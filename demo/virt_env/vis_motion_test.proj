@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9352
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 LeabraProject .projects["vis_motion_test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -425,6 +425,7 @@ LeabraProject .projects["vis_motion_test"] {
   Program @["MotionTest"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["user_pinned"] { };
+    UserData_DocLink @["DocLink"] { };
    };
 
    ProgObjList @.objs = [4] {
@@ -1088,19 +1089,19 @@ LeabraProject .projects["vis_motion_test"] {
   minor=0;
   step=0;
  };
- author=;
- email=;
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
+ pub_cite=;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -1146,7 +1147,7 @@ LeabraProject .projects["vis_motion_test"] {
     };
    };
    name="ControlPanel";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -1172,7 +1173,7 @@ LeabraProject .projects["vis_motion_test"] {
     };
    };
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -1209,7 +1210,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1251,7 +1252,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1279,7 +1280,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1363,7 +1364,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1609,7 +1610,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1699,7 +1700,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1713,7 +1714,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1732,7 +1733,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [0]     };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -1771,7 +1771,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1813,7 +1813,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1841,7 +1841,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -1925,7 +1925,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2171,7 +2171,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2261,7 +2261,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2275,7 +2275,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2294,7 +2294,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [0]     };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -2319,7 +2318,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2333,7 +2332,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2347,7 +2346,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2361,7 +2360,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2375,7 +2374,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2389,7 +2388,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2403,7 +2402,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2417,7 +2416,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2431,7 +2430,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2445,7 +2444,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2459,7 +2458,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2473,7 +2472,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2487,7 +2486,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2501,7 +2500,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2515,7 +2514,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2529,7 +2528,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2543,7 +2542,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2557,7 +2556,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2581,7 +2580,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2595,7 +2594,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2609,7 +2608,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2623,7 +2622,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2637,7 +2636,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2661,7 +2660,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2685,7 +2684,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2709,7 +2708,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2733,7 +2732,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2757,7 +2756,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2781,7 +2780,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2795,7 +2794,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2809,7 +2808,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2823,7 +2822,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2837,7 +2836,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2856,7 +2855,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [0]     };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -2895,7 +2893,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2937,7 +2935,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2965,7 +2963,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3049,7 +3047,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3295,7 +3293,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3385,7 +3383,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3399,7 +3397,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3418,7 +3416,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [0]     };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -3443,7 +3440,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="cluster where this job was submitted / run";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3457,7 +3454,7 @@ LeabraProject .projects["vis_motion_test"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3602,7 +3599,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [0]     };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -3716,7 +3712,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [0]     };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -3839,7 +3834,7 @@ LeabraProject .projects["vis_motion_test"] {
        };
       };
       name="Name";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3867,7 +3862,7 @@ LeabraProject .projects["vis_motion_test"] {
        };
       };
       name="Stencil";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 20;20;      };
       calc_expr {
@@ -4891,7 +4886,6 @@ LeabraProject .projects["vis_motion_test"] {
     [25] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
 20;21;22;23;24;    };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -4950,7 +4944,7 @@ LeabraProject .projects["vis_motion_test"] {
        };
       };
       name="Name";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4976,7 +4970,7 @@ LeabraProject .projects["vis_motion_test"] {
        };
       };
       name="Filter";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 10;10;      };
       calc_expr {
@@ -5018,7 +5012,6 @@ LeabraProject .projects["vis_motion_test"] {
     row_indexes {
      name="row_indexes";
     [2] 0;1;    };
-    table_font_size=12;
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -5052,11 +5045,22 @@ LeabraProject .projects["vis_motion_test"] {
      value 1 0=1;
      val_type_fixed=0;
     };
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["vis_motion_test"].programs["MotionTest"].doc$$;
+    };
    };
    name="MotionTest";
    short_nm="MtnTst";
    tags=;
    desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=OBJS_UPDT_GUI;
    stop_step_cond {
     expr=;
@@ -5089,7 +5093,7 @@ LeabraProject .projects["vis_motion_test"] {
 	};
        };
        name="V1reg_image_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 64;64;       };
        calc_expr {
@@ -5112,7 +5116,7 @@ LeabraProject .projects["vis_motion_test"] {
 	};
        };
        name="V1reg_v1s_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5135,7 +5139,7 @@ LeabraProject .projects["vis_motion_test"] {
 	};
        };
        name="V1reg_v1pi_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;1;32;32;       };
        calc_expr {
@@ -5158,7 +5162,7 @@ LeabraProject .projects["vis_motion_test"] {
 	};
        };
        name="V1reg_v1m_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;4;32;32;       };
        calc_expr {
@@ -5181,7 +5185,7 @@ LeabraProject .projects["vis_motion_test"] {
 	};
        };
        name="V1reg_v1m_max_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;1;32;32;       };
        calc_expr {
@@ -5194,7 +5198,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m0"] {
        name="V1reg_v1m_hist_r_m0";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5207,7 +5211,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m1"] {
        name="V1reg_v1m_hist_r_m1";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5220,7 +5224,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m2"] {
        name="V1reg_v1m_hist_r_m2";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5233,7 +5237,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m3"] {
        name="V1reg_v1m_hist_r_m3";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5246,7 +5250,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m4"] {
        name="V1reg_v1m_hist_r_m4";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5259,7 +5263,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m5"] {
        name="V1reg_v1m_hist_r_m5";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5272,7 +5276,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m6"] {
        name="V1reg_v1m_hist_r_m6";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5285,7 +5289,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m7"] {
        name="V1reg_v1m_hist_r_m7";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5298,7 +5302,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m8"] {
        name="V1reg_v1m_hist_r_m8";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5311,7 +5315,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_hist_r_m9"] {
        name="V1reg_v1m_hist_r_m9";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;32;32;       };
        calc_expr {
@@ -5324,7 +5328,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1s_sg_r"] {
        name="V1reg_v1s_sg_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;16;16;       };
        calc_expr {
@@ -5337,7 +5341,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1pi_sg_r"] {
        name="V1reg_v1pi_sg_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;1;16;16;       };
        calc_expr {
@@ -5350,7 +5354,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_sg_r"] {
        name="V1reg_v1m_sg_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;4;16;16;       };
        calc_expr {
@@ -5363,7 +5367,7 @@ LeabraProject .projects["vis_motion_test"] {
       };
       float_Data @["V1reg_v1m_max_sg_r"] {
        name="V1reg_v1m_max_sg_r";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;1;16;16;       };
        calc_expr {
@@ -5381,8 +5385,7 @@ LeabraProject .projects["vis_motion_test"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
-     table_font_size=12;
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -5421,7 +5424,7 @@ LeabraProject .projects["vis_motion_test"] {
 	};
        };
        name="canvas";
-       col_flags=SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 128;128;3;       };
        calc_expr {
@@ -5439,8 +5442,7 @@ LeabraProject .projects["vis_motion_test"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
-     table_font_size=12;
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -5600,6 +5602,7 @@ LeabraProject .projects["vis_motion_test"] {
      name="stim_type";
      var_type=T_DynEnum;
      dyn_enum_val {
+      user_data_=NULL;
       enum_type=.projects["vis_motion_test"].programs["MotionTest"].types["StimType"]$$;
       value=1;
      };
@@ -5768,7 +5771,7 @@ LeabraProject .projects["vis_motion_test"] {
        object_type=taCanvas;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -5906,7 +5909,7 @@ LeabraProject .projects["vis_motion_test"] {
        object_type=taCanvas;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=1;
        desc=;
        init_from=NULL;
@@ -5915,7 +5918,7 @@ LeabraProject .projects["vis_motion_test"] {
        name="col_nm";
        var_type=T_String;
        string_val=;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -6120,7 +6123,7 @@ LeabraProject .projects["vis_motion_test"] {
 	 name="sx";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -6129,7 +6132,7 @@ LeabraProject .projects["vis_motion_test"] {
 	 name="sy";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -6138,7 +6141,7 @@ LeabraProject .projects["vis_motion_test"] {
 	 name="rad_ang";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -6147,7 +6150,7 @@ LeabraProject .projects["vis_motion_test"] {
 	 name="ex";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -6156,7 +6159,7 @@ LeabraProject .projects["vis_motion_test"] {
 	 name="ey";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -6800,7 +6803,7 @@ LeabraProject .projects["vis_motion_test"] {
        name="st";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -7094,8 +7097,8 @@ LeabraProject .projects["vis_motion_test"] {
       StopStepPoint @[6] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Stop/Step Point";
-       pre_compile_code_string="Stop/Step Point";
+       code_string="Stop_Step Point";
+       pre_compile_code_string="Stop_Step Point";
        cond {
 	expr=;
        };
@@ -7150,6 +7153,17 @@ LeabraProject .projects["vis_motion_test"] {
    };
    step_prog=.projects["vis_motion_test"].programs["MotionTest"]$$;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
@@ -7163,22 +7177,22 @@ LeabraProject .projects["vis_motion_test"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001591512;
+     value 8 0=0.001352265;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.009345794;
+     value 8 0=0.008987418;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9984085;
+     value 8 0=0.9983097;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -7527,7 +7541,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -7560,7 +7574,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -7818,7 +7832,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -7851,7 +7865,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -8109,7 +8123,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -8142,7 +8156,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -8400,7 +8414,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -8433,7 +8447,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -8446,11 +8460,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -8622,7 +8638,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -8635,11 +8651,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -8811,7 +8829,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=4;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -8824,11 +8842,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=0: g=0: b=0: a=1: };
        text_color {r=1: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -8988,7 +9008,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -9001,11 +9021,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -9103,17 +9125,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.008496176;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04350132;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7357689;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -9142,6 +9164,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

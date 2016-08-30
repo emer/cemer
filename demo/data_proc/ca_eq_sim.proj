@@ -1,8 +1,12 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 LeabraProject .projects["ca_eq_sim"] { 
  Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
   taDoc @["ChangeLog"] { };
-  taDoc @["ProjDoc"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -21,15 +25,20 @@ LeabraProject .projects["ca_eq_sim"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [26] {
+   DataTableCols @.jobs_running.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -42,7 +51,6 @@ LeabraProject .projects["ca_eq_sim"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -60,6 +68,11 @@ LeabraProject .projects["ca_eq_sim"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -72,17 +85,30 @@ LeabraProject .projects["ca_eq_sim"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.jobs_done.data = [26] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -95,7 +121,6 @@ LeabraProject .projects["ca_eq_sim"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -113,6 +138,11 @@ LeabraProject .projects["ca_eq_sim"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -125,17 +155,30 @@ LeabraProject .projects["ca_eq_sim"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [26] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_deleted.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -148,7 +191,6 @@ LeabraProject .projects["ca_eq_sim"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -166,6 +208,11 @@ LeabraProject .projects["ca_eq_sim"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -178,9 +225,89 @@ LeabraProject .projects["ca_eq_sim"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.file_list.data = [9] {
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.file_list.data = [11] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["file_name"] { };
     String_Data @["tag"] { };
     String_Data @["size"] { };
@@ -192,6 +319,12 @@ LeabraProject .projects["ca_eq_sim"] {
     String_Data @["file_path"] { };
    };
 
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.file_list.control_panel_cells = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -201,9 +334,18 @@ LeabraProject .projects["ca_eq_sim"] {
     String_Data @["start_time"] { };
    };
 
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
+   };
+
    ParamSearchAlgo_List @.search_algos = [0] {
    };
   };
+ };
+
+ ParamSet_Group @.param_sets = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -240,6 +382,12 @@ LeabraProject .projects["ca_eq_sim"] {
       };
      };
     };
+
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
+
+    DataTableCell_List @.control_panel_cells = [0] {
+    };
    };
    DataTable @["CaEnd"] { 
     DataTableCols @.data = [5] {
@@ -249,35 +397,22 @@ LeabraProject .projects["ca_eq_sim"] {
      float_Data @["sdo"] { };
      float_Data @["cai_fit"] { };
     };
-   };
-  };
- };
 
- taBase_Group @.data_proc = [4] {
-  taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
+
+    DataTableCell_List @.control_panel_cells = [0] {
+    };
    };
   };
  };
 
  Program_TopGroup @.programs = [1] {
   Program @["CaSim"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -419,8 +554,8 @@ LeabraProject .projects["ca_eq_sim"] {
    };
 
    FrameViewer_List @.frames = [3] {
-    BrowseViewerTaBase @["Tree"] { };
-    PanelViewer @["Panels"] { };
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
     T3PanelViewer @["T3Frames"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["view_panel_selected"] { };
@@ -591,73 +726,48 @@ LeabraProject .projects["ca_eq_sim"] {
 };
 LeabraProject .projects["ca_eq_sim"] {
  name="ca_eq_sim";
- desc=;
- tags=;
+ desc="Calcium equation simulation -- shows how to use a DataTable to graph equations (e.g., like gnuplot or similar), using a DataCalcLoop object and various other important data processing techniques.";
+ tags="Data Processing, Data Calc Loop, Calcium, Program, Graphing";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=2;
  };
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2014";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
+ pub_cite=;
+ wiki {
+  wiki="emergent";
+  page_name="demos/ca_eq_sim";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
-  taDoc @["ChangeLog"] {
-   name="ChangeLog";
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
    desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
-<head>ChangeLog</head>
-<body>
-<h1>ChangeLog</h1>
-<ul>
-
-<li>Sat Dec 15 00:36:40 2007 oreilly <code>ca_eq_sim.proj</code><br>
-  simulation of ca equations
-
-</ul>
-</body>
-</html>
-";
-   html_text="<html>
-<head>ChangeLog</head>
-<body>
-<h1>ChangeLog</h1>
-<ul>
-<P>
-<li>Sat Dec 15 00:36:40 2007 oreilly <code>ca_eq_sim.proj</code><br>
-  simulation of ca equations
-<P>
-</ul>
-</body>
-</html>
-";
-  };
-  taDoc @["ProjDoc"] {
-   name="ProjDoc";
-   desc=;
-   auto_open=1;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="demos/ca_eq_sim";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/ca_eq_sim";
    text_size=1;
    text="<html>
 <head></head>
@@ -673,19 +783,75 @@ The CaData DataTable and associated graph show the time evolution as a function 
 </body>
 </html>
 ";
-   html_text="<html><head></head>
+   html_text="<html>
+<head></head>
 <body>
 <h2> Calcium (Ca) Equation Simulation </h2>
-<p>
+<P>
 This project simulates various intracellular calcium equations and resulting synaptic depression and learning functions, using DataTables to store and plot the evolution of the relevant variables over time.  It provides a good example of DataCalcLoop and this overall use of the software for exploratory mathematical computations.
-</p><p>
+<P>
 To run, go to <a href=\"ta:.programs.CaSim\">CaSim</a> and do <a href=\"ta:.programs.CaSim.Init()\">CaSim.Init()</a> and <a href=\"ta:.programs.CaSim.Run()\">CaSim.Run()</a>.  The control panel contains all the relevant parameters.
-</p><p>
+<P>
 The CaData DataTable and associated graph show the time evolution as a function of different levels of synaptic drive (sender * receiver activation), while CaEnd shows the final asymptotic states right before the drive is removed.
-</p><p>
+<P>
+</body>
+</html>
+";
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
 
 
-</p></body></html>";
+<li>Tue Aug 30 02:43:25 2016 version: 8.0.2 user: oreilly file_name: <code>ca_eq_sim.proj</code> <br>
+Project updated on wiki: emergent changes: doc link
+
+
+
+<li>Tue Aug 30 02:41:08 2016 version: 8.0.1 user: oreilly file_name: <code>ca_eq_sim.proj</code> <br>
+Published on wiki: emergent page: demos/ca_eq_sim with description: Calcium equation simulation -- shows how to use a DataTable to graph equations (e.g., like gnuplot or similar), using a DataCalcLoop object and various other important data processing techniques. tags: Data Processing, Data Calc Loop, Calcium, Program, Graphing author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+
+
+<li>Sat Dec 15 00:36:40 2007 oreilly <code>ca_eq_sim.proj</code><br>
+  simulation of ca equations
+
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Tue Aug 30 02:43:25 2016 version: 8.0.2 user: oreilly file_name: <code>ca_eq_sim.proj</code> <br>
+Project updated on wiki: emergent changes: doc link
+<P>
+<P>
+<P>
+<li>Tue Aug 30 02:41:08 2016 version: 8.0.1 user: oreilly file_name: <code>ca_eq_sim.proj</code> <br>
+Published on wiki: emergent page: demos/ca_eq_sim with description: Calcium equation simulation -- shows how to use a DataTable to graph equations (e.g., like gnuplot or similar), using a DataCalcLoop object and various other important data processing techniques. tags: Data Processing, Data Calc Loop, Calcium, Program, Graphing author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+<P>
+<P>
+<li>Sat Dec 15 00:36:40 2007 oreilly <code>ca_eq_sim.proj</code><br>
+  simulation of ca equations
+<P>
+</ul>
+</body>
+</html>
+";
   };
  };
  wizards {
@@ -704,7 +870,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
    };
    name="LeabraWizard_0";
-   auto_open=0;
   };
  };
  ctrl_panels {
@@ -713,8 +878,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   auto_edit=0;
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -734,185 +898,255 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -929,84 +1163,70 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1023,14 +1243,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1047,14 +1267,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1070,15 +1290,39 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1095,14 +1339,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1118,43 +1362,71 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1164,8 +1436,21 @@ The CaData DataTable and associated graph show the time evolution as a function 
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    jobs_done {
     name="jobs_done";
@@ -1174,185 +1459,255 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1369,84 +1724,70 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1463,14 +1804,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1487,14 +1828,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1510,15 +1851,39 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1535,14 +1900,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1558,43 +1923,632 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_deleted {
+    name="jobs_deleted";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
        name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1606,6 +2560,19 @@ The CaData DataTable and associated graph show the time evolution as a function 
     row_indexes {
      name=;
     [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -1614,185 +2581,255 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1809,84 +2846,70 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1903,14 +2926,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1927,14 +2950,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1950,15 +2973,39 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1975,14 +3022,14 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1998,43 +3045,71 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2044,8 +3119,21 @@ The CaData DataTable and associated graph show the time evolution as a function 
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    file_list {
     name="file_list";
@@ -2054,129 +3142,157 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="data";
      el_typ=String_Data;
      el_def=0;
-     String_Data @["file_name"] {
-      name="file_name";
-      desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="cluster where this job was submitted / run";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_name"] {
+      name="file_name";
+      desc="name of file -- does not include any path information";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2186,8 +3302,21 @@ The CaData DataTable and associated graph show the time evolution as a function 
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    cluster_info {
     name="cluster_info";
@@ -2199,84 +3328,84 @@ The CaData DataTable and associated graph show the time evolution as a function 
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2286,32 +3415,63 @@ The CaData DataTable and associated graph show the time evolution as a function 
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    search_algos {
     name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
+   exe_cmd="emergent";
    ram_gb=0;
    n_threads=1;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=0;
   };
+ };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
  };
  data {
   name="data";
@@ -2354,7 +3514,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
       name="time";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2491,7 +3651,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="drive";
       desc="synaptic drive";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2628,7 +3788,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="cai";
       desc="intracellular calcium";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2765,7 +3925,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="pfire";
       desc="probability of firing (new sd based on cai)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2902,7 +4062,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       name="sdo";
       desc="old std synaptic depression";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3144,6 +4304,19 @@ The CaData DataTable and associated graph show the time evolution as a function 
 1080;1081;1082;1083;1084;1085;1086;1087;1088;1089;
 1090;1091;1092;1093;1094;1095;1096;1097;1098;1099;
     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    DataTable @["CaEnd"] {
     name="CaEnd";
@@ -3154,7 +4327,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      el_def=0;
      float_Data @["drive"] {
       name="drive";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3172,7 +4345,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      float_Data @["cai"] {
       name="cai";
       desc="intracellular calcium";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3190,7 +4363,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      float_Data @["pfire"] {
       name="pfire";
       desc="probability of firing (new sd based on cai)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3208,7 +4381,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      float_Data @["sdo"] {
       name="sdo";
       desc="old std synaptic depression";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3225,7 +4398,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      };
      float_Data @["cai_fit"] {
       name="cai_fit";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3249,64 +4422,20 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="row_indexes";
     [11] 0;1;2;3;4;5;6;7;8;9;
 10;    };
-   };
-  };
- };
- data_proc {
-  name="data_proc";
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @["data_base"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
     };
    };
-   name="data_base";
-  };
-  taDataAnal @["data_anal"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @["data_gen"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @["image_proc"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
   };
  };
  programs {
@@ -3315,12 +4444,32 @@ The CaData DataTable and associated graph show the time evolution as a function 
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
   Program @["CaSim"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["ca_eq_sim"].programs["CaSim"].doc$$;
+    };
+   };
    name="CaSim";
    short_nm="Sim";
    tags=;
    desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Randall C. O'Reilly";
+   email="emergent-users@grey.colorado.edu";
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
     name="objs";
     el_typ=taNBase;
@@ -3366,7 +4515,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="cai";
      var_type=T_Real;
      real_val=0.04156301289196076;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="intracell calcium";
@@ -3376,7 +4524,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="cai_thr";
      var_type=T_Real;
      real_val=0;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="thresholded";
@@ -3386,7 +4533,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="pfire";
      var_type=T_Real;
      real_val=1;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="probability of firing";
@@ -3396,7 +4542,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="cai_fit";
      var_type=T_Real;
      real_val=0.716703787691222;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="attempted log fit";
@@ -3406,7 +4551,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="drive";
      var_type=T_Real;
      real_val=0;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="current \"synaptic drive\" = s * r (excluding eff wt!)";
@@ -3416,7 +4560,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="steps_per_drive";
      var_type=T_Int;
      int_val=100;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="tot number of time steps to sim per drive level";
@@ -3426,7 +4569,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="drive_off_step";
      var_type=T_Int;
      int_val=50;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="turn off drive after this many steps";
@@ -3436,7 +4578,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="drive_steps";
      var_type=T_Int;
      int_val=11;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="total number of diff drive values to sim";
@@ -3446,7 +4587,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="drive_inc";
      var_type=T_Real;
      real_val=0.1;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="how much to inc drive per drive step";
@@ -3456,7 +4596,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="drive_idx";
      var_type=T_Int;
      int_val=10;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -3466,7 +4605,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="ca_inc";
      var_type=T_Real;
      real_val=0.1;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="rate of increase in ca as function of drive and amount avail";
@@ -3476,7 +4614,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="ca_dec";
      var_type=T_Real;
      real_val=0.05;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="rate of decay/decrease in cai";
@@ -3486,7 +4623,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="pfire_gain";
      var_type=T_Real;
      real_val=1;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="overall pfire gain";
@@ -3496,7 +4632,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="pfire_thr";
      var_type=T_Real;
      real_val=0.4;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="threshold cai level prior to activating decrease in pfire";
@@ -3506,7 +4641,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="log_gain";
      var_type=T_Real;
      real_val=5;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="gain on cai val for log fit";
@@ -3516,7 +4650,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="log_mult";
      var_type=T_Real;
      real_val=0.4;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="outside of log multiplier";
@@ -3526,7 +4659,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="sdo";
      var_type=T_Real;
      real_val=0.9982826726973996;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="old std syndep value";
@@ -3536,7 +4668,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="sdo_rec";
      var_type=T_Real;
      real_val=0.1;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="old std syndep recovery constant";
@@ -3546,7 +4677,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="sdo_asymp";
      var_type=T_Real;
      real_val=0.5;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="old std syndep asymptotic level constant";
@@ -3556,7 +4686,6 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="sdo_depl";
      var_type=T_Real;
      real_val=0.05;
-     objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="old std syndep depletion (computed)";
@@ -3579,8 +4708,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
     el_def=0;
     LocalVars @[0] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -3589,8 +4719,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="src_row";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3599,8 +4728,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
     AssignExpr @[1] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cai = 0";
+     pre_compile_code_string="cai = 0";
      result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["cai"]$$;
      expr {
       expr="0";
@@ -3608,8 +4738,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
     AssignExpr @[2] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="pfire = 1";
+     pre_compile_code_string="pfire = 1";
      result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["pfire"]$$;
      expr {
       expr="1";
@@ -3617,8 +4748,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
     AssignExpr @[3] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sdo = 1";
+     pre_compile_code_string="sdo = 1";
      result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["sdo"]$$;
      expr {
       expr="1";
@@ -3626,8 +4758,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
     AssignExpr @[4] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sdo_depl = sdo_rec * (1.0 - sdo_asymp)";
+     pre_compile_code_string="sdo_depl = sdo_rec * (1.0 - sdo_asymp)";
      result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["sdo_depl"]$$;
      expr {
       expr="sdo_rec * (1.0 - sdo_asymp)";
@@ -3635,8 +4768,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
     MethodCall @[5] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="CaData->EnforceRows(drive_steps * steps_per_drive)";
+     pre_compile_code_string="CaData->EnforceRows(drive_steps * steps_per_drive)";
      result_var=NULL;
      obj=.projects["ca_eq_sim"].programs["CaSim"].vars["CaData"]$$;
      method=DataTable::EnforceRows;
@@ -3650,16 +4784,20 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="n_rows";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="drive_steps * steps_per_drive";
        };
       };
      };
+     meth_sig="void EnforceRows(int n_rows)";
+     meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
     };
     MethodCall @[6] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="CaEnd->EnforceRows(drive_steps)";
+     pre_compile_code_string="CaEnd->EnforceRows(drive_steps)";
      result_var=NULL;
      obj=.projects["ca_eq_sim"].programs["CaSim"].vars["CaEnd"]$$;
      method=DataTable::EnforceRows;
@@ -3673,16 +4811,20 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="n_rows";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="drive_steps";
        };
       };
      };
+     meth_sig="void EnforceRows(int n_rows)";
+     meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
     };
     DataCalcLoop @[7] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Calc loop:  src table = CaData  dest table = ? ";
+     pre_compile_code_string="Calc loop:  src table = CaData  dest table = ? ";
      src_data_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["CaData"]$;
      dest_data_var=NULL;
      src_cols {
@@ -3716,8 +4858,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       el_def=0;
       AssignExpr @[0] {
        desc="integer index for drive value (0..n)";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="drive_idx = src_row / steps_per_drive";
+       pre_compile_code_string="drive_idx = src_row / steps_per_drive";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["drive_idx"]$$;
        expr {
 	expr="src_row / steps_per_drive";
@@ -3725,8 +4868,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[1] {
        desc="actual drive value";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="drive = drive_inc * drive_idx";
+       pre_compile_code_string="drive = drive_inc * drive_idx";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["drive"]$$;
        expr {
 	expr="drive_inc * drive_idx";
@@ -3734,8 +4878,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[2] {
        desc="time value";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="s_time = src_row % steps_per_drive";
+       pre_compile_code_string="s_time = src_row % steps_per_drive";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].prog_code[7].src_col_vars["s_time"]$$;
        expr {
 	expr="src_row % steps_per_drive";
@@ -3743,8 +4888,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[3] {
        desc="store the drive before we turn it off!";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="s_drive = drive";
+       pre_compile_code_string="s_drive = drive";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].prog_code[7].src_col_vars["s_drive"]$$;
        expr {
 	expr="drive";
@@ -3752,8 +4898,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       If @[4] {
        desc="drive goes off after this point";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (s_time >= drive_off_step)";
+       pre_compile_code_string="if (s_time >= drive_off_step)";
        cond {
 	expr="s_time >= drive_off_step";
        };
@@ -3763,8 +4910,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	el_def=0;
 	AssignExpr @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="drive = 0";
+	 pre_compile_code_string="drive = 0";
 	 result_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["drive"]$;
 	 expr {
 	  expr="0";
@@ -3774,8 +4922,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[5] {
        desc="Key equation!";
-       flags=NEW_EL;
-       orig_prog_code=;
+       flags=NEW_EL|CAN_REVERT_TO_CODE;
+       code_string="cai = cai + ca_inc * (1.0 - cai) * drive * pfire - ca_dec * cai";
+       pre_compile_code_string="cai = cai + ca_inc * (1.0 - cai) * drive * pfire - ca_dec * cai";
        result_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["cai"]$;
        expr {
 	expr="cai + ca_inc * (1.0 - cai) * drive * pfire - ca_dec * cai";
@@ -3783,8 +4932,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[6] {
        desc="old std syndep eq";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sdo = sdo + sdo_rec * (1.0 - sdo) - sdo_depl * drive * sdo";
+       pre_compile_code_string="sdo = sdo + sdo_rec * (1.0 - sdo) - sdo_depl * drive * sdo";
        result_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["sdo"]$;
        expr {
 	expr="sdo + sdo_rec * (1.0 - sdo) - sdo_depl * drive * sdo";
@@ -3792,8 +4942,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       If @[7] {
        desc="initialize at start of time";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (s_time == 0)";
+       pre_compile_code_string="if (s_time == 0)";
        cond {
 	expr="s_time == 0";
        };
@@ -3803,8 +4954,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	el_def=0;
 	AssignExpr @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="cai = 0";
+	 pre_compile_code_string="cai = 0";
 	 result_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["cai"]$;
 	 expr {
 	  expr="0";
@@ -3812,8 +4964,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	};
 	AssignExpr @[1] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="sdo = 1";
+	 pre_compile_code_string="sdo = 1";
 	 result_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["sdo"]$;
 	 expr {
 	  expr="1";
@@ -3823,8 +4976,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[8] {
        desc="threshold gives delay before ca depletion starts to take effect";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="cai_thr = (cai > pfire_thr) ? (cai-pfire_thr) / (1.0 - pfire_thr) : 0.0";
+       pre_compile_code_string="cai_thr = (cai > pfire_thr) ? (cai-pfire_thr) / (1.0 - pfire_thr) : 0.0";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["cai_thr"]$$;
        expr {
 	expr="(cai > pfire_thr) ? (cai-pfire_thr) / (1.0 - pfire_thr) : 0.0";
@@ -3832,8 +4986,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[9] {
        desc="probability of firing based on extracellular ca = 1.0 - cai";
-       flags=NEW_EL;
-       orig_prog_code=;
+       flags=NEW_EL|CAN_REVERT_TO_CODE;
+       code_string="pfire = pfire_gain * (1.0 - cai_thr)*(1.0 - cai_thr)";
+       pre_compile_code_string="pfire = pfire_gain * (1.0 - cai_thr)*(1.0 - cai_thr)";
        result_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["pfire"]$;
        expr {
 	expr="pfire_gain * (1.0 - cai_thr)*(1.0 - cai_thr)";
@@ -3841,8 +4996,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[10] {
        desc="store computed values";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="s_cai = cai";
+       pre_compile_code_string="s_cai = cai";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].prog_code[7].src_col_vars["s_cai"]$$;
        expr {
 	expr="cai";
@@ -3850,8 +5006,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[11] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="s_pfire = pfire";
+       pre_compile_code_string="s_pfire = pfire";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].prog_code[7].src_col_vars["s_pfire"]$$;
        expr {
 	expr="pfire";
@@ -3859,8 +5016,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       AssignExpr @[12] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="s_sdo = sdo";
+       pre_compile_code_string="s_sdo = sdo";
        result_var=.projects["ca_eq_sim"].programs["CaSim"].prog_code[7].src_col_vars["s_sdo"]$$;
        expr {
 	expr="sdo";
@@ -3868,15 +5026,17 @@ The CaData DataTable and associated graph show the time evolution as a function 
       };
       DataCalcSetSrcRow @[13] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Set Src Row in: CaData";
+       pre_compile_code_string="Set Src Row in: CaData";
        src_data_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["CaData"]$;
        dest_data_var=NULL;
       };
       If @[14] {
        desc="just before drive is going off: store in CaEnd";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (s_time == drive_off_step-1)";
+       pre_compile_code_string="if (s_time == drive_off_step-1)";
        cond {
 	expr="s_time == drive_off_step-1";
        };
@@ -3886,8 +5046,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	el_def=0;
 	AssignExpr @[0] {
 	 desc="attempt to fit cai value with a log function to show that it is log shaped..";
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="cai_fit = log_mult * log(1.0 + log_gain * drive)";
+	 pre_compile_code_string="cai_fit = log_mult * log(1.0 + log_gain * drive)";
 	 result_var=.projects["ca_eq_sim"].programs["CaSim"].vars["cai_fit"]$$;
 	 expr {
 	  expr="log_mult * log(1.0 + log_gain * drive)";
@@ -3895,8 +5056,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	};
 	DataVarProg @[1] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="Data To:  table=CaEnd  row_spec=row_num  row_var=drive_idx  set=to  all_matches=false  var_1=drive  var_2=cai  var_3=cai_fit  var_4=pfire ";
+	 pre_compile_code_string="Data To:  table=CaEnd  row_spec=row_num  row_var=drive_idx  set=to  all_matches=false  var_1=drive  var_2=cai  var_3=cai_fit  var_4=pfire ";
 	 data_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["CaEnd"]$;
 	 row_spec=ROW_NUM;
 	 row_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["drive_idx"]$;
@@ -3910,8 +5072,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	};
 	DataVarProg @[2] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="Data To:  table=CaEnd  row_spec=row_num  row_var=drive_idx  set=to  all_matches=false  var_1=sdo  var_2=?  var_3=?  var_4=? ";
+	 pre_compile_code_string="Data To:  table=CaEnd  row_spec=row_num  row_var=drive_idx  set=to  all_matches=false  var_1=sdo  var_2=?  var_3=?  var_4=? ";
 	 data_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["CaEnd"]$;
 	 row_spec=ROW_NUM;
 	 row_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["drive_idx"]$;
@@ -3935,8 +5098,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="s_time";
        var_type=T_Real;
        real_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3945,8 +5107,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="s_drive";
        var_type=T_Real;
        real_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3955,8 +5116,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="s_cai";
        var_type=T_Real;
        real_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3965,8 +5125,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="s_pfire";
        var_type=T_Real;
        real_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3975,8 +5134,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        name="s_sdo";
        var_type=T_Real;
        real_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3990,13 +5148,25 @@ The CaData DataTable and associated graph show the time evolution as a function 
     };
     DoneWritingDataRow @[8] {
      desc="triggers update of CaEnd graph";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DoneWritingDataRow:  table = CaEnd ";
+     pre_compile_code_string="DoneWritingDataRow:  table = CaEnd ";
      data_var=$.projects["ca_eq_sim"].programs["CaSim"].vars["CaEnd"]$;
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
@@ -4010,22 +5180,22 @@ The CaData DataTable and associated graph show the time evolution as a function 
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 8 0=0.04433793;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=1;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -4041,8 +5211,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
    };
    name="Browser2";
    m_data=.projects["ca_eq_sim"]$$;
+   cur_font_size=12;
    visible=1;
-   win_name=".projects[\"Project_0\"] - ca_eq_sim.proj [*]";
+   win_name=".projects[\"ca_eq_sim\"] - ca_eq_sim.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -4064,6 +5235,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -4074,17 +5246,19 @@ The CaData DataTable and associated graph show the time evolution as a function 
     name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$.projects["ca_eq_sim"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["T3Frames"] {
@@ -4100,6 +5274,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      };
      name="T3Frames";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -4108,10 +5283,12 @@ The CaData DataTable and associated graph show the time evolution as a function 
       T3Panel @["CaData"] {
        name="CaData";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -4120,6 +5297,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	 GraphTableView @["CaData_Graph"] {
 	  name="CaData_Graph";
 	  m_data=$.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaData"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -4128,6 +5306,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["time"] {
 	    name="time";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaData"].data["time"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=99: };
@@ -4136,6 +5315,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["drive"] {
 	    name="drive";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaData"].data["drive"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
@@ -4144,6 +5324,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["cai"] {
 	    name="cai";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaData"].data["cai"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
@@ -4152,6 +5333,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["pfire"] {
 	    name="pfire";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaData"].data["pfire"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
@@ -4160,6 +5342,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["sdo"] {
 	    name="sdo";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaData"].data["sdo"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
@@ -4179,6 +5362,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=1099: };
+	  page_rows=1952796260;
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -4188,6 +5372,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -4198,6 +5383,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -4207,6 +5393,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=99: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -4215,6 +5403,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=Z;
@@ -4224,6 +5413,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -4237,6 +5428,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_1"] {
 	    name="CaData_Graph_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -4246,6 +5438,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4256,6 +5450,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_2"] {
 	    name="CaData_Graph_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -4265,6 +5460,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4275,6 +5472,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_3"] {
 	    name="CaData_Graph_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -4284,6 +5482,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4294,6 +5494,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_4"] {
 	    name="CaData_Graph_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4303,6 +5504,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4313,6 +5516,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_5"] {
 	    name="CaData_Graph_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4322,6 +5526,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4332,6 +5538,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_6"] {
 	    name="CaData_Graph_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4341,6 +5548,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4351,6 +5560,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_7"] {
 	    name="CaData_Graph_plot_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4360,6 +5570,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4370,6 +5582,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_8"] {
 	    name="CaData_Graph_plot_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4379,6 +5592,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4389,6 +5604,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_9"] {
 	    name="CaData_Graph_plot_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4398,6 +5614,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4408,6 +5626,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_10"] {
 	    name="CaData_Graph_plot_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4417,6 +5636,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4427,6 +5648,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_11"] {
 	    name="CaData_Graph_plot_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4436,6 +5658,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4446,6 +5670,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_12"] {
 	    name="CaData_Graph_plot_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4455,6 +5680,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4465,6 +5692,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_13"] {
 	    name="CaData_Graph_plot_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4474,6 +5702,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4484,6 +5714,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_14"] {
 	    name="CaData_Graph_plot_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4493,6 +5724,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4503,6 +5736,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_15"] {
 	    name="CaData_Graph_plot_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4512,6 +5746,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4522,6 +5758,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_plot_16"] {
 	    name="CaData_Graph_plot_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4531,6 +5768,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4546,6 +5785,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_1"] {
 	    name="CaData_Graph_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4555,6 +5795,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4565,6 +5807,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_2"] {
 	    name="CaData_Graph_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4574,6 +5817,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4584,6 +5829,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_3"] {
 	    name="CaData_Graph_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4593,6 +5839,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4603,6 +5851,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_4"] {
 	    name="CaData_Graph_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4612,6 +5861,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4622,6 +5873,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_5"] {
 	    name="CaData_Graph_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4631,6 +5883,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4641,6 +5895,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_6"] {
 	    name="CaData_Graph_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4650,6 +5905,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4660,6 +5917,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_7"] {
 	    name="CaData_Graph_err_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4669,6 +5927,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4679,6 +5939,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_8"] {
 	    name="CaData_Graph_err_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4688,6 +5949,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4698,6 +5961,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_9"] {
 	    name="CaData_Graph_err_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4707,6 +5971,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4717,6 +5983,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_10"] {
 	    name="CaData_Graph_err_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4726,6 +5993,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4736,6 +6005,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_11"] {
 	    name="CaData_Graph_err_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4745,6 +6015,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4755,6 +6027,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_12"] {
 	    name="CaData_Graph_err_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4764,6 +6037,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4774,6 +6049,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_13"] {
 	    name="CaData_Graph_err_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4783,6 +6059,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4793,6 +6071,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_14"] {
 	    name="CaData_Graph_err_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4802,6 +6081,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4812,6 +6093,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_15"] {
 	    name="CaData_Graph_err_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4821,6 +6103,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4831,6 +6115,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["CaData_Graph_err_16"] {
 	    name="CaData_Graph_err_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4840,6 +6125,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -4850,10 +6137,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
-	  color_mode=FIXED_COLOR;
+	  color_mode=FIXED;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -4863,6 +6151,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -4873,6 +6163,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=0;
 	   zero=0;
 	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
@@ -4881,6 +6173,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -4890,6 +6183,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -4908,6 +6203,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {
+	field_of_view=45;
+	near_distance=0.1;
+	focal=5;
+	far_distance=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -4988,10 +6291,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       T3Panel @["CaEnd"] {
        name="CaEnd";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -5000,6 +6305,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 GraphTableView @["children_0"] {
 	  name="children_0";
 	  m_data=$.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaEnd"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -5008,6 +6314,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["drive"] {
 	    name="drive";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaEnd"].data["drive"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
@@ -5016,6 +6323,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["cai"] {
 	    name="cai";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaEnd"].data["cai"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
@@ -5024,6 +6332,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["pfire"] {
 	    name="pfire";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaEnd"].data["pfire"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.245501: fix_max=0: max=1: };
@@ -5032,6 +6341,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["sdo"] {
 	    name="sdo";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaEnd"].data["sdo"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.111243: fix_max=0: max=0.707093: };
@@ -5040,6 +6350,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["cai_fit"] {
 	    name="cai_fit";
 	    m_data=.projects["ca_eq_sim"].data.gp["AnalysisData"]["CaEnd"].data["cai_fit"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.716704: };
@@ -5059,6 +6370,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=10: };
+	  page_rows=1952796260;
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -5068,6 +6380,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -5078,6 +6391,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -5087,6 +6401,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -5095,6 +6411,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
@@ -5104,6 +6421,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=10: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -5117,6 +6436,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_1"] {
 	    name="children_0_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5126,6 +6446,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5136,6 +6458,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_2"] {
 	    name="children_0_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5145,6 +6468,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.7167038: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5155,6 +6480,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_3"] {
 	    name="children_0_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5164,6 +6490,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0.5873552: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5174,6 +6502,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_4"] {
 	    name="children_0_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5183,6 +6512,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0.6667827: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5193,6 +6524,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_5"] {
 	    name="children_0_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5202,6 +6534,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5212,6 +6546,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_6"] {
 	    name="children_0_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5221,6 +6556,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5231,6 +6568,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_7"] {
 	    name="children_0_plot_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5240,6 +6578,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5250,6 +6590,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_8"] {
 	    name="children_0_plot_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5259,6 +6600,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5269,6 +6612,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_9"] {
 	    name="children_0_plot_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5278,6 +6622,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5288,6 +6634,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_10"] {
 	    name="children_0_plot_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5297,6 +6644,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5307,6 +6656,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_11"] {
 	    name="children_0_plot_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5316,6 +6666,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5326,6 +6678,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_12"] {
 	    name="children_0_plot_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5335,6 +6688,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5345,6 +6700,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_13"] {
 	    name="children_0_plot_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5354,6 +6710,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5364,6 +6722,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_14"] {
 	    name="children_0_plot_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5373,6 +6732,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5383,6 +6744,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_15"] {
 	    name="children_0_plot_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5392,6 +6754,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5402,6 +6766,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_plot_16"] {
 	    name="children_0_plot_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5411,6 +6776,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5426,6 +6793,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_1"] {
 	    name="children_0_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5435,6 +6803,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5445,6 +6815,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_2"] {
 	    name="children_0_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5454,6 +6825,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5464,6 +6837,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_3"] {
 	    name="children_0_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5473,6 +6847,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5483,6 +6859,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_4"] {
 	    name="children_0_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5492,6 +6869,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5502,6 +6881,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_5"] {
 	    name="children_0_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5511,6 +6891,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5521,6 +6903,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_6"] {
 	    name="children_0_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5530,6 +6913,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5540,6 +6925,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_7"] {
 	    name="children_0_err_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5549,6 +6935,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5559,6 +6947,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_8"] {
 	    name="children_0_err_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5568,6 +6957,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5578,6 +6969,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_9"] {
 	    name="children_0_err_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5587,6 +6979,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5597,6 +6991,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_10"] {
 	    name="children_0_err_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5606,6 +7001,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5616,6 +7013,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_11"] {
 	    name="children_0_err_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5625,6 +7023,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5635,6 +7035,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_12"] {
 	    name="children_0_err_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5644,6 +7045,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5654,6 +7057,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_13"] {
 	    name="children_0_err_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5663,6 +7067,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5673,6 +7079,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_14"] {
 	    name="children_0_err_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5682,6 +7089,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5692,6 +7101,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_15"] {
 	    name="children_0_err_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5701,6 +7111,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5711,6 +7123,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["children_0_err_16"] {
 	    name="children_0_err_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5720,6 +7133,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -5730,10 +7145,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
-	  color_mode=FIXED_COLOR;
+	  color_mode=FIXED;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -5743,6 +7159,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -5753,6 +7171,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=0;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
@@ -5761,6 +7181,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -5770,6 +7191,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -5788,6 +7211,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {
+	field_of_view=45;
+	near_distance=0.1;
+	focal=5;
+	far_distance=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -5879,22 +7310,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -5910,6 +7341,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -5921,8 +7353,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="simulation of ca equations
-";
+ last_change_desc="Project updated on wiki: emergent changes: doc link";
+ tree_state{ .;.docs;.docs[0];.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

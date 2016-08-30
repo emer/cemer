@@ -1,11 +1,12 @@
-// ta_Dump File v3.0 -- code v7.8.2.0 rev8589
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 LeabraProject .projects["projection_sampler"] { 
- Doc_Group @.docs = [1] {
+ Doc_Group @.docs = [2] {
   taDoc @["ProjectionSpecDocs"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["user_pinned"] { };
    };
   };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -28,13 +29,13 @@ LeabraProject .projects["projection_sampler"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [31] {
+   DataTableCols @.jobs_running.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -88,18 +89,23 @@ LeabraProject .projects["projection_sampler"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
    };
 
-   DataTableCols @.jobs_done.data = [31] {
+   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -153,18 +159,23 @@ LeabraProject .projects["projection_sampler"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
    };
 
-   DataTableCols @.jobs_archive.data = [31] {
+   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_deleted.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -218,9 +229,84 @@ LeabraProject .projects["projection_sampler"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
    DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
    };
 
    DataTableCols @.file_list.data = [11] {
@@ -240,6 +326,9 @@ LeabraProject .projects["projection_sampler"] {
    DataOpList @.file_list.last_sort_spec.ops = [0] {
    };
 
+   DataTableCell_List @.file_list.control_panel_cells = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -250,6 +339,9 @@ LeabraProject .projects["projection_sampler"] {
    };
 
    DataOpList @.cluster_info.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -570,6 +662,9 @@ LeabraProject .projects["projection_sampler"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @["Sender"] { 
      Projection_Group @.projections = [0] {
@@ -605,14 +700,6 @@ LeabraProject .projects["projection_sampler"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
    };
   };
   LeabraNetwork @["Tessel"] { 
@@ -777,6 +864,9 @@ LeabraProject .projects["projection_sampler"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @["Sender"] { 
      Projection_Group @.projections = [0] {
@@ -812,14 +902,6 @@ LeabraProject .projects["projection_sampler"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
    };
   };
   LeabraNetwork @["TiledRF"] { 
@@ -909,6 +991,9 @@ LeabraProject .projects["projection_sampler"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [6] {
     LeabraLayer @["Sender"] { 
      Projection_Group @.projections = [0] {
@@ -961,14 +1046,6 @@ LeabraProject .projects["projection_sampler"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
    };
   };
   LeabraNetwork @["Random"] { 
@@ -1046,6 +1123,9 @@ LeabraProject .projects["projection_sampler"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @["Sender"] { 
      Projection_Group @.projections = [0] {
@@ -1081,14 +1161,6 @@ LeabraProject .projects["projection_sampler"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
    };
   };
   LeabraNetwork @["RandomLarge"] { 
@@ -1166,6 +1238,9 @@ LeabraProject .projects["projection_sampler"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @["Sender"] { 
      Projection_Group @.projections = [0] {
@@ -1201,9 +1276,6 @@ LeabraProject .projects["projection_sampler"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [0] {
    };
   };
   LeabraNetwork @["GpRndTessel"] { 
@@ -1303,6 +1375,9 @@ LeabraProject .projects["projection_sampler"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [4] {
     LeabraLayer @["Sender"] { 
      Projection_Group @.projections = [1] {
@@ -1340,39 +1415,31 @@ LeabraProject .projects["projection_sampler"] {
 
    Weights_List @.weights = [0] {
    };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
-   };
   };
  };
 };
 LeabraProject .projects["projection_sampler"] {
  name="projection_sampler";
- desc=;
- tags=;
+ desc="demonstrates how to use various ProjectionSpec's to connect units according to various patterns";
+ tags="Demo, Projection, Network, Connections";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=2;
  };
- author=;
- email=;
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
+ pub_cite=;
+ wiki {
+  wiki="emergent";
+  page_name="demos/projection_sampler";
  };
  docs {
   name="docs";
@@ -1393,8 +1460,8 @@ LeabraProject .projects["projection_sampler"] {
    desc=;
    web_doc=1;
    wiki="emergent";
-   url="ProjectionSpec";
-   full_url="http://grey.colorado.edu/emergent/index.php/ProjectionSpec";
+   url="demos/projection_sampler";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/projection_sampler";
    text_size=1;
    text="<html>
 <head></head>
@@ -1662,6 +1729,49 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 
 </body></html>";
   };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Tue Aug 30 03:19:02 2016 version: 8.0.2 user: oreilly file_name: <code>projection_sampler.proj</code> <br>
+Project updated on wiki: emergent changes: doc link
+
+
+<li>Tue Aug 30 03:17:42 2016 version: 8.0.1 user: oreilly file_name: <code>projection_sampler.proj</code> <br>
+Published on wiki: emergent page: demos/projection_sampler with description: demonstrates how to use various ProjectionSpec's to connect units according to various patterns tags: Demo, Projection, Network, Connections author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Tue Aug 30 03:19:02 2016 version: 8.0.2 user: oreilly file_name: <code>projection_sampler.proj</code> <br>
+Project updated on wiki: emergent changes: doc link
+<P>
+<P>
+<li>Tue Aug 30 03:17:42 2016 version: 8.0.1 user: oreilly file_name: <code>projection_sampler.proj</code> <br>
+Published on wiki: emergent page: demos/projection_sampler with description: demonstrates how to use various ProjectionSpec's to connect units according to various patterns tags: Demo, Projection, Network, Connections author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -1692,12 +1802,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -1720,9 +1830,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1734,9 +1844,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1748,9 +1858,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1762,9 +1872,23 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1776,23 +1900,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1804,9 +1914,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1818,9 +1928,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1832,9 +1942,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1846,9 +1956,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1860,9 +1970,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1874,9 +1984,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1888,9 +1998,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1902,9 +2012,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1916,9 +2026,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1930,9 +2040,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1944,9 +2054,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1958,9 +2068,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1982,9 +2092,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1996,9 +2106,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2010,9 +2120,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2024,9 +2134,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2038,9 +2148,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2062,9 +2172,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2086,9 +2196,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2109,10 +2219,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2134,9 +2244,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2158,9 +2268,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2181,10 +2291,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2196,9 +2306,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2210,7 +2320,35 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2236,6 +2374,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       el_typ=DataSortEl;
       el_def=0;
      };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
     };
    };
    jobs_done {
@@ -2248,9 +2391,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2262,9 +2405,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2276,9 +2419,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2290,9 +2433,23 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2304,23 +2461,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2332,9 +2475,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2346,9 +2489,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2360,9 +2503,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2374,9 +2517,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2388,9 +2531,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2402,9 +2545,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2416,9 +2559,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2430,9 +2573,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2444,9 +2587,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2458,9 +2601,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2472,9 +2615,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2486,9 +2629,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2510,9 +2653,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2524,9 +2667,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2538,9 +2681,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2552,9 +2695,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2566,9 +2709,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2590,9 +2733,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2614,9 +2757,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2637,10 +2780,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2662,9 +2805,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2686,9 +2829,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2709,10 +2852,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2724,9 +2867,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2738,7 +2881,35 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2764,6 +2935,572 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       el_typ=DataSortEl;
       el_def=0;
      };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_deleted {
+    name="jobs_deleted";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
     };
    };
    jobs_archive {
@@ -2776,9 +3513,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2790,9 +3527,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2804,9 +3541,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2818,9 +3555,23 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2832,23 +3583,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2860,9 +3597,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2874,9 +3611,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2888,9 +3625,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2902,9 +3639,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2916,9 +3653,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2930,9 +3667,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2944,9 +3681,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2958,9 +3695,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2972,9 +3709,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2986,9 +3723,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3000,9 +3737,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3014,9 +3751,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3038,9 +3775,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3052,9 +3789,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3066,9 +3803,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3080,9 +3817,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3094,9 +3831,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3118,9 +3855,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3142,9 +3879,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3165,10 +3902,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3190,9 +3927,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3214,9 +3951,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3237,10 +3974,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3252,9 +3989,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3266,7 +4003,35 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3292,6 +4057,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       el_typ=DataSortEl;
       el_def=0;
      };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
     };
    };
    file_list {
@@ -3304,9 +4074,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["cluster"] {
       name="cluster";
       desc="cluster where this job was submitted / run";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3318,9 +4088,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3332,9 +4102,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3346,9 +4116,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3360,9 +4130,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3374,9 +4144,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3388,9 +4158,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3402,9 +4172,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3416,9 +4186,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3430,9 +4200,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3444,9 +4214,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3470,6 +4240,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       el_typ=DataSortEl;
       el_def=0;
      };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
     };
    };
    cluster_info {
@@ -3482,9 +4257,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3496,9 +4271,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3510,9 +4285,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3524,9 +4299,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3538,9 +4313,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3552,9 +4327,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3579,15 +4354,24 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       el_def=0;
      };
     };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    search_algos {
     name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
    set_proj_name=0;
    proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
    clusters=;
    users=;
    last_submit_time=;
@@ -3596,7 +4380,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
    exe_cmd="emergent";
@@ -3607,7 +4390,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
    enable_kill=0;
    enable_load=0;
@@ -3662,12 +4445,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.001352265;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.06650689;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -3677,7 +4460,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -3693,6 +4476,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    };
    name="Browser2";
    m_data=.projects["projection_sampler"]$$;
+   cur_font_size=12;
    visible=1;
    win_name=".projects[\"projection_sampler\"] - projection_sampler.proj";
    m_is_root=0;
@@ -3716,6 +4500,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -3729,6 +4514,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     BrowseViewerTaBase @["Navigator"] {
      name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
@@ -3737,6 +4523,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     PanelViewer @["Editor"] {
      name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["Visualizer"] {
@@ -3752,6 +4539,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      name="Visualizer";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -3760,10 +4548,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       T3Panel @["GaussRF"] {
        name="GaussRF";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -3772,6 +4562,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_GaussRF_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_GaussRF_root_view_children_0";
 	  m_data=.projects["projection_sampler"].networks["GaussRF"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -3792,6 +4583,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[1].units[17]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -3820,8 +4612,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -3870,11 +4662,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -3956,10 +4750,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["Tessel"] {
        name="Tessel";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -3968,6 +4764,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Tessel_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Tessel_root_view_children_0";
 	  m_data=.projects["projection_sampler"].networks["Tessel"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -3988,6 +4785,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
+	  hot_vars{ 	  };
 	  unit_src_path=".layers[2].units[32]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -4016,8 +4814,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -4066,11 +4864,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4152,10 +4952,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["TiledRF"] {
        name="TiledRF";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -4164,6 +4966,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_TiledRF_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_TiledRF_root_view_children_0";
 	  m_data=.projects["projection_sampler"].networks["TiledRF"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -4184,6 +4987,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
+	  hot_vars{ 	  };
 	  unit_src_path=".layers[5].units[73]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -4212,8 +5016,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -4268,11 +5072,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4354,10 +5160,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["Random"] {
        name="Random";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -4366,6 +5174,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Random_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Random_root_view_children_0";
 	  m_data=.projects["projection_sampler"].networks["Random"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -4386,6 +5195,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
+	  hot_vars{ 	  };
 	  unit_src_path=".layers[3].units[10]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -4414,8 +5224,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -4464,11 +5274,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4550,10 +5362,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["RandomLarge"] {
        name="RandomLarge";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -4562,6 +5376,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_RandomLarge_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_RandomLarge_root_view_children_0";
 	  m_data=.projects["projection_sampler"].networks["RandomLarge"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -4582,6 +5397,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
+	  hot_vars{ 	  };
 	  unit_src_path=".layers[1].units[79]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -4610,8 +5426,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -4660,11 +5476,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4746,10 +5564,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["GpRndTessel"] {
        name="GpRndTessel";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -4758,6 +5578,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 NetView @["GpRndTessel_View"] {
 	  name="GpRndTessel_View";
 	  m_data=.projects["projection_sampler"].networks["GpRndTessel"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -4778,6 +5599,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ r.wt;	  };
+	  hot_vars{ 	  };
 	  unit_src_path=".layers[3].units[6]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -4806,8 +5628,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -4856,11 +5678,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4958,17 +5782,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.008496176;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.0403183;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7357689;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -4984,6 +5808,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -4995,7 +5820,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Project updated on wiki: emergent changes: doc link";
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks;.networks[0];.networks[0].specs;.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers;.networks[2];.networks[2].specs;.networks[2].layers;.networks[3];.networks[3].specs;.networks[3].layers;.networks[4];.networks[4].specs;.networks[4].layers;.networks[5];.networks[5].specs;.networks[5].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -5162,7 +5988,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -5177,11 +6003,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="v_m_init": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
+     init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
+     adapt_leak {
+      on=0;
+      tau=100;
+      hi_thr=1.2;
+      lo_thr=0.4;
+      min_bwt=0;
+      max_bwt=0.2;
+      dt=0.01;
+      mid_thr=0.8;
+     };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -5200,18 +6036,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       on=0;
       delay=4;
      };
-     dropout {
-      net_on=0;
-      net_p=0.1;
-      net_drop=0.9;
-     };
-     deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_raw_qtr=Q4;
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -5233,12 +6063,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -5247,10 +6077,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      dwt_thresh=0.1;
     };
@@ -5264,23 +6104,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=LeabraLayerSpec;
       el_def=0;
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     GaussRFPrjnSpec @["GaussRF_HalfOvlp4x4"] {
      name="GaussRF_HalfOvlp4x4";
@@ -5296,6 +6144,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=1;
      set_scale=0;
      add_rnd_var=1;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      rf_width {x=4: y=4: };
      rf_move {x=2: y=2: };
      gauss_sigma=1;
@@ -5317,6 +6166,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=1;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      rf_width {x=4: y=4: };
      rf_move {x=4: y=4: };
      gauss_sigma=1;
@@ -5338,6 +6188,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=1;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      rf_width {x=7: y=7: };
      rf_move {x=1: y=1: };
      gauss_sigma=2;
@@ -5358,12 +6209,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -5372,10 +6223,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjn"] {
@@ -5392,7 +6253,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -5454,6 +6321,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["projection_sampler"].networks["GaussRF"].specs["LeabraLayerSpec_0"]$$: };
+     adapt_gi=1;
     };
     LeabraLayer @["HalfOvlp4x4"] {
      name="HalfOvlp4x4";
@@ -5523,6 +6391,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["GaussRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["NoOvlp4x4"] {
      name="NoOvlp4x4";
@@ -5592,6 +6461,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["GaussRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["Self"] {
      name="Self";
@@ -5662,6 +6532,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["GaussRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
    };
    weights {
@@ -5694,81 +6565,25 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.004950033390163e-147;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
-   usr1_save_fmt=FULL_NET;
-   wt_save_fmt=TEXT;
-   n_units=278;
-   n_cons=5444;
-   max_prjns=1;
-   max_disp_size {x=12: y=12: z=3: };
-   max_disp_size2d {x=22: y=24: };
    cuda {
+    sync_units=0;
+    sync_cons=0;
     min_threads=32;
     max_threads=1024;
     cons_per_thread=2;
     timers_on=0;
+    n_threads=32;
    };
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   n_units=279;
+   n_cons=5444;
+   max_prjns=1;
+   max_disp_size {x=12: y=12: z=3: };
+   max_disp_size2d {x=22: y=24: };
    times {
     quarter=25;
+    gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
     minus=75;
@@ -5779,7 +6594,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
@@ -5788,9 +6603,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
+    wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
    };
    rel_netin {
     on=1;
@@ -5960,7 +6782,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -5975,11 +6797,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="v_m_init": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
+     init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
+     adapt_leak {
+      on=0;
+      tau=100;
+      hi_thr=1.2;
+      lo_thr=0.4;
+      min_bwt=0;
+      max_bwt=0.2;
+      dt=0.01;
+      mid_thr=0.8;
+     };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -5998,18 +6830,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       on=0;
       delay=4;
      };
-     dropout {
-      net_on=0;
-      net_p=0.1;
-      net_drop=0.9;
-     };
-     deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_raw_qtr=Q4;
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -6031,12 +6857,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -6045,10 +6871,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      dwt_thresh=0.1;
     };
@@ -6062,23 +6898,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=LeabraLayerSpec;
       el_def=0;
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     TesselPrjnSpec @["Tessel_EllipseHalfOvlp"] {
      name="Tessel_EllipseHalfOvlp";
@@ -6094,6 +6938,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=1;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_off {x=0: y=0: };
      recv_n {x=-1: y=-1: };
      recv_skip {x=1: y=1: };
@@ -6175,6 +7020,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_off {x=0: y=0: };
      recv_n {x=-1: y=-1: };
      recv_skip {x=1: y=1: };
@@ -6268,6 +7114,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=1;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_off {x=0: y=0: };
      recv_n {x=-1: y=-1: };
      recv_skip {x=1: y=1: };
@@ -6492,12 +7339,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -6506,10 +7353,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjn"] {
@@ -6526,7 +7383,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -6588,6 +7451,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["projection_sampler"].networks["Tessel"].specs["LeabraLayerSpec_0"]$$: };
+     adapt_gi=1;
     };
     LeabraLayer @["EllipseHalfOvlp"] {
      name="EllipseHalfOvlp";
@@ -6657,6 +7521,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["Tessel"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["Grouped_4x4HalfOvlp"] {
      name="Grouped_4x4HalfOvlp";
@@ -6726,6 +7591,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["Tessel"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["Self"] {
      name="Self";
@@ -6796,6 +7662,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["Tessel"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
    };
    weights {
@@ -6828,81 +7695,25 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=2.121995790985035e-312;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
-   usr1_save_fmt=FULL_NET;
-   wt_save_fmt=TEXT;
-   n_units=360;
-   n_cons=6708;
-   max_prjns=1;
-   max_disp_size {x=16: y=16: z=3: };
-   max_disp_size2d {x=28: y=24: };
    cuda {
+    sync_units=0;
+    sync_cons=0;
     min_threads=32;
     max_threads=1024;
     cons_per_thread=2;
     timers_on=0;
+    n_threads=32;
    };
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   n_units=361;
+   n_cons=6708;
+   max_prjns=1;
+   max_disp_size {x=16: y=16: z=3: };
+   max_disp_size2d {x=28: y=24: };
    times {
     quarter=25;
+    gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
     minus=75;
@@ -6913,7 +7724,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
@@ -6922,9 +7733,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
+    wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
    };
    rel_netin {
     on=1;
@@ -7094,7 +7912,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -7109,11 +7927,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="v_m_init": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
+     init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
+     adapt_leak {
+      on=0;
+      tau=100;
+      hi_thr=1.2;
+      lo_thr=0.4;
+      min_bwt=0;
+      max_bwt=0.2;
+      dt=0.01;
+      mid_thr=0.8;
+     };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -7132,18 +7960,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       on=0;
       delay=4;
      };
-     dropout {
-      net_on=0;
-      net_p=0.1;
-      net_drop=0.9;
-     };
-     deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_raw_qtr=Q4;
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -7165,12 +7987,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -7179,10 +8001,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      dwt_thresh=0.1;
     };
@@ -7196,23 +8028,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=LeabraLayerSpec;
       el_def=0;
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
@@ -7227,12 +8067,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -7241,10 +8081,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjn"] {
@@ -7261,6 +8111,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
     TiledRFPrjnSpec @["TiledRF_4x4HalfOvlp"] {
      name="TiledRF_4x4HalfOvlp";
@@ -7276,6 +8127,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_gp_border {x=0: y=0: };
      recv_gp_ex_st {x=-1: y=-1: };
      recv_gp_ex_n {x=0: y=0: };
@@ -7307,6 +8159,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      reciprocal=0;
      ru_geo {x=3: y=3: };
      su_act_geom {x=12: y=12: };
@@ -7326,6 +8179,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
     TiledGpMapConvergePrjnSpec @["TiledGpMapConverge"] {
      name="TiledGpMapConverge";
@@ -7350,6 +8204,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        init_wts=0;
        set_scale=0;
        add_rnd_var=0;
+       renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
        send_tile_size {x=4: y=4: };
        send_tile_skip {x=2: y=2: };
        wrap=1;
@@ -7362,6 +8217,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      send_tile_size {x=4: y=4: };
      send_tile_skip {x=2: y=2: };
      wrap=1;
@@ -7383,6 +8239,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=1;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      send_gp_size {x=4: y=4: };
      send_gp_skip {x=2: y=2: };
      send_gp_start {x=-1: y=-1: };
@@ -7400,6 +8257,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      trg_recv_geom {x=0: y=0: };
      trg_send_geom {x=0: y=0: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -7461,6 +8323,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["projection_sampler"].networks["TiledRF"].specs["LeabraLayerSpec_0"]$$: };
+     adapt_gi=1;
     };
     LeabraLayer @["Tiled_4x4HalfOvlp"] {
      name="Tiled_4x4HalfOvlp";
@@ -7551,6 +8414,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["TiledRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["Tiled_NoOvlp"] {
      name="Tiled_NoOvlp";
@@ -7620,6 +8484,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["TiledRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["GpMapConverge"] {
      name="GpMapConverge";
@@ -7689,6 +8554,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["TiledRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["TiledGpMapConverge"] {
      name="TiledGpMapConverge";
@@ -7759,6 +8625,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["TiledRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["TiledGpRF"] {
      name="TiledGpRF";
@@ -7828,6 +8695,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["TiledRF"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
    };
    weights {
@@ -7860,81 +8728,25 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.625974598210277e-260;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
-   usr1_save_fmt=FULL_NET;
-   wt_save_fmt=TEXT;
-   n_units=1404;
-   n_cons=214020;
-   max_prjns=2;
-   max_disp_size {x=44: y=34: z=3: };
-   max_disp_size2d {x=52: y=62: };
    cuda {
+    sync_units=0;
+    sync_cons=0;
     min_threads=32;
     max_threads=1024;
     cons_per_thread=2;
     timers_on=0;
+    n_threads=32;
    };
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   n_units=1405;
+   n_cons=214020;
+   max_prjns=2;
+   max_disp_size {x=44: y=34: z=3: };
+   max_disp_size2d {x=52: y=62: };
    times {
     quarter=25;
+    gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
     minus=75;
@@ -7945,7 +8757,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
@@ -7954,9 +8766,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
+    wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
    };
    rel_netin {
     on=1;
@@ -8126,7 +8945,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -8141,11 +8960,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="v_m_init": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
+     init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
+     adapt_leak {
+      on=0;
+      tau=100;
+      hi_thr=1.2;
+      lo_thr=0.4;
+      min_bwt=0;
+      max_bwt=0.2;
+      dt=0.01;
+      mid_thr=0.8;
+     };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -8164,18 +8993,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       on=0;
       delay=4;
      };
-     dropout {
-      net_on=0;
-      net_p=0.1;
-      net_drop=0.9;
-     };
-     deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_raw_qtr=Q4;
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -8197,12 +9020,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -8211,10 +9034,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      dwt_thresh=0.1;
     };
@@ -8228,23 +9061,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=LeabraLayerSpec;
       el_def=0;
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
@@ -8259,12 +9100,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -8273,10 +9114,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjn"] {
@@ -8293,6 +9144,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
     UniformRndPrjnSpec @["UniformRnd_p25"] {
      name="UniformRnd_p25";
@@ -8308,6 +9160,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      p_con=0.25;
      sym_self=1;
      same_seed=0;
@@ -8330,6 +9183,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      p_con=0.05;
      sym_self=1;
      same_seed=0;
@@ -8352,6 +9206,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      p_con=0.05;
      rnd_dist {name="rnd_dist": type=GAUSSIAN: mean=0: var=0.25: par=1: };
      rnd_angle {name="rnd_angle": type=UNIFORM: mean=0.5: var=0.5: par=1: };
@@ -8364,6 +9219,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       rnd_seed=1017380772;
      };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -8426,6 +9286,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["projection_sampler"].networks["Random"].specs["LeabraLayerSpec_0"]$$: };
+     adapt_gi=1;
     };
     LeabraLayer @["UniformRandom_p25"] {
      name="UniformRandom_p25";
@@ -8495,6 +9356,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["Random"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["UniformRandom_p05"] {
      name="UniformRandom_p05";
@@ -8564,6 +9426,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["Random"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["PolarRandom_p05"] {
      name="PolarRandom_p05";
@@ -8633,6 +9496,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["Random"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
    };
    weights {
@@ -8665,81 +9529,25 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=3.209734060534516e+21;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
-   usr1_save_fmt=FULL_NET;
-   wt_save_fmt=TEXT;
-   n_units=252;
-   n_cons=1800;
-   max_prjns=1;
-   max_disp_size {x=14: y=14: z=2: };
-   max_disp_size2d {x=22: y=20: };
    cuda {
+    sync_units=0;
+    sync_cons=0;
     min_threads=32;
     max_threads=1024;
     cons_per_thread=2;
     timers_on=0;
+    n_threads=32;
    };
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   n_units=253;
+   n_cons=5760;
+   max_prjns=1;
+   max_disp_size {x=14: y=14: z=2: };
+   max_disp_size2d {x=22: y=20: };
    times {
     quarter=25;
+    gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
     minus=75;
@@ -8750,7 +9558,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
@@ -8759,9 +9567,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
+    wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
    };
    rel_netin {
     on=1;
@@ -8931,7 +9746,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -8946,11 +9761,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="v_m_init": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
+     init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
+     adapt_leak {
+      on=0;
+      tau=100;
+      hi_thr=1.2;
+      lo_thr=0.4;
+      min_bwt=0;
+      max_bwt=0.2;
+      dt=0.01;
+      mid_thr=0.8;
+     };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -8969,18 +9794,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       on=0;
       delay=4;
      };
-     dropout {
-      net_on=0;
-      net_p=0.1;
-      net_drop=0.9;
-     };
-     deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_raw_qtr=Q4;
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -9002,12 +9821,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -9016,10 +9835,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      dwt_thresh=0.1;
     };
@@ -9033,23 +9862,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=LeabraLayerSpec;
       el_def=0;
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
@@ -9064,12 +9901,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -9078,10 +9915,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjn"] {
@@ -9098,6 +9945,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
     UniformRndPrjnSpec @["UniformRnd_p25"] {
      name="UniformRnd_p25";
@@ -9113,6 +9961,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      p_con=0.25;
      sym_self=1;
      same_seed=0;
@@ -9135,6 +9984,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      p_con=0.05;
      sym_self=1;
      same_seed=0;
@@ -9157,6 +10007,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      p_con=0.05;
      rnd_dist {name="rnd_dist": type=GAUSSIAN: mean=0: var=0.25: par=1: };
      rnd_angle {name="rnd_angle": type=UNIFORM: mean=0.5: var=0.5: par=1: };
@@ -9169,6 +10020,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       rnd_seed=1157418478;
      };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -9231,6 +10087,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=.projects["projection_sampler"].networks["RandomLarge"].specs["LeabraLayerSpec_0"]$$: };
+     adapt_gi=1;
     };
     LeabraLayer @["UniformRandom_p25"] {
      name="UniformRandom_p25";
@@ -9300,6 +10157,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["RandomLarge"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["UniformRandom_p05"] {
      name="UniformRandom_p05";
@@ -9369,6 +10227,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["RandomLarge"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["PolarRandom_p05"] {
      name="PolarRandom_p05";
@@ -9438,6 +10297,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["RandomLarge"].specs["LeabraLayerSpec_0"]$: };
+     adapt_gi=1;
     };
    };
    weights {
@@ -9470,10 +10330,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.075851866021369e-311;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
@@ -9482,14 +10346,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    max_prjns=1;
    max_disp_size {x=38: y=36: z=2: };
    max_disp_size2d {x=36: y=36: };
-   cuda {
-    min_threads=32;
-    max_threads=1024;
-    cons_per_thread=2;
-    timers_on=0;
-   };
    times {
     quarter=25;
+    gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
     minus=75;
@@ -9500,7 +10359,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
@@ -9509,9 +10368,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
+    wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
    };
    rel_netin {
     on=1;
@@ -9681,7 +10547,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -9696,11 +10562,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="v_m_init": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
+     init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03214286: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
+     adapt_leak {
+      on=0;
+      tau=100;
+      hi_thr=1.2;
+      lo_thr=0.4;
+      min_bwt=0;
+      max_bwt=0.2;
+      dt=0.01;
+      mid_thr=0.8;
+     };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -9719,18 +10595,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       on=0;
       delay=4;
      };
-     dropout {
-      net_on=0;
-      net_p=0.1;
-      net_drop=0.9;
-     };
-     deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_raw_qtr=Q4;
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=1: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -9752,12 +10622,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
      wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -9766,10 +10636,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
      dwt_thresh=0.1;
     };
@@ -9783,23 +10663,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_typ=LeabraLayerSpec;
       el_def=0;
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     GpRndTesselPrjnSpec @["GpRndTessel_Full"] {
      name="GpRndTessel_Full";
@@ -9815,6 +10703,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_gp_off {x=0: y=0: };
      recv_gp_n {x=-1: y=-1: };
      recv_gp_skip {x=1: y=1: };
@@ -9866,6 +10755,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_gp_off {x=0: y=0: };
      recv_gp_n {x=-1: y=-1: };
      recv_gp_skip {x=1: y=1: };
@@ -9917,6 +10807,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
      recv_gp_off {x=0: y=0: };
      recv_gp_n {x=-1: y=-1: };
      recv_gp_skip {x=1: y=1: };
@@ -9956,6 +10847,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_5"] {
      name="LeabraConSpec_5";
@@ -9970,12 +10862,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.01;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.01;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -9984,10 +10876,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       default_val=1;
       interpolate=0;
      };
-     ignore_unlearnable=1;
+     use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     wt_sig {gain=6: off=1.25: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
+     adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     GpMapConvergePrjnSpec @["GpAggregatePrjnSpec_0"] {
@@ -10004,7 +10906,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -10086,6 +10994,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["projection_sampler"].networks["GpRndTessel"].specs["LeabraLayerSpec_5"]$$: };
+     adapt_gi=1;
     };
     LeabraLayer @["GpRndTessel_full"] {
      name="GpRndTessel_full";
@@ -10155,6 +11064,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["GpRndTessel"].specs["LeabraLayerSpec_5"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["GpRndTessel_p25"] {
      name="GpRndTessel_p25";
@@ -10224,6 +11134,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["GpRndTessel"].specs["LeabraLayerSpec_5"]$: };
+     adapt_gi=1;
     };
     LeabraLayer @["GpAggregate"] {
      name="GpAggregate";
@@ -10293,6 +11204,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["projection_sampler"].networks["GpRndTessel"].specs["LeabraLayerSpec_5"]$: };
+     adapt_gi=1;
     };
    };
    weights {
@@ -10325,81 +11237,25 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.964077274749999e-152;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
-   usr1_save_fmt=FULL_NET;
-   wt_save_fmt=TEXT;
-   n_units=282;
-   n_cons=8959;
-   max_prjns=1;
-   max_disp_size {x=21: y=17: z=2: };
-   max_disp_size2d {x=19: y=24: };
    cuda {
+    sync_units=0;
+    sync_cons=0;
     min_threads=32;
     max_threads=1024;
     cons_per_thread=2;
     timers_on=0;
+    n_threads=32;
    };
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   n_units=283;
+   n_cons=14450;
+   max_prjns=1;
+   max_disp_size {x=21: y=17: z=2: };
+   max_disp_size2d {x=19: y=24: };
    times {
     quarter=25;
+    gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
     minus=75;
@@ -10410,7 +11266,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
@@ -10419,9 +11275,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
+    wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
    };
    rel_netin {
     on=1;

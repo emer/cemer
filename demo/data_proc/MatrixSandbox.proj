@@ -1,543 +1,864 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6452
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 BpProject .projects["MatrixSandbox"] { 
-  taBase_Group @.templates = [0] {
-  };
+ Doc_Group @.docs = [0] {
+ };
 
-  Doc_Group @.docs = [0] {
-  };
+ Wizard_Group @.wizards = [0] {
+ };
 
-  Wizard_Group @.wizards = [1] {
-    BpWizard @["BpWizard_0"] { 
+ ControlPanel_Group @.ctrl_panels = [1] {
+  ClusterRun @["ClusterRun"] { 
    UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
+    UserDataItem @["user_pinned"] { };
    };
-};
-  };
 
-  SelectEdit_Group @.edits = [1] {
-    ClusterRun @["ClusterRun"] { 
-      EditMbrItem_Group @.mbrs = [0] {
-      };
+   EditMbrItem_Group @.mbrs = [0] {
+   };
 
-      EditMthItem_Group @.mths = [0] {
-      };
+   EditMthItem_Group @.mths = [0] {
+   };
 
-      ParamSearchAlgo_List @.search_algos = [0] {
-      };
+   DataTableCols @.jobs_running.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
     };
-  };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
 
-  DataTable_Group @.data = [0] {
-    DataTable_Group @.gp["InputData"] = [1] { 
-      DataTable @["test"] { 
-	DataTableCols @.data = [1] {
-	  float_Data @["temp"] { 
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_deleted.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.file_list.data = [11] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["file_name"] { };
+    String_Data @["tag"] { };
+    String_Data @["size"] { };
+    String_Data @["kind"] { };
+    String_Data @["date_modified"] { };
+    String_Data @["date_created"] { };
+    String_Data @["svn_file_path"] { };
+    String_Data @["proj_file_path"] { };
+    String_Data @["file_path"] { };
+   };
+
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.file_list.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.cluster_info.data = [6] {
+    String_Data @["queue"] { };
+    String_Data @["job_no"] { };
+    String_Data @["user"] { };
+    String_Data @["state"] { };
+    String_Data @["procs"] { };
+    String_Data @["start_time"] { };
+   };
+
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+ };
+
+ ParamSet_Group @.param_sets = [0] {
+ };
+
+ DataTable_Group @.data = [0] {
+  DataTable_Group @.gp["InputData"] = [1] { 
+   DataTable @["test"] { 
+    DataTableCols @.data = [1] {
+     float_Data @["temp"] { 
       UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["view_panel_wd"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
-};
-	};
-      };
-    };
-    DataTable_Group @.gp["OutputData"] { 
-    };
-    DataTable_Group @.gp["AnalysisData"] { 
-    };
-  };
-
-  taBase_Group @.data_proc = [4] {
-    taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-    taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-    taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-    taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-  };
-
-  Program_Group @.programs = [4] {
-    Program @["Matrix_2D"] { 
-      ProgObjList @.objs = [1] {
-	Random @["Random_0"] { };
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [0] {
-      };
-
-      ProgVar_List @.vars = [2] {
-	ProgVar @["Random_0"] { };
-	ProgVar @["cell_value"] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [10] {
-	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [1] {
-	    ProgVar @["in_matrix_2d"] { };
-	  };
-	};
-	AssignExpr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	DataGenCall @[3] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	PrintExpr @[4] { };
-	PrintExpr @[5] { };
-	PrintExpr @[6] { };
-	PrintVar @[7] { };
-	MethodCall @[8] { 
-	  ProgArg_List @.meth_args = [7] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	  };
-	};
-	PrintVar @[9] { };
-      };
-    };
-    Program @["Matrix_3D"] { 
-      ProgObjList @.objs = [1] {
-	Random @["Random_0"] { };
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [0] {
-      };
-
-      ProgVar_List @.vars = [2] {
-	ProgVar @["Random_0"] { };
-	ProgVar @["cell_value"] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [15] {
-	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [1] {
-	    ProgVar @["in_matrix_3d"] { };
-	  };
-	};
-	AssignExpr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	DataGenCall @[3] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	PrintExpr @[4] { };
-	PrintExpr @[5] { };
-	PrintExpr @[6] { };
-	PrintVar @[7] { };
-	MethodCall @[8] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	PrintExpr @[9] { };
-	PrintExpr @[10] { };
-	PrintExpr @[11] { };
-	PrintVar @[12] { };
-	MethodCall @[13] { 
-	  ProgArg_List @.meth_args = [7] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	  };
-	};
-	PrintVar @[14] { };
-      };
-    };
-    Program @["Slicing"] { 
-      ProgObjList @.objs = [1] {
-	Random @["Random_0"] { };
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [0] {
-      };
-
-      ProgVar_List @.vars = [2] {
-	ProgVar @["Random_0"] { };
-	ProgVar @["cell_value"] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [16] {
-	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [5] {
-	    ProgVar @["in_matrix_3d"] { };
-	    ProgVar @["slice_of_matrix"] { };
-	    ProgVar @["out_matrix"] { };
-	    ProgVar @["kernel"] { };
-	    ProgVar @["i"] { };
-	  };
-	};
-	AssignExpr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	DataGenCall @[3] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	PrintVar @[4] { };
-	AssignExpr @[5] { };
-	MethodCall @[6] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	PrintVar @[7] { };
-	AssignExpr @[8] { };
-	MethodCall @[9] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	AssignExpr @[10] { };
-	MethodCall @[11] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	ForLoop @[12] { 
-	  ProgEl_List @.loop_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	  };
-	};
-	PrintVar @[13] { };
-	MathCall @[14] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	PrintVar @[15] { };
-      };
-    };
-    Program @["Convolve_test"] { 
-      ProgObjList @.objs = [1] {
-	Random @["Random_0"] { };
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [0] {
-      };
-
-      ProgVar_List @.vars = [2] {
-	ProgVar @["Random_0"] { };
-	ProgVar @["cell_value"] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [18] {
-	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [7] {
-	    ProgVar @["in_matrix_2d"] { };
-	    ProgVar @["slice_of_matrix"] { };
-	    ProgVar @["out_matrix"] { };
-	    ProgVar @["kernel"] { };
-	    ProgVar @["i"] { };
-	    ProgVar @["y"] { };
-	    ProgVar @["x"] { };
-	  };
-	};
-	AssignExpr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	ForLoop @[3] { 
-	  ProgEl_List @.loop_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	  };
-	};
-	PrintVar @[4] { };
-	AssignExpr @[5] { };
-	MethodCall @[6] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	AssignExpr @[7] { };
-	MethodCall @[8] { 
-	  ProgArg_List @.meth_args = [8] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	    ProgArg @[4] { };
-	    ProgArg @[5] { };
-	    ProgArg @[6] { };
-	    ProgArg @[7] { };
-	  };
-	};
-	ForLoop @[9] { 
-	  ProgEl_List @.loop_code = [1] {
-	    ForLoop @[0] { 
-	      ProgEl_List @.loop_code = [1] {
-		IfElse @[0] { 
-		  ProgEl_List @.true_code = [1] {
-		    MethodCall @[0] { 
-		      ProgArg_List @.meth_args = [8] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-			ProgArg @[3] { };
-			ProgArg @[4] { };
-			ProgArg @[5] { };
-			ProgArg @[6] { };
-			ProgArg @[7] { };
-		      };
-		    };
-		  };
-
-		  ProgEl_List @.false_code = [1] {
-		    MethodCall @[0] { 
-		      ProgArg_List @.meth_args = [8] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-			ProgArg @[3] { };
-			ProgArg @[4] { };
-			ProgArg @[5] { };
-			ProgArg @[6] { };
-			ProgArg @[7] { };
-		      };
-		    };
-		  };
-		};
-	      };
-	    };
-	  };
-	};
-	MathCall @[10] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	PrintVar @[11] { };
-	MathCall @[12] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	PrintVar @[13] { };
-	ForLoop @[14] { 
-	  ProgEl_List @.loop_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	  };
-	};
-	PrintVar @[15] { };
-	MathCall @[16] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	PrintVar @[17] { };
-      };
-    };
-  };
-
-  taViewer_List @.viewers = [1] {
-    MainWindowViewer @["Browser2"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["view_win_lft"] { };
-	UserDataItem @["view_win_top"] { };
-	UserDataItem @["view_win_wd"] { };
-	UserDataItem @["view_win_ht"] { };
-	UserDataItem @["view_win_iconified"] { };
-	UserDataItem @["view_splitter_state"] { };
-   };
-
-      ToolBar_List @.toolbars = [1] {
-	ToolBar @["Application"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["view_win_visible"] { };
      };
-};
-      };
-
-      FrameViewer_List @.frames = [3] {
-	BrowseViewerTaBase @["Tree"] { };
-	PanelViewer @["Panels"] { };
-	T3PanelViewer @["T3Frames"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["view_panel_selected"] { };
-     };
-
-	  T3Panel_List @.panels = [1] {
-	    T3Panel @["Frame1"] { 
-	      T3DataView_List @.children = [0] {
-	      };
-
-	      T3SavedView_List @.saved_views = [6] {
-		T3SavedView @["View_0"] { };
-		T3SavedView @["View_1"] { };
-		T3SavedView @["View_2"] { };
-		T3SavedView @["View_3"] { };
-		T3SavedView @["View_4"] { };
-		T3SavedView @["View_5"] { };
-	      };
-	    };
-	  };
-	};
-      };
-
-      DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @["Tools"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["view_win_lft"] { };
-	    UserDataItem @["view_win_top"] { };
-	    UserDataItem @["view_win_wd"] { };
-	    UserDataItem @["view_win_ht"] { };
-	    UserDataItem @["view_win_iconified"] { };
-	    UserDataItem @["view_visible"] { };
-     };
-};
-      };
     };
-  };
 
-  Network_Group @.networks = [0] {
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
+
+    DataTableCell_List @.control_panel_cells = [0] {
+    };
+   };
   };
+  DataTable_Group @.gp["OutputData"] { 
+  };
+  DataTable_Group @.gp["AnalysisData"] { 
+  };
+ };
+
+ Program_TopGroup @.programs = [4] {
+  Program @["Matrix_2D"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
+   ProgObjList @.objs = [1] {
+    Random @["Random_0"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["Random_0"] { };
+    ProgVar @["cell_value"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [10] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["in_matrix_2d"] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    DataGenCall @[3] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintExpr @[4] { };
+    PrintExpr @[5] { };
+    PrintExpr @[6] { };
+    PrintVar @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [7] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+     };
+    };
+    PrintVar @[9] { };
+   };
+  };
+  Program @["Matrix_3D"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
+   ProgObjList @.objs = [1] {
+    Random @["Random_0"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["Random_0"] { };
+    ProgVar @["cell_value"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [15] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["in_matrix_3d"] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    DataGenCall @[3] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintExpr @[4] { };
+    PrintExpr @[5] { };
+    PrintExpr @[6] { };
+    PrintVar @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    PrintExpr @[9] { };
+    PrintExpr @[10] { };
+    PrintExpr @[11] { };
+    PrintVar @[12] { };
+    MethodCall @[13] { 
+     ProgArg_List @.meth_args = [7] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+     };
+    };
+    PrintVar @[14] { };
+   };
+  };
+  Program @["Slicing"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
+   ProgObjList @.objs = [1] {
+    Random @["Random_0"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["Random_0"] { };
+    ProgVar @["cell_value"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [16] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [5] {
+      ProgVar @["in_matrix_3d"] { };
+      ProgVar @["slice_of_matrix"] { };
+      ProgVar @["out_matrix"] { };
+      ProgVar @["kernel"] { };
+      ProgVar @["i"] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    DataGenCall @[3] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[4] { };
+    AssignExpr @[5] { };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    PrintVar @[7] { };
+    AssignExpr @[8] { };
+    MethodCall @[9] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    AssignExpr @[10] { };
+    MethodCall @[11] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    ForLoop @[12] { 
+     ProgEl_List @.loop_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+     };
+    };
+    PrintVar @[13] { };
+    MathCall @[14] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[15] { };
+   };
+  };
+  Program @["Convolve_test"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
+   ProgObjList @.objs = [1] {
+    Random @["Random_0"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["Random_0"] { };
+    ProgVar @["cell_value"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [18] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [7] {
+      ProgVar @["in_matrix_2d"] { };
+      ProgVar @["slice_of_matrix"] { };
+      ProgVar @["out_matrix"] { };
+      ProgVar @["kernel"] { };
+      ProgVar @["i"] { };
+      ProgVar @["y"] { };
+      ProgVar @["x"] { };
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    ForLoop @[3] { 
+     ProgEl_List @.loop_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+     };
+    };
+    PrintVar @[4] { };
+    AssignExpr @[5] { };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    AssignExpr @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [8] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+     };
+    };
+    ForLoop @[9] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [2] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	   };
+	  };
+	 };
+	};
+	Else @[1] { 
+	 ProgEl_List @.else_code = [1] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MathCall @[10] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[11] { };
+    MathCall @[12] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[13] { };
+    ForLoop @[14] { 
+     ProgEl_List @.loop_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+     };
+    };
+    PrintVar @[15] { };
+    MathCall @[16] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[17] { };
+   };
+  };
+ };
+
+ taViewer_List @.viewers = [1] {
+  MainWindowViewer @["Browser2"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["view_win_lft"] { };
+    UserDataItem @["view_win_top"] { };
+    UserDataItem @["view_win_wd"] { };
+    UserDataItem @["view_win_ht"] { };
+    UserDataItem @["view_win_iconified"] { };
+    UserDataItem @["view_splitter_state"] { };
+   };
+
+   ToolBar_List @.toolbars = [1] {
+    ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_visible"] { };
+     };
+    };
+   };
+
+   FrameViewer_List @.frames = [3] {
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
+    T3PanelViewer @["T3Frames"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
+     T3Panel_List @.panels = [1] {
+      T3Panel @["Frame1"] { 
+       T3DataView_List @.root_view.children = [0] {
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+     };
+    };
+   };
+
+   DockViewer_List @.docks = [1] {
+    ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_lft"] { };
+      UserDataItem @["view_win_top"] { };
+      UserDataItem @["view_win_wd"] { };
+      UserDataItem @["view_win_ht"] { };
+      UserDataItem @["view_win_iconified"] { };
+      UserDataItem @["view_visible"] { };
+     };
+    };
+   };
+  };
+ };
+
+ Network_Group @.networks = [0] {
+ };
 };
 BpProject .projects["MatrixSandbox"] {
  name="MatrixSandbox";
@@ -548,98 +869,2651 @@ BpProject .projects["MatrixSandbox"] {
   minor=0;
   step=0;
  };
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
+ pub_cite=;
+ wiki {
   wiki=;
-  url=;
- };
- templates {
-  name="taBase_Group_0";
-  el_typ=taBase;
-  el_def=0;
+  page_name=;
  };
  docs {
-  name="Doc_Group_1";
+  name="docs";
   el_typ=taDoc;
   el_def=0;
  };
  wizards {
-  name="Wizard_Group_1";
-  el_typ=BpWizard;
+  name="wizards";
+  el_typ=Wizard;
   el_def=0;
-  BpWizard @["BpWizard_0"] {
+ };
+ ctrl_panels {
+  name="ctrl_panels";
+  el_typ=ControlPanel;
+  el_def=0;
+  ClusterRun @["ClusterRun"] {
    UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_6";
+    name=;
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
      value 1 0=1;
      val_type_fixed=0;
     };
    };
-   name="BpWizard_0";
-   auto_open=1;
-  };
- };
- edits {
-  name="SelectEdit_Group_0";
-  el_typ=ClusterRun;
-  el_def=0;
-  ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   auto_edit=1;
+   updt_while_running=0;
    desc=;
    mbrs {
-    name=;
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name=;
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
    };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_deleted {
+    name="jobs_deleted";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_archive {
+    name="jobs_archive";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   file_list {
+    name="file_list";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="cluster where this job was submitted / run";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_name"] {
+      name="file_name";
+      desc="name of file -- does not include any path information";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="job tag associated with this file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["size"] {
+      name="size";
+      desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["kind"] {
+      name="kind";
+      desc="type of file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_modified"] {
+      name="date_modified";
+      desc="timestamp for when the file was last modified";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_created"] {
+      name="date_created";
+      desc="timestamp for when the file was first created";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["svn_file_path"] {
+      name="svn_file_path";
+      desc="path to file in SVN repository, relative to root of svn_repo repository";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["proj_file_path"] {
+      name="proj_file_path";
+      desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_path"] {
+      name="file_path";
+      desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   cluster_info {
+    name="cluster_info";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["queue"] {
+      name="queue";
+      desc="queue that this info relates to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number or total number of actve jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["state"] {
+      name="state";
+      desc="current scheduler state -- or description of global state info";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["procs"] {
+      name="procs";
+      desc="number of processors for this job or for global state info";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="timestamp for when the job was submitted or started running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
    search_algos {
-    name=;
+    name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
+   exe_cmd="emergent";
    ram_gb=-1;
    n_threads=2;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=0;
   };
  };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
+ };
  data {
-  name="DataTable_Group_0";
+  name="data";
   el_typ=DataTable;
   el_def=0;
+  save_tables=1;
   DataTable_Group @.gp["InputData"] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
    DataTable @["test"] {
     name="test";
     desc=;
@@ -659,19 +3533,19 @@ BpProject .projects["MatrixSandbox"] {
        };
       };
       name="temp";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 3;3;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-	    [2] ;;      };
+       name="dim_names";
+      [2] ;;      };
       width=0;
       ar {
-       name=;
-	    [3 3 1] 7;8;9;4;5;6;1;2;3;      };
+       name="ar";
+      [3 3 1] 7;8;9;4;5;6;1;2;3;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -679,108 +3553,86 @@ BpProject .projects["MatrixSandbox"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
-	[1] 0;    };
+     name="row_indexes";
+    [1] 0;    };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["AnalysisData"] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
-  };
- };
- data_proc {
-  name="taBase_Group_0";
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @["data_base"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_2";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_base";
-  };
-  taDataAnal @["data_anal"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_3";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @["data_gen"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_4";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @["image_proc"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_5";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
+   save_tables=1;
   };
  };
  programs {
-  name="Program_Group_0";
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
   Program @["Matrix_2D"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["MatrixSandbox"].programs["Matrix_2D"].doc$$;
+    };
+   };
    name="Matrix_2D";
    short_nm="blur";
    tags=;
    desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
-    name="ProgObjList_4";
+    name="objs";
     el_typ=float_Matrix;
     el_def=0;
     Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
    };
    types {
-    name="ProgType_List_0";
-    el_typ=ProgType;
+    name="types";
+    el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name="ProgVar_List_0";
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name="ProgVar_List_0";
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["Random_0"] {
@@ -798,7 +3650,6 @@ BpProject .projects["MatrixSandbox"] {
      name="cell_value";
      var_type=T_Real;
      real_val=1.139253735542297;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -806,23 +3657,24 @@ BpProject .projects["MatrixSandbox"] {
     };
    };
    functions {
-    name="Function_List_4";
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name="ProgEl_List_47";
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name="ProgEl_List_48";
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
      local_vars {
       name="ProgVar_List_0";
       el_typ=ProgVar;
@@ -833,7 +3685,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -842,8 +3694,9 @@ BpProject .projects["MatrixSandbox"] {
     };
     AssignExpr @[1] {
      desc="create a new object for our variable to point to -- this is essential!";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="in_matrix_2d = new float_Matrix";
+     pre_compile_code_string="in_matrix_2d = new float_Matrix";
      result_var=.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$$;
      expr {
       expr="new float_Matrix";
@@ -852,7 +3705,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[2] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="in_matrix_2d->SetGeom(2, 3, 5, , , , , )";
+     pre_compile_code_string="in_matrix_2d->SetGeom(2, 3, 5, , , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$;
      method=taMatrix::SetGeom;
@@ -866,6 +3720,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -876,6 +3731,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -886,6 +3742,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="5";
        };
@@ -896,6 +3753,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -906,6 +3764,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -916,6 +3775,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -926,6 +3786,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -936,16 +3797,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     DataGenCall @[3] {
      desc="fill matrix with noise";
      flags=0;
-     orig_prog_code=;
+     code_string="taDataGen::AddNoiseMat(in_matrix_2d, Random_0)";
+     pre_compile_code_string="taDataGen::AddNoiseMat(in_matrix_2d, Random_0)";
      result_var=NULL;
      object_type=taDataGen;
      method=taDataGen::AddNoiseMat;
@@ -959,6 +3824,7 @@ BpProject .projects["MatrixSandbox"] {
        name="mat";
        required=1;
        def_val=;
+       prev_expr="in_matrix_2d";
        expr {
 	expr="in_matrix_2d";
        };
@@ -969,46 +3835,59 @@ BpProject .projects["MatrixSandbox"] {
        name="rnd_spec";
        required=1;
        def_val=;
+       prev_expr="Random_0";
        expr {
 	expr="Random_0";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="thr_no";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
        };
       };
      };
     };
     PrintExpr @[4] {
      desc="The number of dimensions in the matrix";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"dimensions = \" + in_matrix_2d->dims()";
+     pre_compile_code_string="Print \"dimensions = \" + in_matrix_2d->dims()";
      expr {
       expr="\"dimensions = \" + in_matrix_2d->dims()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintExpr @[5] {
      desc="The number of frames is the size of the last dimension";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"frames = \" + in_matrix_2d->Frames()";
+     pre_compile_code_string="Print \"frames = \" + in_matrix_2d->Frames()";
      expr {
       expr="\"frames = \" + in_matrix_2d->Frames()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintExpr @[6] {
      desc="The number of elements in each frame (product of inner dimensions)";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"frame size = \" + in_matrix_2d->FrameSize()";
+     pre_compile_code_string="Print \"frame size = \" + in_matrix_2d->FrameSize()";
      expr {
       expr="\"frame size = \" + in_matrix_2d->FrameSize()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintVar @[7] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  in_matrix_2d";
+     pre_compile_code_string="Print  in_matrix_2d";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$;
      print_var2=NULL;
@@ -1016,13 +3895,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     MethodCall @[8] {
      desc="for any matrix access is inner to outer (for a 2d matrix this is basically column, row - row being the frame)";
      flags=0;
-     orig_prog_code=;
+     code_string="cell_value = in_matrix_2d->FastElAsFloat(1, 2, , , , , )";
+     pre_compile_code_string="cell_value = in_matrix_2d->FastElAsFloat(1, 2, , , , , )";
      result_var=.projects["MatrixSandbox"].programs["Matrix_2D"].vars["cell_value"]$$;
      obj=$.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$;
      method=taMatrix::FastElAsFloat;
@@ -1036,6 +3915,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="1";
        };
@@ -1046,6 +3926,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -1056,6 +3937,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1066,6 +3948,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1076,6 +3959,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1086,6 +3970,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1096,16 +3981,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="float FastElAsFloat(int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" get element as float without range checking";
     };
     PrintVar @[9] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  cell_value";
+     pre_compile_code_string="Print  cell_value";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Matrix_2D"].vars["cell_value"]$;
      print_var2=NULL;
@@ -1113,37 +4002,66 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program @["Matrix_3D"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["MatrixSandbox"].programs["Matrix_3D"].doc$$;
+    };
+   };
    name="Matrix_3D";
    short_nm="DMtrx";
    tags=;
    desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
-    name="ProgObjList_5";
+    name="objs";
     el_typ=taNBase;
     el_def=0;
     Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
    };
    types {
-    name="ProgType_List_0";
-    el_typ=ProgType;
+    name="types";
+    el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name="ProgVar_List_0";
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name="ProgVar_List_0";
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["Random_0"] {
@@ -1161,7 +4079,6 @@ BpProject .projects["MatrixSandbox"] {
      name="cell_value";
      var_type=T_Real;
      real_val=0.6977747082710266;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -1169,23 +4086,24 @@ BpProject .projects["MatrixSandbox"] {
     };
    };
    functions {
-    name="Function_List_5";
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name="ProgEl_List_51";
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name="ProgEl_List_52";
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
      local_vars {
       name="ProgVar_List_0";
       el_typ=ProgVar;
@@ -1196,7 +4114,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1205,8 +4123,9 @@ BpProject .projects["MatrixSandbox"] {
     };
     AssignExpr @[1] {
      desc="create a new object for our variable to point to -- this is essential!";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="in_matrix_3d = new float_Matrix";
+     pre_compile_code_string="in_matrix_3d = new float_Matrix";
      result_var=.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$$;
      expr {
       expr="new float_Matrix";
@@ -1215,7 +4134,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[2] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="in_matrix_3d->SetGeom(3, 5, 6, 2, , , , )";
+     pre_compile_code_string="in_matrix_3d->SetGeom(3, 5, 6, 2, , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
      method=taMatrix::SetGeom;
@@ -1229,6 +4149,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -1239,6 +4160,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="5";
        };
@@ -1249,6 +4171,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="6";
        };
@@ -1259,6 +4182,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -1269,6 +4193,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1279,6 +4204,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1289,6 +4215,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1299,16 +4226,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     DataGenCall @[3] {
      desc="fill matrix with noise";
      flags=0;
-     orig_prog_code=;
+     code_string="taDataGen::AddNoiseMat(in_matrix_3d, Random_0)";
+     pre_compile_code_string="taDataGen::AddNoiseMat(in_matrix_3d, Random_0)";
      result_var=NULL;
      object_type=taDataGen;
      method=taDataGen::AddNoiseMat;
@@ -1322,6 +4253,7 @@ BpProject .projects["MatrixSandbox"] {
        name="mat";
        required=1;
        def_val=;
+       prev_expr="in_matrix_3d";
        expr {
 	expr="in_matrix_3d";
        };
@@ -1332,46 +4264,59 @@ BpProject .projects["MatrixSandbox"] {
        name="rnd_spec";
        required=1;
        def_val=;
+       prev_expr="Random_0";
        expr {
 	expr="Random_0";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="thr_no";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
        };
       };
      };
     };
     PrintExpr @[4] {
      desc="The number of dimensions was set at 3";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"dimensions = \" + in_matrix_3d->dims()";
+     pre_compile_code_string="Print \"dimensions = \" + in_matrix_3d->dims()";
      expr {
       expr="\"dimensions = \" + in_matrix_3d->dims()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintExpr @[5] {
      desc="The number of frames is the size of the last dimension";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"frames = \" + in_matrix_3d->Frames()";
+     pre_compile_code_string="Print \"frames = \" + in_matrix_3d->Frames()";
      expr {
       expr="\"frames = \" + in_matrix_3d->Frames()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintExpr @[6] {
      desc="The number of elements in each frame (product of inner dimensions)";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"frame size = \" + in_matrix_3d->FrameSize()";
+     pre_compile_code_string="Print \"frame size = \" + in_matrix_3d->FrameSize()";
      expr {
       expr="\"frame size = \" + in_matrix_3d->FrameSize()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintVar @[7] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  in_matrix_3d";
+     pre_compile_code_string="Print  in_matrix_3d";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
      print_var2=NULL;
@@ -1379,13 +4324,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     MethodCall @[8] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="in_matrix_3d->AddFrames(2)";
+     pre_compile_code_string="in_matrix_3d->AddFrames(2)";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
      method=taMatrix::AddFrames;
@@ -1399,46 +4344,50 @@ BpProject .projects["MatrixSandbox"] {
        name="n";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
       };
      };
+     meth_sig="bool AddFrames(int n)";
+     meth_desc=" add n new blank frames -- note that this assumes incremental growth and thus calls AllocFrames in advance";
     };
     PrintExpr @[9] {
      desc="The number of dimensions was set at 3";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"dimensions = \" + in_matrix_3d->dims()";
+     pre_compile_code_string="Print \"dimensions = \" + in_matrix_3d->dims()";
      expr {
       expr="\"dimensions = \" + in_matrix_3d->dims()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintExpr @[10] {
      desc="We now have a matrix that is 5 x 6 x 4";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"frames = \" + in_matrix_3d->Frames()";
+     pre_compile_code_string="Print \"frames = \" + in_matrix_3d->Frames()";
      expr {
       expr="\"frames = \" + in_matrix_3d->Frames()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintExpr @[11] {
      desc="The number of elements in each frame (product of inner dimensions)";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print \"frame size = \" + in_matrix_3d->FrameSize()";
+     pre_compile_code_string="Print \"frame size = \" + in_matrix_3d->FrameSize()";
      expr {
       expr="\"frame size = \" + in_matrix_3d->FrameSize()";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     PrintVar @[12] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  in_matrix_3d";
+     pre_compile_code_string="Print  in_matrix_3d";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
      print_var2=NULL;
@@ -1446,13 +4395,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     MethodCall @[13] {
      desc="for a 3d matrix the access is inner to outer with the frame being the most outer";
      flags=0;
-     orig_prog_code=;
+     code_string="cell_value = in_matrix_3d->FastElAsFloat(0, 1, 1, , , , )";
+     pre_compile_code_string="cell_value = in_matrix_3d->FastElAsFloat(0, 1, 1, , , , )";
      result_var=.projects["MatrixSandbox"].programs["Matrix_3D"].vars["cell_value"]$$;
      obj=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
      method=taMatrix::FastElAsFloat;
@@ -1466,6 +4415,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="0";
        };
@@ -1476,6 +4426,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="1";
        };
@@ -1486,6 +4437,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="1";
        };
@@ -1496,6 +4448,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1506,6 +4459,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1516,6 +4470,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1526,16 +4481,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="float FastElAsFloat(int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" get element as float without range checking";
     };
     PrintVar @[14] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  cell_value";
+     pre_compile_code_string="Print  cell_value";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Matrix_3D"].vars["cell_value"]$;
      print_var2=NULL;
@@ -1543,37 +4502,66 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program @["Slicing"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["MatrixSandbox"].programs["Slicing"].doc$$;
+    };
+   };
    name="Slicing";
    short_nm="Slicin";
    tags=;
    desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
-    name=;
+    name="objs";
     el_typ=taNBase;
     el_def=0;
     Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
    };
    types {
-    name=;
-    el_typ=ProgType;
+    name="types";
+    el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["Random_0"] {
@@ -1591,7 +4579,6 @@ BpProject .projects["MatrixSandbox"] {
      name="cell_value";
      var_type=T_Real;
      real_val=0.697775;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc=;
@@ -1599,23 +4586,24 @@ BpProject .projects["MatrixSandbox"] {
     };
    };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name=;
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="LocalVars (5 vars)";
+     pre_compile_code_string="LocalVars (5 vars)";
      local_vars {
       name=;
       el_typ=ProgVar;
@@ -1626,7 +4614,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1637,7 +4625,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1648,7 +4636,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1659,7 +4647,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1668,8 +4656,7 @@ BpProject .projects["MatrixSandbox"] {
        name="i";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1678,8 +4665,9 @@ BpProject .projects["MatrixSandbox"] {
     };
     AssignExpr @[1] {
      desc="create a new object for our local variable to point to -- this is essential!";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="in_matrix_3d = new float_Matrix";
+     pre_compile_code_string="in_matrix_3d = new float_Matrix";
      result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$$;
      expr {
       expr="new float_Matrix";
@@ -1688,7 +4676,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[2] {
      desc="A matrix that is 10x10x4";
      flags=0;
-     orig_prog_code=;
+     code_string="in_matrix_3d->SetGeom(3, 10, 10, 4, , , , )";
+     pre_compile_code_string="in_matrix_3d->SetGeom(3, 10, 10, 4, , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$;
      method=taMatrix::SetGeom;
@@ -1702,6 +4691,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -1712,6 +4702,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="10";
        };
@@ -1722,6 +4713,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="10";
        };
@@ -1732,6 +4724,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="4";
        };
@@ -1742,6 +4735,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1752,6 +4746,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1762,6 +4757,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1772,16 +4768,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     DataGenCall @[3] {
      desc="fill matrix with random values";
      flags=0;
-     orig_prog_code=;
+     code_string="taDataGen::AddNoiseMat(in_matrix_3d, Random_0)";
+     pre_compile_code_string="taDataGen::AddNoiseMat(in_matrix_3d, Random_0)";
      result_var=NULL;
      object_type=taDataGen;
      method=taDataGen::AddNoiseMat;
@@ -1795,6 +4795,7 @@ BpProject .projects["MatrixSandbox"] {
        name="mat";
        required=1;
        def_val=;
+       prev_expr="in_matrix_3d";
        expr {
 	expr="in_matrix_3d";
        };
@@ -1805,8 +4806,20 @@ BpProject .projects["MatrixSandbox"] {
        name="rnd_spec";
        required=1;
        def_val=;
+       prev_expr="Random_0";
        expr {
 	expr="Random_0";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="thr_no";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
        };
       };
      };
@@ -1814,7 +4827,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[4] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  in_matrix_3d";
+     pre_compile_code_string="Print  in_matrix_3d";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$;
      print_var2=NULL;
@@ -1822,13 +4836,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     AssignExpr @[5] {
      desc="create another float_matrix object ";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="slice_of_matrix = new float_Matrix";
+     pre_compile_code_string="slice_of_matrix = new float_Matrix";
      result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["slice_of_matrix"]$$;
      expr {
       expr="new float_Matrix";
@@ -1837,7 +4851,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[6] {
      desc="the matrix will get its geometry from the matrix we are slicing";
      flags=0;
-     orig_prog_code=;
+     code_string="slice_of_matrix = in_matrix_3d->GetFrameSlice_(3)";
+     pre_compile_code_string="slice_of_matrix = in_matrix_3d->GetFrameSlice_(3)";
      result_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["slice_of_matrix"]$;
      obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$;
      method=taMatrix::GetFrameSlice_;
@@ -1851,16 +4866,20 @@ BpProject .projects["MatrixSandbox"] {
        name="frame";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="3";
        };
       };
      };
+     meth_sig="taMatrix_ptr GetFrameSlice_(int frame)";
+     meth_desc=" return a slice, of exactly one frame; will have dim-1 of us";
     };
     PrintVar @[7] {
      desc="the slice should be a 10x10 matrix";
      flags=0;
-     orig_prog_code=;
+     code_string="Print  slice_of_matrix";
+     pre_compile_code_string="Print  slice_of_matrix";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["slice_of_matrix"]$;
      print_var2=NULL;
@@ -1868,13 +4887,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     AssignExpr @[8] {
      desc="create another float_matrix to hold the result of the convolution we will do";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="out_matrix = new float_Matrix()";
+     pre_compile_code_string="out_matrix = new float_Matrix()";
      result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["out_matrix"]$$;
      expr {
       expr="new float_Matrix()";
@@ -1883,7 +4902,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[9] {
      desc="set the geometry to be the same as the matrix we will pass in to the convolve method";
      flags=0;
-     orig_prog_code=;
+     code_string="out_matrix->SetGeom(2, 10, 10, , , , , )";
+     pre_compile_code_string="out_matrix->SetGeom(2, 10, 10, , , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["out_matrix"]$;
      method=taMatrix::SetGeom;
@@ -1897,6 +4917,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -1907,6 +4928,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="10";
        };
@@ -1917,6 +4939,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="10";
        };
@@ -1927,6 +4950,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1937,6 +4961,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1947,6 +4972,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1957,6 +4983,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -1967,16 +4994,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     AssignExpr @[10] {
      desc="the kernel matrix to convolve with the slice of matrix";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="kernel = new float_Matrix()";
+     pre_compile_code_string="kernel = new float_Matrix()";
      result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$$;
      expr {
       expr="new float_Matrix()";
@@ -1985,7 +5016,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[11] {
      desc="a 2x2 matrix";
      flags=0;
-     orig_prog_code=;
+     code_string="kernel->SetGeom(2, 3, 3, , , , , )";
+     pre_compile_code_string="kernel->SetGeom(2, 3, 3, , , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$;
      method=taMatrix::SetGeom;
@@ -1999,6 +5031,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -2009,6 +5042,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -2019,6 +5053,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -2029,6 +5064,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2039,6 +5075,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2049,6 +5086,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2059,6 +5097,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2069,16 +5108,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     ForLoop @[12] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 9; i++)";
+     pre_compile_code_string="for (i = 0; i < 9; i++)";
      loop_code {
       name="ProgEl_List_54";
       el_typ=ProgCode;
@@ -2086,7 +5129,8 @@ BpProject .projects["MatrixSandbox"] {
       MethodCall @[0] {
        desc=;
        flags=0;
-       orig_prog_code=;
+       code_string="kernel->Set_Flat(.111, i)";
+       pre_compile_code_string="kernel->Set_Flat(.111, i)";
        result_var=NULL;
        obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$;
        method=taMatrixT_float_::Set_Flat;
@@ -2100,6 +5144,7 @@ BpProject .projects["MatrixSandbox"] {
 	 name="item";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr=".111";
 	 };
@@ -2110,11 +5155,14 @@ BpProject .projects["MatrixSandbox"] {
 	 name="idx";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="i";
 	 };
 	};
        };
+       meth_sig="void Set_Flat(float& item, int idx)";
+       meth_desc=" safely assign values to items in the matrix, treated as a flat vector";
       };
      };
      init {
@@ -2130,7 +5178,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[13] {
      desc="the slice should be a 10x10 matrix";
      flags=0;
-     orig_prog_code=;
+     code_string="Print  kernel";
+     pre_compile_code_string="Print  kernel";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$;
      print_var2=NULL;
@@ -2138,13 +5187,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     MathCall @[14] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="taMath_float::mat_frame_convolve(out_matrix, slice_of_matrix, kernel)";
+     pre_compile_code_string="taMath_float::mat_frame_convolve(out_matrix, slice_of_matrix, kernel)";
      result_var=NULL;
      object_type=taMath_float;
      method=taMath_float::mat_frame_convolve;
@@ -2158,6 +5207,7 @@ BpProject .projects["MatrixSandbox"] {
        name="out_mat";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="out_matrix";
        };
@@ -2168,6 +5218,7 @@ BpProject .projects["MatrixSandbox"] {
        name="in_mat";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="slice_of_matrix";
        };
@@ -2178,6 +5229,7 @@ BpProject .projects["MatrixSandbox"] {
        name="kernel";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="kernel";
        };
@@ -2187,7 +5239,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[15] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  out_matrix";
+     pre_compile_code_string="Print  out_matrix";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["out_matrix"]$;
      print_var2=NULL;
@@ -2195,37 +5248,66 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program @["Convolve_test"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["MatrixSandbox"].programs["Convolve_test"].doc$$;
+    };
+   };
    name="Convolve_test";
    short_nm="cnvtst";
    tags=;
    desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
-    name=;
+    name="objs";
     el_typ=taNBase;
     el_def=0;
     Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
    };
    types {
-    name=;
-    el_typ=ProgType;
+    name="types";
+    el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["Random_0"] {
@@ -2243,7 +5325,6 @@ BpProject .projects["MatrixSandbox"] {
      name="cell_value";
      var_type=T_Real;
      real_val=0.697775;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc=;
@@ -2251,23 +5332,24 @@ BpProject .projects["MatrixSandbox"] {
     };
    };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name=;
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="LocalVars (7 vars)";
+     pre_compile_code_string="LocalVars (7 vars)";
      local_vars {
       name=;
       el_typ=ProgVar;
@@ -2278,7 +5360,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2289,7 +5371,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       flags=LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2300,7 +5382,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2311,7 +5393,7 @@ BpProject .projects["MatrixSandbox"] {
        object_type=float_Matrix;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2320,8 +5402,7 @@ BpProject .projects["MatrixSandbox"] {
        name="i";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2330,8 +5411,7 @@ BpProject .projects["MatrixSandbox"] {
        name="y";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2340,8 +5420,7 @@ BpProject .projects["MatrixSandbox"] {
        name="x";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -2350,8 +5429,9 @@ BpProject .projects["MatrixSandbox"] {
     };
     AssignExpr @[1] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="in_matrix_2d = new float_Matrix";
+     pre_compile_code_string="in_matrix_2d = new float_Matrix";
      result_var=.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$$;
      expr {
       expr="new float_Matrix";
@@ -2360,7 +5440,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[2] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="in_matrix_2d->SetGeom(2, 5, 5, , , , , )";
+     pre_compile_code_string="in_matrix_2d->SetGeom(2, 5, 5, , , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$;
      method=taMatrix::SetGeom;
@@ -2374,6 +5455,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -2384,6 +5466,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="5";
        };
@@ -2394,6 +5477,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="5";
        };
@@ -2404,6 +5488,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2414,6 +5499,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2424,6 +5510,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2434,6 +5521,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2444,16 +5532,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     ForLoop @[3] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 25; i++)";
+     pre_compile_code_string="for (i = 0; i < 25; i++)";
      loop_code {
       name=;
       el_typ=ProgCode;
@@ -2461,7 +5553,8 @@ BpProject .projects["MatrixSandbox"] {
       MethodCall @[0] {
        desc=;
        flags=0;
-       orig_prog_code=;
+       code_string="in_matrix_2d->Set_Flat(i, i)";
+       pre_compile_code_string="in_matrix_2d->Set_Flat(i, i)";
        result_var=NULL;
        obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$;
        method=taMatrixT_float_::Set_Flat;
@@ -2475,6 +5568,7 @@ BpProject .projects["MatrixSandbox"] {
 	 name="item";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="i";
 	 };
@@ -2485,11 +5579,14 @@ BpProject .projects["MatrixSandbox"] {
 	 name="idx";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="i";
 	 };
 	};
        };
+       meth_sig="void Set_Flat(float& item, int idx)";
+       meth_desc=" safely assign values to items in the matrix, treated as a flat vector";
       };
      };
      init {
@@ -2505,7 +5602,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[4] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  in_matrix_2d";
+     pre_compile_code_string="Print  in_matrix_2d";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$;
      print_var2=NULL;
@@ -2513,13 +5611,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     AssignExpr @[5] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="out_matrix = new float_Matrix()";
+     pre_compile_code_string="out_matrix = new float_Matrix()";
      result_var=.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$$;
      expr {
       expr="new float_Matrix()";
@@ -2528,7 +5626,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[6] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="out_matrix->SetGeom(2, 5, 5, , , , , )";
+     pre_compile_code_string="out_matrix->SetGeom(2, 5, 5, , , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$;
      method=taMatrix::SetGeom;
@@ -2542,6 +5641,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -2552,6 +5652,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="5";
        };
@@ -2562,6 +5663,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="5";
        };
@@ -2572,6 +5674,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2582,6 +5685,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2592,6 +5696,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2602,6 +5707,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2612,16 +5718,20 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     AssignExpr @[7] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="kernel = new float_Matrix()";
+     pre_compile_code_string="kernel = new float_Matrix()";
      result_var=.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$$;
      expr {
       expr="new float_Matrix()";
@@ -2630,7 +5740,8 @@ BpProject .projects["MatrixSandbox"] {
     MethodCall @[8] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="kernel->SetGeom(2, 3, 3, , , , , )";
+     pre_compile_code_string="kernel->SetGeom(2, 3, 3, , , , , )";
      result_var=NULL;
      obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
      method=taMatrix::SetGeom;
@@ -2644,6 +5755,7 @@ BpProject .projects["MatrixSandbox"] {
        name="size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="2";
        };
@@ -2654,6 +5766,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d0";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -2664,6 +5777,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d1";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr="3";
        };
@@ -2674,6 +5788,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d2";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2684,6 +5799,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d3";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2694,6 +5810,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d4";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2704,6 +5821,7 @@ BpProject .projects["MatrixSandbox"] {
        name="d5";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -2714,36 +5832,41 @@ BpProject .projects["MatrixSandbox"] {
        name="d6";
        required=0;
        def_val="0";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+     meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
     };
     ForLoop @[9] {
      desc=;
-     flags=0;
-     orig_prog_code="for(y=0; y<3; y++)";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (y=0;  y<3;  y++)";
+     pre_compile_code_string="for (y=0;  y<3;  y++)";
      loop_code {
       name="ProgEl_List_63";
       el_typ=ProgCode;
       el_def=0;
       ForLoop @[0] {
        desc=;
-       flags=0;
-       orig_prog_code="for(x=0; x<3; x++)";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (x=0;  x<3;  x++)";
+       pre_compile_code_string="for (x=0;  x<3;  x++)";
        loop_code {
 	name="ProgEl_List_64";
 	el_typ=ProgCode;
 	el_def=0;
-	IfElse @[0] {
+	If @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code="if(x == 1 && y == 1)";
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (x == 1 && y == 1)";
+	 pre_compile_code_string="if (x == 1 && y == 1)";
 	 cond {
 	  expr="x == 1 && y == 1";
 	 };
-	 show_false_code=1;
 	 true_code {
 	  name="ProgEl_List_65";
 	  el_typ=ProgCode;
@@ -2751,7 +5874,8 @@ BpProject .projects["MatrixSandbox"] {
 	  MethodCall @[0] {
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
-	   orig_prog_code="kernel.Set(1, x,y)";
+	   code_string="kernel->Set(1, x, y, , , , , )";
+	   pre_compile_code_string="kernel->Set(1, x, y, , , , , )";
 	   result_var=NULL;
 	   obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
 	   method=taMatrixT_float_::Set;
@@ -2765,6 +5889,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="item";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="1";
 	     };
@@ -2775,6 +5900,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d0";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="x";
 	     };
@@ -2785,6 +5911,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d1";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr="y";
 	     };
@@ -2795,6 +5922,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d2";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2805,6 +5933,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d3";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2815,6 +5944,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d4";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2825,6 +5955,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d5";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2835,26 +5966,36 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d6";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
 	    };
 	   };
+	   meth_sig="void Set(float& item, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+	   meth_desc=" safely assign values to items in the matrix";
 	  };
 	 };
-	 false_code {
-	  name="ProgEl_List_66";
+	};
+	Else @[1] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string=;
+	 pre_compile_code_string=;
+	 else_code {
+	  name="else_code";
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MethodCall @[0] {
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
-	   orig_prog_code="kernel.Set(1, x,y)";
+	   code_string="kernel->Set(.1, x, y, , , , , )";
+	   pre_compile_code_string="kernel->Set(.1, x, y, , , , , )";
 	   result_var=NULL;
 	   obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
 	   method=taMatrixT_float_::Set;
 	   meth_args {
-	    name="ProgArg_List_0";
+	    name="meth_args";
 	    el_typ=ProgArg;
 	    el_def=0;
 	    ProgArg @[0] {
@@ -2863,6 +6004,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="item";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr=".1";
 	     };
@@ -2873,6 +6015,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d0";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="x";
 	     };
@@ -2883,6 +6026,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d1";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr="y";
 	     };
@@ -2893,6 +6037,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d2";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2903,6 +6048,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d3";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2913,6 +6059,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d4";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2923,6 +6070,7 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d5";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
@@ -2933,11 +6081,14 @@ BpProject .projects["MatrixSandbox"] {
 	     name="d6";
 	     required=0;
 	     def_val="0";
+	     prev_expr=;
 	     expr {
 	      expr=;
 	     };
 	    };
 	   };
+	   meth_sig="void Set(float& item, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+	   meth_desc=" safely assign values to items in the matrix";
 	  };
 	 };
 	};
@@ -2966,7 +6117,8 @@ BpProject .projects["MatrixSandbox"] {
     MathCall @[10] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     orig_prog_code="taMath_float::vec_norm_sum()";
+     code_string="taMath_float::vec_norm_sum(kernel, 1.0, )";
+     pre_compile_code_string="taMath_float::vec_norm_sum(kernel, 1.0, )";
      result_var=NULL;
      object_type=taMath_float;
      method=taMath_float::vec_norm_sum;
@@ -2980,6 +6132,7 @@ BpProject .projects["MatrixSandbox"] {
        name="vec";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="kernel";
        };
@@ -2990,6 +6143,7 @@ BpProject .projects["MatrixSandbox"] {
        name="sum";
        required=0;
        def_val="1.0f";
+       prev_expr=;
        expr {
 	expr="1.0";
        };
@@ -3000,6 +6154,7 @@ BpProject .projects["MatrixSandbox"] {
        name="min_val";
        required=0;
        def_val="0.0f";
+       prev_expr=;
        expr {
 	expr=;
        };
@@ -3009,7 +6164,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[11] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  kernel";
+     pre_compile_code_string="Print  kernel";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
      print_var2=NULL;
@@ -3017,13 +6173,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     MathCall @[12] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="taMath_float::mat_frame_convolve(out_matrix, in_matrix_2d, kernel)";
+     pre_compile_code_string="taMath_float::mat_frame_convolve(out_matrix, in_matrix_2d, kernel)";
      result_var=NULL;
      object_type=taMath_float;
      method=taMath_float::mat_frame_convolve;
@@ -3037,6 +6193,7 @@ BpProject .projects["MatrixSandbox"] {
        name="out_mat";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="out_matrix";
        };
@@ -3047,6 +6204,7 @@ BpProject .projects["MatrixSandbox"] {
        name="in_mat";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="in_matrix_2d";
        };
@@ -3057,6 +6215,7 @@ BpProject .projects["MatrixSandbox"] {
        name="kernel";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="kernel";
        };
@@ -3066,7 +6225,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[13] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  out_matrix";
+     pre_compile_code_string="Print  out_matrix";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$;
      print_var2=NULL;
@@ -3074,13 +6234,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     ForLoop @[14] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 9; i++)";
+     pre_compile_code_string="for (i = 0; i < 9; i++)";
      loop_code {
       name=;
       el_typ=ProgCode;
@@ -3088,7 +6248,8 @@ BpProject .projects["MatrixSandbox"] {
       MethodCall @[0] {
        desc=;
        flags=0;
-       orig_prog_code=;
+       code_string="kernel->Set_Flat(.111, i)";
+       pre_compile_code_string="kernel->Set_Flat(.111, i)";
        result_var=NULL;
        obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
        method=taMatrixT_float_::Set_Flat;
@@ -3102,6 +6263,7 @@ BpProject .projects["MatrixSandbox"] {
 	 name="item";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr=".111";
 	 };
@@ -3112,11 +6274,14 @@ BpProject .projects["MatrixSandbox"] {
 	 name="idx";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="i";
 	 };
 	};
        };
+       meth_sig="void Set_Flat(float& item, int idx)";
+       meth_desc=" safely assign values to items in the matrix, treated as a flat vector";
       };
      };
      init {
@@ -3132,7 +6297,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[15] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  kernel";
+     pre_compile_code_string="Print  kernel";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
      print_var2=NULL;
@@ -3140,13 +6306,13 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     MathCall @[16] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="taMath_float::mat_frame_convolve(out_matrix, in_matrix_2d, kernel)";
+     pre_compile_code_string="taMath_float::mat_frame_convolve(out_matrix, in_matrix_2d, kernel)";
      result_var=NULL;
      object_type=taMath_float;
      method=taMath_float::mat_frame_convolve;
@@ -3160,6 +6326,7 @@ BpProject .projects["MatrixSandbox"] {
        name="out_mat";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="out_matrix";
        };
@@ -3170,6 +6337,7 @@ BpProject .projects["MatrixSandbox"] {
        name="in_mat";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="in_matrix_2d";
        };
@@ -3180,6 +6348,7 @@ BpProject .projects["MatrixSandbox"] {
        name="kernel";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="kernel";
        };
@@ -3189,7 +6358,8 @@ BpProject .projects["MatrixSandbox"] {
     PrintVar @[17] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     code_string="Print  out_matrix";
+     pre_compile_code_string="Print  out_matrix";
      message=;
      print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$;
      print_var2=NULL;
@@ -3197,16 +6367,26 @@ BpProject .projects["MatrixSandbox"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
-  name="DataViewer_List_0";
+  name="viewers";
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
@@ -3216,22 +6396,22 @@ BpProject .projects["MatrixSandbox"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.0304162222892046;
+     value 8 0=0.0300879;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.05348047614097595;
+     value 8 0=0.05332535;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9279615879058838;
+     value 8 0=0.9276538;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.5755518078804016;
+     value 8 0=0.5751948;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -3241,19 +6421,21 @@ BpProject .projects["MatrixSandbox"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABZgAAAo8AAAAAAQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAEAAAADAAABZgAAAo8AAAAAAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
    name="Browser2";
    m_data=.projects["MatrixSandbox"]$$;
+   cur_font_size=12;
    visible=1;
+   win_name=".projects[\"MatrixSandbox\"] - MatrixSandbox.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name="ToolBar_List_1";
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
@@ -3269,6 +6451,7 @@ BpProject .projects["MatrixSandbox"] {
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -3276,20 +6459,22 @@ BpProject .projects["MatrixSandbox"] {
     };
    };
    frames {
-    name="FrameViewer_List_0";
+    name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=BpProject;
      root_md=NULL;
      m_root=$.projects["MatrixSandbox"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["T3Frames"] {
@@ -3305,21 +6490,24 @@ BpProject .projects["MatrixSandbox"] {
      };
      name="T3Frames";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
-      name="T3DataViewFrame_List_0";
+      name="panels";
       el_typ=T3Panel;
       el_def=0;
       T3Panel @["Frame1"] {
        name="Frame1";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	};
@@ -3327,48 +6515,84 @@ BpProject .projects["MatrixSandbox"] {
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {
+	field_of_view=45;
+	near_distance=0.1;
+	focal=5;
+	far_distance=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_0";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
-	T3SavedView @["View_0"] {
-	 name="View_0";
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
 	 view_saved=1;
 	 pos {x=0: y=0: z=-0.4765596: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=3.52344;
 	};
-	T3SavedView @["View_1"] {
-	 name="View_1";
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_2"] {
-	 name="View_2";
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_3"] {
-	 name="View_3";
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_4"] {
-	 name="View_4";
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_5"] {
-	 name="View_5";
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
@@ -3380,7 +6604,7 @@ BpProject .projects["MatrixSandbox"] {
     };
    };
    docks {
-    name="DockViewer_List_0";
+    name="docks";
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
@@ -3390,22 +6614,22 @@ BpProject .projects["MatrixSandbox"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007640067953616381;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.0405549630522728;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.5135823488235474;
+       value 8 0=0.5302576;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -3421,7 +6645,9 @@ BpProject .projects["MatrixSandbox"] {
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
@@ -3432,8 +6658,9 @@ BpProject .projects["MatrixSandbox"] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
-  name="Network_Group_0";
+  name="networks";
   el_typ=BpNetwork;
   el_def=0;
  };

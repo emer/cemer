@@ -1,6 +1,8 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 LeabraProject .projects["matrix_demo"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -19,15 +21,20 @@ LeabraProject .projects["matrix_demo"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [26] {
+   DataTableCols @.jobs_running.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -40,7 +47,6 @@ LeabraProject .projects["matrix_demo"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -58,6 +64,11 @@ LeabraProject .projects["matrix_demo"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -70,17 +81,30 @@ LeabraProject .projects["matrix_demo"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.jobs_done.data = [26] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -93,7 +117,6 @@ LeabraProject .projects["matrix_demo"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -111,6 +134,11 @@ LeabraProject .projects["matrix_demo"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -123,17 +151,30 @@ LeabraProject .projects["matrix_demo"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [26] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_deleted.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -146,7 +187,6 @@ LeabraProject .projects["matrix_demo"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -164,6 +204,11 @@ LeabraProject .projects["matrix_demo"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -176,9 +221,89 @@ LeabraProject .projects["matrix_demo"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.file_list.data = [9] {
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.file_list.data = [11] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["file_name"] { };
     String_Data @["tag"] { };
     String_Data @["size"] { };
@@ -190,6 +315,12 @@ LeabraProject .projects["matrix_demo"] {
     String_Data @["file_path"] { };
    };
 
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.file_list.control_panel_cells = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -199,9 +330,18 @@ LeabraProject .projects["matrix_demo"] {
     String_Data @["start_time"] { };
    };
 
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
+   };
+
    ParamSearchAlgo_List @.search_algos = [0] {
    };
   };
+ };
+
+ ParamSet_Group @.param_sets = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -213,31 +353,12 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
 
- taBase_Group @.data_proc = [4] {
-  taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
- };
-
  Program_TopGroup @.programs = [1] {
   Program @["MatrixMathDemo"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [2] {
     Random @["Random_0"] { };
     DataTable @["Results"] { 
@@ -245,6 +366,12 @@ LeabraProject .projects["matrix_demo"] {
       float_Data @["noise_data"] { };
       float_Data @["eigen_vectors"] { };
       float_Data @["eigen_values"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
      };
     };
    };
@@ -294,9 +421,10 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       DataGenCall @[5] { 
-       ProgArg_List @.meth_args = [2] {
+       ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
+	ProgArg @[2] { };
        };
       };
       MathCall @[6] { 
@@ -378,8 +506,8 @@ LeabraProject .projects["matrix_demo"] {
    };
 
    FrameViewer_List @.frames = [3] {
-    BrowseViewerTaBase @["Tree"] { };
-    PanelViewer @["Panels"] { };
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
     T3PanelViewer @["T3Frames"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["view_panel_selected"] { };
@@ -440,29 +568,97 @@ LeabraProject .projects["matrix_demo"] {
 };
 LeabraProject .projects["matrix_demo"] {
  name="matrix_demo";
- desc=;
- tags=;
+ desc="how to use Matrix objects in Programs -- creates matrices from scratch, sets values, runs Math functions, etc.";
+ tags="Demo, Matrix, Program";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=2;
  };
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2014";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
+ pub_cite=;
+ wiki {
+  wiki="emergent";
+  page_name="demos/matrix_demo";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/matrix_demo";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/matrix_demo";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Tue Aug 30 03:06:14 2016 version: 8.0.2 user: oreilly file_name: <code>matrix_demo.proj</code> <br>
+Project updated on wiki: emergent changes: doc link
+
+
+<li>Tue Aug 30 03:04:11 2016 version: 8.0.1 user: oreilly file_name: <code>matrix_demo.proj</code> <br>
+Published on wiki: emergent page: demos/matrix_demo with description: how to use Matrix objects in Programs -- creates matrices from scratch, sets values, runs Math functions, etc. tags: Demo, Matrix, Program author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Tue Aug 30 03:06:14 2016 version: 8.0.2 user: oreilly file_name: <code>matrix_demo.proj</code> <br>
+Project updated on wiki: emergent changes: doc link
+<P>
+<P>
+<li>Tue Aug 30 03:04:11 2016 version: 8.0.1 user: oreilly file_name: <code>matrix_demo.proj</code> <br>
+Published on wiki: emergent page: demos/matrix_demo with description: how to use Matrix objects in Programs -- creates matrices from scratch, sets values, runs Math functions, etc. tags: Demo, Matrix, Program author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -480,7 +676,6 @@ LeabraProject .projects["matrix_demo"] {
     };
    };
    name="LeabraWizard_0";
-   auto_open=0;
   };
  };
  ctrl_panels {
@@ -489,8 +684,7 @@ LeabraProject .projects["matrix_demo"] {
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   auto_edit=0;
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -510,40 +704,40 @@ LeabraProject .projects["matrix_demo"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -555,9 +749,65 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -569,9 +819,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -583,9 +833,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -597,9 +847,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -611,9 +861,23 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -625,9 +889,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -639,9 +903,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -653,9 +917,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -667,9 +931,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -681,9 +945,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -705,9 +969,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -719,9 +983,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -733,23 +997,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -761,9 +1011,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -775,9 +1025,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -799,9 +1049,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -823,9 +1073,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -846,8 +1096,32 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -871,9 +1145,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -894,10 +1168,10 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -909,9 +1183,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -923,7 +1197,35 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -942,6 +1244,19 @@ LeabraProject .projects["matrix_demo"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    jobs_done {
     name="jobs_done";
@@ -950,40 +1265,40 @@ LeabraProject .projects["matrix_demo"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -995,9 +1310,65 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1009,9 +1380,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1023,9 +1394,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1037,9 +1408,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1051,9 +1422,23 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1065,9 +1450,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1079,9 +1464,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1093,9 +1478,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1107,9 +1492,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1121,9 +1506,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1145,9 +1530,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1159,9 +1544,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1173,23 +1558,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1201,9 +1572,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1215,9 +1586,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1239,9 +1610,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1263,9 +1634,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1286,8 +1657,32 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1311,9 +1706,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1334,10 +1729,10 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1349,9 +1744,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1363,7 +1758,35 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1382,6 +1805,580 @@ LeabraProject .projects["matrix_demo"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_deleted {
+    name="jobs_deleted";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+    last_sort_spec {
+     name=;
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name=;
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -1390,40 +2387,40 @@ LeabraProject .projects["matrix_demo"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1435,9 +2432,65 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1449,9 +2502,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1463,9 +2516,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1477,9 +2530,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1491,9 +2544,23 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1505,9 +2572,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1519,9 +2586,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1533,9 +2600,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1547,9 +2614,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1561,9 +2628,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1585,9 +2652,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1599,9 +2666,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1613,23 +2680,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1641,9 +2694,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1655,9 +2708,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1679,9 +2732,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1703,9 +2756,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1726,8 +2779,32 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1751,9 +2828,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1774,10 +2851,10 @@ LeabraProject .projects["matrix_demo"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1789,9 +2866,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1803,7 +2880,35 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1822,6 +2927,19 @@ LeabraProject .projects["matrix_demo"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    file_list {
     name="file_list";
@@ -1830,12 +2948,40 @@ LeabraProject .projects["matrix_demo"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="cluster where this job was submitted / run";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1847,9 +2993,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1861,9 +3007,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1875,9 +3021,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1889,9 +3035,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1903,9 +3049,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1917,9 +3063,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1931,9 +3077,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1945,9 +3091,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1964,6 +3110,19 @@ LeabraProject .projects["matrix_demo"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    cluster_info {
     name="cluster_info";
@@ -1975,9 +3134,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1989,9 +3148,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2003,9 +3162,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2017,9 +3176,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2031,9 +3190,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2045,9 +3204,9 @@ LeabraProject .projects["matrix_demo"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2064,30 +3223,61 @@ LeabraProject .projects["matrix_demo"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    search_algos {
     name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
+   exe_cmd="emergent";
    ram_gb=0;
    n_threads=1;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=1;
   };
+ };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
  };
  data {
   name="data";
@@ -2113,75 +3303,38 @@ LeabraProject .projects["matrix_demo"] {
    save_tables=1;
   };
  };
- data_proc {
-  name="data_proc";
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @["data_base"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_base";
-  };
-  taDataAnal @["data_anal"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @["data_gen"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @["image_proc"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
-  };
- };
  programs {
   name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
   Program @["MatrixMathDemo"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["matrix_demo"].programs["MatrixMathDemo"].doc$$;
+    };
+   };
    name="MatrixMathDemo";
    short_nm="Demo";
    tags=;
    desc="demonstration for how to create and manipulate matrix objects";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
     name="objs";
     el_typ=Random;
@@ -2196,7 +3349,7 @@ LeabraProject .projects["matrix_demo"] {
       el_def=0;
       float_Data @["noise_data"] {
        name="noise_data";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 5;5;       };
        calc_expr {
@@ -2208,13 +3361,13 @@ LeabraProject .projects["matrix_demo"] {
        width=0;
        ar {
 	name="ar";
-       [5 5 1] 0.52951348;0.74498385;-0.45747808;-0.73006713;0.57894838;0.27123624;2.6703207;-1.0323464;0.014729861;-0.0097444206;
-1.2632595;-1.0445784;-1.9117873;0.45174086;-1.4417158;1.285895;0.91082537;0.083340168;-0.98665011;0.33168331;
--0.48249656;-0.27132002;-1.0674992;-0.14642008;0.44052213;       };
+       [5 5 1] -2.2761803;0.50047743;0.9737317;-0.92170626;1.4926603;0.86502635;-0.34558958;-0.24037994;0.96577132;-1.2456846;
+1.4281152;0.48932362;-0.53048021;-0.4925786;2.8611636;0.90396708;-0.30825812;1.0999366;-0.85102594;1.3201033;
+-0.11214362;0.32552138;1.5667535;0.34712639;0.62619305;       };
       };
       float_Data @["eigen_vectors"] {
        name="eigen_vectors";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 5;5;       };
        calc_expr {
@@ -2226,13 +3379,13 @@ LeabraProject .projects["matrix_demo"] {
        width=0;
        ar {
 	name="ar";
-       [5 5 1] 0.18418285;-0.350593;-0.69620144;0.38006854;0.46261504;0.93418771;0.17123882;0.2061965;0.21077438;-0.10501309;
--0.12312119;0.87639248;-0.41332415;0.20113146;-0.074071817;0.26400885;0.13416605;-0.26930809;-0.86517245;0.30207387;
--0.092252307;0.24838977;0.47898105;0.14881152;0.82354379;       };
+       [5 5 1] 0.83407527;-0.27676782;-0.17044298;-0.12930122;0.42655414;-0.20418942;-0.23041815;0.32395208;0.67722625;0.58449453;
+-0.43362466;-0.61741579;-0.61490124;-0.1749;0.14857289;-0.1611985;-0.32576418;0.66290611;-0.62996042;0.1777586;
+0.22047646;-0.61885583;0.22012778;0.31177822;-0.65018898;       };
       };
       float_Data @["eigen_values"] {
        name="eigen_values";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 5;       };
        calc_expr {
@@ -2244,7 +3397,7 @@ LeabraProject .projects["matrix_demo"] {
        width=0;
        ar {
 	name="ar";
-       [5 1] 3.1456671;-2.9110391;2.0285282;-1.7676276;0.24639027;       };
+       [5 1] -3.4347548;2.4430749;-2.1391058;-0.20051365;-0.045783784;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2254,6 +3407,19 @@ LeabraProject .projects["matrix_demo"] {
      row_indexes {
       name="row_indexes";
      [1] 0;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     control_panel_cells {
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
     };
    };
    types {
@@ -2284,8 +3450,7 @@ LeabraProject .projects["matrix_demo"] {
     ProgVar @["mean"] {
      name="mean";
      var_type=T_Real;
-     real_val=-0.0002041935949819162;
-     objs_ptr=0;
+     real_val=0.3376737236976624;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="mean of matrix values";
@@ -2294,8 +3459,7 @@ LeabraProject .projects["matrix_demo"] {
     ProgVar @["std_dev"] {
      name="std_dev";
      var_type=T_Real;
-     real_val=0.9806657433509827;
-     objs_ptr=0;
+     real_val=1.071085929870605;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="standard deviation of matrix values";
@@ -2329,16 +3493,18 @@ LeabraProject .projects["matrix_demo"] {
     el_def=0;
     CodeBlock @[0] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="CodeBlock (17 items)";
+     pre_compile_code_string="CodeBlock (17 items)";
      prog_code {
       name=;
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (3 vars)";
+       pre_compile_code_string="LocalVars (3 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -2349,7 +3515,7 @@ LeabraProject .projects["matrix_demo"] {
 	 object_type=float_Matrix;
 	 object_val=NULL;
 	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc="critical for it to be a local var within a ProgVars, not in global vars!";
 	 init_from=NULL;
@@ -2360,7 +3526,7 @@ LeabraProject .projects["matrix_demo"] {
 	 object_type=float_Matrix;
 	 object_val=NULL;
 	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -2371,7 +3537,7 @@ LeabraProject .projects["matrix_demo"] {
 	 object_type=float_Matrix;
 	 object_val=NULL;
 	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -2380,8 +3546,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       AssignExpr @[1] {
        desc="create a new object for our variable to point to -- this is essential!";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="my_mat = new float_Matrix";
+       pre_compile_code_string="my_mat = new float_Matrix";
        result_var=.projects["matrix_demo"].programs["MatrixMathDemo"].prog_code[0].prog_code[0].local_vars["my_mat"]$$;
        expr {
 	expr="new float_Matrix";
@@ -2389,8 +3556,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       AssignExpr @[2] {
        desc="all \"return values\" in math functions assume matrix object exists already, even if they configure geom for it";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="eigen_values = new float_Matrix";
+       pre_compile_code_string="eigen_values = new float_Matrix";
        result_var=.projects["matrix_demo"].programs["MatrixMathDemo"].prog_code[0].prog_code[0].local_vars["eigen_values"]$$;
        expr {
 	expr="new float_Matrix";
@@ -2398,8 +3566,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       AssignExpr @[3] {
        desc="all \"return values\" in math functions assume matrix object exists already, even if they configure geom for it";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="eigen_vectors = new float_Matrix";
+       pre_compile_code_string="eigen_vectors = new float_Matrix";
        result_var=.projects["matrix_demo"].programs["MatrixMathDemo"].prog_code[0].prog_code[0].local_vars["eigen_vectors"]$$;
        expr {
 	expr="new float_Matrix";
@@ -2407,8 +3576,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       MethodCall @[4] {
        desc="Manually set to be a 5x5 2 dimensional matrix";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="my_mat->SetGeom(2, 5, 5, , , , , )";
+       pre_compile_code_string="my_mat->SetGeom(2, 5, 5, , , , , )";
        result_var=NULL;
        obj=$.projects["matrix_demo"].programs["MatrixMathDemo"].prog_code[0].prog_code[0].local_vars["my_mat"]$;
        method=taMatrix::SetGeom;
@@ -2422,6 +3592,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="size";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="2";
 	 };
@@ -2432,6 +3603,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d0";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="5";
 	 };
@@ -2442,6 +3614,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d1";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr="5";
 	 };
@@ -2452,6 +3625,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d2";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2462,6 +3636,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d3";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2472,6 +3647,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d4";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2482,6 +3658,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d5";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2492,16 +3669,20 @@ LeabraProject .projects["matrix_demo"] {
 	 name="d6";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+       meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
       };
       DataGenCall @[5] {
        desc="fill matrix with noise";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taDataGen::AddNoiseMat(my_mat, Random_0)";
+       pre_compile_code_string="taDataGen::AddNoiseMat(my_mat, Random_0)";
        result_var=NULL;
        object_type=taDataGen;
        method=taDataGen::AddNoiseMat;
@@ -2515,6 +3696,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="mat";
 	 required=1;
 	 def_val=;
+	 prev_expr="my_mat";
 	 expr {
 	  expr="my_mat";
 	 };
@@ -2525,16 +3707,29 @@ LeabraProject .projects["matrix_demo"] {
 	 name="rnd_spec";
 	 required=1;
 	 def_val=;
+	 prev_expr="Random_0";
 	 expr {
 	  expr="Random_0";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="thr_no";
+	 required=0;
+	 def_val="-1";
+	 prev_expr=;
+	 expr {
+	  expr=;
 	 };
 	};
        };
       };
       MathCall @[6] {
        desc="compute mean of matrix";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="mean = taMath_float::vec_mean(my_mat)";
+       pre_compile_code_string="mean = taMath_float::vec_mean(my_mat)";
        result_var=.projects["matrix_demo"].programs["MatrixMathDemo"].vars["mean"]$$;
        object_type=taMath_float;
        method=taMath_float::vec_mean;
@@ -2548,6 +3743,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="vec";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="my_mat";
 	 };
@@ -2556,8 +3752,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       MathCall @[7] {
        desc="compute std dev of matrix";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="std_dev = taMath_float::vec_std_dev(my_mat, , , )";
+       pre_compile_code_string="std_dev = taMath_float::vec_std_dev(my_mat, , , )";
        result_var=.projects["matrix_demo"].programs["MatrixMathDemo"].vars["std_dev"]$$;
        object_type=taMath_float;
        method=taMath_float::vec_std_dev;
@@ -2571,6 +3768,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="vec";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="my_mat";
 	 };
@@ -2581,6 +3779,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="mean";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2591,6 +3790,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="use_mean";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2601,6 +3801,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="use_est";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -2609,8 +3810,9 @@ LeabraProject .projects["matrix_demo"] {
       };
       MathCall @[8] {
        desc="compute std dev of matrix";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMath_float::mat_eigen(my_mat, eigen_values, eigen_vectors)";
+       pre_compile_code_string="taMath_float::mat_eigen(my_mat, eigen_values, eigen_vectors)";
        result_var=NULL;
        object_type=taMath_float;
        method=taMath_float::mat_eigen;
@@ -2624,6 +3826,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="A";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="my_mat";
 	 };
@@ -2634,6 +3837,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="eigen_vals";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="eigen_values";
 	 };
@@ -2644,6 +3848,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="eigen_vecs";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="eigen_vectors";
 	 };
@@ -2652,28 +3857,29 @@ LeabraProject .projects["matrix_demo"] {
       };
       PrintExpr @[9] {
        desc="test to see what the geometry of the resulting matrix is -- turned off but can be turned on to check";
-       flags=OFF;
-       orig_prog_code=;
+       flags=OFF|CAN_REVERT_TO_CODE;
+       code_string="Print eigen_vectors.geom.GeomToString()";
+       pre_compile_code_string="Print eigen_vectors.geom.GeomToString()";
        expr {
 	expr="eigen_vectors.geom.GeomToString()";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       PrintExpr @[10] {
        desc="test to see what the geometry of the resulting matrix is -- turned off but can be turned on to check";
-       flags=OFF;
-       orig_prog_code=;
+       flags=OFF|CAN_REVERT_TO_CODE;
+       code_string="Print eigen_values.geom.GeomToString()";
+       pre_compile_code_string="Print eigen_values.geom.GeomToString()";
        expr {
 	expr="eigen_values.geom.GeomToString()";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       PrintVar @[11] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Print  \"stats on matrix are:\" mean std_dev";
+       pre_compile_code_string="Print  \"stats on matrix are:\" mean std_dev";
        message="stats on matrix are:";
        print_var=$.projects["matrix_demo"].programs["MatrixMathDemo"].vars["mean"]$;
        print_var2=$.projects["matrix_demo"].programs["MatrixMathDemo"].vars["std_dev"]$;
@@ -2681,13 +3887,13 @@ LeabraProject .projects["matrix_demo"] {
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       MethodCall @[12] {
        desc="make sure has exactly one row";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Results->EnforceRows(1)";
+       pre_compile_code_string="Results->EnforceRows(1)";
        result_var=NULL;
        obj=.projects["matrix_demo"].programs["MatrixMathDemo"].vars["Results"]$$;
        method=DataTable::EnforceRows;
@@ -2701,16 +3907,20 @@ LeabraProject .projects["matrix_demo"] {
 	 name="n_rows";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="1";
 	 };
 	};
        };
+       meth_sig="void EnforceRows(int n_rows)";
+       meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
       };
       MethodCall @[13] {
        desc="write our matrix data to a data table, which is very convenient for visualization";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Results->SetValAsMatrixColName(my_mat, \"noise_data\", 0, )";
+       pre_compile_code_string="Results->SetValAsMatrixColName(my_mat, \"noise_data\", 0, )";
        result_var=NULL;
        obj=$.projects["matrix_demo"].programs["MatrixMathDemo"].vars["Results"]$;
        method=DataTable::SetValAsMatrixColName;
@@ -2724,6 +3934,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="my_mat";
 	 };
@@ -2734,6 +3945,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="\"noise_data\"";
 	 };
@@ -2744,6 +3956,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="0";
 	 };
@@ -2754,16 +3967,20 @@ LeabraProject .projects["matrix_demo"] {
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool SetValAsMatrixColName(taMatrix* val, taString& col_name, int row, bool quiet = false)";
+       meth_desc=" set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)";
       };
       MethodCall @[14] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Results->SetValAsMatrixColName(eigen_values, \"eigen_values\", 0, )";
+       pre_compile_code_string="Results->SetValAsMatrixColName(eigen_values, \"eigen_values\", 0, )";
        result_var=NULL;
        obj=$.projects["matrix_demo"].programs["MatrixMathDemo"].vars["Results"]$;
        method=DataTable::SetValAsMatrixColName;
@@ -2777,6 +3994,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="eigen_values";
 	 };
@@ -2787,6 +4005,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="\"eigen_values\"";
 	 };
@@ -2797,6 +4016,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="0";
 	 };
@@ -2807,16 +4027,20 @@ LeabraProject .projects["matrix_demo"] {
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool SetValAsMatrixColName(taMatrix* val, taString& col_name, int row, bool quiet = false)";
+       meth_desc=" set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)";
       };
       MethodCall @[15] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Results->SetValAsMatrixColName(eigen_vectors, \"eigen_vectors\", 0, )";
+       pre_compile_code_string="Results->SetValAsMatrixColName(eigen_vectors, \"eigen_vectors\", 0, )";
        result_var=NULL;
        obj=$.projects["matrix_demo"].programs["MatrixMathDemo"].vars["Results"]$;
        method=DataTable::SetValAsMatrixColName;
@@ -2830,6 +4054,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="eigen_vectors";
 	 };
@@ -2840,6 +4065,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="\"eigen_vectors\"";
 	 };
@@ -2850,6 +4076,7 @@ LeabraProject .projects["matrix_demo"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="0";
 	 };
@@ -2860,16 +4087,20 @@ LeabraProject .projects["matrix_demo"] {
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool SetValAsMatrixColName(taMatrix* val, taString& col_name, int row, bool quiet = false)";
+       meth_desc=" set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)";
       };
       DoneWritingDataRow @[16] {
        desc="this triggers a display update";
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="DoneWritingDataRow:  table = Results ";
+       pre_compile_code_string="DoneWritingDataRow:  table = Results ";
        data_var=$.projects["matrix_demo"].programs["MatrixMathDemo"].vars["Results"]$;
       };
      };
@@ -2877,6 +4108,17 @@ LeabraProject .projects["matrix_demo"] {
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
@@ -2890,22 +4132,22 @@ LeabraProject .projects["matrix_demo"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 8 0=0.0003380663;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 8 0=0.03594967;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=1;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7988115549087524;
+     value 8 0=0.7986819;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -2921,8 +4163,9 @@ LeabraProject .projects["matrix_demo"] {
    };
    name="Browser2";
    m_data=.projects["matrix_demo"]$$;
+   cur_font_size=12;
    visible=1;
-   win_name=".projects[\"matrix_demo\"] - matrix_demo.proj [*]";
+   win_name=".projects[\"matrix_demo\"] - matrix_demo.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -2944,6 +4187,7 @@ LeabraProject .projects["matrix_demo"] {
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -2954,17 +4198,19 @@ LeabraProject .projects["matrix_demo"] {
     name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$.projects["matrix_demo"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["T3Frames"] {
@@ -2980,6 +4226,7 @@ LeabraProject .projects["matrix_demo"] {
      };
      name="T3Frames";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -2988,10 +4235,12 @@ LeabraProject .projects["matrix_demo"] {
       T3Panel @["Results"] {
        name="Results";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -3000,6 +4249,7 @@ LeabraProject .projects["matrix_demo"] {
 	 GridTableView @["projects_Project_0_viewers_Browser2_frames_T3Frames_panels_Results_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_panels_Results_root_view_children_0";
 	  m_data=$.projects["matrix_demo"].programs["MatrixMathDemo"].objs["Results"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -3008,6 +4258,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["noise_data"] {
 	    name="noise_data";
 	    m_data=.projects["matrix_demo"].programs["MatrixMathDemo"].objs["Results"].data["noise_data"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
@@ -3019,6 +4270,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["eigen_vectors"] {
 	    name="eigen_vectors";
 	    m_data=.projects["matrix_demo"].programs["MatrixMathDemo"].objs["Results"].data["eigen_vectors"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
@@ -3030,6 +4282,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["eigen_values"] {
 	    name="eigen_values";
 	    m_data=.projects["matrix_demo"].programs["MatrixMathDemo"].objs["Results"].data["eigen_values"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
@@ -3052,10 +4305,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  view_rows=1;
 	  view_range {min=0: max=0: };
+	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  col_n=5;
+	  view_cols=5;
+	  page_cols=5;
 	  col_range {min=0: max=2: };
+	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -3068,6 +4324,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=1;
 	   zero=0;
 	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
@@ -3079,18 +4337,27 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
 	  lmb_val=1;
 	  mmb_val=0;
+	  use_custom_paging=0;
 	 };
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {
+	field_of_view=45;
+	near_distance=0.1;
+	focal=5;
+	far_distance=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -3182,22 +4449,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.735144317150116;
+       value 8 0=0.7537448;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -3213,6 +4480,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -3224,7 +4492,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Project updated on wiki: emergent changes: doc link";
+ tree_state{ .;.docs;.docs[0];.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

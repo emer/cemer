@@ -1,12 +1,13 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9686
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 BpProject .projects["bp_softmax"] { 
- Doc_Group @.docs = [2] {
+ Doc_Group @.docs = [3] {
   taDoc @["ProjectDocs"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["user_pinned"] { };
    };
   };
   taDoc @["HelpDoc"] { };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [0] {
@@ -18,10 +19,9 @@ BpProject .projects["bp_softmax"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [3] {
+   EditMbrItem_Group @.mbrs = [2] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
-    EditMbrItem @[2] { };
    };
 
    EditMthItem_Group @.mths = [4] {
@@ -1286,21 +1286,10 @@ BpProject .projects["bp_softmax"] {
     UserDataItem @["batch"] { };
    };
 
-   DataTable_Group @.spec_tables = [0] {
-   };
-
-   BaseSpec_Group @.specs = [4] {
+   BaseSpec_Group @.specs = [3] {
     BpUnitSpec @["BpUnitSpec_0"] { 
-     BaseSpec_Group @.children = [3] {
-      ExpBpUnitSpec @["ExpBpUnitSpec_0"] { 
-       BaseSpec_Group @.children = [0] {
-       };
-      };
-      SoftMaxBpUnitSpec @["SoftMaxBpUnitSpec_0"] { 
-       BaseSpec_Group @.children = [0] {
-       };
-      };
-      LinearBpUnitSpec @["LinearBpUnitSpec_0"] { 
+     BaseSpec_Group @.children = [1] {
+      BpUnitSpec @["SoftMaxUnits"] { 
        BaseSpec_Group @.children = [0] {
        };
       };
@@ -1331,16 +1320,12 @@ BpProject .projects["bp_softmax"] {
      BaseSpec_Group @.children = [0] {
      };
     };
-    OneToOnePrjnSpec @["OneToOnePrjnSpec_0"] { 
-     BaseSpec_Group @.children = [0] {
-     };
-    };
    };
 
    ParamSeq_Group @.param_seqs = [0] {
    };
 
-   Layer_Group @.layers = [5] {
+   Layer_Group @.layers = [3] {
     BpLayer @["Input"] { 
      Projection_Group @.projections = [0] {
      };
@@ -1356,26 +1341,9 @@ BpProject .projects["bp_softmax"] {
      Unit_Group @.units = [9] {
      };
     };
-    BpLayer @["Output_Exp"] { 
+    BpLayer @["Output"] { 
      Projection_Group @.projections = [1] {
       Projection @["Fm_Hidden"] { };
-     };
-
-     Unit_Group @.units = [4] {
-     };
-    };
-    BpLayer @["Output_Sum"] { 
-     Projection_Group @.projections = [1] {
-      Projection @["Fm_Output_Exp"] { };
-     };
-
-     Unit_Group @.units = [1] {
-     };
-    };
-    BpLayer @["Output"] { 
-     Projection_Group @.projections = [2] {
-      Projection @["Fm_Output_Exp"] { };
-      Projection @["Fm_Output_Sum"] { };
      };
 
      Unit_Group @.units = [4] {
@@ -1402,24 +1370,9 @@ BpProject .projects["bp_softmax"] {
     UserDataItem @["batch"] { };
    };
 
-   DataTable_Group @.spec_tables = [0] {
-   };
-
-   BaseSpec_Group @.specs = [4] {
+   BaseSpec_Group @.specs = [3] {
     BpUnitSpec @["BpUnitSpec_0"] { 
-     BaseSpec_Group @.children = [3] {
-      ExpBpUnitSpec @["ExpBpUnitSpec_0"] { 
-       BaseSpec_Group @.children = [0] {
-       };
-      };
-      SoftMaxBpUnitSpec @["SoftMaxBpUnitSpec_0"] { 
-       BaseSpec_Group @.children = [0] {
-       };
-      };
-      LinearBpUnitSpec @["LinearBpUnitSpec_0"] { 
-       BaseSpec_Group @.children = [0] {
-       };
-      };
+     BaseSpec_Group @.children = [0] {
      };
     };
     BpConSpec @["BpConSpec_0"] { 
@@ -1444,10 +1397,6 @@ BpProject .projects["bp_softmax"] {
      };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] { 
-     BaseSpec_Group @.children = [0] {
-     };
-    };
-    OneToOnePrjnSpec @["OneToOnePrjnSpec_0"] { 
      BaseSpec_Group @.children = [0] {
      };
     };
@@ -1489,29 +1438,26 @@ BpProject .projects["bp_softmax"] {
 };
 BpProject .projects["bp_softmax"] {
  name="bp_softmax";
- desc="
-
-
-";
- tags=;
+ desc="Demonstrates use of softmax output layer -- much easier in 8.0 than before";
+ tags="Demo, Backpropagation, SoftMax";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=2;
  };
  author="Randall C. O'Reilly";
  email="randy.oreilly@colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2014";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
+ pub_cite=;
+ wiki {
+  wiki="emergent";
+  page_name="demos/bp_softmax";
  };
  docs {
   name="docs";
@@ -1530,10 +1476,10 @@ BpProject .projects["bp_softmax"] {
    };
    name="ProjectDocs";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="demos/bp_softmax";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/bp_softmax";
    text_size=1;
    text="<html>
 <head></head>
@@ -1896,6 +1842,49 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 <!-- Served in 0.362 secs. -->
 </body></html>";
   };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Tue Aug 30 03:38:13 2016 version: 8.0.2 user: oreilly file_name: <code>bp_softmax.proj</code> <br>
+Project updated on wiki: emergent changes: doc
+
+
+<li>Tue Aug 30 03:36:50 2016 version: 8.0.1 user: oreilly file_name: <code>bp_softmax.proj</code> <br>
+Published on wiki: emergent page: demos/bp_softmax with description: Demonstrates use of softmax output layer -- much easier in 8.0 than before tags: Demo, Backpropagation, SoftMax author: Randall C. O'Reilly email: randy.oreilly@colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Tue Aug 30 03:38:13 2016 version: 8.0.2 user: oreilly file_name: <code>bp_softmax.proj</code> <br>
+Project updated on wiki: emergent changes: doc
+<P>
+<P>
+<li>Tue Aug 30 03:36:50 2016 version: 8.0.1 user: oreilly file_name: <code>bp_softmax.proj</code> <br>
+Published on wiki: emergent page: demos/bp_softmax with description: Demonstrates use of softmax output layer -- much easier in 8.0 than before tags: Demo, Backpropagation, SoftMax author: Randall C. O'Reilly email: randy.oreilly@colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -1918,7 +1907,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     };
    };
    name="ControlPanel";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -1945,37 +1934,17 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      };
     };
     EditMbrItem @[1] {
-     label="ExpBpUnitSpec_0_act_range";
-     desc=" range of activation for units<br>  min:  minimum value<br>  max:  maximum value";
+     label="bp_train_network";
+     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
-     base=.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpUnitSpec_0"].children["ExpBpUnitSpec_0"]$$;
-     mbr=UnitSpec::act_range;
+     base=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrain"].args["network"]$$;
+     mbr=ProgVar::object_val;
      is_numeric=0;
-     is_single=0;
+     is_single=1;
      param_search {
-      record=0;
+      record=1;
       search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      saved_value=;
-     };
-     notes {
-      notes=;
-     };
-    };
-    EditMbrItem @[2] {
-     label="ExpBpUnitSpec_0_sig";
-     desc=" sigmoid activation parameters<br>  off:  offset for .5 point<br>  gain:  gain";
-     cust_desc=0;
-     base=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpUnitSpec_0"].children["ExpBpUnitSpec_0"]$;
-     mbr=BpUnitSpec::sig;
-     is_numeric=0;
-     is_single=0;
-     param_search {
-      record=0;
-      search=0;
-      range="0:1:0.1";
+      range=;
      };
      param_set_value {
       saved_value=;
@@ -2027,12 +1996,12 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     el_def=0;
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -3712,10 +3681,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -3723,7 +3692,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -5534,6 +5503,13 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     short_nm="Batch";
     tags="Bp, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -5609,7 +5585,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      el_def=0;
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
       pre_compile_code_string="Net Counter Init: batch";
       network_var=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$$;
@@ -5624,7 +5600,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      el_def=0;
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
       pre_compile_code_string="Net Counter Init: batch";
       network_var=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
@@ -5643,7 +5619,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        el_def=0;
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="BpTrain(network, input_data, true)";
 	pre_compile_code_string="BpTrain(network, input_data, true)";
 	prog_args {
@@ -5689,7 +5665,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        };
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
 	pre_compile_code_string="Net Counter Incr: batch";
 	network_var=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
@@ -5731,6 +5707,13 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     short_nm="Train";
     tags="Bp, Std";
     desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -5741,7 +5724,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      el_def=0;
      RndSeed @["rnd_seed"] {
       name="rnd_seed";
-      rnd_seed=585558895;
+      rnd_seed=1532954899;
      };
     };
     types {
@@ -5874,7 +5857,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["bp_softmax"].networks["SoftMax_Net"].train_time$$;
+      object_val=.projects["bp_softmax"].networks["Standard_Net"].train_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5903,11 +5886,11 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      };
      MethodCall @[1] {
       desc="check network to make sure it is ready to be run";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->CheckConfig(false)";
       pre_compile_code_string="network->CheckConfig(false)";
       result_var=NULL;
-      obj=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrain"].args["network"]$$;
+      obj=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrain"].args["network"]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -5952,7 +5935,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        el_def=0;
        MethodCall @[0] {
 	desc="restore previous random seed (all runs produce same results)";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="rnd_seed->OldSeed()";
 	pre_compile_code_string="rnd_seed->OldSeed()";
 	result_var=NULL;
@@ -5979,7 +5962,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        el_def=0;
        MethodCall @[0] {
 	desc="new random numbers each time";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="rnd_seed->NewSeed()";
 	pre_compile_code_string="rnd_seed->NewSeed()";
 	result_var=NULL;
@@ -6009,7 +5992,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        el_def=0;
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
@@ -6262,6 +6245,13 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     short_nm="Epoch";
     tags="Bp, Std";
     desc="iterates over all of the items in a data table and calls BpTrial process on them";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -6284,7 +6274,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      object_val=.projects["bp_softmax"].networks["Standard_Net"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6342,7 +6332,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["bp_softmax"].networks["SoftMax_Net"].epoch_time$$;
+      object_val=.projects["bp_softmax"].networks["Standard_Net"].epoch_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6352,7 +6342,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=1;
+      int_val=2;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -6370,7 +6360,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
       network_var=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpoch"].args["network"]$$;
@@ -6660,6 +6650,13 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     short_nm="Trial";
     tags="Bp, Std";
     desc="Backpropagation processing of a single input/output event or external information";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -6682,7 +6679,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      object_val=$.projects["bp_softmax"].networks["Standard_Net"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6874,6 +6871,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="AplyIn";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6885,7 +6889,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      LayerWriter @["LayerWriter_0"] {
       name="LayerWriter_0";
       data=$.projects["bp_softmax"].data.gp["InputData"]["Exemplars"]$;
-      network=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      network=$.projects["bp_softmax"].networks["Standard_Net"]$;
       layer_data {
        name="layer_data";
        el_typ=LayerWriterEl;
@@ -6939,7 +6943,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      object_val=$.projects["bp_softmax"].networks["Standard_Net"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6985,7 +6989,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
@@ -7023,7 +7027,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
@@ -7098,6 +7102,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="TrlMon";
     tags="Bp, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -7114,10 +7125,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
-	monitor=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7149,10 +7159,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7184,10 +7193,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial"] {
 	name="trial";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7219,10 +7227,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7254,10 +7261,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group_name"] {
 	name="group_name";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7289,10 +7295,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["sse"] {
 	name="sse";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7323,7 +7328,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      network=$.projects["bp_softmax"].networks["Standard_Net"]$;
       data=$.projects["bp_softmax"].data.gp["OutputData"]["TrialOutputData"]$;
       rmv_orphan_cols=1;
      };
@@ -7341,7 +7346,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      object_val=$.projects["bp_softmax"].networks["Standard_Net"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7368,7 +7373,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$;
+      object_val=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpTrialMonitor"].objs["trial_netmon"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7387,7 +7392,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="set the network and datatable for the NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
@@ -7425,7 +7430,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       pre_compile_code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
@@ -7452,7 +7457,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
@@ -7597,6 +7602,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="EpcMon";
     tags="Bp, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -7613,10 +7625,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
-	monitor=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7648,10 +7659,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7683,10 +7693,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7718,10 +7727,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+	object=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7753,7 +7761,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -7788,7 +7795,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
-	monitor=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -7822,7 +7828,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      network=$.projects["bp_softmax"].networks["Standard_Net"]$;
       data=.projects["bp_softmax"].data.gp["OutputData"]["EpochOutputData"]$$;
       rmv_orphan_cols=1;
      };
@@ -7840,7 +7846,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["bp_softmax"].networks["SoftMax_Net"]$;
+      object_val=$.projects["bp_softmax"].networks["Standard_Net"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7867,7 +7873,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=$.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$;
+      object_val=.projects["bp_softmax"].programs.gp["BpAll_Std"]["BpEpochMonitor"].objs["epoch_netmon"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7878,7 +7884,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects["bp_softmax"].networks["SoftMax_Net"].epoch_time$;
+      object_val=$.projects["bp_softmax"].networks["Standard_Net"].epoch_time$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7907,7 +7913,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="set data and network on NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
@@ -7945,7 +7951,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       pre_compile_code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
@@ -7972,7 +7978,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
@@ -8209,6 +8215,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SvWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -8323,7 +8336,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       pre_compile_code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       result_var=.projects["bp_softmax"].programs.gp["BpAll_Std"]["SaveWeights"].vars["batch_str"]$$;
@@ -8359,7 +8372,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       pre_compile_code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       result_var=.projects["bp_softmax"].programs.gp["BpAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
@@ -8405,7 +8418,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       pre_compile_code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       result_var=.projects["bp_softmax"].programs.gp["BpAll_Std"]["SaveWeights"].vars["fname"]$$;
@@ -8465,7 +8478,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[5] {
       desc="save the weights to that file name";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
       pre_compile_code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
@@ -8529,12 +8542,12 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.002366464;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.04433793;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -8544,7 +8557,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -8667,6 +8680,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.6999999: y=0.6999998: z=0.6999998: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.1074312: y=0.8633766: z=-0.9999952: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;bias_pdw;err;dEdA;dEdNet;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[4].units[0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -8676,7 +8690,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=4: y=5: z=2.333333: };
-	  max_size2d {x=9: y=13: z=1: };
+	  max_size2d {x=4: y=13: z=1: };
 	  eff_max_size {x=4: y=5: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
@@ -8756,7 +8770,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    max=1;
 	   };
 	  };
-	  lay_disp_modes{ Input=-1;Hidden=-1;Output_Exp=-1;Output_Sum=-1;Output=-1;	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
 	 };
 	};
        };
@@ -8864,7 +8878,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 NetView @["children_0"] {
 	  name="children_0";
-	  m_data=.projects["bp_softmax"].networks["Standard_Net"]$$;
+	  m_data=$.projects["bp_softmax"].networks["Standard_Net"]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -8886,6 +8900,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.6999999: z=0.6999999: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.05201041: y=0.6911638: z=-0.9999974: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ 	  };
+	  hot_vars{ 	  };
 	  unit_src_path=;
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -10485,17 +10500,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.008496176;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04359383;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7357689;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -10523,8 +10538,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
- tree_state{ .;.docs;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].layers;.networks[1];.networks[1].specs;.networks[1].layers; };
+ last_change_desc="Project updated on wiki: emergent changes: doc";
+ tree_state{ .;.docs;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].layers;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[1];.networks[1].specs;.networks[1].layers; };
  networks {
   name="networks";
   el_typ=BpNetwork;
@@ -10597,12 +10612,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    name="SoftMax_Net";
    desc=;
-   spec_tables {
-    name="spec_tables";
-    el_typ=DataTable;
-    el_def=0;
-    save_tables=0;
-   };
    specs {
     name="specs";
     el_typ=BaseSpec;
@@ -10616,64 +10625,40 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="children";
       el_typ=BpUnitSpec;
       el_def=0;
-      ExpBpUnitSpec @["ExpBpUnitSpec_0"] {
-       name="ExpBpUnitSpec_0";
+      BpUnitSpec @["SoftMaxUnits"] {
+       name="SoftMaxUnits";
        is_used=1;
        desc=;
-       unique{ act_range;sig;       };
+       unique{ act_fun;       };
        children {
-	name="children";
-	el_typ=ExpBpUnitSpec;
-	el_def=0;
-       };
-       act_range {min=0: max=1e+8: range=1e+8: scale=1e-8: };
-       bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"]$: };
-       sse_tol=0;
-       sig {off=0: gain=1: };
-       err_tol=0;
-       err_fun=Bp_CrossEnt_Error;
-      };
-      SoftMaxBpUnitSpec @["SoftMaxBpUnitSpec_0"] {
-       name="SoftMaxBpUnitSpec_0";
-       is_used=1;
-       desc=;
-       unique{ bias_spec;sig;       };
-       children {
-	name="children";
-	el_typ=SoftMaxBpUnitSpec;
+	name="BaseSpec_Group_160";
+	el_typ=BpUnitSpec;
 	el_def=0;
        };
        act_range {min=0: max=1: range=1: scale=1: };
-       bias_spec {type=BpConSpec: spec=.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["ZeroBias"]$$: };
+       bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"]$: };
        sse_tol=0;
-       sig {off=0: gain=1: };
+       act_fun=SOFTMAX;
+       error_fun=CROSS_ENTROPY;
        err_tol=0;
-       err_fun=Bp_CrossEnt_Error;
-      };
-      LinearBpUnitSpec @["LinearBpUnitSpec_0"] {
-       name="LinearBpUnitSpec_0";
-       is_used=1;
-       desc=;
-       unique{ act_range;bias_spec;err_fun;       };
-       children {
-	name="children";
-	el_typ=LinearBpUnitSpec;
-	el_def=0;
-       };
-       act_range {min=-1e+20: max=1e+20: range=2e+20: scale=5e-21: };
-       bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["ZeroBias"]$: };
-       sse_tol=0;
-       sig {off=0: gain=1: };
-       err_tol=0;
-       err_fun=Bp_Squared_Error;
+       save_err=0;
+       nlxx1 {ramp_start=-3: ramp_max=0.1: ramp_gain=-0.03333334: };
+       gauss {mean=0: std_dev=1: std_dev_r=1: };
+       noise_type=NO_NOISE;
+       noise {name="noise": type=UNIFORM: mean=0: var=1: par=1: };
       };
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"]$: };
      sse_tol=0;
-     sig {off=0: gain=1: };
+     act_fun=SIGMOID;
+     error_fun=CROSS_ENTROPY;
      err_tol=0;
-     err_fun=Bp_CrossEnt_Error;
+     save_err=0;
+     nlxx1 {ramp_start=-3: ramp_max=0.1: ramp_gain=-0.03333334: };
+     gauss {mean=0: std_dev=1: std_dev_r=1: };
+     noise_type=NO_NOISE;
+     noise {name="noise": type=UNIFORM: mean=0: var=1: par=1: };
     };
     BpConSpec @["BpConSpec_0"] {
      name="BpConSpec_0";
@@ -10686,7 +10671,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       BpConSpec @["Fixed_1"] {
        name="Fixed_1";
-       is_used=1;
+       is_used=0;
        desc=;
        unique{ rnd;lrate;momentum;decay;       };
        children {
@@ -10706,14 +10691,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        momentum=0;
-       momentum_type=BEFORE_LRATE;
-       momentum_c=1;
+       decay_type=NO_DECAY;
        decay=0;
-       decay_fun=NULL;
+       wt_updt=WU_DWT_ONLY;
       };
       BpConSpec @["ZeroBias"] {
        name="ZeroBias";
-       is_used=1;
+       is_used=0;
        desc=;
        unique{ rnd;lrate;momentum;decay;       };
        children {
@@ -10733,16 +10717,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        momentum=0;
-       momentum_type=BEFORE_LRATE;
-       momentum_c=1;
+       decay_type=NO_DECAY;
        decay=0;
-       decay_fun=NULL;
+       wt_updt=WU_DWT_ONLY;
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: sym_fm_top=0: };
-     lrate=0.01;
-     cur_lrate=0.01;
+     lrate=0.1;
+     cur_lrate=0.1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -10751,10 +10734,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      momentum=0;
-     momentum_type=BEFORE_LRATE;
-     momentum_c=1;
+     decay_type=NO_DECAY;
      decay=0;
-     decay_fun=NULL;
+     wt_updt=WU_DWT_ONLY;
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -10772,26 +10754,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      add_rnd_var=0;
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
-    OneToOnePrjnSpec @["OneToOnePrjnSpec_0"] {
-     name="OneToOnePrjnSpec_0";
-     is_used=1;
-     desc=;
-     unique{ self_con;     };
-     children {
-      name="children";
-      el_typ=OneToOnePrjnSpec;
-      el_def=0;
-     };
-     self_con=0;
-     init_wts=0;
-     set_scale=0;
-     add_rnd_var=0;
-     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
-     n_conns=-1;
-     recv_start=0;
-     send_start=0;
-     use_gp=0;
-    };
    };
    param_seqs {
     name="param_seqs";
@@ -10804,8 +10766,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_def=0;
     pos {x=0: y=0: z=0: };
     pos2d {x=0: y=0: };
-    max_disp_size {x=4: y=5: z=3: };
-    max_disp_size2d {x=9: y=13: };
+    max_disp_size {x=4: y=4: z=3: };
+    max_disp_size2d {x=4: y=13: };
     BpLayer @["Input"] {
      name="Input";
      desc=;
@@ -10901,7 +10863,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects["bp_softmax"].networks["SoftMax_Net"].layers["Output_Exp"].projections["Fm_Hidden"];
+      Projection_Group @. = [0] = Projection .projects["bp_softmax"].networks["SoftMax_Net"].layers["Output"].projections["Fm_Hidden"];
      };
      units {
       name="units";
@@ -10920,15 +10882,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
     };
-    BpLayer @["Output_Exp"] {
-     name="Output_Exp";
+    BpLayer @["Output"] {
+     name="Output";
      desc=;
      flags=0;
      layer_type=TARGET;
-     pos {x=0: y=0: z=2: };
-     pos_abs {x=0: y=0: z=2: };
-     pos2d {x=5: y=6: };
-     pos2d_abs {x=5: y=6: };
+     pos {x=0: y=1: z=2: };
+     pos_abs {x=0: y=1: z=2: };
+     pos2d {x=0: y=12: };
+     pos2d_abs {x=0: y=12: };
      disp_scale=1;
      un_geom {x=4: y=1: n_not_xy=0: n=4: };
      unit_groups=0;
@@ -10939,7 +10901,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=4: y=1: n_not_xy=0: n=4: };
      scaled_disp_geom {x=4: y=1: n_not_xy=0: n=1: };
      n_recv_prjns=1;
-     n_send_prjns=2;
+     n_send_prjns=0;
      projections {
       name="projections";
       el_typ=Projection;
@@ -10967,8 +10929,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects["bp_softmax"].networks["SoftMax_Net"].layers["Output_Sum"].projections["Fm_Output_Exp"];
-      Projection_Group @. = [1] = Projection .projects["bp_softmax"].networks["SoftMax_Net"].layers["Output"].projections["Fm_Output_Exp"];
      };
      units {
       name="units";
@@ -10977,158 +10937,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=ExpBpUnitSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpUnitSpec_0"].children["ExpBpUnitSpec_0"]$: };
+     unit_spec {type=BpUnitSpec: spec=.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpUnitSpec_0"].children["SoftMaxUnits"]$$: };
      dist {
       fm_input=2;
-      fm_output=0;
-     };
-     units_lesioned=0;
-     gp_unit_names_4d=0;
-     brain_area=;
-     voxel_fill_pct=1;
-    };
-    BpLayer @["Output_Sum"] {
-     name="Output_Sum";
-     desc=;
-     flags=0;
-     layer_type=TARGET;
-     pos {x=3: y=2: z=2: };
-     pos_abs {x=3: y=2: z=2: };
-     pos2d {x=0: y=9: };
-     pos2d_abs {x=0: y=9: };
-     disp_scale=1;
-     un_geom {x=1: y=1: n_not_xy=0: n=1: };
-     unit_groups=0;
-     virt_groups=1;
-     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
-     gp_spc {x=0: y=0: };
-     flat_geom {x=1: y=1: n_not_xy=0: n=1: };
-     disp_geom {x=1: y=1: n_not_xy=0: n=1: };
-     scaled_disp_geom {x=1: y=1: n_not_xy=0: n=1: };
-     n_recv_prjns=1;
-     n_send_prjns=1;
-     projections {
-      name="projections";
-      el_typ=Projection;
-      el_def=0;
-      Projection @["Fm_Output_Exp"] {
-       name="Fm_Output_Exp";
-       off=0;
-       disp=1;
-       from_type=CUSTOM;
-       from=.projects["bp_softmax"].networks["SoftMax_Net"].layers["Output_Exp"]$$;
-       spec {type=FullPrjnSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["FullPrjnSpec_0"]$: };
-       con_type=BpCon;
-       con_spec {type=BpConSpec: spec=.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["Fixed_1"]$$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
-       dir_fixed=0;
-       direction=FM_INPUT;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-      };
-     };
-     send_prjns {
-      name="send_prjns";
-      el_typ=Projection;
-      el_def=0;
-      Projection_Group @. = [0] = Projection .projects["bp_softmax"].networks["SoftMax_Net"].layers["Output"].projections["Fm_Output_Sum"];
-     };
-     units {
-      name="units";
-      el_typ=BpUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
-     };
-     unit_spec {type=LinearBpUnitSpec: spec=.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpUnitSpec_0"].children["LinearBpUnitSpec_0"]$$: };
-     dist {
-      fm_input=3;
-      fm_output=0;
-     };
-     units_lesioned=0;
-     gp_unit_names_4d=0;
-     brain_area=;
-     voxel_fill_pct=1;
-    };
-    BpLayer @["Output"] {
-     name="Output";
-     desc=;
-     flags=0;
-     layer_type=TARGET;
-     pos {x=0: y=4: z=2: };
-     pos_abs {x=0: y=4: z=2: };
-     pos2d {x=0: y=12: };
-     pos2d_abs {x=0: y=12: };
-     disp_scale=1;
-     un_geom {x=4: y=1: n_not_xy=0: n=4: };
-     unit_groups=0;
-     virt_groups=1;
-     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
-     gp_spc {x=0: y=0: };
-     flat_geom {x=4: y=1: n_not_xy=0: n=4: };
-     disp_geom {x=4: y=1: n_not_xy=0: n=4: };
-     scaled_disp_geom {x=4: y=1: n_not_xy=0: n=1: };
-     n_recv_prjns=2;
-     n_send_prjns=0;
-     projections {
-      name="projections";
-      el_typ=Projection;
-      el_def=0;
-      Projection @["Fm_Output_Exp"] {
-       name="Fm_Output_Exp";
-       off=0;
-       disp=1;
-       from_type=CUSTOM;
-       from=$.projects["bp_softmax"].networks["SoftMax_Net"].layers["Output_Exp"]$;
-       spec {type=OneToOnePrjnSpec: spec=.projects["bp_softmax"].networks["SoftMax_Net"].specs["OneToOnePrjnSpec_0"]$$: };
-       con_type=BpCon;
-       con_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["Fixed_1"]$: };
-       recv_idx=0;
-       send_idx=1;
-       recv_n=1;
-       send_n=1;
-       projected=1;
-       dir_fixed=0;
-       direction=FM_INPUT;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-      };
-      Projection @["Fm_Output_Sum"] {
-       name="Fm_Output_Sum";
-       off=0;
-       disp=1;
-       from_type=CUSTOM;
-       from=.projects["bp_softmax"].networks["SoftMax_Net"].layers["Output_Sum"]$$;
-       spec {type=FullPrjnSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["FullPrjnSpec_0"]$: };
-       con_type=BpCon;
-       con_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["Fixed_1"]$: };
-       recv_idx=1;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
-       dir_fixed=0;
-       direction=LATERAL;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-      };
-     };
-     send_prjns {
-      name="send_prjns";
-      el_typ=Projection;
-      el_def=0;
-     };
-     units {
-      name="units";
-      el_typ=BpUnit;
-      el_def=0;
-      pos {x=0: y=0: z=0: };
-      output_name=;
-     };
-     unit_spec {type=SoftMaxBpUnitSpec: spec=.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpUnitSpec_0"].children["SoftMaxBpUnitSpec_0"]$$: };
-     dist {
-      fm_input=3;
       fm_output=0;
      };
      units_lesioned=0;
@@ -11167,13 +10978,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=5.310868937649195e-315;
    };
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
+   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
-   n_units=35;
-   n_cons=192;
-   max_prjns=2;
-   max_disp_size {x=4: y=5: z=3: };
-   max_disp_size2d {x=9: y=13: };
+   n_units=30;
+   n_cons=180;
+   max_prjns=1;
+   max_disp_size {x=4: y=4: z=3: };
+   max_disp_size2d {x=4: y=13: };
    bp_to_inputs=0;
   };
   BpNetwork @["Standard_Net"] {
@@ -11244,12 +11064,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    name="Standard_Net";
    desc=;
-   spec_tables {
-    name="spec_tables";
-    el_typ=DataTable;
-    el_def=0;
-    save_tables=0;
-   };
    specs {
     name="specs";
     el_typ=BaseSpec;
@@ -11263,64 +11077,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="children";
       el_typ=BpUnitSpec;
       el_def=0;
-      ExpBpUnitSpec @["ExpBpUnitSpec_0"] {
-       name="ExpBpUnitSpec_0";
-       is_used=0;
-       desc=;
-       unique{ act_range;       };
-       children {
-	name="children";
-	el_typ=ExpBpUnitSpec;
-	el_def=0;
-       };
-       act_range {min=0.01: max=0.99: range=0.98: scale=1.020408: };
-       bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"]$: };
-       sse_tol=0;
-       sig {off=0: gain=1: };
-       err_tol=0;
-       err_fun=Bp_CrossEnt_Error;
-      };
-      SoftMaxBpUnitSpec @["SoftMaxBpUnitSpec_0"] {
-       name="SoftMaxBpUnitSpec_0";
-       is_used=0;
-       desc=;
-       unique{ bias_spec;       };
-       children {
-	name="children";
-	el_typ=SoftMaxBpUnitSpec;
-	el_def=0;
-       };
-       act_range {min=0: max=1: range=1: scale=1: };
-       bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["ZeroBias"]$: };
-       sse_tol=0;
-       sig {off=0: gain=1: };
-       err_tol=0;
-       err_fun=Bp_CrossEnt_Error;
-      };
-      LinearBpUnitSpec @["LinearBpUnitSpec_0"] {
-       name="LinearBpUnitSpec_0";
-       is_used=0;
-       desc=;
-       unique{ act_range;bias_spec;err_fun;       };
-       children {
-	name="children";
-	el_typ=LinearBpUnitSpec;
-	el_def=0;
-       };
-       act_range {min=-1e+20: max=1e+20: range=2e+20: scale=5e-21: };
-       bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"].children["ZeroBias"]$: };
-       sse_tol=0;
-       sig {off=0: gain=1: };
-       err_tol=0;
-       err_fun=Bp_Squared_Error;
-      };
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_spec {type=BpConSpec: spec=$.projects["bp_softmax"].networks["SoftMax_Net"].specs["BpConSpec_0"]$: };
      sse_tol=0;
-     sig {off=0: gain=1: };
+     act_fun=SIGMOID;
+     error_fun=CROSS_ENTROPY;
      err_tol=0;
-     err_fun=Bp_CrossEnt_Error;
+     save_err=0;
+     nlxx1 {ramp_start=-3: ramp_max=0.1: ramp_gain=-0.03333334: };
+     gauss {mean=0: std_dev=1: std_dev_r=1: };
+     noise_type=NO_NOISE;
+     noise {name="noise": type=UNIFORM: mean=0: var=1: par=1: };
     };
     BpConSpec @["BpConSpec_0"] {
      name="BpConSpec_0";
@@ -11353,10 +11121,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        momentum=0;
-       momentum_type=BEFORE_LRATE;
-       momentum_c=1;
+       decay_type=NO_DECAY;
        decay=0;
-       decay_fun=NULL;
+       wt_updt=WU_DWT_ONLY;
       };
       BpConSpec @["ZeroBias"] {
        name="ZeroBias";
@@ -11380,16 +11147,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        momentum=0;
-       momentum_type=BEFORE_LRATE;
-       momentum_c=1;
+       decay_type=NO_DECAY;
        decay=0;
-       decay_fun=NULL;
+       wt_updt=WU_DWT_ONLY;
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: sym_fm_top=0: };
-     lrate=0.01;
-     cur_lrate=0.01;
+     lrate=0.1;
+     cur_lrate=0.1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -11398,10 +11164,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      momentum=0;
-     momentum_type=BEFORE_LRATE;
-     momentum_c=1;
+     decay_type=NO_DECAY;
      decay=0;
-     decay_fun=NULL;
+     wt_updt=WU_DWT_ONLY;
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -11418,26 +11183,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      set_scale=0;
      add_rnd_var=0;
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
-    };
-    OneToOnePrjnSpec @["OneToOnePrjnSpec_0"] {
-     name="OneToOnePrjnSpec_0";
-     is_used=0;
-     desc=;
-     unique{ self_con;     };
-     children {
-      name="children";
-      el_typ=OneToOnePrjnSpec;
-      el_def=0;
-     };
-     self_con=0;
-     init_wts=0;
-     set_scale=0;
-     add_rnd_var=0;
-     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
-     n_conns=-1;
-     recv_start=0;
-     send_start=0;
-     use_gp=0;
     };
    };
    param_seqs {
@@ -11662,6 +11407,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=-1.547111125070234e+215;
+   };
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;

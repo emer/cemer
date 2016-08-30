@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9667
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 SoProject .projects["som"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1092,9 +1092,6 @@ SoProject .projects["som"] {
     UserDataItem @["batch"] { };
    };
 
-   DataTable_Group @.spec_tables = [0] {
-   };
-
    BaseSpec_Group @.specs = [5] {
     SomLayerSpec @["SomLayerSpec_0"] { 
      BaseSpec_Group @.children = [0] {
@@ -1240,19 +1237,19 @@ SoProject .projects["som"] {
   minor=0;
   step=0;
  };
- author=;
- email=;
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2014";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
+ pub_cite=;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -1293,7 +1290,7 @@ SoProject .projects["som"] {
     };
    };
    name="ControlPanel";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -1357,7 +1354,7 @@ SoProject .projects["som"] {
   };
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -4746,6 +4743,13 @@ SoProject .projects["som"] {
     short_nm="Batch";
     tags=;
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -4932,6 +4936,13 @@ SoProject .projects["som"] {
     short_nm="Train";
     tags=;
     desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -5397,6 +5408,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     short_nm="Epoch";
     tags=;
     desc="iterates over all of the items in a data table and calls SoTrial process on them";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -5487,7 +5505,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=26;
+      int_val=4;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -5795,6 +5813,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     short_nm="Trial";
     tags=;
     desc="Self-organizing processing of a single input/output event or external information";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -6009,6 +6034,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="AplyIn";
     tags=;
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6222,6 +6254,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="TrlMon";
     tags=;
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6238,7 +6277,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
-	monitor=.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6273,7 +6311,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6308,7 +6345,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial"] {
 	name="trial";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6343,7 +6379,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6378,7 +6413,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group_name"] {
 	name="group_name";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6413,7 +6447,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["sse"] {
 	name="sse";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6492,7 +6525,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=$.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+      object_val=.projects["som"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6721,6 +6754,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="EpcMon";
     tags=;
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6737,7 +6777,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
-	monitor=.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6772,7 +6811,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6807,7 +6845,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6842,7 +6879,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["som"].networks["SoNetwork_0"]$;
@@ -6877,7 +6913,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -6912,7 +6947,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
-	monitor=$.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -6991,7 +7025,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=$.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+      object_val=.projects["som"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7333,6 +7367,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SvWts";
     tags=;
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -7668,7 +7709,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -7791,6 +7832,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ act;	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_i;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[0].units[0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -7819,7 +7861,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
+	   lay_trans=0.4;
 	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
@@ -7891,9 +7933,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -7991,17 +8033,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.008496176;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7357689;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -8103,12 +8145,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    name="SoNetwork_0";
    desc=;
-   spec_tables {
-    name="spec_tables";
-    el_typ=DataTable;
-    el_def=0;
-    save_tables=0;
-   };
    specs {
     name="specs";
     el_typ=BaseSpec;
@@ -8577,8 +8613,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      brain_area=;
      voxel_fill_pct=1;
      spec {type=SomLayerSpec: spec=.projects["som"].networks["SoNetwork_0"].specs["SomLayerSpec_0"]$$: };
-     avg_act=-0.5790248;
-     sum_act=-1.15805;
+     avg_act=0.0794991;
+     sum_act=0.1589982;
     };
     SoLayer @["Map"] {
      name="Map";
@@ -8678,6 +8714,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=1.86533476073351e+23;
+   };
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;

@@ -1,12 +1,19 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 LeabraProject .projects["std_wizards"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDoc"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
   LeabraWizard @["LeabraWizard_0"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["NO_CLIP"] { };
+    UserDataItem @["user_pinned"] { };
    };
   };
  };
@@ -19,15 +26,20 @@ LeabraProject .projects["std_wizards"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [26] {
+   DataTableCols @.jobs_running.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -40,7 +52,6 @@ LeabraProject .projects["std_wizards"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -58,6 +69,11 @@ LeabraProject .projects["std_wizards"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -70,17 +86,30 @@ LeabraProject .projects["std_wizards"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.jobs_done.data = [26] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -93,7 +122,6 @@ LeabraProject .projects["std_wizards"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -111,6 +139,11 @@ LeabraProject .projects["std_wizards"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -123,17 +156,30 @@ LeabraProject .projects["std_wizards"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [26] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_deleted.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -146,7 +192,6 @@ LeabraProject .projects["std_wizards"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -164,6 +209,11 @@ LeabraProject .projects["std_wizards"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -176,9 +226,89 @@ LeabraProject .projects["std_wizards"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
-   DataTableCols @.file_list.data = [9] {
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.file_list.data = [11] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["file_name"] { };
     String_Data @["tag"] { };
     String_Data @["size"] { };
@@ -190,6 +320,12 @@ LeabraProject .projects["std_wizards"] {
     String_Data @["file_path"] { };
    };
 
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.file_list.control_panel_cells = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -199,9 +335,18 @@ LeabraProject .projects["std_wizards"] {
     String_Data @["start_time"] { };
    };
 
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
+   };
+
    ParamSearchAlgo_List @.search_algos = [0] {
    };
   };
+ };
+
+ ParamSet_Group @.param_sets = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -213,31 +358,12 @@ LeabraProject .projects["std_wizards"] {
   };
  };
 
- taBase_Group @.data_proc = [4] {
-  taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
- };
-
  Program_TopGroup @.programs = [1] {
   Program @["NetworkWizard"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [3] {
     taGuiDialog @["Dlg1"] { };
     taGuiDialog @["Dlg2"] { };
@@ -267,6 +393,12 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       String_Data @["RecvPrjns"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
      };
     };
    };
@@ -782,8 +914,8 @@ LeabraProject .projects["std_wizards"] {
    };
 
    FrameViewer_List @.frames = [3] {
-    BrowseViewerTaBase @["Tree"] { };
-    PanelViewer @["Panels"] { };
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
     T3PanelViewer @["T3Frames"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["view_panel_selected"] { };
@@ -831,29 +963,101 @@ LeabraProject .projects["std_wizards"] {
 };
 LeabraProject .projects["std_wizards"] {
  name="std_wizards";
- desc=;
- tags=;
+ desc="standard wizards constructed in Programs using taGui programmable gui -- good starting point for making your own custom wizards.";
+ tags="Demo, Program, taGui, Dialog";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=2;
  };
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
+ pub_cite=;
+ wiki {
+  wiki="emergent";
+  page_name="demos/std_wizards";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDoc"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_116";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDoc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/std_wizards";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/std_wizards";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Tue Aug 30 03:27:21 2016 version: 8.0.2 user: oreilly file_name: <code>std_wizards.proj</code> <br>
+Project updated on wiki: emergent changes: doc lnk
+
+
+<li>Tue Aug 30 03:21:30 2016 version: 8.0.1 user: oreilly file_name: <code>std_wizards.proj</code> <br>
+Published on wiki: emergent page: demos/std_wizards with description: standard wizards constructed in Programs using taGui programmable gui -- good starting point for making your own custom wizards. tags: Demo, Program, taGui, Dialog author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Tue Aug 30 03:27:21 2016 version: 8.0.2 user: oreilly file_name: <code>std_wizards.proj</code> <br>
+Project updated on wiki: emergent changes: doc lnk
+<P>
+<P>
+<li>Tue Aug 30 03:21:30 2016 version: 8.0.1 user: oreilly file_name: <code>std_wizards.proj</code> <br>
+Published on wiki: emergent page: demos/std_wizards with description: standard wizards constructed in Programs using taGui programmable gui -- good starting point for making your own custom wizards. tags: Demo, Program, taGui, Dialog author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -869,9 +1073,13 @@ LeabraProject .projects["std_wizards"] {
      value 1 0=1;
      val_type_fixed=0;
     };
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
    };
    name="LeabraWizard_0";
-   auto_open=1;
   };
  };
  ctrl_panels {
@@ -880,8 +1088,7 @@ LeabraProject .projects["std_wizards"] {
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   auto_edit=0;
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -901,185 +1108,255 @@ LeabraProject .projects["std_wizards"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1096,84 +1373,70 @@ LeabraProject .projects["std_wizards"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1190,14 +1453,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1214,14 +1477,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1237,15 +1500,39 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1262,14 +1549,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1285,43 +1572,71 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1331,8 +1646,21 @@ LeabraProject .projects["std_wizards"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    jobs_done {
     name="jobs_done";
@@ -1341,185 +1669,255 @@ LeabraProject .projects["std_wizards"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1536,84 +1934,70 @@ LeabraProject .projects["std_wizards"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1630,14 +2014,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1654,14 +2038,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1677,15 +2061,39 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1702,14 +2110,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1725,43 +2133,71 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1771,8 +2207,582 @@ LeabraProject .projects["std_wizards"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_deleted {
+    name="jobs_deleted";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -1781,185 +2791,255 @@ LeabraProject .projects["std_wizards"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1976,84 +3056,70 @@ LeabraProject .projects["std_wizards"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2070,14 +3136,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2094,14 +3160,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2117,15 +3183,39 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2142,14 +3232,14 @@ LeabraProject .projects["std_wizards"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2165,43 +3255,71 @@ LeabraProject .projects["std_wizards"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2211,8 +3329,21 @@ LeabraProject .projects["std_wizards"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    file_list {
     name="file_list";
@@ -2221,129 +3352,157 @@ LeabraProject .projects["std_wizards"] {
      name="data";
      el_typ=String_Data;
      el_def=0;
-     String_Data @["file_name"] {
-      name="file_name";
-      desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="cluster where this job was submitted / run";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_name"] {
+      name="file_name";
+      desc="name of file -- does not include any path information";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2353,8 +3512,21 @@ LeabraProject .projects["std_wizards"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    cluster_info {
     name="cluster_info";
@@ -2366,84 +3538,84 @@ LeabraProject .projects["std_wizards"] {
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2453,32 +3625,63 @@ LeabraProject .projects["std_wizards"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
    };
    search_algos {
     name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
+   exe_cmd="emergent";
    ram_gb=0;
    n_threads=1;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=1;
   };
+ };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
  };
  data {
   name="data";
@@ -2504,75 +3707,38 @@ LeabraProject .projects["std_wizards"] {
    save_tables=1;
   };
  };
- data_proc {
-  name="data_proc";
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @["data_base"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_2";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_base";
-  };
-  taDataAnal @["data_anal"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_3";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @["data_gen"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_4";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @["image_proc"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_5";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
-  };
- };
  programs {
   name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
   Program @["NetworkWizard"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["std_wizards"].programs["NetworkWizard"].doc$$;
+    };
+   };
    name="NetworkWizard";
    short_nm="NtwWzr";
    tags=;
    desc="network wizard based on gui dialog technology";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=0;
+   stop_step_cond {
+    expr=;
+   };
    objs {
     name="objs";
     el_typ=DataTable;
@@ -2601,7 +3767,7 @@ LeabraProject .projects["std_wizards"] {
       String_Data @["Group"] {
        name="Group";
        desc="name of layer group to put layer in -- layer groups are useful for organizing layers logically, moving them together, etc";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2618,7 +3784,7 @@ LeabraProject .projects["std_wizards"] {
       String_Data @["Name"] {
        name="Name";
        desc="name of layer -- will be updated to be a valid C language label so it can be referred to in Programs etc";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2635,7 +3801,7 @@ LeabraProject .projects["std_wizards"] {
       String_Data @["Type"] {
        name="Type";
        desc="functional type of layer in terms of input/output data -- options are: INPUT, TARGET, OUTPUT, HIDDEN -- TARGET means it learns from target output data, while OUTPUT means it generates output error signals but does not use output values for error-driven learning, HIDDEN doesn't get any input/output, and INPUT is simply an input layer";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2662,7 +3828,7 @@ LeabraProject .projects["std_wizards"] {
        };
        name="Size_X";
        desc="size of layer (number of units) in the horizontal (X) axis";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2689,7 +3855,7 @@ LeabraProject .projects["std_wizards"] {
        };
        name="Size_Y";
        desc="size of layer (number of units) in the vertical (Y) axis";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2716,7 +3882,7 @@ LeabraProject .projects["std_wizards"] {
        };
        name="UnitGps_X";
        desc="number of unit groups (subgroups of units within a layer) in the horizontal (X) axis -- set to 0 to not have any subgroups at all";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2743,7 +3909,7 @@ LeabraProject .projects["std_wizards"] {
        };
        name="UnitGps_Y";
        desc="number of unit groups (subgroups of units within a layer) in the vertical (Y) axis -- set to 0 to not have any subgroups at all";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2760,7 +3926,7 @@ LeabraProject .projects["std_wizards"] {
       String_Data @["RecvPrjns"] {
        name="RecvPrjns";
        desc="receiving projections -- connections from other layers that send into this one -- these must be valid names of other layers in the network, separated by a space if there are multiple";
-       col_flags=SAVE_ROWS|SAVE_DATA;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{        };
        calc_expr {
@@ -2782,6 +3948,19 @@ LeabraProject .projects["std_wizards"] {
      row_indexes {
       name="row_indexes";
      [3] 0;1;2;     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     control_panel_cells {
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
     };
    };
    types {
@@ -2835,7 +4014,6 @@ LeabraProject .projects["std_wizards"] {
      name="n_layers";
      var_type=T_Int;
      int_val=3;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -2845,7 +4023,6 @@ LeabraProject .projects["std_wizards"] {
      name="curow";
      var_type=T_String;
      string_val="nlayers";
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -2866,7 +4043,6 @@ LeabraProject .projects["std_wizards"] {
      name="rval";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -2879,8 +4055,9 @@ LeabraProject .projects["std_wizards"] {
     el_def=0;
     Function @["NewNetwork"] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="NewNetwork() returns: int";
+     pre_compile_code_string="NewNetwork() returns: int";
      name="NewNetwork";
      return_type=T_Int;
      object_type=taOBase;
@@ -2895,8 +4072,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (0 vars)";
+       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -2905,8 +4083,9 @@ LeabraProject .projects["std_wizards"] {
       };
       AssignExpr @[1] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="network = .networks.New(1)";
+       pre_compile_code_string="network = .networks.New(1)";
        result_var=.projects["std_wizards"].programs["NetworkWizard"].vars["network"]$$;
        expr {
 	expr=".networks.New(1)";
@@ -2914,8 +4093,9 @@ LeabraProject .projects["std_wizards"] {
       };
       MethodCall @[2] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Dlg1->Revert()";
+       pre_compile_code_string="Dlg1->Revert()";
        result_var=NULL;
        obj=.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$$;
        method=taGuiDialog::Revert;
@@ -2924,11 +4104,14 @@ LeabraProject .projects["std_wizards"] {
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void Revert()";
+       meth_desc=" Revert any outstanding changes in the dialog, and update to reflect current contents";
       };
       PrintVar @[3] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Print  \"New network created\" network";
+       pre_compile_code_string="Print  \"New network created\" network";
        message="New network created";
        print_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["network"]$;
        print_var2=NULL;
@@ -2936,15 +4119,15 @@ LeabraProject .projects["std_wizards"] {
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
      };
     };
     Function @["NLayersFmNetwork"] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="NLayersFmNetwork() returns: int";
+     pre_compile_code_string="NLayersFmNetwork() returns: int";
      name="NLayersFmNetwork";
      return_type=T_Int;
      object_type=taOBase;
@@ -2959,8 +4142,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (0 vars)";
+       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -2969,16 +4153,18 @@ LeabraProject .projects["std_wizards"] {
       };
       IfReturn @[1] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if(!network) return";
+       pre_compile_code_string="if(!network) return";
        cond {
 	expr="!network";
        };
       };
       AssignExpr @[2] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="n_layers = network.layers.leaves";
+       pre_compile_code_string="n_layers = network.layers.leaves";
        result_var=.projects["std_wizards"].programs["NetworkWizard"].vars["n_layers"]$$;
        expr {
 	expr="network.layers.leaves";
@@ -2986,8 +4172,9 @@ LeabraProject .projects["std_wizards"] {
       };
       MethodCall @[3] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Dlg1->Revert()";
+       pre_compile_code_string="Dlg1->Revert()";
        result_var=NULL;
        obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
        method=taGuiDialog::Revert;
@@ -2996,11 +4183,14 @@ LeabraProject .projects["std_wizards"] {
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void Revert()";
+       meth_desc=" Revert any outstanding changes in the dialog, and update to reflect current contents";
       };
       PrintVar @[4] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Print  \"Read n_layers from network\" n_layers network";
+       pre_compile_code_string="Print  \"Read n_layers from network\" n_layers network";
        message="Read n_layers from network";
        print_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["n_layers"]$;
        print_var2=$.projects["std_wizards"].programs["NetworkWizard"].vars["network"]$;
@@ -3008,15 +4198,15 @@ LeabraProject .projects["std_wizards"] {
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
      };
     };
     Function @["ConfigOneLayer"] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="ConfigOneLayer(int lay_no, String nm, String typ) returns: int";
+     pre_compile_code_string="ConfigOneLayer(int lay_no, String nm, String typ) returns: int";
      name="ConfigOneLayer";
      return_type=T_Int;
      object_type=taOBase;
@@ -3028,8 +4218,7 @@ LeabraProject .projects["std_wizards"] {
        name="lay_no";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3038,8 +4227,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        var_type=T_String;
        string_val=;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3048,8 +4236,7 @@ LeabraProject .projects["std_wizards"] {
        name="typ";
        var_type=T_String;
        string_val=;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3061,8 +4248,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (0 vars)";
+       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -3071,8 +4259,9 @@ LeabraProject .projects["std_wizards"] {
       };
       MethodCall @[1] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="NetworkConfig->SetVal(nm, \"Name\", lay_no)";
+       pre_compile_code_string="NetworkConfig->SetVal(nm, \"Name\", lay_no)";
        result_var=NULL;
        obj=.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$$;
        method=DataTable::SetVal;
@@ -3086,6 +4275,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="nm";
 	 };
@@ -3096,6 +4286,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="col";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\"Name\"";
 	 };
@@ -3106,16 +4297,20 @@ LeabraProject .projects["std_wizards"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="lay_no";
 	 };
 	};
        };
+       meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
       };
       MethodCall @[2] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="NetworkConfig->SetVal(typ, \"Type\", lay_no)";
+       pre_compile_code_string="NetworkConfig->SetVal(typ, \"Type\", lay_no)";
        result_var=NULL;
        obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$;
        method=DataTable::SetVal;
@@ -3129,6 +4324,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="typ";
 	 };
@@ -3139,6 +4335,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="col";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\"Type\"";
 	 };
@@ -3149,16 +4346,20 @@ LeabraProject .projects["std_wizards"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="lay_no";
 	 };
 	};
        };
+       meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
       };
       MethodCall @[3] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="NetworkConfig->SetVal(5, \"Size_X\", lay_no)";
+       pre_compile_code_string="NetworkConfig->SetVal(5, \"Size_X\", lay_no)";
        result_var=NULL;
        obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$;
        method=DataTable::SetVal;
@@ -3172,6 +4373,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="5";
 	 };
@@ -3182,6 +4384,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="col";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\"Size_X\"";
 	 };
@@ -3192,16 +4395,20 @@ LeabraProject .projects["std_wizards"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="lay_no";
 	 };
 	};
        };
+       meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
       };
       MethodCall @[4] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="NetworkConfig->SetVal(5, \"Size_Y\", lay_no)";
+       pre_compile_code_string="NetworkConfig->SetVal(5, \"Size_Y\", lay_no)";
        result_var=NULL;
        obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$;
        method=DataTable::SetVal;
@@ -3215,6 +4422,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="5";
 	 };
@@ -3225,6 +4433,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="col";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\"Size_Y\"";
 	 };
@@ -3235,18 +4444,22 @@ LeabraProject .projects["std_wizards"] {
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="lay_no";
 	 };
 	};
        };
+       meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
       };
      };
     };
     Function @["NewNetDefaultConfig"] {
      desc="configure default structure for a new network";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="NewNetDefaultConfig() returns: int";
+     pre_compile_code_string="NewNetDefaultConfig() returns: int";
      name="NewNetDefaultConfig";
      return_type=T_Int;
      object_type=taOBase;
@@ -3261,8 +4474,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (3 vars)";
+       pre_compile_code_string="LocalVars (3 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -3271,8 +4485,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="n_lays";
 	 var_type=T_Int;
 	 int_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -3283,7 +4496,7 @@ LeabraProject .projects["std_wizards"] {
 	 object_type=Layer;
 	 object_val=NULL;
 	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	 flags=LOCAL_VAR|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -3292,8 +4505,7 @@ LeabraProject .projects["std_wizards"] {
 	 name="i";
 	 var_type=T_Int;
 	 int_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -3302,8 +4514,9 @@ LeabraProject .projects["std_wizards"] {
       };
       AssignExpr @[1] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="n_lays = NetworkConfig.rows";
+       pre_compile_code_string="n_lays = NetworkConfig.rows";
        result_var=.projects["std_wizards"].programs["NetworkWizard"].functions["NewNetDefaultConfig"].fun_code[0].local_vars["n_lays"]$$;
        expr {
 	expr="NetworkConfig.rows";
@@ -3311,8 +4524,9 @@ LeabraProject .projects["std_wizards"] {
       };
       If @[2] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (n_lays > 0)";
+       pre_compile_code_string="if (n_lays > 0)";
        cond {
 	expr="n_lays > 0";
        };
@@ -3322,8 +4536,9 @@ LeabraProject .projects["std_wizards"] {
 	el_def=0;
 	FunctionCall @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="ConfigOneLayer(0, \"Input\", \"INPUT\")";
+	 pre_compile_code_string="ConfigOneLayer(0, \"Input\", \"INPUT\")";
 	 result_var=NULL;
 	 fun=.projects["std_wizards"].programs["NetworkWizard"].functions["ConfigOneLayer"]$$;
 	 fun_args {
@@ -3336,6 +4551,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="lay_no";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="0";
 	   };
@@ -3346,6 +4562,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="nm";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Input\"";
 	   };
@@ -3356,6 +4573,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="typ";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"INPUT\"";
 	   };
@@ -3366,8 +4584,9 @@ LeabraProject .projects["std_wizards"] {
       };
       If @[3] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (n_lays > 1)";
+       pre_compile_code_string="if (n_lays > 1)";
        cond {
 	expr="n_lays > 1";
        };
@@ -3377,8 +4596,9 @@ LeabraProject .projects["std_wizards"] {
 	el_def=0;
 	FunctionCall @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="ConfigOneLayer(1, \"Hidden\", \"HIDDEN\")";
+	 pre_compile_code_string="ConfigOneLayer(1, \"Hidden\", \"HIDDEN\")";
 	 result_var=NULL;
 	 fun=$.projects["std_wizards"].programs["NetworkWizard"].functions["ConfigOneLayer"]$;
 	 fun_args {
@@ -3391,6 +4611,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="lay_no";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="1";
 	   };
@@ -3401,6 +4622,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="nm";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Hidden\"";
 	   };
@@ -3411,6 +4633,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="typ";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"HIDDEN\"";
 	   };
@@ -3421,8 +4644,9 @@ LeabraProject .projects["std_wizards"] {
       };
       If @[4] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (n_lays == 3)";
+       pre_compile_code_string="if (n_lays == 3)";
        cond {
 	expr="n_lays == 3";
        };
@@ -3432,8 +4656,9 @@ LeabraProject .projects["std_wizards"] {
 	el_def=0;
 	FunctionCall @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="ConfigOneLayer(2, \"Output\", \"TARGET\")";
+	 pre_compile_code_string="ConfigOneLayer(2, \"Output\", \"TARGET\")";
 	 result_var=NULL;
 	 fun=$.projects["std_wizards"].programs["NetworkWizard"].functions["ConfigOneLayer"]$;
 	 fun_args {
@@ -3446,6 +4671,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="lay_no";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="2";
 	   };
@@ -3456,6 +4682,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="nm";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Output\"";
 	   };
@@ -3466,6 +4693,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="typ";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"TARGET\"";
 	   };
@@ -3476,8 +4704,9 @@ LeabraProject .projects["std_wizards"] {
       };
       If @[5] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (n_lays > 2)";
+       pre_compile_code_string="if (n_lays > 2)";
        cond {
 	expr="n_lays > 2";
        };
@@ -3487,8 +4716,9 @@ LeabraProject .projects["std_wizards"] {
 	el_def=0;
 	FunctionCall @[0] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="ConfigOneLayer(n_lays-1, \"Output\", \"TARGET\")";
+	 pre_compile_code_string="ConfigOneLayer(n_lays-1, \"Output\", \"TARGET\")";
 	 result_var=NULL;
 	 fun=$.projects["std_wizards"].programs["NetworkWizard"].functions["ConfigOneLayer"]$;
 	 fun_args {
@@ -3501,6 +4731,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="lay_no";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="n_lays-1";
 	   };
@@ -3511,6 +4742,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="nm";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Output\"";
 	   };
@@ -3521,6 +4753,7 @@ LeabraProject .projects["std_wizards"] {
 	   name="typ";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"TARGET\"";
 	   };
@@ -3529,16 +4762,18 @@ LeabraProject .projects["std_wizards"] {
 	};
 	ForLoop @[1] {
 	 desc=;
-	 flags=0;
-	 orig_prog_code=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (i=2; i<n_lays-1; i++)";
+	 pre_compile_code_string="for (i=2; i<n_lays-1; i++)";
 	 loop_code {
 	  name="ProgEl_List_63";
 	  el_typ=ProgCode;
 	  el_def=0;
 	  FunctionCall @[0] {
 	   desc=;
-	   flags=0;
-	   orig_prog_code=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="ConfigOneLayer(i, \"Hidden_\" + String(i-1), \"HIDDEN\")";
+	   pre_compile_code_string="ConfigOneLayer(i, \"Hidden_\" + String(i-1), \"HIDDEN\")";
 	   result_var=NULL;
 	   fun=$.projects["std_wizards"].programs["NetworkWizard"].functions["ConfigOneLayer"]$;
 	   fun_args {
@@ -3551,6 +4786,7 @@ LeabraProject .projects["std_wizards"] {
 	     name="lay_no";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="i";
 	     };
@@ -3561,6 +4797,7 @@ LeabraProject .projects["std_wizards"] {
 	     name="nm";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="\"Hidden_\" + String(i-1)";
 	     };
@@ -3571,6 +4808,7 @@ LeabraProject .projects["std_wizards"] {
 	     name="typ";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="\"HIDDEN\"";
 	     };
@@ -3594,8 +4832,9 @@ LeabraProject .projects["std_wizards"] {
     };
     Function @["AddNewLayerRow"] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="AddNewLayerRow() returns: int";
+     pre_compile_code_string="AddNewLayerRow() returns: int";
      name="AddNewLayerRow";
      return_type=T_Int;
      object_type=taOBase;
@@ -3610,8 +4849,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (0 vars)";
+       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -3620,8 +4860,9 @@ LeabraProject .projects["std_wizards"] {
       };
       MethodCall @[1] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="NetworkConfig->AddBlankRow()";
+       pre_compile_code_string="NetworkConfig->AddBlankRow()";
        result_var=NULL;
        obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$;
        method=DataTable::AddBlankRow;
@@ -3630,11 +4871,14 @@ LeabraProject .projects["std_wizards"] {
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="int AddBlankRow()";
+       meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
       };
       MethodCall @[2] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Dlg2->Apply()";
+       pre_compile_code_string="Dlg2->Apply()";
        result_var=NULL;
        obj=.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$$;
        method=taGuiDialog::Apply;
@@ -3643,13 +4887,16 @@ LeabraProject .projects["std_wizards"] {
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void Apply()";
+       meth_desc=" Apply any outstanding changes in the dialog";
       };
      };
     };
     Function @["RefreshLayerList"] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="RefreshLayerList() returns: int";
+     pre_compile_code_string="RefreshLayerList() returns: int";
      name="RefreshLayerList";
      return_type=T_Int;
      object_type=taOBase;
@@ -3664,8 +4911,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (0 vars)";
+       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -3674,8 +4922,9 @@ LeabraProject .projects["std_wizards"] {
       };
       MethodCall @[1] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Dlg2->Apply()";
+       pre_compile_code_string="Dlg2->Apply()";
        result_var=NULL;
        obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
        method=taGuiDialog::Apply;
@@ -3684,6 +4933,8 @@ LeabraProject .projects["std_wizards"] {
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void Apply()";
+       meth_desc=" Apply any outstanding changes in the dialog";
       };
      };
     };
@@ -3699,8 +4950,9 @@ LeabraProject .projects["std_wizards"] {
     el_def=0;
     LocalVars @[0] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
      local_vars {
       name="ProgVar_List_0";
       el_typ=ProgVar;
@@ -3709,8 +4961,7 @@ LeabraProject .projects["std_wizards"] {
        name="new_net";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3719,8 +4970,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[1] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->Reset()";
+     pre_compile_code_string="Dlg1->Reset()";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::Reset;
@@ -3729,11 +4981,14 @@ LeabraProject .projects["std_wizards"] {
       el_typ=ProgArg;
       el_def=0;
      };
+     meth_sig="void Reset()";
+     meth_desc=" reset contents to start over";
     };
     MemberAssign @[2] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1.prompt = \"Network Wizard Step 1 of 2: Select Network and Number of Layers\"";
+     pre_compile_code_string="Dlg1.prompt = \"Network Wizard Step 1 of 2: Select Network and Number of Layers\"";
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      path="prompt";
      expr {
@@ -3743,8 +4998,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MemberAssign @[3] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1.win_title = \"Network Wizard Step 1 of 2\"";
+     pre_compile_code_string="Dlg1.win_title = \"Network Wizard Step 1 of 2\"";
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      path="win_title";
      expr {
@@ -3754,8 +5010,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[4] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddWidget(\"main\", \"\", \"\", )";
+     pre_compile_code_string="Dlg1->AddWidget(\"main\", \"\", \"\", )";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddWidget;
@@ -3769,6 +5026,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -3779,6 +5037,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -3789,6 +5048,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -3799,16 +5059,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="bool AddWidget(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a plain widget -- attributes are: tooltip=, min/max_width/height= ,font=, font_size=, bold=, italic=";
     };
     MethodCall @[5] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddVBoxLayout(\"mainv\", \"\", \"main\", \"\")";
+     pre_compile_code_string="Dlg1->AddVBoxLayout(\"mainv\", \"\", \"main\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddVBoxLayout;
@@ -3822,6 +5086,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -3832,6 +5097,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -3842,6 +5108,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -3852,16 +5119,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddVBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a vertical box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     AssignExpr @[6] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="curow = \"instr\"";
+     pre_compile_code_string="curow = \"instr\"";
      result_var=.projects["std_wizards"].programs["NetworkWizard"].vars["curow"]$$;
      expr {
       expr="\"instr\"";
@@ -3869,8 +5140,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[7] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
+     pre_compile_code_string="Dlg1->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddHBoxLayout;
@@ -3884,6 +5156,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -3894,6 +5167,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -3904,6 +5178,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -3914,16 +5189,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddHBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a horizontal box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     MethodCall @[8] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddLabel(\"Instructions\", \"main\", curow, \"label=Please select a network (or make a new one) and enter the number of layers.\\nYou will then be able to configure each layer in the next dialog (press OK to continue).;\")";
+     pre_compile_code_string="Dlg1->AddLabel(\"Instructions\", \"main\", curow, \"label=Please select a network (or make a new one) and enter the number of layers.\\nYou will then be able to configure each layer in the next dialog (press OK to continue).;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddLabel;
@@ -3937,6 +5216,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"Instructions\"";
        };
@@ -3947,6 +5227,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -3957,6 +5238,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -3967,16 +5249,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=Please select a network (or make a new one) and enter the number of layers.\\nYou will then be able to configure each layer in the next dialog (press OK to continue).;\"";
        };
       };
      };
+     meth_sig="bool AddLabel(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a label widget -- attributes are: label=, wrap=on";
     };
     MethodCall @[9] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddSpace(20, \"mainv\")";
+     pre_compile_code_string="Dlg1->AddSpace(20, \"mainv\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddSpace;
@@ -3990,6 +5276,7 @@ LeabraProject .projects["std_wizards"] {
        name="sp_size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="20";
        };
@@ -4000,16 +5287,20 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
       };
      };
+     meth_sig="bool AddSpace(int sp_size, taString& layout)";
+     meth_desc=" add space to given layout";
     };
     AssignExpr @[10] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="curow = \"netsel\"";
+     pre_compile_code_string="curow = \"netsel\"";
      result_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["curow"]$;
      expr {
       expr="\"netsel\"";
@@ -4017,8 +5308,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[11] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
+     pre_compile_code_string="Dlg1->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddHBoxLayout;
@@ -4032,6 +5324,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4042,6 +5335,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -4052,6 +5346,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -4062,16 +5357,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddHBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a horizontal box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     MethodCall @[12] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddProgVar(this.vars.network, \"Network\", \"main\", curow, \"tooltip=select the network to configure;\")";
+     pre_compile_code_string="Dlg1->AddProgVar(this.vars.network, \"Network\", \"main\", curow, \"tooltip=select the network to configure;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddProgVar;
@@ -4085,6 +5384,7 @@ LeabraProject .projects["std_wizards"] {
        name="pvar";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="this.vars.network";
        };
@@ -4095,6 +5395,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"Network\"";
        };
@@ -4105,6 +5406,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=1;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4115,6 +5417,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4125,16 +5428,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"tooltip=select the network to configure;\"";
        };
       };
      };
+     meth_sig="bool AddProgVar(ProgVar& pvar, taString& nm, taString& parent, taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a program variable edit field -- IMPORTANT: must use this.vars.progvarname in program code, not the direct name of the program variable (which is not actually the full progvar) -- attributes are:";
     };
     MethodCall @[13] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddSpace(20, curow)";
+     pre_compile_code_string="Dlg1->AddSpace(20, curow)";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddSpace;
@@ -4148,6 +5455,7 @@ LeabraProject .projects["std_wizards"] {
        name="sp_size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="20";
        };
@@ -4158,16 +5466,20 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
       };
      };
+     meth_sig="bool AddSpace(int sp_size, taString& layout)";
+     meth_desc=" add space to given layout";
     };
     MethodCall @[14] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddPushButton(\"NewNetwork\", \"main\", curow, \"this.NewNetwork()\", \"label=New Network; tooltip=press this button to create a new network to configure;\")";
+     pre_compile_code_string="Dlg1->AddPushButton(\"NewNetwork\", \"main\", curow, \"this.NewNetwork()\", \"label=New Network; tooltip=press this button to create a new network to configure;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddPushButton;
@@ -4181,6 +5493,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"NewNetwork\"";
        };
@@ -4191,6 +5504,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4201,6 +5515,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4211,6 +5526,7 @@ LeabraProject .projects["std_wizards"] {
        name="url";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"this.NewNetwork()\"";
        };
@@ -4221,16 +5537,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=New Network; tooltip=press this button to create a new network to configure;\"";
        };
       };
      };
+     meth_sig="bool AddPushButton(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& url = taString(), taString& attributes = taString())";
+     meth_desc=" add a pushbutton widget -- attributes are: label=";
     };
     MethodCall @[15] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddSpace(20, \"mainv\")";
+     pre_compile_code_string="Dlg1->AddSpace(20, \"mainv\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddSpace;
@@ -4244,6 +5564,7 @@ LeabraProject .projects["std_wizards"] {
        name="sp_size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="20";
        };
@@ -4254,16 +5575,20 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
       };
      };
+     meth_sig="bool AddSpace(int sp_size, taString& layout)";
+     meth_desc=" add space to given layout";
     };
     AssignExpr @[16] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="curow = \"nlayers\"";
+     pre_compile_code_string="curow = \"nlayers\"";
      result_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["curow"]$;
      expr {
       expr="\"nlayers\"";
@@ -4271,8 +5596,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[17] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
+     pre_compile_code_string="Dlg1->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddHBoxLayout;
@@ -4286,6 +5612,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4296,6 +5623,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -4306,6 +5634,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -4316,16 +5645,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddHBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a horizontal box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     MethodCall @[18] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddLabel(\"nlaylbl\", \"main\", curow, \"label=N Layers: ;\")";
+     pre_compile_code_string="Dlg1->AddLabel(\"nlaylbl\", \"main\", curow, \"label=N Layers: ;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddLabel;
@@ -4339,6 +5672,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"nlaylbl\"";
        };
@@ -4349,6 +5683,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4359,6 +5694,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4369,16 +5705,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=N Layers: ;\"";
        };
       };
      };
+     meth_sig="bool AddLabel(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a label widget -- attributes are: label=, wrap=on";
     };
     MethodCall @[19] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddProgVar(this.vars.n_layers, \"n_layers\", \"main\", curow, \"tooltip=enter the number of layers to create here\\n you will be able to change this later too;\")";
+     pre_compile_code_string="Dlg1->AddProgVar(this.vars.n_layers, \"n_layers\", \"main\", curow, \"tooltip=enter the number of layers to create here\\n you will be able to change this later too;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddProgVar;
@@ -4392,6 +5732,7 @@ LeabraProject .projects["std_wizards"] {
        name="pvar";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="this.vars.n_layers";
        };
@@ -4402,6 +5743,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"n_layers\"";
        };
@@ -4412,6 +5754,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=1;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4422,6 +5765,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4432,16 +5776,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"tooltip=enter the number of layers to create here\\n you will be able to change this later too;\"";
        };
       };
      };
+     meth_sig="bool AddProgVar(ProgVar& pvar, taString& nm, taString& parent, taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a program variable edit field -- IMPORTANT: must use this.vars.progvarname in program code, not the direct name of the program variable (which is not actually the full progvar) -- attributes are:";
     };
     MethodCall @[20] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddStretch(curow)";
+     pre_compile_code_string="Dlg1->AddStretch(curow)";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddStretch;
@@ -4455,16 +5803,20 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
       };
      };
+     meth_sig="bool AddStretch(taString& layout)";
+     meth_desc=" add flexible stretch to given layout";
     };
     MethodCall @[21] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg1->AddPushButton(\"NLayersFmNetwork\", \"main\", curow, \"this.NLayersFmNetwork()\", \"label=Get N Layers From Network; tooltip=get the number of layers from the existing network;\")";
+     pre_compile_code_string="Dlg1->AddPushButton(\"NLayersFmNetwork\", \"main\", curow, \"this.NLayersFmNetwork()\", \"label=Get N Layers From Network; tooltip=get the number of layers from the existing network;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::AddPushButton;
@@ -4478,6 +5830,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"NLayersFmNetwork\"";
        };
@@ -4488,6 +5841,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4498,6 +5852,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4508,6 +5863,7 @@ LeabraProject .projects["std_wizards"] {
        name="url";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"this.NLayersFmNetwork()\"";
        };
@@ -4518,16 +5874,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=Get N Layers From Network; tooltip=get the number of layers from the existing network;\"";
        };
       };
      };
+     meth_sig="bool AddPushButton(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& url = taString(), taString& attributes = taString())";
+     meth_desc=" add a pushbutton widget -- attributes are: label=";
     };
     MethodCall @[22] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="rval = Dlg1->PostDialog(true)";
+     pre_compile_code_string="rval = Dlg1->PostDialog(true)";
      result_var=.projects["std_wizards"].programs["NetworkWizard"].vars["rval"]$$;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg1"]$;
      method=taGuiDialog::PostDialog;
@@ -4541,29 +5901,35 @@ LeabraProject .projects["std_wizards"] {
        name="modal";
        required=0;
        def_val="false";
+       prev_expr=;
        expr {
 	expr="true";
        };
       };
      };
+     meth_sig="int PostDialog(bool modal = false)";
+     meth_desc=" post the dialog -- if modal, then this call does not return until the dialog is cancled -- otherwise it returns immediately and the dialog persists";
     };
     IfReturn @[23] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if(rval == 0 || network == NULL) return";
+     pre_compile_code_string="if(rval == 0 || network == NULL) return";
      cond {
       expr="rval == 0 || network == NULL";
      };
     };
     Comment @[24] {
      desc="== Dialog 2 ==";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// == Dialog 2 ==";
+     pre_compile_code_string="// == Dialog 2 ==";
     };
     If @[25] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (network.layers.leaves == 0)";
+     pre_compile_code_string="if (network.layers.leaves == 0)";
      cond {
       expr="network.layers.leaves == 0";
      };
@@ -4573,8 +5939,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       AssignExpr @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="new_net = true";
+       pre_compile_code_string="new_net = true";
        result_var=.projects["std_wizards"].programs["NetworkWizard"].prog_code[0].local_vars["new_net"]$$;
        expr {
 	expr="true";
@@ -4584,8 +5951,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[26] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="network->NetStructToTable(NetworkConfig, )";
+     pre_compile_code_string="network->NetStructToTable(NetworkConfig, )";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["network"]$;
      method=Network::NetStructToTable;
@@ -4599,6 +5967,7 @@ LeabraProject .projects["std_wizards"] {
        name="dt";
        required=0;
        def_val="__null";
+       prev_expr=;
        expr {
 	expr="NetworkConfig";
        };
@@ -4609,16 +5978,20 @@ LeabraProject .projects["std_wizards"] {
        name="list_specs";
        required=0;
        def_val="false";
+       prev_expr=;
        expr {
 	expr=;
        };
       };
      };
+     meth_sig="DataTable_ptr NetStructToTable(DataTable* dt = __null, bool list_specs = false)";
+     meth_desc=" NULL_TEXT_0_NewTable record the network structure to given data table, including names of layers and layer groups, sizes, and where each layer receives projections from and sends projections to -- if list_specs also include columns for layer and unit specs";
     };
     MethodCall @[27] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="NetworkConfig->RemoveCol(\"SendPrjns\")";
+     pre_compile_code_string="NetworkConfig->RemoveCol(\"SendPrjns\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$;
      method=DataTable::RemoveCol;
@@ -4632,16 +6005,20 @@ LeabraProject .projects["std_wizards"] {
        name="col";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"SendPrjns\"";
        };
       };
      };
+     meth_sig="void RemoveCol(Variant& col)";
+     meth_desc=" removes indicated column";
     };
     MethodCall @[28] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="NetworkConfig->EnforceRows(n_layers)";
+     pre_compile_code_string="NetworkConfig->EnforceRows(n_layers)";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["NetworkConfig"]$;
      method=DataTable::EnforceRows;
@@ -4655,16 +6032,20 @@ LeabraProject .projects["std_wizards"] {
        name="n_rows";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="n_layers";
        };
       };
      };
+     meth_sig="void EnforceRows(int n_rows)";
+     meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
     };
     If @[29] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (new_net)";
+     pre_compile_code_string="if (new_net)";
      cond {
       expr="new_net";
      };
@@ -4674,8 +6055,9 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       FunctionCall @[0] {
        desc=;
-       flags=0;
-       orig_prog_code=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="NewNetDefaultConfig()";
+       pre_compile_code_string="NewNetDefaultConfig()";
        result_var=NULL;
        fun=.projects["std_wizards"].programs["NetworkWizard"].functions["NewNetDefaultConfig"]$$;
        fun_args {
@@ -4688,8 +6070,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[30] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->Reset()";
+     pre_compile_code_string="Dlg2->Reset()";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::Reset;
@@ -4698,11 +6081,14 @@ LeabraProject .projects["std_wizards"] {
       el_typ=ProgArg;
       el_def=0;
      };
+     meth_sig="void Reset()";
+     meth_desc=" reset contents to start over";
     };
     MemberAssign @[31] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2.prompt = \"Network Wizard Step 2 of 2: Enter Layer Names, Sizes, and Projections (Prjns)\"";
+     pre_compile_code_string="Dlg2.prompt = \"Network Wizard Step 2 of 2: Enter Layer Names, Sizes, and Projections (Prjns)\"";
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      path="prompt";
      expr {
@@ -4712,8 +6098,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MemberAssign @[32] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2.win_title = \"Network Wizard Step 2 of 2\"";
+     pre_compile_code_string="Dlg2.win_title = \"Network Wizard Step 2 of 2\"";
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      path="win_title";
      expr {
@@ -4723,8 +6110,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[33] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->SetSize(900, 600)";
+     pre_compile_code_string="Dlg2->SetSize(900, 600)";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::SetSize;
@@ -4738,6 +6126,7 @@ LeabraProject .projects["std_wizards"] {
        name="wd";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="900";
        };
@@ -4748,16 +6137,20 @@ LeabraProject .projects["std_wizards"] {
        name="ht";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="600";
        };
       };
      };
+     meth_sig="void SetSize(int wd, int ht)";
+     meth_desc=" Set the minimum size of the dialog (also just do with width, height members)";
     };
     MethodCall @[34] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddWidget(\"main\", \"\", \"\", \"\")";
+     pre_compile_code_string="Dlg2->AddWidget(\"main\", \"\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddWidget;
@@ -4771,6 +6164,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4781,6 +6175,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -4791,6 +6186,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -4801,16 +6197,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddWidget(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a plain widget -- attributes are: tooltip=, min/max_width/height= ,font=, font_size=, bold=, italic=";
     };
     MethodCall @[35] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddVBoxLayout(\"mainv\", \"\", \"main\", \"\")";
+     pre_compile_code_string="Dlg2->AddVBoxLayout(\"mainv\", \"\", \"main\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddVBoxLayout;
@@ -4824,6 +6224,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -4834,6 +6235,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -4844,6 +6246,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4854,16 +6257,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddVBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a vertical box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     AssignExpr @[36] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="curow = \"instr\"";
+     pre_compile_code_string="curow = \"instr\"";
      result_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["curow"]$;
      expr {
       expr="\"instr\"";
@@ -4871,8 +6278,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[37] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
+     pre_compile_code_string="Dlg2->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddHBoxLayout;
@@ -4886,6 +6294,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4896,6 +6305,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -4906,6 +6316,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -4916,16 +6327,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddHBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a horizontal box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     MethodCall @[38] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddLabel(\"LabelTest\", \"main\", curow, \"label=Enter the names of the network layers, optionally a Group for the layers to live in, and the number of units in X, Y dimensions per layer\\nand the receiving projections (layer names, separated by spaces) to connect from\\nHold the mouse over the colum names for more detailed information (e.g., for Type options);\")";
+     pre_compile_code_string="Dlg2->AddLabel(\"LabelTest\", \"main\", curow, \"label=Enter the names of the network layers, optionally a Group for the layers to live in, and the number of units in X, Y dimensions per layer\\nand the receiving projections (layer names, separated by spaces) to connect from\\nHold the mouse over the colum names for more detailed information (e.g., for Type options);\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddLabel;
@@ -4939,6 +6354,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"LabelTest\"";
        };
@@ -4949,6 +6365,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -4959,6 +6376,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -4969,16 +6387,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=Enter the names of the network layers, optionally a Group for the layers to live in, and the number of units in X, Y dimensions per layer\\nand the receiving projections (layer names, separated by spaces) to connect from\\nHold the mouse over the colum names for more detailed information (e.g., for Type options);\"";
        };
       };
      };
+     meth_sig="bool AddLabel(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a label widget -- attributes are: label=, wrap=on";
     };
     MethodCall @[39] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddSpace(20, \"mainv\")";
+     pre_compile_code_string="Dlg2->AddSpace(20, \"mainv\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddSpace;
@@ -4992,6 +6414,7 @@ LeabraProject .projects["std_wizards"] {
        name="sp_size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="20";
        };
@@ -5002,16 +6425,20 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
       };
      };
+     meth_sig="bool AddSpace(int sp_size, taString& layout)";
+     meth_desc=" add space to given layout";
     };
     AssignExpr @[40] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="curow = \"dtable\"";
+     pre_compile_code_string="curow = \"dtable\"";
      result_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["curow"]$;
      expr {
       expr="\"dtable\"";
@@ -5019,8 +6446,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[41] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
+     pre_compile_code_string="Dlg2->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddHBoxLayout;
@@ -5034,6 +6462,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -5044,6 +6473,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -5054,6 +6484,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -5064,16 +6495,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddHBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a horizontal box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     MethodCall @[42] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddDataTable(NetworkConfig, \"NetworkStructure\", \"main\", curow, \"max_width=850; max_height=500;\")";
+     pre_compile_code_string="Dlg2->AddDataTable(NetworkConfig, \"NetworkStructure\", \"main\", curow, \"max_width=850; max_height=500;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddDataTable;
@@ -5087,6 +6522,7 @@ LeabraProject .projects["std_wizards"] {
        name="dt";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="NetworkConfig";
        };
@@ -5097,6 +6533,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"NetworkStructure\"";
        };
@@ -5107,6 +6544,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=1;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -5117,6 +6555,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -5127,16 +6566,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"max_width=850; max_height=500;\"";
        };
       };
      };
+     meth_sig="bool AddDataTable(DataTable* dt, taString& nm, taString& parent, taString& layout = taString(), taString& attributes = taString())";
+     meth_desc=" add a DataTable editor for given data table -- attributes are:";
     };
     AssignExpr @[43] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="curow = \"buttons\"";
+     pre_compile_code_string="curow = \"buttons\"";
      result_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["curow"]$;
      expr {
       expr="\"buttons\"";
@@ -5144,8 +6587,9 @@ LeabraProject .projects["std_wizards"] {
     };
     MethodCall @[44] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
+     pre_compile_code_string="Dlg2->AddHBoxLayout(curow, \"mainv\", \"\", \"\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddHBoxLayout;
@@ -5159,6 +6603,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -5169,6 +6614,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"mainv\"";
        };
@@ -5179,6 +6625,7 @@ LeabraProject .projects["std_wizards"] {
        name="widget";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
@@ -5189,16 +6636,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"\"";
        };
       };
      };
+     meth_sig="bool AddHBoxLayout(taString& nm, taString& parent = taString(), taString& widget = taString(), taString& attributes = taString())";
+     meth_desc=" add a horizontal box layout to given widget (optional), and parent *layout* -- attributes are: spacing=x, margin=x";
     };
     MethodCall @[45] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddToolButton(\"AddLayer\", \"main\", curow, \"this.AddNewLayerRow()\", \"label=Add New Layer; tooltip=Add a new layer row to layer list (above)\\n use context menu on selected rows to delete (press Refresh Layer List afterwards);\")";
+     pre_compile_code_string="Dlg2->AddToolButton(\"AddLayer\", \"main\", curow, \"this.AddNewLayerRow()\", \"label=Add New Layer; tooltip=Add a new layer row to layer list (above)\\n use context menu on selected rows to delete (press Refresh Layer List afterwards);\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddToolButton;
@@ -5212,6 +6663,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"AddLayer\"";
        };
@@ -5222,6 +6674,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -5232,6 +6685,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -5242,6 +6696,7 @@ LeabraProject .projects["std_wizards"] {
        name="url";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"this.AddNewLayerRow()\"";
        };
@@ -5252,16 +6707,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=Add New Layer; tooltip=Add a new layer row to layer list (above)\\n use context menu on selected rows to delete (press Refresh Layer List afterwards);\"";
        };
       };
      };
+     meth_sig="bool AddToolButton(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& url = taString(), taString& attributes = taString())";
+     meth_desc=" add a toolbutton widget -- attributes are: label=";
     };
     MethodCall @[46] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddSpace(20, curow)";
+     pre_compile_code_string="Dlg2->AddSpace(20, curow)";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddSpace;
@@ -5275,6 +6734,7 @@ LeabraProject .projects["std_wizards"] {
        name="sp_size";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="20";
        };
@@ -5285,16 +6745,20 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="curow";
        };
       };
      };
+     meth_sig="bool AddSpace(int sp_size, taString& layout)";
+     meth_desc=" add space to given layout";
     };
     MethodCall @[47] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Dlg2->AddToolButton(\"RefreshList\", \"main\", curow, \"this.RefreshLayerList()\", \"label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\\n if you used one of the context menu actions to insert or remove layers.\\n the display updating does not work automatically in this dialog;\")";
+     pre_compile_code_string="Dlg2->AddToolButton(\"RefreshList\", \"main\", curow, \"this.RefreshLayerList()\", \"label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\\n if you used one of the context menu actions to insert or remove layers.\\n the display updating does not work automatically in this dialog;\")";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::AddToolButton;
@@ -5308,6 +6772,7 @@ LeabraProject .projects["std_wizards"] {
        name="nm";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\"RefreshList\"";
        };
@@ -5318,6 +6783,7 @@ LeabraProject .projects["std_wizards"] {
        name="parent";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"main\"";
        };
@@ -5328,6 +6794,7 @@ LeabraProject .projects["std_wizards"] {
        name="layout";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="curow";
        };
@@ -5338,6 +6805,7 @@ LeabraProject .projects["std_wizards"] {
        name="url";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"this.RefreshLayerList()\"";
        };
@@ -5348,16 +6816,20 @@ LeabraProject .projects["std_wizards"] {
        name="attributes";
        required=0;
        def_val="taString()";
+       prev_expr=;
        expr {
 	expr="\"label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\\n if you used one of the context menu actions to insert or remove layers.\\n the display updating does not work automatically in this dialog;\"";
        };
       };
      };
+     meth_sig="bool AddToolButton(taString& nm, taString& parent = taString(), taString& layout = taString(), taString& url = taString(), taString& attributes = taString())";
+     meth_desc=" add a toolbutton widget -- attributes are: label=";
     };
     MethodCall @[48] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="rval = Dlg2->PostDialog(true)";
+     pre_compile_code_string="rval = Dlg2->PostDialog(true)";
      result_var=$.projects["std_wizards"].programs["NetworkWizard"].vars["rval"]$;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["Dlg2"]$;
      method=taGuiDialog::PostDialog;
@@ -5371,29 +6843,35 @@ LeabraProject .projects["std_wizards"] {
        name="modal";
        required=0;
        def_val="false";
+       prev_expr=;
        expr {
 	expr="true";
        };
       };
      };
+     meth_sig="int PostDialog(bool modal = false)";
+     meth_desc=" post the dialog -- if modal, then this call does not return until the dialog is cancled -- otherwise it returns immediately and the dialog persists";
     };
     IfReturn @[49] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if(rval == 0) return";
+     pre_compile_code_string="if(rval == 0) return";
      cond {
       expr="rval == 0";
      };
     };
     Comment @[50] {
      desc="== now build the network to spec ==";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// == now build the network to spec ==";
+     pre_compile_code_string="// == now build the network to spec ==";
     };
     MethodCall @[51] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="network->NetStructFmTable(NetworkConfig)";
+     pre_compile_code_string="network->NetStructFmTable(NetworkConfig)";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["network"]$;
      method=Network::NetStructFmTable;
@@ -5407,16 +6885,20 @@ LeabraProject .projects["std_wizards"] {
        name="dt";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="NetworkConfig";
        };
       };
      };
+     meth_sig="void NetStructFmTable(DataTable* dt)";
+     meth_desc=" configure network structure (layer and layer group names, sizes, positions, connectivity) from data table (should be in same format as generated by NetStructToTable)";
     };
     MethodCall @[52] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="network->Build()";
+     pre_compile_code_string="network->Build()";
      result_var=NULL;
      obj=$.projects["std_wizards"].programs["NetworkWizard"].vars["network"]$;
      method=Network::Build;
@@ -5425,10 +6907,23 @@ LeabraProject .projects["std_wizards"] {
       el_typ=ProgArg;
       el_def=0;
      };
+     meth_sig="void Build()";
+     meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
@@ -5442,22 +6937,22 @@ LeabraProject .projects["std_wizards"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 8 0=0.06710605;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=1;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -5473,8 +6968,9 @@ LeabraProject .projects["std_wizards"] {
    };
    name="Browser2";
    m_data=.projects["std_wizards"]$$;
+   cur_font_size=12;
    visible=1;
-   win_name=".projects[\"Project_0\"] - std_wizards.proj [*]";
+   win_name=".projects[\"std_wizards\"] - std_wizards.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -5496,6 +6992,7 @@ LeabraProject .projects["std_wizards"] {
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -5506,17 +7003,19 @@ LeabraProject .projects["std_wizards"] {
     name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$.projects["std_wizards"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["T3Frames"] {
@@ -5532,6 +7031,7 @@ LeabraProject .projects["std_wizards"] {
      };
      name="T3Frames";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -5540,10 +7040,12 @@ LeabraProject .projects["std_wizards"] {
       T3Panel @["Frame1"] {
        name="Frame1";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -5554,6 +7056,14 @@ LeabraProject .projects["std_wizards"] {
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {
+	field_of_view=45;
+	near_distance=0.1;
+	focal=5;
+	far_distance=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -5645,22 +7155,22 @@ LeabraProject .projects["std_wizards"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -5676,6 +7186,7 @@ LeabraProject .projects["std_wizards"] {
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -5687,7 +7198,8 @@ LeabraProject .projects["std_wizards"] {
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Project updated on wiki: emergent changes: doc lnk";
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

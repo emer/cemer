@@ -1,6 +1,11 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9851
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
 LeabraProject .projects["program_examples"] { 
- Doc_Group @.docs = [5] {
+ Doc_Group @.docs = [6] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
   taDoc @["DataTables"] { };
   taDoc @["Matrix_css"] { };
   taDoc @["DataTable_css"] { };
@@ -3407,7 +3412,7 @@ LeabraProject .projects["program_examples"] {
  version {
   major=8;
   minor=0;
-  step=1;
+  step=2;
  };
  author="John Rohrlich, Randall C. O'Reilly";
  email="john.rohrlich@colorado.edu, randy.oreilly@colorado.edu";
@@ -3421,12 +3426,45 @@ LeabraProject .projects["program_examples"] {
  pub_cite=;
  wiki {
   wiki="emergent";
-  page_name="Program Examples";
+  page_name="demos/program_examples";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_235";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/program_examples";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/program_examples";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+  };
   taDoc @["DataTables"] {
    name="DataTables";
    desc=;
@@ -5043,6 +5081,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 <h1>ChangeLog</h1>
 <ul>
 
+
+<li>Tue Aug 30 02:27:12 2016 version: 8.0.2 user: oreilly file_name: <code>program_examples.proj</code> <br>
+Project updated on wiki: emergent changes: added doc
+
+
 <li>Wed Aug 17 22:20:51 2016 version: 8.0.1 user: oreilly file_name: <code>program_examples.proj</code> <br>
 svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta data, and added more foreach examples -- fixing minus step per latest changes in code
 
@@ -5055,6 +5098,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Tue Aug 30 02:27:12 2016 version: 8.0.2 user: oreilly file_name: <code>program_examples.proj</code> <br>
+Project updated on wiki: emergent changes: added doc
+<P>
 <P>
 <li>Wed Aug 17 22:20:51 2016 version: 8.0.1 user: oreilly file_name: <code>program_examples.proj</code> <br>
 svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta data, and added more foreach examples -- fixing minus step per latest changes in code
@@ -5104,7 +5152,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     };
    };
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -20616,12 +20664,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.0005313496;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.03228547;
+     value 8 0=0.04134212;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -20631,7 +20679,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7986406;
+     value 8 0=0.7980827;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -20754,6 +20802,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2].units[0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -21965,17 +22014,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.008496176;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7349193;
+       value 8 0=0.7531456;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -22003,9 +22052,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta data, and added more foreach examples -- fixing minus step per latest changes in code
-";
- tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[2].gp[0];.programs.gp[2].gp[1];.programs.gp[2].gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ last_change_desc="Project updated on wiki: emergent changes: added doc";
+ tree_state{ .;.docs;.docs[0];.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[2].gp[0];.programs.gp[2].gp[1];.programs.gp[2].gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -22244,7 +22292,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -22291,11 +22339,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      syn_delay {
       on=0;
       delay=4;
-     };
-     r_lrate {
-      on=0;
-      base=0.5;
-      act_thr=0.2;
      };
      deep_raw_qtr=Q4;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
@@ -22672,6 +22715,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=0;
    };
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
+   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=76;
@@ -22679,12 +22731,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
-   cuda {
-    min_threads=32;
-    max_threads=1024;
-    cons_per_thread=2;
-    timers_on=0;
-   };
    times {
     quarter=25;
     gate_cyc=18;
