@@ -242,6 +242,7 @@ void iPanelOfDocView::doc_goPressed() {
     doc_->wiki = wiki_edit->text();
     doc_->url = url_edit->text();
     doc_->UpdateAfterEdit();    // this will drive all the updating, including toggle from local etc
+    webview->reload();
     UpdatePanel();              // also update us..
   }
 }
