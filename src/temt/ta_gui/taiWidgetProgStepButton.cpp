@@ -113,7 +113,7 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
     iAction* act = new iAction(taiWidgetActions::normal, stpnm);
     act->usr_data = (void*)sp;
     act->connect(iAction::ptr_act, this, SLOT(CallFunList(void*)));
-    act->setToolTip(taiMisc::ToolTipPreProcess(sp->name));
+    act->setToolTip(taiMisc::ToolTipPreProcess(sp->name + " : Current step size (hold button to change step size)"));
     act->setFont(taiM->menuFont(defSize()));
     tbut->setDefaultAction(act);
     if(i == prg->sub_progs_step.size-1) {
