@@ -161,8 +161,8 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
 
   float nov = novelty.ComputeNovelty(lay->norm_err);
   float lrate = novelty.ComputeLrate(nov);
-  lay->SetUserData("novelty", nov);
-  lay->SetUserData("lrate", lrate);
+  lay->SetUserData("novelty", nov, false); // false=no update
+  lay->SetUserData("lrate", lrate, false); // false=no update
 
   // clamp novelty value on our layer
   UNIT_GP_ITR

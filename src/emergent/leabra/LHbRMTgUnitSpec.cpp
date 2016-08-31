@@ -302,22 +302,22 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   if(lhb.rec_data) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraLayer* lay = un->own_lay();
-    lay->SetUserData("pv_pos", pv_pos);
-    lay->SetUserData("vsmatrix_pos_D1", vsmatrix_pos_D1);
-    lay->SetUserData("vsmatrix_pos_D2", vsmatrix_pos_D2);
-    lay->SetUserData("net_pos", net_pos);
-    lay->SetUserData("vspatch_pos_D1", vspatch_pos_D1);
-    lay->SetUserData("vspatch_pos_D2", vspatch_pos_D2);
+    lay->SetUserData("pv_pos", pv_pos, false); // false=no update
+    lay->SetUserData("vsmatrix_pos_D1", vsmatrix_pos_D1, false); // false=no update
+    lay->SetUserData("vsmatrix_pos_D2", vsmatrix_pos_D2, false); // false=no update
+    lay->SetUserData("net_pos", net_pos, false); // false=no update
+    lay->SetUserData("vspatch_pos_D1", vspatch_pos_D1, false); // false=no update
+    lay->SetUserData("vspatch_pos_D2", vspatch_pos_D2, false); // false=no update
     
-    lay->SetUserData("pv_neg", pv_neg);
-    lay->SetUserData("vsmatrix_neg_D1", vsmatrix_neg_D1);
-    lay->SetUserData("vsmatrix_neg_D2", vsmatrix_neg_D2);
-    lay->SetUserData("net_neg", net_neg);
-    lay->SetUserData("vspatch_neg_D1", vspatch_neg_D1);
-    lay->SetUserData("vspatch_neg_D2", vspatch_neg_D2);
-    lay->SetUserData("vspatch_neg_net", vspatch_neg_net);
+    lay->SetUserData("pv_neg", pv_neg, false); // false=no update
+    lay->SetUserData("vsmatrix_neg_D1", vsmatrix_neg_D1, false); // false=no update
+    lay->SetUserData("vsmatrix_neg_D2", vsmatrix_neg_D2, false); // false=no update
+    lay->SetUserData("net_neg", net_neg, false); // false=no update
+    lay->SetUserData("vspatch_neg_D1", vspatch_neg_D1, false); // false=no update
+    lay->SetUserData("vspatch_neg_D2", vspatch_neg_D2, false); // false=no update
+    lay->SetUserData("vspatch_neg_net", vspatch_neg_net, false); // false=no update
     
-    lay->SetUserData("net_lhb", net_lhb);
+    lay->SetUserData("net_lhb", net_lhb, false); // false=no update
   }
 }
 

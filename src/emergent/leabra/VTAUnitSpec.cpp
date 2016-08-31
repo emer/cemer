@@ -374,14 +374,14 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   net->ext_rew = pospv;
 
   if(da.rec_data) {
-    lay->SetUserData("pospv", pospv);
-    lay->SetUserData("pptg_da_p", pptg_da_p);
-    lay->SetUserData("lhb_da", lhb_da);
-    lay->SetUserData("tot_burst_da", tot_burst_da);
-    lay->SetUserData("vs_patch_burst_shunt_net", vspospvi);
-    lay->SetUserData("vs_patch_dip_shunt_net", vsnegpvi);
-    lay->SetUserData("net_burst_da", net_burst_da);
-    lay->SetUserData("net_da", net_da);
+    lay->SetUserData("pospv", pospv, false); // false=no update
+    lay->SetUserData("pptg_da_p", pptg_da_p, false); // false=no update
+    lay->SetUserData("lhb_da", lhb_da, false); // false=no update
+    lay->SetUserData("tot_burst_da", tot_burst_da, false); // false=no update
+    lay->SetUserData("vs_patch_burst_shunt_net", vspospvi, false); // false=no update
+    lay->SetUserData("vs_patch_dip_shunt_net", vsnegpvi, false); // false=no update
+    lay->SetUserData("net_burst_da", net_burst_da, false); // false=no update
+    lay->SetUserData("net_da", net_da, false); // false=no update
   }
 }
 
@@ -450,12 +450,12 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   u->da = 0.0f;
 
   if(da.rec_data) {
-    lay->SetUserData("negpv", negpv);
-    lay->SetUserData("pptg_da_n", pptg_da_n);
-    lay->SetUserData("lhb_da_n", lhb_da_n);
-    lay->SetUserData("tot_burst_da", tot_burst_da);
-    lay->SetUserData("tot_dip_da", tot_dip_da);
-    lay->SetUserData("net_da", net_da);
+    lay->SetUserData("negpv", negpv, false); // false=no update
+    lay->SetUserData("pptg_da_n", pptg_da_n, false); // false=no update
+    lay->SetUserData("lhb_da_n", lhb_da_n, false); // false=no update
+    lay->SetUserData("tot_burst_da", tot_burst_da, false); // false=no update
+    lay->SetUserData("tot_dip_da", tot_dip_da, false); // false=no update
+    lay->SetUserData("net_da", net_da, false); // false=no update
   }
 }
 

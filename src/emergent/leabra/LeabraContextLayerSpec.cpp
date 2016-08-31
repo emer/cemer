@@ -88,7 +88,7 @@ void LeabraContextLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNet
   lay->SetExtFlag(UnitVars::EXT);
   bool do_update = lay->GetUserDataDef(do_update_key, false).toBool();
   if (do_update) {
-    lay->SetUserData(do_update_key, false); // reset
+    lay->SetUserData(do_update_key, false, false); // reset, no update
   }
   else { // not explicit triger, so try other conditions
     switch (update_criteria) {
@@ -118,6 +118,6 @@ void LeabraContextLayerSpec::TriggerUpdate(LeabraLayer* lay) {
   if (TestError((lay->spec.spec.ptr() != this),
     "TriggerUpdate", "Spec does not belong to the layer passed as arg"))
     return;
-  lay->SetUserData(do_update_key, true);
+  lay->SetUserData(do_update_key, true, false); // false = no update
 }
 
