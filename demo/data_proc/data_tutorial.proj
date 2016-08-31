@@ -1,7 +1,16 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9959
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
 LeabraProject .projects["data_tutorial"] { 
- Doc_Group @.docs = [7] {
-  taDoc @["ProjectDocs"] { };
+ Doc_Group @.docs = [8] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["DataProcTutorial"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
   taDoc @["DataGenDoc"] { };
   taDoc @["DataAnalysisDoc"] { };
   taDoc @["DataBaseDoc"] { };
@@ -418,15 +427,15 @@ LeabraProject .projects["data_tutorial"] {
  version {
   major=8;
   minor=0;
-  step=3;
+  step=4;
  };
  author="John Rohrlich";
  email="john.rohrlich@colorado.edu";
  license {
-  license=NO_LIC;
-  owner_name=;
-  org=;
-  year="2013";
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
+  org="CCNLab at the University of Colorado Boulder";
+  year="2016";
   custom=;
  };
  pub_cite=;
@@ -439,7 +448,314 @@ LeabraProject .projects["data_tutorial"] {
   el_typ=taDoc;
   el_def=0;
   taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_110";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
    name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="tutorials/data_tutorial";
+   full_url="https://grey.colorado.edu/emergent/index.php/tutorials/data_tutorial";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
+<title>DataProcTutorial - Emergent</title>
+<meta charset=\"UTF-8\">
+<meta name=\"generator\" content=\"MediaWiki 1.20alpha\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/Drafts/Drafts.css?3\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=DataProcTutorial&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=DataProcTutorial&amp;action=edit\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
+<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/emergent/api.php?action=rsd\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared&amp;only=styles&amp;skin=gumaxdd&amp;*\">
+<link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/gumax_main.css?303\" media=\"screen\">
+<!--[if lt IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE50Fixes.css?303\" media=\"screen\" /><![endif]-->
+<!--[if IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE55Fixes.css?303\" media=\"screen\" /><![endif]-->
+<!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE60Fixes.css?303\" media=\"screen\" /><![endif]-->
+<!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE70Fixes.css?303\" media=\"screen\" /><![endif]-->
+<link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/gumax_print.css?303\" media=\"print\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style type=\"text/css\">.js-messagebox{margin:1em 5%;padding:0.5em 2.5%;border:1px solid #ccc;background-color:#fcfcfc;font-size:0.8em}.js-messagebox .js-messagebox-group{margin:1px;padding:0.5em 2.5%;border-bottom:1px solid #ddd}.js-messagebox .js-messagebox-group:last-child{border-bottom:thin none transparent}
+
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:8b08bdc91c52a9ffba396dccfb5b473c */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=gumaxdd&amp;*\">
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.editsection{display:none}
+
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:bbc2580de445604b1dcdb5561cbe4c3c */</style>
+
+<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20121215T200257Z\"></script>
+<script>if(window.mw){
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"DataProcTutorial\",\"wgTitle\":\"DataProcTutorial\",\"wgCurRevisionId\":8696,\"wgArticleId\":493,\"wgIsArticle\":true,\"wgAction\":\"view\",\"wgUserName\":\"John.rohrlich\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgRelevantPageName\":\"DataProcTutorial\",\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgSearchNamespaces\":[0],\"sfgAutocompleteOnAllChars\":false,\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"sfgAutocompleteValues\":[],\"sfgShowOnSelect\":[],\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgFormErrorsHeader\":\"There were errors with your form input; see below.\",\"sfgBlankErrorStr\":\"cannot be blank\",\"sfgBadURLErrorStr\":\"must have the correct URL format, starting with \\\"http\\\"\",\"sfgBadEmailErrorStr\":\"must have a valid email address format\",\"sfgBadNumberErrorStr\":\"must be a valid number\",\"sfgBadDateErrorStr\":\"must be a valid date\",\"sfgAnonEditWarning\":\"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\",\"sfgSaveAndContinueSummary\":\"Saved using \\\"Save and continue\\\" button in form\",\"htTabIndexes\":[],\"wgVectorEnabledModules\":{\"collapsiblenav\":true,\"collapsibletabs\":true,\"editwarning\":false,\"expandablesearch\":false,\"footercleanup\":false,\"sectioneditlinks\":false,\"simplesearch\":true,\"experiments\":true},\"wgSVGEditEditor\":false,\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+}</script><script>if(window.mw){
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,
+\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"rohrlich\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{},{});mw.loader.implement(\"user.tokens\",function
+(){mw.user.tokens.set({\"editToken\":\"56fd2f92d637ad78483a2c5b93bfb57f+\\\\\",\"watchToken\":\"951e0c0c0e44fa2b50bfbf06bafa76fe+\\\\\"});;},{},{});
+
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:959ad419911619de118ad94635c84d34 */
+}</script>
+<script>if(window.mw){
+mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
+}</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.client%2Ccookie%2CmessageBox%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.page.startup%7Cmediawiki.util&amp;skin=gumaxdd&amp;version=20130513T150115Z&amp;*\"></script>
+		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"DataProcTutorial\" href=\"/emergent/index.php?title=Special:ExportRDF/DataProcTutorial&amp;xmlmime=rdf\">
+</head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-DataProcTutorial skin-gumaxdd action-view\">
+<div id=\"gumax-page\">
+	<!--///===== Drop Down menu script =====///-->
+
+	<!--/// no need for mediawiki 1.17.0 and up
+	<script type=\"text/javascript\" src=\"/emergent/skins/gumaxdd/scripts/jquery-1.4.2.min.js?303\"></script>
+	    ///-->
+
+	<!--/// click style ///-->
+	<script type=\"text/javascript\" src=\"/emergent/skins/gumaxdd/scripts/jquery.droppy-0.1.2.js?303\"></script>
+	<script type=\"text/javascript\">jQuery(document).ready( function($){  $(function(){ $('#gumax-nav').droppy({trigger: 'click'}); })  } );</script>
+
+	<!--/// auto style 
+	<script type=\"text/javascript\" src=\"/emergent/skins/gumaxdd/scripts/jquery.droppy.js?303\"></script>
+	<script type=\"text/javascript\">jQuery(document).ready( function($){  $(function(){ $('#gumax-nav').droppy({speed: 10}); })  } );</script>
+	    ///-->
+
+	<!--///===== End of Drop Down menu =====///-->
+
+
+	<div id=\"gumax-header\">
+
+		<div id=\"gumax-p-login\">
+				<!--li><a href=\"#\">My Accounts</a-->
+		<ul>
+			<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:John.rohrlich\" class=\"new\">John.rohrlich</a></li>
+			<li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:John.rohrlich\" class=\"new\">My talk</a></li>
+			<li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\">My preferences</a></li>
+			<li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\">My watchlist</a></li>
+			<li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/John.rohrlich\">My contributions</a></li>
+			<li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=DataProcTutorial\">Log out</a></li>
+		</ul>
+	<!--/li-->
+		</div> <!-- end of Login Tools -->
+
+		<div id=\"gumax-p-logo\">
+				<div id=\"p-logo\">
+		<a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\"></a>
+	</div>
+	<script type=\"text/javascript\"> if (window.isMSIE55) fixalpha(); </script>
+		</div> <!-- end of gumax-p-logo -->
+
+		
+	<div id=\"gumax-p-search\">
+		<!--h5><label for=\"searchInput\">Search</label></h5-->
+		<div id=\"gumax-searchBody\">
+			<form action=\"/emergent/index.php/Special:Search\" id=\"searchform\"><div>
+				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\">
+				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\">&nbsp;
+				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\">
+			</div></form>
+		</div>
+	</div>
+
+	</div> <!-- ///// end of gumax-header ///// -->
+
+	<div style=\"clear:both\"></div>
+
+
+	<div id=\"gumax-p-navigation\">
+		 	<ul id=\"gumax-nav\" class=\"droppy\">
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Navigation  »</a>
+				<ul>
+ 					<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\">Main page</a></li>
+ 					<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\">Recent changes</a></li>
+ 					<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
+ 					<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
+ 					<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\">Bug tracker</a></li>
+ 					<li id=\"n-Mailing-list\"><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">Mailing list</a></li>
+				<li><p style=\"margin:0; padding: 7px 0;\"></p></li>
+ 				</ul>
+			</li>
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Toolbox  »</a>
+			<ul>
+				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/DataProcTutorial\">What links here</a></li>
+				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/DataProcTutorial\">Related changes</a></li>
+<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
+<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
+				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;oldid=8696\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/DataProcTutorial\" title=\"Special:Browse/DataProcTutorial\">Browse properties</a></li>			</ul>
+			</li>
+			<li><a id=\"gumax-nav-heading\" href=\"#\">Print/export  »</a>
+			</li>
+	</ul>
+	</div> <!-- end of Navigation Menu -->
+
+	<div style=\"clear:both\"></div>
+
+	<!-- gumax-content-actions -->
+	<div id=\"gumax-content-actions\">
+				<ul>
+
+			 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/DataProcTutorial\">Page</a></li>
+			 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:DataProcTutorial&amp;action=edit&amp;redlink=1\">Discussion</a></li>
+			 <li id=\"ca-edit\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=edit\">Edit</a></li>
+			 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=history\">History</a></li>
+			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=delete\">Delete</a></li>
+			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/DataProcTutorial\">Move</a></li>
+			 <li id=\"ca-watch\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=watch&amp;token=94275fe7759180a2432ded48328f827d%2B%5C\">Watch</a></li>
+			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=purge\">Refresh</a></li>
+		</ul>
+
+	</div>
+	<!-- end of gumax-content-actions -->
+
+	<div class=\"gumax-p-navigation-spacer\"></div>
+
+	<!-- gumax-article-picture -->
+		<!-- end of gumax-article-picture -->
+
+	<!-- gumax-content-body -->
+		<div id=\"gumax-content-body\">
+		<div class=\"gumax-firstHeading\">DataProcTutorial</div>
+		<div class=\"visualClear\"></div>
+		<!-- content -->
+		<div id=\"content\"><div id=\"mw-js-message\" class=\"js-messagebox\" style=\"display: none; \"></div>
+			<a name=\"top\" id=\"top\"></a>
+						<div id=\"bodyContent\" class=\"gumax-bodyContent\">
+				<h3 id=\"siteSub\">From Emergent</h3>
+				<div id=\"contentSub\"></div>
+												<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>				<!-- start content -->
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>This tutorial shows you how to generate data in data tables, and then apply a large number of different manipulation and analysis routines on that data, including graphing. It is available as an interactive <i>emergent</i> project in <code>demo/data_proc/data_tutorial.proj</code> (just run <i>emergent</i>, open the project and start following the instructions that appear), and in this wiki page. Note: the <code>demo/data_proc/data_tutorial_final.proj</code> project is the version of the project saved <i>after</i> doing the entire tutorial (i.e., the final state of the tutorial project) -- this can be useful to refer to if something is not going right..
+</p><p>The text from here is largely just copied from the tutorial project, and may refer to the presence of the documentation within the project itself, and thus it probably makes the most sense to follow these directions after loading that project in any case, even if you're mostly reading along on the wiki here.. 
+</p>
+<h1><span class=\"editsection\">[<a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=edit&amp;section=1\" title=\"Edit section: Data Table Tutorial\">edit</a>]</span> <span class=\"mw-headline\" id=\"Data_Table_Tutorial\"> Data Table Tutorial  </span></h1>
+<p>This tutorial provides an introduction to a variety of techniques for working with DataTables in <i>emergent</i>. DataTables are one of the most important objects in the system, and can be used for a very wide range of different functions. Essentially, anything that requires storing and manipulating multiple items of data can benefit from a data table. Most of the functionality is exposed through the writing of Programs, so this also serves as a good tutorial for the gui-based programming system in <i>emergent</i>. 
+</p><p><b>To return to this document</b> at any time, just hit the <code>ProjectDocs</code> tab at the top of this middle panel where you are now reading. 
+</p><p>Also, as you work with each documentation section, it is usually a good idea to do <code>Object/Edit Dialog</code> in the menu just above this text, which will open the documentation in a separate window that you can more easily come back to. 
+</p><p>Some basic terminology: 
+</p>
+<ul><li><b>Left browser panel</b> is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the network, and the input/output data, etc). 
+</li><li><b>Middle edit panel</b> is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel. The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of. The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty). 
+</li><li><b>Right view panel</b> shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
+</li></ul>
+<p>Note: this tutorial is designed for version 4.0.17 or greater of <i>emergent</i>! Some features may not work in earlier versions. 
+</p>
+<h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=DataProcTutorial&amp;action=edit&amp;section=2\" title=\"Edit section: Overview of Tutorial\">edit</a>]</span> <span class=\"mw-headline\" id=\"Overview_of_Tutorial\"> Overview of Tutorial  </span></h2>
+<p>We begin by creating some data, which we then process in a variety of ways. Each step is described in a separate document object located in the docs section of the left browser panel, and linked here: 
+</p>
+<ol><li><a href=\"/emergent/index.php/DataTut_DataGenDoc\" title=\"DataTut DataGenDoc\">DataTut DataGenDoc</a> -- generating data, including basic datatable gui usage (<i>required first step</i>) 
+</li><li><a href=\"/emergent/index.php/DataTut_DataAnalysisDoc\" title=\"DataTut DataAnalysisDoc\">DataTut DataAnalysisDoc</a> -- analyzing data in various ways (grouping, stats, dimensionality reduction, etc) 
+</li><li><a href=\"/emergent/index.php/DataTut_DataBaseDoc\" title=\"DataTut DataBaseDoc\">DataTut DataBaseDoc</a> -- data-base style operations for modifying data in various ways 
+</li><li><a href=\"/emergent/index.php/DataTut_DataCalcLoopDoc\" title=\"DataTut DataCalcLoopDoc\">DataTut DataCalcLoopDoc</a> -- a very powerful mechanism for iterating through data tables row-by-row and performing various computations 
+</li><li><a href=\"/emergent/index.php/DataTut_MatrixDataDoc\" title=\"DataTut MatrixDataDoc\">DataTut MatrixDataDoc</a> -- matrix data cells: creating random bit patterns, and high-dimensional analysis tools.
+</li></ol>
+<p>Each document involves creating a separate Program with its own data tables, so after the first step of generating the data, each one can be independently explored in any order.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 23/1000000
+Post-expand include size: 60/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:493-0!*!0!!*!*!* and timestamp 20130815215952 -->
+</div><div class=\"printfooter\">
+Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=DataProcTutorial&amp;oldid=8696\">http://grey.colorado.edu/emergent/index.php?title=DataProcTutorial&amp;oldid=8696</a>\"</div>
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
+				<div class=\"visualClear\"></div>
+			</div> <!-- end of bodyContent -->
+		</div> <!-- end of content -->
+	</div> <!-- end of gumax-content-body -->
+
+
+	<!-- end of gumax-content-body -->
+
+
+	<div class=\"gumax-footer-spacer\"></div>
+
+
+	<div id=\"gumax-footer\">
+
+		<!-- personal specia tools  -->
+		
+		<div id=\"gumax-special-tools\">
+			<ul>
+					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/DataProcTutorial\">What links here</a></li>
+					<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/DataProcTutorial\">Related changes</a></li>
+	<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
+	<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
+					<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=DataProcTutorial&amp;oldid=8696\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/DataProcTutorial\" title=\"Special:Browse/DataProcTutorial\">Browse properties</a></li>			</ul>
+		</div>
+
+		<!-- end of personal specia tools  -->
+
+		<!-- gumax-f-message -->
+		
+		<div id=\"gumax-article-message\">
+			<span id=\"f-lastmod\"> This page was last modified on 29 April 2011, at 22:29.</span>
+			<span id=\"f-viewcount\">This page has been accessed 2,593 times. </span>
+					</div>
+
+		<!-- end of gumax-f-message -->
+
+		<script>if(window.mw){
+mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.watch.ajax\",\"mediawiki.legacy.mwsuggest\",\"ext.headertabs\"], null, true);
+}</script>
+<script type=\"text/javascript\" src=\"/emergent/extensions/Drafts/Drafts.js?3\"></script>
+<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
+
+	</div> <!-- ///// end of gumax-footer ///// -->
+
+
+	<!-- gumax-f-list -->
+	
+		<div id=\"gumax-credit-list\">
+			<ul>
+								<li id=\"about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
+								<li id=\"f-poweredby\"><a href=\"http://mediawiki.org\" target=\"_blank\">Powered by MediaWiki</a></li>
+				<li id=\"f-designedby\"><a href=\"http://paulgu.com\" target=\"_blank\">Designed by Paul Gu</a></li>
+			</ul>
+		</div>
+
+	<!-- end of gumax-f-list -->
+
+
+</div><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.headertabs%7Cjquery.checkboxShiftClick%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%7Cmediawiki.action.watch.ajax%7Cmediawiki.api%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.legacy.mwsuggest%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20130513T184204Z&amp;*\" type=\"text/javascript\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20130330T024858Z&amp;*\" type=\"text/javascript\"></script> <!-- ===== end of gumax-page ===== -->
+
+	<div style=\"clear:both\"></div>
+
+	<div id=\"gumax_page_spacer\"></div>
+
+
+<!-- Served in 0.157 secs. -->
+
+
+
+
+	
+</body></html>";
+  };
+  taDoc @["DataProcTutorial"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_110";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="DataProcTutorial";
    desc=;
    web_doc=1;
    wiki="emergent";
@@ -2388,6 +2704,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 <ul>
 
 
+<li>Wed Aug 31 04:28:41 2016 version: 8.0.4 user: oreilly file_name: <code>data_tutorial.proj</code> <br>
+Project updated on wiki: emergent changes: pinned docs, put doc to proj file on wiki as first item.
+
+
+
 <li>Tue Aug 30 20:19:32 2016 version: 8.0.3 user: rohrlich file_name: <code>data_tutorial.proj</code> <br>
 svn rev: 9964 update page name to tutorials/data_tutorial
 
@@ -2408,6 +2729,11 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Wed Aug 31 04:28:41 2016 version: 8.0.4 user: oreilly file_name: <code>data_tutorial.proj</code> <br>
+Project updated on wiki: emergent changes: pinned docs, put doc to proj file on wiki as first item.
+<P>
 <P>
 <P>
 <li>Tue Aug 30 20:19:32 2016 version: 8.0.3 user: rohrlich file_name: <code>data_tutorial.proj</code> <br>
@@ -5094,7 +5420,7 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.06280875;
+     value 8 0=0.06231276;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -5104,7 +5430,7 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7995766;
+     value 8 0=0.7992811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -5208,17 +5534,17 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.007057163;
+       value 8 0=0.005991612;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.03208138;
+       value 8 0=0.02772143;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7466478;
+       value 8 0=0.7543439;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -5246,7 +5572,7 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 9964 update page name to tutorials/data_tutorial";
+ last_change_desc="Project updated on wiki: emergent changes: pinned docs, put doc to proj file on wiki as first item.";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";

@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
 LeabraProject .projects["vis_test"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -2410,12 +2416,12 @@ LeabraProject .projects["vis_test"] {
 };
 LeabraProject .projects["vis_test"] {
  name="vis_test";
- desc=;
- tags=;
+ desc="Allows testing of V1 visual filters on well-controlled visual stimuli rendered using a canvas and in a 3D world.";
+ tags="Demo, Vision, V1 Filters, Gabor Filters";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=1;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -2423,18 +2429,88 @@ LeabraProject .projects["vis_test"] {
   license=GPLv2;
   owner_name="Regents of the University of Colorado";
   org="CCNLab at University of Colorado Boulder";
-  year="2010";
+  year="2016";
   custom=;
  };
  pub_cite=;
  wiki {
-  wiki=;
-  page_name=;
+  wiki="emergent";
+  page_name="demos/vis_test";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_130";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/vis_test";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/vis_test";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Wed Aug 31 03:32:14 2016 version: 8.0.1 user: oreilly file_name: <code>vis_test.proj</code> <br>
+Published on wiki: emergent page: demos/vis_test with description: Allows testing of V1 visual filters on well-controlled visual stimuli rendered using a canvas and in a 3D world. tags: Demo, Vision, V1 Filters, Gabor Filters author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+
+
+<li>Wed Aug 31 03:30:01 2016 version: 8.0.1 user: oreilly file_name: <code>vis_test.proj</code> <br>
+Published on wiki: emergent page: demos/vis_test with description: This model allows testing of the responses of the V1RegionSpec visual filters on a variety of well-controlled stimuli generated using a canvas. tags: Demo, Vision, V1 Filters, Gabor Filters author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Wed Aug 31 03:32:14 2016 version: 8.0.1 user: oreilly file_name: <code>vis_test.proj</code> <br>
+Published on wiki: emergent page: demos/vis_test with description: Allows testing of V1 visual filters on well-controlled visual stimuli rendered using a canvas and in a 3D world. tags: Demo, Vision, V1 Filters, Gabor Filters author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+<P>
+<P>
+<li>Wed Aug 31 03:30:01 2016 version: 8.0.1 user: oreilly file_name: <code>vis_test.proj</code> <br>
+Published on wiki: emergent page: demos/vis_test with description: This model allows testing of the responses of the V1RegionSpec visual filters on a variety of well-controlled stimuli generated using a canvas. tags: Demo, Vision, V1 Filters, Gabor Filters author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -2452,7 +2528,7 @@ LeabraProject .projects["vis_test"] {
     };
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -4296,10 +4372,10 @@ LeabraProject .projects["vis_test"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -4307,7 +4383,7 @@ LeabraProject .projects["vis_test"] {
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -12350,7 +12426,7 @@ LeabraProject .projects["vis_test"] {
     };
     ProgramCall @[1] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="VisTest_3D()";
      pre_compile_code_string="VisTest_3D()";
      prog_args {
@@ -12363,7 +12439,7 @@ LeabraProject .projects["vis_test"] {
     };
     ProgramCall @[2] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="VisTest_3D()";
      pre_compile_code_string="VisTest_3D()";
      prog_args {
@@ -12376,7 +12452,7 @@ LeabraProject .projects["vis_test"] {
     };
     ProgramCall @[3] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="VisTest_3D()";
      pre_compile_code_string="VisTest_3D()";
      prog_args {
@@ -12389,7 +12465,7 @@ LeabraProject .projects["vis_test"] {
     };
     ProgramCall @[4] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="VisTest_3D()";
      pre_compile_code_string="VisTest_3D()";
      prog_args {
@@ -12402,7 +12478,7 @@ LeabraProject .projects["vis_test"] {
     };
     MiscCall @[5] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="taMisc::ProcessEvents()";
      pre_compile_code_string="taMisc::ProcessEvents()";
      result_var=NULL;
@@ -12416,7 +12492,7 @@ LeabraProject .projects["vis_test"] {
     };
     MiscCall @[6] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="taMisc::ProcessEvents()";
      pre_compile_code_string="taMisc::ProcessEvents()";
      result_var=NULL;
@@ -12430,7 +12506,7 @@ LeabraProject .projects["vis_test"] {
     };
     MiscCall @[7] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="taMisc::ProcessEvents()";
      pre_compile_code_string="taMisc::ProcessEvents()";
      result_var=NULL;
@@ -12727,7 +12803,7 @@ LeabraProject .projects["vis_test"] {
     el_def=0;
     MethodCall @[0] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="V1RetinaProc_0->Init()";
      pre_compile_code_string="V1RetinaProc_0->Init()";
      result_var=NULL;
@@ -12748,7 +12824,7 @@ LeabraProject .projects["vis_test"] {
     el_def=0;
     ProgramCall @[0] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="VisStimGen()";
      pre_compile_code_string="VisStimGen()";
      prog_args {
@@ -12761,7 +12837,7 @@ LeabraProject .projects["vis_test"] {
     };
     MethodCall @[1] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="V1RetinaProc_0->TransformImage(Canvas, NULL, 0, 0, .25, 0)";
      pre_compile_code_string="V1RetinaProc_0->TransformImage(Canvas, NULL, 0, 0, .25, 0)";
      result_var=NULL;
@@ -12843,7 +12919,7 @@ LeabraProject .projects["vis_test"] {
     };
     MethodCall @[2] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="V1RetinaProc_0->FilterImageData(false)";
      pre_compile_code_string="V1RetinaProc_0->FilterImageData(false)";
      result_var=NULL;
@@ -19633,7 +19709,7 @@ LeabraProject .projects["vis_test"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (4 vars)";
        pre_compile_code_string="LocalVars (4 vars)";
        local_vars {
@@ -19680,7 +19756,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[1] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="Canvas->PenColorName(color)";
        pre_compile_code_string="Canvas->PenColorName(color)";
        result_var=NULL;
@@ -19707,7 +19783,7 @@ LeabraProject .projects["vis_test"] {
       };
       MathCall @[2] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="st_x = taMath_float::cos_deg(Myangle-180.0)";
        pre_compile_code_string="st_x = taMath_float::cos_deg(Myangle-180.0)";
        result_var=.projects["vis_test"].programs["VisStimGen"].functions["DrawLine"].fun_code[0].local_vars["st_x"]$$;
@@ -19732,7 +19808,7 @@ LeabraProject .projects["vis_test"] {
       };
       MathCall @[3] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="st_y = taMath_float::sin_deg(Myangle-180.0)";
        pre_compile_code_string="st_y = taMath_float::sin_deg(Myangle-180.0)";
        result_var=.projects["vis_test"].programs["VisStimGen"].functions["DrawLine"].fun_code[0].local_vars["st_y"]$$;
@@ -19757,7 +19833,7 @@ LeabraProject .projects["vis_test"] {
       };
       MathCall @[4] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="ed_x = taMath_float::cos_deg(Myangle)";
        pre_compile_code_string="ed_x = taMath_float::cos_deg(Myangle)";
        result_var=.projects["vis_test"].programs["VisStimGen"].functions["DrawLine"].fun_code[0].local_vars["ed_x"]$$;
@@ -19782,7 +19858,7 @@ LeabraProject .projects["vis_test"] {
       };
       MathCall @[5] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="ed_y = taMath_float::sin_deg(Myangle)";
        pre_compile_code_string="ed_y = taMath_float::sin_deg(Myangle)";
        result_var=.projects["vis_test"].programs["VisStimGen"].functions["DrawLine"].fun_code[0].local_vars["ed_y"]$$;
@@ -19847,7 +19923,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[10] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="Canvas->Line(st_x, st_y, ed_x, ed_y)";
        pre_compile_code_string="Canvas->Line(st_x, st_y, ed_x, ed_y)";
        result_var=NULL;
@@ -19974,7 +20050,7 @@ LeabraProject .projects["vis_test"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (5 vars)";
        pre_compile_code_string="LocalVars (5 vars)";
        local_vars {
@@ -20030,7 +20106,7 @@ LeabraProject .projects["vis_test"] {
       };
       MathCall @[1] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="st_x = taMath_float::cos_deg(Myangle-180.0)";
        pre_compile_code_string="st_x = taMath_float::cos_deg(Myangle-180.0)";
        result_var=.projects["vis_test"].programs["VisStimGen"].functions["DrawShape"].fun_code[0].local_vars["st_x"]$$;
@@ -20055,7 +20131,7 @@ LeabraProject .projects["vis_test"] {
       };
       MathCall @[2] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="st_y = taMath_float::sin_deg(Myangle-180.0)";
        pre_compile_code_string="st_y = taMath_float::sin_deg(Myangle-180.0)";
        result_var=.projects["vis_test"].programs["VisStimGen"].functions["DrawShape"].fun_code[0].local_vars["st_y"]$$;
@@ -20459,14 +20535,14 @@ LeabraProject .projects["vis_test"] {
     el_def=0;
     ResetDataRows @[0] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="ResetDataRows:  table = StimGenData ";
      pre_compile_code_string="ResetDataRows:  table = StimGenData ";
      data_var=.projects["vis_test"].programs["VisStimGen"].vars["StimGenData"]$$;
     };
     MethodCall @[1] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Canvas->SetImageSize(canvas_width, canvas_height)";
      pre_compile_code_string="Canvas->SetImageSize(canvas_width, canvas_height)";
      result_var=NULL;
@@ -20504,7 +20580,7 @@ LeabraProject .projects["vis_test"] {
     };
     MethodCall @[2] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Canvas->ConfigDataColName(StimGenData, \"Canvas\", taBase::VT_FLOAT, true)";
      pre_compile_code_string="Canvas->ConfigDataColName(StimGenData, \"Canvas\", taBase::VT_FLOAT, true)";
      result_var=NULL;
@@ -20564,14 +20640,14 @@ LeabraProject .projects["vis_test"] {
     };
     AddNewDataRow @[3] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Add New Row:  table = StimGenData ";
      pre_compile_code_string="Add New Row:  table = StimGenData ";
      data_var=$.projects["vis_test"].programs["VisStimGen"].vars["StimGenData"]$;
     };
     MethodCall @[4] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Canvas->InitCanvas()";
      pre_compile_code_string="Canvas->InitCanvas()";
      result_var=NULL;
@@ -20587,7 +20663,7 @@ LeabraProject .projects["vis_test"] {
     };
     MethodCall @[5] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Canvas->EraseName(bg_color)";
      pre_compile_code_string="Canvas->EraseName(bg_color)";
      result_var=NULL;
@@ -20614,7 +20690,7 @@ LeabraProject .projects["vis_test"] {
     };
     MethodCall @[6] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Canvas->PenWidth(line_width)";
      pre_compile_code_string="Canvas->PenWidth(line_width)";
      result_var=NULL;
@@ -20671,7 +20747,7 @@ LeabraProject .projects["vis_test"] {
     };
     RandomCall @[10] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="trg_x = Random::IntZeroN(disp_size, )";
      pre_compile_code_string="trg_x = Random::IntZeroN(disp_size, )";
      result_var=.projects["vis_test"].programs["VisStimGen"].vars["trg_x"]$$;
@@ -20707,7 +20783,7 @@ LeabraProject .projects["vis_test"] {
     };
     RandomCall @[11] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="trg_y = Random::IntZeroN(disp_size, )";
      pre_compile_code_string="trg_y = Random::IntZeroN(disp_size, )";
      result_var=.projects["vis_test"].programs["VisStimGen"].vars["trg_y"]$$;
@@ -20845,7 +20921,7 @@ LeabraProject .projects["vis_test"] {
 	};
 	RandomCall @[4] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cur_jitter = Random::UniformMinMax(-  orientation_jitter, orientation_jitter, )";
 	 pre_compile_code_string="cur_jitter = Random::UniformMinMax(-  orientation_jitter, orientation_jitter, )";
 	 result_var=.projects["vis_test"].programs["VisStimGen"].vars["cur_jitter"]$$;
@@ -21051,13 +21127,13 @@ LeabraProject .projects["vis_test"] {
     };
     Comment @[15] {
      desc="update the datatable with the current image";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// update the datatable with the current image";
      pre_compile_code_string="// update the datatable with the current image";
     };
     MethodCall @[16] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Canvas->ImageToDataCellName(StimGenData, \"Canvas\", -1)";
      pre_compile_code_string="Canvas->ImageToDataCellName(StimGenData, \"Canvas\", -1)";
      result_var=NULL;
@@ -21106,7 +21182,7 @@ LeabraProject .projects["vis_test"] {
     };
     DoneWritingDataRow @[17] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="DoneWritingDataRow:  table = StimGenData ";
      pre_compile_code_string="DoneWritingDataRow:  table = StimGenData ";
      data_var=$.projects["vis_test"].programs["VisStimGen"].vars["StimGenData"]$;
@@ -21612,7 +21688,7 @@ LeabraProject .projects["vis_test"] {
       el_def=0;
       LocalVars @[0] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
        pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
@@ -21623,13 +21699,13 @@ LeabraProject .projects["vis_test"] {
       };
       Comment @[1] {
        desc="== Turn off eyebeams to not distract during GetCamera";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="// == Turn off eyebeams to not distract during GetCamera";
        pre_compile_code_string="// == Turn off eyebeams to not distract during GetCamera";
       };
       ProgramCall @[2] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="EyeBeamsToggle(false)";
        pre_compile_code_string="EyeBeamsToggle(false)";
        prog_args {
@@ -21653,13 +21729,13 @@ LeabraProject .projects["vis_test"] {
       };
       Comment @[3] {
        desc="== Left Eye ==";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="// == Left Eye ==";
        pre_compile_code_string="// == Left Eye ==";
       };
       MethodCall @[4] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="VEVisTestWorld->GetCameraTaImage(LeftEyeImage, 0)";
        pre_compile_code_string="VEVisTestWorld->GetCameraTaImage(LeftEyeImage, 0)";
        result_var=NULL;
@@ -21697,7 +21773,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[5] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="VEVisTestWorld->GetCameraTaImage(RightEyeImage, 1)";
        pre_compile_code_string="VEVisTestWorld->GetCameraTaImage(RightEyeImage, 1)";
        result_var=NULL;
@@ -21735,7 +21811,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[6] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="V1RetinaProc_3D->TransformImage(RightEyeImage, LeftEyeImage, , , , )";
        pre_compile_code_string="V1RetinaProc_3D->TransformImage(RightEyeImage, LeftEyeImage, , , , )";
        result_var=NULL;
@@ -21817,7 +21893,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[7] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="V1RetinaProc_3D->FilterImageData(false)";
        pre_compile_code_string="V1RetinaProc_3D->FilterImageData(false)";
        result_var=NULL;
@@ -21844,7 +21920,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[8] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="V1DataSave3D->UpdateAllViews()";
        pre_compile_code_string="V1DataSave3D->UpdateAllViews()";
        result_var=NULL;
@@ -21860,7 +21936,7 @@ LeabraProject .projects["vis_test"] {
       };
       ProgramCall @[9] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="EyeBeamsToggle(true)";
        pre_compile_code_string="EyeBeamsToggle(true)";
        prog_args {
@@ -21884,7 +21960,7 @@ LeabraProject .projects["vis_test"] {
       };
       MethodCall @[10] {
        desc=;
-       flags=OFF;
+       flags=OFF|CAN_REVERT_TO_CODE;
        code_string="LeftEyeImage->SaveImage(\"cur_3d_image_l.jpg\")";
        pre_compile_code_string="LeftEyeImage->SaveImage(\"cur_3d_image_l.jpg\")";
        result_var=NULL;
@@ -21911,7 +21987,7 @@ LeabraProject .projects["vis_test"] {
       };
       MiscCall @[11] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::ProcessEvents()";
        pre_compile_code_string="taMisc::ProcessEvents()";
        result_var=NULL;
@@ -21932,7 +22008,7 @@ LeabraProject .projects["vis_test"] {
     el_def=0;
     MethodCall @[0] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="V1RetinaProc_3D->Init()";
      pre_compile_code_string="V1RetinaProc_3D->Init()";
      result_var=NULL;
@@ -21948,7 +22024,7 @@ LeabraProject .projects["vis_test"] {
     };
     MethodCall @[1] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="VEVisTestWorld->Init()";
      pre_compile_code_string="VEVisTestWorld->Init()";
      result_var=NULL;
@@ -21988,7 +22064,7 @@ LeabraProject .projects["vis_test"] {
 	el_def=0;
 	ProgramCall @[0] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="MoveFixateTarget(false, targ_x, targ_y, targ_z)";
 	 pre_compile_code_string="MoveFixateTarget(false, targ_x, targ_y, targ_z)";
 	 prog_args {
@@ -22073,7 +22149,7 @@ LeabraProject .projects["vis_test"] {
 	el_def=0;
 	ProgramCall @[0] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="MoveFixateTarget(true, 0, 0, 0)";
 	 pre_compile_code_string="MoveFixateTarget(true, 0, 0, 0)";
 	 prog_args {
@@ -22188,7 +22264,7 @@ LeabraProject .projects["vis_test"] {
 	};
 	ProgramCall @[3] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="MoveFixateTarget(false, tpos_x, tpos_y, tpos_z)";
 	 pre_compile_code_string="MoveFixateTarget(false, tpos_x, tpos_y, tpos_z)";
 	 prog_args {
@@ -22258,7 +22334,7 @@ LeabraProject .projects["vis_test"] {
 	};
 	StopStepPoint @[5] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Stop_Step Point";
 	 pre_compile_code_string="Stop_Step Point";
 	 cond {
@@ -22306,7 +22382,7 @@ LeabraProject .projects["vis_test"] {
 	  };
 	  ProgramCall @[3] {
 	   desc=;
-	   flags=0;
+	   flags=CAN_REVERT_TO_CODE;
 	   code_string="MoveTarget(false, tpos_x, tpos_y, tpos_z)";
 	   pre_compile_code_string="MoveTarget(false, tpos_x, tpos_y, tpos_z)";
 	   prog_args {
@@ -22376,7 +22452,7 @@ LeabraProject .projects["vis_test"] {
 	  };
 	  StopStepPoint @[5] {
 	   desc=;
-	   flags=0;
+	   flags=CAN_REVERT_TO_CODE;
 	   code_string="Stop_Step Point";
 	   pre_compile_code_string="Stop_Step Point";
 	   cond {
@@ -23718,7 +23794,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      MethodCall @[0] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="VEVisTestWorld->Init()";
       pre_compile_code_string="VEVisTestWorld->Init()";
       result_var=NULL;
@@ -23739,7 +23815,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      MethodCall @[0] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="RobotTime->StartTimer(false)";
       pre_compile_code_string="RobotTime->StartTimer(false)";
       result_var=NULL;
@@ -23778,13 +23854,13 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        Comment @[0] {
 	desc="= Generate Random Eye Positions =";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="// = Generate Random Eye Positions =";
 	pre_compile_code_string="// = Generate Random Eye Positions =";
        };
        RandomCall @[1] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="leye_horiz = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="leye_horiz = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].vars["leye_horiz"]$$;
@@ -23831,7 +23907,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[2] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="leye_vert = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="leye_vert = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].vars["leye_vert"]$$;
@@ -23878,7 +23954,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[3] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="reye_horiz = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="reye_horiz = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].vars["reye_horiz"]$$;
@@ -23925,7 +24001,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[4] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="reye_vert = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="reye_vert = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].vars["reye_vert"]$$;
@@ -23986,13 +24062,13 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        Comment @[0] {
 	desc="= Generate Random Head Pos =";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="// = Generate Random Head Pos =";
 	pre_compile_code_string="// = Generate Random Head Pos =";
        };
        RandomCall @[1] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="head_horiz = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="head_horiz = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].vars["head_horiz"]$$;
@@ -24039,7 +24115,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[2] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="head_vert = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="head_vert = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].vars["head_vert"]$$;
@@ -24088,7 +24164,7 @@ LeabraProject .projects["vis_test"] {
      };
      Comment @[3] {
       desc="= Run the World =";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="// = Run the World =";
       pre_compile_code_string="// = Run the World =";
      };
@@ -24106,7 +24182,7 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="LeftEyeJoint->ApplyServoNorm(leye_vert, leye_horiz, )";
 	pre_compile_code_string="LeftEyeJoint->ApplyServoNorm(leye_vert, leye_horiz, )";
 	result_var=NULL;
@@ -24155,7 +24231,7 @@ LeabraProject .projects["vis_test"] {
        };
        MethodCall @[1] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="RightEyeJoint->ApplyServoNorm(reye_vert, reye_horiz, )";
 	pre_compile_code_string="RightEyeJoint->ApplyServoNorm(reye_vert, reye_horiz, )";
 	result_var=NULL;
@@ -24218,7 +24294,7 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="NeckJoint->ApplyServoNorm(head_vert, head_horiz, )";
 	pre_compile_code_string="NeckJoint->ApplyServoNorm(head_vert, head_horiz, )";
 	result_var=NULL;
@@ -24278,7 +24354,7 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="VEVisTestWorld->Step()";
 	pre_compile_code_string="VEVisTestWorld->Step()";
 	result_var=NULL;
@@ -24294,7 +24370,7 @@ LeabraProject .projects["vis_test"] {
        };
        StopStepPoint @[1] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Stop_Step Point";
 	pre_compile_code_string="Stop_Step Point";
 	cond {
@@ -24314,7 +24390,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[7] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="RobotTime->EndTimer()";
       pre_compile_code_string="RobotTime->EndTimer()";
       result_var=NULL;
@@ -24623,7 +24699,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      MathCall @[0] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="reye_horiz_ang = taMath_float::atan2(targ_z - nose_z, (targ_x-nose_x) - eye_off)";
       pre_compile_code_string="reye_horiz_ang = taMath_float::atan2(targ_z - nose_z, (targ_x-nose_x) - eye_off)";
       result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["FixateOnXYZ"].vars["reye_horiz_ang"]$$;
@@ -24669,7 +24745,7 @@ LeabraProject .projects["vis_test"] {
      };
      MathCall @[2] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="leye_horiz_ang = taMath_float::atan2(targ_z - nose_z, (targ_x-nose_x) + eye_off)";
       pre_compile_code_string="leye_horiz_ang = taMath_float::atan2(targ_z - nose_z, (targ_x-nose_x) + eye_off)";
       result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["FixateOnXYZ"].vars["leye_horiz_ang"]$$;
@@ -24715,7 +24791,7 @@ LeabraProject .projects["vis_test"] {
      };
      MathCall @[4] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="reye_vert_ang = taMath_float::atan2(targ_z - nose_z, nose_y - targ_y)";
       pre_compile_code_string="reye_vert_ang = taMath_float::atan2(targ_z - nose_z, nose_y - targ_y)";
       result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["FixateOnXYZ"].vars["reye_vert_ang"]$$;
@@ -24771,7 +24847,7 @@ LeabraProject .projects["vis_test"] {
      };
      OtherProgramVar @[7] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Vars To:  program=VisTestRobot set=to  var_1=leye_horiz  var_2=leye_vert  var_3=reye_horiz  var_4=reye_vert ";
       pre_compile_code_string="Vars To:  program=VisTestRobot set=to  var_1=leye_horiz  var_2=leye_vert  var_3=reye_horiz  var_4=reye_vert ";
       other_prog=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"]$$;
@@ -24783,7 +24859,7 @@ LeabraProject .projects["vis_test"] {
      };
      ProgramCall @[8] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="VisTestRobot()";
       pre_compile_code_string="VisTestRobot()";
       prog_args {
@@ -25003,7 +25079,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[2] {
       desc=;
-      flags=OFF;
+      flags=OFF|CAN_REVERT_TO_CODE;
       code_string="VEEmerWorld->UpdateAllViews()";
       pre_compile_code_string="VEEmerWorld->UpdateAllViews()";
       result_var=NULL;
@@ -25019,7 +25095,7 @@ LeabraProject .projects["vis_test"] {
      };
      MiscCall @[3] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="taMisc::ProcessEvents()";
       pre_compile_code_string="taMisc::ProcessEvents()";
       result_var=NULL;
@@ -25241,7 +25317,7 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        RandomCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="targ_x = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="targ_x = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["MoveTarget"].args["targ_x"]$$;
@@ -25288,7 +25364,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[1] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="targ_y = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="targ_y = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["MoveTarget"].args["targ_y"]$$;
@@ -25335,7 +25411,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[2] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="targ_z = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="targ_z = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["MoveTarget"].args["targ_z"]$$;
@@ -25420,7 +25496,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[5] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="TargetBody->SetValsToODE()";
       pre_compile_code_string="TargetBody->SetValsToODE()";
       result_var=NULL;
@@ -25436,7 +25512,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[6] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="VEEmerWorld->UpdateView()";
       pre_compile_code_string="VEEmerWorld->UpdateView()";
       result_var=NULL;
@@ -25603,7 +25679,7 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        RandomCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="targ_x = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="targ_x = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["MoveFixateTarget"].args["targ_x"]$$;
@@ -25650,7 +25726,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[1] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="targ_y = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="targ_y = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["MoveFixateTarget"].args["targ_y"]$$;
@@ -25697,7 +25773,7 @@ LeabraProject .projects["vis_test"] {
        };
        RandomCall @[2] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="targ_z = Random::UniformMinMax(0.0, 1.0, )";
 	pre_compile_code_string="targ_z = Random::UniformMinMax(0.0, 1.0, )";
 	result_var=.projects["vis_test"].programs.gp["VisTest_3D_Progs"]["MoveFixateTarget"].args["targ_z"]$$;
@@ -25746,7 +25822,7 @@ LeabraProject .projects["vis_test"] {
      };
      ProgramCall @[1] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="MoveTarget(false, targ_x, targ_y, targ_z)";
       pre_compile_code_string="MoveTarget(false, targ_x, targ_y, targ_z)";
       prog_args {
@@ -25803,7 +25879,7 @@ LeabraProject .projects["vis_test"] {
      };
      ProgramCall @[2] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="FixateOnXYZ(Target1.init_pos.x, Target1.init_pos.y + targ_y_off, Target1.init_pos.z + targ_z_off)";
       pre_compile_code_string="FixateOnXYZ(Target1.init_pos.x, Target1.init_pos.y + targ_y_off, Target1.init_pos.z + targ_z_off)";
       prog_args {
@@ -25984,7 +26060,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: ?";
       pre_compile_code_string="Net Counter Init: ?";
       network_var=.projects["vis_test"].programs.gp["NetTest"]["LeabraTrial"].args["network"]$$;
@@ -25999,7 +26075,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: ?";
       pre_compile_code_string="Net Counter Init: ?";
       network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraTrial"].args["network"]$;
@@ -26009,7 +26085,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[1] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="input_data->ReadItem(0)";
       pre_compile_code_string="input_data->ReadItem(0)";
       result_var=NULL;
@@ -26036,7 +26112,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[2] {
       desc="initializes various counters at start of trial";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
       pre_compile_code_string="network->Trial_Init()";
       result_var=NULL;
@@ -26061,7 +26137,7 @@ LeabraProject .projects["vis_test"] {
        el_def=0;
        ProgramCall @[0] {
 	desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="LeabraSettle(network, input_data)";
 	pre_compile_code_string="LeabraSettle(network, input_data)";
 	prog_args {
@@ -26096,7 +26172,7 @@ LeabraProject .projects["vis_test"] {
        };
        NetCounterIncr @[1] {
 	desc="increment the phase number (also on network)";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: ?";
 	pre_compile_code_string="Net Counter Incr: ?";
 	network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraTrial"].args["network"]$;
@@ -26106,7 +26182,7 @@ LeabraProject .projects["vis_test"] {
        };
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->method()";
 	pre_compile_code_string="network->method()";
 	result_var=NULL;
@@ -26127,7 +26203,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[4] {
       desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Final()";
       pre_compile_code_string="network->Trial_Final()";
       result_var=NULL;
@@ -26143,7 +26219,7 @@ LeabraProject .projects["vis_test"] {
      };
      NetUpdateView @[5] {
       desc="update the network view(s) (only if update_net_view is true)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
       network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraTrial"].args["network"]$;
@@ -26274,7 +26350,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
@@ -26312,7 +26388,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[1] {
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
-      flags=OFF;
+      flags=OFF|CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->AutoConfig()";
       pre_compile_code_string="LayerWriter_0->AutoConfig()";
       result_var=NULL;
@@ -26339,7 +26415,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
@@ -26371,7 +26447,7 @@ LeabraProject .projects["vis_test"] {
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
@@ -26409,7 +26485,7 @@ LeabraProject .projects["vis_test"] {
      };
      MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
-      flags=PROG_ERROR;
+      flags=PROG_ERROR|CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
       pre_compile_code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
@@ -26544,7 +26620,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
       pre_compile_code_string="Net Counter Init: cycle";
       network_var=.projects["vis_test"].programs.gp["NetTest"]["LeabraSettle"].args["network"]$$;
@@ -26559,7 +26635,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
       pre_compile_code_string="Net Counter Init: cycle";
       network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraSettle"].args["network"]$;
@@ -26569,7 +26645,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      };
      MethodCall @[1] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
@@ -26586,7 +26662,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      ProgramCall @[2] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="ApplyInputs(network, input_data)";
       pre_compile_code_string="ApplyInputs(network, input_data)";
       prog_args {
@@ -26621,7 +26697,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[3] {
       desc="initializes various counters at start of settling";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->method()";
       pre_compile_code_string="network->method()";
       result_var=NULL;
@@ -26691,7 +26767,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="LeabraCycle(network)";
 	pre_compile_code_string="LeabraCycle(network)";
 	prog_args {
@@ -26715,7 +26791,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetCounterIncr @[1] {
 	desc="increment cycle counter (also on network)";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: cycle";
 	pre_compile_code_string="Net Counter Incr: cycle";
 	network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraSettle"].args["network"]$;
@@ -26751,7 +26827,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[7] {
       desc="perform final operations at end of settling (storing final activations, etc)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->method()";
       pre_compile_code_string="network->method()";
       result_var=NULL;
@@ -26780,7 +26856,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        MethodCall @[0] {
 	desc="compute trial-level statistics";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_TrialStats()";
 	pre_compile_code_string="network->Compute_TrialStats()";
 	result_var=NULL;
@@ -26810,7 +26886,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        MethodCall @[0] {
 	desc="get external reward information";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_ExtRew()";
 	pre_compile_code_string="network->Compute_ExtRew()";
 	result_var=NULL;
@@ -26828,7 +26904,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      NetUpdateView @[10] {
       desc="update network views, if update_net_view == true";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
       network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraSettle"].args["network"]$;
@@ -26930,7 +27006,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="this does all the standard leabra processing for one cycle of activation updating";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Cycle_Run()";
       pre_compile_code_string="network->Cycle_Run()";
       result_var=NULL;
@@ -26946,7 +27022,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
       network_var=$.projects["vis_test"].programs.gp["NetTest"]["LeabraCycle"].args["network"]$;
@@ -27082,7 +27158,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="unit = V2bo->UnitAtGpCoord(V2bo.gp_geom.x / 2, V2bo.gp_geom.y / 2, 0, 0)";
       pre_compile_code_string="unit = V2bo->UnitAtGpCoord(V2bo.gp_geom.x / 2, V2bo.gp_geom.y / 2, 0, 0)";
       result_var=.projects["vis_test"].programs.gp["NetTest"]["SelectTargUnit"].vars["unit"]$$;
@@ -29574,7 +29650,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.4412228: y=0.4412234: z=0.4412235: }: rotate={x=-1.000165: y=-2.835972e-6: z=-2.835973e-6: rot=0.04293072: }: translate={x=1.005204: y=0.002140507: z=-0.6380163: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
-	  hot_vars{ 	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;	  };
 	  unit_src_path=".layers[0].units[3298]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -29813,7 +29889,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Published on wiki: emergent page: demos/vis_test with description: Allows testing of V1 visual filters on well-controlled visual stimuli rendered using a canvas and in a 3D world. tags: Demo, Vision, V1 Filters, Gabor Filters author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";

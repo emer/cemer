@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
 LeabraProject .projects["vis_test_shadow"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -2795,12 +2801,12 @@ LeabraProject .projects["vis_test_shadow"] {
 };
 LeabraProject .projects["vis_test_shadow"] {
  name="vis_test_shadow";
- desc=;
- tags=;
+ desc="Testing of visual processing on 3D environment with shadows enabled";
+ tags="Demo, Vision, V1 Filters, Gabor Filters, Virtual Environment, Shadows";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=1;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -2808,18 +2814,78 @@ LeabraProject .projects["vis_test_shadow"] {
   license=GPLv2;
   owner_name="Regents of the University of Colorado";
   org="CCNLab at University of Colorado Boulder";
-  year="2010";
+  year="2016";
   custom=;
  };
  pub_cite=;
  wiki {
-  wiki=;
-  page_name=;
+  wiki="emergent";
+  page_name="demos/vis_test_shadow";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_159";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/vis_test_shadow";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/vis_test_shadow";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Wed Aug 31 03:36:26 2016 version: 8.0.1 user: oreilly file_name: <code>vis_test_shadow.proj</code> <br>
+Published on wiki: emergent page: demos/vis_test_shadow with description: Testing of visual processing on 3D environment with shadows enabled tags: Demo, Vision, V1 Filters, Gabor Filters, Virtual Environment, Shadows author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<li>Wed Aug 31 03:36:26 2016 version: 8.0.1 user: oreilly file_name: <code>vis_test_shadow.proj</code> <br>
+Published on wiki: emergent page: demos/vis_test_shadow with description: Testing of visual processing on 3D environment with shadows enabled tags: Demo, Vision, V1 Filters, Gabor Filters, Virtual Environment, Shadows author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -2837,7 +2903,7 @@ LeabraProject .projects["vis_test_shadow"] {
     };
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -36718,7 +36784,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.01557819;
+     value 8 0=0.01497903;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -41280,8 +41346,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ last_change_desc="Published on wiki: emergent page: demos/vis_test_shadow with description: Testing of visual processing on 3D environment with shadows enabled tags: Demo, Vision, V1 Filters, Gabor Filters, Virtual Environment, Shadows author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
+ tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

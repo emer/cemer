@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
 CsProject .projects["cs_ra"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -456,14 +462,15 @@ CsProject .projects["cs_ra"] {
     ProgType_List @.types = [0] {
     };
 
-    ProgVar_List @.args = [3] {
+    ProgVar_List @.args = [2] {
      ProgVar @["network"] { };
      ProgVar @["input_data"] { };
-     ProgVar @["max_batch"] { };
     };
 
-    ProgVar_List @.vars = [1] {
+    ProgVar_List @.vars = [3] {
      ProgVar @["batch"] { };
+     ProgVar @["batch_start"] { };
+     ProgVar @["n_batches"] { };
     };
 
     Function_List @.functions = [0] {
@@ -473,19 +480,27 @@ CsProject .projects["cs_ra"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [2] {
-     NetCounterInit @[0] { };
-     WhileLoop @[1] { 
+    ProgEl_List @.prog_code = [5] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     MemberAssign @[2] { };
+     ForLoop @[3] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
-	ProgArg_List @.prog_args = [2] {
+	ProgArg_List @.prog_args = [3] {
 	 ProgArg @[0] { };
 	 ProgArg @[1] { };
+	 ProgArg @[2] { };
 	};
        };
        NetCounterIncr @[1] { };
       };
      };
+     BlankLineEl @[4] { };
     };
    };
    Program @["CsTrain"] { 
@@ -493,82 +508,163 @@ CsProject .projects["cs_ra"] {
      UserData_DocLink @["DocLink"] { };
     };
 
-    ProgObjList @.objs = [1] {
+    ProgObjList @.objs = [2] {
+     RndSeed_List @["rnd_seeds"] { 
+      taList @.seeds = [25] {
+       RndSeed @["RndSeed_1"] { };
+       RndSeed @["RndSeed_2"] { };
+       RndSeed @["RndSeed_3"] { };
+       RndSeed @["RndSeed_4"] { };
+       RndSeed @["RndSeed_5"] { };
+       RndSeed @["RndSeed_6"] { };
+       RndSeed @["RndSeed_7"] { };
+       RndSeed @["RndSeed_8"] { };
+       RndSeed @["RndSeed_9"] { };
+       RndSeed @["RndSeed_10"] { };
+       RndSeed @["RndSeed_11"] { };
+       RndSeed @["RndSeed_12"] { };
+       RndSeed @["RndSeed_13"] { };
+       RndSeed @["RndSeed_14"] { };
+       RndSeed @["RndSeed_15"] { };
+       RndSeed @["RndSeed_16"] { };
+       RndSeed @["RndSeed_17"] { };
+       RndSeed @["RndSeed_18"] { };
+       RndSeed @["RndSeed_19"] { };
+       RndSeed @["RndSeed_20"] { };
+       RndSeed @["RndSeed_21"] { };
+       RndSeed @["RndSeed_22"] { };
+       RndSeed @["RndSeed_23"] { };
+       RndSeed @["RndSeed_24"] { };
+       RndSeed @["RndSeed_25"] { };
+      };
+     };
      RndSeed @["rnd_seed"] { };
     };
 
     ProgType_List @.types = [1] {
      DynEnumType @["RndInitType"] { 
-      DynEnumItem_List @.enums = [2] {
+      DynEnumItem_List @.enums = [3] {
        DynEnumItem @["OLD_SEED"] { };
        DynEnumItem @["NEW_SEED"] { };
+       DynEnumItem @["BATCH_SEEDS"] { };
       };
      };
     };
 
-    ProgVar_List @.args = [2] {
+    ProgVar_List @.args = [3] {
      ProgVar @["network"] { };
      ProgVar @["input_data"] { };
+     ProgVar @["no_prompts"] { };
     };
 
-    ProgVar_List @.vars = [7] {
+    ProgVar_List @.vars = [12] {
      ProgVar @["max_epoch"] { };
+     ProgVar @["epoch"] { };
      ProgVar @["train_mode"] { };
      ProgVar @["rnd_init"] { };
-     ProgVar @["epoch"] { };
      ProgVar @["err_stopcrit"] { };
-     ProgVar @["rnd_seed"] { };
+     ProgVar @["n_under_thr"] { };
+     ProgVar @["save_final_wts"] { };
+     ProgVar @["save_wts_interval"] { };
+     ProgVar @["n_under_cnt"] { };
+     ProgVar @["rnd_seeds"] { };
      ProgVar @["train_timer"] { };
+     ProgVar @["rnd_seed"] { };
     };
 
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [6] {
-     MethodCall @[0] { 
-      ProgArg_List @.meth_args = [1] {
-       ProgArg @[0] { };
+    Function_List @.functions = [1] {
+     Function @["GetRandomSeed"] { 
+      ProgVar_List @.args = [0] {
       };
-     };
-     AssignExpr @[1] { };
-     NetCounterInit @[2] { };
-     If @[3] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
+
+      ProgEl_List @.fun_code = [2] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       Switch @[1] { 
+	ProgEl_List @.cases = [3] {
+	 CaseBlock @[0] { 
+	  ProgEl_List @.prog_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	 CaseBlock @[1] { 
+	  ProgEl_List @.prog_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	 CaseBlock @[2] { 
+	  ProgEl_List @.prog_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	     ProgArg @[0] { };
+	    };
+	   };
+	  };
+	 };
 	};
        };
       };
      };
-     Else @[4] { 
-      ProgEl_List @.else_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-      };
-     };
-     MethodCall @[5] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
     };
 
-    ProgEl_List @.prog_code = [7] {
+    ProgEl_List @.init_code = [7] {
      AssignExpr @[0] { };
      MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetCounterInit @[2] { };
-     MemberAssign @[3] { };
-     MethodCall @[4] { 
-      ProgArg_List @.meth_args = [0] {
+     AssignExpr @[2] { };
+     AssignExpr @[3] { };
+     FunctionCall @[4] { 
+      ProgArg_List @.fun_args = [0] {
       };
      };
-     WhileLoop @[5] { 
-      ProgEl_List @.loop_code = [3] {
+     WtInitPrompt @[5] { 
+      ProgEl_List @.yes_code = [2] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       PrintExpr @[1] { };
+      };
+     };
+     AssignExpr @[6] { };
+    };
+
+    ProgEl_List @.prog_code = [10] {
+     AssignExpr @[0] { };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     AssignExpr @[2] { };
+     MemberAssign @[3] { };
+     FunctionCall @[4] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+     };
+     If @[5] { 
+      ProgEl_List @.true_code = [2] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       PrintExpr @[1] { };
+      };
+     };
+     AssignExpr @[6] { };
+     WhileLoop @[7] { 
+      ProgEl_List @.loop_code = [5] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
 	 ProgArg @[0] { };
@@ -576,10 +672,42 @@ CsProject .projects["cs_ra"] {
 	};
        };
        NetCounterIncr @[1] { };
-       IfBreak @[2] { };
+       If @[2] { 
+	ProgEl_List @.true_code = [2] {
+	 VarIncr @[0] { };
+	 IfBreak @[1] { };
+	};
+       };
+       Else @[3] { 
+	ProgEl_List @.else_code = [1] {
+	 AssignExpr @[0] { };
+	};
+       };
+       If @[4] { 
+	ProgEl_List @.true_code = [1] {
+	 If @[0] { 
+	  ProgEl_List @.true_code = [1] {
+	   ProgramCall @[0] { 
+	    ProgArg_List @.prog_args = [1] {
+	     ProgArg @[0] { };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
       };
      };
-     MethodCall @[6] { 
+     If @[8] { 
+      ProgEl_List @.true_code = [1] {
+       ProgramCall @[0] { 
+	ProgArg_List @.prog_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+      };
+     };
+     MethodCall @[9] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -617,7 +745,7 @@ CsProject .projects["cs_ra"] {
      AssignExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [9] {
+    ProgEl_List @.prog_code = [10] {
      NetCounterInit @[0] { };
      AssignExpr @[1] { };
      MethodCall @[2] { 
@@ -629,7 +757,11 @@ CsProject .projects["cs_ra"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetDataLoop @[4] { 
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetDataLoop @[5] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
@@ -647,7 +779,7 @@ CsProject .projects["cs_ra"] {
        };
       };
      };
-     If @[5] { 
+     If @[6] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -655,16 +787,16 @@ CsProject .projects["cs_ra"] {
        };
       };
      };
-     MethodCall @[6] { 
+     MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[7] { 
+     ProgramCall @[8] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[8] { 
+     MethodCall @[9] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -760,23 +892,28 @@ CsProject .projects["cs_ra"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [8] {
+    ProgEl_List @.prog_code = [9] {
      NetCounterInit @[0] { };
-     MethodCall @[1] { 
+     If @[1] { 
+      ProgEl_List @.true_code = [1] {
+       AssignExpr @[0] { };
+      };
+     };
+     MethodCall @[2] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[2] { 
+     ProgramCall @[3] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     MethodCall @[3] { 
+     MethodCall @[4] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     WhileLoop @[4] { 
+     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [4] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -788,11 +925,11 @@ CsProject .projects["cs_ra"] {
        IfBreak @[3] { };
       };
      };
-     MethodCall @[5] { 
+     MethodCall @[6] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[6] { 
+     If @[7] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -800,7 +937,7 @@ CsProject .projects["cs_ra"] {
        };
       };
      };
-     NetUpdateView @[7] { };
+     NetUpdateView @[8] { };
     };
    };
    Program @["CsCycle"] { 
@@ -866,7 +1003,7 @@ CsProject .projects["cs_ra"] {
     Function_List @.functions = [0] {
     };
 
-    ProgEl_List @.init_code = [2] {
+    ProgEl_List @.init_code = [3] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
@@ -878,10 +1015,21 @@ CsProject .projects["cs_ra"] {
        ProgArg @[0] { };
       };
      };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
     };
 
-    ProgEl_List @.prog_code = [1] {
+    ProgEl_List @.prog_code = [2] {
      MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     MethodCall @[1] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -1353,11 +1501,11 @@ CsProject .projects["cs_ra"] {
 CsProject .projects["cs_ra"] {
  name="cs_ra";
  desc="constraint satisfaction random associator";
- tags=;
+ tags="Demo, Constraint Satisfaction";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=1;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -1370,13 +1518,73 @@ CsProject .projects["cs_ra"] {
  };
  pub_cite=;
  wiki {
-  wiki=;
-  page_name=;
+  wiki="emergent";
+  page_name="demos/cs_ra";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_115";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/cs_ra";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/cs_ra";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Wed Aug 31 03:11:53 2016 version: 8.0.1 user: oreilly file_name: <code>cs_ra.proj</code> <br>
+Published on wiki: emergent page: demos/cs_ra with description: constraint satisfaction random associator tags: Demo, Constraint Satisfaction author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<li>Wed Aug 31 03:11:53 2016 version: 8.0.1 user: oreilly file_name: <code>cs_ra.proj</code> <br>
+Published on wiki: emergent page: demos/cs_ra with description: constraint satisfaction random associator tags: Demo, Constraint Satisfaction author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -4653,12 +4861,12 @@ CsProject .projects["cs_ra"] {
     tags="Cs, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -4680,7 +4888,7 @@ CsProject .projects["cs_ra"] {
      ProgVar @["network"] {
       name="network";
       var_type=T_Object;
-      object_type=CsNetwork;
+      object_type=LeabraNetwork;
       object_val=.projects["cs_ra"].networks["Network_0"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -4699,15 +4907,6 @@ CsProject .projects["cs_ra"] {
       desc="datatable with training patterns -- not used by this program, but passed to train program";
       init_from=NULL;
      };
-     ProgVar @["max_batch"] {
-      name="max_batch";
-      var_type=T_Int;
-      int_val=10;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
-      reference=0;
-      desc="maximum number of batch runs to perform";
-      init_from=NULL;
-     };
     };
     vars {
      name="vars";
@@ -4717,9 +4916,27 @@ CsProject .projects["cs_ra"] {
       name="batch";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
+      init_from=NULL;
+     };
+     ProgVar @["batch_start"] {
+      name="batch_start";
+      var_type=T_Int;
+      int_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="batch number to start on";
+      init_from=NULL;
+     };
+     ProgVar @["n_batches"] {
+      name="n_batches";
+      var_type=T_Int;
+      int_val=10;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of batches to run";
       init_from=NULL;
      };
     };
@@ -4747,32 +4964,64 @@ CsProject .projects["cs_ra"] {
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     NetCounterInit @[0] {
-      desc="initializes local batch counter and batch field on network";
+     LocalVars @[0] {
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Net Counter Init: batch";
-      pre_compile_code_string="Net Counter Init: batch";
-      network_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
-      local_ctr_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
-      counter=Network::batch;
+      code_string="LocalVars (1 vars)";
+      pre_compile_code_string="LocalVars (1 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
+      desc="start at the start";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="batch = batch_start";
+      pre_compile_code_string="batch = batch_start";
+      result_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
+      expr {
+       expr="batch_start";
+      };
+     };
+     MemberAssign @[2] {
+      desc="update network";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network.batch = batch";
+      pre_compile_code_string="network.batch = batch";
+      obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
+      path="batch";
+      expr {
+       expr="batch";
+      };
       update_after=0;
      };
-     WhileLoop @[1] {
-      desc="the main loop over training runs";
+     ForLoop @[3] {
+      desc="main loop over training runs";
       flags=CAN_REVERT_TO_CODE;
-      code_string="while (batch < max_batch)";
-      pre_compile_code_string="while (batch < max_batch)";
+      code_string="for (i=0; i<n_batches; i++)";
+      pre_compile_code_string="for (i=0; i<n_batches; i++)";
       loop_code {
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="CsTrain(network, input_data)";
-	pre_compile_code_string="CsTrain(network, input_data)";
+	code_string="CsTrain(network, input_data, true)";
+	pre_compile_code_string="CsTrain(network, input_data, true)";
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -4781,7 +5030,7 @@ CsProject .projects["cs_ra"] {
 	  name="network";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="network";
 	  expr {
 	   expr="network";
 	  };
@@ -4792,9 +5041,20 @@ CsProject .projects["cs_ra"] {
 	  name="input_data";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="input_data";
 	  expr {
 	   expr="input_data";
+	  };
+	 };
+	 ProgArg @[2] {
+	  arg_type=bool;
+	  type="bool";
+	  name="no_prompts";
+	  required=1;
+	  def_val=;
+	  prev_expr="true";
+	  expr {
+	   expr="true";
 	  };
 	 };
 	};
@@ -4812,9 +5072,21 @@ CsProject .projects["cs_ra"] {
 	update_after=0;
        };
       };
-      test {
-       expr="batch < max_batch";
+      init {
+       expr="i=0";
       };
+      test {
+       expr="i<n_batches";
+      };
+      iter {
+       expr="i++";
+      };
+     };
+     BlankLineEl @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string=" ";
+      pre_compile_code_string=" ";
      };
     };
     step_prog=NULL;
@@ -4822,10 +5094,10 @@ CsProject .projects["cs_ra"] {
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraBatch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
      text_size=1;
      text=;
      html_text=;
@@ -4844,14 +5116,14 @@ CsProject .projects["cs_ra"] {
     name="CsTrain";
     short_nm="Train";
     tags="Cs, Std";
-    desc="A complete training run of a Cs network: iterating over epochs until the network has learned the task";
+    desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -4860,9 +5132,117 @@ CsProject .projects["cs_ra"] {
      name="objs";
      el_typ=RndSeed;
      el_def=0;
+     RndSeed_List @["rnd_seeds"] {
+      name="rnd_seeds";
+      seeds {
+       name="seeds";
+       el_typ=RndSeed;
+       el_def=0;
+       RndSeed @["RndSeed_1"] {
+	name="RndSeed_1";
+	rnd_seed=741928826;
+       };
+       RndSeed @["RndSeed_2"] {
+	name="RndSeed_2";
+	rnd_seed=741928827;
+       };
+       RndSeed @["RndSeed_3"] {
+	name="RndSeed_3";
+	rnd_seed=741928828;
+       };
+       RndSeed @["RndSeed_4"] {
+	name="RndSeed_4";
+	rnd_seed=741928829;
+       };
+       RndSeed @["RndSeed_5"] {
+	name="RndSeed_5";
+	rnd_seed=741928830;
+       };
+       RndSeed @["RndSeed_6"] {
+	name="RndSeed_6";
+	rnd_seed=741928831;
+       };
+       RndSeed @["RndSeed_7"] {
+	name="RndSeed_7";
+	rnd_seed=741928832;
+       };
+       RndSeed @["RndSeed_8"] {
+	name="RndSeed_8";
+	rnd_seed=741928833;
+       };
+       RndSeed @["RndSeed_9"] {
+	name="RndSeed_9";
+	rnd_seed=741928834;
+       };
+       RndSeed @["RndSeed_10"] {
+	name="RndSeed_10";
+	rnd_seed=741928835;
+       };
+       RndSeed @["RndSeed_11"] {
+	name="RndSeed_11";
+	rnd_seed=741928836;
+       };
+       RndSeed @["RndSeed_12"] {
+	name="RndSeed_12";
+	rnd_seed=741928837;
+       };
+       RndSeed @["RndSeed_13"] {
+	name="RndSeed_13";
+	rnd_seed=741928838;
+       };
+       RndSeed @["RndSeed_14"] {
+	name="RndSeed_14";
+	rnd_seed=741928839;
+       };
+       RndSeed @["RndSeed_15"] {
+	name="RndSeed_15";
+	rnd_seed=741928840;
+       };
+       RndSeed @["RndSeed_16"] {
+	name="RndSeed_16";
+	rnd_seed=741928841;
+       };
+       RndSeed @["RndSeed_17"] {
+	name="RndSeed_17";
+	rnd_seed=741928842;
+       };
+       RndSeed @["RndSeed_18"] {
+	name="RndSeed_18";
+	rnd_seed=741928843;
+       };
+       RndSeed @["RndSeed_19"] {
+	name="RndSeed_19";
+	rnd_seed=741928844;
+       };
+       RndSeed @["RndSeed_20"] {
+	name="RndSeed_20";
+	rnd_seed=741928845;
+       };
+       RndSeed @["RndSeed_21"] {
+	name="RndSeed_21";
+	rnd_seed=741928846;
+       };
+       RndSeed @["RndSeed_22"] {
+	name="RndSeed_22";
+	rnd_seed=741928847;
+       };
+       RndSeed @["RndSeed_23"] {
+	name="RndSeed_23";
+	rnd_seed=741928848;
+       };
+       RndSeed @["RndSeed_24"] {
+	name="RndSeed_24";
+	rnd_seed=741928849;
+       };
+       RndSeed @["RndSeed_25"] {
+	name="RndSeed_25";
+	rnd_seed=741928850;
+       };
+      };
+     };
      RndSeed @["rnd_seed"] {
       name="rnd_seed";
-      rnd_seed=3535056576;
+      rnd_seed=1798922048;
      };
     };
     types {
@@ -4885,6 +5265,11 @@ CsProject .projects["cs_ra"] {
 	name="NEW_SEED";
 	value=1;
 	desc="generate new random seed (new sequence of random numbers)";
+       };
+       DynEnumItem @["BATCH_SEEDS"] {
+	name="BATCH_SEEDS";
+	value=2;
+	desc="use a fixed list of random seeds with the current batch number selecting the seed to use -- provides a consistent set of initial conditions for each batch regardless..";
        };
       };
       bits=0;
@@ -4916,6 +5301,15 @@ CsProject .projects["cs_ra"] {
       desc="datatable with training patterns";
       init_from=NULL;
      };
+     ProgVar @["no_prompts"] {
+      name="no_prompts";
+      var_type=T_Bool;
+      bool_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      reference=0;
+      desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
+      init_from=NULL;
+     };
     };
     vars {
      name="vars";
@@ -4928,6 +5322,15 @@ CsProject .projects["cs_ra"] {
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="maximum number of epochs to run";
+      init_from=NULL;
+     };
+     ProgVar @["epoch"] {
+      name="epoch";
+      var_type=T_Int;
+      int_val=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="current epoch -- local copy, which is used to update network's epoch counter";
       init_from=NULL;
      };
      ProgVar @["train_mode"] {
@@ -4946,41 +5349,67 @@ CsProject .projects["cs_ra"] {
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].types["RndInitType"]$$;
-       value=0;
+       value=2;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
       init_from=NULL;
      };
-     ProgVar @["epoch"] {
-      name="epoch";
-      var_type=T_Int;
-      int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="current epoch -- local copy, which is used to update network's epoch counter";
-      init_from=NULL;
-     };
      ProgVar @["err_stopcrit"] {
       name="err_stopcrit";
       var_type=T_Real;
-      real_val=0;
+      real_val=0.25;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
-goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+      desc="stopping criterion -- network avg_sse must be <= this number to stop training -- see n_under_thr too";
       init_from=NULL;
      };
-     ProgVar @["rnd_seed"] {
-      name="rnd_seed";
+     ProgVar @["n_under_thr"] {
+      name="n_under_thr";
+      var_type=T_Int;
+      int_val=1;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of times network needs to be under stopcrit threshold to actually stop";
+      init_from=NULL;
+     };
+     ProgVar @["save_final_wts"] {
+      name="save_final_wts";
+      var_type=T_Bool;
+      bool_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="save the network's weights at the end of training?  ";
+      init_from=NULL;
+     };
+     ProgVar @["save_wts_interval"] {
+      name="save_wts_interval";
+      var_type=T_Int;
+      int_val=-1;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
+      init_from=NULL;
+     };
+     ProgVar @["n_under_cnt"] {
+      name="n_under_cnt";
+      var_type=T_Int;
+      int_val=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="current under threshold counter";
+      init_from=NULL;
+     };
+     ProgVar @["rnd_seeds"] {
+      name="rnd_seeds";
       var_type=T_Object;
-      object_type=RndSeed;
-      object_val=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].objs["rnd_seed"]$$;
+      object_type=RndSeed_List;
+      object_val=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].objs["rnd_seeds"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="random seed that is used at start of training -- if OldSeed is called";
+      desc=;
       init_from=NULL;
      };
      ProgVar @["train_timer"] {
@@ -4994,17 +5423,184 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
       init_from=NULL;
      };
+     ProgVar @["rnd_seed"] {
+      name="rnd_seed";
+      var_type=T_Object;
+      object_type=RndSeed;
+      object_val=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].objs["rnd_seed"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="random seed that is used at start of training -- if OldSeed is called";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
      el_typ=Function;
      el_def=0;
+     Function @["GetRandomSeed"] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="GetRandomSeed() returns: int";
+      pre_compile_code_string="GetRandomSeed() returns: int";
+      name="GetRandomSeed";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (0 vars)";
+	pre_compile_code_string="LocalVars (0 vars)";
+	local_vars {
+	 name=;
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       Switch @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="switch(rnd_init)";
+	pre_compile_code_string="switch(rnd_init)";
+	switch_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_init"]$$;
+	cases {
+	 name=;
+	 el_typ=CaseBlock;
+	 el_def=0;
+	 CaseBlock @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="case: OLD_SEED";
+	  pre_compile_code_string="case: OLD_SEED";
+	  prog_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="rnd_seed->OldSeed()";
+	    pre_compile_code_string="rnd_seed->OldSeed()";
+	    result_var=NULL;
+	    obj=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$$;
+	    method=RndSeed::OldSeed;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void OldSeed()";
+	    meth_desc=" restore current seed to random num generator";
+	   };
+	  };
+	  case_val {
+	   expr="OLD_SEED";
+	  };
+	  is_default=0;
+	 };
+	 CaseBlock @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="case: NEW_SEED";
+	  pre_compile_code_string="case: NEW_SEED";
+	  prog_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="new random numbers each time";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="rnd_seed->NewSeed()";
+	    pre_compile_code_string="rnd_seed->NewSeed()";
+	    result_var=NULL;
+	    obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$;
+	    method=RndSeed::NewSeed;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void NewSeed()";
+	    meth_desc=" set the seed to a new random value (based on time and process id)";
+	   };
+	  };
+	  case_val {
+	   expr="NEW_SEED";
+	  };
+	  is_default=0;
+	 };
+	 CaseBlock @[2] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="case: BATCH_SEEDS";
+	  pre_compile_code_string="case: BATCH_SEEDS";
+	  prog_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
+	    pre_compile_code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
+	    result_var=NULL;
+	    obj=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seeds"]$$;
+	    method=RndSeed_List::UseSeed;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=int;
+	      type="int";
+	      name="idx";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="network.batch % rnd_seeds.seeds.size";
+	      };
+	     };
+	    };
+	    meth_sig="void UseSeed(int idx)";
+	    meth_desc=" use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)";
+	   };
+	  };
+	  case_val {
+	   expr="BATCH_SEEDS";
+	  };
+	  is_default=0;
+	 };
+	};
+       };
+      };
+     };
     };
     init_code {
      name="init_code";
      el_typ=ProgCode;
      el_def=0;
-     MethodCall @[0] {
+     AssignExpr @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="no_prompts = false";
+      pre_compile_code_string="no_prompts = false";
+      result_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["no_prompts"]$$;
+      expr {
+       expr="false";
+      };
+     };
+     MethodCall @[1] {
       desc="check network to make sure it is ready to be run";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->CheckConfig(false)";
@@ -5031,7 +5627,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="bool CheckConfig(bool quiet = false)";
       meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
-     AssignExpr @[1] {
+     AssignExpr @[2] {
       desc="get our pointer to the network training time object";
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
@@ -5041,88 +5637,78 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="network.train_time";
       };
      };
-     NetCounterInit @[2] {
-      desc="initialize epoch counter ";
+     AssignExpr @[3] {
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Net Counter Init: epoch";
-      pre_compile_code_string="Net Counter Init: epoch";
-      network_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      local_ctr_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$$;
-      counter=Network::epoch;
-      update_after=0;
-     };
-     If @[3] {
-      desc="initialize random seed (either old or new)";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="if (rnd_init == OLD_SEED)";
-      pre_compile_code_string="if (rnd_init == OLD_SEED)";
-      cond {
-       expr="rnd_init == OLD_SEED";
+      code_string="n_under_cnt = 0";
+      pre_compile_code_string="n_under_cnt = 0";
+      result_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$$;
+      expr {
+       expr="0";
       };
-      true_code {
+     };
+     FunctionCall @[4] {
+      desc="initialize random seed";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="GetRandomSeed()";
+      pre_compile_code_string="GetRandomSeed()";
+      result_var=NULL;
+      fun=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].functions["GetRandomSeed"]$$;
+      fun_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     WtInitPrompt @[5] {
+      desc="don't initialize weights without checking";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (gui && \"Do you want to Initialize Network Weights\")";
+      pre_compile_code_string="if (gui && \"Do you want to Initialize Network Weights\")";
+      prompt="Do you want to Initialize Network Weights";
+      yes_label="Yes";
+      no_label="No";
+      yes_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
-	desc="restore previous random seed (all runs produce same results)";
+	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="rnd_seed->OldSeed()";
-	pre_compile_code_string="rnd_seed->OldSeed()";
+	code_string="network->Init_Weights()";
+	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$$;
-	method=RndSeed::OldSeed;
+	obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
+	method=Network::Init_Weights;
 	meth_args {
 	 name=;
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
-	meth_sig="void OldSeed()";
-	meth_desc=" restore current seed to random num generator";
+	meth_sig="void Init_Weights()";
+	meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
        };
-      };
-     };
-     Else @[4] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="else";
-      pre_compile_code_string="else";
-      else_code {
-       name="else_code";
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc="new random numbers each time";
+       PrintExpr @[1] {
+	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="rnd_seed->NewSeed()";
-	pre_compile_code_string="rnd_seed->NewSeed()";
-	result_var=NULL;
-	obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$;
-	method=RndSeed::NewSeed;
-	meth_args {
-	 name="meth_args";
-	 el_typ=ProgArg;
-	 el_def=0;
+	code_string="Print network.name << \" Weights Initialized\"";
+	pre_compile_code_string="Print network.name << \" Weights Initialized\"";
+	expr {
+	 expr="network.name << \" Weights Initialized\"";
 	};
-	meth_sig="void NewSeed()";
-	meth_desc=" set the seed to a new random value (based on time and process id)";
+	debug=0;
        };
       };
      };
-     MethodCall @[5] {
-      desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
+     AssignExpr @[6] {
+      desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=CAN_REVERT_TO_CODE;
-      code_string="network->Init_Weights()";
-      pre_compile_code_string="network->Init_Weights()";
-      result_var=NULL;
-      obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      method=Network::Init_Weights;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
+      code_string="epoch = network.epoch";
+      pre_compile_code_string="epoch = network.epoch";
+      result_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$$;
+      expr {
+       expr="network.epoch";
       };
-      meth_sig="void Init_Weights()";
-      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
     };
     prog_code {
@@ -5166,15 +5752,15 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void StartTimer(bool reset_used = true)";
       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
-     NetCounterInit @[2] {
-      desc="initialize epoch counter (both our local copy and network's epoch counter)";
+     AssignExpr @[2] {
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Net Counter Init: epoch";
-      pre_compile_code_string="Net Counter Init: epoch";
-      network_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      local_ctr_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
-      counter=Network::epoch;
-      update_after=0;
+      code_string="n_under_cnt = 0";
+      pre_compile_code_string="n_under_cnt = 0";
+      result_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
+      expr {
+       expr="0";
+      };
      };
      MemberAssign @[3] {
       desc="set network's training mode to our local value";
@@ -5188,23 +5774,70 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
       update_after=0;
      };
-     MethodCall @[4] {
-      desc="initialize network weights: could also load pre-set weights or something else here";
+     FunctionCall @[4] {
+      desc="initialize random seed";
       flags=CAN_REVERT_TO_CODE;
-      code_string="network->Init_Weights()";
-      pre_compile_code_string="network->Init_Weights()";
+      code_string="GetRandomSeed()";
+      pre_compile_code_string="GetRandomSeed()";
       result_var=NULL;
-      obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      method=Network::Init_Weights;
-      meth_args {
+      fun=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].functions["GetRandomSeed"]$;
+      fun_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
-      meth_sig="void Init_Weights()";
-      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
-     WhileLoop @[5] {
+     If @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (no_prompts)";
+      pre_compile_code_string="if (no_prompts)";
+      cond {
+       expr="no_prompts";
+      };
+      true_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc="initialize network weights: could also load pre-set weights or something else here";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="network->Init_Weights()";
+	pre_compile_code_string="network->Init_Weights()";
+	result_var=NULL;
+	obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
+	method=Network::Init_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig="void Init_Weights()";
+	meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
+       };
+       PrintExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="Print network.name << \" Weights Initialized\"";
+	pre_compile_code_string="Print network.name << \" Weights Initialized\"";
+	expr {
+	 expr="network.name << \" Weights Initialized\"";
+	};
+	debug=0;
+       };
+      };
+     };
+     AssignExpr @[6] {
+      desc="grab the official network epoch counter: will be initialized if needed by now";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="epoch = network.epoch";
+      pre_compile_code_string="epoch = network.epoch";
+      result_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
+      expr {
+       expr="network.epoch";
+      };
+     };
+     WhileLoop @[7] {
       desc="main loop over epochs of training";
       flags=CAN_REVERT_TO_CODE;
       code_string="while (epoch < max_epoch)";
@@ -5258,13 +5891,110 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	counter=Network::epoch;
 	update_after=0;
        };
-       IfBreak @[2] {
-	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
+       If @[2] {
+	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="if(network.cnt_err <= err_stopcrit) break";
-	pre_compile_code_string="if(network.cnt_err <= err_stopcrit) break";
+	code_string="if (network.avg_sse.avg <= err_stopcrit)";
+	pre_compile_code_string="if (network.avg_sse.avg <= err_stopcrit)";
 	cond {
-	 expr="network.cnt_err <= err_stopcrit";
+	 expr="network.avg_sse.avg <= err_stopcrit";
+	};
+	true_code {
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 VarIncr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="n_under_cnt += 1";
+	  pre_compile_code_string="n_under_cnt += 1";
+	  var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
+	  expr {
+	   expr="1";
+	  };
+	 };
+	 IfBreak @[1] {
+	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if(n_under_cnt >=  n_under_thr) break";
+	  pre_compile_code_string="if(n_under_cnt >=  n_under_thr) break";
+	  cond {
+	   expr="n_under_cnt >=  n_under_thr";
+	  };
+	 };
+	};
+       };
+       Else @[3] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="else";
+	pre_compile_code_string="else";
+	else_code {
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 AssignExpr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="n_under_cnt = 0";
+	  pre_compile_code_string="n_under_cnt = 0";
+	  result_var=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
+	  expr {
+	   expr="0";
+	  };
+	 };
+	};
+       };
+       If @[4] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="if (save_wts_interval >= 1)";
+	pre_compile_code_string="if (save_wts_interval >= 1)";
+	cond {
+	 expr="save_wts_interval >= 1";
+	};
+	true_code {
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 If @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (epoch % save_wts_interval == 0)";
+	  pre_compile_code_string="if (epoch % save_wts_interval == 0)";
+	  cond {
+	   expr="epoch % save_wts_interval == 0";
+	  };
+	  true_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   ProgramCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="SaveWeights(network)";
+	    pre_compile_code_string="SaveWeights(network)";
+	    prog_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=Network;
+	      type="CsNetwork*";
+	      name="network";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="network";
+	      };
+	     };
+	    };
+	    target=.projects["cs_ra"].programs.gp["CsAll_Std"]["SaveWeights"]$$;
+	    targ_ld_init="*SaveWeights*";
+	   };
+	  };
+	 };
 	};
        };
       };
@@ -5272,7 +6002,45 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="epoch < max_epoch";
       };
      };
-     MethodCall @[6] {
+     If @[8] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (save_final_wts)";
+      pre_compile_code_string="if (save_final_wts)";
+      cond {
+       expr="save_final_wts";
+      };
+      true_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       ProgramCall @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="SaveWeights(network)";
+	pre_compile_code_string="SaveWeights(network)";
+	prog_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=Network;
+	  type="CsNetwork*";
+	  name="network";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="network";
+	  };
+	 };
+	};
+	target=$.projects["cs_ra"].programs.gp["CsAll_Std"]["SaveWeights"]$;
+	targ_ld_init="*SaveWeights*";
+       };
+      };
+     };
+     MethodCall @[9] {
       desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->EndTimer()";
@@ -5289,15 +6057,15 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrial"]$$;
+    step_prog=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsCycle"]$$;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text=;
@@ -5318,12 +6086,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     tags="Cs, Std";
     desc="iterates over all of the items in a data table and calls Trial process on them";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -5384,7 +6152,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
       init_from=NULL;
@@ -5503,6 +6271,22 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[3] {
+      desc="added in 8.0: essential for param_seqs";
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="network->Init_Epoch()";
+      pre_compile_code_string="network->Init_Epoch()";
+      result_var=NULL;
+      obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
+      method=Network::Init_Epoch;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_Epoch()";
+      meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
+     };
+     MethodCall @[4] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
@@ -5518,7 +6302,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void ResetData()";
       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
-     NetDataLoop @[4] {
+     NetDataLoop @[5] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
@@ -5559,7 +6343,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrial"]$;
+	target=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrial"]$$;
 	targ_ld_init="*CsTrial*";
        };
        If @[1] {
@@ -5607,7 +6391,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       group_order=PERMUTED;
       group_idx_list{       };
      };
-     If @[5] {
+     If @[6] {
       desc="if full batch mode, update only at end of epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network.wt_update == Network::BATCH)";
@@ -5637,7 +6421,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
@@ -5653,7 +6437,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void Compute_EpochStats()";
       meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
-     ProgramCall @[7] {
+     ProgramCall @[8] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="CsEpochMonitor(network)";
@@ -5677,7 +6461,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       target=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsEpochMonitor"]$$;
       targ_ld_init="*CsEpochMonitor*";
      };
-     MethodCall @[8] {
+     MethodCall @[9] {
       desc="done with the computation in the epoch -- record time it took";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->EndTimer()";
@@ -5699,10 +6483,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -5723,12 +6507,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     tags="Cs, Std";
     desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -5753,7 +6537,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=CsNetwork;
       object_val=$.projects["cs_ra"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
       init_from=NULL;
@@ -5764,7 +6548,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$.projects["cs_ra"].data.gp["InputData"]["SimpleLines5x5"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable containing training input/output patterns";
       init_from=NULL;
@@ -5777,8 +6561,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @["phase_no"] {
       name="phase_no";
       var_type=T_Int;
-      int_val=2;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      int_val=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
       init_from=NULL;
@@ -5805,11 +6589,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Net Counter Init: ?";
-      pre_compile_code_string="Net Counter Init: ?";
+      code_string="Net Counter Init: phase_no";
+      pre_compile_code_string="Net Counter Init: phase_no";
       network_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$$;
       local_ctr_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$$;
-      counter=NULL;
+      counter=CsNetwork::phase_no;
       update_after=0;
      };
     };
@@ -5972,10 +6756,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -5996,12 +6780,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     tags="Cs, Std";
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -6026,7 +6810,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=CsNetwork;
       object_val=$.projects["cs_ra"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -6037,7 +6821,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$.projects["cs_ra"].data.gp["InputData"]["SimpleLines5x5"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -6051,7 +6835,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="cycle";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
       init_from=NULL;
@@ -6059,11 +6843,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @["min_cycles"] {
       name="min_cycles";
       var_type=T_Int;
-      int_val=15;
+      int_val=20;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
-sets the minimum number of cycles to settle for, regardless of network state changes, etc";
+      desc="sets the minimum number of cycles to settle for, regardless of network state changes, etc";
       init_from=NULL;
      };
      ProgVar @["update_net_view"] {
@@ -6110,7 +6893,31 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       counter=Network::cycle;
       update_after=0;
      };
-     MethodCall @[1] {
+     If @[1] {
+      desc="if not deterministic, set min_cycles = max_cycles!";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (!network.deterministic)";
+      pre_compile_code_string="if (!network.deterministic)";
+      cond {
+       expr="!network.deterministic";
+      };
+      true_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       AssignExpr @[0] {
+	desc="if not determinstic, must settle for full number of cycles (bypasses use of maxda to stop settling)";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="min_cycles = network.cycle_max";
+	pre_compile_code_string="min_cycles = network.cycle_max";
+	result_var=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsSettle"].vars["min_cycles"]$$;
+	expr {
+	 expr="network.cycle_max";
+	};
+       };
+      };
+     };
+     MethodCall @[2] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
@@ -6126,7 +6933,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       meth_sig="void Init_InputData()";
       meth_desc=" Initializes external and target inputs";
      };
-     ProgramCall @[2] {
+     ProgramCall @[3] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=CAN_REVERT_TO_CODE;
@@ -6162,7 +6969,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       target=.projects["cs_ra"].programs.gp["CsAll_Std"]["ApplyInputs"]$$;
       targ_ld_init="*ApplyInputs*";
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       desc="initializes various counters at start of settling";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Settle_Init()";
@@ -6178,7 +6985,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Settle_Init()";
       meth_desc=" run various initialization steps at the start of settling";
      };
-     WhileLoop @[4] {
+     WhileLoop @[5] {
       desc="the main loop over cycles of updating";
       flags=CAN_REVERT_TO_CODE;
       code_string="while (cycle < network.cycle_max)";
@@ -6208,7 +7015,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=.projects["cs_ra"].programs.gp["CsAll_Std"]["CsCycle"]$$;
+	target=$.projects["cs_ra"].programs.gp["CsAll_Std"]["CsCycle"]$;
 	targ_ld_init="*CsCycle*";
        };
        NetCounterIncr @[1] {
@@ -6244,7 +7051,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        expr="cycle < network.cycle_max";
       };
      };
-     MethodCall @[5] {
+     MethodCall @[6] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Settle_Final()";
@@ -6260,7 +7067,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Settle_Final()";
       meth_desc=" run final steps of processing after settling";
      };
-     If @[6] {
+     If @[7] {
       desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
       flags=CAN_REVERT_TO_CODE;
@@ -6291,7 +7098,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
       };
      };
-     NetUpdateView @[7] {
+     NetUpdateView @[8] {
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
@@ -6305,10 +7112,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraQuarter";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
      text_size=1;
      text=;
      html_text=;
@@ -6329,12 +7136,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
     tags="Cs, Std";
     desc="runs one cycle of CS processing (updating net inputs and activations)";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -6359,7 +7166,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=CsNetwork;
       object_val=$.projects["cs_ra"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -6423,10 +7230,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraCycle";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
      text_size=1;
      text=;
      html_text=;
@@ -6443,16 +7250,16 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     name="ApplyInputs";
-    short_nm="AplyIn";
+    short_nm="Inputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6478,20 +7285,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=EXT;
-	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
-	col_name="Output";
-	net_target=LAYER;
-	layer_name="Output";
-	offset {x=0: y=0: };
-	use_layer_type=1;
-	quiet=0;
-	na_by_range=0;
-	ext_flags=TARG;
-	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
-       };
-       LayerWriterEl @[2] {
 	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
@@ -6500,6 +7296,17 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
+	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
+       };
+       LayerWriterEl @[2] {
+	col_name="Output";
+	net_target=LAYER;
+	layer_name="Output";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	quiet=0;
+	na_by_range=0;
+	ext_flags=TARG;
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
@@ -6547,7 +7354,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LayerWriter;
       object_val=.projects["cs_ra"].programs.gp["CsAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
       objs_ptr=1;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
       init_from=NULL;
@@ -6601,6 +7408,33 @@ presented in the minus phase -- if this is not the case (values are computed on 
       meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
+      desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayerWriter_0->AutoConfig()";
+      pre_compile_code_string="LayerWriter_0->AutoConfig()";
+      result_var=NULL;
+      obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      method=LayerWriter::AutoConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="remove_unused";
+	required=0;
+	def_val="true";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
+      };
+      meth_sig="void AutoConfig(bool remove_unused = true)";
+      meth_desc=" do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed";
+     };
+     MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
@@ -6633,6 +7467,44 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
+      desc="sets the datatable and network for the layer writer, so it knows what to write to";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+      pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+      result_var=NULL;
+      obj=$.projects["cs_ra"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      method=LayerWriter::SetDataNetwork;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="db";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="input_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network_ptr;
+	type="Network*";
+	name="net";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+      meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+      meth_desc=" set the data table and network pointers -- convenience function for programs ";
+     };
+     MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
@@ -6654,10 +7526,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -6678,12 +7550,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
     tags="Cs, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6714,13 +7586,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6748,13 +7620,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6782,13 +7654,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6816,13 +7688,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6850,13 +7722,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6884,13 +7756,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6918,13 +7790,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6952,13 +7824,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6986,13 +7858,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7256,10 +8128,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -7280,12 +8152,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
     tags="Cs, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -7316,13 +8188,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7350,13 +8222,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7384,13 +8256,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7418,13 +8290,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7452,13 +8324,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7486,13 +8358,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7520,13 +8392,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7554,13 +8426,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7937,10 +8809,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -7957,16 +8829,16 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     name="SaveWeights";
-    short_nm="SvWts";
+    short_nm="SavWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -8004,7 +8876,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["tag"] {
       name="tag";
       var_type=T_String;
-      string_val=;
+      string_val="_gui";
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
@@ -8022,8 +8894,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["fname"] {
       name="fname";
       var_type=T_String;
-      string_val=;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      string_val="/Users/oreilly/emergent/test/leabra_std.00_0010.wts.gz";
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
       init_from=NULL;
@@ -8031,7 +8903,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["epoch_str"] {
       name="epoch_str";
       var_type=T_String;
-      string_val="0036";
+      string_val="0010";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -8040,7 +8912,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["batch_str"] {
       name="batch_str";
       var_type=T_String;
-      string_val="03";
+      string_val="00";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
@@ -8049,7 +8921,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["final_tag"] {
       name="final_tag";
       var_type=T_String;
-      string_val=".03_0036";
+      string_val=".00_0010";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -8265,10 +9137,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="SaveWeights";
+     full_url="https://grey.colorado.edu/emergent/index.php/SaveWeights";
      text_size=1;
      text=;
      html_text=;
@@ -9732,7 +10604,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Published on wiki: emergent page: demos/cs_ra with description: constraint satisfaction random associator tags: Demo, Constraint Satisfaction author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].param_seqs;.networks[0].layers; };
  networks {
   name="networks";

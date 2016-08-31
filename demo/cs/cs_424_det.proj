@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
-CsProject .projects["_cs_det"] { 
- Doc_Group @.docs = [0] {
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
+CsProject .projects["cs_424_det"] { 
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -440,14 +446,15 @@ CsProject .projects["_cs_det"] {
     ProgType_List @.types = [0] {
     };
 
-    ProgVar_List @.args = [3] {
+    ProgVar_List @.args = [2] {
      ProgVar @["network"] { };
      ProgVar @["input_data"] { };
-     ProgVar @["max_batch"] { };
     };
 
-    ProgVar_List @.vars = [1] {
+    ProgVar_List @.vars = [3] {
      ProgVar @["batch"] { };
+     ProgVar @["batch_start"] { };
+     ProgVar @["n_batches"] { };
     };
 
     Function_List @.functions = [0] {
@@ -457,19 +464,27 @@ CsProject .projects["_cs_det"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [2] {
-     NetCounterInit @[0] { };
-     WhileLoop @[1] { 
+    ProgEl_List @.prog_code = [5] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     MemberAssign @[2] { };
+     ForLoop @[3] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
-	ProgArg_List @.prog_args = [2] {
+	ProgArg_List @.prog_args = [3] {
 	 ProgArg @[0] { };
 	 ProgArg @[1] { };
+	 ProgArg @[2] { };
 	};
        };
        NetCounterIncr @[1] { };
       };
      };
+     BlankLineEl @[4] { };
     };
    };
    Program @["CsTrain"] { 
@@ -477,82 +492,163 @@ CsProject .projects["_cs_det"] {
      UserData_DocLink @["DocLink"] { };
     };
 
-    ProgObjList @.objs = [1] {
+    ProgObjList @.objs = [2] {
+     RndSeed_List @["rnd_seeds"] { 
+      taList @.seeds = [25] {
+       RndSeed @["RndSeed_1"] { };
+       RndSeed @["RndSeed_2"] { };
+       RndSeed @["RndSeed_3"] { };
+       RndSeed @["RndSeed_4"] { };
+       RndSeed @["RndSeed_5"] { };
+       RndSeed @["RndSeed_6"] { };
+       RndSeed @["RndSeed_7"] { };
+       RndSeed @["RndSeed_8"] { };
+       RndSeed @["RndSeed_9"] { };
+       RndSeed @["RndSeed_10"] { };
+       RndSeed @["RndSeed_11"] { };
+       RndSeed @["RndSeed_12"] { };
+       RndSeed @["RndSeed_13"] { };
+       RndSeed @["RndSeed_14"] { };
+       RndSeed @["RndSeed_15"] { };
+       RndSeed @["RndSeed_16"] { };
+       RndSeed @["RndSeed_17"] { };
+       RndSeed @["RndSeed_18"] { };
+       RndSeed @["RndSeed_19"] { };
+       RndSeed @["RndSeed_20"] { };
+       RndSeed @["RndSeed_21"] { };
+       RndSeed @["RndSeed_22"] { };
+       RndSeed @["RndSeed_23"] { };
+       RndSeed @["RndSeed_24"] { };
+       RndSeed @["RndSeed_25"] { };
+      };
+     };
      RndSeed @["rnd_seed"] { };
     };
 
     ProgType_List @.types = [1] {
      DynEnumType @["RndInitType"] { 
-      DynEnumItem_List @.enums = [2] {
+      DynEnumItem_List @.enums = [3] {
        DynEnumItem @["OLD_SEED"] { };
        DynEnumItem @["NEW_SEED"] { };
+       DynEnumItem @["BATCH_SEEDS"] { };
       };
      };
     };
 
-    ProgVar_List @.args = [2] {
+    ProgVar_List @.args = [3] {
      ProgVar @["network"] { };
      ProgVar @["input_data"] { };
+     ProgVar @["no_prompts"] { };
     };
 
-    ProgVar_List @.vars = [7] {
+    ProgVar_List @.vars = [12] {
      ProgVar @["max_epoch"] { };
+     ProgVar @["epoch"] { };
      ProgVar @["train_mode"] { };
      ProgVar @["rnd_init"] { };
-     ProgVar @["epoch"] { };
      ProgVar @["err_stopcrit"] { };
-     ProgVar @["rnd_seed"] { };
+     ProgVar @["n_under_thr"] { };
+     ProgVar @["save_final_wts"] { };
+     ProgVar @["save_wts_interval"] { };
+     ProgVar @["n_under_cnt"] { };
+     ProgVar @["rnd_seeds"] { };
      ProgVar @["train_timer"] { };
+     ProgVar @["rnd_seed"] { };
     };
 
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [6] {
-     MethodCall @[0] { 
-      ProgArg_List @.meth_args = [1] {
-       ProgArg @[0] { };
+    Function_List @.functions = [1] {
+     Function @["GetRandomSeed"] { 
+      ProgVar_List @.args = [0] {
       };
-     };
-     AssignExpr @[1] { };
-     NetCounterInit @[2] { };
-     If @[3] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
+
+      ProgEl_List @.fun_code = [2] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       Switch @[1] { 
+	ProgEl_List @.cases = [3] {
+	 CaseBlock @[0] { 
+	  ProgEl_List @.prog_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	 CaseBlock @[1] { 
+	  ProgEl_List @.prog_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	 CaseBlock @[2] { 
+	  ProgEl_List @.prog_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	     ProgArg @[0] { };
+	    };
+	   };
+	  };
+	 };
 	};
        };
       };
      };
-     Else @[4] { 
-      ProgEl_List @.else_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-      };
-     };
-     MethodCall @[5] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
     };
 
-    ProgEl_List @.prog_code = [7] {
+    ProgEl_List @.init_code = [7] {
      AssignExpr @[0] { };
      MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetCounterInit @[2] { };
-     MemberAssign @[3] { };
-     MethodCall @[4] { 
-      ProgArg_List @.meth_args = [0] {
+     AssignExpr @[2] { };
+     AssignExpr @[3] { };
+     FunctionCall @[4] { 
+      ProgArg_List @.fun_args = [0] {
       };
      };
-     WhileLoop @[5] { 
-      ProgEl_List @.loop_code = [3] {
+     WtInitPrompt @[5] { 
+      ProgEl_List @.yes_code = [2] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       PrintExpr @[1] { };
+      };
+     };
+     AssignExpr @[6] { };
+    };
+
+    ProgEl_List @.prog_code = [10] {
+     AssignExpr @[0] { };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     AssignExpr @[2] { };
+     MemberAssign @[3] { };
+     FunctionCall @[4] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+     };
+     If @[5] { 
+      ProgEl_List @.true_code = [2] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       PrintExpr @[1] { };
+      };
+     };
+     AssignExpr @[6] { };
+     WhileLoop @[7] { 
+      ProgEl_List @.loop_code = [5] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
 	 ProgArg @[0] { };
@@ -560,10 +656,42 @@ CsProject .projects["_cs_det"] {
 	};
        };
        NetCounterIncr @[1] { };
-       IfBreak @[2] { };
+       If @[2] { 
+	ProgEl_List @.true_code = [2] {
+	 VarIncr @[0] { };
+	 IfBreak @[1] { };
+	};
+       };
+       Else @[3] { 
+	ProgEl_List @.else_code = [1] {
+	 AssignExpr @[0] { };
+	};
+       };
+       If @[4] { 
+	ProgEl_List @.true_code = [1] {
+	 If @[0] { 
+	  ProgEl_List @.true_code = [1] {
+	   ProgramCall @[0] { 
+	    ProgArg_List @.prog_args = [1] {
+	     ProgArg @[0] { };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
       };
      };
-     MethodCall @[6] { 
+     If @[8] { 
+      ProgEl_List @.true_code = [1] {
+       ProgramCall @[0] { 
+	ProgArg_List @.prog_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+      };
+     };
+     MethodCall @[9] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -601,7 +729,7 @@ CsProject .projects["_cs_det"] {
      AssignExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [9] {
+    ProgEl_List @.prog_code = [10] {
      NetCounterInit @[0] { };
      AssignExpr @[1] { };
      MethodCall @[2] { 
@@ -613,7 +741,11 @@ CsProject .projects["_cs_det"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetDataLoop @[4] { 
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetDataLoop @[5] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
@@ -631,7 +763,7 @@ CsProject .projects["_cs_det"] {
        };
       };
      };
-     If @[5] { 
+     If @[6] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -639,16 +771,16 @@ CsProject .projects["_cs_det"] {
        };
       };
      };
-     MethodCall @[6] { 
+     MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[7] { 
+     ProgramCall @[8] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[8] { 
+     MethodCall @[9] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -855,7 +987,7 @@ CsProject .projects["_cs_det"] {
     Function_List @.functions = [0] {
     };
 
-    ProgEl_List @.init_code = [2] {
+    ProgEl_List @.init_code = [3] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
@@ -867,10 +999,21 @@ CsProject .projects["_cs_det"] {
        ProgArg @[0] { };
       };
      };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
     };
 
-    ProgEl_List @.prog_code = [1] {
+    ProgEl_List @.prog_code = [2] {
      MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     MethodCall @[1] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -1331,17 +1474,14 @@ CsProject .projects["_cs_det"] {
   };
  };
 };
-CsProject .projects["_cs_det"] {
- name="_cs_det";
- desc="
-
-
-";
- tags=;
+CsProject .projects["cs_424_det"] {
+ name="cs_424_det";
+ desc="deterministic form of the 4-2-4 autoencoder model";
+ tags="Demo, Constraint Satisfaction, Autoencoder";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=1;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -1354,13 +1494,73 @@ CsProject .projects["_cs_det"] {
  };
  pub_cite=;
  wiki {
-  wiki=;
-  page_name=;
+  wiki="emergent";
+  page_name="demos/cs_424_det";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_113";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/cs_424_det";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/cs_424_det";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Wed Aug 31 03:09:34 2016 version: 8.0.1 user: oreilly file_name: <code>cs_424_det.proj</code> <br>
+Published on wiki: emergent page: demos/cs_424_det with description: deterministic form of the 4-2-4 autoencoder model tags: Demo, Constraint Satisfaction, Autoencoder author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<li>Wed Aug 31 03:09:34 2016 version: 8.0.1 user: oreilly file_name: <code>cs_424_det.proj</code> <br>
+Published on wiki: emergent page: demos/cs_424_det with description: deterministic form of the 4-2-4 autoencoder model tags: Demo, Constraint Satisfaction, Autoencoder author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -3066,10 +3266,10 @@ CsProject .projects["_cs_det"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -3077,7 +3277,7 @@ CsProject .projects["_cs_det"] {
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -4527,7 +4727,7 @@ CsProject .projects["_cs_det"] {
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].doc$$;
      };
     };
     name="CsBatch";
@@ -4535,12 +4735,12 @@ CsProject .projects["_cs_det"] {
     tags="Cs, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -4562,8 +4762,8 @@ CsProject .projects["_cs_det"] {
      ProgVar @["network"] {
       name="network";
       var_type=T_Object;
-      object_type=CsNetwork;
-      object_val=.projects["_cs_det"].networks["CsNetwork_0"]$$;
+      object_type=LeabraNetwork;
+      object_val=.projects["cs_424_det"].networks["CsNetwork_0"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -4574,20 +4774,11 @@ CsProject .projects["_cs_det"] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$$;
+      object_val=.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable with training patterns -- not used by this program, but passed to train program";
-      init_from=NULL;
-     };
-     ProgVar @["max_batch"] {
-      name="max_batch";
-      var_type=T_Int;
-      int_val=10;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
-      reference=0;
-      desc="maximum number of batch runs to perform";
       init_from=NULL;
      };
     };
@@ -4599,9 +4790,27 @@ CsProject .projects["_cs_det"] {
       name="batch";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
+      init_from=NULL;
+     };
+     ProgVar @["batch_start"] {
+      name="batch_start";
+      var_type=T_Int;
+      int_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="batch number to start on";
+      init_from=NULL;
+     };
+     ProgVar @["n_batches"] {
+      name="n_batches";
+      var_type=T_Int;
+      int_val=10;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of batches to run";
       init_from=NULL;
      };
     };
@@ -4616,11 +4825,11 @@ CsProject .projects["_cs_det"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
       pre_compile_code_string="Net Counter Init: batch";
-      network_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$$;
-      local_ctr_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$$;
+      network_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$$;
+      local_ctr_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$$;
       counter=Network::batch;
       update_after=0;
      };
@@ -4629,32 +4838,64 @@ CsProject .projects["_cs_det"] {
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     NetCounterInit @[0] {
-      desc="initializes local batch counter and batch field on network";
-      flags=0;
-      code_string="Net Counter Init: batch";
-      pre_compile_code_string="Net Counter Init: batch";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
-      local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
-      counter=Network::batch;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (1 vars)";
+      pre_compile_code_string="LocalVars (1 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
+      desc="start at the start";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="batch = batch_start";
+      pre_compile_code_string="batch = batch_start";
+      result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
+      expr {
+       expr="batch_start";
+      };
+     };
+     MemberAssign @[2] {
+      desc="update network";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network.batch = batch";
+      pre_compile_code_string="network.batch = batch";
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
+      path="batch";
+      expr {
+       expr="batch";
+      };
       update_after=0;
      };
-     WhileLoop @[1] {
-      desc="the main loop over training runs";
+     ForLoop @[3] {
+      desc="main loop over training runs";
       flags=CAN_REVERT_TO_CODE;
-      code_string="while (batch < max_batch)";
-      pre_compile_code_string="while (batch < max_batch)";
+      code_string="for (i=0; i<n_batches; i++)";
+      pre_compile_code_string="for (i=0; i<n_batches; i++)";
       loop_code {
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
-	flags=0;
-	code_string="CsTrain(network, input_data)";
-	pre_compile_code_string="CsTrain(network, input_data)";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="CsTrain(network, input_data, true)";
+	pre_compile_code_string="CsTrain(network, input_data, true)";
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -4663,7 +4904,7 @@ CsProject .projects["_cs_det"] {
 	  name="network";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="network";
 	  expr {
 	   expr="network";
 	  };
@@ -4674,29 +4915,52 @@ CsProject .projects["_cs_det"] {
 	  name="input_data";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="input_data";
 	  expr {
 	   expr="input_data";
 	  };
 	 };
+	 ProgArg @[2] {
+	  arg_type=bool;
+	  type="bool";
+	  name="no_prompts";
+	  required=1;
+	  def_val=;
+	  prev_expr="true";
+	  expr {
+	   expr="true";
+	  };
+	 };
 	};
-	target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"]$$;
+	target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"]$$;
 	targ_ld_init="*CsTrain*";
        };
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
 	pre_compile_code_string="Net Counter Incr: batch";
-	network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
-	local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
+	network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
+	local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
 	counter=Network::batch;
 	update_after=0;
        };
       };
-      test {
-       expr="batch < max_batch";
+      init {
+       expr="i=0";
       };
+      test {
+       expr="i<n_batches";
+      };
+      iter {
+       expr="i++";
+      };
+     };
+     BlankLineEl @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string=" ";
+      pre_compile_code_string=" ";
      };
     };
     step_prog=NULL;
@@ -4704,10 +4968,10 @@ CsProject .projects["_cs_det"] {
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraBatch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
      text_size=1;
      text=;
      html_text=;
@@ -4720,20 +4984,20 @@ CsProject .projects["_cs_det"] {
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].doc$$;
      };
     };
     name="CsTrain";
     short_nm="Train";
     tags="Cs, Std";
-    desc="A complete training run of a Cs network: iterating over epochs until the network has learned the task";
+    desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -4742,9 +5006,117 @@ CsProject .projects["_cs_det"] {
      name="objs";
      el_typ=RndSeed;
      el_def=0;
+     RndSeed_List @["rnd_seeds"] {
+      name="rnd_seeds";
+      seeds {
+       name="seeds";
+       el_typ=RndSeed;
+       el_def=0;
+       RndSeed @["RndSeed_1"] {
+	name="RndSeed_1";
+	rnd_seed=741928826;
+       };
+       RndSeed @["RndSeed_2"] {
+	name="RndSeed_2";
+	rnd_seed=741928827;
+       };
+       RndSeed @["RndSeed_3"] {
+	name="RndSeed_3";
+	rnd_seed=741928828;
+       };
+       RndSeed @["RndSeed_4"] {
+	name="RndSeed_4";
+	rnd_seed=741928829;
+       };
+       RndSeed @["RndSeed_5"] {
+	name="RndSeed_5";
+	rnd_seed=741928830;
+       };
+       RndSeed @["RndSeed_6"] {
+	name="RndSeed_6";
+	rnd_seed=741928831;
+       };
+       RndSeed @["RndSeed_7"] {
+	name="RndSeed_7";
+	rnd_seed=741928832;
+       };
+       RndSeed @["RndSeed_8"] {
+	name="RndSeed_8";
+	rnd_seed=741928833;
+       };
+       RndSeed @["RndSeed_9"] {
+	name="RndSeed_9";
+	rnd_seed=741928834;
+       };
+       RndSeed @["RndSeed_10"] {
+	name="RndSeed_10";
+	rnd_seed=741928835;
+       };
+       RndSeed @["RndSeed_11"] {
+	name="RndSeed_11";
+	rnd_seed=741928836;
+       };
+       RndSeed @["RndSeed_12"] {
+	name="RndSeed_12";
+	rnd_seed=741928837;
+       };
+       RndSeed @["RndSeed_13"] {
+	name="RndSeed_13";
+	rnd_seed=741928838;
+       };
+       RndSeed @["RndSeed_14"] {
+	name="RndSeed_14";
+	rnd_seed=741928839;
+       };
+       RndSeed @["RndSeed_15"] {
+	name="RndSeed_15";
+	rnd_seed=741928840;
+       };
+       RndSeed @["RndSeed_16"] {
+	name="RndSeed_16";
+	rnd_seed=741928841;
+       };
+       RndSeed @["RndSeed_17"] {
+	name="RndSeed_17";
+	rnd_seed=741928842;
+       };
+       RndSeed @["RndSeed_18"] {
+	name="RndSeed_18";
+	rnd_seed=741928843;
+       };
+       RndSeed @["RndSeed_19"] {
+	name="RndSeed_19";
+	rnd_seed=741928844;
+       };
+       RndSeed @["RndSeed_20"] {
+	name="RndSeed_20";
+	rnd_seed=741928845;
+       };
+       RndSeed @["RndSeed_21"] {
+	name="RndSeed_21";
+	rnd_seed=741928846;
+       };
+       RndSeed @["RndSeed_22"] {
+	name="RndSeed_22";
+	rnd_seed=741928847;
+       };
+       RndSeed @["RndSeed_23"] {
+	name="RndSeed_23";
+	rnd_seed=741928848;
+       };
+       RndSeed @["RndSeed_24"] {
+	name="RndSeed_24";
+	rnd_seed=741928849;
+       };
+       RndSeed @["RndSeed_25"] {
+	name="RndSeed_25";
+	rnd_seed=741928850;
+       };
+      };
+     };
      RndSeed @["rnd_seed"] {
       name="rnd_seed";
-      rnd_seed=1123758588;
+      rnd_seed=1798922048;
      };
     };
     types {
@@ -4768,6 +5140,11 @@ CsProject .projects["_cs_det"] {
 	value=1;
 	desc="generate new random seed (new sequence of random numbers)";
        };
+       DynEnumItem @["BATCH_SEEDS"] {
+	name="BATCH_SEEDS";
+	value=2;
+	desc="use a fixed list of random seeds with the current batch number selecting the seed to use -- provides a consistent set of initial conditions for each batch regardless..";
+       };
       };
       bits=0;
      };
@@ -4780,7 +5157,7 @@ CsProject .projects["_cs_det"] {
       name="network";
       var_type=T_Object;
       object_type=CsNetwork;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -4791,11 +5168,20 @@ CsProject .projects["_cs_det"] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$;
+      object_val=$.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable with training patterns";
+      init_from=NULL;
+     };
+     ProgVar @["no_prompts"] {
+      name="no_prompts";
+      var_type=T_Bool;
+      bool_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      reference=0;
+      desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
       init_from=NULL;
      };
     };
@@ -4810,6 +5196,15 @@ CsProject .projects["_cs_det"] {
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="maximum number of epochs to run";
+      init_from=NULL;
+     };
+     ProgVar @["epoch"] {
+      name="epoch";
+      var_type=T_Int;
+      int_val=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="current epoch -- local copy, which is used to update network's epoch counter";
       init_from=NULL;
      };
      ProgVar @["train_mode"] {
@@ -4827,7 +5222,7 @@ CsProject .projects["_cs_det"] {
       var_type=T_DynEnum;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].types["RndInitType"]$$;
+       enum_type=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].types["RndInitType"]$$;
        value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4835,45 +5230,82 @@ CsProject .projects["_cs_det"] {
       desc="how to initialize the random numbers when the Init button is pressed";
       init_from=NULL;
      };
-     ProgVar @["epoch"] {
-      name="epoch";
-      var_type=T_Int;
-      int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="current epoch -- local copy, which is used to update network's epoch counter";
-      init_from=NULL;
-     };
      ProgVar @["err_stopcrit"] {
       name="err_stopcrit";
       var_type=T_Real;
-      real_val=0;
+      real_val=0.25;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
-goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+      desc="stopping criterion -- network avg_sse must be <= this number to stop training -- see n_under_thr too";
       init_from=NULL;
      };
-     ProgVar @["rnd_seed"] {
-      name="rnd_seed";
+     ProgVar @["n_under_thr"] {
+      name="n_under_thr";
+      var_type=T_Int;
+      int_val=1;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of times network needs to be under stopcrit threshold to actually stop";
+      init_from=NULL;
+     };
+     ProgVar @["save_final_wts"] {
+      name="save_final_wts";
+      var_type=T_Bool;
+      bool_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="save the network's weights at the end of training?  ";
+      init_from=NULL;
+     };
+     ProgVar @["save_wts_interval"] {
+      name="save_wts_interval";
+      var_type=T_Int;
+      int_val=-1;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
+      init_from=NULL;
+     };
+     ProgVar @["n_under_cnt"] {
+      name="n_under_cnt";
+      var_type=T_Int;
+      int_val=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="current under threshold counter";
+      init_from=NULL;
+     };
+     ProgVar @["rnd_seeds"] {
+      name="rnd_seeds";
       var_type=T_Object;
-      object_type=RndSeed;
-      object_val=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].objs["rnd_seed"]$$;
+      object_type=RndSeed_List;
+      object_val=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].objs["rnd_seeds"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="random seed that is used at start of training -- if OldSeed is called";
+      desc=;
       init_from=NULL;
      };
      ProgVar @["train_timer"] {
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["_cs_det"].networks["CsNetwork_0"].train_time$$;
+      object_val=.projects["cs_424_det"].networks["CsNetwork_0"].train_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
+      init_from=NULL;
+     };
+     ProgVar @["rnd_seed"] {
+      name="rnd_seed";
+      var_type=T_Object;
+      object_type=RndSeed;
+      object_val=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].objs["rnd_seed"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="random seed that is used at start of training -- if OldSeed is called";
       init_from=NULL;
      };
     };
@@ -4881,18 +5313,174 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      name="functions";
      el_typ=Function;
      el_def=0;
+     Function @["GetRandomSeed"] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="GetRandomSeed() returns: int";
+      pre_compile_code_string="GetRandomSeed() returns: int";
+      name="GetRandomSeed";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (0 vars)";
+	pre_compile_code_string="LocalVars (0 vars)";
+	local_vars {
+	 name=;
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       Switch @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="switch(rnd_init)";
+	pre_compile_code_string="switch(rnd_init)";
+	switch_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_init"]$$;
+	cases {
+	 name=;
+	 el_typ=CaseBlock;
+	 el_def=0;
+	 CaseBlock @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="case: OLD_SEED";
+	  pre_compile_code_string="case: OLD_SEED";
+	  prog_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="rnd_seed->OldSeed()";
+	    pre_compile_code_string="rnd_seed->OldSeed()";
+	    result_var=NULL;
+	    obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$$;
+	    method=RndSeed::OldSeed;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void OldSeed()";
+	    meth_desc=" restore current seed to random num generator";
+	   };
+	  };
+	  case_val {
+	   expr="OLD_SEED";
+	  };
+	  is_default=0;
+	 };
+	 CaseBlock @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="case: NEW_SEED";
+	  pre_compile_code_string="case: NEW_SEED";
+	  prog_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="new random numbers each time";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="rnd_seed->NewSeed()";
+	    pre_compile_code_string="rnd_seed->NewSeed()";
+	    result_var=NULL;
+	    obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$;
+	    method=RndSeed::NewSeed;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void NewSeed()";
+	    meth_desc=" set the seed to a new random value (based on time and process id)";
+	   };
+	  };
+	  case_val {
+	   expr="NEW_SEED";
+	  };
+	  is_default=0;
+	 };
+	 CaseBlock @[2] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="case: BATCH_SEEDS";
+	  pre_compile_code_string="case: BATCH_SEEDS";
+	  prog_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
+	    pre_compile_code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
+	    result_var=NULL;
+	    obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seeds"]$$;
+	    method=RndSeed_List::UseSeed;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=int;
+	      type="int";
+	      name="idx";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="network.batch % rnd_seeds.seeds.size";
+	      };
+	     };
+	    };
+	    meth_sig="void UseSeed(int idx)";
+	    meth_desc=" use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)";
+	   };
+	  };
+	  case_val {
+	   expr="BATCH_SEEDS";
+	  };
+	  is_default=0;
+	 };
+	};
+       };
+      };
+     };
     };
     init_code {
      name="init_code";
      el_typ=ProgCode;
      el_def=0;
-     MethodCall @[0] {
+     AssignExpr @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="no_prompts = false";
+      pre_compile_code_string="no_prompts = false";
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].args["no_prompts"]$$;
+      expr {
+       expr="false";
+      };
+     };
+     MethodCall @[1] {
       desc="check network to make sure it is ready to be run";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->CheckConfig(false)";
       pre_compile_code_string="network->CheckConfig(false)";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -4913,98 +5501,88 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="bool CheckConfig(bool quiet = false)";
       meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
-     AssignExpr @[1] {
+     AssignExpr @[2] {
       desc="get our pointer to the network training time object";
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
       pre_compile_code_string="train_timer = network.train_time";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$$;
       expr {
        expr="network.train_time";
       };
      };
-     NetCounterInit @[2] {
-      desc="initialize epoch counter ";
-      flags=0;
-      code_string="Net Counter Init: epoch";
-      pre_compile_code_string="Net Counter Init: epoch";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      local_ctr_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$$;
-      counter=Network::epoch;
-      update_after=0;
-     };
-     If @[3] {
-      desc="initialize random seed (either old or new)";
+     AssignExpr @[3] {
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="if (rnd_init == OLD_SEED)";
-      pre_compile_code_string="if (rnd_init == OLD_SEED)";
-      cond {
-       expr="rnd_init == OLD_SEED";
+      code_string="n_under_cnt = 0";
+      pre_compile_code_string="n_under_cnt = 0";
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$$;
+      expr {
+       expr="0";
       };
-      true_code {
+     };
+     FunctionCall @[4] {
+      desc="initialize random seed";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="GetRandomSeed()";
+      pre_compile_code_string="GetRandomSeed()";
+      result_var=NULL;
+      fun=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].functions["GetRandomSeed"]$$;
+      fun_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     WtInitPrompt @[5] {
+      desc="don't initialize weights without checking";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (gui && \"Do you want to Initialize Network Weights\")";
+      pre_compile_code_string="if (gui && \"Do you want to Initialize Network Weights\")";
+      prompt="Do you want to Initialize Network Weights";
+      yes_label="Yes";
+      no_label="No";
+      yes_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
-	desc="restore previous random seed (all runs produce same results)";
-	flags=0;
-	code_string="rnd_seed->OldSeed()";
-	pre_compile_code_string="rnd_seed->OldSeed()";
+	desc="initialize network weights: could also load pre-set weights or something else here";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="network->Init_Weights()";
+	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$$;
-	method=RndSeed::OldSeed;
+	obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
+	method=Network::Init_Weights;
 	meth_args {
 	 name=;
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
-	meth_sig="void OldSeed()";
-	meth_desc=" restore current seed to random num generator";
+	meth_sig="void Init_Weights()";
+	meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
        };
-      };
-     };
-     Else @[4] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="else";
-      pre_compile_code_string="else";
-      else_code {
-       name="else_code";
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc="new random numbers each time";
-	flags=0;
-	code_string="rnd_seed->NewSeed()";
-	pre_compile_code_string="rnd_seed->NewSeed()";
-	result_var=NULL;
-	obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$;
-	method=RndSeed::NewSeed;
-	meth_args {
-	 name="meth_args";
-	 el_typ=ProgArg;
-	 el_def=0;
+       PrintExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="Print network.name << \" Weights Initialized\"";
+	pre_compile_code_string="Print network.name << \" Weights Initialized\"";
+	expr {
+	 expr="network.name << \" Weights Initialized\"";
 	};
-	meth_sig="void NewSeed()";
-	meth_desc=" set the seed to a new random value (based on time and process id)";
+	debug=0;
        };
       };
      };
-     MethodCall @[5] {
-      desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
-      flags=0;
-      code_string="network->Init_Weights()";
-      pre_compile_code_string="network->Init_Weights()";
-      result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      method=Network::Init_Weights;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
+     AssignExpr @[6] {
+      desc="grab the official network epoch counter: will be initialized if needed by now";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="epoch = network.epoch";
+      pre_compile_code_string="epoch = network.epoch";
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$$;
+      expr {
+       expr="network.epoch";
       };
-      meth_sig="void Init_Weights()";
-      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
     };
     prog_code {
@@ -5016,18 +5594,18 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
       pre_compile_code_string="train_timer = network.train_time";
-      result_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
+      result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
       expr {
        expr="network.train_time";
       };
      };
      MethodCall @[1] {
       desc="start timer to keep track of how long it takes to run entire training run";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->StartTimer(true)";
       pre_compile_code_string="train_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -5048,45 +5626,92 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void StartTimer(bool reset_used = true)";
       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
-     NetCounterInit @[2] {
-      desc="initialize epoch counter (both our local copy and network's epoch counter)";
-      flags=0;
-      code_string="Net Counter Init: epoch";
-      pre_compile_code_string="Net Counter Init: epoch";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
-      counter=Network::epoch;
-      update_after=0;
+     AssignExpr @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="n_under_cnt = 0";
+      pre_compile_code_string="n_under_cnt = 0";
+      result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
+      expr {
+       expr="0";
+      };
      };
      MemberAssign @[3] {
       desc="set network's training mode to our local value";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.train_mode = train_mode";
       pre_compile_code_string="network.train_mode = train_mode";
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
       path="train_mode";
       expr {
        expr="train_mode";
       };
       update_after=0;
      };
-     MethodCall @[4] {
-      desc="initialize network weights: could also load pre-set weights or something else here";
-      flags=0;
-      code_string="network->Init_Weights()";
-      pre_compile_code_string="network->Init_Weights()";
+     FunctionCall @[4] {
+      desc="initialize random seed";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="GetRandomSeed()";
+      pre_compile_code_string="GetRandomSeed()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-      method=Network::Init_Weights;
-      meth_args {
+      fun=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].functions["GetRandomSeed"]$;
+      fun_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
-      meth_sig="void Init_Weights()";
-      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
-     WhileLoop @[5] {
+     If @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (no_prompts)";
+      pre_compile_code_string="if (no_prompts)";
+      cond {
+       expr="no_prompts";
+      };
+      true_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc="initialize network weights: could also load pre-set weights or something else here";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="network->Init_Weights()";
+	pre_compile_code_string="network->Init_Weights()";
+	result_var=NULL;
+	obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
+	method=Network::Init_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig="void Init_Weights()";
+	meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
+       };
+       PrintExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="Print network.name << \" Weights Initialized\"";
+	pre_compile_code_string="Print network.name << \" Weights Initialized\"";
+	expr {
+	 expr="network.name << \" Weights Initialized\"";
+	};
+	debug=0;
+       };
+      };
+     };
+     AssignExpr @[6] {
+      desc="grab the official network epoch counter: will be initialized if needed by now";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="epoch = network.epoch";
+      pre_compile_code_string="epoch = network.epoch";
+      result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
+      expr {
+       expr="network.epoch";
+      };
+     };
+     WhileLoop @[7] {
       desc="main loop over epochs of training";
       flags=CAN_REVERT_TO_CODE;
       code_string="while (epoch < max_epoch)";
@@ -5097,7 +5722,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
        ProgramCall @[0] {
 	desc="run the epoch program (one epoch), passes our network and input_data";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="CsEpoch(network, input_data)";
 	pre_compile_code_string="CsEpoch(network, input_data)";
 	prog_args {
@@ -5127,26 +5752,123 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"]$$;
+	target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"]$$;
 	targ_ld_init="*CsEpoch*";
        };
        NetCounterIncr @[1] {
 	desc="increment the epoch counter (locally and on network)";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: epoch";
 	pre_compile_code_string="Net Counter Incr: epoch";
-	network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
-	local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
+	network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
+	local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
 	counter=Network::epoch;
 	update_after=0;
        };
-       IfBreak @[2] {
-	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
+       If @[2] {
+	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="if(network.cnt_err <= err_stopcrit) break";
-	pre_compile_code_string="if(network.cnt_err <= err_stopcrit) break";
+	code_string="if (network.avg_sse.avg <= err_stopcrit)";
+	pre_compile_code_string="if (network.avg_sse.avg <= err_stopcrit)";
 	cond {
-	 expr="network.cnt_err <= err_stopcrit";
+	 expr="network.avg_sse.avg <= err_stopcrit";
+	};
+	true_code {
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 VarIncr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="n_under_cnt += 1";
+	  pre_compile_code_string="n_under_cnt += 1";
+	  var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
+	  expr {
+	   expr="1";
+	  };
+	 };
+	 IfBreak @[1] {
+	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if(n_under_cnt >=  n_under_thr) break";
+	  pre_compile_code_string="if(n_under_cnt >=  n_under_thr) break";
+	  cond {
+	   expr="n_under_cnt >=  n_under_thr";
+	  };
+	 };
+	};
+       };
+       Else @[3] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="else";
+	pre_compile_code_string="else";
+	else_code {
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 AssignExpr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="n_under_cnt = 0";
+	  pre_compile_code_string="n_under_cnt = 0";
+	  result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
+	  expr {
+	   expr="0";
+	  };
+	 };
+	};
+       };
+       If @[4] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="if (save_wts_interval >= 1)";
+	pre_compile_code_string="if (save_wts_interval >= 1)";
+	cond {
+	 expr="save_wts_interval >= 1";
+	};
+	true_code {
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 If @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (epoch % save_wts_interval == 0)";
+	  pre_compile_code_string="if (epoch % save_wts_interval == 0)";
+	  cond {
+	   expr="epoch % save_wts_interval == 0";
+	  };
+	  true_code {
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   ProgramCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="SaveWeights(network)";
+	    pre_compile_code_string="SaveWeights(network)";
+	    prog_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=Network;
+	      type="CsNetwork*";
+	      name="network";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="network";
+	      };
+	     };
+	    };
+	    target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"]$$;
+	    targ_ld_init="*SaveWeights*";
+	   };
+	  };
+	 };
 	};
        };
       };
@@ -5154,13 +5876,51 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="epoch < max_epoch";
       };
      };
-     MethodCall @[6] {
+     If @[8] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (save_final_wts)";
+      pre_compile_code_string="if (save_final_wts)";
+      cond {
+       expr="save_final_wts";
+      };
+      true_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       ProgramCall @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="SaveWeights(network)";
+	pre_compile_code_string="SaveWeights(network)";
+	prog_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=Network;
+	  type="CsNetwork*";
+	  name="network";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="network";
+	  };
+	 };
+	};
+	target=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"]$;
+	targ_ld_init="*SaveWeights*";
+       };
+      };
+     };
+     MethodCall @[9] {
       desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->EndTimer()";
       pre_compile_code_string="train_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -5176,10 +5936,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text=;
@@ -5192,7 +5952,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].doc$$;
      };
     };
     name="CsEpoch";
@@ -5200,12 +5960,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     tags="Cs, Std";
     desc="iterates over all of the items in a data table and calls Trial process on them";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -5228,7 +5988,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=CsNetwork;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -5239,7 +5999,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$;
+      object_val=$.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -5266,7 +6026,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
       init_from=NULL;
@@ -5275,7 +6035,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["_cs_det"].data.gp["OutputData"]["TrialOutputData"]$$;
+      object_val=.projects["cs_424_det"].data.gp["OutputData"]["TrialOutputData"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5286,7 +6046,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["_cs_det"].networks["CsNetwork_0"].epoch_time$$;
+      object_val=.projects["cs_424_det"].networks["CsNetwork_0"].epoch_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5296,7 +6056,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -5314,11 +6074,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
-      network_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$$;
-      local_ctr_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial"]$$;
+      network_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$$;
+      local_ctr_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial"]$$;
       counter=Network::trial;
       update_after=0;
      };
@@ -5327,7 +6087,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -5339,11 +6099,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
-      local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial"]$;
+      network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
+      local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial"]$;
       counter=Network::trial;
       update_after=0;
      };
@@ -5352,18 +6112,18 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
+      result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
       };
      };
      MethodCall @[2] {
       desc="start the epoch timer to record computation time per epoch";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->StartTimer(true)";
       pre_compile_code_string="epoch_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -5385,12 +6145,28 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[3] {
+      desc="added in 8.0: essential for param_seqs";
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="network->Init_Epoch()";
+      pre_compile_code_string="network->Init_Epoch()";
+      result_var=NULL;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
+      method=Network::Init_Epoch;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_Epoch()";
+      meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
+     };
+     MethodCall @[4] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       pre_compile_code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial_mon_data"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial_mon_data"]$$;
       method=DataTable::ResetData;
       meth_args {
        name=;
@@ -5400,7 +6176,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void ResetData()";
       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
-     NetDataLoop @[4] {
+     NetDataLoop @[5] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
@@ -5411,7 +6187,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="CsTrial(network, input_data)";
 	pre_compile_code_string="CsTrial(network, input_data)";
 	prog_args {
@@ -5441,7 +6217,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"]$$;
+	target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"]$$;
 	targ_ld_init="*CsTrial*";
        };
        If @[1] {
@@ -5458,11 +6234,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	 el_def=0;
 	 MethodCall @[0] {
 	  desc="update the weight values based on changes computed by trial program";
-	  flags=0;
+	  flags=CAN_REVERT_TO_CODE;
 	  code_string="network->Compute_Weights()";
 	  pre_compile_code_string="network->Compute_Weights()";
 	  result_var=NULL;
-	  obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
+	  obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   name=;
@@ -5475,9 +6251,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      data_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["input_data"]$$;
-      index_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["data_loop_index"]$$;
-      order_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["data_loop_order"]$$;
+      data_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["input_data"]$$;
+      index_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["data_loop_index"]$$;
+      order_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["data_loop_order"]$$;
       order=PERMUTED;
       update_after=0;
       dmem_nprocs=1;
@@ -5489,7 +6265,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       group_order=PERMUTED;
       group_idx_list{       };
      };
-     If @[5] {
+     If @[6] {
       desc="if full batch mode, update only at end of epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network.wt_update == Network::BATCH)";
@@ -5503,11 +6279,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
        MethodCall @[0] {
 	desc="final update of weights based on accumulated changes";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	pre_compile_code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
+	obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name=;
@@ -5519,13 +6295,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
       pre_compile_code_string="network->Compute_EpochStats()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name=;
@@ -5535,9 +6311,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void Compute_EpochStats()";
       meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
-     ProgramCall @[7] {
+     ProgramCall @[8] {
       desc="run program that records data from network and possibly other sources about the epoch";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="CsEpochMonitor(network)";
       pre_compile_code_string="CsEpochMonitor(network)";
       prog_args {
@@ -5556,16 +6332,16 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"]$$;
+      target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"]$$;
       targ_ld_init="*CsEpochMonitor*";
      };
-     MethodCall @[8] {
+     MethodCall @[9] {
       desc="done with the computation in the epoch -- record time it took";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->EndTimer()";
       pre_compile_code_string="epoch_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -5581,10 +6357,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -5597,7 +6373,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].doc$$;
      };
     };
     name="CsTrial";
@@ -5605,12 +6381,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     tags="Cs, Std";
     desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -5633,9 +6409,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=CsNetwork;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
       init_from=NULL;
@@ -5644,9 +6420,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$;
+      object_val=$.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable containing training input/output patterns";
       init_from=NULL;
@@ -5660,7 +6436,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="phase_no";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
       init_from=NULL;
@@ -5686,12 +6462,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
-      flags=0;
-      code_string="Net Counter Init: ?";
-      pre_compile_code_string="Net Counter Init: ?";
-      network_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$$;
-      local_ctr_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$$;
-      counter=NULL;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Net Counter Init: phase_no";
+      pre_compile_code_string="Net Counter Init: phase_no";
+      network_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$$;
+      local_ctr_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$$;
+      counter=CsNetwork::phase_no;
       update_after=0;
      };
     };
@@ -5701,21 +6477,21 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
-      flags=0;
-      code_string="Net Counter Init: ?";
-      pre_compile_code_string="Net Counter Init: ?";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
-      local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$;
-      counter=NULL;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Net Counter Init: phase_no";
+      pre_compile_code_string="Net Counter Init: phase_no";
+      network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
+      local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$;
+      counter=CsNetwork::phase_no;
       update_after=0;
      };
      MethodCall @[1] {
       desc="initializes various counters at start of trial";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
       pre_compile_code_string="network->Trial_Init()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
       method=CsNetwork::Trial_Init;
       meth_args {
        name=;
@@ -5736,7 +6512,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
        ProgramCall @[0] {
 	desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="CsSettle(network, input_data)";
 	pre_compile_code_string="CsSettle(network, input_data)";
 	prog_args {
@@ -5766,26 +6542,26 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"]$$;
+	target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"]$$;
 	targ_ld_init="*CsSettle*";
        };
        NetCounterIncr @[1] {
 	desc="increment the phase number (also on network)";
-	flags=0;
-	code_string="Net Counter Incr: ?";
-	pre_compile_code_string="Net Counter Incr: ?";
-	network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
-	local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$;
-	counter=NULL;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="Net Counter Incr: phase_no";
+	pre_compile_code_string="Net Counter Incr: phase_no";
+	network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
+	local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$;
+	counter=CsNetwork::phase_no;
 	update_after=0;
        };
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Trial_UpdatePhase()";
 	pre_compile_code_string="network->Trial_UpdatePhase()";
 	result_var=NULL;
-	obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
+	obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
 	method=CsNetwork::Trial_UpdatePhase;
 	meth_args {
 	 name=;
@@ -5802,11 +6578,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
      MethodCall @[3] {
       desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Final()";
       pre_compile_code_string="network->Trial_Final()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
       method=CsNetwork::Trial_Final;
       meth_args {
        name=;
@@ -5818,7 +6594,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="CsTrialMonitor(network)";
       pre_compile_code_string="CsTrialMonitor(network)";
       prog_args {
@@ -5837,16 +6613,16 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"]$$;
+      target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"]$$;
       targ_ld_init="*CsTrialMonitor*";
      };
      NetUpdateView @[5] {
       desc="update the network view(s) (only if update_net_view is true)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
-      update_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["update_net_view"]$$;
+      network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
+      update_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrial"].vars["update_net_view"]$$;
      };
     };
     step_prog=NULL;
@@ -5854,10 +6630,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -5870,7 +6646,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].doc$$;
      };
     };
     name="CsSettle";
@@ -5878,12 +6654,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     tags="Cs, Std";
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -5906,9 +6682,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=CsNetwork;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -5917,9 +6693,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$;
+      object_val=$.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -5933,7 +6709,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="cycle";
       var_type=T_Int;
       int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
       init_from=NULL;
@@ -5968,11 +6744,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
       pre_compile_code_string="Net Counter Init: cycle";
-      network_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$$;
-      local_ctr_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$$;
+      network_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$$;
+      local_ctr_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$$;
       counter=Network::cycle;
       update_after=0;
      };
@@ -5983,11 +6759,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
       pre_compile_code_string="Net Counter Init: cycle";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
-      local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$;
+      network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+      local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$;
       counter=Network::cycle;
       update_after=0;
      };
@@ -6008,7 +6784,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=CAN_REVERT_TO_CODE;
 	code_string="min_cycles = network.cycle_max";
 	pre_compile_code_string="min_cycles = network.cycle_max";
-	result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["min_cycles"]$$;
+	result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["min_cycles"]$$;
 	expr {
 	 expr="network.cycle_max";
 	};
@@ -6017,11 +6793,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
      MethodCall @[2] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       method=Network::Init_InputData;
       meth_args {
        name=;
@@ -6034,7 +6810,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgramCall @[3] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="ApplyInputs(network, input_data)";
       pre_compile_code_string="ApplyInputs(network, input_data)";
       prog_args {
@@ -6064,16 +6840,16 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects["_cs_det"].programs.gp["CsAll_Std"]["ApplyInputs"]$$;
+      target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"]$$;
       targ_ld_init="*ApplyInputs*";
      };
      MethodCall @[4] {
       desc="initializes various counters at start of settling";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Settle_Init()";
       pre_compile_code_string="network->Settle_Init()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       method=CsNetwork::Settle_Init;
       meth_args {
        name=;
@@ -6094,7 +6870,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="CsCycle(network)";
 	pre_compile_code_string="CsCycle(network)";
 	prog_args {
@@ -6113,16 +6889,16 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsCycle"]$$;
+	target=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsCycle"]$$;
 	targ_ld_init="*CsCycle*";
        };
        NetCounterIncr @[1] {
 	desc="increment cycle counter (also on network)";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: cycle";
 	pre_compile_code_string="Net Counter Incr: cycle";
-	network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
-	local_ctr_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$;
+	network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+	local_ctr_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$;
 	counter=Network::cycle;
 	update_after=0;
        };
@@ -6151,11 +6927,11 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[6] {
       desc="perform final operations at end of settling (storing final activations, etc)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Settle_Final()";
       pre_compile_code_string="network->Settle_Final()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       method=CsNetwork::Settle_Final;
       meth_args {
        name=;
@@ -6180,11 +6956,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        MethodCall @[0] {
 	desc="compute trial-level statistics";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_TrialStats()";
 	pre_compile_code_string="network->Compute_TrialStats()";
 	result_var=NULL;
-	obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+	obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
 	method=LeabraNetwork::Compute_TrialStats;
 	meth_args {
 	 name=;
@@ -6198,11 +6974,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      NetUpdateView @[8] {
       desc="update network views, if update_net_view == true";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
-      update_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["update_net_view"]$$;
+      network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
+      update_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsSettle"].vars["update_net_view"]$$;
      };
     };
     step_prog=NULL;
@@ -6210,10 +6986,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraQuarter";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
      text_size=1;
      text=;
      html_text=;
@@ -6226,7 +7002,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsCycle"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsCycle"].doc$$;
      };
     };
     name="CsCycle";
@@ -6234,12 +7010,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
     tags="Cs, Std";
     desc="runs one cycle of CS processing (updating net inputs and activations)";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -6262,9 +7038,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=CsNetwork;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -6300,11 +7076,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="this does all the standard cs processing for one cycle of activation updating";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Cycle_Run()";
       pre_compile_code_string="network->Cycle_Run()";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsCycle"].args["network"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsCycle"].args["network"]$$;
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        name=;
@@ -6316,11 +7092,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
-      network_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsCycle"].args["network"]$;
-      update_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsCycle"].vars["update_net_view"]$$;
+      network_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsCycle"].args["network"]$;
+      update_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsCycle"].vars["update_net_view"]$$;
      };
     };
     step_prog=NULL;
@@ -6328,10 +7104,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraCycle";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
      text_size=1;
      text=;
      html_text=;
@@ -6344,20 +7120,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["ApplyInputs"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].doc$$;
      };
     };
     name="ApplyInputs";
-    short_nm="AplyIn";
+    short_nm="Inputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6368,8 +7144,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      LayerWriter @["LayerWriter_0"] {
       name="LayerWriter_0";
-      data=$.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$;
-      network=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      data=$.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$;
+      network=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       layer_data {
        name="layer_data";
        el_typ=LayerWriterEl;
@@ -6383,20 +7159,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=EXT;
-	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
-	col_name="Output";
-	net_target=LAYER;
-	layer_name="Output";
-	offset {x=0: y=0: };
-	use_layer_type=1;
-	quiet=0;
-	na_by_range=0;
-	ext_flags=TARG;
-	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
-       };
-       LayerWriterEl @[2] {
 	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
@@ -6405,6 +7170,17 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
+	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
+       };
+       LayerWriterEl @[2] {
+	col_name="Output";
+	net_target=LAYER;
+	layer_name="Output";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	quiet=0;
+	na_by_range=0;
+	ext_flags=TARG;
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
@@ -6423,7 +7199,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6434,7 +7210,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["InputData"]["Environment_0"]$;
+      object_val=$.projects["cs_424_det"].data.gp["InputData"]["Environment_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6450,9 +7226,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects["_cs_det"].programs.gp["CsAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
+      object_val=.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
       objs_ptr=1;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
       init_from=NULL;
@@ -6469,11 +7245,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -6506,12 +7282,39 @@ presented in the minus phase -- if this is not the case (values are computed on 
       meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
+      desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayerWriter_0->AutoConfig()";
+      pre_compile_code_string="LayerWriter_0->AutoConfig()";
+      result_var=NULL;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      method=LayerWriter::AutoConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="remove_unused";
+	required=0;
+	def_val="true";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
+      };
+      meth_sig="void AutoConfig(bool remove_unused = true)";
+      meth_desc=" do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed";
+     };
+     MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name=;
@@ -6538,12 +7341,50 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
+      desc="sets the datatable and network for the layer writer, so it knows what to write to";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+      pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+      result_var=NULL;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      method=LayerWriter::SetDataNetwork;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="db";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="input_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network_ptr;
+	type="Network*";
+	name="net";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+      meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+      meth_desc=" set the data table and network pointers -- convenience function for programs ";
+     };
+     MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
       pre_compile_code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name=;
@@ -6559,10 +7400,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -6575,7 +7416,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].doc$$;
      };
     };
     name="CsTrialMonitor";
@@ -6583,12 +7424,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
     tags="Cs, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -6607,7 +7448,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6619,13 +7460,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6641,7 +7482,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6653,13 +7494,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6675,7 +7516,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6687,13 +7528,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6709,7 +7550,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6721,13 +7562,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6743,7 +7584,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6755,13 +7596,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6777,7 +7618,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="phase_no";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="phase_no";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6789,13 +7630,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6811,7 +7652,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="minus_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="minus_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6823,13 +7664,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6845,7 +7686,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6857,13 +7698,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6879,7 +7720,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6891,13 +7732,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6910,8 +7751,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["_cs_det"].networks["CsNetwork_0"]$;
-      data=$.projects["_cs_det"].data.gp["OutputData"]["TrialOutputData"]$;
+      network=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
+      data=$.projects["cs_424_det"].data.gp["OutputData"]["TrialOutputData"]$;
       rmv_orphan_cols=1;
      };
     };
@@ -6928,7 +7769,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6944,7 +7785,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_val=$.projects["cs_424_det"].data.gp["OutputData"]["TrialOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6955,7 +7796,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].objs["trial_netmon"]$$;
+      object_val=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].objs["trial_netmon"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6974,11 +7815,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="set the network and datatable for the NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -7012,11 +7853,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       pre_compile_code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -7039,11 +7880,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -7071,11 +7912,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="add a new blank row to the data";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->AddBlankRow()";
       pre_compile_code_string="trial_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_mon_data"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_mon_data"]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -7087,11 +7928,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc="get the new monitor data from the network and other sources -- this does the main work";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       pre_compile_code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -7103,11 +7944,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[2] {
       desc="update views and other things after writing new data to monitor data table";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->WriteClose()";
       pre_compile_code_string="trial_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_mon_data"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_mon_data"]$;
       method=DataTable::WriteClose;
       meth_args {
        name=;
@@ -7119,11 +7960,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[3] {
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       pre_compile_code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].args["network"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsTrialMonitor"].args["network"]$$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name=;
@@ -7161,10 +8002,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -7177,7 +8018,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].doc$$;
      };
     };
     name="CsEpochMonitor";
@@ -7185,12 +8026,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
     tags="Cs, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -7209,7 +8050,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7221,13 +8062,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7243,7 +8084,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7255,13 +8096,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7277,7 +8118,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7289,13 +8130,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7311,7 +8152,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7323,13 +8164,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7345,7 +8186,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="avg_ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7357,13 +8198,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7379,7 +8220,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	object=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	variable="avg_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7391,13 +8232,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7425,13 +8266,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7459,13 +8300,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name="_EQUAL_";
+	 col_name="select_spec";
+	 name="select_spec_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7478,8 +8319,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["_cs_det"].networks["CsNetwork_0"]$;
-      data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"]$$;
+      network=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
+      data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"]$$;
       rmv_orphan_cols=1;
      };
     };
@@ -7496,7 +8337,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7512,7 +8353,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"]$;
+      object_val=$.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7523,7 +8364,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].objs["epoch_netmon"]$$;
+      object_val=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].objs["epoch_netmon"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7534,7 +8375,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"].epoch_time$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"].epoch_time$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7556,18 +8397,18 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_timer"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
       };
      };
      MethodCall @[1] {
       desc="set data and network on NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -7601,11 +8442,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       pre_compile_code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -7628,11 +8469,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -7660,11 +8501,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="add a new blank row to the data";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->AddBlankRow()";
       pre_compile_code_string="epoch_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -7676,11 +8517,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->GetMonVals()";
       pre_compile_code_string="epoch_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -7695,18 +8536,18 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_timer"]$;
+      result_var=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
       };
      };
      MethodCall @[3] {
       desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -7762,11 +8603,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[4] {
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -7822,11 +8663,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[5] {
       desc="update after writing new data to monitor data table";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->WriteClose()";
       pre_compile_code_string="epoch_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::WriteClose;
       meth_args {
        name=;
@@ -7842,10 +8683,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -7858,20 +8699,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].doc$$;
+      doc=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].doc$$;
      };
     };
     name="SaveWeights";
-    short_nm="SvWts";
+    short_nm="SavWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     version {
-     major=0;
+     major=8;
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -7894,7 +8735,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+      object_val=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7909,7 +8750,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["tag"] {
       name="tag";
       var_type=T_String;
-      string_val=;
+      string_val="_gui";
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
@@ -7927,8 +8768,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["fname"] {
       name="fname";
       var_type=T_String;
-      string_val=;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      string_val="/Users/oreilly/emergent/test/leabra_std.00_0010.wts.gz";
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
       init_from=NULL;
@@ -7936,7 +8777,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["epoch_str"] {
       name="epoch_str";
       var_type=T_String;
-      string_val="0036";
+      string_val="0010";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -7945,7 +8786,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["batch_str"] {
       name="batch_str";
       var_type=T_String;
-      string_val="03";
+      string_val="00";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
@@ -7954,7 +8795,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["final_tag"] {
       name="final_tag";
       var_type=T_String;
-      string_val=".03_0036";
+      string_val=".00_0010";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -7986,10 +8827,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       pre_compile_code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["batch_str"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["batch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -8022,10 +8863,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       pre_compile_code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -8061,18 +8902,18 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=CAN_REVERT_TO_CODE;
       code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
       pre_compile_code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["final_tag"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["final_tag"]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
       };
      };
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       pre_compile_code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
-      result_var=.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["fname"]$$;
-      obj=.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].args["network"]$$;
+      result_var=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].vars["fname"]$$;
+      obj=.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].args["network"]$$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name=;
@@ -8128,11 +8969,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[5] {
       desc="save the weights to that file name";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
       pre_compile_code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
-      obj=$.projects["_cs_det"].programs.gp["CsAll_Std"]["SaveWeights"].args["network"]$;
+      obj=$.projects["cs_424_det"].programs.gp["CsAll_Std"]["SaveWeights"].args["network"]$;
       method=Network::SaveWeights;
       meth_args {
        name=;
@@ -8170,10 +9011,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="SaveWeights";
+     full_url="https://grey.colorado.edu/emergent/index.php/SaveWeights";
      text_size=1;
      text=;
      html_text=;
@@ -8222,10 +9063,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
    };
    name="Browser";
-   m_data=.projects["_cs_det"]$$;
+   m_data=.projects["cs_424_det"]$$;
    cur_font_size=12;
    visible=1;
-   win_name=".projects[\"_cs_det\"] - 424_cs_det.proj";
+   win_name=".projects[\"cs_424_det\"] - cs_424_det.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -8265,7 +9106,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      visible=1;
      root_typ=CsProject;
      root_md=NULL;
-     m_root=$.projects["_cs_det"]$;
+     m_root=$.projects["cs_424_det"]$;
     };
     PanelViewer @["Editor"] {
      name="Editor";
@@ -8308,7 +9149,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 el_def=0;
 	 NetView @["CsNetwork_0_View"] {
 	  name="CsNetwork_0_View";
-	  m_data=$.projects["_cs_det"].networks["CsNetwork_0"]$;
+	  m_data=$.projects["cs_424_det"].networks["CsNetwork_0"]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -8504,7 +9345,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
-	  m_data=$.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"]$;
+	  m_data=$.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -8513,7 +9354,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @["batch"] {
 	    name="batch";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8522,7 +9363,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["epoch"] {
 	    name="epoch";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8531,7 +9372,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["avg_sse"] {
 	    name="avg_sse";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8540,7 +9381,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["cnt_err"] {
 	    name="cnt_err";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8549,7 +9390,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["Hidden_avg_ext_rew"] {
 	    name="Hidden_avg_ext_rew";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_ext_rew"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_ext_rew"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8558,7 +9399,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["Output_avg_ext_rew"] {
 	    name="Output_avg_ext_rew";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_ext_rew"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_ext_rew"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8567,7 +9408,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["avg_cycles"] {
 	    name="avg_cycles";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8576,7 +9417,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -8585,7 +9426,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
-	    m_data=.projects["_cs_det"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    m_data=.projects["cs_424_det"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9589,7 +10430,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Published on wiki: emergent page: demos/cs_424_det with description: deterministic form of the 4-2-4 autoencoder model tags: Demo, Constraint Satisfaction, Autoencoder author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
@@ -9703,7 +10544,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_spec {type=CsConSpec: spec=.projects["_cs_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$$: };
+     bias_spec {type=CsConSpec: spec=.projects["cs_424_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$$: };
      sse_tol=0;
      real_range {min=0.05: max=0.95: range=0.9: scale=1.111111: };
      noise {name="noise": type=NONE: mean=0: var=0.1: par=1: };
@@ -9809,7 +10650,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects["_cs_det"].networks["CsNetwork_0"].layers["Hidden"].projections["Fm_Input"];
+      Projection_Group @. = [0] = Projection .projects["cs_424_det"].networks["CsNetwork_0"].layers["Hidden"].projections["Fm_Input"];
      };
      units {
       name="units";
@@ -9818,7 +10659,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=SigmoidCsUnitSpec: spec=.projects["_cs_det"].networks["CsNetwork_0"].specs["SigmoidUnitSpec_0"]$$: };
+     unit_spec {type=SigmoidCsUnitSpec: spec=.projects["cs_424_det"].networks["CsNetwork_0"].specs["SigmoidUnitSpec_0"]$$: };
      dist {
       fm_input=0;
       fm_output=2;
@@ -9857,10 +10698,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects["_cs_det"].networks["CsNetwork_0"].layers["Input"]$$;
-       spec {type=FullPrjnSpec: spec=.projects["_cs_det"].networks["CsNetwork_0"].specs["FullPrjnSpec_0"]$$: };
+       from=.projects["cs_424_det"].networks["CsNetwork_0"].layers["Input"]$$;
+       spec {type=FullPrjnSpec: spec=.projects["cs_424_det"].networks["CsNetwork_0"].specs["FullPrjnSpec_0"]$$: };
        con_type=CsCon;
-       con_spec {type=CsConSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$: };
+       con_spec {type=CsConSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -9875,10 +10716,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects["_cs_det"].networks["CsNetwork_0"].layers["Output"]$$;
-       spec {type=FullPrjnSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["FullPrjnSpec_0"]$: };
+       from=.projects["cs_424_det"].networks["CsNetwork_0"].layers["Output"]$$;
+       spec {type=FullPrjnSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["FullPrjnSpec_0"]$: };
        con_type=CsCon;
-       con_spec {type=CsConSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$: };
+       con_spec {type=CsConSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -9893,7 +10734,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects["_cs_det"].networks["CsNetwork_0"].layers["Output"].projections["Fm_Hidden"];
+      Projection_Group @. = [0] = Projection .projects["cs_424_det"].networks["CsNetwork_0"].layers["Output"].projections["Fm_Hidden"];
      };
      units {
       name="units";
@@ -9902,7 +10743,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=SigmoidCsUnitSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["SigmoidUnitSpec_0"]$: };
+     unit_spec {type=SigmoidCsUnitSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["SigmoidUnitSpec_0"]$: };
      dist {
       fm_input=1;
       fm_output=1;
@@ -9941,10 +10782,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects["_cs_det"].networks["CsNetwork_0"].layers["Hidden"]$$;
-       spec {type=FullPrjnSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["FullPrjnSpec_0"]$: };
+       from=.projects["cs_424_det"].networks["CsNetwork_0"].layers["Hidden"]$$;
+       spec {type=FullPrjnSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["FullPrjnSpec_0"]$: };
        con_type=CsCon;
-       con_spec {type=CsConSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$: };
+       con_spec {type=CsConSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["CsConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -9959,7 +10800,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects["_cs_det"].networks["CsNetwork_0"].layers["Hidden"].projections["Fm_Output"];
+      Projection_Group @. = [0] = Projection .projects["cs_424_det"].networks["CsNetwork_0"].layers["Hidden"].projections["Fm_Output"];
      };
      units {
       name="units";
@@ -9968,7 +10809,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=SigmoidCsUnitSpec: spec=$.projects["_cs_det"].networks["CsNetwork_0"].specs["SigmoidUnitSpec_0"]$: };
+     unit_spec {type=SigmoidCsUnitSpec: spec=$.projects["cs_424_det"].networks["CsNetwork_0"].specs["SigmoidUnitSpec_0"]$: };
      dist {
       fm_input=2;
       fm_output=0;

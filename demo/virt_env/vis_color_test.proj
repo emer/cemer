@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
 LeabraProject .projects["vis_color_test"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -780,12 +786,12 @@ LeabraProject .projects["vis_color_test"] {
 };
 LeabraProject .projects["vis_color_test"] {
  name="vis_color_test";
- desc=;
- tags=;
+ desc="Test of color processing using opponent-coding color channels in the DoG (difference of Gaussian) filter system";
+ tags="Demo, Vision, Color Perception, Color Space";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=1;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -798,13 +804,73 @@ LeabraProject .projects["vis_color_test"] {
  };
  pub_cite=;
  wiki {
-  wiki=;
-  page_name=;
+  wiki="emergent";
+  page_name="demos/vis_color_test";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_119";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/vis_color_test";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/vis_color_test";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Wed Aug 31 03:38:26 2016 version: 8.0.1 user: oreilly file_name: <code>vis_color_test.proj</code> <br>
+Published on wiki: emergent page: demos/vis_color_test with description: Test of color processing using opponent-coding color channels in the DoG (difference of Gaussian) filter system tags: Demo, Vision, Color Perception, Color Space author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<li>Wed Aug 31 03:38:26 2016 version: 8.0.1 user: oreilly file_name: <code>vis_color_test.proj</code> <br>
+Published on wiki: emergent page: demos/vis_color_test with description: Test of color processing using opponent-coding color channels in the DoG (difference of Gaussian) filter system tags: Demo, Vision, Color Perception, Color Space author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -822,7 +888,7 @@ LeabraProject .projects["vis_color_test"] {
     };
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -3960,7 +4026,7 @@ LeabraProject .projects["vis_color_test"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -4739,12 +4805,12 @@ LeabraProject .projects["vis_color_test"] {
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.01557819;
+     value 8 0=0.01497903;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9972954;
+     value 8 0=0.9969574;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -4978,7 +5044,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5149,7 +5215,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5320,7 +5386,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5491,7 +5557,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5870,7 +5936,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Published on wiki: emergent page: demos/vis_color_test with description: Test of color processing using opponent-coding color channels in the DoG (difference of Gaussian) filter system tags: Demo, Vision, Color Perception, Color Space author: Randall C. O'Reilly email: emergent-users@grey.colorado.edu version: 8.0.0 pub_cite: ";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";

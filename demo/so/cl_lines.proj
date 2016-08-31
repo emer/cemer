@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9957
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9967
 SoProject .projects["cl_lines"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -1555,12 +1561,12 @@ SoProject .projects["cl_lines"] {
 };
 SoProject .projects["cl_lines"] {
  name="cl_lines";
- desc=;
- tags=;
+ desc="Competitive Learning self-organizing learning of correlational structure present in horizontal and vertical line inputs";
+ tags="Demo, Competitive Learning, Self Organizing";
  version {
-  major=0;
+  major=8;
   minor=0;
-  step=0;
+  step=2;
  };
  author="Randall C. O'Reilly";
  email="randy.oreilly@colorado.edu";
@@ -1573,13 +1579,83 @@ SoProject .projects["cl_lines"] {
  };
  pub_cite=;
  wiki {
-  wiki=;
-  page_name=;
+  wiki="emergent";
+  page_name="demos/cl_lines";
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_126";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="demos/cl_lines";
+   full_url="https://grey.colorado.edu/emergent/index.php/demos/cl_lines";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Wed Aug 31 03:19:40 2016 version: 8.0.2 user: oreilly file_name: <code>cl_lines.proj</code> <br>
+Project updated on wiki: emergent changes: doc updt
+
+
+<li>Wed Aug 31 03:17:36 2016 version: 8.0.1 user: oreilly file_name: <code>cl_lines.proj</code> <br>
+Published on wiki: emergent page: demos/cl_lines with description: Competitive Learning self-organizing learning of correlational structure present in horizontal and vertical line inputs tags: Demo, Competitive Learning, Self Organizing author: Randall C. O'Reilly email: randy.oreilly@colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Wed Aug 31 03:19:40 2016 version: 8.0.2 user: oreilly file_name: <code>cl_lines.proj</code> <br>
+Project updated on wiki: emergent changes: doc updt
+<P>
+<P>
+<li>Wed Aug 31 03:17:36 2016 version: 8.0.1 user: oreilly file_name: <code>cl_lines.proj</code> <br>
+Published on wiki: emergent page: demos/cl_lines with description: Competitive Learning self-organizing learning of correlational structure present in horizontal and vertical line inputs tags: Demo, Competitive Learning, Self Organizing author: Randall C. O'Reilly email: randy.oreilly@colorado.edu version: 8.0.0 pub_cite: 
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -1597,7 +1673,7 @@ SoProject .projects["cl_lines"] {
     };
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -1689,7 +1765,7 @@ SoProject .projects["cl_lines"] {
     el_def=0;
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -7629,7 +7705,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=44;
+      int_val=35;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -9818,12 +9894,12 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=-0.0006761325;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.03175554;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -9957,7 +10033,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_i;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
-	  unit_src_path=".layers[1].units[8]";
+	  unit_src_path=".layers[1].units[0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -10216,7 +10292,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=50: };
 	  page_rows=-1439467152;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -10247,7 +10323,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -10292,7 +10368,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -11200,7 +11276,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="Project updated on wiki: emergent changes: doc updt";
  tree_state{ .;.docs;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].specs[0].children[1];.networks[0].specs[4];.networks[0].specs[4].children[0];.networks[0].specs[4].children[1];.networks[0].layers;.networks[0].layers[1];.networks[0].layers[1].projections; };
  networks {
   name="networks";
@@ -11474,8 +11550,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      spec {type=SoLayerSpec: spec=.projects["cl_lines"].networks["Network_0"].specs["SoLayerSpec_0"]$$: };
-     avg_act=0.4;
-     sum_act=10;
+     avg_act=0.36;
+     sum_act=9;
     };
     SoLayer @["Hidden"] {
      name="Hidden";
@@ -11542,8 +11618,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      spec {type=SoLayerSpec: spec=$.projects["cl_lines"].networks["Network_0"].specs["SoLayerSpec_0"]$: };
-     avg_act=0.528762;
-     sum_act=13.21905;
+     avg_act=0.288401;
+     sum_act=7.210024;
     };
    };
    weights {
