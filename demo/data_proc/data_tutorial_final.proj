@@ -1625,7 +1625,7 @@ LeabraProject .projects["data_tutorial_final"] {
  version {
   major=8;
   minor=0;
-  step=2;
+  step=3;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -1639,7 +1639,7 @@ LeabraProject .projects["data_tutorial_final"] {
  pub_cite=;
  wiki {
   wiki="emergent";
-  page_name="data_tutorial_final";
+  page_name="tutorials/data_tutorial_final";
  };
  docs {
   name="docs";
@@ -3595,6 +3595,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 <ul>
 
 
+<li>Tue Aug 30 20:18:42 2016 version: 8.0.3 user: rohrlich file_name: <code>data_tutorial_final.proj</code> <br>
+svn rev: 9963 update page name to tutorials/data_tutorial_final
+
+
+
 <li>Tue Aug 30 20:03:46 2016 version: 8.0.2 user: rohrlich file_name: <code>data_tutorial_final.proj</code> <br>
 svn rev: 9962 now published to wiki
 
@@ -3610,6 +3615,11 @@ Published on wiki: emergent page: data_tutorial_final with description: This is 
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Tue Aug 30 20:18:42 2016 version: 8.0.3 user: rohrlich file_name: <code>data_tutorial_final.proj</code> <br>
+svn rev: 9963 update page name to tutorials/data_tutorial_final
+<P>
 <P>
 <P>
 <li>Tue Aug 30 20:03:46 2016 version: 8.0.2 user: rohrlich file_name: <code>data_tutorial_final.proj</code> <br>
@@ -10895,7 +10905,7 @@ Published on wiki: emergent page: data_tutorial_final with description: This is 
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAADAgAAAkUAAARUAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAADAgAABKkAAAHwAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -16337,8 +16347,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 9962 now published to wiki";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[1];.programs[1].objs;.programs[1].vars;.programs[1].prog_code;.programs[1].prog_code[1];.programs[1].prog_code[2];.programs[1].prog_code[4];.networks; };
+ last_change_desc="svn rev: 9963 update page name to tutorials/data_tutorial_final";
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
