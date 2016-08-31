@@ -418,7 +418,7 @@ LeabraProject .projects["data_tutorial"] {
  version {
   major=8;
   minor=0;
-  step=2;
+  step=3;
  };
  author="John Rohrlich";
  email="john.rohrlich@colorado.edu";
@@ -432,7 +432,7 @@ LeabraProject .projects["data_tutorial"] {
  pub_cite=;
  wiki {
   wiki="emergent";
-  page_name="data_tutorial";
+  page_name="tutorials/data_tutorial";
  };
  docs {
   name="docs";
@@ -2388,6 +2388,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 <ul>
 
 
+<li>Tue Aug 30 20:19:32 2016 version: 8.0.3 user: rohrlich file_name: <code>data_tutorial.proj</code> <br>
+svn rev: 9964 update page name to tutorials/data_tutorial
+
+
+
 <li>Tue Aug 30 19:55:20 2016 version: 8.0.2 user: rohrlich file_name: <code>data_tutorial.proj</code> <br>
 svn rev: 9961 This version now published
 
@@ -2403,6 +2408,11 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Tue Aug 30 20:19:32 2016 version: 8.0.3 user: rohrlich file_name: <code>data_tutorial.proj</code> <br>
+svn rev: 9964 update page name to tutorials/data_tutorial
+<P>
 <P>
 <P>
 <li>Tue Aug 30 19:55:20 2016 version: 8.0.2 user: rohrlich file_name: <code>data_tutorial.proj</code> <br>
@@ -5236,7 +5246,7 @@ Published on wiki: emergent page: data_tutorial with description: This tutorial 
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 9961 This version now published";
+ last_change_desc="svn rev: 9964 update page name to tutorials/data_tutorial";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.networks; };
  networks {
   name="networks";
