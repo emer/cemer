@@ -31,6 +31,7 @@
 #include <QWidget>
 #include <QStatusTipEvent>
 #include <QCheckBox>
+#include <iTextEdit>
 
 namespace // anon
 {
@@ -146,12 +147,19 @@ iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& 
     addLabeledWidget(newHBox(vbox), "&Tags:", tagsEdit);
     
     // Description
-    descEdit = new QTextEdit;
+    descEdit = new iTextEdit;
     descEdit->setTabChangesFocus(true);
     descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
     descEdit->installEventFilter(this);
     addLabeledWidget(vbox, "&Description:", descEdit);
 
+    // create doc
+    if(publish_type == "Project") {
+      create_doc = new QCheckBox;
+      create_doc->setChecked(true); // start off true by default -- no harm done if not needed
+      create_doc->setToolTip("Create a new Doc in docs called ProjectDocs that points to the new wiki page for this project?");
+      addLabeledWidget(vbox, "&Create ProjectDocs:", create_doc);
+    }
   }
   
   // OK, Cancel buttons
@@ -207,9 +215,9 @@ QString iDialogPublishDocs::GetPubCite() const
   return pubCiteEdit->text();
 }
 
-bool iDialogPublishDocs::GetUploadChoice() const
+bool iDialogPublishDocs::GetCreateDoc() const
 {
-  return upload_project->isChecked();
+  return create_doc->isChecked();
 }
 
 bool iDialogPublishDocs::event(QEvent *event)

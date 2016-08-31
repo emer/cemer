@@ -53,7 +53,7 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iPanelSet* pan) {
     // if we set a new Doc or null it out, we get a USER_DATA_UPDATED notify, and reset it
     taDoc* doc = tab->GetDocLink();
     // get an existing DocPanel, if any -- don't force yet...
-    start_idx = 0;
+    start_idx = 1;              // start at 1 to skip over actual docs!!!
     iPanelOfDocView* dp = (iPanelOfDocView*)pan->GetDataPanelOfType(&TA_iPanelOfDocView, start_idx);
     if (doc) {
       if (!dp) { // need to create one
@@ -61,7 +61,8 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iPanelSet* pan) {
         DataPanelCreated(dp);
       }
       dp->setDoc(doc); // sets link
-    } else {
+    }
+    else {
       if (dp) {
         dp->setDoc(NULL);
         //NOTE: we currently don't support removing data panels

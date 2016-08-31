@@ -1560,6 +1560,11 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
       }
 
       if(publish_type == "Project") {
+        bool mk_doc = dialog.GetCreateDoc();
+        if(mk_doc) {
+          ((taProject*)obj)->docs.NewProjWikiDoc();
+        }
+        
         String chlog = "Published on wiki: " + wiki_name + " page: " + page_name + 
           " with description: " + desc + " tags: " + tags + " author: " + author +
           " email: " + email + " version: " + ver_str + " pub_cite: " + pub_cite;

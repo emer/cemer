@@ -2949,7 +2949,8 @@ void taBase::PrintMyPath() {
   taMisc::Info(GetPathNames());
 }
 
-UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
+UserDataItem* taBase::SetUserData(const String& name, const Variant& value,
+                                  bool gui_notify_signal)
 {
   if (TestError((name.empty()),
     "SetUserData",
@@ -2960,7 +2961,9 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
   UserDataItem_List* ud = GetUserDataList(true);
   if (!ud) return NULL; // not supported, shouldn't be calling
 
-  bool notify = taTaskThread::inMainThread();
+  if(gui_notify_signal && !taTaskThread::inMainThread())
+    gui_notify_signal = false;
+  
   UserDataItemBase* udi = ud->FindLeafName(name);
   if (udi) {
     if (TestError(!udi->isSimple(),
@@ -2975,8 +2978,11 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
     ud->Add(udi);
   }
   TestWarning(!udi->setValueAsVariant(value),"SetUserData",
-              "Attempt to set existing UserData value as Variant, was not supported for", name);
-  if (notify) SigEmit(SLS_USER_DATA_UPDATED);
+              "Attempt to set existing UserData value as Variant, was not supported for",
+              name);
+  if (gui_notify_signal) {
+    SigEmit(SLS_USER_DATA_UPDATED);
+  }
   return dynamic_cast<UserDataItem*>(udi); // should succeed!
 }
 

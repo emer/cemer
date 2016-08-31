@@ -44,7 +44,7 @@ public:
   QString     GetTags() const;
   QString     GetVersion() const;
   QString     GetPubCite() const;
-  bool        GetUploadChoice() const;
+  bool        GetCreateDoc() const;
   
   void        SetName(const QString& name);
   void        SetPageName(const QString& prefix);
@@ -68,7 +68,7 @@ protected:
   QLineEdit*  versionEdit;
   QLineEdit*  pubCiteEdit;
   QStatusBar* statusBar;
-  QCheckBox*  upload_project;
+  QCheckBox*  create_doc;
   QString     publish_type;
 };
 

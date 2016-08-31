@@ -155,15 +155,17 @@ void iPanelBase::setUpdateOnShow(bool value) {
 void iPanelBase::setPinned(bool value) {
   if (m_pinned == value) return;
   m_pinned = value; // no action needed... "pinned is just a state of mind"
-  if (tabView())
-    tabView()->UpdateTabNames(); //updates the icons
+  // if (tabView())
+  //   tabView()->UpdateTabNames(); //updates the icons
   if (link_() && link_()->taData()) {
-    taBase* owner = link_()->taData()->GetMemberOwner();
+    taBase* tabby = link_()->taData();
+    taBase* owner = tabby->GetMemberOwner();
+    // this emits a signal which is bad..
     if (owner) {
-      owner->SetUserData("user_pinned", value);
+      owner->SetUserData("user_pinned", value, false); // false = don't notify!
     }
     else {
-      link_()->taData()->SetUserData("user_pinned", value);
+      tabby->SetUserData("user_pinned", value, false); // false = don't notify!
     }
   }
 }

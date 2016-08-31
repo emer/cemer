@@ -53,7 +53,7 @@ set(ta_math_HEADS_MAKETA
   RandomCall.h
 )
 
-set(ta_HEADS_NOMAKETA
+set(ta_math_HEADS_NOMAKETA
   ta_vector_ops.h
   vectorclass.h
   vectormath.h

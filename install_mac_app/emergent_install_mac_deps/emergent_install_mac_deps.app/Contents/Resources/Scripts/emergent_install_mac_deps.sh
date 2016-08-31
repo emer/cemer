@@ -8,7 +8,7 @@ QT_DMG=qt561_mac64.dmg
 COIN_DMG=coin_mac64_4_0.dmg
 QUARTER_DMG=quarter_mac64_qt56.dmg
 CMAKE_DMG=cmake-3.6.1_mac64.dmg
-SVN_DMG=Subversion-1.9.4_10.11.x.pkg
+SVN_DMG=Subversion-1.9.4_10.11.x.dmg
 MISC_DMG=misclibs_mac64_8_0.dmg
 
 OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f1,2 -d.`
@@ -31,7 +31,7 @@ fi
 
 if [[ "$OS_VERS" == "10.10" ]]; then
     echo "Note: updating the dependencies for 10.10"
-    SVN_DMG=Subversion-1.7.8_10.8.x.dmg
+    SVN_DMG=Subversion-1.9.4_10.10.x.dmg
 fi
 
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
@@ -155,12 +155,12 @@ function installCMAKEinDMG {
   echo "package: $DMG_PKG"
   echo "IMPORTANT: You may now need to (re)enter your password for sudo here:"
   removeCMakeLinks
-  echo "===> NOTE: installer will popup a dialog, usually behind the terminal (it will be jumping up and down in your dock), about installing the command-line links -- please click the install button"
-  echo "**THE INSTALL PROCESS WILL STALL UNTIL YOU DO THE AVOVE!!**"
   sudo /usr/sbin/installer -target / -pkg "${DMG_PKG}"
   unmountDMG $DMG_MNT
   # make new links:
   sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install 
+  echo "===> NOTE: if you see errors above here about links already existing"
+  echo "then you may need to manually create cmake etc links in /usr/local/bin/"
 }
 
 echo " "

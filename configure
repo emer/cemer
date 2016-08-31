@@ -7,6 +7,14 @@ echo Command line: ./configure $@ > config.log
 # also, cmake has rather lame command-line args so this is generally quite useful
 # for the lazy typers as well.
 
+# save these for later!
+orig_args=$@
+
+# get rid of any "clean" args!
+orig_args="${orig_args//--clean}"
+orig_args="${orig_args//-clean}"
+orig_args="${orig_args//clean}"
+
 echo "Running simple configure script wrapper around cmake build system!"
 echo "args are:"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
@@ -221,6 +229,8 @@ if [[ $clean == "true" ]]; then
     echo "NOTE: Cleaning files now!"
     /bin/rm -rf *
 fi
+
+echo ${orig_args} > configure.opts
 
 cmake ../ $cmake_cmd
 

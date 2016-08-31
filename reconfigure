@@ -1,0 +1,71 @@
+#!/bin/bash
+echo Command line: ./reconfigure $@
+# NOTE: this reuses previous configure params stored in configure.opts to
+# to reconfigure 
+
+echo "reconfiguring from previous configure run, stored in configure.opts"
+echo "args are:"
+echo "  <build_dir_name>  name of build directory to reconfigure (could be . if build)"
+echo "  --clean           clean existing cmake cache etc first: start fresh"
+echo " "
+echo "  (note: -- before args is optional, and - works too!)"
+echo " "
+
+build_dir="."
+clean=false
+
+if [ $# -lt 1 ]; then
+   echo "ERROR: requires at least one arg, which is the name of the directory to reconfigure"
+   exit 1
+fi
+
+build_dir=$1
+shift 1   
+   
+while [ $# -gt 0 ]
+do
+  preq=${1%%=*}			# get part before =
+#  echo $preq
+  case $preq
+  in
+    --help | -help | help)
+      exit 0
+    ;;
+    --clean | -clean | clean | -c)
+      clean=true
+      shift 1
+    ;;
+
+    --dir | -dir | dir)
+      build_dir=${1##*=}		# get part after =
+      shift 1
+    ;;
+
+    *)
+      echo "Invalid argument -- please see above list"
+      shift 1
+    ;;
+  esac
+done
+
+configfl="${build_dir}/configure.opts"
+
+if [ ! -f ${configfl} ]; then
+    echo "ERROR: configure.opts file not found in dir: ${dir}, looking for ${configfl}"
+    exit 1
+fi
+
+configopts=`cat ${configfl}`
+
+if [[ $clean == "true" ]]; then
+    echo "Adding clean option!"
+    configopts="${configopts} --clean"
+fi
+
+if [[ $build_dir == "." ]]; then
+    cd ../
+    ./configure ${configopts}
+else
+    ./configure ${configopts}
+fi
+

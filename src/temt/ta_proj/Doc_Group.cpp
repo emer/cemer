@@ -28,31 +28,21 @@ void Doc_Group::RestorePanels() {
   }
 }
 
-taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
-  // todo: make a chooser for taMisc::wikis!
+taDoc* Doc_Group::NewProjWikiDoc() {
   taProject* proj = GetMyProj();
   if(!proj)
     return NULL;
   taDoc* doc = NewEl(1);
-  doc->name = "ProjectDoc";
-  doc->wiki = wiki_name;
-  doc->url = proj->name;
+  doc->name = "ProjectDocs";
+  doc->wiki = proj->wiki.wiki;
+  doc->url = proj->wiki.page_name;
   doc->web_doc = true;
+  // pin by default
+  doc->SetUserData("user_pinned", true, false); // false = no notify
   doc->UpdateAfterEdit();
+  if(size > 1)                  // put in first position
+    MoveEl(doc, FastEl(0));
   tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
   return doc;
 }
 
-taDoc* Doc_Group::PubProjWikiDoc(const String& wiki_name, const String& page_name) {
-  taProject* proj = GetMyProj();
-  if(!proj)
-    return NULL;
-  taDoc* doc = NewEl(1);
-  doc->name = page_name;
-  doc->wiki = wiki_name;
-  doc->url = page_name;
-  doc->web_doc = true;
-  doc->UpdateAfterEdit();
-  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
-  return doc;
-}

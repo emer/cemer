@@ -1476,8 +1476,9 @@ public:
     {return GetUserData(key).toDouble();} // #CAT_UserData #EXPERT get specified user data as double (see GetUserData)
   inline const String   GetUserDataAsString(const String& key) const
     {return GetUserData(key).toString();} // #CAT_UserData #EXPERT get specified user data as String (see GetUserData)
-  UserDataItem*         SetUserData(const String& key, const Variant& value);
-  // #CAT_UserData make new (or change existing) simple user data entry with given name and value; returns item, which can be ignored
+  UserDataItem*         SetUserData(const String& key, const Variant& value,
+                                    bool gui_notify_signal=true);
+  // #CAT_UserData make new (or change existing) simple user data entry with given name and value; returns item, which can be ignored -- emits a gui notification signal which can be suppressed if needed for speed or other reasons
   void                  SetUserData_Gui(const String& key, const Variant& value,
     const String& desc);
   // #CAT_UserData #MENU #MENU_ON_Object #MENU_CONTEXT #LABEL_Set_User_Data make new (or change existing) simple user data entry with given name and value (desc optional) -- this is how to get User Data editor panel to show up the first time
