@@ -482,9 +482,9 @@ void iHelpBrowser::brow_createWindow(QWebEnginePage::WebWindowType type, QWebEng
 void iHelpBrowser::brow_createWindow(QWebPage::WebWindowType type,
     iWebView*& window)
 {
-  if (type == QWebPage::WebBrowserWindow) {
+  // if (type == QWebPage::WebBrowserWindow) {
     window = AddWebView(_nilString);
-  }
+  // }
 }
 
 #endif // USE_QT_WEBENGINE
