@@ -24,7 +24,7 @@ set BUILD_TYPE=Release
 set SRC_DIR=C:\src\emergent
 set ARCH=64
 
-set QTDIR=C:\Qt\5.6.1\5.6\msvc2015_64
+set QTDIR=C:\Qt\Qt5.6.1\5.6\msvc2015_64
 set EMER_MISC_LIBS_DIR=C:\EmerMiscLibs
 set COINDIR=C:\Coin\4.0.0a
 set EMER_SVN_LIBS_DIR=C:\Subversion
