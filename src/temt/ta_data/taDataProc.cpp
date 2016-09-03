@@ -661,6 +661,16 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
         else if(ds->agg.op == Aggregate::LAST) {
           dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
         }
+        else if(ds->agg.op == Aggregate::COUNT) {
+          bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // string so only CONTAINS or NOT_CONTAINS
+          dda->SetValAsInt(sda->AR()->CountValAsString(ds->agg.rel.val_string, contains), 0);
+        }
+        else if(ds->agg.op == Aggregate::FIND_FIRST) {
+          dda->SetValAsString(sda->AR()->FindValAsString_Flat(ds->agg.rel.val_string, 0), 0);
+        }
+        else if(ds->agg.op == Aggregate::FIND_LAST) {
+          dda->SetValAsString(sda->AR()->FindValAsString_Flat(ds->agg.rel.val_string, -1), 0);
+        }
         else if(ds->agg.op == Aggregate::N) {
           dda->SetValAsInt(mat->size, 0);
         }

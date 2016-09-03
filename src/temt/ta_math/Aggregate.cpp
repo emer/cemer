@@ -30,7 +30,12 @@ String Aggregate::GetAggName() const {
 }
 
 Aggregate::ValType Aggregate::MinValType() const {
-  if(op == GROUP || op == FIRST || op == LAST || op == N) return VT_STRING;
+  if(op == GROUP || op == FIRST || op == LAST || op == N) {
+    return VT_STRING;
+  }
+  else if ((op == COUNT || op == FIND_FIRST || op == FIND_LAST) && (rel.rel == Relation::CONTAINS || rel.rel == Relation::NOT_CONTAINS) ) {
+    return VT_STRING;
+  }
   return VT_INT;
 }
 

@@ -1363,44 +1363,105 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
 }
 
 int taMatrix::FindVal_Flat(const Variant& val, int st_idx) const {
-  for(int i=st_idx;i<size; i++) {
-    Variant mval = FastElAsVar_Flat(i);
-    if(mval == val)
-      return i;
+  if(st_idx >= 0) {
+    for(int i=st_idx;i<size; i++) {
+      Variant mval = FastElAsVar_Flat(i);
+      if(mval == val)
+        return i;
+    }
+    return -1;
   }
-  return -1;
+  else {
+    for(int i=size+st_idx; i>=0; i--) {
+      Variant mval = FastElAsVar_Flat(i);
+      if(mval == val)
+        return i;
+    }
+    return -1;
+  }
 }
 
 int taMatrix::FindValAsString_Flat(const String& val, int st_idx, bool contains) const {
-  for(int i=st_idx;i<size; i++) {
-    Variant mval = FastElAsVar_Flat(i);
-    if (contains) {
-      if(mval.toString().contains(val))
-        return i;
+  if(st_idx >= 0) {
+    for(int i=st_idx;i<size; i++) {
+      Variant mval = FastElAsVar_Flat(i);
+      if (contains) {
+        if(mval.toString().contains(val))
+          return i;
+      }
+      else {
+        if(mval.toString() == val)
+          return i;
+      }
     }
-    else {
-      if(mval.toString() == val)
-        return i;
-    }
+    return -1;
   }
-  return -1;
+  else {
+    for(int i=size+st_idx; i>=0; i--) {
+      Variant mval = FastElAsVar_Flat(i);
+      if (contains) {
+        if(mval.toString().contains(val))
+          return i;
+      }
+      else {
+        if(mval.toString() == val)
+          return i;
+      }
+    }
+    return -1;
+  }
 }
 
 int taMatrix::FindValAsStringCi_Flat(const String& val, int st_idx, bool contains) const {
-  for(int i=st_idx;i<size; i++) {
-    Variant mval = FastElAsVar_Flat(i);
-    if (contains) {
-      if(mval.toString().contains_ci(val))
-        return i;
+  if(st_idx >= 0) {
+    for(int i=st_idx;i<size; i++) {
+      Variant mval = FastElAsVar_Flat(i);
+      if (contains) {
+        if(mval.toString().contains_ci(val))
+          return i;
+      }
+      else {
+        String mval_copy = mval.toString();
+        String val_copy = val;
+        if(mval_copy.downcase() == val_copy.downcase())
+          return i;
+      }
     }
-    else {
-      String mval_copy = mval.toString();
-      String val_copy = val;
-      if(mval_copy.downcase() == val_copy.downcase())
-        return i;
+    return -1;
+  }
+  else {
+    for(int i=size+st_idx; i>=0; i--) {
+      Variant mval = FastElAsVar_Flat(i);
+      if (contains) {
+        if(mval.toString().contains_ci(val))
+          return i;
+      }
+      else {
+        String mval_copy = mval.toString();
+        String val_copy = val;
+        if(mval_copy.downcase() == val_copy.downcase())
+          return i;
+      }
+    }
+    return -1;
+  }
+}
+
+int taMatrix::CountValAsString(const String& val, bool contains) const {
+  int count = 0;
+  int cur_idx = 0;
+  int found = 1;
+  while (found >= 0) {
+    found = FindValAsString_Flat(val, cur_idx);  // don't pass contains 
+    if (found >= 0) {
+      count++;
+      cur_idx = ++found; // go back for more starting just past last found
     }
   }
-  return -1;
+  if (!contains) {
+    count = size - count;
+  }
+  return count;
 }
 
 const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to) {

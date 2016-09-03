@@ -50,7 +50,8 @@ public:
     };
 
   Relations     rel;            // #LABEL_ relationship to evaluate
-  double        val;            // #LABEL_ comparison value
+  double        val;            // #LABEL_ comparison value #CONDSHOW_OFF_rel:CONTAINS,NOT_CONTAINS
+  String        val_string;     // #LABEL_ comparison value #CONDSHOW_ON_rel:CONTAINS,NOT_CONTAINS
   bool          use_var;        // if true, use a program variable to specify the relation value
   ProgVarRef    var;            // #CONDSHOW_ON_use_var:true variable that contains the comparison value -- variable must be a top-level (.args or .vars) variable and not a local one
 

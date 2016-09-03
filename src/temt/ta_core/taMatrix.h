@@ -338,12 +338,14 @@ public:
   // #CAT_Access treats the matrix like a flat array, returns the element as a variant
 
   int                   FindVal_Flat(const Variant& val, int st_idx = 0) const;
-  // #CAT_Access find a value in the matrix -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found
+  // #CAT_Access find a value in the matrix -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found. Negative st_idx will search backwards
   int                   FindValAsString_Flat(const String& val, int st_idx = 0, bool contains = true) const;
-  // #CAT_Access find a value in the matrix -- treat all values as strings -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found
+  // #CAT_Access find a value in the matrix -- treat all values as strings -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found - !contains means equal (i.e. full match). Negative st_idx will search backwards
   int                   FindValAsStringCi_Flat(const String& val, int st_idx = 0, bool contains = true) const;
-  // #CAT_Access find a value in the matrix -- case independent -- treat all values as strings -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found
-
+  // #CAT_Access find a value in the matrix -- case independent -- treat all values as strings -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found. Negative st_idx will search backwards
+  int                   CountValAsString(const String& val, bool contains = true) const;
+  // #CAT_Access return count of value in the matrix -- treat all values as strings - !contains means the substring is not found
+  
   void          SetFmVar(const Variant& var, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)
   {
