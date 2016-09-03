@@ -66,6 +66,12 @@ Sort
     Run Emergent Program	Select
     Prog Var Should Equal	test_failed	0    
 
+Group
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "Group"    
+    Run Emergent Program	Group
+    Prog Var Should Equal	test_failed	0    
+
 
 *** Keywords ***
 
