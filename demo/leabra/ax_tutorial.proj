@@ -437,7 +437,51 @@ LeabraProject .projects["ax_tutorial"] {
   };
  };
 
- Network_Group @.networks = [0] {
+ Network_Group @.networks = [1] {
+  LeabraNetwork @["Network_1"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["cos_err"] { };
+    UserDataItem @["norm_err"] { };
+    UserDataItem @["ext_rew"] { };
+    UserDataItem @["minus_output_name"] { };
+    UserDataItem @["rt_cycles"] { };
+    UserDataItem @["tot_cycle"] { };
+    UserDataItem @["phase"] { };
+    UserDataItem @["quarter"] { };
+    UserDataItem @["sse"] { };
+    UserDataItem @["output_name"] { };
+    UserDataItem @["trial_name"] { };
+    UserDataItem @["group_name"] { };
+    UserDataItem @["total_trials"] { };
+    UserDataItem @["time"] { };
+    UserDataItem @["cycle"] { };
+    UserDataItem @["tick"] { };
+    UserDataItem @["trial"] { };
+    UserDataItem @["group"] { };
+    UserDataItem @["epoch"] { };
+    UserDataItem @["batch"] { };
+   };
+
+   BaseSpec_Group @.specs = [1] {
+    LeabraLayerSpec @["HiddenLayer"] { 
+     BaseSpec_Group @.children = [1] {
+      LeabraLayerSpec @["Input_Output"] { 
+       BaseSpec_Group @.children = [0] {
+       };
+      };
+     };
+    };
+   };
+
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
+   Layer_Group @.layers = [0] {
+   };
+
+   Weights_List @.weights = [0] {
+   };
+  };
  };
 };
 LeabraProject .projects["ax_tutorial"] {
@@ -492,204 +536,94 @@ LeabraProject .projects["ax_tutorial"] {
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
-<meta charset=\"UTF-8\">
-<title>Editing tutorials/ax tutorial - emergent</title>
-<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
-<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial\",\"wgTitle\":\"tutorials/ax tutorial\",\"wgCurRevisionId\":11988,\"wgRevisionId\":0,\"wgArticleId\":2845,\"wgIsArticle\":!1,\"wgIsRedirect\":!1,\"wgAction\":\"edit\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial\",\"wgRelevantArticleId\":2845,\"wgUserId\":10,\"wgUserEditCount\":187,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[]
-,\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgEditMessage\":\"editing\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"cd748bd40335d298080d8437f166141057c5f59e+\\\\\",\"patrolToken\":\"9c68fee56fc91c49a8ac377b6eaf0fa557c5f59e+\\\\\",\"watchToken\":\"57b0a863dfc47d3e63cde3828ddcabe557c5f59e+\\\\\"});});mw.loader.load([\"mediawiki.action.edit\",\"mediawiki.toolbar\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
-} );</script>
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.wikiEditor.toolbar.styles&amp;only=styles&amp;skin=vector\">
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.action.edit.styles%7Cmediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
-<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
-<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
-<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
-<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
-<meta name=\"robots\" content=\"noindex,nofollow\">
-<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"tutorials/ax tutorial\" href=\"/emergent/index.php?title=Special:ExportRDF/tutorials/ax_tutorial&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=edit\">
-<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
-<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
-<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
-<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
-<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=jEfPGIsK\"></script></head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-tutorials_ax_tutorial skin-vector action-edit\">
-		<div id=\"mw-page-base\" class=\"noprint\"></div>
-		<div id=\"mw-head-base\" class=\"noprint\"></div>
-		<div id=\"content\" class=\"mw-body\" role=\"main\">
-			<a id=\"top\"></a>
+   html_text="<!DOCTYPE html><!--[if lt IE 7]><html class=\"no-js lt-ie9 lt-ie8 lt-ie7\"> <![endif]--><!--[if IE 7]><html class=\"no-js lt-ie9 lt-ie8\"> <![endif]--><!--[if IE 8]><html class=\"no-js lt-ie9\"> <![endif]--><!--[if gt IE 8]><!--><html class=\"no-js\"><!--<![endif]--><head> 
+  
 
-						<div class=\"mw-indicators\">
+    <meta charset=\"utf-8\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\"><script src=\"https://js-agent.newrelic.com/nr-974.min.js\"></script><script type=\"text/javascript\">window.NREUM||(NREUM={});NREUM.info = {\"beacon\":\"bam.nr-data.net\",\"errorBeacon\":\"bam.nr-data.net\",\"licenseKey\":\"ed18eb5a61\",\"applicationID\":\"3124437\",\"transactionName\":\"YlNQZEtTWBYFVRBZDlsZc2NpHWYKFkIFXBIaRlNeXEBXE1cZDV4FUE4cUUpCTg==\",\"queueTime\":0,\"applicationTime\":625,\"ttGuid\":\"21ADDC28B93D992A\",\"agent\":\"\"}</script><script type=\"text/javascript\">(window.NREUM||(NREUM={})).loader_config={xpid:\"UQEFV1ZXGwABVlVWBAY=\"};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o||e)},o,o.exports)}return e[n].exports}if(\"function\"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({1:[function(t,e,n){function r(t){try{c.console&&console.log(t)}catch(e){}}var o,i=t(\"ee\"),a=t(12),c={};try{o=localStorage.getItem(\"__nr_flags\").split(\",\"),console&&\"function\"==typeof console.log&&(c.console=!0,o.indexOf(\"dev\")!==-1&&(c.dev=!0),o.indexOf(\"nr_dev\")!==-1&&(c.nrDev=!0))}catch(s){}c.nrDev&&i.on(\"internal-error\",function(t){r(t.stack)}),c.dev&&i.on(\"fn-err\",function(t,e,n){r(n.stack)}),c.dev&&(r(\"NR AGENT IN DEVELOPMENT MODE\"),r(\"flags: \"+a(c,function(t,e){return t}).join(\", \")))},{}],2:[function(t,e,n){function r(t,e,n,r,o){try{d?d-=1:i(\"err\",[o||new UncaughtException(t,e,n)])}catch(c){try{i(\"ierr\",[c,(new Date).getTime(),!0])}catch(s){}}return\"function\"==typeof f&&f.apply(this,a(arguments))}function UncaughtException(t,e,n){this.message=t||\"Uncaught error with no additional information\",this.sourceURL=e,this.line=n}function o(t){i(\"err\",[t,(new Date).getTime()])}var i=t(\"handle\"),a=t(13),c=t(\"ee\"),s=t(\"loader\"),f=window.onerror,u=!1,d=0;s.features.err=!0,t(1),window.onerror=r;try{throw new Error}catch(l){\"stack\"in l&&(t(5),t(4),\"addEventListener\"in window&&t(3),s.xhrWrappable&&t(6),u=!0)}c.on(\"fn-start\",function(t,e,n){u&&(d+=1)}),c.on(\"fn-err\",function(t,e,n){u&&(this.thrown=!0,o(n))}),c.on(\"fn-end\",function(){u&&!this.thrown&&d>0&&(d-=1)}),c.on(\"internal-error\",function(t){i(\"ierr\",[t,(new Date).getTime(),!0])})},{}],3:[function(t,e,n){function r(t){for(var e=t;e&&!e.hasOwnProperty(u);)e=Object.getPrototypeOf(e);e&&o(e)}function o(t){c.inPlace(t,[u,d],\"-\",i)}function i(t,e){return t[1]}var a=t(\"ee\").get(\"events\"),c=t(14)(a),s=t(\"gos\"),f=XMLHttpRequest,u=\"addEventListener\",d=\"removeEventListener\";e.exports=a,\"getPrototypeOf\"in Object?(r(document),r(window),r(f.prototype)):f.prototype.hasOwnProperty(u)&&(o(window),o(f.prototype)),a.on(u+\"-start\",function(t,e){if(t[1]){var n=t[1];if(\"function\"==typeof n){var r=s(n,\"nr@wrapped\",function(){return c(n,\"fn-\",null,n.name||\"anonymous\")});this.wrapped=t[1]=r}else\"function\"==typeof n.handleEvent&&c.inPlace(n,[\"handleEvent\"],\"fn-\")}}),a.on(d+\"-start\",function(t){var e=this.wrapped;e&&(t[1]=e)})},{}],4:[function(t,e,n){var r=t(\"ee\").get(\"raf\"),o=t(14)(r),i=\"equestAnimationFrame\";e.exports=r,o.inPlace(window,[\"r\"+i,\"mozR\"+i,\"webkitR\"+i,\"msR\"+i],\"raf-\"),r.on(\"raf-start\",function(t){t[0]=o(t[0],\"fn-\")})},{}],5:[function(t,e,n){function r(t,e,n){t[0]=a(t[0],\"fn-\",null,n)}function o(t,e,n){this.method=n,this.timerDuration=\"number\"==typeof t[1]?t[1]:0,t[0]=a(t[0],\"fn-\",this,n)}var i=t(\"ee\").get(\"timer\"),a=t(14)(i),c=\"setTimeout\",s=\"setInterval\",f=\"clearTimeout\",u=\"-start\",d=\"-\";e.exports=i,a.inPlace(window,[c,\"setImmediate\"],c+d),a.inPlace(window,[s],s+d),a.inPlace(window,[f,\"clearImmediate\"],f+d),i.on(s+u,r),i.on(c+u,o)},{}],6:[function(t,e,n){function r(t,e){d.inPlace(e,[\"onreadystatechange\"],\"fn-\",c)}function o(){var t=this,e=u.context(t);t.readyState>3&&!e.resolved&&(e.resolved=!0,u.emit(\"xhr-resolved\",[],t)),d.inPlace(t,v,\"fn-\",c)}function i(t){y.push(t),h&&(w=-w,x.data=w)}function a(){for(var t=0;t<y.length;t++)r([],y[t]);y.length&&(y=[])}function c(t,e){return e}function s(t,e){for(var n in t)e[n]=t[n];return e}t(3);var f=t(\"ee\"),u=f.get(\"xhr\"),d=t(14)(u),l=NREUM.o,p=l.XHR,h=l.MO,m=\"readystatechange\",v=[\"onload\",\"onerror\",\"onabort\",\"onloadstart\",\"onloadend\",\"onprogress\",\"ontimeout\"],y=[];e.exports=u;var g=window.XMLHttpRequest=function(t){var e=new p(t);try{u.emit(\"new-xhr\",[e],e),e.addEventListener(m,o,!1)}catch(n){try{u.emit(\"internal-error\",[n])}catch(r){}}return e};if(s(p,g),g.prototype=p.prototype,d.inPlace(g.prototype,[\"open\",\"send\"],\"-xhr-\",c),u.on(\"send-xhr-start\",function(t,e){r(t,e),i(e)}),u.on(\"open-xhr-start\",r),h){var w=1,x=document.createTextNode(w);new h(a).observe(x,{characterData:!0})}else f.on(\"fn-end\",function(t){t[0]&&t[0].type===m||a()})},{}],7:[function(t,e,n){function r(t){var e=this.params,n=this.metrics;if(!this.ended){this.ended=!0;for(var r=0;r<d;r++)t.removeEventListener(u[r],this.listener,!1);if(!e.aborted){if(n.duration=(new Date).getTime()-this.startTime,4===t.readyState){e.status=t.status;var i=o(t,this.lastSize);if(i&&(n.rxSize=i),this.sameOrigin){var a=t.getResponseHeader(\"X-NewRelic-App-Data\");a&&(e.cat=a.split(\", \").pop())}}else e.status=0;n.cbTime=this.cbTime,f.emit(\"xhr-done\",[t],t),c(\"xhr\",[e,n,this.startTime])}}}function o(t,e){var n=t.responseType;if(\"json\"===n&&null!==e)return e;var r=\"arraybuffer\"===n||\"blob\"===n||\"json\"===n?t.response:t.responseText;return h(r)}function i(t,e){var n=s(e),r=t.params;r.host=n.hostname+\":\"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}var a=t(\"loader\");if(a.xhrWrappable){var c=t(\"handle\"),s=t(8),f=t(\"ee\"),u=[\"load\",\"error\",\"abort\",\"timeout\"],d=u.length,l=t(\"id\"),p=t(11),h=t(10),m=window.XMLHttpRequest;a.features.xhr=!0,t(6),f.on(\"new-xhr\",function(t){var e=this;e.totalCbs=0,e.called=0,e.cbTime=0,e.end=r,e.ended=!1,e.xhrGuids={},e.lastSize=null,p&&(p>34||p<10)||window.opera||t.addEventListener(\"progress\",function(t){e.lastSize=t.loaded},!1)}),f.on(\"open-xhr-start\",function(t){this.params={method:t[0]},i(this,t[1]),this.metrics={}}),f.on(\"open-xhr-end\",function(t,e){\"loader_config\"in NREUM&&\"xpid\"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader(\"X-NewRelic-ID\",NREUM.loader_config.xpid)}),f.on(\"send-xhr-start\",function(t,e){var n=this.metrics,r=t[0],o=this;if(n&&r){var i=h(r);i&&(n.txSize=i)}this.startTime=(new Date).getTime(),this.listener=function(t){try{\"abort\"===t.type&&(o.params.aborted=!0),(\"load\"!==t.type||o.called===o.totalCbs&&(o.onloadCalled||\"function\"!=typeof e.onload))&&o.end(e)}catch(n){try{f.emit(\"internal-error\",[n])}catch(r){}}};for(var a=0;a<d;a++)e.addEventListener(u[a],this.listener,!1)}),f.on(\"xhr-cb-time\",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&\"function\"==typeof n.onload||this.end(n)}),f.on(\"xhr-load-added\",function(t,e){var n=\"\"+l(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),f.on(\"xhr-load-removed\",function(t,e){var n=\"\"+l(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),f.on(\"addEventListener-end\",function(t,e){e instanceof m&&\"load\"===t[0]&&f.emit(\"xhr-load-added\",[t[1],t[2]],e)}),f.on(\"removeEventListener-end\",function(t,e){e instanceof m&&\"load\"===t[0]&&f.emit(\"xhr-load-removed\",[t[1],t[2]],e)}),f.on(\"fn-start\",function(t,e,n){e instanceof m&&(\"onload\"===n&&(this.onload=!0),(\"load\"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),f.on(\"fn-end\",function(t,e){this.xhrCbStart&&f.emit(\"xhr-cb-time\",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{}],8:[function(t,e,n){e.exports=function(t){var e=document.createElement(\"a\"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split(\"://\");!r.port&&o[1]&&(r.port=o[1].split(\"/\")[0].split(\"@\").pop().split(\":\")[1]),r.port&&\"0\"!==r.port||(r.port=\"https\"===o[0]?\"443\":\"80\"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],\"/\"!==r.pathname.charAt(0)&&(r.pathname=\"/\"+r.pathname);var i=!e.protocol||\":\"===e.protocol||e.protocol===n.protocol,a=e.hostname===document.domain&&e.port===n.port;return r.sameOrigin=i&&(!e.hostname||a),r}},{}],9:[function(t,e,n){function r(){}function o(t,e,n){return function(){return i(t,[(new Date).getTime()].concat(c(arguments)),e?null:this,n),e?void 0:this}}var i=t(\"handle\"),a=t(12),c=t(13),s=t(\"ee\").get(\"tracer\"),f=NREUM;\"undefined\"==typeof window.newrelic&&(newrelic=f);var u=[\"setPageViewName\",\"setCustomAttribute\",\"setErrorHandler\",\"finished\",\"addToTrace\",\"inlineHit\"],d=\"api-\",l=d+\"ixn-\";a(u,function(t,e){f[e]=o(d+e,!0,\"api\")}),f.addPageAction=o(d+\"addPageAction\",!0),e.exports=newrelic,f.interaction=function(){return(new r).get()};var p=r.prototype={createTracer:function(t,e){var n={},r=this,o=\"function\"==typeof e;return i(l+\"tracer\",[Date.now(),t,n],r),function(){if(s.emit((o?\"\":\"no-\")+\"fn-start\",[Date.now(),r,o],n),o)try{return e.apply(this,arguments)}finally{s.emit(\"fn-end\",[Date.now()],n)}}}};a(\"setName,setAttribute,save,ignore,onEnd,getContext,end,get\".split(\",\"),function(t,e){p[e]=o(l+e)}),newrelic.noticeError=function(t){\"string\"==typeof t&&(t=new Error(t)),i(\"err\",[t,(new Date).getTime()])}},{}],10:[function(t,e,n){e.exports=function(t){if(\"string\"==typeof t&&t.length)return t.length;if(\"object\"==typeof t){if(\"undefined\"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if(\"undefined\"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if(!(\"undefined\"!=typeof FormData&&t instanceof FormData))try{return JSON.stringify(t).length}catch(e){return}}}},{}],11:[function(t,e,n){var r=0,o=navigator.userAgent.match(/Firefox[\\/\\s](\\d+\\.\\d+)/);o&&(r=+o[1]),e.exports=r},{}],12:[function(t,e,n){function r(t,e){var n=[],r=\"\",i=0;for(r in t)o.call(t,r)&&(n[i]=e(r,t[r]),i+=1);return n}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],13:[function(t,e,n){function r(t,e,n){e||(e=0),\"undefined\"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(o<0?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=r},{}],14:[function(t,e,n){function r(t){return!(t&&\"function\"==typeof t&&t.apply&&!t[a])}var o=t(\"ee\"),i=t(13),a=\"nr@original\",c=Object.prototype.hasOwnProperty,s=!1;e.exports=function(t){function e(t,e,n,o){function nrWrapper(){var r,a,c,s;try{a=this,r=i(arguments),c=\"function\"==typeof n?n(r,a):n||{}}catch(u){d([u,\"\",[r,a,o],c])}f(e+\"start\",[r,a,o],c);try{return s=t.apply(a,r)}catch(l){throw f(e+\"err\",[r,a,l],c),l}finally{f(e+\"end\",[r,a,s],c)}}return r(t)?t:(e||(e=\"\"),nrWrapper[a]=t,u(t,nrWrapper),nrWrapper)}function n(t,n,o,i){o||(o=\"\");var a,c,s,f=\"-\"===o.charAt(0);for(s=0;s<n.length;s++)c=n[s],a=t[c],r(a)||(t[c]=e(a,f?c+o:o,i,c))}function f(e,n,r){if(!s){s=!0;try{t.emit(e,n,r)}catch(o){d([o,e,n,r])}s=!1}}function u(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){d([r])}for(var o in t)c.call(t,o)&&(e[o]=t[o]);return e}function d(e){try{t.emit(\"internal-error\",e)}catch(n){}}return t||(t=o),e.inPlace=n,e.flag=a,e}},{}],ee:[function(t,e,n){function r(){}function o(t){function e(t){return t&&t instanceof r?t:t?c(t,a,i):i()}function n(n,r,o){t&&t(n,r,o);for(var i=e(o),a=l(n),c=a.length,s=0;s<c;s++)a[s].apply(i,r);var u=f[v[n]];return u&&u.push([y,n,r,i]),i}function d(t,e){m[t]=l(t).concat(e)}function l(t){return m[t]||[]}function p(t){return u[t]=u[t]||o(n)}function h(t,e){s(t,function(t,n){e=e||\"feature\",v[n]=e,e in f||(f[e]=[])})}var m={},v={},y={on:d,emit:n,get:p,listeners:l,context:e,buffer:h};return y}function i(){return new r}var a=\"nr@context\",c=t(\"gos\"),s=t(12),f={},u={},d=e.exports=o();d.backlog=f},{}],gos:[function(t,e,n){function r(t,e,n){if(o.call(t,e))return t[e];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return t[e]=r,r}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],handle:[function(t,e,n){function r(t,e,n,r){o.buffer([t],r),o.emit(t,e,n)}var o=t(\"ee\").get(\"handle\");e.exports=r,r.ee=o},{}],id:[function(t,e,n){function r(t){var e=typeof t;return!t||\"object\"!==e&&\"function\"!==e?-1:t===window?0:a(t,i,function(){return o++})}var o=1,i=\"nr@id\",a=t(\"gos\");e.exports=r},{}],loader:[function(t,e,n){function r(){if(!w++){var t=g.info=NREUM.info,e=u.getElementsByTagName(\"script\")[0];if(t&&t.licenseKey&&t.applicationID&&e){s(v,function(e,n){t[e]||(t[e]=n)});var n=\"https\"===m.split(\":\")[0]||t.sslForHttp;g.proto=n?\"https://\":\"http://\",c(\"mark\",[\"onload\",a()],null,\"api\");var r=u.createElement(\"script\");r.src=g.proto+t.agent,e.parentNode.insertBefore(r,e)}}}function o(){\"complete\"===u.readyState&&i()}function i(){c(\"mark\",[\"domContent\",a()],null,\"api\")}function a(){return(new Date).getTime()}var c=t(\"handle\"),s=t(12),f=window,u=f.document,d=\"addEventListener\",l=\"attachEvent\",p=f.XMLHttpRequest,h=p&&p.prototype;NREUM.o={ST:setTimeout,CT:clearTimeout,XHR:p,REQ:f.Request,EV:f.Event,PR:f.Promise,MO:f.MutationObserver},t(9);var m=\"\"+location,v={beacon:\"bam.nr-data.net\",errorBeacon:\"bam.nr-data.net\",agent:\"js-agent.newrelic.com/nr-974.min.js\"},y=p&&h&&h[d]&&!/CriOS/.test(navigator.userAgent),g=e.exports={offset:a(),origin:m,features:{},xhrWrappable:y};u[d]?(u[d](\"DOMContentLoaded\",i,!1),f[d](\"load\",r,!1)):(u[l](\"onreadystatechange\",o),f[l](\"onload\",r)),c(\"mark\",[\"firstbyte\",a()],null,\"api\");var w=0},{}]},{},[\"loader\",2,7]);</script>
+    <title>Panera Bread® Wifi</title>
+    <meta name=\"description\" content=\"\">
+    <meta name=\"viewport\" content=\"width=device-width\">
+    <link type=\"image/x-icon\" href=\"../PaneraV3/Images/favicon.ico\" rel=\"shortcut icon\">
+ 
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    
+<link href=\"../Login/css/reset.css\" rel=\"stylesheet\" type=\"text/css\">
+<link href=\"css/font.css\" rel=\"stylesheet\" type=\"text/css\">
+<link href=\"css/style.css\" rel=\"stylesheet\" type=\"text/css\">
+    <script src=\"../Login/js/jquery.js\"></script>
+  </head>
+  <body>
+      <form name=\"aspnetForm\" method=\"post\" action=\"Index.aspx\" id=\"aspnetForm\">
+<div>
+<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"/wEPDwUJNjcyMjc3NTQzD2QWAmYPZBYCAgMPZBYCZg9kFgQCAQ8PFgQeBFRleHQFb1lvdSBoYXZlIHJlYWNoZWQgdGhlIG1heGltdW0gbnVtYmVyIG9mIGFsbG93ZWQgbG9naW5zIGZvciB0aGlzIHRpbWUgcGVyaW9kLiBQbGVhc2UgdHJ5IGxvZ2dpbmcgaW4gYWZ0ZXIgMjowMFBNLh4HVmlzaWJsZWdkZAIDDw8WAh8BaGRkZJfBo83Gxl9fMEowdZ2SGncQEaL6+KdAsOnK5Ls4B4CM\">
 </div>
-			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">Editing tutorials/ax tutorial</h1>
-									<div id=\"bodyContent\" class=\"mw-body-content\">
-								<div id=\"contentSub\"></div>
-												<div id=\"jump-to-nav\" class=\"mw-jump\">
-					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
-				</div>
-				<div id=\"mw-content-text\"><div id=\"wikiPreview\" class=\"ontop\" style=\"display: none;\"><div lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"></div></div><form id=\"editform\" name=\"editform\" method=\"post\" action=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=submit\" enctype=\"multipart/form-data\"><div id=\"antispam-container\" style=\"display: none;\"><label for=\"wpAntiSpam\">Anti-spam check.
-Do <strong>not</strong> fill this in!</label><input type=\"text\" name=\"wpAntispam\" id=\"wpAntispam\" value=\"\"></div><input type=\"hidden\" name=\"editingStatsId\" id=\"editingStatsId\" value=\"98d5b8e421eada868b693d8bef1af8c3\"><input type=\"hidden\" value=\"\" name=\"wpSection\">
-<input type=\"hidden\" value=\"20160830210741\" name=\"wpStarttime\">
-<input type=\"hidden\" value=\"20160830075836\" name=\"wpEdittime\">
-<input type=\"hidden\" value=\"\" name=\"wpScrolltop\" id=\"wpScrolltop\">
-<input type=\"hidden\" value=\"d41d8cd98f00b204e9800998ecf8427e\" name=\"wpAutoSummary\"><input type=\"hidden\" value=\"0\" name=\"oldid\"><input type=\"hidden\" value=\"11988\" name=\"parentRevId\"><input type=\"hidden\" value=\"text/x-wiki\" name=\"format\"><input type=\"hidden\" value=\"wikitext\" name=\"model\"><div class=\"wikiEditor-oldToolbar\"><div id=\"toolbar\"></div></div><textarea tabindex=\"1\" accesskey=\",\" id=\"wpTextbox1\" cols=\"80\" rows=\"25\" style=\"\" lang=\"en\" dir=\"ltr\" name=\"wpTextbox1\">{{PublishedProject
-| page_name=tutorials/ax_tutorial
-| obj_name=ax_tutorial
-| filename=ax_tutorial.proj
-| author=Thomas Hazy, Randall C. O'Reilly
-| email=thazy@colorado.edu, emergent-users@grey.colorado.edu
-| first_pub=Aug 29 2016
-| tags=Tutorial, CPT-AX Task, Leabra, Environment, Program
-| desc=Blank version of the AX tutorial project for users to build out as they progress through the project.  Critically, has pointers to the wiki docs that walk the user through the basic process of building out a simple project.
-| pub_cite=
-}}
 
-See [[AX Tutorial]] for full information on using this project -- it provides step-by-step instructions.
+<div>
 
-The [[tutorials/ax_tutorial_final]] project provides a completed final version after all the steps have been performed, for comparison.
-</textarea><div class=\"editOptions\">
-<span class=\"mw-summary\" id=\"wpSummaryLabel\"><label for=\"wpSummary\">Summary:</label></span> <input class=\"mw-summary\" id=\"wpSummary\" maxlength=\"200\" tabindex=\"1\" size=\"60\" spellcheck=\"true\" title=\"Enter a short summary [b]\" accesskey=\"b\" name=\"wpSummary\"><div class=\"editCheckboxes\"><input name=\"wpMinoredit\" type=\"checkbox\" value=\"1\" tabindex=\"3\" accesskey=\"i\" id=\"wpMinoredit\">&nbsp;<label for=\"wpMinoredit\" id=\"mw-editpage-minoredit\" title=\"Mark this as a minor edit [i]\">This is a minor edit</label>
-<input name=\"wpWatchthis\" type=\"checkbox\" value=\"1\" checked=\"checked\" tabindex=\"4\" accesskey=\"w\" id=\"wpWatchthis\">&nbsp;<label for=\"wpWatchthis\" id=\"mw-editpage-watch\" title=\"Add this page to your watchlist [w]\">Watch this page</label></div>
-<div id=\"editpage-copywarn\">
-<p>Please note that all contributions to emergent may be edited, altered, or removed by other contributors.
-If you do not want your writing to be edited mercilessly, then do not submit it here.<br>
-You are also promising us that you wrote this yourself, or copied it from a public domain or similar free resource (see <a href=\"/emergent/index.php?title=emergent:Copyrights&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"emergent:Copyrights (page does not exist)\">emergent:Copyrights</a> for details).
-<strong>Do not submit copyrighted work without permission!</strong>
-</p>
+	<input type=\"hidden\" name=\"__VIEWSTATEGENERATOR\" id=\"__VIEWSTATEGENERATOR\" value=\"D5779170\">
 </div>
-<div class=\"editButtons\">
-<input id=\"wpSave\" name=\"wpSave\" tabindex=\"5\" title=\"Save your changes [s]\" accesskey=\"s\" type=\"submit\" value=\"Save page\">
-<input id=\"wpPreview\" name=\"wpPreview\" tabindex=\"6\" title=\"Preview your changes. Please use this before saving. [p]\" accesskey=\"p\" type=\"submit\" value=\"Show preview\">
+   	    <div id=\"container\">
+              <div id=\"container-head\" class=\"edge\"> </div>
+              <div id=\"logo\"><img src=\"images/logo.png\"></div>
+                    
 
-<input id=\"wpDiff\" name=\"wpDiff\" tabindex=\"7\" title=\"Show which changes you made to the text [v]\" accesskey=\"v\" type=\"submit\" value=\"Show changes\">
-	<span class=\"cancelLink\"><a href=\"/emergent/index.php/tutorials/ax_tutorial\" title=\"tutorials/ax tutorial\" id=\"mw-editform-cancel\">Cancel</a><span class=\"mw-editButtons-pipe-separator\"> | </span></span>
-	<span class=\"editHelp\"><a target=\"helpwindow\" href=\"https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Editing_pages\">Editing help</a> (opens in new window)</span>
-</div><!-- editButtons -->
-</div><!-- editOptions -->
+  <div id=\"login-content\">
+    <h1>Hassle-Free Wi-Fi</h1>
+    <h2>Sign on just once per device, and we'll remember you next time at any participating bakery-cafe.</h2>
+    <div id=\"loginModuleError\">
+		<span id=\"ctl00_contentPlaceHolder1_lblError\" style=\"color:Red;font-weight:bold;\">You have reached the maximum number of allowed logins for this time period. Please try logging in after 2:00PM.</span>
+    </div>
+        
+        <!--<a href=\"Login.aspx\"><img src=\"images/connect.png\"></a>-->
+    <!--<p>By connecting, you accept the terms of our <a id=\"agreement-link\" href=\"#agreement\">User Agreement</a>.</p>-->
+  </div>
+  
+  <div id=\"info\">
+    <div id=\"peak\" class=\"half-col\">
+      <h2>Peak Hours</h2>
+      <p>To better serve all of our customers, wi-fi access is limited to one 30 minute session for non-mobile devices between 11am-2pm.</p>
+    </div>
+    <div id=\"table\" class=\"half-col\">
+      <h2>Table Size</h2>
+      <p>When deciding where to sit, please consider the size of your group. We like to leave our larger tables open for larger groups when possible.</p>
+    </div>
+    <div class=\"seperator\"></div>
+  <div class=\"clearfix\"></div>
+  </div>
+  <div id=\"main-section\"> <a href=\"#\"><img id=\"main-image\" width=\"100%\" src=\"../PaneraV3/images/app1.png\"></a> 
+  <div class=\"disclaimer\">Apple, the Apple logo and iPhone are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc.</div></div>
 
-<input type=\"hidden\" value=\"cd748bd40335d298080d8437f166141057c5f59e+\\\" name=\"wpEditToken\">
-<div class=\"mw-editTools\"></div>
-<div class=\"templatesUsed\"><div class=\"mw-templatesUsedExplanation\"><p>Templates used on this page:
-</p></div><ul>
-<li><a href=\"/emergent/index.php/Template:PublishedProject\" title=\"Template:PublishedProject\">Template:PublishedProject</a> (<a href=\"/emergent/index.php?title=Template:PublishedProject&amp;action=edit\" title=\"Template:PublishedProject\">edit</a>) </li><li><a href=\"/emergent/index.php/Template:cite\" title=\"Template:cite\">Template:cite</a> (<a href=\"/emergent/index.php?title=Template:cite&amp;action=edit\" title=\"Template:cite\">edit</a>) </li><li><a href=\"/emergent/index.php/Template:emerlink\" title=\"Template:emerlink\">Template:emerlink</a> (<a href=\"/emergent/index.php?title=Template:emerlink&amp;action=edit\" title=\"Template:emerlink\">edit</a>) </li></ul></div><div class=\"hiddencats\"></div><div class=\"limitreport\"></div><input type=\"hidden\" value=\"1\" name=\"wpUltimateParam\">
-</form>
-</div>					<div class=\"printfooter\">
-						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php/tutorials/ax_tutorial\">https://grey.colorado.edu/emergent/index.php/tutorials/ax_tutorial</a>\"					</div>
-				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
-							</div>
-		</div>
-		<div id=\"mw-navigation\">
-			<h2>Navigation menu</h2>
+              </div>
+  
+  <div id=\"footer\">
+  <div class=\"clearfix\"></div>
+  <p>Need help? Talk to our experts by calling 404-478-7300 24 hours a day.<br>Copyright © 2014 Panera Bread. All rights reserved.</p>
+  <div id=\"wwlogo\">
+        <a href=\"http://www.wanderingwifi.com\">
+            <img src=\"../Images/Logos/wanderingwifi.png\" width=\"160\" alt=\"Wandering WiFi\">
+        </a>
+</div>
+</div>
+  
+<script>
+    ///Places a random app image in the #main-image container div
+    $(document).ready(function () {
+        $('#main-image').attr('src', '../PaneraV3/images/app' + ((Math.floor(Math.random() * 3) % 3) + 1) + '.png');
+    });
+    function use_ui_params(opts) {
+        if (opts == \"corp\") {
+            $('#info').remove();
+            $('#main-section').html('<img src=\"../PaneraV3/images/corp.jpg\" width=\"100%\">');
+            $('#login-content > h2').text('Sign on just once per device, and we?ll remember you next time you sign on.');
+        }
+    }
+</script>
+    <script src=\"../PaneraV3/Scripts/plugins.js\"></script>
+    <script src=\"../PaneraV3/Scripts/main.js\"></script>
+    </form>
+  
 
-			<div id=\"mw-head\">
-									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
-						<h3 id=\"p-personal-label\">Personal tools</h3>
-						<ul>
-							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Thazy\" class=\"new\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Thazy</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Thazy\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Thazy\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=tutorials%2Fax+tutorial&amp;returntoquery=action%3Dedit\" title=\"Log out\">Log out</a></li>						</ul>
-					</div>
-									<div id=\"left-navigation\">
-										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
-						<h3 id=\"p-namespaces-label\">Namespaces</h3>
-						<ul>
-															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/tutorials/ax_tutorial\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:tutorials/ax_tutorial&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
-													</ul>
-					</div>
-										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
-												<h3 id=\"p-variants-label\">
-							<span>Variants</span><a href=\"#\"></a>
-						</h3>
-
-						<div class=\"menu\">
-							<ul>
-															</ul>
-						</div>
-					</div>
-									</div>
-				<div id=\"right-navigation\">
-										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
-						<h3 id=\"p-views-label\">Views</h3>
-						<ul>
-															<li id=\"ca-view\"><span><a href=\"/emergent/index.php/tutorials/ax_tutorial\">Read</a></span></li>
-															<li id=\"ca-edit\" class=\"selected\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=edit\" title=\"Edit this page\">Edit</a></span></li>
-															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=unwatch&amp;token=2bf1909e3edf14c7dfdaa30214109e3f57c5f59e%2B%5C\" title=\"Remove this page from your watchlist\">Unwatch</a></span></li>
-													</ul>
-					</div>
-										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
-
-						<div class=\"menu\">
-							<ul>
-																	<li id=\"ca-delete\">
-										<a href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
-									</li>
-																	<li id=\"ca-move\">
-										<a href=\"/emergent/index.php/Special:MovePage/tutorials/ax_tutorial\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
-									</li>
-																	<li id=\"ca-purge\">
-										<a href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=purge\">Refresh</a>
-									</li>
-															</ul>
-						</div>
-					</div>
-										<div id=\"p-search\" role=\"search\">
-						<h3>
-							<label for=\"searchInput\">Search</label>
-						</h3>
-
-						<form action=\"/emergent/index.php\" id=\"searchform\">
-							<div id=\"simpleSearch\">
-							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
-						</form>
-					</div>
-									</div>
-			</div>
-			<div id=\"mw-panel\">
-				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
-			<h3 id=\"p-navigation-label\">Navigation</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
-							</div>
-		</div>
-			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-			<h3 id=\"p-tb-label\">Tools</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/tutorials/ax_tutorial\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/tutorials/ax_tutorial\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=tutorials/ax_tutorial&amp;action=info\" title=\"More information about this page\">Page information</a></li>					</ul>
-							</div>
-		</div>
-				</div>
-		</div>
-		<div id=\"footer\" role=\"contentinfo\">
-							<ul id=\"footer-places\">
-											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
-									</ul>
-										<ul id=\"footer-icons\" class=\"noprint\">
-											<li id=\"footer-poweredbyico\">
-							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
-									</ul>
-						<div style=\"clear:both\"></div>
-		</div>
-		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"ext.wikiEditor.toolbar\",\"ext.wikiEditor.dialogs\",\"ext.wikiEditor.preview\",\"mediawiki.action.edit.editWarning\",\"mediawiki.action.edit.stash\",\"ext.math.editbutton.enabler\",\"mediawiki.action.edit.collapsibleFooter\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.svgedit.toolbar\",\"ext.headertabs\"]);
-} );</script>
-<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.loader.using(\"mediawiki.toolbar\", function () {mw.toolbar.addButton(false,\"Bold text\",\"'''\",\"'''\",\"Bold text\",\"mw-editbutton-bold\");mw.toolbar.addButton(false,\"Italic text\",\"''\",\"''\",\"Italic text\",\"mw-editbutton-italic\");mw.toolbar.addButton(false,\"Internal link\",\"[[\",\"]]\",\"Link title\",\"mw-editbutton-link\");mw.toolbar.addButton(false,\"External link (remember http:// prefix)\",\"[\",\"]\",\"http://www.example.com link title\",\"mw-editbutton-extlink\");mw.toolbar.addButton(false,\"Level 2 headline\",\"\\n== \",\" ==\\n\",\"Headline text\",\"mw-editbutton-headline\");mw.toolbar.addButton(false,\"Embedded file\",\"[[File:\",\"]]\",\"Example.jpg\",\"mw-editbutton-image\");mw.toolbar.addButton(false,\"File link\",\"[[Media:\",\"]]\",\"Example.ogg\",\"mw-editbutton-media\");mw.toolbar.addButton(false,\"Ignore wiki formatting\",\"\\u003Cnowiki\\u003E\",\"\\u003C/nowiki\\u003E\",\"Insert non-formatted text here\",\"mw-editbutton-nowiki\");mw.toolbar.addButton(false,\"Horizontal line (use sparingly)\",\"\\n----\\n\",\"\",\"\",\"mw-editbutton-hr\");});
-} );</script>
-<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":239});
-} );</script>
-	
 
 </body></html>";
   };
@@ -720,270 +654,11 @@ mw.config.set({\"wgBackendResponseTime\":239});
 ";
    html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
 <meta charset=\"UTF-8\">
-<title>AX Tutorial - emergent</title>
-<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
-<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":11978,\"wgRevisionId\":11978,\"wgArticleId\":232,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgRelevantArticleId\":232,\"wgUserId\":10,\"wgUserEditCount\":186,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],
-\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"25243b49c3fcf81b8647f75c12d52bee57c5f510+\\\\\",\"patrolToken\":\"8d87b26eea9a38975c2b7baad20be8c657c5f510+\\\\\",\"watchToken\":\"224a12f0a950b62de6524be589dc049157c5f510+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
-} );</script>
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
-<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
-<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
-<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
-<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
-<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
-<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"AX Tutorial\" href=\"/emergent/index.php?title=Special:ExportRDF/AX_Tutorial&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\">
-<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
-<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
-<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
-<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
-<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=jEfPGIsK\"></script></head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-AX_Tutorial skin-vector action-view\">
-		<div id=\"mw-page-base\" class=\"noprint\"></div>
-		<div id=\"mw-head-base\" class=\"noprint\"></div>
-		<div id=\"content\" class=\"mw-body\" role=\"main\">
-			<a id=\"top\"></a>
-
-						<div class=\"mw-indicators\">
-</div>
-			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">AX Tutorial</h1>
-									<div id=\"bodyContent\" class=\"mw-body-content\">
-									<div id=\"siteSub\">From emergent</div>
-								<div id=\"contentSub\"></div>
-												<div id=\"jump-to-nav\" class=\"mw-jump\">
-					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
-				</div>
-				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><table style=\"width:100%\" border=\"0\">
-
-<tbody><tr>
-<td>
-</td>
-<td align=\"center\" width=\"50%\"><b>AX Tutorial</b>
-</td>
-<td align=\"right\" width=\"25%\"> <a href=\"/emergent/index.php/AXTut_BuildNet\" title=\"AXTut BuildNet\">? next BuildNet</a>
-</td></tr>
-</tbody></table>
-<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2></div>
-<ul>
-<li class=\"toclevel-1 tocsection-1\"><a href=\"#Overview\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Overview</span></a>
-<ul>
-<li class=\"toclevel-2 tocsection-2\"><a href=\"#Building_a_Complete_Model\"><span class=\"tocnumber\">1.1</span> <span class=\"toctext\">Building a Complete Model</span></a></li>
-<li class=\"toclevel-2 tocsection-3\"><a href=\"#Basic_Task:_Target_Detection\"><span class=\"tocnumber\">1.2</span> <span class=\"toctext\">Basic Task: Target Detection</span></a></li>
-<li class=\"toclevel-2 tocsection-4\"><a href=\"#Chapters\"><span class=\"tocnumber\">1.3</span> <span class=\"toctext\">Chapters</span></a></li>
-<li class=\"toclevel-2 tocsection-5\"><a href=\"#If_You_Get_Off_Track...\"><span class=\"tocnumber\">1.4</span> <span class=\"toctext\">If You Get Off Track...</span></a></li>
-<li class=\"toclevel-2 tocsection-6\"><a href=\"#AX_Tutorial_Archive\"><span class=\"tocnumber\">1.5</span> <span class=\"toctext\">AX Tutorial Archive</span></a></li>
-</ul>
-</li>
-</ul>
-</div>
-
-<h1><span class=\"mw-headline\" id=\"Overview\">Overview</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit&amp;section=1\" title=\"Edit section: Overview\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
-<p>This tutorial shows you how to construct a simple model of an actual psychological task (the CPT-AX task), from start to finish.  This one tutorial touches on all major aspects of the system. The tutorial can be read from a web browser, or accessed as a <b><code>ProjectDocs</code></b> from within the <i>emergent</i> project. Simply launch <i>emergent</i>, open the project (it can be found in the 'Emergent' folder under  <code>demo/leabra/ax_tutorial.proj</code>, or from the emergent wiki here: <a href=\"/emergent/index.php/tutorials/ax_tutorial\" title=\"tutorials/ax tutorial\">tutorials/ax_tutorial</a>), select the <b><code>ProjectDocs</code></b> tab which is pinned to the top of the middle edit panel (should be showing when you open the project, or accessed from the <code>docs ? ProjectDocs</code> section of the left browser panel).
-</p><p>Many links in within the tutorial refer to the objects within the <i>emergent</i> project itself, and thus it makes the most sense to follow these directions after loading the <code>ax_tutorial.proj</code> project in <i>emergent</i>, and opening the tutorials ProjectDocs within the project, rather than reading along outside the project. 
-</p>
-<h2><span class=\"mw-headline\" id=\"Building_a_Complete_Model\">Building a Complete Model</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit&amp;section=2\" title=\"Edit section: Building a Complete Model\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
-<p>This project provides step-by-step directions for constructing a working neural network simulation from the ground up, including programming a simple psychological task (target detection), which we extend through several stages to ultimately simulate the more complex CPT-AX task used in working memory studies.
-</p><p>Some basic terminology:
-</p>
-<ul><li> <b>Left <i>Navigator</i> panel</b> is the left portion of the window with a \"tree\" of objects in the simulation (including the network, and the input/output data, etc).</li>
-<li> <b>Middle <i>Editor</i> panel</b> is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left <i>Navigator</i> panel.  The left-most tab in this middle <i>Editor</i> panel usually shows what is selected in the left <i>Navigator</i> panel, and the other \"pinned\" tabs are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab in the <i>Editor</i> panel represents the configuration information for the current 3D display shown in the right-most <i>Visualizer</i> panel. The current \"Frame1\" tab is empty, because the corresponding \"Frame1\" view panel is empty.</li>
-<li> <b>Right <i>Visualizer</i> panel</b> shows 2D &amp; 3D displays of various simulation objects, including the network, input/output patterns, and graphs of results, etc. The current view displayed is called \"Frame1\" and is empty.</li></ul>
-<p><br>
-</p>
-<h2><span class=\"mw-headline\" id=\"Basic_Task:_Target_Detection\">Basic Task: Target Detection</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit&amp;section=3\" title=\"Edit section: Basic Task: Target Detection\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
-<p>The basic task we'll simulate involves presenting letters one at at a time to the network, and having it identify \"targets\" from \"non-targets\".  The targets are the letters 'A' and 'X', and the non-targets are 'B', 'C', 'Y', and 'Z'.
-</p><p>The network will have six input units representing each of these letters, and two output units, one for \"target\" and the other for \"non-target\".  It will have a hidden layer to learn the mapping (though this task is initially so trivial that it doesn't even require a hidden layer -- we'll make it harder later).
-</p>
-<h2><span class=\"mw-headline\" id=\"Chapters\">Chapters</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit&amp;section=4\" title=\"Edit section: Chapters\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
-<p>Here are the steps we'll go through, organized as separate document chapters:
-</p>
-<ol><li> <a href=\"/emergent/index.php/AXTut_BuildNet\" title=\"AXTut BuildNet\">AXTut BuildNet</a> -- build the network</li>
-<li> <a href=\"/emergent/index.php/AXTut_InputData\" title=\"AXTut InputData\">AXTut InputData</a> -- make basic patterns (data) to present to the network</li>
-<li> <a href=\"/emergent/index.php/AXTut_Programs\" title=\"AXTut Programs\">AXTut Programs</a> -- create and control the programs that perform the simulation</li>
-<li> <a href=\"/emergent/index.php/AXTut_OutputData\" title=\"AXTut OutputData\">AXTut OutputData</a> -- monitor and analyze the performance of the model</li>
-<li> <a href=\"/emergent/index.php/AXTut_TaskProgram\" title=\"AXTut TaskProgram\">AXTut TaskProgram</a> -- write a program to construct the task input patterns, including more complex tasks</li>
-<li> Extras: elaborations that go all the way to the full CPT-AX task
-<ol><li> <a href=\"/emergent/index.php/AXTut_CPTAX_Program\" title=\"AXTut CPTAX Program\">AXTut CPTAX_Program</a> -- extend our basic program to the full CPT-AX task</li>
-<li> <a href=\"/emergent/index.php/AXTut_PfcBg\" title=\"AXTut PfcBg\">AXTut PfcBg</a> -- add a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task</li></ol></li></ol>
-<h2><span class=\"mw-headline\" id=\"If_You_Get_Off_Track...\">If You Get Off Track...</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit&amp;section=5\" title=\"Edit section: If You Get Off Track...\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
-<p>In the same directory where you loaded this project is a <code>ax_tutorial_final.proj</code> project file, which has the full project that will result from following these directions (not the extras).  You can load this project and refer to it to see what things are supposed to look like.
-</p><p>Let's begin...
-</p><p><a href=\"/emergent/index.php/AXTut_BuildNet\" title=\"AXTut BuildNet\">? Go to BuildNet</a>
-</p>
-<h2><span class=\"mw-headline\" id=\"AX_Tutorial_Archive\">AX Tutorial Archive</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit&amp;section=6\" title=\"Edit section: AX Tutorial Archive\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
-<p><a href=\"/emergent/index.php/AX_Tutorial_v5.0.2.0\" title=\"AX Tutorial v5.0.2.0\">AX_Tutorial_v5.0.2.0</a>
-</p>
-<!-- 
-NewPP limit report
-Cached time: 20160830074926
-Cache expiry: 86400
-Dynamic content: false
-CPU time usage: 0.027 seconds
-Real time usage: 0.028 seconds
-Preprocessor visited node count: 36/1000000
-Preprocessor generated node count: 62/1000000
-Post?expand include size: 48/2097152 bytes
-Template argument size: 0/2097152 bytes
-Highest expansion depth: 2/40
-Expensive parser function count: 0/100
--->
-
-<!-- 
-Transclusion expansion time report (%,ms,calls,template)
-100.00%    2.912      1 - -total
- 68.71%    2.001      4 - Template:emergent
--->
-
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:232-0!*!0!!en!*!* and timestamp 20160830074926 and revision id 11978
- -->
-</div>					<div class=\"printfooter\">
-						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=AX_Tutorial&amp;oldid=11978\">https://grey.colorado.edu/emergent/index.php?title=AX_Tutorial&amp;oldid=11978</a>\"					</div>
-				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
-							</div>
-		</div>
-		<div id=\"mw-navigation\">
-			<h2>Navigation menu</h2>
-
-			<div id=\"mw-head\">
-									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
-						<h3 id=\"p-personal-label\">Personal tools</h3>
-						<ul>
-							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Thazy\" class=\"new\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Thazy</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Thazy\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Thazy\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=AX+Tutorial\" title=\"Log out\">Log out</a></li>						</ul>
-					</div>
-									<div id=\"left-navigation\">
-										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
-						<h3 id=\"p-namespaces-label\">Namespaces</h3>
-						<ul>
-															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:AX_Tutorial&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
-													</ul>
-					</div>
-										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
-												<h3 id=\"p-variants-label\">
-							<span>Variants</span><a href=\"#\"></a>
-						</h3>
-
-						<div class=\"menu\">
-							<ul>
-															</ul>
-						</div>
-					</div>
-									</div>
-				<div id=\"right-navigation\">
-										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
-						<h3 id=\"p-views-label\">Views</h3>
-						<ul>
-															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\">Read</a></span></li>
-															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
-															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=f877bd23116a73d86a24bb4e4fc41b7357c5f510%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
-													</ul>
-					</div>
-										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
-
-						<div class=\"menu\">
-							<ul>
-																	<li id=\"ca-delete\">
-										<a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
-									</li>
-																	<li id=\"ca-move\">
-										<a href=\"/emergent/index.php/Special:MovePage/AX_Tutorial\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
-									</li>
-																	<li id=\"ca-purge\">
-										<a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=purge\">Refresh</a>
-									</li>
-															</ul>
-						</div>
-					</div>
-										<div id=\"p-search\" role=\"search\">
-						<h3>
-							<label for=\"searchInput\">Search</label>
-						</h3>
-
-						<form action=\"/emergent/index.php\" id=\"searchform\">
-							<div id=\"simpleSearch\">
-							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
-						</form>
-					</div>
-									</div>
-			</div>
-			<div id=\"mw-panel\">
-				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
-			<h3 id=\"p-navigation-label\">Navigation</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
-							</div>
-		</div>
-			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-			<h3 id=\"p-tb-label\">Tools</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/AX_Tutorial\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/AX_Tutorial\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;oldid=11978\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/AX_Tutorial\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
-							</div>
-		</div>
-			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
-
-			<div class=\"body\">
-									<ul>
-						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=AX+Tutorial\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=AX+Tutorial&amp;oldid=11978&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
-							</div>
-		</div>
-				</div>
-		</div>
-		<div id=\"footer\" role=\"contentinfo\">
-							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 30 August 2016, at 01:48.</li>
-									</ul>
-							<ul id=\"footer-places\">
-											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
-									</ul>
-										<ul id=\"footer-icons\" class=\"noprint\">
-											<li id=\"footer-poweredbyico\">
-							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
-									</ul>
-						<div style=\"clear:both\"></div>
-		</div>
-		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
-} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":147});
-} );</script>
-	
-
-</body></html>";
-  };
-  taDoc @["BuildNet"] {
-   name="BuildNet";
-   desc=;
-   web_doc=1;
-   wiki="emergent";
-   url="AXTut_BuildNet";
-   full_url="https://grey.colorado.edu/emergent/index.php/AXTut_BuildNet";
-   text_size=1;
-   text="<html>
-<head></head>
-<body>
-== Enter Title Here ==
-</body>
-</html>
-";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
-<meta charset=\"UTF-8\">
 <title>AXTut BuildNet - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"AXTut_BuildNet\",\"wgTitle\":\"AXTut BuildNet\",\"wgCurRevisionId\":11837,\"wgRevisionId\":11837,\"wgArticleId\":233,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AXTut_BuildNet\",\"wgRelevantArticleId\":233,\"wgUserId\":10,\"wgUserEditCount\":187,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\"
-:[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"48f1a0659a2ec0de06994270645ff9c257c5f672+\\\\\",\"patrolToken\":\"721780b5eb980e7621c8a8a34ebb1b6757c5f672+\\\\\",\"watchToken\":\"8250bc3a23a8dd6330e3789289747b4b57c5f672+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"AXTut_BuildNet\",\"wgTitle\":\"AXTut BuildNet\",\"wgCurRevisionId\":11837,\"wgRevisionId\":11837,\"wgArticleId\":233,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AXTut_BuildNet\",\"wgRelevantArticleId\":233,\"wgUserId\":10,\"wgUserEditCount\":247,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\"
+:[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"06d145d0403efd078907eca4686c653157cc72fd+\\\\\",\"patrolToken\":\"f7f7052b647c2c145aa2ffb81c4576b657cc72fd+\\\\\",\"watchToken\":\"c67284a7ee77c6efe965020fc878df1457cc72fd+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -1081,11 +756,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 </p>
 <!-- 
 NewPP limit report
-Cached time: 20160830053719
+Cached time: 20160904103037
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.062 seconds
-Real time usage: 0.067 seconds
+CPU time usage: 0.053 seconds
+Real time usage: 0.060 seconds
 Preprocessor visited node count: 61/1000000
 Preprocessor generated node count: 182/1000000
 Post?expand include size: 658/2097152 bytes
@@ -1096,12 +771,12 @@ Expensive parser function count: 0/100
 
 <!-- 
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   12.971      1 - -total
- 46.70%    6.058      4 - Template:emerlink
- 33.44%    4.338      2 - Template:emergent
+100.00%    7.350      1 - -total
+ 53.68%    3.945      4 - Template:emerlink
+ 24.01%    1.765      2 - Template:emergent
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:233-0!*!0!!en!*!* and timestamp 20160830053719 and revision id 11837
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:233-0!*!0!!en!*!* and timestamp 20160904103037 and revision id 11837
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=AXTut_BuildNet&amp;oldid=11837\">https://grey.colorado.edu/emergent/index.php?title=AXTut_BuildNet&amp;oldid=11837</a>\"					</div>
@@ -1143,7 +818,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/AXTut_BuildNet\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=unwatch&amp;token=c71eaafa1208e37176ad651375a0d84857c5f672%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=unwatch&amp;token=e8a8ec303c390bfc46306fbd896179e857cc72fd%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -1219,7 +894,274 @@ Transclusion expansion time report (%,ms,calls,template)
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":144});
+mw.config.set({\"wgBackendResponseTime\":139});
+} );</script>
+	
+
+</body></html>";
+  };
+  taDoc @["BuildNet"] {
+   name="BuildNet";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="AXTut_BuildNet";
+   full_url="https://grey.colorado.edu/emergent/index.php/AXTut_BuildNet";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
+<meta charset=\"UTF-8\">
+<title>AXTut BuildNet - emergent</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"AXTut_BuildNet\",\"wgTitle\":\"AXTut BuildNet\",\"wgCurRevisionId\":12534,\"wgRevisionId\":12534,\"wgArticleId\":233,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AXTut_BuildNet\",\"wgRelevantArticleId\":233,\"wgUserId\":10,\"wgUserEditCount\":248,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\"
+:[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"540a8db4d27a7ef932724c032fae1eaf57cc74a9+\\\\\",\"patrolToken\":\"c0ca70afc51cd0e6c85a95e23aa58a4857cc74a9+\\\\\",\"watchToken\":\"8d245623aaaa8db86715a2f0a1e3b48757cc74a9+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+} );</script>
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
+<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
+<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
+<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"AXTut BuildNet\" href=\"/emergent/index.php?title=Special:ExportRDF/AXTut_BuildNet&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
+<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
+</head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-AXTut_BuildNet skin-vector action-view\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
+		<div id=\"mw-head-base\" class=\"noprint\"></div>
+		<div id=\"content\" class=\"mw-body\" role=\"main\">
+			<a id=\"top\"></a>
+
+						<div class=\"mw-indicators\">
+</div>
+			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">AXTut BuildNet</h1>
+									<div id=\"bodyContent\" class=\"mw-body-content\">
+									<div id=\"siteSub\">From emergent</div>
+								<div id=\"contentSub\"></div>
+												<div id=\"jump-to-nav\" class=\"mw-jump\">
+					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
+				</div>
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><table style=\"width:100%\" border=\"0\">
+
+<tbody><tr>
+<td align=\"left\" width=\"25%\"><a href=\"/emergent/index.php/AX_Tutorial\" title=\"AX Tutorial\"> ? back to AX Tutorial main page</a>
+</td>
+<td align=\"center\" width=\"50%\"><a href=\"/emergent/index.php/AX_Tutorial\" title=\"AX Tutorial\"> <b>AX Tutorial</b></a>
+</td>
+<td align=\"right\" width=\"25%\"><a href=\"/emergent/index.php/AXTut_InputData\" title=\"AXTut InputData\"> ? next InputData</a>
+</td></tr>
+</tbody></table>
+<p><i><b>NOTE:</b></i> Within <i>emergent</i>, you can return to this document by selecting <code>docs ? BuildNet</code> in the left browser panel).
+</p>
+<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2></div>
+<ul>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#Rename_the_Project\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Rename the Project</span></a></li>
+<li class=\"toclevel-1 tocsection-2\"><a href=\"#Building_a_Network\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Building a Network</span></a></li>
+<li class=\"toclevel-1 tocsection-3\"><a href=\"#Manipulating_the_Visualizer_View\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Manipulating the Visualizer View</span></a></li>
+<li class=\"toclevel-1 tocsection-4\"><a href=\"#Configuring_the_Network_View\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">Configuring the Network View</span></a></li>
+<li class=\"toclevel-1 tocsection-5\"><a href=\"#Changing_the_Network_Layout\"><span class=\"tocnumber\">5</span> <span class=\"toctext\">Changing the Network Layout</span></a></li>
+</ul>
+</div>
+
+<h1><span class=\"mw-headline\" id=\"Rename_the_Project\">Rename the Project</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit&amp;section=1\" title=\"Edit section: Rename the Project\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>Before we start it's a good idea to save the project we'll be working on to distinguish it from the essentially empty project that we are starting from. In the toolbar along the top of the project window select <code>Save As</code> and rename the project we'll be building <code>ax_tutorial_working.proj</code>.  
+</p>
+<h1><span class=\"mw-headline\" id=\"Building_a_Network\">Building a Network</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit&amp;section=2\" title=\"Edit section: Building a Network\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The wizard makes it easy to create a network.  It is located in the <code>wizards</code> section of the left browser panel, and can always be found in the <code>LeabraWizard_0</code> tab which is pinned to the top of this middle <i>Editor</i> panel. 
+</p><p>Click the <code>Standard Network</code> link in the wizard (under Standard Everything or under Networks) (this link here: <a href=\"/emergent/index.php?title=.wizards.LeabraWizard_0.StdNetwork()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".wizards.LeabraWizard 0.StdNetwork() (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">StdNetwork</span></a> will run it for you too -- convenient for seeing the table below while the wizard dialog is open). This will pop up a dialog box showing the network name and asking for the number of layers (<b>N_Layers:</b>) you want your network to have. We are going to create a simple 3 layer network so leave it at the default value of 3 and hit ok.
+</p><p>The next screen shows a table with the names of the layers, the type of layer, the layer sizes and their dimensions (<b>Size_X</b>, <b>Size_Y</b>; along with the other layers from which each one will receive connections (<b>RecvPrjns</b>). To get further information about each column you can mouse over the headings. For this network, you should enter dimensions as follows:
+</p>
+<table width=\"70%\">
+<tbody><tr><th align=\"left\">Layer</th> <th align=\"left\">Size_X</th> <th align=\"left\">Size_Y</th><th align=\"left\">UnitGps_X</th><th align=\"left\">UnitGps_Y</th><th align=\"left\">Recv Prjns</th></tr>
+<tr><td>Input</td> <td>3</td> <td>2</td><td></td></tr>
+<tr> <td>Hidden</td> <td>4</td> <td>4</td><td>0</td><td>0</td><td>Input Output</td></tr>
+<tr> <td>Output</td> <td>2</td> <td>1</td><td>0</td><td>0</td><td>Hidden</td></tr>
+</tbody></table>
+<p>This will create a network with 6 input units, 16 hidden units and 2 output units. Since we are making a bidirectionally connected network the input layer should not receive any connections, the hidden layer should receive from both the input and the output and the output layer should receive only from the hidden layer. When you can set everything up hit OK.
+</p><p>You will see a network appear in the right Visualizer panel (replacing Frame1), and the left Navigator panel will expand to reveal all of the objects created (e.g., <a href=\"/emergent/index.php?title=.networks.Network_1&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".networks.Network 1 (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">Network_1</span></a> containing the specifications (specs) and layers for the new network).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
+</p><p>Make sure that your network is actually called <b>Network_1</b> because all of the subsequent links will refer to it by that name.
+</p><p>We'll next be moving on to making the <b><a href=\"/emergent/index.php/AXTut_InputData\" title=\"AXTut InputData\">InputData</a></b> for the simple target detection task, but first below are a few optional topics that you can explore if you wish (or come back to later at any time). 
+</p><p><a href=\"/emergent/index.php/AXTut_InputData\" title=\"AXTut InputData\"> ? skip optional topics and continue to InputData</a>
+</p>
+<h1><span class=\"mw-headline\" id=\"Manipulating_the_Visualizer_View\">Manipulating the Visualizer View</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit&amp;section=3\" title=\"Edit section: Manipulating the Visualizer View\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The controls for the Visualizer panel (3D view) are located on the extreme right-hand side of the view panel starting with the red arrow at the top.  Drag the mouse over them to see what they do (a \"tool tip\" should pop up when the mouse hovers over the button).
+</p><p>To begin, you can experiment with the <i><b>hand</b></i> tool -- if you click the mouse and move it around, you'll see that you can manipulate the position of the \"camera view\" for the 3D view of the network.
+</p><p>Two key tips:
+</p>
+<ul><li> Holding down the SHIFT key (while moving the mouse) will <b>pan the view</b> instead of rotating the view</li>
+<li> Pressing the <i><b>eye</b></i> icon <b>restores the initial view</b>. You can also save alternate views by assigning new views to the <code>Vw</code> buttons at the bottom of the view panel, which you also rename with descriptive labels, e.g., FullNet, HidOnly, etc.</li></ul>
+<p>At some point you'll discover that if you don't completely stop before lifting the mouse button, the view continues to rotate -- kind of mezmerizing -- apologies if you spend too much time doing this (we certainly have..&nbsp;:) In any event, you can stop the spinning by simply clicking in Visualizer panel. 
+</p><p>If you have a scroll wheel on your mouse, or similar functionality on a touchpad, you'll see that it acts like a zoom.  The same effect can be had by manually scrolling the <b>Zoom</b> wheel.
+</p><p>The <b>V.Rot</b> and <b>H.Rot</b> wheels rotate precisely around the x and y axes -- these are often more useful than the mouse-based rotation using the \"hand\" tool because they don't introduce off-angles.  Arrow keys can also be used here -- just click on the background of the view and use the arrow keys (shift moves, without shift rotates).
+</p><p>The <b>Flashlight</b> button is very useful for zooming in on something of interest (especially for large complicated displays) -- after clicking on its icon, click on an object in the view (NOTE: text doesn't work as a target for this purpose).  This button stays on until unclicked or another button is clicked, so you can do repeated exploration.
+</p><p>Finally, for extra thrills, you can click the right mouse button (or equivalent on a laptop, Mac, etc.) and configure many interesting display options -- check out the different draw styles, and the stereo mode options -- dig out those old red/green stereo glasses!
+</p>
+<h1><span class=\"mw-headline\" id=\"Configuring_the_Network_View\">Configuring the Network View</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit&amp;section=4\" title=\"Edit section: Configuring the Network View\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>Once the network has been created, the right-most tab in the middle Editor panel, labeled <a href=\"/emergent/index.php?title=.PanelTab.Network_1&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".PanelTab.Network 1 (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">Network_1</span></a> provides various parameters for controlling the network display.  
+</p><p>There are 3 main segments in the Editor panel for the network view (see the wiki <a href=\"/emergent/index.php/Network_View\" title=\"Network View\" class=\"mw-redirect\">Network View</a> page for more info):
+</p>
+<ul><li> Primary display parameters at the top (font sizes, display style etc) (mouse over to get more info, and explore!)</li>
+<li> <b>Unit Display Values</b> Selector (left tab) -- which network variable value to display in the units in the network view (activations vs. weights vs. netinputs etc).  If you select one of the weight variables (e.g., <code>r.wt</code> for receiving weights into a selected unit; <code>s.wt</code> is for sending weights out), you then need to use the red arrow tool in the viewer to select a unit to view -- it will turn green/dark gray, and you should be able to see its weights. For convenience, short-cut buttons can be set to select the most common network variables by toggling the check boxes to the left of each parameter listed. Some of the most useful ones are pre-set by default.</li>
+<li> <b>Spec Explorer</b> (right tab) -- this is very handy for seeing where your specs are used in the network -- try clicking on the <code>HiddenLayer</code> and then <code>Input_Output</code> -- note that the layer border changes color indicating which layers are using these layer specs.  You can also use the context menu (e.g., right-click) to edit the network specs right there.</li></ul>
+<h1><span class=\"mw-headline\" id=\"Changing_the_Network_Layout\">Changing the Network Layout</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit&amp;section=5\" title=\"Edit section: Changing the Network Layout\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>You can also configure the network layout interactively in the viewer, including repositioning the layers, and orienting the network display relative to other objects in the view (which we postpone for later, when this arises).
+</p><p>To do this, select the <b>red arrow</b> tool, and you'll see that transparent purple arrow objects now appear on each layer, and a box appears on the network text box.  These are the manipulation controls.  Try clicking on one of the horizontal arrows for the Output layer, and moving it around.  This moves within the \"horizontal\" plane (the X-Y plane for the network).  The vertical arrows not surprisingly move in the vertical dimension (the Z axis for the network). Using these manipulation controls can take some getting used to, but you'll find they can become very useful with practice. 
+</p><p><a href=\"/emergent/index.php/AXTut_InputData\" title=\"AXTut InputData\"> ? next InputData</a> or <a href=\"/emergent/index.php?title=.docs.InputData&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".docs.InputData (page does not exist)\"><span style=\"color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px\">InputData</span></a> in <i>emergent</i>
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20160904192321
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.055 seconds
+Real time usage: 0.059 seconds
+Preprocessor visited node count: 65/1000000
+Preprocessor generated node count: 186/1000000
+Post?expand include size: 658/2097152 bytes
+Template argument size: 126/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    6.302      1 - -total
+ 47.70%    3.006      4 - Template:emerlink
+ 26.50%    1.670      2 - Template:emergent
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:233-0!*!0!!en!*!* and timestamp 20160904192321 and revision id 12534
+ -->
+</div>					<div class=\"printfooter\">
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=AXTut_BuildNet&amp;oldid=12534\">https://grey.colorado.edu/emergent/index.php?title=AXTut_BuildNet&amp;oldid=12534</a>\"					</div>
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
+							</div>
+		</div>
+		<div id=\"mw-navigation\">
+			<h2>Navigation menu</h2>
+
+			<div id=\"mw-head\">
+									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+						<h3 id=\"p-personal-label\">Personal tools</h3>
+						<ul>
+							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Thazy\" class=\"new\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Thazy</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Thazy\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Thazy\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=AXTut+BuildNet\" title=\"Log out\">Log out</a></li>						</ul>
+					</div>
+									<div id=\"left-navigation\">
+										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+						<h3 id=\"p-namespaces-label\">Namespaces</h3>
+						<ul>
+															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/AXTut_BuildNet\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:AXTut_BuildNet&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+												<h3 id=\"p-variants-label\">
+							<span>Variants</span><a href=\"#\"></a>
+						</h3>
+
+						<div class=\"menu\">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id=\"right-navigation\">
+										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+						<h3 id=\"p-views-label\">Views</h3>
+						<ul>
+															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/AXTut_BuildNet\">Read</a></span></li>
+															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=unwatch&amp;token=1cadb9f37cdaa2bdf24a54f4b660bef657cc74a9%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
+
+						<div class=\"menu\">
+							<ul>
+																	<li id=\"ca-delete\">
+										<a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
+									</li>
+																	<li id=\"ca-move\">
+										<a href=\"/emergent/index.php/Special:MovePage/AXTut_BuildNet\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
+									</li>
+																	<li id=\"ca-purge\">
+										<a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=purge\">Refresh</a>
+									</li>
+															</ul>
+						</div>
+					</div>
+										<div id=\"p-search\" role=\"search\">
+						<h3>
+							<label for=\"searchInput\">Search</label>
+						</h3>
+
+						<form action=\"/emergent/index.php\" id=\"searchform\">
+							<div id=\"simpleSearch\">
+							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id=\"mw-panel\">
+				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+			<h3 id=\"p-navigation-label\">Navigation</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+			<h3 id=\"p-tb-label\">Tools</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/AXTut_BuildNet\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/AXTut_BuildNet\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;oldid=12534\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/AXTut_BuildNet\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=AXTut+BuildNet\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=AXTut+BuildNet&amp;oldid=12534&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=AXTut_BuildNet&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+		<div id=\"footer\" role=\"contentinfo\">
+							<ul id=\"footer-info\">
+											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2016, at 13:22.</li>
+									</ul>
+							<ul id=\"footer-places\">
+											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
+									</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+											<li id=\"footer-poweredbyico\">
+							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
+									</ul>
+						<div style=\"clear:both\"></div>
+		</div>
+		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":214});
 } );</script>
 	
 
@@ -5690,7 +5632,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=-0.0005966587;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -5700,12 +5642,12 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.874105;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994158;
+     value 8 0=0.895813;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -5923,7 +5865,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7098345;
+       value 8 0=0.8062317;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -5957,5 +5899,289 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
   name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
+  LeabraNetwork @["Network_1"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_97";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["cos_err"] {
+     name="cos_err";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["norm_err"] {
+     name="norm_err";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["ext_rew"] {
+     name="ext_rew";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["minus_output_name"] {
+     name="minus_output_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["rt_cycles"] {
+     name="rt_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["tot_cycle"] {
+     name="tot_cycle";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["phase"] {
+     name="phase";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["quarter"] {
+     name="quarter";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["sse"] {
+     name="sse";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["output_name"] {
+     name="output_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["trial_name"] {
+     name="trial_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["group_name"] {
+     name="group_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["total_trials"] {
+     name="total_trials";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["time"] {
+     name="time";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["cycle"] {
+     name="cycle";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["tick"] {
+     name="tick";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["trial"] {
+     name="trial";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["group"] {
+     name="group";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["epoch"] {
+     name="epoch";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["batch"] {
+     name="batch";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+   };
+   name="Network_1";
+   desc=;
+   specs {
+    name="BaseSpec_Group_131";
+    el_typ=LeabraLayerSpec;
+    el_def=0;
+    LeabraLayerSpec @["HiddenLayer"] {
+     name="HiddenLayer";
+     is_used=0;
+     desc=;
+     unique{      };
+     children {
+      name="BaseSpec_Group_132";
+      el_typ=LeabraLayerSpec;
+      el_def=0;
+      LeabraLayerSpec @["Input_Output"] {
+       name="Input_Output";
+       is_used=0;
+       desc=;
+       unique{        };
+       children {
+	name="BaseSpec_Group_133";
+	el_typ=LeabraLayerSpec;
+	el_def=0;
+       };
+       lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+       lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       avg_act {targ_init=0.15: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+       inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+       inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       clamp {hard=1: gain=0.2: };
+       decay {trial=1: };
+       del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lay_lrate=1;
+       cos_diff {
+	avg_tau=100;
+	lrate_mod=0;
+	lrmod_fm_trc=0;
+	lrmod_z_thr=-1.5;
+	set_net_unlrn=0;
+	avg_dt=0.01;
+	avg_dt_c=0.99;
+       };
+       lstats {
+	hog_thr=0.3;
+	dead_thr=0.01;
+       };
+      };
+     };
+     lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.15: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     clamp {hard=1: gain=0.2: };
+     decay {trial=1: };
+     del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
+     lstats {
+      hog_thr=0.3;
+      dead_thr=0.01;
+     };
+    };
+   };
+   param_seqs {
+    name="ParamSeq_Group_7";
+    el_typ=ParamSeq;
+    el_def=0;
+   };
+   layers {
+    name="Layer_Group_7";
+    el_typ=LeabraLayer;
+    el_def=0;
+    pos {x=0: y=0: z=0: };
+    pos2d {x=0: y=0: };
+    max_disp_size {x=0: y=0: z=0: };
+    max_disp_size2d {x=0: y=0: };
+   };
+   weights {
+    name="Weights_List_1";
+    el_typ=Weights;
+    el_def=0;
+   };
+   flags=MANUAL_POS|ABS_POS|BUILD_INIT_WTS;
+   unit_vars_type=LeabraUnitVars;
+   con_group_type=LeabraConGroup;
+   auto_build=AUTO_BUILD;
+   auto_load_wts=NO_AUTO_LOAD;
+   auto_load_file=;
+   brain_atlas_name="Talairach";
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=10;
+   stats {
+    sse_unit_avg=0;
+    sse_sqrt=0;
+    cnt_err_tol=0;
+    prerr=0;
+   };
+   threads {
+    run_time {name="TimeUsedHR_105": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="TimeUsedHR_106": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="TimeUsedHR_107": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=0;
+   };
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
+   };
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   n_units=0;
+   n_cons=0;
+   max_prjns=1;
+   max_disp_size {x=1: y=1: z=1: };
+   max_disp_size2d {x=1: y=1: };
+   times {
+    quarter=25;
+    gate_cyc=18;
+    deep_cyc=5;
+    time_inc=0.001;
+    minus=75;
+    plus=25;
+    total_cycles=100;
+   };
+   lstats {
+    trg_max_act_crit=0.5;
+    off_errs=1;
+    on_errs=1;
+    agg_unlearnable=0;
+   };
+   net_misc {
+    spike=0;
+    deep=0;
+    bias_learn=0;
+    trial_decay=0;
+    diff_scale_p=0;
+    diff_scale_q1=0;
+    wt_bal=0;
+    lay_gp_inhib=0;
+    inhib_cons=0;
+   };
+   deep {
+    on=0;
+    ctxt=0;
+    raw_net=0;
+    mod_net=0;
+    raw_qtr=0;
+   };
+   rel_netin {
+    on=1;
+    trl_skip=10;
+    epc_skip=10;
+   };
+  };
  };
 };
