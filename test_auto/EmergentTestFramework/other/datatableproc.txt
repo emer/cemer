@@ -60,7 +60,7 @@ Sort
     Run Emergent Program	Sort
     Prog Var Should Equal	test_failed	0    
 
-Sort
+Select
     Ensure Emergent Free
     Set Suite Variable     ${program_test}       "Select"    
     Run Emergent Program	Select

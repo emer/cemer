@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9973
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9975
 LeabraProject .projects["TestDataTableProcs"] { 
  Doc_Group @.docs = [0] {
  };
@@ -14787,7 +14787,7 @@ LeabraProject .projects["TestDataTableProcs"] {
        width=167;
        ar {
 	name="ar";
-       [3] 0;0;0;       };
+       [3] 3;2;3;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -22262,13 +22262,13 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[118] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[119] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -23045,19 +23045,19 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[130] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[131] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[132] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -23834,19 +23834,19 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[143] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[144] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[145] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -24623,19 +24623,19 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[156] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[157] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[158] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -25412,19 +25412,19 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[169] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[170] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[171] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -26201,19 +26201,19 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[182] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[183] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[184] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -26854,10 +26854,10 @@ LeabraProject .projects["TestDataTableProcs"] {
     If @[194] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="if ((DataTable1_dst[\"Name_count\"][0] != 3) || (DataTable1_dst[\"Name_count\"][1] != 3) || (DataTable1_dst[\"Name_count\"][2] != 3))";
-     pre_compile_code_string="if ((DataTable1_dst[\"Name_count\"][0] != 3) || (DataTable1_dst[\"Name_count\"][1] != 3) || (DataTable1_dst[\"Name_count\"][2] != 3))";
+     code_string="if ((DataTable1_dst[\"Name_count\"][0] != 3) || (DataTable1_dst[\"Name_count\"][1] != 2) || (DataTable1_dst[\"Name_count\"][2] != 3))";
+     pre_compile_code_string="if ((DataTable1_dst[\"Name_count\"][0] != 3) || (DataTable1_dst[\"Name_count\"][1] != 2) || (DataTable1_dst[\"Name_count\"][2] != 3))";
      cond {
-      expr="(DataTable1_dst[\"Name_count\"][0] != 3) || (DataTable1_dst[\"Name_count\"][1] != 3) || (DataTable1_dst[\"Name_count\"][2] != 3)";
+      expr="(DataTable1_dst[\"Name_count\"][0] != 3) || (DataTable1_dst[\"Name_count\"][1] != 2) || (DataTable1_dst[\"Name_count\"][2] != 3)";
      };
      true_code {
       name="true_code";
@@ -26865,7 +26865,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       el_def=0;
       MiscCall @[0] {
        desc=;
-       flags=PROG_ERROR|CAN_REVERT_TO_CODE;
+       flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::Error(\"Destination group by table did not have the correct for count string not contains aggregate operator\", , , , , , , , )";
        pre_compile_code_string="taMisc::Error(\"Destination group by table did not have the correct for count string not contains aggregate operator\", , , , , , , , )";
        result_var=NULL;
@@ -26990,13 +26990,13 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[195] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
     BlankLineEl @[196] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -27042,7 +27042,7 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.8248106;
+     value 8 0=0.7992424;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -27260,7 +27260,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7291667;
+       value 8 0=0.7035985;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
