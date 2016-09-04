@@ -41,7 +41,7 @@ Aggregate::ValType Aggregate::MinValType() const {
 
 Aggregate::ValType Aggregate::MinReturnType() const {
   if(op == MEAN || op == VAR || op == SS || op == STDEV || op == SEM) return VT_FLOAT;
-  if(op == GROUP || op == FIRST || op == LAST) return VT_STRING;
+  if(op == GROUP || op == FIRST || op == LAST || op == FIND_FIRST || op == FIND_LAST) return VT_STRING;
   return VT_INT;
 }
 

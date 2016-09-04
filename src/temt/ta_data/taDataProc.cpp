@@ -662,7 +662,7 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
           dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
         }
         else if(ds->agg.op == Aggregate::COUNT) {
-          bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // string so only CONTAINS or NOT_CONTAINS
+          bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
           dda->SetValAsInt(sda->AR()->CountValAsString(ds->agg.rel.val_string, contains), 0);
         }
         else if(ds->agg.op == Aggregate::FIND_FIRST) {
@@ -684,11 +684,11 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   if(src->rows == 0) return false;
   DataTable ssrc(false);
   taBase::Own(ssrc, NULL);      // activates initlinks, refs
-
+  
   DataSortSpec full_sort_spec(false);
   taBase::Own(full_sort_spec, NULL);
   full_sort_spec = *sort_spec;
-
+  
   // for [FIND_] LAST and FIRST: need to add a column that has the row index and add that
   // to the sort, to preserve the current table order for these operations.
   bool has_first_last = false;
@@ -696,7 +696,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     if((ds->agg.op == Aggregate::FIRST) || (ds->agg.op == Aggregate::LAST) ||
-        (ds->agg.op == Aggregate::FIND_FIRST) || (ds->agg.op == Aggregate::FIND_LAST)) {
+       (ds->agg.op == Aggregate::FIND_FIRST) || (ds->agg.op == Aggregate::FIND_LAST)) {
       has_first_last = true;
       break;
     }
@@ -716,14 +716,14 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     ss->order = DataSortEl::ASCENDING;
     ss->SetColName(rowno_col->name);
   }
-
+  
   taDataProc::Sort(&ssrc, use_src, &full_sort_spec);
-
+  
   sort_spec->GetColumns(&ssrc); // re-get columns -- they were nuked by Sort op!
-
+  
   Variant_Array cur_vals;
   cur_vals.SetSize(sort_spec->ops.size);
-
+  
   // initialize cur vals
   for(int i=0;i<sort_spec->ops.size; i++) {
     DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
@@ -731,7 +731,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     Variant cval = sda->GetValAsVar(0); // start at row 0
     cur_vals[i] = cval;
   }
-
+  
   float_Matrix float_tmp(false);
   int st_row = 0;
   int row = 1;
@@ -852,6 +852,88 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                   val = mat->SafeEl_Flat(mat->size-1);
                 }
                 dda->SetValAsString(val, -1);
+              }
+              else if(ds->agg.op == Aggregate::COUNT) {
+                int count = 0;
+                String val;
+                String compare_val = ds->agg.rel.val_string;
+                if(mat->ElView()) {		// significantly less efficient
+                  TA_FOREACH_INDEX(i, *mat) {
+                    val = mat->FastEl_Flat(i);
+                    if (val.contains(compare_val)) {
+                      count++;
+                    }
+                  }
+                  bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
+                  if (!contains) {
+                    count = mat->IterCount() - count;
+                  }
+                }
+                else {
+                  bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
+                  count = mat->CountValAsString(ds->agg.rel.val_string, contains);
+                }
+                dda->SetValAsInt(count, -1);
+              }
+              else if(ds->agg.op == Aggregate::FIND_FIRST) {
+                String val;
+                String rval;
+                String compare_val = ds->agg.rel.val_string;
+                bool rel_is_contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
+                if(mat->ElView()) {		// significantly less efficient
+                  TA_FOREACH_INDEX(i, *mat) {
+                    val = mat->FastEl_Flat(i);
+                    if (rel_is_contains) {
+                      if (val.contains(compare_val)) {
+                        rval = val;
+                        break;
+                      }
+                    }
+                    else { // NOT_CONTAINS
+                      if (!val.contains(compare_val)) {
+                        rval = val;
+                        break;
+                      }
+                    }
+                  }
+                }
+                else {
+                  int idx = mat->FindValAsString_Flat(ds->agg.rel.val_string, 0);
+                  if (idx > -1) {
+                    rval = mat->SafeElAsStr(idx);
+                  }
+                }
+                dda->SetValAsString(rval, -1);
+              }
+              else if(ds->agg.op == Aggregate::FIND_LAST) {
+                String val;
+                String rval;
+                String compare_val = ds->agg.rel.val_string;
+                bool rel_is_contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
+                if(mat->ElView()) {		// significantly less efficient
+                  TA_FOREACH_INDEX_REV(i, *mat) {
+                    val = mat->FastEl_Flat(i);
+                    if (rel_is_contains) {
+                      if (val.contains(compare_val)) {
+                        rval = val;
+                        break;
+                      }
+                    }
+                    else { // NOT_CONTAINS
+                      if (!val.contains(compare_val)) {
+                        rval = val;
+                        break;
+                      }
+                    }
+                  }
+                }
+                else {
+                  int idx = mat->FindValAsString_Flat(ds->agg.rel.val_string, 0);
+                  if (idx > -1) {
+                    rval = mat->SafeElAsStr(idx);
+                  }
+                }
+                dda->SetValAsString(rval, -1);
               }
               else if(ds->agg.op == Aggregate::N) {
                 dda->SetValAsInt(mat->IterCount(), -1);
