@@ -2263,12 +2263,15 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 
 void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
   String urlString = url.toString();
-  if ((urlString.contains("bugzilla")) || urlString.contains("PublishedProject")) {
+  if (urlString.contains("bugzilla")) {
     QDesktopServices::openUrl(url);    // user's default browser
   }
   else {
-    // just use the help browser for any misc links
-    iHelpBrowser::StatLoadUrl(url.toString());
+    bool is_ta = iWebView::handleTaLinkClick(url, NULL);
+    if(!is_ta) {
+      // just use the help browser for any misc links
+      iHelpBrowser::StatLoadUrl(url.toString());
+    }
   }
 }
 

@@ -1764,6 +1764,7 @@ bool taRootBase::Startup_MakeMainWin() {
       taiMisc::net_access_mgr->setMainWindow(bw);
     QDesktopServices::setUrlHandler("ta", bw, "taUrlHandler");
     QDesktopServices::setUrlHandler("http", bw, "httpUrlHandler");
+    QDesktopServices::setUrlHandler("https", bw, "httpUrlHandler");
     bw->show(); // when we start event loop
   }
 
