@@ -904,10 +904,15 @@ void UnitGroupView::Render_impl_blocks() {
             mfs->setValue(unit_name.chars());
           break;
         case NetView::UTD_BOTH:
-          const char* strs[2];
-          strs[0] = val_str.chars();
-          strs[1] = unit_name.chars();
-          mfs->setValues(0, 2, strs);
+          if(unit_name.empty()) {
+            mfs->setValue(val_str.chars());
+          }
+          else {
+            const char* strs[2];
+            strs[0] = val_str.chars();
+            strs[1] = unit_name.chars();
+            mfs->setValues(0, 2, strs);
+          }
           break;
         default: break; // compiler food, won't happen
         }
