@@ -20,15 +20,17 @@ echo "CPU = " $CPU " use this value to determine the qt include directory"
 
 export CPPFLAGS="-I/usr/include/$QT_INC_DIR -I/usr/include/$QT_INC_DIR/QtCore -I/usr/include/$QT_INC_DIR/QtWidgets -I/usr/include/$QT_INC_DIR/QtOpenGL -I/usr/include/$QT_INC_DIR/QtGui -I/usr/include/qt5/QtCore -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtGui -I/usr/include/qt5/ -L/usr/lib/ -fPIC"
 
-QUARTER_VERSION=1.0
-DEBEMAIL='brian.mingus@colorado.edu'
-DEBFULLNAME='Brian Mingus'
+QUARTER_VERSION=1.0.1
+DEBEMAIL='emergentdev@grey.colorado.edu'
+DEBFULLNAME='Emergent developers'
 REPONAME=`lsb_release -cs` # e.g., "maverick"
 
 QUARTER_BLD_DIR=libquarter0-${QUARTER_VERSION}
 QUARTER_BLD_PATH=/tmp/${QUARTER_BLD_DIR}
 rm -fr ${QUARTER_BLD_PATH}
-svn co --username anonymous --password emergent https://grey.colorado.edu/svn/coin3d/quarter/trunk ${QUARTER_BLD_PATH}
+svn co https://grey.colorado.edu/svn/coin3d/quarter/trunk ${QUARTER_BLD_PATH}
+cd ${QUARTER_BLD_PATH}
+SVN_REV=`svn info | grep "Revision" | awk '{print $2}'`
 # Create tarball (?)
 cd /tmp
 tar -czf libquarter0_${QUARTER_VERSION}.orig.tar.gz ${QUARTER_BLD_DIR}
@@ -40,11 +42,18 @@ mkdir -p debian
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Quarter
+libquarter0 (1.0-${SVN_REV}ubuntu1) ${REPONAME}; urgency=low
+
+  * Release for Ubuntu 8.0
+
+ -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)
+
 libquarter0 (1.0-0ubuntu1) ${REPONAME}; urgency=low
 
   * Initial release (LP: #364748)
 
- -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)
+ -- ${DEBFULLNAME} <${DEBEMAIL}>  Mon, 01 Jan 1900 00:00:00 +0000
+
 Quarter
 
 #################################################
@@ -58,7 +67,7 @@ Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
 Build-Depends: debhelper (>= 7.0.17), libcoin80-dev, pkg-config, ${QT_BLD_DEPS}
-Standards-Version: 3.9.1
+Standards-Version: 3.9.8
 
 Homepage: http://www.coin3d.org/lib/quarter
 Package: libquarter0
@@ -128,11 +137,13 @@ Quarter
 #################################################
 cat > debian/rules <<Quarter
 #!/usr/bin/make -f
+%:
+	dh \$@ --parallel
 
 build: build-stamp
 build-stamp:
 	dh_auto_configure -- CONFIG_QTLIBS="-lQt5Core -lQt5OpenGL -lQt5Gui"
-	dh build
+	dh build --parallel
 	touch build-stamp
 
 clean:
@@ -156,9 +167,9 @@ Quarter
 # debian/compat 
 #################################################
 cat > debian/compat <<Quarter
-7
+9
 Quarter
 
 #debuild -S -us -uc
-debuild -i -b -us -uc
+DEB_BUILD_OPTIONS="parallel=4" debuild -j4 -i -b -us -uc
 
