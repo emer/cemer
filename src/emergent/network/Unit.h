@@ -117,13 +117,13 @@ public: //
   inline ConGroup*      SendConGroup(int scg_idx) const;
   // #IGNORE #CAT_Structure get sendingconnection group at given index -- no safe range checking is applied to scg_idx!
   ConGroup*             RecvConGroupSafe(int rcg_idx) const;
-  // #CAT_Structure get receiving connection group at given index -- no safe range checking is applied to rcg_idx!
+  // #CAT_Structure get receiving connection group at given index, with safety checking for index in range
   ConGroup*             SendConGroupSafe(int scg_idx) const;
-  // #CAT_Structure get sendingconnection group at given index -- no safe range checking is applied to scg_idx!
+  // #CAT_Structure get sendingconnection group at given index, with safety checking for index in range
   inline ConGroup*      RecvConGroupPrjn(Projection* prjn) const;
-  // #IGNORE get con group at given prjn->recv_idx -- if it is not in range, emits error message and returns NULL
+  // #IGNORE get con group at given prjn->recv_idx -- no range checking -- fast
   inline ConGroup*      SendConGroupPrjn(Projection* prjn) const;
-  // #IGNORE get con group at given prjn->send_idx -- if it is not in range, emits error message and returns NULL
+  // #IGNORE get con group at given prjn->send_idx -- no range checking -- fast
   ConGroup*             RecvConGroupPrjnSafe(Projection* prjn) const;
   // #CAT_Structure get con group at given prjn->recv_idx -- if it is not in range, emits error message and returns NULL
   ConGroup*             SendConGroupPrjnSafe(Projection* prjn) const;
@@ -132,12 +132,18 @@ public: //
   // #CAT_Structure get receiving connection group from given sending layer
   ConGroup*             FindRecvConGroupFromName(const String& fm_nm) const;
   // #CAT_Structure get receiving connection group from given sending layer name
+  ConGroup*             FindSendConGroupToName(const String& to_nm) const;
+  // #CAT_Structure get sending connection group to given receiving layer name
 
+  bool                  SetUnValName(float val, const String& var_nm);
+  // #CAT_Access set unit variable (specified by name, e.g., act, net, bias_wt) to given value -- for use by programs, which cannot assign the value through the direct variable access functions (e.g., act())
+  float                 GetUnValName(const String& var_nm);
+  // #CAT_Access get unit variable value (specified by name, e.g., act, net, bias_wt) -- for use by programs or other generic access via name variable
   bool                  SetCnValName(float val, const Variant& prjn,
-                                     int idx, const String& var_nm);
-  // #CAT_Access set recv connection variable (specified by name, e.g., wt, dwt, pdw) in given projection (can be specified by name or index), to given value -- for use by programs, which cannot assign the value through the SafeCn function 
-  float                 GetCnValName(const Variant& prjn, int idx, const String& var_nm);
-  // #CAT_Access get recv connection variable value (specified by name, e.g., wt, dwt, pdw) in given projection (can be specified by name or index) -- for use by programs, which cannot assign the value through the SafeCn function 
+                                     int cn_idx, const String& var_nm);
+  // #CAT_Access set recv connection variable (specified by name, e.g., wt, dwt, pdw) in given projection (can be specified by name or index) at given connection index (cn_idx), to given value -- for use by programs, which cannot assign the value through the SafeCn function 
+  float                 GetCnValName(const Variant& prjn, int cn_idx, const String& var_nm);
+  // #CAT_Access get recv connection variable value (specified by name, e.g., wt, dwt, pdw) in given projection (can be specified by name or index) at given connection index (cn_idx) -- for use by programs
   
   
   inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }

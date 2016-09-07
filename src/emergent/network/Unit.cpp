@@ -311,6 +311,47 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
   return true;
 }
 
+bool Unit::SetUnValName(float val, const String& var_nm) {
+  Network* net = own_net();
+  if(TestError(!net->IsBuiltIntact(), "SetUnValName",
+               "Network is not built or intact -- cannot access unit variables until built!")) {
+    return false;
+  }
+
+  UnitVars* uv = GetUnitVars();
+  MemberDef* md = net->unit_vars_type->members.FindName(var_nm);
+  if(TestError(!md, "SetUnValName", "variable named:", var_nm,
+               "not found in unit variables, of type:", net->unit_vars_type->name)) {
+    return false;
+  }
+  if(TestError(!md->type->IsFloat(), "SetUnValName", "variable named:", var_nm,
+               "is not of float type -- must be -- is:", md->name)) {
+    return false;
+  }
+  *((float*)md->GetOff(uv)) = val;
+  return true;
+}
+
+float Unit::GetUnValName(const String& var_nm) {
+  Network* net = own_net();
+  if(TestError(!net->IsBuiltIntact(), "GetUnValName",
+               "Network is not built or intact -- cannot access unit variables until built!")) {
+    return 0.0f;
+  }
+
+  UnitVars* uv = GetUnitVars();
+  MemberDef* md = net->unit_vars_type->members.FindName(var_nm);
+  if(TestError(!md, "GetUnValName", "variable named:", var_nm,
+               "not found in unit variables, of type:", net->unit_vars_type->name)) {
+    return 0.0f;
+  }
+  if(TestError(!md->type->IsFloat(), "GetUnValName", "variable named:", var_nm,
+               "is not of float type -- must be -- is:", md->name)) {
+    return 0.0f;
+  }
+  return *((float*)md->GetOff(uv));
+}
+
 ConGroup* Unit::FindRecvConGroupFrom(Layer* fm_lay) const {
   const int rsz = NRecvConGps();
   for(int g = 0; g < rsz; g++) {
@@ -331,7 +372,23 @@ ConGroup* Unit::FindRecvConGroupFromName(const String& fm_nm) const {
   return NULL;
 }
 
+ConGroup* Unit::FindSendConGroupToName(const String& to_nm) const {
+  const int rsz = NSendConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = SendConGroup(g);
+    if(cg->prjn && cg->prjn->layer->name == to_nm)
+      return cg;
+  }
+  return NULL;
+}
+
 bool Unit::SetCnValName(float val, const Variant& prjn, int idx, const String& var_nm) {
+  Network* net = own_net();
+  if(TestError(!net->IsBuiltIntact(), "SetCnValName",
+               "Network is not built or intact -- cannot access connection variables until built!")) {
+    return false;
+  }
+
   ConGroup* cg = NULL;
   if(prjn.isStringType()) {
     cg = FindRecvConGroupFromName(prjn.toString());
@@ -349,6 +406,11 @@ bool Unit::SetCnValName(float val, const Variant& prjn, int idx, const String& v
 }
   
 float Unit::GetCnValName(const Variant& prjn, int idx, const String& var_nm) {
+  Network* net = own_net();
+  if(TestError(!net->IsBuiltIntact(), "GetCnValName",
+               "Network is not built or intact -- cannot access connection variables until built!")) {
+    return 0.0f;
+  }
   ConGroup* cg = NULL;
   if(prjn.isStringType()) {
     cg = FindRecvConGroupFromName(prjn.toString());

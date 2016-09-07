@@ -1256,20 +1256,26 @@ endload:
     }
   }
 
-  if(taMisc::loading_version < taMisc::version_bin) {
-    if(td && td->InheritsFrom(&TA_taProject) && taMisc::gui_active) {
-      // only for project-level objects, not sub-files, and only in gui mode (so analysis scripts and startup things don't give a lot of grief
-      taMisc::Warning("Loaded a file saved in an earlier version of the software:",
-		      taMisc::loading_version.toString(),"  Current version is:",
-		      taMisc::version_bin.toString(),
-		      "set verbose_load to VERSION_SKEW to see version skew warnings, which may have useful information -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
+  // for purposes of loading issues, don't complain about step releases!
+  bool same_vers = (taMisc::loading_version.major == taMisc::version_bin.major &&
+                    taMisc::loading_version.minor == taMisc::version_bin.minor);
+
+  if(!same_vers) {
+    if(taMisc::loading_version < taMisc::version_bin) {
+      if(td && td->InheritsFrom(&TA_taProject) && taMisc::gui_active) {
+        // only for project-level objects, not sub-files, and only in gui mode (so analysis scripts and startup things don't give a lot of grief
+        taMisc::Warning("Loaded a file saved in an earlier version of the software:",
+                        taMisc::loading_version.toString(),"  Current version is:",
+                        taMisc::version_bin.toString(),
+                        "set verbose_load to VERSION_SKEW to see version skew warnings, which may have useful information -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
+      }
     }
-  }
-  else if(taMisc::loading_version > taMisc::version_bin) {
-    taMisc::Warning("Loaded a file saved in a *LATER* version of the software:",
-		    taMisc::loading_version.toString(),"  Current version is:",
-		    taMisc::version_bin.toString(),
-		    "this is not likely to be a good idea, as the software is generally only backwards compatible, but it might work..");
+    else if(taMisc::loading_version > taMisc::version_bin) {
+      taMisc::Warning("Loaded a file saved in a *LATER* version of the software:",
+                      taMisc::loading_version.toString(),"  Current version is:",
+                      taMisc::version_bin.toString(),
+                      "this is not likely to be a good idea, as the software is generally only backwards compatible, but it might work..");
+    }
   }
   return rval;
 }
