@@ -34,7 +34,9 @@ INHERITED(SpecMemberBase)
 public:
   float         otr_lrate;      // #MIN_0 #DEF_0.3 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
   float         otr_pos_da;     // #MIN_0 #DEF_0.9 learning rate multiplier for otr changes with positive dopamine signals -- 1 = symmetric with negative da, < 1 = do less learning for positive da than negative da -- works better that way
+  float         otr_neg_da;     // #MIN_0 learning rate multiplier for otr changes with negative dopamine signals -- 1 = symmetric with positive da, < 1 = do less learning for negative da than positivee da
   bool          otr_nogo_veto;  // #AKA_otr_no_nogo #DEF_true nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo) -- this is very beneficial -- see nogo_max for scaling of this effect
+  float         max_ru_act;     // max receving activation -- if > 0 then learning decreases in propoortion to distance to this activation
   float         nogo_max;       // #DEF_0.3 #CONDSHOW_ON_otr_nogo_veto nogo activation (conveyed by deep_raw_net) at which the otr_nogo_veto effect is maximal -- anything above this activation has full veto effect, and anything below this value has a proportional veto effect, down to 0 at 0 nogo activation
   float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
@@ -165,7 +167,7 @@ public:
     }
     else {                    // otr
       if(da_p < 0.0f) {       // negative dopamine -- an error
-        dwt += lrate_eff * da * tr;
+        dwt += trace.otr_neg_da * lrate_eff * da * tr;
       }
       else {
         dwt += trace.otr_pos_da * lrate_eff * da * tr;
@@ -182,7 +184,12 @@ public:
     }
 
     if(ru_thal > 0.0f) {              // gated
-      ntr = ru_act * su_act;
+      if(trace.max_ru_act > 0.0f) {
+        ntr = (trace.max_ru_act - ru_act) * su_act;
+      }
+      else {
+        ntr = ru_act * su_act;
+      }
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
       if(trace.otr_nogo_veto) {
@@ -312,6 +319,7 @@ public:
     const bool d2r = (rus->dar == MSNUnitSpec::D2R);
 
     const float su_act = GetActVal(su, su_act_var);
+    const bool q4 = (net->quarter == 3);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
@@ -358,8 +366,9 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         const float ru_act = GetActVal(ru, ru_act_var);
+        const float ach = q4 ? ru->ach : 0.0f;
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                        ru->da_p, ru->ach, d2r, ru->thal_cnt, ru_act, su_act, lrate_eff,
+                        ru->da_p, ach, d2r, ru->thal_cnt, ru_act, su_act, lrate_eff,
                                  ru->deep_raw_net);
       }
       break;
@@ -372,7 +381,8 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         const float ru_act = GetActVal(ru, ru_act_var);
-        C_Compute_dWt_Trace_Thal_Sep_dWt(dwts[i], trs[i], ru->da_p, ru->ach, d2r,
+        const float ach = q4 ? ru->ach : 0.0f;
+        C_Compute_dWt_Trace_Thal_Sep_dWt(dwts[i], trs[i], ru->da_p, ach, d2r,
                                          lrate_eff);
       }
       break;
@@ -385,8 +395,9 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         const float ru_act = GetActVal(ru, ru_act_var);
+        const float ach = q4 ? ru->ach : 0.0f;
         C_Compute_dWt_Trace_NoThal(dwts[i], ntrs[i], trs[i],
-                            ru->da_p, ru->ach, d2r, ru_act, su_act, lrate_eff);
+                            ru->da_p, ach, d2r, ru_act, su_act, lrate_eff);
       }
       break;
     }
@@ -399,7 +410,8 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate); // TODO: deep_lrn was turning off before phaDA hits
         }
         const float ru_act = GetActVal(ru, ru_act_var);
-        C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ru->ach, d2r,
+        const float ach = q4 ? ru->ach : 0.0f;
+        C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ach, d2r,
                                      ru_act, ru->deep_lrn, su_act, lrate_eff);
       }
       break;

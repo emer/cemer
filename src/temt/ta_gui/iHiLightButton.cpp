@@ -49,6 +49,8 @@ void iHiLightButton::init(const char* script_) {
   taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
   iFont currentFont = taiM->buttonFont(currentSizeSpec);
   this->setFont(currentFont);
+
+  this->setStyleSheet("color: black"); // sometimes button gets white color font!
 }
 
 void iHiLightButton::released() {
@@ -60,16 +62,16 @@ void iHiLightButton::released() {
 
 void iHiLightButton::setHiLight(bool value) {
   if (mhiLight == value) return;
-  QPalette palette;
-  if (value) {
-    palette.setColor(backgroundRole(), mhiLight_color);
-    setPalette(palette);    
-  }
-  else {
-    palette.setColor(backgroundRole(),
-                     QApplication::palette().color(QPalette::Active, QPalette::Button));
-    setPalette(palette);    
-  }
+  // QPalette palette;
+  // if (value) {
+  //   palette.setColor(backgroundRole(), mhiLight_color);
+  //   setPalette(palette);    
+  // }
+  // else {
+  //   palette.setColor(backgroundRole(),
+  //                    QApplication::palette().color(QPalette::Active, QPalette::Button));
+  //   setPalette(palette);    
+  // }
   mhiLight = value;
 }
 

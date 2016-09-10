@@ -810,7 +810,7 @@ void iViewPanelOfGraphTable::MovePlotBefore(int old_index) {
   
   taGuiDialog dlg;
   dlg.win_title = "Move Plot";
-  String prompt = "Move Y" + String(old_index) +  " before Y?";
+  String prompt = "Move Y" + String(old_index+1) +  " before Y?";
   dlg.prompt = prompt;
   dlg.width = 200;
   dlg.height = 150;

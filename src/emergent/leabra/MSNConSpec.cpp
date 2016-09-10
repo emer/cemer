@@ -25,11 +25,12 @@ void MSNTraceSpec::Initialize() {
 void MSNTraceSpec::Defaults_init() {
   otr_lrate = 0.3f;
   otr_pos_da = 0.9f;
+  otr_neg_da = 1.0f;
+  max_ru_act = 0.8f;
   otr_nogo_veto = true;
   nogo_max = 0.3f;
   da_reset_tr = 0.0f;
   ach_reset_thr = 0.5f;
-  
 }
 
 void MSNTraceSpec::UpdateAfterEdit_impl() {

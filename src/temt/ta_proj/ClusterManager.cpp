@@ -957,11 +957,13 @@ ClusterManager::DeleteFile(const String &filename)
 bool
 ClusterManager::ShowRepoDialog()
 {
+  float font_ratio = (float)taMisc::font_size / 12.0f;
+  
   taGuiDialog dlg;
   dlg.win_title = "Run on cluster";
   dlg.prompt = "Enter parameters";
-  dlg.width = 300;
-  dlg.height = 600;
+  dlg.width = (int)(300.0f * font_ratio);
+  dlg.height = (int)(600.0f * font_ratio);
 
   String widget("main");
   String vbox("mainv");

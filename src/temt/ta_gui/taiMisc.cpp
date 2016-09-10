@@ -247,6 +247,12 @@ void taiMisc::HandleScreenGeomChange() {
 }
 
 void taiMisc::HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget* win) {
+  // at this point Qt or OS seems to handle this, and it seems to cause
+  // major problems when an external monitor is turned off and then back on
+  // at least on a mac -- can revisit on other platforms but likely the safest
+  // thing at this point is to cause no harm!
+  return;
+
   // if size bigger than avail size, then shrink it
   // easiest policy is just to resize top-level wins by change in size
   QRect r(win->frameGeometry());
