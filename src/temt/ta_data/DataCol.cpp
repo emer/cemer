@@ -519,35 +519,43 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   DataTable* dt = dataTable();
   if(!dt)
     return DQR_NO_SAVE;   // should not happen
+
+  int dt_cells = dt->Cells();
   
   if(!taMisc::is_undo_saving) { // if not undo, logic is simple..
     if(dt->HasDataFlag(DataTable::SAVE_ROWS)) {
-      if(dt->Cells() > taMisc::auto_save_data_max_cells) {
-        taMisc::Info("auto save - not saving data for datatable -- too big:", dt->GetPathNames(), "cells:", String(dt->Cells()));
-        return DQR_NO_SAVE;
+      if(taMisc::is_auto_saving) {
+        if(dt_cells > taMisc::auto_save_data_max_cells) {
+          taMisc::Info("auto save - not saving data for datatable -- too big:",
+                       dt->GetPathNames(), "cells:", String(dt_cells));
+          return DQR_NO_SAVE;
+        }
+        else {
+          return DQR_SAVE;
+        }
       }
-      else {
-        return DQR_SAVE;
-      }
+      return DQR_SAVE;
     }
     else {
       return DQR_NO_SAVE;
     }
   }
   
+  // undo saving after this point!
+
   // always save for obj itself
   if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
-    if(dt->Cells() > taMisc::undo_data_max_cells) {
+    if(dt_cells > taMisc::undo_data_max_cells) {
       if(taMisc::undo_debug && last_dt != dt) {
         taMisc::Info("not undo saving directly affected datatable -- too big:",
-                     dt->GetPathNames(), "cells:", String(dt->Cells()));
+                     dt->GetPathNames(), "cells:", String(dt_cells));
         last_dt = dt;
       }
       return DQR_NO_SAVE; // too big or no save!
     }
     if(taMisc::undo_debug && last_dt != dt) {
       taMisc::Info("YES undo saving directly affected datatable:",
-                   dt->GetPathNames(), "cells:", String(dt->Cells()));
+                   dt->GetPathNames(), "cells:", String(dt_cells));
       last_dt = dt;
     }
     return DQR_SAVE;
@@ -566,30 +574,30 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     return DQR_NO_SAVE;
   }
   
-  if(dt->Cells() > taMisc::undo_data_max_cells) {
+  if(!dt->HasDataFlag(DataTable::SAVE_ROWS)) {
     if(taMisc::undo_debug && last_dt != dt) {
-      taMisc::Info("not undo saving datatable -- too big:",
-                   dt->GetPathNames(), "cells:", String(dt->Cells()));
+      // taMisc::Info("not undo saving datatable -- SAVE_ROWS not set:",
+      //              dt->GetPathNames(), "cells:", String(dt_cells));
+      last_dt = dt;
+    }
+    return DQR_NO_SAVE;
+  }
+  
+  if(dt_cells > taMisc::undo_data_max_cells) {
+    if(taMisc::undo_debug && last_dt != dt) {
+      taMisc::Info("not undo saving datatable -- affected, but too big:",
+                   dt->GetPathNames(), "cells:", String(dt_cells));
       last_dt = dt;
     }
     return DQR_NO_SAVE;   // too big!
   }
   
-  if(dt->HasDataFlag(DataTable::SAVE_ROWS)) {
-    if(taMisc::undo_debug && last_dt != dt) {
-      taMisc::Info("YES undo saving datatable -- affected and small enough:",
-                   dt->GetPathNames(), "cells:", String(dt->Cells()));
-      last_dt = dt;
-    }
-    return DQR_SAVE;
-  }
-  
   if(taMisc::undo_debug && last_dt != dt) {
-    // taMisc::Info("not undo saving datatable -- affected but no save at data table level:",
-    //              dt->GetPathNames(), "cells:", String(dt->Cells()));
+    // taMisc::Info("YES undo saving datatable -- affected, SAVE_ROWS on, not too big:",
+    //              dt->GetPathNames(), "cells:", String(dt_cells));
     last_dt = dt;
   }
-  return DQR_NO_SAVE;
+  return DQR_SAVE;
 }
 
 void DataCol::Get2DCellGeom(int& x, int& y) const {

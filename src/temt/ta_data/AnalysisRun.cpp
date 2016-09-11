@@ -20,6 +20,7 @@
 #include <taDataAnal>
 #include <taDataAnalParams>
 #include <taMisc>
+#include <taiMisc>
 #include <DynEnum>
 #include <String_Array>
 
@@ -99,8 +100,8 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
 
   dlg.win_title = "Cluster Analysis";
-  dlg.width = 300;
-  dlg.height = 400;
+  dlg.width = taiMisc::resizeByMainFont(300);
+  dlg.height = taiMisc::resizeByMainFont(400);
 
   String widget("main");
   String vbox("mainv");
@@ -252,8 +253,8 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   taBase::Ref(dlg);
 
   dlg.win_title = "PCA 2D";
-  dlg.width = 300;
-  dlg.height = 400;
+  dlg.width = taiMisc::resizeByMainFont(300);
+  dlg.height = taiMisc::resizeByMainFont(400);
 
   String widget("main");
   String vbox("mainv");
@@ -363,8 +364,8 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
   taBase::Ref(dlg);
 
   dlg.win_title = "PCA Eigen";
-  dlg.width = 300;
-  dlg.height = 300;
+  dlg.width = taiMisc::resizeByMainFont(300);
+  dlg.height = taiMisc::resizeByMainFont(300);
 
   String widget("main");
   String vbox("mainv");
@@ -431,8 +432,8 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   taBase::Ref(dlg);
 
   dlg.win_title = "Distance Matrix";
-  dlg.width = 300;
-  dlg.height = 400;
+  dlg.width = taiMisc::resizeByMainFont(300);
+  dlg.height = taiMisc::resizeByMainFont(400);
 
   String widget("main");
   String vbox("mainv");
@@ -586,8 +587,8 @@ bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
   taBase::Ref(dlg);
 
   dlg.win_title = "Linear Regression";
-  dlg.width = 300;
-  dlg.height = 300;
+  dlg.width = taiMisc::resizeByMainFont(300);
+  dlg.height = taiMisc::resizeByMainFont(300);
 
   String widget("main");
   String vbox("mainv");

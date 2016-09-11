@@ -21,6 +21,7 @@
 #include <ProgVar>
 #include <String_Array>
 #include <DynEnum>
+#include <taiMisc>
 
 #include <QComboBox>
 #include <QBoxLayout>
@@ -38,8 +39,8 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
   bool    show_local_global_chooser = (local_global_choice == 2); // not local or global so show the chooser
 
   dlg.win_title = "Create Variable - Local or Global";
-  dlg.width = 300;
-  dlg.height = 125;
+  dlg.width = taiMisc::resizeByMainFont(300);
+  dlg.height = taiMisc::resizeByMainFont(125);
 
   String widget("main");
   String vbox("mainv");

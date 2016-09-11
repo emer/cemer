@@ -40,9 +40,20 @@ iTableView::iTableView(QWidget* parent)
   ext_select_on = false;
   m_saved_scroll_pos = 0;
 
-  setFont(taiM->dialogFont(taiM->ctrl_size));
-  QFont cur_font = QFont();
-  cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
+  QFont cur_font = taiM->dialogFont(taiM->ctrl_size);
+  cur_font.setPointSize(tabMisc::root->table_font_size +
+                        tabMisc::root->global_font_incr_decr);
+  setFont(cur_font);
+
+  QHeaderView* vhead = verticalHeader();
+#if (QT_VERSION >= 0x050000)
+  vhead->sectionResizeMode(QHeaderView::Fixed);
+#else
+  vhead->setResizeMode(QHeaderView::Fixed);
+#endif
+  vhead->setDefaultSectionSize(tabMisc::root->table_font_size +
+                               tabMisc::root->global_font_incr_decr + 6);
+  
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );

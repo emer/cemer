@@ -2216,8 +2216,8 @@ String SubversionClient::getCommitMessage(const String& com_itm_str) {
   taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
   
   dlg.win_title = "Svn Commit Message";
-  dlg.width = 400;
-  dlg.height = 200;
+  dlg.width = taiMisc::resizeByMainFont(400);
+  dlg.height = taiMisc::resizeByMainFont(200);
   
   String widget("main");
   String vbox("mainv");

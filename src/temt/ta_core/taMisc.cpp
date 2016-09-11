@@ -471,6 +471,7 @@ ContextFlag     taMisc::is_saving;
 bool            taMisc::save_use_name_paths;
 ContextFlag     taMisc::is_undo_loading;
 ContextFlag     taMisc::is_undo_saving;
+ContextFlag     taMisc::is_auto_saving;
 ContextFlag     taMisc::is_duplicating;
 ContextFlag     taMisc::is_changing_type;
 ContextFlag     taMisc::is_checking;

@@ -318,27 +318,38 @@ void taiMisc::InitMetrics(bool reinit) {
   else
     base_height = 29;
 
+  mbutton_ht[0] = resizeByMainFont(22);
+  mbutton_ht[1] = resizeByMainFont(23);
+  mbutton_ht[2] = resizeByMainFont(25);
+
+  mlabel_ht[0] = resizeByMainFont(20);
+  mlabel_ht[1] = resizeByMainFont(21);
+  mlabel_ht[2] = resizeByMainFont(24);
+
+  mtext_ht[0] = resizeByMainFont(22);
+  mtext_ht[1] = resizeByMainFont(23);
+  mtext_ht[2] = resizeByMainFont(26);
+
   // control sizes -- depend on size of default font
   if (taMisc::font_size <= 10) {
     // Small
-//    mbutton_ht[0] = 21; mbutton_ht[1] = 23; mbutton_ht[2] = 24;
-    mbutton_ht[0] = 20; mbutton_ht[1] = 22; mbutton_ht[2] = 23;
-    mlabel_ht[0] = 17; mlabel_ht[1] = 19; mlabel_ht[2] = 20;
-    mtext_ht[0] = 19; mtext_ht[1] = 21; mtext_ht[2] = 22;
+    // mbutton_ht[0] = 20; mbutton_ht[1] = 22; mbutton_ht[2] = 23;
+    // mlabel_ht[0] = 17; mlabel_ht[1] = 19; mlabel_ht[2] = 20;
+    // mtext_ht[0] = 19; mtext_ht[1] = 21; mtext_ht[2] = 22;
     currentSizeSpec = sizSmall;
-  } else if (taMisc::font_size > 13) {
+  }
+  else if (taMisc::font_size > 13) {
     // Big
-//    mbutton_ht[0] = 27; mbutton_ht[1] = 30; mbutton_ht[2] = 33;
-    mbutton_ht[0] = 24; mbutton_ht[1] = 27; mbutton_ht[2] = 30;
-    mlabel_ht[0] = 24; mlabel_ht[1] = 26; mlabel_ht[2] = 29;
-    mtext_ht[0] = 26; mtext_ht[1] = 28; mtext_ht[2] = 31;
+    // mbutton_ht[0] = 24; mbutton_ht[1] = 27; mbutton_ht[2] = 30;
+    // mlabel_ht[0] = 24; mlabel_ht[1] = 26; mlabel_ht[2] = 29;
+    // mtext_ht[0] = 26; mtext_ht[1] = 28; mtext_ht[2] = 31;
     currentSizeSpec = sizBig;
-  }  else {
+  }
+  else {
     // Med
-//    mbutton_ht[0] = 24;  mbutton_ht[1] = 25;  mbutton_ht[2] = 27;
-    mbutton_ht[0] = 22;  mbutton_ht[1] = 23;  mbutton_ht[2] = 25;
-    mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
-    mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
+    // mbutton_ht[0] = 22;  mbutton_ht[1] = 23;  mbutton_ht[2] = 25;
+    // mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
+    // mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
     currentSizeSpec = sizMedium;
   }
 
@@ -451,6 +462,23 @@ void taiMisc::AdjustFont(int fontSpec, iFont& font) {
   default: //defFontSize
     break;
   }
+}
+
+float taiMisc::fontPctOfDefault(int fs) {
+#ifdef TA_OS_MAC
+  float def_font_sz = 12.0f;
+#else
+  float def_font_sz = 10.0f;    // linux and windows
+#endif
+  return (float)fs  / def_font_sz;
+}
+
+float taiMisc::mainFontPctOfDefault() {
+  return fontPctOfDefault(taMisc::font_size);
+}
+                                      
+int taiMisc::resizeByMainFont(int elem_size) {
+  return (int)ceil((float)elem_size * mainFontPctOfDefault());
 }
 
 iSize taiMisc::dialogSize(int dialogSpec) {

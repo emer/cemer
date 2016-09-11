@@ -555,6 +555,13 @@ public:
   float         edit_lightbg_brightness;
   SizeSpec      currentSizeSpec;
 
+  static float  fontPctOfDefault(int font_size);
+  // how big is the given font size compared to default size -- for rescaling elements that have been sized based on default size (12 or 10 depending on platform)
+  static float  mainFontPctOfDefault();
+  // how big is the current main font size compared to default size
+  static int    resizeByMainFont(int elem_size);
+  // resize a given gui element as a function of current main font size relative to default font size -- use for resizing dialogs etc that are based on default font
+  
   iSize         dialogSize(int dialogSpec); // return starting dialog size for given spec
 
   SizeSpec      GetCurrentSizeSpec();

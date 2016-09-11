@@ -105,6 +105,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   tabMisc::cur_undo_mod_obj = NULL;
   tabMisc::cur_undo_save_owner = NULL;
 
+  bool cur_is_new_src = false;
+  
   // now encode diff for big saves!
   if(save_top == owner) {
     taUndoDiffSrc* cur_src = NULL;
@@ -114,7 +116,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       String last_pct;
       if(cur_src)
         last_pct = " last pct: " + String(cur_src->last_diff_pct);
-      taMisc::Info("undo save size:", String(urec->save_data.length() / 1.0e6), "MB",
+      taMisc::Info("undo save size:", taMisc::GetSizeString(urec->save_data.length()),
                    last_pct);
     }
     if(!cur_src || cur_src->last_diff_pct > new_src_thr) {
@@ -127,7 +129,29 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
       cur_src->InitFmRec(urec);                    // init
       taMisc::LogInfo("Undo: New source added!");
+      cur_is_new_src = true;
     }
+    else {
+      int size_diff = ABS(cur_src->save_data.length() - urec->save_data.length());
+      float size_diff_pct = (float)size_diff / (float)MAX(cur_src->save_data.length(),
+                                                          urec->save_data.length());
+      
+      if(size_diff_pct > 0.5f * new_src_thr) {
+        if(cur_src && taMisc::undo_debug) {
+          taMisc::Info("SaveUndo size difference is above threshold:",
+                       String(size_diff_pct),
+                       "saving a new src instead of the diff from previous src");
+        }
+        cur_src = new taUndoDiffSrc;
+        undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
+        cur_src->InitFmRec(urec);                    // init
+        taMisc::LogInfo("Undo: New source added!");
+        cur_is_new_src = true;
+      }
+    }
+    // note: ALWAYS need to encode the new undo rec -- the above undo_src's just determine
+    // what it is computed against (in case of cur_is_new_src, the diff is 0, but still
+    // needs to be encoded -- otherwise you store it 2x)
 #if (QT_VERSION >= 0x050000)
     int cur_running = diff_threads.n_running.loadAcquire();
 #else
@@ -323,16 +347,23 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
     msg << "Total Undo records: " << undo_recs.length << " cur_undo_idx: " << cur_undo_idx;
     taMisc::Info(msg);
   }
-  int tot_size = 0;
+  int tot_small_size = 0;
   int tot_diff_lines = 0;
+
+  if(show_list) {
+    taMisc::Info("\n====== Undo Records ======");
+  }
+  
   for(int i=undo_recs.length-1; i>=0; i--) {
     taUndoRec* urec = undo_recs.CircSafeEl(i);
     if(!urec) continue;
-    tot_size += urec->save_data.length();
     int dif_lns = 0;
     if((bool)urec->diff_src && urec->save_data.empty()) { // empty is key flag for actually ready
       dif_lns = urec->diff_edits.GetLinesChanged();
       tot_diff_lines += dif_lns;
+    }
+    else {
+      tot_small_size += urec->save_data.length();
     }
     if(show_list) {
       String msg;
@@ -352,18 +383,40 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
     }
   }
 
+  if(show_list) {
+    taMisc::Info("\n====== Undo Sources ======");
+  }
+  
   int tot_saved = 0;
   for(int i=undo_srcs.length-1; i>=0; i--) {
     taUndoDiffSrc* urec = undo_srcs.CircSafeEl(i);
     tot_saved += urec->save_data.length();
+    if(show_list) {
+      String msg;
+      msg << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
+          << " use_count: " << urec->UseCount()
+          << " last_diff_n: " << urec->last_diff_n << " pct: " << urec->last_diff_pct
+          << " top path: " << urec->save_top_path;
+      taMisc::Info(msg);
+    }
   }
 
   {
     String msg;
-    msg << "Undo memory usage: small Edit saves: " << tot_size
-        << " full proj saves: " << tot_saved
+    msg << "Undo memory usage: small Edit saves: " << taMisc::GetSizeString(tot_small_size)
+        << " full proj saves: " << taMisc::GetSizeString(tot_saved)
         << " in: " << undo_srcs.length << " recs, "
         << " diff lines: " << tot_diff_lines;
     taMisc::Info(msg);
   }
+}
+
+void taUndoMgr::SaveCurSrcRec(const String& fname) {
+  if(undo_srcs.length == 0) {
+    taMisc::Warning("No undo sources saved yet!");
+    return;
+  }
+    
+  taUndoDiffSrc* cur_src = undo_srcs.CircPeek();
+  cur_src->save_data.SaveToFile(fname);
 }

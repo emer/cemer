@@ -62,16 +62,19 @@ void iHiLightButton::released() {
 
 void iHiLightButton::setHiLight(bool value) {
   if (mhiLight == value) return;
-  // QPalette palette;
-  // if (value) {
-  //   palette.setColor(backgroundRole(), mhiLight_color);
-  //   setPalette(palette);    
-  // }
-  // else {
-  //   palette.setColor(backgroundRole(),
-  //                    QApplication::palette().color(QPalette::Active, QPalette::Button));
-  //   setPalette(palette);    
-  // }
+  // TODO: in qt5 (at least 5.6.1) this is having NO effect
+  // the docs: http://doc.qt.io/qt-5/stylesheet-examples.html
+  // explain that 
+  QPalette palette;
+  if (value) {
+    palette.setColor(backgroundRole(), mhiLight_color);
+    setPalette(palette);    
+  }
+  else {
+    palette.setColor(backgroundRole(),
+                     QApplication::palette().color(QPalette::Active, QPalette::Button));
+    setPalette(palette);    
+  }
   mhiLight = value;
 }
 
