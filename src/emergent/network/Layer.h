@@ -96,11 +96,10 @@ public:
     ICONIFIED           = 0x0002,       // only display a single unit showing icon_value (set in algorithm-specific manner)
     NO_ADD_SSE          = 0x0004,       // do NOT add this layer's sse value (sum squared error) to the overall network sse value: this is for all types of SSE computed for ext_flag = TARG (layer_type = TARGET) or ext_flag = COMP (layer_type = OUTPUT) layers
     NO_ADD_COMP_SSE     = 0x0008,       // do NOT add this layer's sse value (sum squared error) to the overall network sse value: ONLY for ext_flag = COMP (OUTPUT) flag settings (NO_ADD_SSE blocks all contributions) -- this is relevant if the layer type or ext_flags are switched dynamically and only TARGET errors are relevant
-    PROJECT_WTS_NEXT    = 0x0010,       // #NO_SHOW this layer is next in line for weight projection operation
-    PROJECT_WTS_DONE    = 0x0020,       // #NO_SHOW this layer is done with weight projection operation (prevents loops)
-    SAVE_UNITS          = 0x0040,       // save this layer's units in the project file (even if Network::SAVE_UNITS off)
-    NO_SAVE_UNITS       = 0x0080,       // don't save this layer's units in the project file (even if Network::SAVE_UNITS on)
-    ABS_POS             = 0x0100,       // #NO_SHOW -- copied from Network -- always use absolute positions for layers as the primary positioning, otherwise if not set then layer positions relative to owning layer group are primary and absolute positions are computed relative to them
+    SAVE_UNIT_NAMES     = 0x0010,       // save the names for individual units in the unit_names matrix on this layer (the Units themselves are never saved) -- when the network is built, these names are then assigned to the units -- use SetUnitNames method to update unit names from unit_names matrix if you've changed them, and GetUnitNames to save current unit names into unit_names matrix
+    PROJECT_WTS_NEXT    = 0x0020,       // #NO_SHOW this layer is next in line for weight projection operation
+    PROJECT_WTS_DONE    = 0x0040,       // #NO_SHOW this layer is done with weight projection operation (prevents loops)
+    ABS_POS             = 0x0080,       // #NO_SHOW -- copied from Network -- always use absolute positions for layers as the primary positioning, otherwise if not set then layer positions relative to owning layer group are primary and absolute positions are computed relative to them
   };
 
   enum AccessMode {     // how to access the units in the layer -- only relevant for layers with unit groups (otherwise modes are the same)
@@ -150,7 +149,7 @@ public:
   float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   int                   units_flat_idx; // #NO_SAVE #READ_ONLY starting index for this layer into the network units_flat list, used in threading
   bool                  units_lesioned; // #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
-  bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
+  bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups&&flags:SAVE_UNIT_NAMES if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix         unit_names;     // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_BrainAtlasRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.

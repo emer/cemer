@@ -126,6 +126,7 @@ public:
   // #CONDEDIT_OFF_data_flags:SAVE_ROWS Whether to automatically load a data file when the DataTable object is loaded.  This option is only available when SAVE_ROWS is unchecked.  Storing row-data externally reduces the project file size (especially for large data tables), but the project is no longer self contained.
   String                auto_load_file;
   // #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
+  int                   row_height; // how high to make the rows in the data table editor, in pixels -- 0 = default
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
@@ -139,7 +140,6 @@ public:
   // #HIDDEN #NO_SAVE When comparing cell values this is the row to compare against
   int_Array             diff_row_list;
   // #HIDDEN #NO_SAVE When comparing cell values this is the list of rows compared against base_diff_row
-//  taVector2i            found_cell_item;
   
   // #HIDDEN #NO_SAVE When searching for cell values this is the list of cells that match
   String                json_error_msg;

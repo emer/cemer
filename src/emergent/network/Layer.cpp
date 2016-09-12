@@ -255,6 +255,11 @@ void Layer::UpdateAfterEdit_impl() {
       else
         gp_unit_names_4d = false;
     }
+    taVersion v801(8, 0, 1);
+    if(taMisc::loading_version < v801) { // update the SAVE_UNIT_NAMES flag
+      if(unit_names.dims() > 0)
+        SetLayerFlag(SAVE_UNIT_NAMES);
+    }
     RecomputeGeometry();
   }
   else {                        // not loading
@@ -267,6 +272,23 @@ void Layer::UpdateAfterEdit_impl() {
       // clear activity if we're lesioned
       if(own_net)
         Init_Acts(own_net);
+    }
+
+    if(HasLayerFlag(SAVE_UNIT_NAMES)) {
+      if(unit_groups) {
+        if(gp_unit_names_4d) {
+          unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+        }
+        else {
+          unit_names.SetGeom(2, un_geom.x, un_geom.y);
+        }
+      }
+      else {
+        unit_names.SetGeom(2, un_geom.x, un_geom.y);
+      }
+    }
+    else {
+      unit_names.SetGeom(0, 0);
     }
   }
   m_prv_layer_flags = flags;
@@ -1364,7 +1386,8 @@ void Layer::Compute_PrjnDirections() {
 }
 
 bool Layer::SetUnitNames(bool force_use_unit_names) {
-  if(!force_use_unit_names && unit_names.dims() == 0) return false;
+  if(!force_use_unit_names && !HasLayerFlag(SAVE_UNIT_NAMES)) return false;
+  SetLayerFlag(SAVE_UNIT_NAMES);
   // first enforce geom, then do it.
   if(unit_groups) {
     if(gp_unit_names_4d) {
@@ -1413,7 +1436,8 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
 }
 
 bool Layer::GetUnitNames(bool force_use_unit_names) {
-  if(!force_use_unit_names && unit_names.dims() == 0) return false;
+  if(!force_use_unit_names && !HasLayerFlag(SAVE_UNIT_NAMES)) return false;
+  SetLayerFlag(SAVE_UNIT_NAMES);
   // first enforce geom, then do it.
   if(unit_groups) {
     if(gp_unit_names_4d) {
@@ -1464,6 +1488,8 @@ bool Layer::GetUnitNames(bool force_use_unit_names) {
 bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_chars) {
   if(TestError(!unit_names_col, "SetUnitNamesFromDataCol", "null unit_names_col"))
     return false;
+
+  SetLayerFlag(SAVE_UNIT_NAMES);
 
   const MatrixGeom& cg = unit_names_col->cell_geom;
   taMatrix* nmat = (const_cast<DataCol*>(unit_names_col))->GetValAsMatrix(-1);

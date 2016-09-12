@@ -39,6 +39,8 @@
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QClipboard>
+#include <QShowEvent>
+#include <QTimer>
 
 cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   lock_to_proj = true;
@@ -161,6 +163,12 @@ void cssConsoleWindow::UpdateFmLock() {
 
 void cssConsoleWindow::SaveGeom() {
   iRect r = frameGeometry(); //note: same as size() for widgets
+
+  if(r == prev_geom) return;    // don't double-save -- on mac when desktop widget
+  // is resizing due to sleep etc, a spurious 2nd resize can come through and
+  // resize the console relative to the wrong screen..
+  prev_geom = r;
+  
   // convert from screen coords to relative (note, allowed to be >1.0)
   // adjust for scrn geom, esp for evil mac
   float lft = (float)(r.left() - taiM->scrn_geom.left()) /
@@ -168,6 +176,9 @@ void cssConsoleWindow::SaveGeom() {
   float top = (float)(r.top() - taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h);
   float wd = (float)r.width() / (float)(taiM->scrn_s.w);
   float ht = (float)r.height() / (float)(taiM->scrn_s.h);
+
+  // taMisc::Info("save console geom: wd:", String(wd), "ht:", String(ht),
+  //              "raw w:", String(r.width()), "h:", String(r.height()));
   
   tabMisc::root->console_size.SetXY(wd, ht);
   tabMisc::root->console_pos.SetXY(lft, top);
@@ -191,6 +202,9 @@ void cssConsoleWindow::LoadGeom() {
     s.h
   );
 
+  // taMisc::Info("load console geom: wd:", String(s.w), "ht:", String(s.h),
+  //              "raw w:", String(wd), "h:", String(ht));
+  
   resize(tr.w, tr.h);
   move(tr.x, tr.y);
 }
@@ -211,18 +225,12 @@ void cssConsoleWindow::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
   if(lock_to_proj) return;
   
-  taProject* proj = tabMisc::root->projects.DefaultEl();
-  if(!proj) return;             // only functions if there is a project
-  
   SaveGeom();
 }
 
 void cssConsoleWindow::moveEvent(QMoveEvent* e) {
   inherited::moveEvent(e);
   if(lock_to_proj) return;
-
-  taProject* proj = tabMisc::root->projects.DefaultEl();
-  if(!proj) return;             // only functions if there is a project
 
   SaveGeom();
 }
@@ -307,4 +315,14 @@ void cssConsoleWindow::changeEvent(QEvent* ev) {
 }
 
 void cssConsoleWindow::UpdateUi() {
+  css_con->displayPrompt(true);
+}
+
+void cssConsoleWindow::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  QTimer::singleShot(150, this, SLOT(Clear()));
+}
+
+void cssConsoleWindow::Clear() {
+  css_con->clear();
 }

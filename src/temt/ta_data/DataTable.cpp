@@ -89,6 +89,7 @@ void DataTable::Initialize() {
   write_idx = -2;
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   auto_load = NO_AUTO_LOAD;
+  row_height = 0;
   keygen.setType(Variant::T_Int64);
   calc_script = NULL;
   log_file = NULL;
@@ -149,6 +150,7 @@ void DataTable::Copy_(const DataTable& cp) {
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
+  row_height = cp.row_height;
   keygen = cp.keygen;
 }
 

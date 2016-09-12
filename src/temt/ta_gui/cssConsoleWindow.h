@@ -22,13 +22,13 @@
 #include <QMainWindow>
 
 // member includes:
+#include <iRect>
 
 // declare all other types mentioned but not required to include:
 class QcssConsole; //
 class QIcon; //
 class iAction; //
 class iAction_List; //
-class iRect; //
 class QMenu; //
 class QMenuBar; //
 class Variant; //
@@ -79,12 +79,16 @@ public slots:
   virtual void  windowActivateByName(const Variant& title_);
   virtual void  windowMenu_aboutToShow();
   virtual void  UpdateUi();
+  virtual void  Clear();
 
 protected:
+  iRect         prev_geom;      // previous geometry -- only update for new
+  
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* e) override;
   void         closeEvent(QCloseEvent* e) override;
   void         changeEvent(QEvent* ev) override;
+  void         showEvent(QShowEvent* e) override;
 };
 
 #endif // cssConsoleWindow_h
