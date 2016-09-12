@@ -2459,7 +2459,7 @@ LeabraProject .projects["ax_tutorial_cptax"] {
  version {
   major=8;
   minor=0;
-  step=5;
+  step=6;
  };
  author="Randall C. O'Reilly, Thomas Hazy";
  email="emergent-users@grey.colorado.edu";
@@ -2509,8 +2509,8 @@ LeabraProject .projects["ax_tutorial_cptax"] {
 <title>tutorials/ax tutorial cptax - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial_cptax\",\"wgTitle\":\"tutorials/ax tutorial cptax\",\"wgCurRevisionId\":12635,\"wgRevisionId\":12635,\"wgArticleId\":2957,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial_cptax\",\"wgRelevantArticleId\":2957,\"wgUserId\":10,\"wgUserEditCount\":317,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,
-\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"8d5fd57baaa157df49a70869bdaf45af57d5b231+\\\\\",\"patrolToken\":\"98dc8c4296edbc5b359da872b264e82657d5b231+\\\\\",\"watchToken\":\"50e6bc6d258f4a3f64caf1c1316670d357d5b231+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial_cptax\",\"wgTitle\":\"tutorials/ax tutorial cptax\",\"wgCurRevisionId\":12635,\"wgRevisionId\":12635,\"wgArticleId\":2957,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial_cptax\",\"wgRelevantArticleId\":2957,\"wgUserId\":10,\"wgUserEditCount\":318,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,
+\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"f17528814dd6f73b1edb9678018ed10f57d5b82c+\\\\\",\"patrolToken\":\"13aa34a39ece8711d37dce4873d628d857d5b82c+\\\\\",\"watchToken\":\"822fdc7a33381e10844905dc1b7b7ff757d5b82c+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -2673,7 +2673,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/tutorials/ax_tutorial_cptax\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=unwatch&amp;token=b8556d52ebe1691a9d71a282bd68fcba57d5b231%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=unwatch&amp;token=7d1e004f22b247efd4813d9e223aa7b057d5b82c%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -2749,7 +2749,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":134});
+mw.config.set({\"wgBackendResponseTime\":132});
 } );</script>
 	
 
@@ -4817,6 +4817,11 @@ mw.config.set({\"wgBackendResponseTime\":150});
 <ul>
 
 
+<li>Sun Sep 11 14:08:42 2016 version: 8.0.6 user: thazy file_name: <code>ax_tutorial_cptax.proj</code> <br>
+Project updated on wiki: emergent changes: add step to increase Hidden layer to 5X5 at the end - ax_tutorial_cptax.proj
+
+
+
 <li>Wed Sep  7 20:23:59 2016 version: 8.0.5 user: thazy file_name: <code>ax_tutorial_cptax.proj</code> <br>
 Published on wiki: emergent page: tutorials/ax_tutorial_cptax with description: A finished version of the AX tutorial project that users can use to compare their evolving version of the project to a \"correct\" version after the CPTAX segment of the tutorial -- to tell how one is doing, make corrections, etc. tags: Tutorial, CPT-AX Task, Leabra, Environment, Program, CPTAX author: Randall C. O'Reilly, Thomas Hazy email: emergent-users@grey.colorado.edu version: 8.0.4 pub_cite: 
 
@@ -4847,6 +4852,11 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Sun Sep 11 14:08:42 2016 version: 8.0.6 user: thazy file_name: <code>ax_tutorial_cptax.proj</code> <br>
+Project updated on wiki: emergent changes: add step to increase Hidden layer to 5X5 at the end - ax_tutorial_cptax.proj
+<P>
 <P>
 <P>
 <li>Wed Sep  7 20:23:59 2016 version: 8.0.5 user: thazy file_name: <code>ax_tutorial_cptax.proj</code> <br>
@@ -20855,7 +20865,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="Published on wiki: emergent page: tutorials/ax_tutorial_cptax with description: A finished version of the AX tutorial project that users can use to compare their evolving version of the project to a \"correct\" version after the CPTAX segment of the tutorial -- to tell how one is doing, make corrections, etc. tags: Tutorial, CPT-AX Task, Leabra, Environment, Program, CPTAX author: Randall C. O'Reilly, Thomas Hazy email: emergent-users@grey.colorado.edu version: 8.0.4 pub_cite: ";
+ last_change_desc="Project updated on wiki: emergent changes: add step to increase Hidden layer to 5X5 at the end - ax_tutorial_cptax.proj";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.programs;.programs.gp[0];.viewers;.viewers[0];.viewers[0].frames;.viewers[0].frames[2];.viewers[0].frames[2].panels;.viewers[0].frames[2].panels[0];.viewers[0].frames[2].panels[0].root_view;.viewers[0].frames[2].panels[0].root_view.children;.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[3];.networks[0].specs[3].children[0];.networks[0].specs[3].children[1];.networks[0].param_seqs;.networks[0].layers;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].layers[2].projections[0];.networks[0].layers[2].units;.networks[0].layers[2].unit_names;.networks[0].layers[2].laygp_data;.networks[0].weights; };
  networks {
   name="networks";
