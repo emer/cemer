@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9987
+// ta_Dump File v3.0 -- code v8.0.1.0 rev9992
 LeabraProject .projects["ax_tutorial_cptax_pfcbg"] { 
  Doc_Group @.docs = [11] {
   taDoc @["ProjectDocs"] { 
@@ -4646,8 +4646,8 @@ LeabraProject .projects["ax_tutorial_cptax_pfcbg"] {
 <title>tutorials/ax tutorial cptax pfcbg - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial_cptax_pfcbg\",\"wgTitle\":\"tutorials/ax tutorial cptax pfcbg\",\"wgCurRevisionId\":12677,\"wgRevisionId\":12677,\"wgArticleId\":2962,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial_cptax_pfcbg\",\"wgRelevantArticleId\":2962,\"wgUserId\":10,\"wgUserEditCount\":350,\"wgUserRegistration\":1184334145000,
-\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"c55fdf03bba5e2309e11c2c2545af95657d6488b+\\\\\",\"patrolToken\":\"265087c242530365689909736c0ac22157d6488b+\\\\\",\"watchToken\":\"8a98ad1d9af4a02ba41d80e088c2d07d57d6488b+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial_cptax_pfcbg\",\"wgTitle\":\"tutorials/ax tutorial cptax pfcbg\",\"wgCurRevisionId\":12677,\"wgRevisionId\":12677,\"wgArticleId\":2962,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial_cptax_pfcbg\",\"wgRelevantArticleId\":2962,\"wgUserId\":10,\"wgUserEditCount\":351,\"wgUserRegistration\":1184334145000,
+\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"57d1abde26d6258a59ebe04c5cb1fb2f57d6d11c+\\\\\",\"patrolToken\":\"33211b66c856c3a8c3310a1535474d6f57d6d11c+\\\\\",\"watchToken\":\"1f1ad9213a1c46ee9cbc9692d76b6e6957d6d11c+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -4727,12 +4727,12 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 <tr>
 <th> Updated
 </th>
-<td> 11 September 2016
+<td> 11 September 2016,  12 September 2016
 </td></tr>
 <tr>
 <th> Versions
 </th>
-<td> 8.0.6
+<td> 8.0.6,  8.0.8
 </td></tr>
 <tr>
 <th> Emergent Versions
@@ -4747,14 +4747,14 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160912051347
+Cached time: 20160912160028
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.095 seconds
-Real time usage: 2.012 seconds
+CPU time usage: 0.113 seconds
+Real time usage: 3.466 seconds
 Preprocessor visited node count: 78/1000000
 Preprocessor generated node count: 485/1000000
-Post?expand include size: 1978/2097152 bytes
+Post?expand include size: 2034/2097152 bytes
 Template argument size: 1209/2097152 bytes
 Highest expansion depth: 5/40
 Expensive parser function count: 0/100
@@ -4762,13 +4762,13 @@ Expensive parser function count: 0/100
 
 <!-- 
 Transclusion expansion time report (%,ms,calls,template)
-100.00% 1976.813      1 - -total
-100.00% 1976.813      1 - Template:PublishedProject
- 96.83% 1914.161      1 - Template:cite
-  0.20%    3.922      1 - Template:emerlink
+100.00% 3424.282      1 - -total
+100.00% 3424.282      1 - Template:PublishedProject
+ 97.40% 3335.333      1 - Template:cite
+  0.15%    4.994      1 - Template:emerlink
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2962-0!*!0!*!*!5!* and timestamp 20160912051345 and revision id 12677
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2962-0!*!0!*!*!5!* and timestamp 20160912160024 and revision id 12677
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=tutorials/ax_tutorial_cptax_pfcbg&amp;oldid=12677\">https://grey.colorado.edu/emergent/index.php?title=tutorials/ax_tutorial_cptax_pfcbg&amp;oldid=12677</a>\"					</div>
@@ -4810,7 +4810,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/tutorials/ax_tutorial_cptax_pfcbg\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax_pfcbg&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax_pfcbg&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax_pfcbg&amp;action=unwatch&amp;token=a5cc124d05717bb4423c95c78667ff9c57d6488b%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax_pfcbg&amp;action=unwatch&amp;token=a2e45532b0864d82a80cbcef1b52a64857d6d11c%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -4885,12 +4885,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		</div>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
-} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":136});
-} );</script>
-	
-
-</body></html>";
+} );</script></body></html>";
   };
   taDoc @["ProjectDoc"] {
    UserDataItem_List @*(.user_data_) {
@@ -4922,8 +4917,8 @@ mw.config.set({\"wgBackendResponseTime\":136});
 <title>tutorials/ax tutorial cptax - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial_cptax\",\"wgTitle\":\"tutorials/ax tutorial cptax\",\"wgCurRevisionId\":12635,\"wgRevisionId\":12635,\"wgArticleId\":2957,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial_cptax\",\"wgRelevantArticleId\":2957,\"wgUserId\":10,\"wgUserEditCount\":350,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,
-\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"c55fdf03bba5e2309e11c2c2545af95657d6488b+\\\\\",\"patrolToken\":\"265087c242530365689909736c0ac22157d6488b+\\\\\",\"watchToken\":\"8a98ad1d9af4a02ba41d80e088c2d07d57d6488b+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"tutorials/ax_tutorial_cptax\",\"wgTitle\":\"tutorials/ax tutorial cptax\",\"wgCurRevisionId\":12635,\"wgRevisionId\":12635,\"wgArticleId\":2957,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Thazy\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[\"PublishedProject\"],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"tutorials/ax_tutorial_cptax\",\"wgRelevantArticleId\":2957,\"wgUserId\":10,\"wgUserEditCount\":351,\"wgUserRegistration\":1184334145000,\"wgUserNewMsgRevisionId\":null,
+\"wgIsProbablyEditable\":!0,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set([]);});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"d2f0c7b21624dce237b5f4adf5a58c2557d6d118+\\\\\",\"patrolToken\":\"9ea1aec21e7904c565ba091c7e8cb39957d6d118+\\\\\",\"watchToken\":\"311aaa22a7f33954374ad448b8ceb89b57d6d118+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -5086,7 +5081,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/tutorials/ax_tutorial_cptax\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=unwatch&amp;token=ece9818bd68c531973428e1b367184da57d6488b%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=tutorials/ax_tutorial_cptax&amp;action=unwatch&amp;token=031a3280315bccb96bb82ae7ca389c1e57d6d118%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -5161,7 +5156,12 @@ Transclusion expansion time report (%,ms,calls,template)
 		</div>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
-} );</script></body></html>";
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":179});
+} );</script>
+	
+
+</body></html>";
   };
   taDoc @["Overview"] {
    UserDataItem_List @*(.user_data_) {
@@ -7886,6 +7886,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     last_sort_spec {
      name="last_sort_spec";
@@ -8444,6 +8445,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     last_sort_spec {
      name="last_sort_spec";
@@ -9002,6 +9004,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     last_sort_spec {
      name="last_sort_spec";
@@ -9560,6 +9563,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     last_sort_spec {
      name="last_sort_spec";
@@ -9740,6 +9744,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     last_sort_spec {
      name="last_sort_spec";
@@ -9850,6 +9855,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     last_sort_spec {
      name="last_sort_spec";
@@ -10800,7 +10806,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
      };
      EditMbrItem @[8] {
       label="matrix_cons_go_trace";
-      desc=" parameters for trace-based learning <br>  otr lrate: [Default: 0.3]  learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace<br>  otr pos da: [Default: 0.9]  learning rate multiplier for otr changes with positive dopamine signals -- 1 = symmetric with negative da, < 1 = do less learning for positive da than negative da -- works better that way<br>  otr neg da:  learning rate multiplier for otr changes with negative dopamine signals -- 1 = symmetric with positive da, < 1 = do less learning for negative da than positivee da<br>  otr nogo veto: [Default: true]  nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo) -- this is very beneficial -- see nogo_max for scaling of this effect<br>  max ru act:  max receving activation -- if > 0 then learning decreases in propoortion to distance to this activation<br>  nogo max: [Default: 0.3]  nogo activation (conveyed by deep_raw_net) at which the otr_nogo_veto effect is maximal -- anything above this activation has full veto effect, and anything below this value has a proportional veto effect, down to 0 at 0 nogo activation<br>  da reset tr: [Default: 0.2;0]  amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace<br>  ach reset thr: [Default: 0.5]  threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning";
+      desc=" parameters for trace-based learning <br>  otr nogo veto: [Default: true]  nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo) -- this is very beneficial -- see nogo_max for scaling of this effect<br>  nogo max: [Default: 0.3]  nogo activation (conveyed by deep_raw_net) at which the otr_nogo_veto effect is maximal -- anything above this activation has full veto effect, and anything below this value has a proportional veto effect, down to 0 at 0 nogo activation<br>  ach reset thr: [Default: 0.5]  threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning";
       cust_desc=0;
       base=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["BgLrnCons"].children["MatrixConsGo"]$;
       mbr=MSNConSpec::trace;
@@ -10840,7 +10846,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
      };
      EditMbrItem @[10] {
       label="gpi_units_gpi";
-      desc=" parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold<br>  net gain: [Default: 3]  extra netinput gain factor to compensate for reduction in netinput from subtracting away nogo -- this is IN ADDITION to adding the nogo factor as an extra gain: net = (net_gain + nogo) * (go_in - nogo * nogo_in)<br>  nogo: [Default: 1;0.1]  how much to weight NoGo inputs relative to Go inputs (which have an implied weight of 1.0)<br>  gate thr: [Default: 0.2]  threshold applied to activation to drive gating -- when any unit activation gets above this threshold, it sends the activation through sending projections to the thal field in Matrix units, otherwise it sends a 0<br>  thr act: [Default: true]  apply threshold to unit act_eq activations (i.e., turn off units that are below threshold) -- this is what is sent to the InvertUnitSpec, so we effectively threshold the gating output<br>  min thal: [Default: 0.2]  minimum thal value to send to thal on layers we project to -- range between gate_thr and 1.0 is mapped into min_thal:1.0 range -- e.g., setting to 1.0 will effectively produce binary gating outputs -- set to 0 (or < gate_thr) to retain raw gate_thr to 1.0 range";
+      desc=" parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold<br>  trl refract:  do not allow multiple gating events within a single trial<br>  net gain: [Default: 3]  extra netinput gain factor to compensate for reduction in netinput from subtracting away nogo -- this is IN ADDITION to adding the nogo factor as an extra gain: net = (net_gain + nogo) * (go_in - nogo * nogo_in)<br>  nogo: [Default: 1;0.1]  how much to weight NoGo inputs relative to Go inputs (which have an implied weight of 1.0)<br>  gate thr: [Default: 0.2]  threshold applied to activation to drive gating -- when any unit activation gets above this threshold, it sends the activation through sending projections to the thal field in Matrix units, otherwise it sends a 0<br>  thr act: [Default: true]  apply threshold to unit act_eq activations (i.e., turn off units that are below threshold) -- this is what is sent to the InvertUnitSpec, so we effectively threshold the gating output<br>  min thal: [Default: 0.2]  minimum thal value to send to thal on layers we project to -- range between gate_thr and 1.0 is mapped into min_thal:1.0 range -- e.g., setting to 1.0 will effectively produce binary gating outputs -- set to 0 (or < gate_thr) to retain raw gate_thr to 1.0 range";
       cust_desc=0;
       base=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMUnits"].children["GPiUnits"]$$;
       mbr=GPiInvUnitSpec::gpi;
@@ -11286,6 +11292,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
@@ -19322,6 +19329,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
@@ -27013,6 +27021,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
@@ -27157,6 +27166,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
@@ -27279,6 +27289,7 @@ Published on wiki: emergent page: ax_tutorial with description: Blank version of
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
+    row_height=0;
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
@@ -40648,7 +40659,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: changed unit names to be stored on layer's unit name object";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.programs;.programs.gp[0];.viewers;.viewers[0];.viewers[0].frames;.viewers[0].frames[2];.viewers[0].frames[2].panels;.viewers[0].frames[2].panels[0];.viewers[0].frames[2].panels[0].root_view;.viewers[0].frames[2].panels[0].root_view.children;.networks;.networks[0];.networks[0].spec_tables;.networks[0].specs[0];.networks[0].specs[0].children[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[3];.networks[0].specs[3].children[0];.networks[0].specs[3].children[1];.networks[0].param_seqs;.networks[0].layers;.networks[0].layers[0];.networks[0].layers[0].units;.networks[0].layers[2];.networks[0].layers[2].projections;.networks[0].layers[2].units;.networks[0].layers.gp[2];.networks[0].layers.gp[2][0];.networks[0].layers.gp[2][0].projections;.networks[0].layers.gp[2][1];.networks[0].layers.gp[2][1].projections;.networks[0].weights; };
+ tree_state{ .; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -43108,7 +43119,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_P;
 	  ru_act_var=ACT_P;
 	  learn_rule=DA_HEBB_VS;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=1;
 	  dip_da_gain=1;
 	 };
@@ -43157,7 +43169,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_P;
 	  ru_act_var=ACT_P;
 	  learn_rule=DA_HEBB_VS;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=1;
 	  dip_da_gain=1;
 	 };
@@ -43206,7 +43219,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_P;
 	  ru_act_var=ACT_P;
 	  learn_rule=DA_HEBB_VS;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=0.2;
 	  dip_da_gain=1;
 	 };
@@ -43246,7 +43260,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	su_act_var=ACT_P;
 	ru_act_var=ACT_P;
 	learn_rule=DA_HEBB_VS;
-	trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	burst_da_gain=1;
 	dip_da_gain=0.2;
        };
@@ -43304,7 +43319,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_P;
 	  ru_act_var=ACT_P;
 	  learn_rule=TRACE_NO_THAL_VS;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=0.2;
 	  dip_da_gain=1;
 	 };
@@ -43353,7 +43369,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_P;
 	  ru_act_var=ACT_P;
 	  learn_rule=TRACE_NO_THAL_VS;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=1;
 	  dip_da_gain=1;
 	 };
@@ -43402,7 +43419,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_P;
 	  ru_act_var=ACT_P;
 	  learn_rule=TRACE_NO_THAL_VS;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=1;
 	  dip_da_gain=1;
 	 };
@@ -43442,7 +43460,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	su_act_var=ACT_P;
 	ru_act_var=ACT_P;
 	learn_rule=TRACE_NO_THAL_VS;
-	trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	burst_da_gain=1;
 	dip_da_gain=0.2;
        };
@@ -44551,7 +44570,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 default_val=1;
 	 interpolate=1;
 	};
-	gpi {net_gain=3: nogo=1: gate_thr=0.2: thr_act=1: min_thal=0.2: tot_gain=4: thal_rescale=1: };
+	gpi {trl_refract=1: net_gain=3: nogo=1: gate_thr=0.2: thr_act=1: min_thal=0.2: tot_gain=4: thal_rescale=1: };
        };
        LeabraUnitSpec @["GPeNoGoUnits"] {
 	name="GPeNoGoUnits";
@@ -44893,6 +44912,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   data_flags=SAVE_ROWS|AUTO_CALC;
 	   auto_load=NO_AUTO_LOAD;
 	   auto_load_file=;
+	   row_height=0;
 	   keygen 4 0=0;
 	   row_indexes {
 	    name="row_indexes";
@@ -45078,6 +45098,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 data_flags=SAVE_ROWS|AUTO_CALC;
 	 auto_load=NO_AUTO_LOAD;
 	 auto_load_file=;
+	 row_height=0;
 	 keygen 4 0=0;
 	 row_indexes {
 	  name="row_indexes";
@@ -45281,6 +45302,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   data_flags=SAVE_ROWS|AUTO_CALC;
 	   auto_load=NO_AUTO_LOAD;
 	   auto_load_file=;
+	   row_height=0;
 	   keygen 4 0=0;
 	   row_indexes {
 	    name="row_indexes";
@@ -45466,6 +45488,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 data_flags=SAVE_ROWS|AUTO_CALC;
 	 auto_load=NO_AUTO_LOAD;
 	 auto_load_file=;
+	 row_height=0;
 	 keygen 4 0=0;
 	 row_indexes {
 	  name="row_indexes";
@@ -45770,7 +45793,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_EQ;
 	  ru_act_var=ACT_EQ;
 	  learn_rule=TRACE_THAL;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=1;
 	  dip_da_gain=1;
 	 };
@@ -45819,7 +45843,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  su_act_var=ACT_EQ;
 	  ru_act_var=ACT_EQ;
 	  learn_rule=TRACE_THAL;
-	  trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	  trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	  tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	  burst_da_gain=1;
 	  dip_da_gain=1;
 	 };
@@ -45859,7 +45884,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	su_act_var=ACT_EQ;
 	ru_act_var=ACT_EQ;
 	learn_rule=TRACE_THAL;
-	trace {otr_lrate=0.3: otr_pos_da=0.9: otr_neg_da=1: otr_nogo_veto=1: max_ru_act=0.8: nogo_max=0.3: da_reset_tr=0: ach_reset_thr=0.5: };
+	trace {otr_nogo_veto=1: nogo_max=0.3: ach_reset_thr=0.5: };
+	tr_thal {gate_go_pos=1: gate_go_neg=1: gate_nogo_pos=0.1: gate_nogo_neg=1: not_go_pos=0.8: not_go_neg=0.2: not_nogo_pos=0.01: not_nogo_neg=0.02: };
 	burst_da_gain=1;
 	dip_da_gain=1;
        };
@@ -46927,6 +46953,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 data_flags=SAVE_ROWS|AUTO_CALC;
 	 auto_load=NO_AUTO_LOAD;
 	 auto_load_file=;
+	 row_height=0;
 	 keygen 4 0=0;
 	 row_indexes {
 	  name="row_indexes";
@@ -47100,6 +47127,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 data_flags=SAVE_ROWS|AUTO_CALC;
 	 auto_load=NO_AUTO_LOAD;
 	 auto_load_file=;
+	 row_height=0;
 	 keygen 4 0=0;
 	 row_indexes {
 	  name="row_indexes";
@@ -47264,6 +47292,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        data_flags=SAVE_ROWS|AUTO_CALC;
        auto_load=NO_AUTO_LOAD;
        auto_load_file=;
+       row_height=0;
        keygen 4 0=0;
        row_indexes {
 	name="row_indexes";
@@ -47369,7 +47398,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @["Input"] {
      name="Input";
      desc=;
-     flags=ABS_POS;
+     flags=SAVE_UNIT_NAMES|ABS_POS;
      layer_type=INPUT;
      pos {x=0: y=0: z=2: };
      pos_abs {x=0: y=0: z=2: };
@@ -47430,9 +47459,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      [3 2] "A";"B";"C";"X";"Y";"Z";     };
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1583326;
-     acts_p_avg=0.1583326;
-     acts_p_avg_eff=0.1583326;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -47537,16 +47566,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.278678;
-     acts_p_avg=0.2810358;
-     acts_p_avg_eff=0.2810358;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
     LeabraLayer @["Output"] {
      name="Output";
      desc=;
-     flags=ABS_POS;
+     flags=SAVE_UNIT_NAMES|ABS_POS;
      layer_type=TARGET;
      pos {x=5: y=0: z=2: };
      pos_abs {x=5: y=0: z=2: };
@@ -47630,9 +47659,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      [2 1] "N";"T";     };
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.3909669;
-     acts_p_avg=0.4749859;
-     acts_p_avg_eff=0.4749859;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
     };
@@ -47714,8 +47743,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Hypothalamic area LHA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=0.4797734;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["PVLayers"]$$: };
       adapt_gi=1;
@@ -47772,8 +47801,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Hypothalamic area LHA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["PVLayers"]$: };
       adapt_gi=1;
@@ -47824,8 +47853,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Hypothalamic area LHA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["PVLayers"]$: };
       adapt_gi=1;
@@ -47876,8 +47905,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Hypothalamic area LHA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["PVLayers"]$: };
       adapt_gi=1;
@@ -47932,8 +47961,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Hypothalamic area LHA";
       voxel_fill_pct=1;
-      acts_m_avg=0.4773771;
-      acts_p_avg=0.4773771;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["PVLayers"]$: };
       adapt_gi=1;
@@ -48021,8 +48050,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Hypothalamic area LHA";
       voxel_fill_pct=1;
-      acts_m_avg=0.2664533;
-      acts_p_avg=0.2664533;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=ExtRewLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["ExtRewLayer"]$$: };
       adapt_gi=1;
@@ -48158,8 +48187,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala";
       voxel_fill_pct=1;
-      acts_m_avg=0.4134966;
-      acts_p_avg=0.4095413;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"]$$: };
       adapt_gi=1;
@@ -48287,8 +48316,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala";
       voxel_fill_pct=1;
-      acts_m_avg=0.6127581;
-      acts_p_avg=0.6132722;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"]$: };
       adapt_gi=1;
@@ -48412,8 +48441,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala";
       voxel_fill_pct=1;
-      acts_m_avg=2.774052e-5;
-      acts_p_avg=4.526623e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"].children["AmygExtLayer"]$$: };
       adapt_gi=1;
@@ -48501,8 +48530,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala Central Nucleus CNA";
       voxel_fill_pct=1;
-      acts_m_avg=0.416867;
-      acts_p_avg=0.6079084;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"]$: };
       adapt_gi=1;
@@ -48630,8 +48659,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"]$: };
       adapt_gi=1;
@@ -48773,8 +48802,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"].children["AmygExtLayer"]$: };
       adapt_gi=1;
@@ -48862,8 +48891,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Amygdala Central Nucleus CNA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["AmygLayer"]$: };
       adapt_gi=1;
@@ -48979,8 +49008,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=0.1332852;
-      acts_p_avg=0.1332852;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSPatchLayer"]$$: };
       adapt_gi=1;
@@ -49087,8 +49116,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=0.01574029;
-      acts_p_avg=0.01585878;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSPatchLayer"]$: };
       adapt_gi=1;
@@ -49195,8 +49224,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSPatchLayer"]$: };
       adapt_gi=1;
@@ -49303,8 +49332,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSPatchLayer"]$: };
       adapt_gi=1;
@@ -49411,8 +49440,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSMatrixLayer"]$$: };
       adapt_gi=1;
@@ -49518,8 +49547,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSMatrixLayer"]$: };
       adapt_gi=1;
@@ -49626,8 +49655,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSMatrixLayer"]$: };
       adapt_gi=1;
@@ -49733,8 +49762,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Nucleus Accumbens NAc";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["VSMatrixLayer"]$: };
       adapt_gi=1;
@@ -49813,8 +49842,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Ventral Tegmental Area VTA";
       voxel_fill_pct=1;
-      acts_m_avg=0.07156358;
-      acts_p_avg=0.09699901;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["DALayers"]$$: };
       adapt_gi=1;
@@ -49970,8 +49999,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Ventral Tegmental Area VTA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=0.4286693;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["DALayers"]$: };
       adapt_gi=1;
@@ -50204,8 +50233,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Lateral Habenula LHB";
       voxel_fill_pct=1;
-      acts_m_avg=-0.3577479;
-      acts_p_avg=-0.3637476;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["DALayers"]$: };
       adapt_gi=1;
@@ -50275,8 +50304,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Ventral Tegmental Area VTA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=1.079281e-5;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["DALayers"]$: };
       adapt_gi=1;
@@ -50418,8 +50447,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Ventral Tegmental Area VTA";
       voxel_fill_pct=1;
-      acts_m_avg=1.079281e-5;
-      acts_p_avg=-0.3638806;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["DALayers"]$: };
       adapt_gi=1;
@@ -50506,8 +50535,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Ventral Tegmental Area VTA";
       voxel_fill_pct=1;
-      acts_m_avg=0.2660536;
-      acts_p_avg=0.1330041;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["DALayers"]$: };
       adapt_gi=1;
@@ -50588,8 +50617,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Substantia Nigra";
       voxel_fill_pct=1;
-      acts_m_avg=0.4929803;
-      acts_p_avg=0.4930489;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["GPiLayer"].children["GPeNoGoLayer"]$: };
       adapt_gi=1;
@@ -50681,8 +50710,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Substantia Nigra";
       voxel_fill_pct=1;
-      acts_m_avg=0.2966401;
-      acts_p_avg=0.2822765;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["GPiLayer"]$: };
       adapt_gi=1;
@@ -50896,8 +50925,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Caudate Body";
       voxel_fill_pct=1;
-      acts_m_avg=0.1915375;
-      acts_p_avg=0.191567;
+      acts_m_avg=0.05;
+      acts_p_avg=0.05;
       acts_p_avg_eff=0.05;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["MatrixLayer"]$: };
       adapt_gi=1;
@@ -51111,8 +51140,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Caudate Body";
       voxel_fill_pct=1;
-      acts_m_avg=0.16506;
-      acts_p_avg=0.1595114;
+      acts_m_avg=0.05;
+      acts_p_avg=0.05;
       acts_p_avg_eff=0.05;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["MatrixLayer"]$: };
       adapt_gi=1;
@@ -51219,8 +51248,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=;
       voxel_fill_pct=1;
-      acts_m_avg=0.4771422;
-      acts_p_avg=0.4773771;
+      acts_m_avg=0.25;
+      acts_p_avg=0.25;
       acts_p_avg_eff=0.25;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PVLV"]["PVLVLayers"].children["PVLayers"]$: };
       adapt_gi=1;
@@ -51291,8 +51320,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/Caudate Body";
       voxel_fill_pct=1;
-      acts_m_avg=0.6059579;
-      acts_p_avg=0.6062504;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["PatchLayer"]$$: };
       adapt_gi=1;
@@ -51437,8 +51466,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/BA9";
       voxel_fill_pct=1;
-      acts_m_avg=0.220488;
-      acts_p_avg=0.2244726;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["PFCLayer"]$: };
       adapt_gi=1;
@@ -51515,8 +51544,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=".*/.*/.*/.*/BA9";
       voxel_fill_pct=1;
-      acts_m_avg=0.1197847;
-      acts_p_avg=0.1197551;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["PFCLayer"]$: };
       adapt_gi=1;
@@ -51622,8 +51651,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=;
       voxel_fill_pct=1;
-      acts_m_avg=0.03466102;
-      acts_p_avg=0.0381818;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["PFCLayer"].children["PFCtrcLayer"]$$: };
       adapt_gi=1;
@@ -51730,8 +51759,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=;
       voxel_fill_pct=1;
-      acts_m_avg=0.1954433;
-      acts_p_avg=0.195588;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["PFCLayer"]$: };
       adapt_gi=1;
@@ -51803,8 +51832,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       gp_unit_names_4d=0;
       brain_area=;
       voxel_fill_pct=1;
-      acts_m_avg=0.07109818;
-      acts_p_avg=0.07109817;
+      acts_m_avg=0.2;
+      acts_p_avg=0.2;
       acts_p_avg_eff=0.2;
       spec {type=LeabraLayerSpec: spec=$.projects["ax_tutorial_cptax_pfcbg"].networks["Network_1"].specs.gp["PBWM"]["PBWMLayers"].children["PFCLayer"]$: };
       adapt_gi=1;
