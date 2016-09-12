@@ -29,6 +29,7 @@ void GPiMiscSpec::Initialize() {
 }
 
 void GPiMiscSpec::Defaults_init() {
+  trl_refract = true;
   net_gain = 3.0f;
   nogo = 1.0f;
   gate_thr = 0.2f;
@@ -75,9 +76,6 @@ bool GPiInvUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
 void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   int nt = net->n_thrs_built;
   int flat_idx = u->flat_idx;
-#ifdef CUDA_COMPILE
-  nt = 1;                       // cuda is always 1 thread for this..
-#endif
 
   // note: REQUIRES NetinPerPrjn!  Set automatically in CheckConfig
   float go_in = 0.0f;
@@ -152,14 +150,23 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   if(net->quarter == 0 && qtr_cyc <= 1) { // reset
     u->thal_cnt = 0.0f;
   }
+
+  bool refract = false;
+  if(gpi.trl_refract && (u->thal_cnt > 0.0f))
+    refract = true;
   
   if(gate_qtr && qtr_cyc == gate_cyc) {
-    if(gpi.thr_act) {
-      if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
-      snd_val = u->act_eq;
+    if(refract) {               // can't fire again!
+      snd_val = 0.0f;
     }
     else {
-      snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
+      if(gpi.thr_act) {
+        if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
+        snd_val = u->act_eq;
+      }
+      else {
+        snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
+      }
     }
 
     if(snd_val > 0.0f && gpi.min_thal > gpi.gate_thr) {

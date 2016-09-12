@@ -32,13 +32,8 @@ class E_API MSNTraceSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for trace-based learning in the MSN's
 INHERITED(SpecMemberBase)
 public:
-  float         otr_lrate;      // #MIN_0 #DEF_0.3 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
-  float         otr_pos_da;     // #MIN_0 #DEF_0.9 learning rate multiplier for otr changes with positive dopamine signals -- 1 = symmetric with negative da, < 1 = do less learning for positive da than negative da -- works better that way
-  float         otr_neg_da;     // #MIN_0 learning rate multiplier for otr changes with negative dopamine signals -- 1 = symmetric with positive da, < 1 = do less learning for negative da than positivee da
   bool          otr_nogo_veto;  // #AKA_otr_no_nogo #DEF_true nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo) -- this is very beneficial -- see nogo_max for scaling of this effect
-  float         max_ru_act;     // max receving activation -- if > 0 then learning decreases in propoortion to distance to this activation
   float         nogo_max;       // #DEF_0.3 #CONDSHOW_ON_otr_nogo_veto nogo activation (conveyed by deep_raw_net) at which the otr_nogo_veto effect is maximal -- anything above this activation has full veto effect, and anything below this value has a proportional veto effect, down to 0 at 0 nogo activation
-  float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
@@ -46,7 +41,35 @@ public:
   TA_SIMPLE_BASEFUNS(MSNTraceSpec);
 protected:
   SPEC_DEFAULTS;
-  void  UpdateAfterEdit_impl() override;
+  // void  UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(MSNTraceThalGains);
+
+class E_API MSNTraceThalGains : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gains for trace-based thalamic gated learning in the MSN's
+INHERITED(SpecMemberBase)
+public:
+  float         gate_go_pos;    // strength of gated, Go (D1), positive dopamine
+  float         gate_go_neg;    // strength of gated, Go (D1), negative dopamine
+  float         gate_nogo_pos;  // strength of gated, NoGo (D1), positive dopamine
+  float         gate_nogo_neg;  // strength of gated, NoGo (D1), negative dopamine
+  float         not_go_pos;     // strength of not-gated, Go (D1), positive dopamine
+  float         not_go_neg;     // strength of not-gated, Go (D1), negative dopamine
+  float         not_nogo_pos;   // strength of not-gated, NoGo (D1), positive dopamine
+  float         not_nogo_neg;   // strength of not-gated, NoGo (D1), negative dopamine
+
+  
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(MSNTraceThalGains);
+protected:
+  SPEC_DEFAULTS;
+  // void  UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -59,9 +82,10 @@ class E_API MSNConSpec : public LeabraConSpec {
   // Learning of striatal medium spiny neurons input (afferent) connections -- must have an MSNUnitSpec on recv neuron -- based on dopamine, sender * receiver activation product, and (optionally) thal gating activation signal -- supports a trace mechanism which accumulates an ongoing synaptic trace over time, which is then multiplied by a later dopamine da_p value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = da_p * tr; tr = [thal] * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
 INHERITED(LeabraConSpec)
 public:
-  enum MtxConVars {
+  enum MSNConVars {
     NTR = N_LEABRA_CON_VARS,    // new trace -- drives updates to trace value -- thal * ru * su
-    TR,                         // current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
+    TR,                         // current ongoing trace of activations using ru * su, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
+    N_MSN_CON_VARS,
   };
 
   enum LearnActVal {            // activation value to use for learning
@@ -75,7 +99,6 @@ public:
     DA_HEBB,                    // immediate use of dopamine * send * recv activation triplet to drive learning
     DA_HEBB_VS,                 // ventral striatum version of DA_HEBB, which uses MAX(deep_lrn, ru_act) for recv term in dopamine * send * recv activation triplet to drive learning
     TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine, and the amount of dopamine and/or any above-threshold ach from TAN units resets the trace
-    TRACE_THAL_SEP,             // separate trace and dwt functions -- trace called when gating actually occurs, and dwt called later with da, etc
     TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
     TRACE_NO_THAL_VS,           // ventral striatum version of TRACE_NO_THAL, which uses MAX(deep_lrn, ru_act) for recv term to set trace
     WM_DEPENDENT,               // learning depends on a working memory trace.. 
@@ -84,7 +107,8 @@ public:
   LearnActVal        su_act_var;     // what variable to use for sending unit activation
   LearnActVal        ru_act_var;     // what variable to use for recv unit activation
   LearningRule       learn_rule;     // what kind of learning rule to use
-  MSNTraceSpec       trace;          // #AKA_matrix #CONDSHOW_ON_learn_rule:TRACE_THAL,TRACE_THAL_SEP,TRACE_NO_THAL parameters for trace-based learning 
+  MSNTraceSpec       trace;          // #AKA_matrix #CONDSHOW_ON_learn_rule:TRACE_THAL,TRACE_NO_THAL,TRACE_NO_THAL_VS parameters for trace-based learning 
+  MSNTraceThalGains  tr_thal;        // #CONDSHOW_ON_learn_rule:TRACE_THAL gain parameters for trace-based thalamic-gated learning 
   float              burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float              dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
 
@@ -157,48 +181,66 @@ public:
   // #IGNORE
 
   inline void C_Compute_dWt_Trace_Thal
-    (float& dwt, float& ntr, float& tr, const float otr_lr, const float da_p,
+    (float& dwt, float& ntr, float& tr, const float da_p,
      const float ach, const bool d2r, const float ru_thal, const float ru_act,
      const float su_act, const float lrate_eff, const float ru_deep_raw_net) {
 
     const float da = GetDa(da_p, d2r);
-    if(tr >= 0.0f) {          // gated trace -- gets full bidir learning
-      dwt += lrate_eff * da * tr;
-    }
-    else {                    // otr
-      if(da_p < 0.0f) {       // negative dopamine -- an error
-        dwt += trace.otr_neg_da * lrate_eff * da * tr;
+    const bool pos_da = (da_p > 0.0f); // raw da
+    if(da != 0.0f) {
+      if(tr >= 0.0f) {          // gated trace
+        if(d2r) {               // nogo
+          if(pos_da) {
+            dwt += tr_thal.gate_nogo_pos * lrate_eff * da * tr;
+          }
+          else {
+            dwt += tr_thal.gate_nogo_neg * lrate_eff * da * tr;
+          }
+        }
+        else {                  // go
+          if(pos_da) {
+            dwt += tr_thal.gate_go_pos * lrate_eff * da * tr;
+          }
+          else {
+            dwt += tr_thal.gate_go_neg * lrate_eff * da * tr;
+          }
+        }
       }
-      else {
-        dwt += trace.otr_pos_da * lrate_eff * da * tr;
+      else {                    // not-gated trace
+        if(d2r) {               // nogo
+          if(pos_da) {
+            dwt += tr_thal.not_nogo_pos * lrate_eff * da * tr;
+          }
+          else {
+            dwt += tr_thal.not_nogo_neg * lrate_eff * da * tr;
+          }
+        }
+        else {                  // go
+          if(pos_da) {
+            dwt += tr_thal.not_go_pos * lrate_eff * da * tr;
+          }
+          else {
+            dwt += tr_thal.not_go_neg * lrate_eff * da * tr;
+          }
+        }
       }
     }
 
     if(ach >= trace.ach_reset_thr) {
       tr = 0.0f;
     }
-    else if(trace.da_reset_tr > 0.0f) {
-      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
-      if(reset_factor < 0.0f) reset_factor = 0.0f;
-      tr *= reset_factor;
-    }
 
-    if(ru_thal > 0.0f) {              // gated
-      if(trace.max_ru_act > 0.0f) {
-        ntr = (trace.max_ru_act - ru_act) * su_act;
-      }
-      else {
-        ntr = ru_act * su_act;
-      }
+    if(ru_thal > 0.0f) {              // gated, always gets 1-msn value
+      ntr = (1.0f - ru_act) * su_act;
     }
-    else {                      // non-gated, do otr: opposite / other / opponent trace
-      if(trace.otr_nogo_veto) {
+    else {                      // not-gated
+      if(!d2r && trace.otr_nogo_veto) {
         float nogo_factor = 1.0f - (ru_deep_raw_net / trace.nogo_max);
         if(nogo_factor < 0.0f) nogo_factor = 0.0f;
-        ntr = nogo_factor * otr_lr * ru_act * su_act;
+        ntr = -nogo_factor * ru_act * su_act;
       }
       else {
-        ntr = otr_lr * ru_act * su_act;
+        ntr = -ru_act * su_act; // negative sign indicates not-gated, uses raw msn act
       }
     }
 
@@ -207,50 +249,6 @@ public:
     tr += ntr - decay_factor * tr;
   }
   // #IGNORE
-
-  inline void C_Compute_dWt_Trace_Thal_Sep_dWt
-    (float& dwt, float& tr, const float da_p, const float ach, const bool d2r,
-     const float lrate_eff) {
-
-    const float da = GetDa(da_p, d2r);
-    if(tr >= 0.0f) {          // gated trace -- gets full bidir learning
-      dwt += lrate_eff * da * tr;
-    }
-    else {                    // otr
-      if(da_p < 0.0f) {       // negative dopamine -- an error
-        dwt += lrate_eff * da * tr;
-      }
-      else {
-        dwt += trace.otr_pos_da * lrate_eff * da * tr;
-      }
-    }
-
-    if(ach >= trace.ach_reset_thr) {
-      tr = 0.0f;
-    }
-    else if(trace.da_reset_tr > 0.0f) {
-      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
-      if(reset_factor < 0.0f) reset_factor = 0.0f;
-      tr *= reset_factor;
-    }
-  }
-  // #IGNORE -- dwt component of separate trace_thal
-
-  inline void C_Compute_Trace_Thal_Sep_Tr
-    (float& ntr, float& tr, const float otr_lr, const float ru_thal,
-     const float ru_act, const float su_act, const float ru_deep_raw_net) {
-    if(ru_thal > 0.0f) {              // gated
-      ntr = ru_act * su_act;
-    }
-    else {                      // non-gated, do otr: opposite / other / opponent trace
-      ntr = otr_lr * ru_act * su_act; // otr_lr already takes into nogo_veto into account
-    }
-
-    float decay_factor = fabs(ntr); // decay is function of new trace
-    if(decay_factor > 1.0f) decay_factor = 1.0f;
-    tr += ntr - decay_factor * tr;
-  }
-  // #IGNORE trace component of separate trace_thal
 
   inline void C_Compute_dWt_Trace_NoThal
     (float& dwt, float& ntr, float& tr, const float da_p, const float ach, const bool d2r,
@@ -261,11 +259,6 @@ public:
 
     if(ach >= trace.ach_reset_thr) {
       tr = 0.0f;
-    }
-    else if(trace.da_reset_tr > 0.0f) {
-      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
-      if(reset_factor < 0.0f) reset_factor = 0.0f;
-      tr *= reset_factor;
     }
     
     ntr = ru_act * su_act;
@@ -285,11 +278,6 @@ public:
     
     if(ach >= trace.ach_reset_thr) {
       tr = 0.0f;
-    }
-    else if(trace.da_reset_tr > 0.0f) {
-      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
-      if(reset_factor < 0.0f) reset_factor = 0.0f;
-      tr *= reset_factor;
     }
     
     ntr = fmaxf(ru_act, deep_lrn) * su_act;
@@ -329,8 +317,6 @@ public:
     float* ntrs = cg->OwnCnVar(NTR);
     float* trs = cg->OwnCnVar(TR);
     
-    const float otr_lr = -trace.otr_lrate;
-    
     const int sz = cg->size;
     switch(learn_rule) {
     case DA_HEBB: {
@@ -367,23 +353,9 @@ public:
         }
         const float ru_act = GetActVal(ru, ru_act_var);
         const float ach = q4 ? ru->ach : 0.0f;
-        C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
+        C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], 
                         ru->da_p, ach, d2r, ru->thal_cnt, ru_act, su_act, lrate_eff,
                                  ru->deep_raw_net);
-      }
-      break;
-    }
-    case TRACE_THAL_SEP: {
-      for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-        float lrate_eff = clrate;
-        if(deep_on) {
-          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
-        }
-        const float ru_act = GetActVal(ru, ru_act_var);
-        const float ach = q4 ? ru->ach : 0.0f;
-        C_Compute_dWt_Trace_Thal_Sep_dWt(dwts[i], trs[i], ru->da_p, ach, d2r,
-                                         lrate_eff);
       }
       break;
     }
@@ -422,28 +394,6 @@ public:
     }
     }
   }
-
-  inline void Compute_Trace_Thal(LeabraConGroup* rcg, LeabraNetwork* net, int thr_no) {
-    if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraUnitVars* ru = (LeabraUnitVars*)rcg->ThrOwnUnVars(net, thr_no);
-
-    float otr_lr = -trace.otr_lrate;
-    if(trace.otr_nogo_veto) {
-      float nogo_factor = 1.0f - (ru->deep_raw_net / trace.nogo_max);
-      if(nogo_factor < 0.0f) nogo_factor = 0.0f;
-      otr_lr *= nogo_factor;
-    }
-    
-    const int sz = rcg->size;
-    for(int i=0; i<sz; i++) {
-      LeabraUnitVars* su = (LeabraUnitVars*)rcg->UnVars(i,net);
-      C_Compute_Trace_Thal_Sep_Tr
-        (rcg->PtrCn(i,NTR,net), rcg->PtrCn(i,TR,net), otr_lr, ru->thal_cnt, ru->act_eq,
-         su->act_eq, ru->deep_raw_net);
-    }
-  }
-  // compute trace at time of gating -- IMPORTANT: receiver based!!
-
   
   bool  CheckConfig_RecvCons(Projection* prjn, bool quiet=false) override;
   
