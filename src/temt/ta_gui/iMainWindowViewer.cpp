@@ -2564,19 +2564,19 @@ void iMainWindowViewer::ViewReset() {
 
 void iMainWindowViewer::viewIncrFontSize() {
   tabMisc::root->global_font_incr_decr += 1;
-  taMisc::font_size += 1;
+  taMisc::font_sizes.labels += 1;
   taiM->InitMetrics(true);
   viewRefresh();
-  taMisc::Info("font size is now:", String(taMisc::font_size));
+  taMisc::Info("font size is now:", String(taMisc::font_sizes.labels));
 }
 
 void iMainWindowViewer::viewDecrFontSize() {
   tabMisc::root->global_font_incr_decr -= 1;
-  taMisc::font_size -= 1;
-  if(taMisc::font_size < 4) taMisc::font_size = 4;
+  taMisc::font_sizes.labels -= 1;
+  if(taMisc::font_sizes.labels < 4) taMisc::font_sizes.labels = 4;
   taiM->InitMetrics(true);
   viewRefresh();
-  taMisc::Info("font size is now:", String(taMisc::font_size));
+  taMisc::Info("font size is now:", String(taMisc::font_sizes.labels));
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {

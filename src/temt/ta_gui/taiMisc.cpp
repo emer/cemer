@@ -292,7 +292,7 @@ void taiMisc::InitMetrics(bool reinit) {
 
   // if (!reinit) {
     // set up the initial font from (already loaded) Settings
-    QFont font(taMisc::font_name, taMisc::font_size);
+    QFont font(taMisc::font_names.general, taMisc::font_sizes.labels);
     //TODO: we should probably put practical lower/upper limits on font sizes
     qApp->setFont(font);
 
@@ -331,14 +331,14 @@ void taiMisc::InitMetrics(bool reinit) {
   mtext_ht[2] = resizeByMainFont(26);
 
   // control sizes -- depend on size of default font
-  if (taMisc::font_size <= 10) {
+  if (taMisc::font_sizes.labels <= 10) {
     // Small
     // mbutton_ht[0] = 20; mbutton_ht[1] = 22; mbutton_ht[2] = 23;
     // mlabel_ht[0] = 17; mlabel_ht[1] = 19; mlabel_ht[2] = 20;
     // mtext_ht[0] = 19; mtext_ht[1] = 21; mtext_ht[2] = 22;
     currentSizeSpec = sizSmall;
   }
-  else if (taMisc::font_size > 13) {
+  else if (taMisc::font_sizes.labels > 13) {
     // Big
     // mbutton_ht[0] = 24; mbutton_ht[1] = 27; mbutton_ht[2] = 30;
     // mlabel_ht[0] = 24; mlabel_ht[1] = 26; mlabel_ht[2] = 29;
@@ -474,7 +474,7 @@ float taiMisc::fontPctOfDefault(int fs) {
 }
 
 float taiMisc::mainFontPctOfDefault() {
-  return fontPctOfDefault(taMisc::font_size);
+  return fontPctOfDefault(taMisc::font_sizes.labels);
 }
                                       
 int taiMisc::resizeByMainFont(int elem_size) {

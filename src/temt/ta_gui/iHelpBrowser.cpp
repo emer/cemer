@@ -393,7 +393,7 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
 #ifdef USE_QT_WEBENGINE
 #else // USE_QT_WEBENGINE
   
-  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_size /
+  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_sizes.labels /
                                                         trg_font_sz));
 #endif // USE_QT_WEBENGINE
 

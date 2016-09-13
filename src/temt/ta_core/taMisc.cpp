@@ -234,45 +234,62 @@ taExpandDefaultsNavigator::taExpandDefaultsNavigator() {
 }
 taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
 
-
 ////////////////////////////////////////////////////////
 //      TA GUI parameters
 
 // parameters that are strictly platform specific
 #ifdef TA_OS_MAC
-String  taMisc::font_name = "Lucida Grande";
-int     taMisc::font_size = 12;
-String  taMisc::console_font_name = "Andale Mono";
-int     taMisc::console_font_size = 12;
-float   taMisc::doc_text_scale = 1.0f;
+  taFontSizes::taFontSizes() {
+    labels = 12; //
+    navigator = taMisc::font_sizes.labels;  //
+    editor = taMisc::font_sizes.labels;  //
+    table = taMisc::font_sizes.labels;  //
+    console = 12;  //
+  }
+  taFontNames::taFontNames() {
+    general = "Lucida Grande";
+    console = "Andale Mono";
+  }
+  float   taMisc::doc_text_scale = 1.0f;
 #elif defined(TA_OS_WIN)
-String  taMisc::font_name = "Arial";
-int     taMisc::font_size = 10;
-String  taMisc::console_font_name = "Fixed";
-int     taMisc::console_font_size = 10;
-float   taMisc::doc_text_scale = 1.5f;
+  taFontSizePrefs::taFontSizes() {
+    labels = 10; //
+    navigator = taMisc::font_sizes.labels;  //
+    editor = taMisc::font_sizes.labels;  //
+    table = taMisc::font_sizes.labels;  //
+    console = 10;  // this is a comment - can you see me??
+  }
+  taFontNames::taFontNames() {
+    general = "Arial";
+    console = "Fixed";
+  }
+  float   taMisc::doc_text_scale = 1.5f;
 #else // Linux or some Unix variant
-String  taMisc::font_name = "Nimbus Sans";
-int     taMisc::font_size = 10;
-String  taMisc::console_font_name = "LucidaTypewriter";
-int     taMisc::console_font_size = 10;
-float   taMisc::doc_text_scale = 1.0f;
+  taFontSizePrefs::taFontSizes() {
+    labels = 10; //
+    navigator = taMisc::font_sizes.labels;  //
+    editor = taMisc::font_sizes.labels;  //
+    table = taMisc::font_sizes.labels;  //
+    console = 10;  // this is a comment - can you see me??
+  }
+  taFontNames::taFontNames() {
+    general = "Nimbus Sans";
+    console = "LucidaTypewriter";
+  }
+  float   taMisc::doc_text_scale = 1.0f;
 #endif
+taFontSizes taMisc::font_sizes;
+taFontNames taMisc::font_names;
 
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)
 String  taMisc::t3d_text_color = "black";
-
-int     taMisc::table_font_size = taMisc::font_size;
-int     taMisc::navigator_font_size = taMisc::font_size;
-int     taMisc::program_font_size = taMisc::font_size;
 
 // parameters that differ between win and unix
 taMisc::ConsoleOptions taMisc::console_options = CO_PAGER;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 taMisc::AppToolbarStyle taMisc::app_toolbar_style = taMisc::TB_TEXT_UNDER_ICON;
-
 
 int     taMisc::display_width = 120;
 int     taMisc::max_display_width = 255;
@@ -584,11 +601,11 @@ namespace {
 
 void taMisc::UpdateAfterEdit() {
 #ifndef NO_TA_BASE
-  if(font_name == "LucidaGrande") {
-    font_name = "Lucida Grande";
+  if(taMisc::font_names.general == "LucidaGrande") {
+    taMisc::font_names.general = "Lucida Grande";
   }
-  if(console_font_name == "AndaleMono") {
-    console_font_name = "Andale Mono";
+  if(taMisc::font_names.console == "AndaleMono") {
+    taMisc::font_names.console = "Andale Mono";
   }
 
   wikis.Reset();

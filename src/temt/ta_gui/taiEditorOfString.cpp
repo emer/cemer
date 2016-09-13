@@ -79,7 +79,7 @@ void taiEditorOfString::Constr_Box() {
   }
   if(edit) {
     edit->installEventFilter(this); // hopefully everyone below body will get it too!
-    edit->setFontPointSize(taMisc::font_size);
+    edit->setFontPointSize(taMisc::font_sizes.labels);
   }
 }
 

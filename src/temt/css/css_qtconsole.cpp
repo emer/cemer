@@ -36,7 +36,7 @@ QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
   inherited((QWidget*)parent, "css> ", true)
 {
   cmd_shell = cs;
-  setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
+  setFontNameSize(taMisc::font_names.general, taMisc::font_sizes.console);
   setPager(false);              // we have our own front-end pager
 }
 

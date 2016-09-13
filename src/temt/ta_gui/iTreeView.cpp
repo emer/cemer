@@ -79,7 +79,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   }
   else if(dynamic_cast<iProgramEditor*>(parent)) {
     parent_type = TYPE_PROGRAMEDITOR;
-    cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
   
@@ -777,7 +777,7 @@ bool iTreeView::eventFilter(QObject* obj, QEvent* event) {
       setFont(cur_font);
     }
     else if(parent_type == TYPE_PROGRAMEDITOR) {
-      cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+      cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
       setFont(cur_font);
     }
   }
@@ -820,8 +820,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
           setFont(cur_font);
         }
         else if(parent_type == TYPE_PROGRAMEDITOR) {
-          tabMisc::root->program_font_size -= 1;
-          cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+          tabMisc::root->editor_font_size -= 1;
+          cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
           setFont(cur_font);
         }
         key_event->accept();
@@ -836,8 +836,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
           setFont(cur_font);
         }
         else if(parent_type == TYPE_PROGRAMEDITOR) {
-          tabMisc::root->program_font_size += 1;
-          cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+          tabMisc::root->editor_font_size += 1;
+          cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
           setFont(cur_font);
         }
         if (myProject()) {
@@ -1129,7 +1129,7 @@ void iTreeView::Refresh_impl() {
     setFont(cur_font);
   }
   else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
   
@@ -1204,7 +1204,7 @@ void iTreeView::showEvent(QShowEvent* ev) {
     setFont(cur_font);
   }
   else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
 }

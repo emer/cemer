@@ -36,7 +36,7 @@ iFont::iFont() {
 }
 
 void iFont::init() {
-  fontName = taMisc::font_name; // defName;
+  fontName = taMisc::font_names.general; // defName;
   attribs = (Attributes)0;
   stretch = 100; //note: default for Qt
   pointSize = 10; // TODO: verify default point size

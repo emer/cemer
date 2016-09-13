@@ -243,7 +243,7 @@ void taiEditor::Constr_Widget() {
   pal.setColor(QPalette::Background, bg_color);
   widget()->setPalette(pal); 
   widget()->setFont(taiM->dialogFont(ctrl_size));
-  last_font_size = taMisc::font_size;
+  last_font_size = taMisc::font_sizes.labels;
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look
   vblDialog->setMargin(2);
@@ -416,10 +416,10 @@ void taiEditor::Ok_impl() {
 }
 
 void taiEditor::Refresh() {
-  if(last_font_size != taMisc::font_size) {
+  if(last_font_size != taMisc::font_sizes.labels) {
     row_height = taiM->max_control_height(ctrl_size);
     widget()->setFont(taiM->dialogFont(ctrl_size));
-    last_font_size = taMisc::font_size;
+    last_font_size = taMisc::font_sizes.labels;
   }
   Refresh_impl(defer_reshow_req);
 }
@@ -542,10 +542,10 @@ void taiEditor::Apply_Async() {
 }
 
 void taiEditor::ReShow_Async(bool forced) {
-  if(last_font_size != taMisc::font_size) {
+  if(last_font_size != taMisc::font_sizes.labels) {
     row_height = taiM->max_control_height(ctrl_size);
     widget()->setFont(taiM->dialogFont(ctrl_size));
-    last_font_size = taMisc::font_size;
+    last_font_size = taMisc::font_sizes.labels;
   }
 
   if (reshow_req) return; // already waiting
