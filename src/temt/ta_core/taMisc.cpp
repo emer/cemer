@@ -252,7 +252,7 @@ taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
   }
   float   taMisc::doc_text_scale = 1.0f;
 #elif defined(TA_OS_WIN)
-  taFontSizePrefs::taFontSizes() {
+  taFontSizes::taFontSizes() {
     labels = 10; //
     navigator = taMisc::font_sizes.labels;  //
     editor = taMisc::font_sizes.labels;  //
@@ -265,7 +265,7 @@ taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
   }
   float   taMisc::doc_text_scale = 1.5f;
 #else // Linux or some Unix variant
-  taFontSizePrefs::taFontSizes() {
+  taFontSizes::taFontSizes() {
     labels = 10; //
     navigator = taMisc::font_sizes.labels;  //
     editor = taMisc::font_sizes.labels;  //
