@@ -16,7 +16,7 @@
 #include "MSNConSpec.h"
 
 TA_BASEFUNS_CTORS_DEFN(MSNTraceSpec);
-TA_BASEFUNS_CTORS_DEFN(MSNTraceThalGains);
+TA_BASEFUNS_CTORS_DEFN(MSNTraceThalLrates);
 TA_BASEFUNS_CTORS_DEFN(MSNConSpec);
 
 void MSNTraceSpec::Initialize() {
@@ -24,8 +24,6 @@ void MSNTraceSpec::Initialize() {
 }
 
 void MSNTraceSpec::Defaults_init() {
-  otr_nogo_veto = true;
-  nogo_max = 0.3f;
   ach_reset_thr = 0.5f;
 }
 
@@ -33,16 +31,17 @@ void MSNTraceSpec::Defaults_init() {
 //   inherited::UpdateAfterEdit_impl();
 // }
 
-void MSNTraceThalGains::Initialize() {
+void MSNTraceThalLrates::Initialize() {
   Defaults_init();
 }
 
-void MSNTraceThalGains::Defaults_init() {
+void MSNTraceThalLrates::Defaults_init() {
+  go_nogo_inhib = 0.1f;
   gate_go_pos = 1.0f;
   gate_go_neg = 1.0f;
   gate_nogo_pos = 0.1f;
   gate_nogo_neg = 1.0f;
-  not_go_pos = 0.8f;
+  not_go_pos = 0.3f;
   not_go_neg = 0.2f;
   not_nogo_pos = 0.01f;
   not_nogo_neg = 0.02f;

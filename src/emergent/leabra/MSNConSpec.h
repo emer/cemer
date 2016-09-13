@@ -32,8 +32,6 @@ class E_API MSNTraceSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for trace-based learning in the MSN's
 INHERITED(SpecMemberBase)
 public:
-  bool          otr_nogo_veto;  // #AKA_otr_no_nogo #DEF_true nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo) -- this is very beneficial -- see nogo_max for scaling of this effect
-  float         nogo_max;       // #DEF_0.3 #CONDSHOW_ON_otr_nogo_veto nogo activation (conveyed by deep_raw_net) at which the otr_nogo_veto effect is maximal -- anything above this activation has full veto effect, and anything below this value has a proportional veto effect, down to 0 at 0 nogo activation
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
@@ -48,25 +46,25 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(MSNTraceThalGains);
+eTypeDef_Of(MSNTraceThalLrates);
 
-class E_API MSNTraceThalGains : public SpecMemberBase {
+class E_API MSNTraceThalLrates : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gains for trace-based thalamic gated learning in the MSN's
 INHERITED(SpecMemberBase)
 public:
-  float         gate_go_pos;    // strength of gated, Go (D1), positive dopamine
-  float         gate_go_neg;    // strength of gated, Go (D1), negative dopamine
-  float         gate_nogo_pos;  // strength of gated, NoGo (D1), positive dopamine
-  float         gate_nogo_neg;  // strength of gated, NoGo (D1), negative dopamine
-  float         not_go_pos;     // strength of not-gated, Go (D1), positive dopamine
-  float         not_go_neg;     // strength of not-gated, Go (D1), negative dopamine
-  float         not_nogo_pos;   // strength of not-gated, NoGo (D1), positive dopamine
-  float         not_nogo_neg;   // strength of not-gated, NoGo (D1), negative dopamine
-
+  float         go_nogo_inhib;  // how much does NoGo (D2) activation in corresponding stripe serve to inhibit learning in Go (D1) pathway
+  float         gate_go_pos;    // #DEF_1 learning rate for gated, Go (D1), positive dopamine -- strong positive reinforcement
+  float         gate_go_neg;    // #DEF_1 learning rate for gated, Go (D1), negative dopamine -- strong negative punishment
+  float         gate_nogo_pos;  // #DEF_0.1 learning rate for gated, NoGo (D2), positive dopamine -- generally weaker -- nogo focuses on punishing bad, not reinforcing good
+  float         gate_nogo_neg;  // #DEF_1 learning rate for gated, NoGo (D2), negative dopamine -- strong learning here to learn more NoGo for bad actions
+  float         not_go_pos;     // #DEF_0.3 learning rate for not-gated, Go (D1), positive dopamine -- this serves to tune the timing of Go firing, by decreasing weights to the extent that the Go unit fires but does not win the competition, and performance is good (i.e., positive dopamine)
+  float         not_go_neg;     // #DEF_0.2 learning rate for not-gated, Go (D1), negative dopamine -- this increases weights to alternative Go firing pathways during errors, to help explore alternatives that work better, given that there are still errors
+  float         not_nogo_pos;   // learning rate for not-gated, NoGo (D2), positive dopamine -- weight increases here serve to reinforce nogo firing to block competing responses
+  float         not_nogo_neg;   // learning rate for not-gated, NoGo (D2), negative dopamine -- weight decreases here serve to reduce firing of NoGo to explore other alternatives 
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  TA_SIMPLE_BASEFUNS(MSNTraceThalGains);
+  TA_SIMPLE_BASEFUNS(MSNTraceThalLrates);
 protected:
   SPEC_DEFAULTS;
   // void  UpdateAfterEdit_impl() override;
@@ -108,7 +106,7 @@ public:
   LearnActVal        ru_act_var;     // what variable to use for recv unit activation
   LearningRule       learn_rule;     // what kind of learning rule to use
   MSNTraceSpec       trace;          // #AKA_matrix #CONDSHOW_ON_learn_rule:TRACE_THAL,TRACE_NO_THAL,TRACE_NO_THAL_VS parameters for trace-based learning 
-  MSNTraceThalGains  tr_thal;        // #CONDSHOW_ON_learn_rule:TRACE_THAL gain parameters for trace-based thalamic-gated learning 
+  MSNTraceThalLrates tr_thal;        // #CONDSHOW_ON_learn_rule:TRACE_THAL gain parameters for trace-based thalamic-gated learning 
   float              burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float              dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
 
@@ -234,14 +232,12 @@ public:
       ntr = (1.0f - ru_act) * su_act;
     }
     else {                      // not-gated
-      if(!d2r && trace.otr_nogo_veto) {
-        float nogo_factor = 1.0f - (ru_deep_raw_net / trace.nogo_max);
-        if(nogo_factor < 0.0f) nogo_factor = 0.0f;
-        ntr = -nogo_factor * ru_act * su_act;
+      float eff_ru_act = ru_act;
+      if(!d2r) {
+        eff_ru_act -= ru_act * tr_thal.go_nogo_inhib;
+        if(eff_ru_act < 0.0f) eff_ru_act = 0.0f;
       }
-      else {
-        ntr = -ru_act * su_act; // negative sign indicates not-gated, uses raw msn act
-      }
+      ntr = -eff_ru_act * su_act; // negative sign indicates not-gated, uses raw msn act
     }
 
     float decay_factor = fabs(ntr); // decay is function of new trace
