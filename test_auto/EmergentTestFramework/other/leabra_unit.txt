@@ -1,0 +1,106 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ./test-projects/TestLeabraUnit.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ./test-projects/TestWizard.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v8.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+Unit net act
+    
+    Setup Non Spiking Network
+    Run Emergent Program	LeabraSettle
+
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  0  net  0  0.1  Net act at cycle 0
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  9  net  0  0.1	  Net act at cycle 9
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  20  net  0.3  0.1     Net act at cycle 20
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  159  net  0.3  0.1    Net act at cycle 159
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  160  net  0.08  0.1   Net act at cycle 160
+
+Unit I_net
+    
+    Setup Non Spiking Network
+    Run Emergent Program	LeabraSettle
+
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  0  net  -0.02  0.1  I_Net at cycle 0
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  9  net  -0.01  0.1  I_Net at cycle 9
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  20  net  0.3  0.1   I_Net at cycle 20
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  160  net  0.0  0.1  I_Net at cycle 160
+
+
+Unit act
+    Setup Non Spiking Network
+    Run Emergent Program	LeabraSettle
+
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  0  act  0  0.1       act at cycle 0
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  12  act  0  0.1	     act at cycle 12
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  27  act  0.87  0.1   act at cycle 27
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  159  act  0.87  0.1  act at cycle 159
+    DataTable Cell Value Should Roughly Equal	.projects[\\\"TestLeabraUnit\\\"].data.gp[\\\"OutputData\\\"][\\\"CycleOutputData\\\"]  170  net  0.01  0.1  act at cycle 170
+
+    
+
+*** Keywords ***
+    
+Setup Non Spiking Network
+    [Arguments]
+    Ensure Emergent Free
+
+    
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"]	act_fun  "NOISY_XX1"
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].g_bar	e  0.30
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].g_bar	l  0.30
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].g_bar	i  1.00
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].e_rev	e  1.00
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].e_rev	l  0.30
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].e_rev	i  0.25
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].act	thr  0.50
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].adapt	on  false
+    Set Emergent Member		.projects[\\\"TestLeabraUnit\\\"].networks[\\\"UnitNet\\\"].specs[\\\"UnitSpec_0\\\"].act	gain  40.00
+
+    Run Emergent Program	LeabraInit
+    Set Emergent Var		LeabraSettle	on_cycle	10
+    Set Emergent Var		LeabraSettle	off_cycle	160
+      
+    
