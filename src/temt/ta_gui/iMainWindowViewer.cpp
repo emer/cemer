@@ -2573,7 +2573,6 @@ void iMainWindowViewer::viewDecrFontSize() {
   if(taMisc::GetCurrentFontSize("labels") > 4) {
     taMisc::global_font_incr_decr -= 1;
   }
-  //  if(taMisc::font_sizes.labels < 4) taMisc::font_sizes.labels = 4;
   taiM->InitMetrics(true);
   viewRefresh();
   taMisc::Info("font size is now:", String(taMisc::GetCurrentFontSize("labels")));
@@ -3149,7 +3148,7 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
     case 6:
       split_sizes_new.replace(1, total_width/2);
       split_sizes_new.replace(2, total_width/2);
-      show_tools_dock = false;
+      show_tools_dock = true;
       break;
     case 7:
       split_sizes_new.replace(0, nav_frame_width);
