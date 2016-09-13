@@ -153,13 +153,13 @@ Run Command Completion
     
 Read till non empty
      [Arguments]	${err_message}
-     Sleep              1000ms
+     Sleep              100ms
      ${output} =        Read
-     :FOR      ${j}     IN RANGE		60
+     :FOR      ${j}     IN RANGE		600
      \	      ${strlen} = 	Get Length 		${output}
      \	      Exit For Loop If		${strlen} > 0
-     \	      Log  "Output from telnet was null, when it shouldn't have been"	WARN
-     \	      Sleep    1000ms
+     \	      Run Keyword If		${j} % 30 == 1	Log  "Output from telnet was null, when it shouldn't have been"	WARN
+     \	      Sleep    100ms
      \	      ${output} =	Read
      Should Not Be Empty	${output}	${err_message}
      [Return] 		${output}     
@@ -201,6 +201,11 @@ Run Emergent Program
 Set Emergent Var
     [Arguments]		${program}	${var_name}	${value}
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "${program}", "var_name": "${var_name}", "var_value": ${value}}
+    Status OK                  ${output}
+
+Set Emergent Member
+    [Arguments]		${path}	${member_name}	${value}
+    ${output} =                Run Command Wait      {"command": "SetMember", "path": "${path}", "member": "${member_name}", "var_value": ${value}}
     Status OK                  ${output}
 
 Get Emergent Var
@@ -245,6 +250,15 @@ DataTable Cell Value Should Equal
     ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
     Status OK 		       ${output}
     Json Value Should Equal    ${output}             /result/columns/0/values/0   ${value}
+
+DataTable Cell Value Should Roughly Equal
+    [Arguments]         ${table_path}	${row_from}	${col} 	${target_value}	${margin}	${err_msg}
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
+    Status OK 		       ${output}
+    ${value} =         Get Json Value    ${output}    /result/columns/0/values/0
+    Should Be True     ${value} > (${target_value} - ${margin})		"${err_msg}: ${value} is not roughly equal to ${target_value}+-${margin}"
+    Should Be True     ${value} < (${target_value} + ${margin})		"${err_msg}: ${value} is not roughly equal to ${target_value}+-${margin}"
+
 
 Restart Emergent
     Log		"Resetting emergent"	WARN
