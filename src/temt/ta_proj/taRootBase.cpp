@@ -1583,11 +1583,6 @@ bool taRootBase::Startup_InitGui() {
     Startup_InitViewColors();
     Startup_InitViewBackgrounds();
     Startup_InitKeyBindings();
-    
-    tabMisc::root->navigator_font_size = taMisc::font_sizes.navigator;
-    tabMisc::root->editor_font_size = taMisc::font_sizes.editor;
-    tabMisc::root->table_font_size = taMisc::font_sizes.table;
-    tabMisc::root->global_font_incr_decr = 0;
    }
   else
 #endif // TA_GUI

@@ -331,14 +331,14 @@ void taiMisc::InitMetrics(bool reinit) {
   mtext_ht[2] = resizeByMainFont(26);
 
   // control sizes -- depend on size of default font
-  if (taMisc::font_sizes.labels <= 10) {
+  if (taMisc::GetCurrentFontSize("labels") <= 10) {
     // Small
     // mbutton_ht[0] = 20; mbutton_ht[1] = 22; mbutton_ht[2] = 23;
     // mlabel_ht[0] = 17; mlabel_ht[1] = 19; mlabel_ht[2] = 20;
     // mtext_ht[0] = 19; mtext_ht[1] = 21; mtext_ht[2] = 22;
     currentSizeSpec = sizSmall;
   }
-  else if (taMisc::font_sizes.labels > 13) {
+  else if (taMisc::GetCurrentFontSize("labels") > 13) {
     // Big
     // mbutton_ht[0] = 24; mbutton_ht[1] = 27; mbutton_ht[2] = 30;
     // mlabel_ht[0] = 24; mlabel_ht[1] = 26; mlabel_ht[2] = 29;
@@ -474,7 +474,7 @@ float taiMisc::fontPctOfDefault(int fs) {
 }
 
 float taiMisc::mainFontPctOfDefault() {
-  return fontPctOfDefault(taMisc::font_sizes.labels);
+  return fontPctOfDefault(taMisc::GetCurrentFontSize("labels"));
 }
                                       
 int taiMisc::resizeByMainFont(int elem_size) {
@@ -1349,9 +1349,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_UP_II, QKeySequence());
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN_II, QKeySequence());
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_DECREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomOut));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_INCREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomIn));
-#ifdef TA_OS_MAC
+ #ifdef TA_OS_MAC
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_FIND_PREVIOUS, QKeySequence(meta_key + Qt::ShiftModifier + Qt::Key_G));
 #endif
@@ -1412,9 +1410,6 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE, QKeySequence(Qt::AltModifier + Qt::Key_R));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE_II, QKeySequence());
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DECREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomOut));
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_INCREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomIn));
-
 
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_OFF, QKeySequence(Qt::Key_V));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_OFF_II, QKeySequence());

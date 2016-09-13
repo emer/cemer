@@ -73,7 +73,7 @@ iDiffTextView::iDiffTextView( QWidget *parent, bool enable_icons )
   view0->setLineWrapMode( iTextEdit::NoWrap );
   view0->setFrameStyle( QFrame::NoFrame );
   view0->installEventFilter( this );
-  view0->setFontPointSize(taMisc::font_sizes.labels);
+  view0->setFontPointSize(taMisc::GetCurrentFontSize("labels"));
   view0->setReadOnly(true);
 
   // Setup the line number pane
@@ -108,7 +108,7 @@ iDiffTextView::iDiffTextView( QWidget *parent, bool enable_icons )
   view1->setLineWrapMode( iTextEdit::NoWrap );
   view1->setFrameStyle( QFrame::NoFrame );
   view1->installEventFilter( this );
-  view1->setFontPointSize(taMisc::font_sizes.labels);
+  view0->setFontPointSize(taMisc::GetCurrentFontSize("labels"));
   view1->setReadOnly(true);
 
   // Setup the line number pane

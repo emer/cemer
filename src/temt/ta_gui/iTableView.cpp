@@ -41,8 +41,7 @@ iTableView::iTableView(QWidget* parent)
   m_saved_scroll_pos = 0;
 
   QFont cur_font = taiM->dialogFont(taiM->ctrl_size);
-  cur_font.setPointSize(tabMisc::root->table_font_size +
-                        tabMisc::root->global_font_incr_decr);
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   setFont(cur_font);
 
   QHeaderView* vhead = verticalHeader();
@@ -51,8 +50,7 @@ iTableView::iTableView(QWidget* parent)
 #else
   vhead->setResizeMode(QHeaderView::Fixed);
 #endif
-  vhead->setDefaultSectionSize(tabMisc::root->table_font_size +
-                               tabMisc::root->global_font_incr_decr + 6);
+  vhead->setDefaultSectionSize(taMisc::GetCurrentFontSize("table") + 6);
   
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
@@ -79,7 +77,7 @@ void iTableView::selectCurCell() {
 bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
     QFont cur_font = QFont();
-    int size = GetFontSize();
+    int size = taMisc::GetCurrentFontSize("table");
     cur_font.setPointSize(size);
     setFont(cur_font);
     return inherited::QObject::eventFilter(obj, event);
@@ -112,24 +110,6 @@ void iTableView::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
   
   switch (action) {
-    case taiMisc::DATATABLE_DECREASE_FONTSIZE:
-    {
-      QFont cur_font(font());
-      tabMisc::root->table_font_size -= 1;
-      cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
-      setFont(cur_font);
-      key_event->accept();
-      return;
-    }
-    case taiMisc::DATATABLE_INCREASE_FONTSIZE:
-    {
-      QFont cur_font(font());
-      tabMisc::root->table_font_size += 1;
-      cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
-      setFont(cur_font);
-      key_event->accept();
-      return;
-    }
     case taiMisc::DATATABLE_DELETE:
     case taiMisc::DATATABLE_DELETE_II:
       RowColOp(OP_ROW | OP_DELETE);
@@ -539,10 +519,6 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
   this->selectionModel()->select(selection, QItemSelectionModel::Select);
   this->setCurrentIndex(topLeft);
   this->setFocus();
-}
-
-int iTableView::GetFontSize() {
-  return tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr;
 }
 
 ////////////////////////////////////////////////

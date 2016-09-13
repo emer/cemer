@@ -280,6 +280,27 @@ taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
 #endif
 taFontSizes taMisc::font_sizes;
 taFontNames taMisc::font_names;
+int taMisc::global_font_incr_decr = 0;
+
+int     taMisc::GetCurrentFontSize(const String& component) {
+  if (component == "labels") {
+    return taMisc::font_sizes.labels + global_font_incr_decr;
+  }
+  else if (component == "table") {
+    return taMisc::font_sizes.table + global_font_incr_decr;
+  }
+  else if (component == "navigator") {
+    return taMisc::font_sizes.navigator + global_font_incr_decr;
+  }
+  else if (component == "editor") {
+    return taMisc::font_sizes.editor + global_font_incr_decr;
+  }
+  else if (component == "console") {
+    return taMisc::font_sizes.console + global_font_incr_decr;
+  }
+  taMisc::Error("Programmer Error - please report - GetCurrentFontSize - component unknown");
+  return taMisc::font_sizes.labels;
+}
 
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)

@@ -2563,25 +2563,25 @@ void iMainWindowViewer::ViewReset() {
 }
 
 void iMainWindowViewer::viewIncrFontSize() {
-  tabMisc::root->global_font_incr_decr += 1;
-  taMisc::font_sizes.labels += 1;
+  taMisc::global_font_incr_decr += 1;
   taiM->InitMetrics(true);
   viewRefresh();
-  taMisc::Info("font size is now:", String(taMisc::font_sizes.labels));
+  taMisc::Info("font size is now:", String(taMisc::GetCurrentFontSize("labels")));
 }
 
 void iMainWindowViewer::viewDecrFontSize() {
-  tabMisc::root->global_font_incr_decr -= 1;
-  taMisc::font_sizes.labels -= 1;
-  if(taMisc::font_sizes.labels < 4) taMisc::font_sizes.labels = 4;
+  if(taMisc::GetCurrentFontSize("labels") > 4) {
+    taMisc::global_font_incr_decr -= 1;
+  }
+  //  if(taMisc::font_sizes.labels < 4) taMisc::font_sizes.labels = 4;
   taiM->InitMetrics(true);
   viewRefresh();
-  taMisc::Info("font size is now:", String(taMisc::font_sizes.labels));
+  taMisc::Info("font size is now:", String(taMisc::GetCurrentFontSize("labels")));
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjShower()) return; // changes only applied for proj showers
-
+  
   taProject* proj = curProject();
   // only closing last browser is important (easier to check that here than below)
   if(!proj) return;             // does happen!

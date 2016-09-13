@@ -164,7 +164,7 @@ taGuiWidget* taGuiDialog::AddWidget_impl(QWidget* widg, const String& nm, const 
   { String att = GetAttribute("max_height=", attributes);
     if(att.nonempty()) wid->widget->setMaximumHeight((int)att); }
   { String att = GetAttribute("font=", attributes);
-    if(att.nonempty()) wid->widget->setFont(QFont(att, taMisc::font_sizes.labels)); }
+    if(att.nonempty()) wid->widget->setFont(QFont(att, taMisc::GetCurrentFontSize("labels"))); }
   { String att = GetAttribute("font_size=", attributes);
     if(att.nonempty()) {
       QFont font = wid->widget->font(); font.setPointSize((int)att);
@@ -204,7 +204,7 @@ taGuiAction* taGuiDialog::AddAction_impl(QAction* act, const String& nm,
   act->setFont(taiM->nameFont(data_host->ctrl_size)); // start with defaults
 
   { String att = GetAttribute("font=", attributes);
-    if(att.nonempty()) act->setFont(QFont(att, taMisc::font_sizes.labels)); }
+    if(att.nonempty()) act->setFont(QFont(att, taMisc::GetCurrentFontSize("labels"))); }
   { String att = GetAttribute("font_size=", attributes);
     if(att.nonempty()) {
       QFont font = act->font(); font.setPointSize((int)att);

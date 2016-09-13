@@ -74,12 +74,12 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   QFont cur_font = QFont();
   if(dynamic_cast<iBrowseViewer*>(parent)) {
     parent_type = TYPE_BROWSEVIEWER;
-    cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
     setFont(cur_font);
   }
   else if(dynamic_cast<iProgramEditor*>(parent)) {
     parent_type = TYPE_PROGRAMEDITOR;
-    cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
     setFont(cur_font);
   }
   
@@ -773,11 +773,13 @@ bool iTreeView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
     QFont cur_font = QFont();
     if(parent_type == TYPE_BROWSEVIEWER) {
-      cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
+//      cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
+      cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
       setFont(cur_font);
     }
     else if(parent_type == TYPE_PROGRAMEDITOR) {
-      cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
+//      cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
+      cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
       setFont(cur_font);
     }
   }
@@ -810,43 +812,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, key_event);
   
   if(stru_actions_enabled) {
-    switch(action) {
-      case taiMisc::TREE_DECREASE_FONTSIZE:
-      {
-        QFont cur_font(font());
-        if(parent_type == TYPE_BROWSEVIEWER) {
-          tabMisc::root->navigator_font_size -= 1;
-          cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
-          setFont(cur_font);
-        }
-        else if(parent_type == TYPE_PROGRAMEDITOR) {
-          tabMisc::root->editor_font_size -= 1;
-          cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
-          setFont(cur_font);
-        }
-        key_event->accept();
-        return;
-      }
-      case taiMisc::TREE_INCREASE_FONTSIZE:
-      {
-        QFont cur_font(font());
-        if(parent_type == TYPE_BROWSEVIEWER) {
-          tabMisc::root->navigator_font_size += 1;
-          cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
-          setFont(cur_font);
-        }
-        else if(parent_type == TYPE_PROGRAMEDITOR) {
-          tabMisc::root->editor_font_size += 1;
-          cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
-          setFont(cur_font);
-        }
-        if (myProject()) {
-          myProject()->RefreshAllViews();
-        }
-        key_event->accept();
-        return;
-      }
-        
+    switch(action) {        
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT:
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT_II:
         ext_select_on = false;
@@ -1125,11 +1091,11 @@ void iTreeView::setTvFlags(int value) {
 void iTreeView::Refresh_impl() {
   QFont cur_font = QFont();
   if(parent_type == TYPE_BROWSEVIEWER) {
-    cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
     setFont(cur_font);
   }
   else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
     setFont(cur_font);
   }
   
@@ -1200,11 +1166,12 @@ void iTreeView::showEvent(QShowEvent* ev) {
   
   QFont cur_font = QFont();
   if(parent_type == TYPE_BROWSEVIEWER) {
-    cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(taMisc::GetCurrentFontSize("navigator"));
+
     setFont(cur_font);
   }
   else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(tabMisc::root->editor_font_size + tabMisc::root->global_font_incr_decr);
+    cur_font.setPointSize(taMisc::GetCurrentFontSize("editor"));
     setFont(cur_font);
   }
 }

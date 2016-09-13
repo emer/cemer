@@ -155,9 +155,9 @@ void iConsole::getDisplayGeom() {
 
 //Clear the console
 void iConsole::clear() {
-  setFontNameSize(taMisc::font_names.console, taMisc::font_sizes.console);
+  setFontNameSize(taMisc::font_names.console, taMisc::GetCurrentFontSize("console"));
   inherited::clear();
-  setFontNameSize(taMisc::font_names.console, taMisc::font_sizes.console);
+  setFontNameSize(taMisc::font_names.console, taMisc::GetCurrentFontSize("console"));
   ext_select_on = false;
   getDisplayGeom();
   curPromptPos = 0;

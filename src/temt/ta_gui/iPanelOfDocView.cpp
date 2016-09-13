@@ -347,7 +347,7 @@ void iPanelOfDocView::UpdatePanel_impl() {
 #else // USE_QT_WEBENGINE
   
   webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size *
-                                 ((float)taMisc::font_sizes.labels / trg_font_sz));
+                                 ((float)taMisc::GetCurrentFontSize("labels") / trg_font_sz));
 #endif // USE_QT_WEBENGINE
 
   String nw_url = doc_->GetURL();
