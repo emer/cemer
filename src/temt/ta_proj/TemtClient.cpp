@@ -1376,6 +1376,9 @@ void TemtClient::RunCommand(const String& cmd) {
   else if (cmd == "GetMember") {
       cmdGetMember();
   }
+  else if (cmd == "SetMember") {
+    cmdSetMember();
+  }
 #endif
   else
   {
@@ -1597,7 +1600,7 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
   }
   
   if (row_to < row_from) {
-    SendError("the parameter 'row_to' is less than 'row_from'", TemtClient::RUNTIME);
+    SendError("the parameter 'row_to' is less than or equal to 'row_from'", TemtClient::RUNTIME);
     return false;
   }
 
@@ -1850,5 +1853,43 @@ void TemtClient::cmdGetMember() {
     SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
   }
 }
-#endif
+void TemtClient::cmdSetMember() {
+  if (!name_params.GetVal("path").isNull()) {
+    String pnm = name_params.GetVal("path").toString();
+    taBase * obj = NULL;
+    MemberDef* md = NULL;
+    if (pnm.startsWith(".projects")) {
+      obj = tabMisc::root->FindFromPath(pnm, md);
+    } else {
+      taProject* proj = GetCurrentProject();
+      obj = proj->FindFromPath(pnm, md);
+    }
+    
+    if(obj) {
+      if (!name_params.GetVal("member").isNull()) {
+        md = obj->GetTypeDef()->members.FindName(name_params.GetVal("member").toString());
+        if (!md) {
+          SendErrorJSON("No member " + name_params.GetVal("member").toString() + " was found in " + name_params.GetVal("path").toString(), TemtClient::NOT_FOUND);
+          return;
+        }
+        Variant var = name_params.GetVal("var_value");
+        taMisc::Info(var.toString());
+        md->SetValVar(name_params.GetVal("var_value"), obj);
+        SendOk(md->GetValVar(obj).toString());
+        return;
+      } else {
+        SendOk(obj->PrintStr());
+        return;
+      }
+    } else {
+      SendError("Path '" + pnm + "' not found", TemtClient::NOT_FOUND);
+      return;
+    }
+    SendErrorJSON("Working on the implementation", TemtClient::NOT_FOUND);
+  }
+  else {
+    SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
+  }
+}
 
+#endif
