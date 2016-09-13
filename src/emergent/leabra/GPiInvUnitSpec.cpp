@@ -29,7 +29,7 @@ void GPiMiscSpec::Initialize() {
 }
 
 void GPiMiscSpec::Defaults_init() {
-  trl_refract = true;
+  trl_refract = false;
   net_gain = 3.0f;
   nogo = 1.0f;
   gate_thr = 0.2f;

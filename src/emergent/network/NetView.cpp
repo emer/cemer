@@ -1469,6 +1469,7 @@ void NetView::Render_wt_lines() {
     src_lay->GetAbsPos(src_lay_pos);
 
   Network* nt = net();
+  if(!nt) return;
   bool swt = wt_line_swt;
   
   // note: only want layer_rel for ru_pos

@@ -352,7 +352,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if (show_individual_option) {
     curow = "add_individual";
     dlg.AddHBoxLayout(curow, "mainv","","");
-    dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Add_Individually: ;");
+    dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Add Individually: ;");
     dlg.AddBoolCheckbox(&add_individually, "add_individually", "main", curow, "tooltip=checking will cause each submember to be added as a separate control panel item that will appear on its own line. Doing this allows the item to be used in parameter searches. If checked the label will be used as a prefix for all items;");
   }
   int drval = dlg.PostDialog(true);
@@ -382,7 +382,13 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
       if (!mbr_md->GetCondOptTest("CONDSHOW", mbr_td, mbr_base)) {
         continue;
       }
-      String complete_lbl = full_lbl + "_" + mbr_td->members.SafeEl(i)->name;
+      String complete_lbl;
+      if(full_lbl.nonempty()) {
+        complete_lbl = full_lbl + "_" + mbr_td->members.SafeEl(i)->name;
+      }
+      else {                    // sometimes you just want the members, if they have distinctive names..
+        complete_lbl = mbr_td->members.SafeEl(i)->name;
+      }
       rval = SelectMember_impl(mbr_base, mbr_md, complete_lbl, eff_desc, sub_grp_name, custom_label);
     }
   }

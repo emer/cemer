@@ -36,15 +36,15 @@ void MSNTraceThalLrates::Initialize() {
 }
 
 void MSNTraceThalLrates::Defaults_init() {
-  go_nogo_inhib = 0.1f;
+  go_nogo_inhib = 0.2f;
   gate_go_pos = 1.0f;
   gate_go_neg = 1.0f;
   gate_nogo_pos = 0.1f;
   gate_nogo_neg = 1.0f;
-  not_go_pos = 0.3f;
-  not_go_neg = 0.2f;
-  not_nogo_pos = 0.01f;
-  not_nogo_neg = 0.02f;
+  not_go_pos = 0.4f;
+  not_go_neg = 0.4f;
+  not_nogo_pos = 0.4f;
+  not_nogo_neg = 0.4f;
 }
 
 void MSNConSpec::Initialize() {
