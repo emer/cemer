@@ -1600,7 +1600,7 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
   }
   
   if (row_to < row_from) {
-    SendError("the parameter 'row_to' is less than or equal to 'row_from'", TemtClient::RUNTIME);
+    SendError("the parameter 'row_to' is less than 'row_from'", TemtClient::RUNTIME);
     return false;
   }
 
