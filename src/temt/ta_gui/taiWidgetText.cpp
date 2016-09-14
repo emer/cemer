@@ -23,6 +23,7 @@
 
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QFont>
 
 taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_,
                  bool needs_edit_button, const char *tooltip)
@@ -54,6 +55,10 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     SetRep(leText);
   }
 
+  QFont font = rep()->font();
+  font.setPointSize(taMisc::GetCurrentFontSize("labels"));
+  rep()->setFont(font);
+  
   rep()->setFixedHeight(taiM->text_height(defSize()));
   if (readOnly()) {
     rep()->setReadOnly(true);
