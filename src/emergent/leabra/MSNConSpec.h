@@ -61,11 +61,10 @@ class E_API MSNTraceThalLrates : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gains for trace-based thalamic gated learning in the MSN's
 INHERITED(SpecMemberBase)
 public:
-  float         go_nogo_inhib;  // #DEF_0.2 how much does NoGo (D2) activation in corresponding stripe serve to inhibit learning in Go (D1) pathway
   float         gate_go_pos;    // #DEF_1 learning rate for gated, Go (D1), positive dopamine -- strong positive reinforcement
   float         gate_go_neg;    // #DEF_1 learning rate for gated, Go (D1), negative dopamine -- strong negative punishment
-  float         gate_nogo_pos;  // #DEF_0.1 learning rate for gated, NoGo (D2), positive dopamine -- generally weaker -- nogo focuses on punishing bad, not reinforcing good
-  float         gate_nogo_neg;  // #DEF_1 learning rate for gated, NoGo (D2), negative dopamine -- strong learning here to learn more NoGo for bad actions
+  float         gate_nogo_pos;  // #DEF_0.1 learning rate for gated, NoGo (D2), positive dopamine -- very important parameter -- must be small but non-zero -- principle is that nogo focuses on punishing bad, not reinforcing good, so we mostly leave it alone for good outcomes
+  float         gate_nogo_neg;  // #DEF_1 learning rate for gated, NoGo (D2), negative dopamine -- strong learning here to learn more NoGo for bad actions -- can be a bit weaker than 1 (e.g., .8) but .5 impairs performance
   float         not_go_pos;     // #DEF_0.4 learning rate for not-gated, Go (D1), positive dopamine -- this serves to tune the timing of Go firing, by decreasing weights to the extent that the Go unit fires but does not win the competition, and performance is good (i.e., positive dopamine)
   float         not_go_neg;     // #DEF_0.4 learning rate for not-gated, Go (D1), negative dopamine -- this increases weights to alternative Go firing pathways during errors, to help explore alternatives that work better, given that there are still errors
   float         not_nogo_pos;   // #DEF_0.4 learning rate for not-gated, NoGo (D2), positive dopamine -- weight increases here serve to reinforce nogo firing to block competing responses
@@ -238,9 +237,6 @@ public:
     }
 
     float new_ntr = trace.MsnActLrnFactor(ru_act) * su_act;
-    if(!d2r) {
-      new_ntr -= new_ntr * tr_thal.go_nogo_inhib;
-    }
     if(ru_thal > 0.0f) {        // gated
       ntr = new_ntr;
     }
