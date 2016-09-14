@@ -33,10 +33,11 @@ class E_API MSNTraceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
-  float         max_msn_act;    // for purposes of learning, what is the maximum msn activation -- above this level, learning is effectively zero
-
+  bool          msn_deriv;      // use the sigmoid derivative factor msn * (1-msn) in modulating learning -- otherwise just multiply by msn
+  float         max_msn_act;    // #CONDSHOW_ON_msn_deriv for msn_deriv case, what is the maximum msn activation -- above this level, learning is effectively zero
 
   inline float  MsnActLrnFactor(const float msn_act) {
+    if(!msn_deriv) return msn_act;
     if(msn_act > max_msn_act) return 0.0f;
     return 2.0f * msn_act * (max_msn_act - msn_act);
   }
