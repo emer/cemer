@@ -213,7 +213,7 @@ build-stamp:
 	touch build-stamp
 
 override_dh_auto_configure:
-	dh_auto_configure -- --${QTVER}
+	dh_auto_configure -- --not-native --${QTVER}
 
 # There is no test target, so override to do nothing.
 override_dh_auto_test:
