@@ -29,7 +29,6 @@ void GPiMiscSpec::Initialize() {
 }
 
 void GPiMiscSpec::Defaults_init() {
-  trl_refract = false;
   net_gain = 3.0f;
   nogo = 1.0f;
   gate_thr = 0.2f;
@@ -151,22 +150,13 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
     u->thal_cnt = 0.0f;
   }
 
-  bool refract = false;
-  if(gpi.trl_refract && (u->thal_cnt > 0.0f))
-    refract = true;
-  
   if(gate_qtr && qtr_cyc == gate_cyc) {
-    if(refract) {               // can't fire again!
-      snd_val = 0.0f;
+    if(gpi.thr_act) {
+      if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
+      snd_val = u->act_eq;
     }
     else {
-      if(gpi.thr_act) {
-        if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
-        snd_val = u->act_eq;
-      }
-      else {
-        snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
-      }
+      snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
     }
 
     if(snd_val > 0.0f && gpi.min_thal > gpi.gate_thr) {

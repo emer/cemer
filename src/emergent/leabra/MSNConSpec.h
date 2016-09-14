@@ -238,13 +238,13 @@ public:
     }
 
     float new_ntr = trace.MsnActLrnFactor(ru_act) * su_act;
+    if(!d2r) {
+      new_ntr -= new_ntr * tr_thal.go_nogo_inhib;
+    }
     if(ru_thal > 0.0f) {        // gated
       ntr = new_ntr;
     }
     else {                      // not-gated
-      if(!d2r) {
-        new_ntr -= new_ntr * tr_thal.go_nogo_inhib;
-      }
       ntr = -new_ntr;           // opposite sign for non-gated
     }
 
