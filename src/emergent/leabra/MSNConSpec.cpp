@@ -25,6 +25,7 @@ void MSNTraceSpec::Initialize() {
 
 void MSNTraceSpec::Defaults_init() {
   ach_reset_thr = 0.5f;
+  max_msn_act = 0.9f;
 }
 
 // void MSNTraceSpec::UpdateAfterEdit_impl() {

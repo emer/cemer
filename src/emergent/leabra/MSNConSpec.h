@@ -33,7 +33,15 @@ class E_API MSNTraceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
+  float         max_msn_act;    // for purposes of learning, what is the maximum msn activation -- above this level, learning is effectively zero
 
+
+  inline float  MsnActLrnFactor(const float msn_act) {
+    if(msn_act > max_msn_act) return 0.0f;
+    return 2.0f * msn_act * (max_msn_act - msn_act);
+  }
+  // learning factor for level of msn activation, of the general form of msn * (1-msn), except using max_msn_act instead of 1 -- the factor of 2 compensates for otherwise reduction in learning from these factors
+  
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(MSNTraceSpec);
@@ -228,16 +236,15 @@ public:
       tr = 0.0f;
     }
 
-    if(ru_thal > 0.0f) {              // gated, always gets 1-msn value
-      ntr = (1.0f - ru_act) * su_act;
+    float new_ntr = trace.MsnActLrnFactor(ru_act) * su_act;
+    if(ru_thal > 0.0f) {        // gated
+      ntr = new_ntr;
     }
     else {                      // not-gated
-      float eff_ru_act = ru_act;
       if(!d2r) {
-        eff_ru_act -= ru_act * tr_thal.go_nogo_inhib;
-        if(eff_ru_act < 0.0f) eff_ru_act = 0.0f;
+        new_ntr -= new_ntr * tr_thal.go_nogo_inhib;
       }
-      ntr = -eff_ru_act * su_act; // negative sign indicates not-gated, uses raw msn act
+      ntr = -new_ntr;           // opposite sign for non-gated
     }
 
     float decay_factor = fabs(ntr); // decay is function of new trace
