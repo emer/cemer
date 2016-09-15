@@ -2445,7 +2445,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_go_units->deep.on = true;
   matrix_go_units->deep.role = DeepSpec::SUPER;
   matrix_go_units->deep.mod_min = 0.2f; // key!
-  matrix_go_units->matrix.out_ach_inhib = 0.1f; // 0.3 is pretty agressive -- 
+  matrix_go_units->matrix.out_ach_inhib = 0.2f; // 0.3 is pretty agressive -- 
 
   matrix_no_units->SetUnique("noise_type", false);
   matrix_no_units->SetUnique("noise", false);

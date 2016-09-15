@@ -26,7 +26,6 @@ void MSNTraceSpec::Initialize() {
 void MSNTraceSpec::Defaults_init() {
   ach_reset_thr = 0.5f;
   msn_deriv = true;
-  max_msn_act = 0.9f;
 }
 
 // void MSNTraceSpec::UpdateAfterEdit_impl() {
@@ -38,14 +37,17 @@ void MSNTraceThalLrates::Initialize() {
 }
 
 void MSNTraceThalLrates::Defaults_init() {
+  full_params = false;
+  not_gated = 0.7f;
+  
   gate_go_pos = 1.0f;
   gate_go_neg = 1.0f;
   gate_nogo_pos = 0.1f;
   gate_nogo_neg = 1.0f;
-  not_go_pos = 0.4f;
-  not_go_neg = 0.4f;
-  not_nogo_pos = 0.4f;
-  not_nogo_neg = 0.4f;
+  not_go_pos = 0.7f;
+  not_go_neg = 0.7f;
+  not_nogo_pos = 0.7f;
+  not_nogo_neg = 0.7f;
 }
 
 void MSNConSpec::Initialize() {
