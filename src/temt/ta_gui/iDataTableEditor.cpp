@@ -108,10 +108,15 @@ iDataTableModel* iDataTableEditor::dtm() const {
 
 void iDataTableEditor::Refresh() {
   iDataTableModel* dtm = this->dtm();
-  if (dtm)
+  if (dtm) {
     dtm->refreshViews();
-  if (m_cell)
+  }
+  if (m_cell) {
     tvCell->Refresh();
+  }
+  if (tvTable) {
+    tvTable->Refresh();
+  }
 }
 
 void iDataTableEditor::setDataTable(DataTable* dt_) {

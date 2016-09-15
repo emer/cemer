@@ -441,6 +441,10 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
   inherited::keyPressEvent(key_event);
 }
 
+void iDataTableView::Refresh() {
+  update();
+}
+
 ////////////////////////////////////////////////
 //      iTableViewCheckboxDelegate
 

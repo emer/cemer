@@ -50,6 +50,7 @@ public: // cliphandler i/f
   void                  EditAction(int ea) override;
   void                  GetEditActionsEnabled(int& ea) override;
   void                  ViewAction(int ea) override;
+  void                  Refresh(); // for manual refresh -- e.g. when font size changes
   
 #ifndef __MAKETA__
   signals:

@@ -55,8 +55,10 @@ iMatrixTableModel* iMatrixEditor::model() const {
 void iMatrixEditor::Refresh() {
  // iMatrixTableModel* mod = q_objectcast<>(model();
   iMatrixTableModel* mod = qobject_cast<iMatrixTableModel*>(tv->model());
-  if (mod)
+  if (mod) {
     mod->emit_layoutChanged(); // default values mean entire table
+    update();
+  }
 }
 
 void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
