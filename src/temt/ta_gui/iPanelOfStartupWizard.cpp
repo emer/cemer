@@ -80,7 +80,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   new_proj_chs->BuildCategories(); // for subtypes that use categories
   String chs_title = new_proj_chs->titleText();
-  new_proj_chs_dlg = iDialogItemChooser::New(chs_title, new_proj_chs, 0, ls_split);
+  new_proj_chs_dlg = iDialogItemChooser::New(chs_title, new_proj_chs, 0, ls_split, iDialogItemChooser::flgNoCancel);
 
   lay_np->addWidget(new_proj_chs_dlg->body);
   new_proj_chs_dlg->Activate(new_proj_chs);
@@ -110,7 +110,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   new_web_chs->BuildCategories(); // for subtypes that use categories
   chs_title = new_web_chs->titleText();
-  new_web_chs_dlg = iDialogItemChooser::New(chs_title, new_web_chs, 0, ls_split);
+  new_web_chs_dlg = iDialogItemChooser::New(chs_title, new_web_chs, 0, ls_split, iDialogItemChooser::flgNoCancel);
 
   lay_nw->addWidget(new_web_chs_dlg->body);
   new_web_chs_dlg->Activate(new_web_chs);
@@ -151,7 +151,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   rec_proj_chs->BuildCategories(); // for subtypes that use categories
   chs_title = rec_proj_chs->titleText();
-  rec_proj_chs_dlg = iDialogItemChooser::New(chs_title, rec_proj_chs, 0, sw_split);
+  rec_proj_chs_dlg = iDialogItemChooser::New(chs_title, rec_proj_chs, 0, sw_split, iDialogItemChooser::flgNoCancel);
 
   lay_rp->addWidget(rec_proj_chs_dlg->body);
   rec_proj_chs_dlg->Activate(rec_proj_chs);

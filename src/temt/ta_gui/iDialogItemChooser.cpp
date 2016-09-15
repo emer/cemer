@@ -44,20 +44,21 @@ const String iDialogItemChooser::cat_none("(none)");
 int iDialogItemChooser::filt_delay = 500;
 
 iDialogItemChooser* iDialogItemChooser::New(const String& caption_, taiWidgetItemChooser* client_,
-  int ft, QWidget* par_window_)
+  int ft, QWidget* par_window_, int flags_)
 {
 /*no, let qt choose  if (par_window_ == NULL)
     par_window_ = taiMisc::main_window;*/
-  iDialogItemChooser* rval = new iDialogItemChooser(caption_, par_window_);
+  iDialogItemChooser* rval = new iDialogItemChooser(caption_, par_window_, flags_);
   rval->setFont(taiM->dialogFont(ft));
   rval->Constr(client_);
   return rval;
 }
 
-iDialogItemChooser::iDialogItemChooser(const String& caption_, QWidget* par_window_)
+iDialogItemChooser::iDialogItemChooser(const String& caption_, QWidget* par_window_, int flags_)
 :inherited(par_window_)
 {
   init(caption_);
+  flags = flags_;
 }
 
 void iDialogItemChooser::init(const String& caption_) {
@@ -361,7 +362,9 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   lay->addWidget(btnOk);
   lay->addSpacing(taiM->vsep_c);
   btnCancel = new QPushButton("&Cancel", body);
-  lay->addWidget(btnCancel);
+  if (!(flags & flgNoCancel)) {
+    lay->addWidget(btnCancel);
+  }
   layOuter->addLayout(lay);
 
   timFilter = new QTimer(this);

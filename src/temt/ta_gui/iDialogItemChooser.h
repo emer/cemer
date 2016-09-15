@@ -48,11 +48,17 @@ public:
     NewFunRole,  // new function call on object
   };
 #endif
+
+  enum Flags {
+    flgNoFlags          = 0x0000,
+    flgNoCancel         = 0x0001,  // don't add the cancel button
+  };
+
   static const String   cat_none; // "none" category
   static int            filt_delay; // delay, in msec, to invoke filter after typing
 
   static iDialogItemChooser* New(const String& caption, taiWidgetItemChooser* client = NULL,
-    int ft = 0, QWidget* par_window_ = NULL);
+    int ft = 0, QWidget* par_window_ = NULL, int flags_ = flgNoFlags);
 
   String                caption;        // current caption at top of chooser
   bool                  multi_cats;     // each item may have multiple categories, separated by commas
@@ -98,6 +104,7 @@ public:
   void*                 GetSelectedObject() const {return m_selObj;}
   
 protected:
+  int                   flags;
   int                   m_changing;
   bool                  m_fully_up;
   void*                 m_selObj;       // current selected object
@@ -121,7 +128,7 @@ protected:
   virtual void          SelectItem(QTreeWidgetItem* itm, bool is_first = false);
   // select the item in items list, by one form of force or another
 
-  iDialogItemChooser(const String& caption, QWidget* par_window_);
+  iDialogItemChooser(const String& caption, QWidget* par_window_, int flags_);
 protected slots:
   void                  accept() override;
   void                  reject() override;
