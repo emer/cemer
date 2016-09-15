@@ -27,19 +27,7 @@ void MatrixActSpec::Initialize() {
 }
 
 void MatrixActSpec::Defaults_init() {
-  mnt_gate_inhib = 0.002f;
-  out_gate_inhib = 0.0f;
-  gate_i_tau = 4.0f;
   out_ach_inhib = 0.3f;
-  mnt_ach_inhib = 0.0f;
-  mnt_deep_mod = false;
-  out_deep_mod = true;
-  gate_i_dt = 1.0f / gate_i_tau;
-}
-
-void MatrixActSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  gate_i_dt = 1.0f / gate_i_tau;
 }
 
 void MSNUnitSpec::Initialize() {
@@ -76,15 +64,8 @@ void MSNUnitSpec::Compute_ApplyInhib
 
   if(matrix_patch != MATRIX) return;
 
-  u->gc_i += u->misc_1;         // post-gating inhibition
-  
   GateType gt = MatrixGateType(u, net, thr_no);
-  if(gt == MAINT) {
-    if(u->ach > 0.0f) {
-      u->gc_i += matrix.mnt_ach_inhib;
-    }
-  }
-  else { // OUT
+  if(gt == OUT) {
     u->gc_i += matrix.out_ach_inhib * (1.0f - u->ach);
   }
 }
@@ -110,33 +91,8 @@ void MSNUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int th
 
 void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
-    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-    LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-    float dp_lrn = 1.0f;
-    float dp_mod = 1.0f;
-    if(lay->am_deep_mod_net.max > 0.1f) {
-      dp_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
-      dp_mod = deep.mod_min + deep.mod_range * dp_lrn;
-    }
-    GateType gt = MatrixGateType(u, net, thr_no);
-    if(gt == MAINT) {
-      if(matrix.mnt_deep_mod) {
-        u->deep_lrn = dp_lrn;
-        u->deep_mod = dp_mod;
-      }
-      else {
-        u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100%
-      }
-    }
-    else { // gt == OUT
-      if(matrix.out_deep_mod) {
-        u->deep_lrn = dp_lrn;
-        u->deep_mod = dp_mod;
-      }
-      else {
-        u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100%
-      }
-    }
+    u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100% -- not using deep
+    // inherited::Compute_DeepMod(u, net, thr_no);
   }
   else if(dorsal_ventral == VENTRAL && matrix_patch == MATRIX) {
     LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
@@ -161,23 +117,4 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 }
 
-void MSNUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
-
-  inherited::Compute_DeepStateUpdt(u, net, thr_no);
-  if(matrix_patch != MATRIX) return;
-
-  if(u->thal > 0.0f) {          // we gated
-    GateType gt = MatrixGateType(u, net, thr_no);
-    if(gt == MAINT) {
-      u->misc_1 += matrix.mnt_gate_inhib * u->net_prv_q; // keep the net, not the inhib!
-    }
-    else {
-      u->misc_1 += matrix.out_gate_inhib * u->net_prv_q; // keep the net, not the inhib!
-    }
-  }
-  else {
-    u->misc_1 -= matrix.gate_i_dt * u->misc_1; // decay
-  }
-}
 

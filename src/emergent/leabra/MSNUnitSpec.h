@@ -29,22 +29,14 @@ class E_API MatrixActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for matrix MSN unit activation
 INHERITED(SpecMemberBase)
 public:
-  float         mnt_gate_inhib; // #DEF_0.002 amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for maintenance gating units
-  float         out_gate_inhib; // #DEF_0 amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for output gating units
-  float         gate_i_tau;     // #DEF_4 decay time for post-gating inhibition, in units of deep active periods (e.g., beta frequency) -- determined by deep_raw_qtr 
   float         out_ach_inhib;  // #DEF_0:0.3 how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials -- do NOT apply to NoGo, only Go -- this is a key param -- between 0.1-0.3 usu good -- see how much output gating happening and change accordingly
-  bool          out_deep_mod;   // #DEF_true engage deep_mod for output units based on projections from mnt deep layer -- allows biasing of stripes that are already maintaining to be favored for output gating -- strength of bias is in deep.mod_min
-  float         mnt_ach_inhib;  // #DEF_0 how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials -- generally not useful, esp compared to out_ach_inhib
-  bool          mnt_deep_mod;   // #DEF_false engage deep_mod for maintenance units based on projections from mnt deep layer -- when applied only to NoGo, allows biasing of stripes that are already maintaining not update -- strength of bias is in deep.mod_min -- generally not useful
 
-  float         gate_i_dt;      // #READ_ONLY #EXPERT rate = 1/gate_i_tau
-  
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(MatrixActSpec);
 protected:
   SPEC_DEFAULTS;
-  void  UpdateAfterEdit_impl() override;
+
 private:
   void  Initialize();
   void  Destroy()       { };
@@ -91,8 +83,6 @@ public:
   
   void Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-
-  void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:

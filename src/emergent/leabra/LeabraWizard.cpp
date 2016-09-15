@@ -2770,7 +2770,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     mtx_cons_go->AddToControlPanelNm("lrate", cp, "matrix", subgp,
                                      "Default Matrix lrate is .01");
     mtx_cons_go->AddToControlPanelNm("trace", cp, "matrix", subgp);
-    mtx_cons_go->AddToControlPanelNm("matrix", cp, "matrix", subgp);
+    mtx_cons_go->AddToControlPanelNm("tr_thal", cp, "matrix", subgp);
     mtx_cons_fm_pfc->AddToControlPanelNm("wt_scale", cp, "matrix", subgp);
 
     gpi_units->AddToControlPanelNm("gpi", cp, "gpi", subgp);
@@ -3062,8 +3062,8 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_go, vta, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_go, matrix_tan, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_go, patch, bgpfcprjn, marker_cons);
-  net->FindMakePrjn(matrix_go, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
-                    pfc_send_deep);
+  // net->FindMakePrjn(matrix_go, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
+  //                   pfc_send_deep);
   net->FindMakePrjn(matrix_go, gpenogo, gponetoone,
                     PbwmSp(prefix + "DeepRawPlus", SendDeepRawConSpec));
   net->FindMakePrjnAdd(matrix_go, pfc_mnt_d, fullprjn,
@@ -3077,8 +3077,8 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_nogo, matrix_tan, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_nogo, patch, bgpfcprjn, marker_cons);
-  net->FindMakePrjn(matrix_nogo, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
-                    pfc_send_deep);
+  // net->FindMakePrjn(matrix_nogo, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
+  //                   pfc_send_deep);
   net->FindMakePrjn(matrix_nogo, gpenogo, gponetoone,
                     PbwmSp(prefix + "DeepRawPlus", SendDeepRawConSpec));
   net->FindMakePrjnAdd(matrix_nogo, pfc_mnt_d, fullprjn,
