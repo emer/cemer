@@ -1614,6 +1614,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     u->spike = 1.0f;
     u->v_m = spike_misc.vm_r;
     u->spk_t = net->tot_cycle;
+    u->I_net = 0.0f;
   }
   else {
     TestWrite(u->spike, 0.0f);
@@ -1636,8 +1637,9 @@ void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnitVars* u, LeabraNetwork* net
   int interval = act_misc.ActToInterval(net->times.time_inc, dt.integ, u->act_nd);
   if((net->tot_cycle - u->spk_t) >= interval) {
     u->spike = 1.0f;
-    u->spk_t = net->tot_cycle;
     u->v_m = spike_misc.vm_r;   // reset vm when we spike -- now we can use it just like spiking!
+    u->spk_t = net->tot_cycle;
+    u->I_net = 0.0f;
   }
 }
 
@@ -1681,6 +1683,7 @@ void LeabraUnitSpec::Compute_ActFun_Spike(LeabraUnitVars* u, LeabraNetwork* net,
     u->spike = 1.0f;
     u->v_m = spike_misc.vm_r;
     u->spk_t = net->tot_cycle;
+    u->I_net = 0.0f;
   }
   else {
     TestWrite(u->act, 0.0f);
@@ -1758,9 +1761,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     float I_net = new_v_m - u->v_m; // time integrate: not really I_net but hey
     u->v_m += I_net;
     u->v_m_eq = u->v_m;
-    if(taMisc::gui_active) {
-      u->I_net = I_net;
-    }
+    u->I_net = I_net;
   }
   else {
     float net_eff = u->net * g_bar.e;
@@ -1796,9 +1797,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
           taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
       }
       u->v_m += dt.integ * dt.vm_dt * I_net;
-      if(taMisc::gui_active) {
-        u->I_net = I_net;
-      }
+      u->I_net = I_net;
     }
 
     // always compute v_m_eq with simple integration -- used for rate code subthreshold
