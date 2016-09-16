@@ -118,8 +118,12 @@ do
     ;;
 
     --generator | -generator | generator | --gen | -gen | gen | -G)
-      generator="-G ${1##*=}"		# get part after =
+      gen_name="${1##*=}"    # get part after =
+      generator="-G ${gen_name}"		
       cmake_cmd="$cmake_cmd $generator"
+      gen_down=`echo "$gen_name" | tr '[:upper:]' '[:lower:]'`
+      gen_short="${gen_down:0:2}"
+      build_dir="${build_dir}_${gen_short}"
       shift 1
     ;;
     # needed for MOTU
