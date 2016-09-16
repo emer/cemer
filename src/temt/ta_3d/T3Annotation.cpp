@@ -74,8 +74,8 @@ void T3Annotation::SetColor(const String& clr) {
   UpdateAfterEdit();
 }
 
-void T3Annotation::SetFillColor(bool fill, const String& clr) {
-  fill = fill;
+void T3Annotation::SetFillColor(bool fl, const String& clr) {
+  fill = fl;
   fill_color.setColorName(clr);
   UpdateAfterEdit();
 }

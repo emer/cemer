@@ -2157,7 +2157,7 @@ void VEArm::ShowIP(int ipno, int prox_dist, taVector3f& ip_loc) {
   }
 
   // color the insertion points by the current gain factor being applied!
-  float disp_val;
+  float disp_val = 0.0f;
   switch(show_ips) {
   case IP_STIM:
     disp_val = stims.SafeEl(ipno);

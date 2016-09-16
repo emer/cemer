@@ -521,7 +521,7 @@ VocalTract::speedOfSound(float temperature)
 void
 VocalTract::initializeSynthesizer()
 {
-  float nyquist;
+  float nyquist = 1.0f;
 
   /*  CALCULATE THE SAMPLE RATE, BASED ON NOMINAL TUBE LENGTH AND SPEED OF SOUND  */
   if (voice.tract_length > 0.0) {
