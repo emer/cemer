@@ -819,6 +819,7 @@ bool ProgEl::CvtCodeToVar(String& code) {
 }
 
 void ProgEl::UpdateProgCode() {
+  code_string = pre_compile_code_string;
   SigEmitUpdated();
 }
 
