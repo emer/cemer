@@ -162,11 +162,7 @@ bool ProgCode::BrowserEditSet(const String& code_str, int move_after) {
   else {
     code.expr = CodeGetDesc(code_str);
   }
-  // rohrlich 8/3/2014 - see comment at start of CvtCodeToProgEl()
-  // uncomment these lines if that is reversed
-//  if(code.expr.nonempty()) {
     tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
-//  }
   return false;
 }
 
