@@ -39,6 +39,7 @@
 
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
+#include <QWebEngineSettings>
 
 #else // USE_QT_WEBENGINE
 
@@ -334,20 +335,20 @@ void iPanelOfDocView::UpdatePanel_impl() {
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);
 
-#if (QT_VERSION >= 0x050000)
-  float trg_font_sz = 14.0f;    // fonts got upsized..
-#else
   float trg_font_sz = 12.0f;
-#endif
-  if(doc_->url.empty() || doc_->url == "local")
-    trg_font_sz = 14.0f;
+  
+  int brow_fs = taMisc::GetCurrentFontSize("browser");
 
 #ifdef USE_QT_WEBENGINE
 
+  QWebEngineSettings* set = webview->settings();
+  set->setFontSize(QWebEngineSettings::DefaultFontSize, brow_fs);
+  set->setFontSize(QWebEngineSettings::DefaultFixedFontSize, brow_fs);
+
 #else // USE_QT_WEBENGINE
   
-  webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size *
-                                 ((float)taMisc::GetCurrentFontSize("labels") / trg_font_sz));
+  webview->setTextSizeMultiplier(doc_->text_size *
+                                 ((float)brow_fs / trg_font_sz));
 #endif // USE_QT_WEBENGINE
 
   String nw_url = doc_->GetURL();

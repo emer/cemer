@@ -127,6 +127,7 @@ public:
   int  editor;  // #MIN_4 the font size used in the middle pane when editing program code
   int  table;  // #MIN_4 the font size for data table cells
   int  console;  // #MIN_4 the font size for the console window
+  int  browser;  // #MIN_4 font size for web browser and docs
   
   taFontSizes();
 };
@@ -320,13 +321,12 @@ public:
   static AppToolbarStyle app_toolbar_style;      // #SAVE #CAT_GUI style options provided by the gui system, change only takes effect on restarting the program
   static taFontNames    font_names; // #SAVE #CAT_GUI font preferences for GUI and console
   static taFontSizes    font_sizes; // #SAVE #CAT_GUI font size preferences for various parts of the GUI
-  static int            global_font_incr_decr; // #NO_SAVE temporary font size increment/decrement applied to all fonts
-  static int            GetCurrentFontSize(const String& component); // return preferred font size plus global_font_incr_decr
+  static int            global_font_incr_decr; // #NO_SAVE #HIDDEN #CAT_GUI temporary font size increment/decrement applied to all fonts
+  static int            GetCurrentFontSize(const String& component); // #CAT_GUI return preferred font size plus global_font_incr_decr
   static String         t3d_bg_color;   // #SAVE #CAT_GUI default background color for 3d view -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_text_color; // #SAVE #CAT_GUI default text color for 3d view  -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_font_name;  // #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
   static ConsoleOptions console_options; // #SAVE #CAT_GUI options for the console **REQUIRES APP RESTART
-  static float          doc_text_scale; // #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
   static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level

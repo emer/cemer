@@ -132,6 +132,8 @@ String MemberMethodCall::GetDisplayName() const {
 bool MemberMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if (code == GetDisplayName())
     return true;
+  if(!code.endsWith(')'))
+    return false;
   if(!code.contains('('))
     return false;
   String lhs = code.before('(');

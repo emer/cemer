@@ -43,6 +43,8 @@
 
 #ifdef USE_QT_WEBENGINE
 
+#include <QWebEngineSettings>
+
 #else // USE_QT_WEBENGINE
 
 #include <QWebPage>
@@ -383,18 +385,20 @@ void iHelpBrowser::AddTypesR(TypeSpace* ts) {
 iWebView* iHelpBrowser::AddWebView(const String& label) {
   ++m_changing;
   iWebView* brow = new iWebView;
-#if (QT_VERSION >= 0x050000)
-  float trg_font_sz = 14.0f;    // fonts got upsized..
-#else
-  float trg_font_sz = 12.0f;
-#endif
+  float trg_font_sz = 12.0f;    // fonts got upsized..
 
+  int brow_fs = taMisc::GetCurrentFontSize("browser");
 
 #ifdef USE_QT_WEBENGINE
+
+  QWebEngineSettings* set = brow->settings();
+  set->setFontSize(QWebEngineSettings::DefaultFontSize, brow_fs);
+  set->setFontSize(QWebEngineSettings::DefaultFixedFontSize, brow_fs);
+
 #else // USE_QT_WEBENGINE
-  
-  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_sizes.labels /
-                                                        trg_font_sz));
+
+  brow->setTextSizeMultiplier((float)brow_fs / trg_font_sz);
+
 #endif // USE_QT_WEBENGINE
 
   int tidx = tab->addTab(brow, label.toQString());
@@ -402,7 +406,7 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
   url_text->setText("");// something else has to make it valid
 
   connect(brow, SIGNAL(statusBarMessage(const QString&)),
-    status_bar, SLOT(showMessage(const QString&)) );
+          status_bar, SLOT(showMessage(const QString&)) );
 
 #ifdef USE_QT_WEBENGINE
   connect(brow,

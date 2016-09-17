@@ -103,12 +103,14 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if (dc.startsWith("local_") || dc.startsWith("localv") || dc.startsWith("loc_var")) {
     return true;
   }
-  // no? look for data type
-  if(!code.contains(' ')) return false; // must have at least one space
-  String vartyp = trim(code.before(' '));
-  if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
-  TypeDef* td = TypeDef::FindGlobalTypeName(vartyp, false);
-  if(td != NULL) return true;   // yep.
+  // this no longer makes any sense with the parsing that prompts to create
+  // a variable when there is a type and a variable name -- which creates local variable
+  // if selected:
+  // if(!code.contains(' ')) return false; // must have at least one space
+  // String vartyp = trim(code.before(' '));
+  // if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
+  // TypeDef* td = TypeDef::FindGlobalTypeName(vartyp, false);
+  // if(td != NULL && !td->InheritsFrom(&TA_ProgEl)) return true;   // yep, and not a prog!
   return false;
 }
 

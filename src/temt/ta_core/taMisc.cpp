@@ -239,50 +239,57 @@ taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
 
 // parameters that are strictly platform specific
 #ifdef TA_OS_MAC
-  taFontSizes::taFontSizes() {
-    labels = 12; //
-    navigator = taMisc::font_sizes.labels;  //
-    editor = taMisc::font_sizes.labels;  //
-    table = taMisc::font_sizes.labels;  //
-    console = 12;  //
-  }
-  taFontNames::taFontNames() {
-    general = "Lucida Grande";
-    console = "Andale Mono";
-  }
-  float   taMisc::doc_text_scale = 1.0f;
+
+taFontSizes::taFontSizes() {
+  labels = 12; //
+  navigator = taMisc::font_sizes.labels;  //
+  editor = taMisc::font_sizes.labels;  //
+  table = taMisc::font_sizes.labels;  //
+  console = 12;  //
+  browser = 14;
+}
+taFontNames::taFontNames() {
+  general = "Lucida Grande";
+  console = "Menlo";
+}
+
 #elif defined(TA_OS_WIN)
-  taFontSizes::taFontSizes() {
-    labels = 10; //
-    navigator = taMisc::font_sizes.labels;  //
-    editor = taMisc::font_sizes.labels;  //
-    table = taMisc::font_sizes.labels;  //
-    console = 10;  // this is a comment - can you see me??
-  }
-  taFontNames::taFontNames() {
-    general = "Arial";
-    console = "Fixed";
-  }
-  float   taMisc::doc_text_scale = 1.5f;
+
+taFontSizes::taFontSizes() {
+  labels = 10; //
+  navigator = taMisc::font_sizes.labels;  //
+  editor = taMisc::font_sizes.labels;  //
+  table = taMisc::font_sizes.labels;  //
+  console = 10;
+  browser = 12;
+}
+taFontNames::taFontNames() {
+  general = "Arial";
+  console = "Fixed";
+}
+
 #else // Linux or some Unix variant
-  taFontSizes::taFontSizes() {
-    labels = 10; //
-    navigator = taMisc::font_sizes.labels;  //
-    editor = taMisc::font_sizes.labels;  //
-    table = taMisc::font_sizes.labels;  //
-    console = 10;  // this is a comment - can you see me??
-  }
-  taFontNames::taFontNames() {
-    general = "Nimbus Sans";
-    console = "LucidaTypewriter";
-  }
-  float   taMisc::doc_text_scale = 1.0f;
+
+taFontSizes::taFontSizes() {
+  labels = 10; //
+  navigator = taMisc::font_sizes.labels;  //
+  editor = taMisc::font_sizes.labels;  //
+  table = taMisc::font_sizes.labels;  //
+  console = 10;
+  browser = 12;
+}
+taFontNames::taFontNames() {
+  general = "Nimbus Sans";
+  console = "LucidaTypewriter";
+}
 #endif
+
 taFontSizes taMisc::font_sizes;
 taFontNames taMisc::font_names;
+
 int taMisc::global_font_incr_decr = 0;
 
-int     taMisc::GetCurrentFontSize(const String& component) {
+int taMisc::GetCurrentFontSize(const String& component) {
   if (component == "labels") {
     return taMisc::font_sizes.labels + global_font_incr_decr;
   }
@@ -298,8 +305,12 @@ int     taMisc::GetCurrentFontSize(const String& component) {
   else if (component == "console") {
     return taMisc::font_sizes.console + global_font_incr_decr;
   }
-  taMisc::Error("Programmer Error - please report - GetCurrentFontSize - component unknown");
-  return taMisc::font_sizes.labels;
+  else if (component == "browser") {
+    return taMisc::font_sizes.browser + global_font_incr_decr;
+  }
+  taMisc::Error("Programmer Error - please report - GetCurrentFontSize - component unknown:",
+                component);
+  return taMisc::font_sizes.labels + global_font_incr_decr;
 }
 
 String  taMisc::t3d_font_name = "Arial";

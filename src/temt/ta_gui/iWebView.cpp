@@ -20,6 +20,7 @@
 #include <iPanelOfDocView>
 #include <taDoc>
 #include <taProject>
+#include <taMisc>
 
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
@@ -87,8 +88,10 @@ QWebEngineProfile* iWebView::temtProfile() {
   temt_profile->setHttpCacheType(QWebEngineProfile::DiskHttpCache);
   temt_profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
 
-  // QWebEngineSettings* set = temt_profile->settings();
-  // todo: could set font size etc
+  QWebEngineSettings* set = temt_profile->settings();
+  int brow_fs = taMisc::GetCurrentFontSize("browser");
+  set->setFontSize(QWebEngineSettings::DefaultFontSize, brow_fs);
+  set->setFontSize(QWebEngineSettings::DefaultFixedFontSize, brow_fs);
   return temt_profile;
 }
 

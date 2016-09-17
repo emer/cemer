@@ -1264,9 +1264,6 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   // this integrates from SendDelta into net_raw and gi_syn
   int nt = net->n_thrs_built;
   const int flat_idx = u->flat_idx;
-#ifdef CUDA_COMPILE
-  nt = 1;                       // cuda is always 1 thread for this..
-#endif
   float net_delta = 0.0f;
   float gi_delta = 0.0f;
   if(net->NetinPerPrjn()) {
