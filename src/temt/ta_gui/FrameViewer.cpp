@@ -47,7 +47,7 @@ void FrameViewer::UpdateAfterEdit_impl() {
     else if (name == "Panels") {
       SetName("Editor");
     }
-    else if (name == "T3LineBoxs") {
+    else if (name == "T3Frames") {
       SetName("Visualizer");
     }
   }
