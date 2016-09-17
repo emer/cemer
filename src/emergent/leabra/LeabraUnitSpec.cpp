@@ -22,6 +22,7 @@
 #include <taProject>
 #include <taMath_double>
 #include <DataTable>
+#include <CircBufferIndex>
 
 #include <taMisc>
 
@@ -610,6 +611,9 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->gi_raw = 0.0f;
   u->deep_raw_sent = 0.0f;
 
+  CircBufferIndex::Reset(u->spike_e_st, u->spike_e_len);
+  CircBufferIndex::Reset(u->spike_i_st, u->spike_i_len);
+  
   // act_buf = NULL;
   // spike_e_buf = NULL;
   // spike_i_buf = NULL;
@@ -742,13 +746,9 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
 
   u->spk_t = -1;
 
-  Init_SpikeBuff(u);
-  // if(act_fun == SPIKE) {
-  //   u->spike_e_buf->Reset();
-  //   u->spike_i_buf->Reset();
-  // }
-
-  Init_ActBuff(u);
+  CircBufferIndex::Reset(u->spike_e_st, u->spike_e_len);
+  CircBufferIndex::Reset(u->spike_i_st, u->spike_i_len);
+  
   // if(syn_delay.on) {
   //   u->act_buf->Reset();
   // }
@@ -789,57 +789,17 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
   }
 
   if(decay == 1.0f) {
-    Init_SpikeBuff(u);
-    // if(act_fun == SPIKE) {
-    //   u->spike_e_buf->Reset();
-    //   u->spike_i_buf->Reset();
-    // }
+    if(act_fun == SPIKE) {
+      CircBufferIndex::Reset(u->spike_e_st, u->spike_e_len);
+      CircBufferIndex::Reset(u->spike_i_st, u->spike_i_len);
+    }
 
-    Init_ActBuff(u);
     // if(syn_delay.on) {
     //   u->act_buf->Reset();
     // }
   }
 }
 
-void LeabraUnitSpec::Init_SpikeBuff(LeabraUnitVars* u) {
-  // todo:
-  // if(act_fun == SPIKE) {
-  //   if(!u->spike_e_buf) {
-  //     u->spike_e_buf = new float_CircBuffer;
-  //     taBase::Own(u->spike_e_buf, u);
-  //   }
-  //   if(!u->spike_i_buf) {
-  //     u->spike_i_buf = new float_CircBuffer;
-  //     taBase::Own(u->spike_i_buf, u);
-  //   }
-  // }
-  // else {
-  //   if(u->spike_e_buf) {
-  //     taBase::unRefDone(u->spike_e_buf);
-  //     u->spike_e_buf = NULL;
-  //   }
-  //   if(u->spike_i_buf) {
-  //     taBase::unRefDone(u->spike_i_buf);
-  //     u->spike_i_buf = NULL;
-  //   }
-  // }
-}
-
-void LeabraUnitSpec::Init_ActBuff(LeabraUnitVars* u) {
-  // if(syn_delay.on) {
-  //   if(!u->act_buf) {
-  //     u->act_buf = new float_CircBuffer;
-  //     taBase::Own(u->act_buf, u);
-  //   }
-  // }
-  // else {
-  //   if(u->act_buf) {
-  //     taBase::unRefDone(u->act_buf);
-  //     u->act_buf = NULL;
-  //   }
-  // }
-}
 
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit functions
@@ -1421,58 +1381,59 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnitVars* u, LeabraNetwork* net,
                                                 int thr_no) {
-  // todo!
   // netin gets added at the end of the spike_buf -- 0 time is the end
-  // Init_SpikeBuff(u);
-  // // u->spike_e_buf->CircAddLimit(u->net, spike.window); // add current net to buffer
-  // int mx = MAX(spike.window, u->spike_e_buf->length);
-  // float sum = 0.0f;
-  // if(spike.rise == 0.0f && spike.decay > 0.0f) {
-  //   // optimized fast recursive exp decay: note: does NOT use dt.net_dt
-  //   for(int t=0;t<mx;t++) {
-  //     sum += u->spike_e_buf->CircSafeEl(t);
-  //   }
-  //   sum /= (float)spike.window; // normalize over window
-  //   u->net += dt.integ * (spike.gg_decay * sum - (u->net * spike.oneo_decay));
-  // }
-  // else {
-  //   for(int t=0;t<mx;t++) {
-  //     float spkin = u->spike_e_buf->CircSafeEl(t);
-  //     if(spkin > 0.0f) {
-  //       sum += spkin * spike.ComputeAlpha(mx-t-1);
-  //     }
-  //   }
-  //   // from compute_netinavg
-  //   u->net += dt.integ * dt.net_dt * (sum - u->net);
-  // }
-  // u->net = fmaxf(u->net, 0.0f); // negative netin doesn't make any sense
+  CircBufferIndex::CircAddShift_float
+    (u->net, u->spike_e_buf, u->spike_e_st, u->spike_e_len, spike.window);
+  int mx = u->spike_e_len;
+  float sum = 0.0f;
+  if(spike.rise == 0.0f && spike.decay > 0.0f) {
+    // optimized fast recursive exp decay: note: does NOT use dt.net_dt
+    for(int t=0;t<mx;t++) {
+      sum += CircBufferIndex::CircEl_float(t, u->spike_e_buf, u->spike_e_st, spike.window);
+    }
+    sum /= (float)spike.window; // normalize over window -- todo: what if it is smaller!?
+    u->net += dt.integ * (spike.gg_decay * sum - (u->net * spike.oneo_decay));
+  }
+  else {
+    for(int t=0;t<mx;t++) {
+      float spkin = CircBufferIndex::CircEl_float(t, u->spike_e_buf, u->spike_e_st,
+                                                  spike.window);
+      if(spkin > 0.0f) {
+        sum += spkin * spike.ComputeAlpha(mx-t-1);
+      }
+    }
+    // from compute_netinavg
+    u->net += dt.integ * dt.net_dt * (sum - u->net);
+  }
+  u->net = fmaxf(u->net, 0.0f); // negative netin doesn't make any sense
 }
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork* net,
                                                 int thr_no) {
   // netin gets added at the end of the spike_i_buf -- 0 time is the end
-  // Init_SpikeBuff(u);
-  // u->spike_i_buf->CircAddLimit(u->gc_i, spike.window); // add current net to buffer
-  // int mx = MAX(spike.window, u->spike_i_buf->length);
-  // float sum = 0.0f;
-  // if(spike.rise == 0.0f && spike.decay > 0.0f) {
-  //   // optimized fast recursive exp decay: note: does NOT use dt.net_dt
-  //   for(int t=0;t<mx;t++) {
-  //     sum += u->spike_i_buf->CircSafeEl(t);
-  //   }
-  //   sum /= (float)spike.window; // normalize over window
-  //   u->gi_syn += dt.integ * (spike.gg_decay * sum - (u->gi_syn * spike.oneo_decay));
-  // }
-  // else {
-  //   for(int t=0;t<mx;t++) {
-  //     float spkin = u->spike_i_buf->CircSafeEl(t);
-  //     if(spkin > 0.0f) {
-  //       sum += spkin * spike.ComputeAlpha(mx-t-1);
-  //     }
-  //   }
-  //   u->gi_syn += dt.integ * dt.net_dt * (sum - u->gi_syn);
-  // }
-  // u->gi_syn = fmaxf(u->gi_syn, 0.0f); // negative netin doesn't make any sense
+  CircBufferIndex::CircAddShift_float
+    (u->gi_raw, u->spike_i_buf, u->spike_i_st, u->spike_i_len, spike.window);
+  int mx = u->spike_i_len;
+  float sum = 0.0f;
+  if(spike.rise == 0.0f && spike.decay > 0.0f) {
+    // optimized fast recursive exp decay: note: does NOT use dt.net_dt
+    for(int t=0;t<mx;t++) {
+      sum += CircBufferIndex::CircEl_float(t, u->spike_i_buf, u->spike_i_st, spike.window);
+    }
+    sum /= (float)spike.window; // normalize over window
+    u->gi_syn += dt.integ * (spike.gg_decay * sum - (u->gi_syn * spike.oneo_decay));
+  }
+  else {
+    for(int t=0;t<mx;t++) {
+      float spkin = CircBufferIndex::CircEl_float(t, u->spike_i_buf, u->spike_i_st,
+                                                  spike.window);
+      if(spkin > 0.0f) {
+        sum += spkin * spike.ComputeAlpha(mx-t-1);
+      }
+    }
+    u->gi_syn += dt.integ * dt.net_dt * (sum - u->gi_syn);
+  }
+  u->gi_syn = fmaxf(u->gi_syn, 0.0f); // negative netin doesn't make any sense
 }
 
 ///////////////////////////////////////////////////////////////////////

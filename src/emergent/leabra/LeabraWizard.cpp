@@ -1456,6 +1456,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd1->burst_da_gain = base_da_gain;
   vsmatrix_cons_pd1->SetUnique("dip_da_gain", true);
   vsmatrix_cons_pd1->dip_da_gain = 0.2f * base_da_gain;
+  vsmatrix_cons_pd1->SetUnique("trace", true);
+  vsmatrix_cons_pd1->trace.msn_deriv = false;
   
   vsmatrix_cons_nd2->SetUnique("rnd", false);
   vsmatrix_cons_nd2->SetUnique("wt_scale", false);
@@ -1470,6 +1472,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_nd2->burst_da_gain = 0.2f * base_da_gain;
   vsmatrix_cons_nd2->SetUnique("dip_da_gain", true);
   vsmatrix_cons_nd2->dip_da_gain = base_da_gain;
+  vsmatrix_cons_nd2->SetUnique("trace", false);
   
   vsmatrix_cons_pd2->SetUnique("rnd", false);
   vsmatrix_cons_pd2->SetUnique("wt_scale", false);
@@ -1484,6 +1487,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd2->burst_da_gain = base_da_gain;
   vsmatrix_cons_pd2->SetUnique("dip_da_gain", true);
   vsmatrix_cons_pd2->dip_da_gain = base_da_gain;
+  vsmatrix_cons_pd2->SetUnique("trace", false);
 
   vsmatrix_cons_nd1->SetUnique("rnd", false);
   vsmatrix_cons_nd1->SetUnique("wt_scale", false);
@@ -1498,6 +1502,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_nd1->burst_da_gain = base_da_gain;
   vsmatrix_cons_nd1->SetUnique("dip_da_gain", true);
   vsmatrix_cons_nd1->dip_da_gain = base_da_gain;
+  vsmatrix_cons_nd1->SetUnique("trace", false);
 
   fix_cons->UpdateAfterEdit();
   fix_cons->learn = false;

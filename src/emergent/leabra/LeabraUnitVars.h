@@ -23,6 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
+// NOTE: this defines how big these spike integration buffers can be
+#define LEABRA_MAX_SPIKE_INTEG_WIN 10
+
 eTypeDef_Of(LeabraUnitVars);
 
 class E_API LeabraUnitVars : public UnitVars {
@@ -90,6 +93,17 @@ public:
   float      net_raw;        // #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta's are added to this value)
   float      gi_raw;         // #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
   float      deep_raw_sent;  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_raw_net
+
+  
+  float      spike_e_buf[LEABRA_MAX_SPIKE_INTEG_WIN];
+  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation buffer for integrating spike current over time, for excitatory inputs
+  int        spike_e_st;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation starting index in buffer for integrating spike current over time, for excitatory inputs
+  int        spike_e_len;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation length of  buffer for integrating spike current over time, for excitatory inputs
+
+  float      spike_i_buf[LEABRA_MAX_SPIKE_INTEG_WIN];
+  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation buffer for integrating spike current over time, for inhibitory inputs
+  int        spike_i_st;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation starting index in buffer for integrating spike current over time, for inhibitory inputs
+  int        spike_i_len;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation length of  buffer for integrating spike current over time, for inhibitory inputs
 };
 
 #endif // LeabraUnitVars_h

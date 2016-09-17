@@ -105,6 +105,7 @@ set(ta_core_HEADS_MAKETA_NOMOC
   voidptr_Array.h
   NameVar_Array.h
   float_CircBuffer.h
+  CircBufferIndex.h
 
   CellRange.h
   MatrixIndex.h
@@ -369,6 +370,7 @@ set(ta_core_SRCS_MAKETA
   voidptr_Array.cpp
   NameVar_Array.cpp
   float_CircBuffer.cpp
+  CircBufferIndex.cpp
 
   CellRange.cpp
   MatrixIndex.cpp

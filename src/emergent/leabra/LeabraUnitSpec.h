@@ -101,7 +101,7 @@ public:
   float         rise;                // #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float         decay;                // #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
   float         g_gain;                // #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
-  int           window;                // #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
+  int           window;                // #DEF_3 #MIN_0 #MAX_10 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost (max of 10 imposed by fixed buffer required in LeabraUnitVars structure)
   float         eq_gain;        // #DEF_8 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float         eq_tau;                // #DEF_50 #MIN_0 if non-zero, compute act_eq as a continuous running average instead of explicit spikes / cycles -- this is the time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
 
@@ -651,11 +651,6 @@ public:
   virtual void DecayState(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no,
                            float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
-
-  virtual void Init_SpikeBuff(LeabraUnitVars* uv);
-  // #CAT_Activation initialize spike buffers based on whether they are needed
-  virtual void Init_ActBuff(LeabraUnitVars* uv);
-  // #CAT_Activation initialize activation buffer based on whether they are needed
 
   ///////////////////////////////////////////////////////////////////////
   //        TrialInit -- at start of trial
