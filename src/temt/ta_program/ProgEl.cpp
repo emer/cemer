@@ -139,7 +139,7 @@ void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgFlags();
   pre_compile_code_string = BrowserEditString();  // hold on to the current code; if compile successful copy to
-  UpdateProgCode();
+  SigEmitUpdated();
 
   // update used flags on variables early and often!
   TypeDef* td = GetTypeDef();
@@ -816,11 +816,6 @@ bool ProgEl::CvtCodeToVar(String& code) {
     }
   }
   return true;
-}
-
-void ProgEl::UpdateProgCode() {
-  code_string = pre_compile_code_string;
-  SigEmitUpdated();
 }
 
 bool ProgEl::InDebugMode() {

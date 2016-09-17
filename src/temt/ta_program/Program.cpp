@@ -578,9 +578,6 @@ void Program::Init() {
   taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   if (ret_val != RV_OK)
     ShowRunError();
-  if (ret_val == RV_OK) {
-    UpdateProgElCodeStrings();
-  }
   script->Restart();            // restart script at beginning if run again
   
   if(!taMisc::check_ok) {
@@ -991,9 +988,6 @@ void Program::StepCss() {
 
 void Program::Compile() {
   CompileScript(true);          // always force if command entered
-  if (ret_val == RV_OK ) {
-    UpdateProgElCodeStrings();
-  }
 }
 
 void Program::CmdShell() {
@@ -2408,20 +2402,6 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   taiMiscCore::ProcessEvents();
   return (bool)iti;
 }
-
-void Program::UpdateProgElCodeStrings() {
-  if (ret_val == RV_OK) {
-    for (int i=0; i<init_code.size; i++) {  // update code_strings in case user wants to revert
-      ProgEl* prog_el = init_code.FastEl(i);
-      prog_el->UpdateProgCode();
-    }
-    for (int i=0; i<prog_code.size; i++) {
-      ProgEl* prog_el = prog_code.FastEl(i);
-      prog_el->UpdateProgCode();
-    }
-  }
-}
-
 
 bool Program::BrowserEditTest() {
   bool rval = init_code.BrowserEditTest();
