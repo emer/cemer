@@ -73,6 +73,7 @@ void iDialogItemChooser::init(const String& caption_) {
   m_view = -1; // until set to valid value
   m_cat_filter = 0; // default is all
   is_dialog = true; // default
+  btnCancel = NULL;
   setModal(true);
   setWindowTitle(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
@@ -361,10 +362,12 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   btnOk->setDefault(true);
   lay->addWidget(btnOk);
   lay->addSpacing(taiM->vsep_c);
-  btnCancel = new QPushButton("&Cancel", body);
+  
   if (!(flags & flgNoCancel)) {
+    btnCancel = new QPushButton("&Cancel", body);
     lay->addWidget(btnCancel);
-  }
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+ }
   layOuter->addLayout(lay);
 
   timFilter = new QTimer(this);
@@ -372,7 +375,6 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   timFilter->setInterval(filt_delay);
 
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
-  connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(items, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
       this, SLOT(items_itemDoubleClicked(QTreeWidgetItem*, int)) );
   connect(filter, SIGNAL(textChanged(const QString&)),
