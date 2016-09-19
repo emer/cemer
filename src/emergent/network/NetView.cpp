@@ -938,7 +938,8 @@ void NetView::InitDisplay(bool init_panel) {
 
   hist_reset_req = false;       // this flag is used to sync history index resetting among
                                 // all the history elements in unit groups and network
-//  InitCtrHist();
+  InitCtrHist(false);           // non-force version, to make sure there is SOMETHING there
+  // doesn't do anything if existing is up-to-date
 
   if (init_panel) {
     InitPanel();

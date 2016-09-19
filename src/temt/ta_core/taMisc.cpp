@@ -289,30 +289,6 @@ taFontNames taMisc::font_names;
 
 int taMisc::global_font_incr_decr = 0;
 
-int taMisc::GetCurrentFontSize(const String& component) {
-  if (component == "labels") {
-    return taMisc::font_sizes.labels + global_font_incr_decr;
-  }
-  else if (component == "table") {
-    return taMisc::font_sizes.table + global_font_incr_decr;
-  }
-  else if (component == "navigator") {
-    return taMisc::font_sizes.navigator + global_font_incr_decr;
-  }
-  else if (component == "editor") {
-    return taMisc::font_sizes.editor + global_font_incr_decr;
-  }
-  else if (component == "console") {
-    return taMisc::font_sizes.console + global_font_incr_decr;
-  }
-  else if (component == "browser") {
-    return taMisc::font_sizes.browser + global_font_incr_decr;
-  }
-  taMisc::Error("Programmer Error - please report - GetCurrentFontSize - component unknown:",
-                component);
-  return taMisc::font_sizes.labels + global_font_incr_decr;
-}
-
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)
 String  taMisc::t3d_text_color = "black";
@@ -1664,6 +1640,45 @@ String taMisc::CurrentThreadName() {
   return "MainThread";
 #endif
 }
+
+int taMisc::GetCurrentFontSize(const String& component) {
+  if (component == "labels") {
+    return font_sizes.labels + global_font_incr_decr;
+  }
+  else if (component == "navigator") {
+    return font_sizes.navigator + global_font_incr_decr;
+  }
+  else if (component == "editor") {
+    return font_sizes.editor + global_font_incr_decr;
+  }
+  else if (component == "table") {
+    return font_sizes.table + global_font_incr_decr;
+  }
+  else if (component == "console") {
+    return font_sizes.console + global_font_incr_decr;
+  }
+  else if (component == "browser") {
+    return font_sizes.browser + global_font_incr_decr;
+  }
+  taMisc::Error("Programmer Error - please report - GetCurrentFontSize - component unknown:",
+                component);
+  return font_sizes.labels + global_font_incr_decr;
+}
+
+void taMisc::SetCurrentFontSizeToDefaults() {
+  font_sizes.labels += global_font_incr_decr;
+  font_sizes.navigator += global_font_incr_decr;
+  font_sizes.editor += global_font_incr_decr;
+  font_sizes.table += global_font_incr_decr;
+  font_sizes.console += global_font_incr_decr;
+  font_sizes.browser += global_font_incr_decr;
+  global_font_incr_decr = 0;
+#ifndef NO_TA_BASE  
+  taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
+  inst->SaveConfig();
+#endif
+}
+
 
 /////////////////////////////////////////////////
 //      Startup

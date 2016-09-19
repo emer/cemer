@@ -174,6 +174,7 @@ public:
   iAction*            viewResetViewAction;
   iAction*            viewIncrFontSizeAction;
   iAction*            viewDecrFontSizeAction;
+  iAction*            viewSetFontSizeAction;
 
   iAction*            viewBrowseOnlyAction;   // all possible combinations of the main frames
   iAction*            viewPanelsOnlyAction;
@@ -361,6 +362,7 @@ public slots:
   virtual void  viewSaveView(); // save the current view state
   virtual void  viewIncrFontSize();
   virtual void  viewDecrFontSize();
+  virtual void  viewSetFontSize();
   
   virtual void  editCut();
   virtual void  editCopy();

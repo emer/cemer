@@ -322,7 +322,6 @@ public:
   static taFontNames    font_names; // #SAVE #CAT_GUI font preferences for GUI and console
   static taFontSizes    font_sizes; // #SAVE #CAT_GUI font size preferences for various parts of the GUI
   static int            global_font_incr_decr; // #NO_SAVE #HIDDEN #CAT_GUI temporary font size increment/decrement applied to all fonts
-  static int            GetCurrentFontSize(const String& component); // #CAT_GUI return preferred font size plus global_font_incr_decr
   static String         t3d_bg_color;   // #SAVE #CAT_GUI default background color for 3d view -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_text_color; // #SAVE #CAT_GUI default text color for 3d view  -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_font_name;  // #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
@@ -759,6 +758,11 @@ public:
   static String  CurrentThreadName();
   // #CAT_Threads name of the current thread
   
+  static int            GetCurrentFontSize(const String& component);
+  // #CAT_GUI return preferred font size plus global_font_incr_decr
+  static void           SetCurrentFontSizeToDefaults();
+  // #CAT_GUI set current font sizes to defaults -- adds global_font_incr_decr to font sizes and saves prefs
+
   /////////////////////////////////////////////////
   //    Startup/Args
 

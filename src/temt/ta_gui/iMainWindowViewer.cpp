@@ -739,8 +739,10 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewIncrFontSizeAction = AddAction(new iAction("&Incr Font Size", ks_increase, "incrFontSizeAction"));
   QKeySequence ks_decrease = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_DECR_FONT);
   viewDecrFontSizeAction = AddAction(new iAction("&Decr Font Size", ks_decrease, "decrFontSizeAction"));
+  viewSetFontSizeAction = AddAction(new iAction("&Save Font Size as Default", QKeySequence(), "setFontSizeAction"));
   viewMenu->AddAction(viewIncrFontSizeAction);
   viewMenu->AddAction(viewDecrFontSizeAction);
+  viewMenu->AddAction(viewSetFontSizeAction);
 
   viewMenu->insertSeparator();
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
@@ -787,6 +789,7 @@ void iMainWindowViewer::Constr_ViewMenu()
 
   connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
   connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
+  connect(viewSetFontSizeAction, SIGNAL(Action()), this, SLOT(viewSetFontSize()));
   connect(viewConsoleFrontAction, SIGNAL(Action()), this, SLOT(ConsoleToFront()));
   connect(signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
 }
@@ -2576,6 +2579,13 @@ void iMainWindowViewer::viewDecrFontSize() {
   taiM->InitMetrics(true);
   viewRefresh();
   taMisc::Info("font size is now:", String(taMisc::GetCurrentFontSize("labels")));
+}
+
+void iMainWindowViewer::viewSetFontSize() {
+  taMisc::SetCurrentFontSizeToDefaults();
+  taiM->InitMetrics(true);
+  viewRefresh();
+  taMisc::Info("current font sizes are now permanently saved in preferences / options");
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {

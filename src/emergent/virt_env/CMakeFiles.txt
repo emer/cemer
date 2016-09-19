@@ -29,6 +29,7 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
   V1KwtaSpec.h
   V1RegionSpec.h
   RetinaProc.h
+  taDataGenSem.h
 
   AuditoryProc.h
   VocalTract.h
@@ -161,6 +162,7 @@ set(virt_env_SRCS
   V1KwtaSpec.cpp
   V1RegionSpec.cpp
   RetinaProc.cpp
+  taDataGenSem.cpp
 
   AuditoryProc.cpp
   VocalTract.cpp

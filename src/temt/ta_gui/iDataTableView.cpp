@@ -272,22 +272,16 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         tab->ClearCompareRows();
       }
       else if (op_code & OP_SET_HEIGHT) {
-        int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in Rows:", 1, 0, 20);
-        
-        QFont font = QWidget::font();
-        QFontMetrics font_metrics(font);
-        int font_height = font_metrics.height();
-        int row_height = rows * font_height + iTableView::row_margin * (2 + rows - 1);  // row height is in pixels
-        tab->row_height = row_height;
-        int effective_height = taiMisc::resizeByMainFont(tab->row_height);
-        row_header->setDefaultSectionSize(effective_height);
+        int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in Rows:",
+                                        tab->row_height, 1, 20);
+        setRowHeight(rows);
+        tab->row_height = rows;
       }
       else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
         this->resizeRowsToContents();
       }
       else if (op_code & OP_RESTORE_HEIGHT) {
-        int effective_height = taiMisc::resizeByMainFont(tab->row_height);
-        row_header->setDefaultSectionSize(effective_height);
+        setRowHeight(tab->row_height);
       }
 
       if (rval) {
@@ -465,17 +459,15 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
 void iDataTableView::Refresh() {
   int effective_height;
   DataTable* dt = dataTable();
-  
-  if (dataTable() && dataTable()->row_height == 0) {
-    QFont cur_font = QFont();
-    QFontMetrics metrics(cur_font);
-    int row_height = metrics.height() + 2 * row_margin;
-    dataTable()->row_height = row_height;
-  }
-  effective_height = taiMisc::resizeByMainFont(dt->row_height);
-  QHeaderView* vhead = verticalHeader();
-  vhead->setDefaultSectionSize(effective_height);  // this is in pixels
 
+  int row_height = 1;
+  
+  if (dataTable()) {
+    if(dataTable()->row_height < 1)
+      dataTable()->row_height = 1;
+    row_height = dataTable()->row_height;
+  }
+  setRowHeight(row_height);
   update();
 }
 

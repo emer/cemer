@@ -120,7 +120,6 @@ public:
     OP_CLEAR_COMPARE              = 0x00800,
     OP_SHOW_ALL                   = 0x01000,
     OP_SET_WIDTH                  = 0x02000,
-//    OP_                           = 0x04000,
     OP_SET_HEIGHT                 = 0x10000, // row height
     OP_RESIZE_HEIGHT_TO_CONTENT   = 0X20000,
     OP_RESTORE_HEIGHT             = 0X40000,
@@ -138,7 +137,7 @@ public:
   void                  wheelEvent(QWheelEvent *) override;
   bool                  eventFilter(QObject* obj, QEvent* event) override;
   virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel);
-  virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
+  virtual void          RowColOp_impl(int op_code, const CellRange& sel) {};
   virtual bool          isFixedRowCount() const { return false; } // true, ex. for tab mat cells with fixed rows
   virtual bool          isFixedColCount() const { return false; } // true, ex. for tab mat cells with fixed geom
 
@@ -146,7 +145,9 @@ public:
   virtual void          this_customContextMenuRequested(const QPoint& pos);
   virtual void          hor_customContextMenuRequested(const QPoint& pos);
   virtual void          ver_customContextMenuRequested(const QPoint& pos);
-
+  virtual void          setRowHeight(int n_lines);
+  // set row height to given number of lines
+                                                                         
  protected slots:
   void                  RowColOp(int op_code); // based on selection
 };

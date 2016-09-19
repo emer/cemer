@@ -533,6 +533,17 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
   this->setFocus();
 }
 
+void iTableView::setRowHeight(int n_lines) {
+  QFont cur_font = QFont();
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
+  // this already does the scaling by table font size, so we don't need anything else
+  QFontMetrics metrics(cur_font);
+  int eff_height = n_lines * metrics.height() + 2 * row_margin;
+  QHeaderView* vhead = verticalHeader();
+  vhead->setDefaultSectionSize(eff_height);
+}
+
+
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate
 

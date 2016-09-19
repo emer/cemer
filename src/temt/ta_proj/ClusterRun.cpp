@@ -82,6 +82,13 @@ void ClusterRun::Initialize() {
   
   qt_object_helper = new ClusterRun_QObj(this);
   helper_is_connected = false;
+
+  jobs_submit.row_height = 2;
+  jobs_submitted.row_height = 2;
+  jobs_running.row_height = 2;
+  jobs_done.row_height = 2;
+  jobs_deleted.row_height = 2;
+  jobs_archive.row_height = 2;
 }
 
 void ClusterRun::Destroy() {

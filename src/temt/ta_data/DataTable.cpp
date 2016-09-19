@@ -89,7 +89,7 @@ void DataTable::Initialize() {
   write_idx = -2;
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   auto_load = NO_AUTO_LOAD;
-  row_height = 0;
+  row_height = 1;
   keygen.setType(Variant::T_Int64);
   calc_script = NULL;
   log_file = NULL;
@@ -231,6 +231,8 @@ void DataTable::UpdateAfterEdit_impl() {
   //  UpdateColCalcs();
   CheckForCalcs();
   TableUpdate();
+
+  if(row_height < 1) row_height = 1;
 }
 
 int DataTable::GetSpecialState() const {
