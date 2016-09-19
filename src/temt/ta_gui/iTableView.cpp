@@ -32,6 +32,8 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 
+int iTableView::row_margin = 4;
+
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)
 {
@@ -40,7 +42,7 @@ iTableView::iTableView(QWidget* parent)
   ext_select_on = false;
   m_saved_scroll_pos = 0;
 
-  QFont cur_font = taiM->dialogFont(taiM->ctrl_size);
+  QFont cur_font = QFont();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   setFont(cur_font);
 
@@ -50,8 +52,8 @@ iTableView::iTableView(QWidget* parent)
 #else
   vhead->setResizeMode(QHeaderView::Fixed);
 #endif
-  vhead->setDefaultSectionSize(taMisc::GetCurrentFontSize("table") + 6);
-  
+  vhead->setDefaultSectionSize(cur_font.pointSize() + 2 * row_margin);
+
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
@@ -277,6 +279,16 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   
   // generic row guys
   if (ca == CA_ROW_HDR) {
+    act = menu->AddItem("Set Row Height...", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_SET_HEIGHT) );
+    act = menu->AddItem("Resize Height to Content", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_RESIZE_HEIGHT_TO_CONTENT) );
+    act = menu->AddItem("Restore Row Height", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_RESTORE_HEIGHT) );
+    menu->AddSep();
     if (!isFixedRowCount()) {
       act = menu->AddItem("Append Rows", taiWidgetMenu::normal, iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );

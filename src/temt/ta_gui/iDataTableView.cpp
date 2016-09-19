@@ -39,6 +39,8 @@
 #include <QWidget>
 #include <QModelIndex>
 #include <QApplication>
+#include <QFontMetrics>
+#include <QFont>
 
 const int iDataTableView::default_column_width_px(150);
 
@@ -201,7 +203,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED | OP_COMPARE | OP_CLEAR_COMPARE | OP_SHOW_ALL))) {
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED | OP_COMPARE | OP_CLEAR_COMPARE | OP_SHOW_ALL | OP_SET_HEIGHT | OP_RESIZE_HEIGHT_TO_CONTENT | OP_RESTORE_HEIGHT))) {
       if (sel.height() < 1)
         goto bail;
       QModelIndex newIndex;
@@ -269,6 +271,25 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       else if (op_code & OP_CLEAR_COMPARE) {
         tab->ClearCompareRows();
       }
+      else if (op_code & OP_SET_HEIGHT) {
+        int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in Rows:", 1, 0, 20);
+        
+        QFont font = QWidget::font();
+        QFontMetrics font_metrics(font);
+        int font_height = font_metrics.height();
+        int row_height = rows * font_height + iTableView::row_margin * (2 + rows - 1);  // row height is in pixels
+        tab->row_height = row_height;
+        int effective_height = taiMisc::resizeByMainFont(tab->row_height);
+        row_header->setDefaultSectionSize(effective_height);
+      }
+      else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
+        this->resizeRowsToContents();
+      }
+      else if (op_code & OP_RESTORE_HEIGHT) {
+        int effective_height = taiMisc::resizeByMainFont(tab->row_height);
+        row_header->setDefaultSectionSize(effective_height);
+      }
+
       if (rval) {
         this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
         this->setCurrentIndex(newIndex);
@@ -276,7 +297,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       }
     }
   }
-
+  
   else if (op_code & OP_COL) {
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE | OP_DUPLICATE))) {
@@ -442,6 +463,19 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
 }
 
 void iDataTableView::Refresh() {
+  int effective_height;
+  DataTable* dt = dataTable();
+  
+  if (dataTable() && dataTable()->row_height == 0) {
+    QFont cur_font = QFont();
+    QFontMetrics metrics(cur_font);
+    int row_height = metrics.height() + 2 * row_margin;
+    dataTable()->row_height = row_height;
+  }
+  effective_height = taiMisc::resizeByMainFont(dt->row_height);
+  QHeaderView* vhead = verticalHeader();
+  vhead->setDefaultSectionSize(effective_height);  // this is in pixels
+
   update();
 }
 

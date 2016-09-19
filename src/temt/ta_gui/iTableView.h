@@ -47,6 +47,8 @@ public:
     CA_HDR_MASK = 0x0C
   };
 
+  static int row_margin;  // #NO_SAVE #HIDDEN #CAT_GUI each row should have this margin top and bottom and between lines if more than one row of characters in table row
+
   int           edit_start_pos;  // position to start when editing
   bool          edit_start_kill; // start editing with kill
 #ifndef __MAKETA__
@@ -104,20 +106,24 @@ public:
 
  protected:
   enum RowColOpCode {
-    OP_APPEND                 = 0x0001,
-    OP_INSERT                 = 0x0002,
-    OP_DUPLICATE              = 0x0004,
-    OP_DELETE                 = 0x0008,
-    OP_INSERT_AFTER           = 0x0010,
-    OP_DELETE_UNSELECTED      = 0x0020,
-    OP_ROW                    = 0x0040,
-    OP_COL                    = 0x0080,
-    OP_RESIZE_TO_CONTENT      = 0x0100,
-    OP_RESIZE_TO_CONTENT_ALL  = 0x0200,
-    OP_COMPARE                = 0x0400,
-    OP_CLEAR_COMPARE          = 0x0800,
-    OP_SHOW_ALL               = 0x1000,
-    OP_SET_WIDTH              = 0X2000
+    OP_APPEND                     = 0x00001,
+    OP_INSERT                     = 0x00002,
+    OP_DUPLICATE                  = 0x00004,
+    OP_DELETE                     = 0x00008,
+    OP_INSERT_AFTER               = 0x00010,
+    OP_DELETE_UNSELECTED          = 0x00020,
+    OP_ROW                        = 0x00040,
+    OP_COL                        = 0x00080,
+    OP_RESIZE_TO_CONTENT          = 0x00100,
+    OP_RESIZE_TO_CONTENT_ALL      = 0x00200,
+    OP_COMPARE                    = 0x00400,
+    OP_CLEAR_COMPARE              = 0x00800,
+    OP_SHOW_ALL                   = 0x01000,
+    OP_SET_WIDTH                  = 0x02000,
+//    OP_                           = 0x04000,
+    OP_SET_HEIGHT                 = 0x10000, // row height
+    OP_RESIZE_HEIGHT_TO_CONTENT   = 0X20000,
+    OP_RESTORE_HEIGHT             = 0X40000,
   };
   
   int                   last_x;
