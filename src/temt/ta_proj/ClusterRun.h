@@ -89,6 +89,7 @@ public:
   String        clusters;       // space-separated list of cluster names to include in listing jobs for this project
   String        users;          // space-separated list of user names to include in listing jobs for this project
   int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)
+  String        last_backend_checkin;// #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current time stamp of when the backend script updated (-1 if not yet updated)
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.  Use %varname to automatically add current variable value
   String        label;          // A label that can be used when plotting data to distinguish this run from another. Use %varname to automatically add current variable value 

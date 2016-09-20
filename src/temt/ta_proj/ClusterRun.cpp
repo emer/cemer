@@ -62,6 +62,7 @@ void ClusterRun::Initialize() {
   auto_updt_interval = 10;
   auto_updt_timeout = 30;
   cur_svn_rev = -1;
+  last_backend_checkin = "Unknown";
   exe_cmd = taMisc::app_name;
   use_search_algo = false;
   ram_gb = 0;
@@ -228,6 +229,9 @@ bool ClusterRun::Update_impl(bool do_svn_update) {
 
   bool has_updates = m_cm->UpdateTables(do_svn_update);
   cur_svn_rev = m_cm->GetCurSvnRev();
+  QDateTime clusterrun_backend_script_timestamp = QDateTime::fromString(clusterscript_timestamp.GetDataByName("timestamp").toQString(), Qt::ISODate);
+  clusterrun_backend_script_timestamp.setTimeSpec(Qt::UTC);
+  last_backend_checkin = clusterrun_backend_script_timestamp.toLocalTime().toString();
   SortClusterInfoTable();
   
   if (jobs_done.HasBeenFiltered()) {
