@@ -276,6 +276,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
                                         tab->row_height, 1, iTableView::max_lines_per_row);
         setRowHeight(rows);
         tab->row_height = rows;
+        dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
         QFont cur_font = QFont();
@@ -283,9 +284,11 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
         verticalHeader()->setMaximumSectionSize(max_pixels);
         this->resizeRowsToContents();
+        dataTable()->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       else if (op_code & OP_RESTORE_HEIGHT) {
         setRowHeight(tab->row_height);
+        dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
 
       if (rval) {
@@ -464,6 +467,8 @@ void iDataTableView::Refresh() {
   DataTable* dt = dataTable();
 
   int row_height = 1;
+  
+//  && !dataTable()->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT
   
   if (dataTable()) {
     if(dataTable()->row_height < 1)
