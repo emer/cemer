@@ -71,6 +71,7 @@ public:
   DataTable     jobs_archive;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have been archived -- already analyzed but possibly still relevant to look at
   DataTable     file_list;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER list of files -- used for various operations -- transferring and deleting
   DataTable     cluster_info;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER cluster status information and list of jobs currently running, etc
+  DataTable     clusterscript_timestamp;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER cluster status information and list of jobs currently running, etc
   DataTable     jobs_running_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_running, for each specific directory
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   DataTable     jobs_deleted_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
@@ -290,6 +291,8 @@ public:
   // for file_list table
   virtual void      FormatClusterInfoTable(DataTable& dt);
   // for cluster_info table
+  virtual void      FormatClusterScriptTimestampTable(DataTable& dt);
+  // for clusterscript_timestamp table
   virtual iDataTableEditor* DataTableEditor(DataTable& dt);
   // get editor for data table
   virtual bool      SelectedRows(DataTable& dt, int& st_row, int& end_row);

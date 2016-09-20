@@ -154,6 +154,7 @@ public:
   String m_submit_dat_filename;
   String m_running_dat_filename;
   String m_cluster_info_filename;
+  String m_clusterscript_timestamp_filename;
   String m_done_dat_filename;
   String m_archive_dat_filename;
   String m_deleted_dat_filename;

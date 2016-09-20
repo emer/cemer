@@ -1299,7 +1299,9 @@ void ClusterRun::FormatTables() {
   FormatFileListTable(file_list);
 
   cluster_info.name = "cluster_info";
+  clusterscript_timestamp.name = "clusterscript_timestamp";
   FormatClusterInfoTable(cluster_info);
+  FormatClusterScriptTimestampTable(clusterscript_timestamp);
 }
 
 void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
@@ -1630,6 +1632,23 @@ void ClusterRun::FormatClusterInfoTable(DataTable& dt) {
 
   dc = dt.FindMakeCol("start_time", VT_STRING);
   dc->desc = "timestamp for when the job was submitted or started running";
+  
+  for (int i=0; i<dt.data.size; i++) {
+    dc = dt.data.SafeEl(i);
+    dc->SetColFlag(DataCol::READ_ONLY);
+  }
+}
+
+void ClusterRun::FormatClusterScriptTimestampTable(DataTable& dt) {
+  DataCol* dc;
+  
+  dt.ClearDataFlag(DataTable::SAVE_ROWS);
+  
+  dc = dt.FindMakeCol("timestamp", VT_STRING);
+  dc->desc = "Timestamp of last interaction from the cluster run script";
+  
+  dc = dt.FindMakeCol("version", VT_INT);
+  dc->desc = "Version number of cluster run script ";
   
   for (int i=0; i<dt.data.size; i++) {
     dc = dt.data.SafeEl(i);

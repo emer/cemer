@@ -214,9 +214,11 @@ ClusterManager::UpdateTables(bool do_svn_update)
                              m_cluster_run.jobs_archive_tmp);
     bool ok4 = LoadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
 
+    bool ok6 = LoadTable(m_clusterscript_timestamp_filename, m_cluster_run.clusterscript_timestamp);
+
     // Return true as long as one of the files was updated and loaded --
     // in that case, the search algo will probably want to do something.
-    return updated && (ok1 || ok2 || ok3 || ok4 || ok5);
+    return updated && (ok1 || ok2 || ok3 || ok4 || ok5 || ok6);
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::DoneBusy();
@@ -519,6 +521,7 @@ ClusterManager::SetPaths(bool updt_wc) {
   //     clustername/
   //       username/                    # m_wc_path
   //         cluster_info.dat             # m_cluster_info_filename
+  //         clusterscript_timestamp.dat             # m_clusterscript_timestamp_filename
   //         projname/                  # m_wc_proj_path
   //           submit/                  # m_wc_submit_path
   //             jobs_submit.dat        # m_submit_dat_filename
@@ -544,6 +547,8 @@ ClusterManager::SetPaths(bool updt_wc) {
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
   m_cluster_info_filename = m_wc_path + PATH_SEP + "cluster_info.dat";
+  m_clusterscript_timestamp_filename = m_wc_path + PATH_SEP + "clusterscript_timestamp.dat";
+
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
@@ -695,11 +700,13 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
       if(main_svn) {
         // We also need the cluster_info.dat from the top level directory -- only for us..
         String cip = wc_path + PATH_SEP + "cluster_info.dat";
+        String ctp = wc_path + PATH_SEP + "clusterscript_timestamp.dat";
         int wc_rev, url_rev;
         bool same_rev = sc->IsWCRevSameAsHead(cip, wc_rev, url_rev);
         if(!same_rev) {
           String_PArray files;
           files.Add(cip);
+          files.Add(ctp);
           try {
             sc->UpdateFiles(files, -1);
           } catch (const ClusterManager::Exception &ex) {
@@ -716,6 +723,7 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
 
   if(main_svn) {
     InitClusterInfoTable();
+    
   }
   
   // We could check if these directories already exist, but it's easier
@@ -895,6 +903,13 @@ ClusterManager::InitClusterInfoTable()
   if(!fi_wc.exists()) {
     m_cluster_run.cluster_info.SaveData(m_cluster_info_filename);
     m_svn_client->Add(m_cluster_info_filename);
+  }
+  
+  // Save a cluster script timestamp table to get format into server
+  QFileInfo fi_wc2(m_clusterscript_timestamp_filename);
+  if(!fi_wc2.exists()) {
+    m_cluster_run.clusterscript_timestamp.SaveData(m_clusterscript_timestamp_filename);
+    m_svn_client->Add(m_clusterscript_timestamp_filename);
   }
 }
 
