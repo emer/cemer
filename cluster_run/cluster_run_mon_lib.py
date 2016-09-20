@@ -719,6 +719,7 @@ class DataTable(object):
 
 class SubversionPoller(object):
     def __init__(self, username, repo_dir, repo_url, delay, check_user):
+        self.version    = 2
         self.username   = username
         self.repo_dir   = repo_dir
         self.repo_url   = repo_url
@@ -740,6 +741,7 @@ class SubversionPoller(object):
         self.cur_deleted_file = ""
         self.cur_archive_file = ""
         self.cluster_info_file = ""
+        self.clusterscript_timestamp_file = ""
         self.got_submit = False     # got a jobs_submit submission 
         self.status_change = False  # some jobs changed status
         self.auto_check_mins = 10   # how long between auto-check-running-jobs-and-commit, in minutes
@@ -752,6 +754,7 @@ class SubversionPoller(object):
         self.jobs_archive = DataTable()
         self.file_list = DataTable()
         self.cluster_info = DataTable()
+        self.clusterscript_timestamp = DataTable()
 
         logging.info(self.repo_url)
 
@@ -968,6 +971,7 @@ class SubversionPoller(object):
         self.cur_deleted_file = self.cur_proj_root + '/submit/jobs_deleted.dat'
         self.cur_archive_file = self.cur_proj_root + '/submit/jobs_archive.dat'
         self.cluster_info_file = os.path.dirname(self.cur_proj_root) + '/cluster_info.dat'
+        self.clusterscript_timestamp_file = os.path.dirname(self.cur_proj_root) + '/clusterscript_timestamp.dat'
 
     # load running and done files if they exist -- they should..
     def _load_cur_files(self):
@@ -2183,12 +2187,26 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _get_cluster_info(self):
+        self._get_clusterscript_timestamp()
+
         if showq_parser == 'pyshowq':
             self._get_cluster_info_pyshowq()
         elif showq_parser == 'moab':
             self._get_cluster_info_moab()
         elif showq_parser == "slurm":
             self._get_cluster_info_slurm()
+
+    def _get_clusterscript_timestamp(self):
+        if (len(self.clusterscript_timestamp_file) == 0):
+            return
+        print("Writing clusterscript_timestamp: " + self.clusterscript_timestamp_file)
+        # always read from file to get current format, then reset
+        self.clusterscript_timestamp.load_from_file(self.clusterscript_timestamp_file)
+        self.clusterscript_timestamp.reset_data();
+        row = self.clusterscript_timestamp.add_blank_row()
+        self.clusterscript_timestamp.set_val(row, "timestamp", datetime.utcnow().isoformat())
+        self.clusterscript_timestamp.set_val(row, "version", self.version)
+        self.clusterscript_timestamp.write(self.clusterscript_timestamp_file)
 
     def _get_cluster_info_pyshowq(self):
         if showq_args != '':
