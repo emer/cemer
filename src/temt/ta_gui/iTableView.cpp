@@ -532,7 +532,7 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
   this->setFocus();
 }
 
-void iTableView::setRowHeight(int n_lines) {
+void iTableView::SetRowHeight(int n_lines) {
   QFont cur_font = QFont();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   // this already does the scaling by table font size, so we don't need anything else
@@ -540,6 +540,16 @@ void iTableView::setRowHeight(int n_lines) {
   int eff_height = n_lines * metrics.height() + 2 * row_margin;
   QHeaderView* vhead = verticalHeader();
   vhead->setDefaultSectionSize(eff_height);  // sets all rows
+}
+
+void iTableView::SetRowHeightToContents() {
+  QFont cur_font = QFont();
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
+  // this already does the scaling by table font size, so we don't need anything else
+  QFontMetrics metrics(cur_font);
+  int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
+  verticalHeader()->setMaximumSectionSize(max_pixels);
+  this->resizeRowsToContents();
 }
 
 ////////////////////////////////////////////////

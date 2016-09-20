@@ -147,9 +147,10 @@ public:
   virtual void          this_customContextMenuRequested(const QPoint& pos);
   virtual void          hor_customContextMenuRequested(const QPoint& pos);
   virtual void          ver_customContextMenuRequested(const QPoint& pos);
-  virtual void          setRowHeight(int n_lines);
+  virtual void          SetRowHeight(int n_lines);
   // set row height to given number of lines
-                                                                         
+  virtual void          SetRowHeightToContents();
+  // set row height per row to size of contents up to max_lines_per_row
  protected slots:
   void                  RowColOp(int op_code); // based on selection
 };

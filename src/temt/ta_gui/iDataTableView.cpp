@@ -41,6 +41,7 @@
 #include <QApplication>
 #include <QFontMetrics>
 #include <QFont>
+#include <QHeaderView>
 
 const int iDataTableView::default_column_width_px(150);
 
@@ -274,20 +275,16 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       else if (op_code & OP_SET_HEIGHT) {
         int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in lines of text:",
                                         tab->row_height, 1, iTableView::max_lines_per_row);
-        setRowHeight(rows);
+        SetRowHeight(rows);
         tab->row_height = rows;
         dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
-        QFont cur_font = QFont();
-        QFontMetrics metrics(cur_font);
-        int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
-        verticalHeader()->setMaximumSectionSize(max_pixels);
-        this->resizeRowsToContents();
+        SetRowHeightToContents();
         dataTable()->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       else if (op_code & OP_RESTORE_HEIGHT) {
-        setRowHeight(tab->row_height);
+        SetRowHeight(tab->row_height);
         dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
 
@@ -468,14 +465,17 @@ void iDataTableView::Refresh() {
 
   int row_height = 1;
   
-//  && !dataTable()->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT
-  
   if (dataTable()) {
-    if(dataTable()->row_height < 1)
-      dataTable()->row_height = 1;
-    row_height = dataTable()->row_height;
+    if (!dataTable()->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
+      if(dataTable()->row_height < 1)
+        dataTable()->row_height = 1;
+      row_height = dataTable()->row_height;
+      SetRowHeight(row_height);
+    }
+    else {
+      SetRowHeightToContents();
+    }
   }
-  setRowHeight(row_height);
   update();
 }
 
