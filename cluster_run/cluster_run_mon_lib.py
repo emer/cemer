@@ -725,6 +725,7 @@ class SubversionPoller(object):
         self.repo_url   = repo_url
         self.delay      = delay
         self.check_user = check_user
+        self.starting_up = True
 
         self.submit_files = ""
         self.model_files = ""
@@ -741,7 +742,7 @@ class SubversionPoller(object):
         self.cur_deleted_file = ""
         self.cur_archive_file = ""
         self.cluster_info_file = ""
-        self.clusterscript_timestamp_file = ""
+        self.clusterscript_timestamp_file = self.repo_dir + '/clusterscript_timestamp.dat'
         self.got_submit = False     # got a jobs_submit submission 
         self.status_change = False  # some jobs changed status
         self.auto_check_mins = 10   # how long between auto-check-running-jobs-and-commit, in minutes
@@ -838,7 +839,8 @@ class SubversionPoller(object):
 
             # reset status counters
             self.got_submit = False
-            self.status_change = False
+            self.status_change = False if not self.starting_up else True
+            self.starting_up = False
 
             # Update the working copy and get the list of files updated in
             # the 'submit'-folder (typically only one file at a time).
