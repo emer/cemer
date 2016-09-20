@@ -48,6 +48,8 @@ public:
   };
 
   static int row_margin;  // #NO_SAVE #HIDDEN #CAT_GUI each row should have this margin top and bottom and between lines if more than one row of characters in table row
+  static int max_lines_per_row; // #NO_SAVE #HIDDEN #CAT_GUI maximum lines of text within one table row
+  
 
   int           edit_start_pos;  // position to start when editing
   bool          edit_start_kill; // start editing with kill

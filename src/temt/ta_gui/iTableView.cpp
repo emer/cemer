@@ -33,6 +33,7 @@
 #include <QWheelEvent>
 
 int iTableView::row_margin = 4;
+int iTableView::max_lines_per_row = 10;
 
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)
@@ -51,9 +52,7 @@ iTableView::iTableView(QWidget* parent)
   vhead->sectionResizeMode(QHeaderView::Fixed);
 #else
   vhead->setResizeMode(QHeaderView::Fixed);
-#endif
-  vhead->setDefaultSectionSize(cur_font.pointSize() + 2 * row_margin);
-
+#endif  
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
@@ -540,9 +539,8 @@ void iTableView::setRowHeight(int n_lines) {
   QFontMetrics metrics(cur_font);
   int eff_height = n_lines * metrics.height() + 2 * row_margin;
   QHeaderView* vhead = verticalHeader();
-  vhead->setDefaultSectionSize(eff_height);
+  vhead->setDefaultSectionSize(eff_height);  // sets all rows
 }
-
 
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate

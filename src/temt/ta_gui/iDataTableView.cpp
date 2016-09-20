@@ -272,12 +272,16 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         tab->ClearCompareRows();
       }
       else if (op_code & OP_SET_HEIGHT) {
-        int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in Rows:",
-                                        tab->row_height, 1, 20);
+        int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in lines of text:",
+                                        tab->row_height, 1, iTableView::max_lines_per_row);
         setRowHeight(rows);
         tab->row_height = rows;
       }
       else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
+        QFont cur_font = QFont();
+        QFontMetrics metrics(cur_font);
+        int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
+        verticalHeader()->setMaximumSectionSize(max_pixels);
         this->resizeRowsToContents();
       }
       else if (op_code & OP_RESTORE_HEIGHT) {
@@ -457,7 +461,6 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
 }
 
 void iDataTableView::Refresh() {
-  int effective_height;
   DataTable* dt = dataTable();
 
   int row_height = 1;
