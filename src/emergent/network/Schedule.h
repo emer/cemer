@@ -39,6 +39,11 @@ public:
   float         GetVal(int ctr)  { return start_val + step * (float)(ctr - start_ctr); }
   // get value for given ctr value
 
+  String          GetDisplayName() const override;
+  bool            BrowserEditEnable() override;
+  String          BrowserEditString() override { return GetDisplayName(); }
+  bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;
+
   String       GetDesc() const override;
 
   TA_SIMPLE_BASEFUNS(SchedItem);

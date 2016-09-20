@@ -14,9 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "Schedule.h"
+#include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(Schedule);
-
 TA_BASEFUNS_CTORS_DEFN(SchedItem);
 
 void SchedItem::Initialize() {
@@ -29,6 +29,31 @@ void SchedItem::Initialize() {
 String SchedItem::GetDesc() const {
   String rval = String(start_ctr) + ": " + String(start_val);
   return rval;
+}
+
+String SchedItem::GetDisplayName() const {
+  return GetDesc();
+}
+
+bool SchedItem::BrowserEditEnable() {
+  return true;
+}
+
+bool SchedItem::BrowserEditSet(const String& new_val_str, int move_after) {
+  if(move_after != -11) {
+    taProject* proj = GetMyProj();
+    if(proj) {
+      proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
+    }
+  }
+  String start_str = new_val_str.before(':');
+  if(start_str.nonempty()) {
+    start_ctr = start_str.toInt();
+    String val_str = new_val_str.after(": ");
+    start_val = val_str.toFloat();
+  }
+  UpdateAfterEdit();            // need full UAE
+  return true;
 }
 
 void Schedule::Initialize() {
