@@ -34,6 +34,8 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
   if(gp_n_cons > 0)
     maxn = MIN(gp_n_cons, maxn);
 
+  Network* net = recv_lay->own_net;
+
   if(reciprocal) {              // reciprocal is backwards!
     for(int ui=0; ui < maxn; ui++) {
       Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
@@ -50,7 +52,17 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
   }
   else {
     for(int ui=0; ui < maxn; ui++) {
-      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
+      Unit* ru_u;
+      if(rgpidx >= 0) {
+        ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
+        if(share_cons && net->RecvOwnsCons() && rgpidx > 0) {
+          Unit* shru = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, 0); // group 0
+          ru_u->ShareRecvConsFrom(shru, prjn);
+        }
+      }
+      else {
+        ru_u = recv_lay->units.SafeEl(ru_idx_st + ui);
+      }
       Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
       if(!self_con && (su_u == ru_u)) continue;
       if(!make_cons) {
