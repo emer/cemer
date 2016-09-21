@@ -41,15 +41,40 @@ public:
     WRAP,			// wrap the image around to the other side: no edges!
   };
   
-  static bool	GetBorderColor_float(float_Matrix& img_data,
+  static bool   CheckValidRGBMatrix(const float_Matrix& img_data);
+  // #CAT_Check is the given matrix a valid RGB image?  emits error if not
+  static bool   CheckValidGreyMatrix(const float_Matrix& img_data);
+  // #CAT_Check is the given matrix a valid Grey image?  emits error if not
+  static int    GetImageMatrixNColors(const float_Matrix& img_data);
+  // #CAT_Check return the number of colors in the given image matrix, emitting an error and returning 0 if it is not a valid image matrix of either RGB or greyscale form
+
+  static bool   FlipY(float_Matrix& trg_data, const float_Matrix& src_data);
+  // #CAT_Convert invert the image in the Y axis -- emergent has 0,0 at lower-left, while many images have that as the top-left -- this deals with that..
+  
+  static bool   FlipYInPlace(float_Matrix& trg_data);
+  // #CAT_Convert #MENU_BUTTON #MENU_ON_ImageProc invert the image in the Y axis -- emergent has 0,0 at lower-left, while many images have that as the top-left -- this deals with that..
+  
+  static bool	RGBToGrey(float_Matrix& grey_data, const float_Matrix& rgb_data);
+  // #CAT_Convert convert rgb image to greyscale (averages the r,g,b values)
+
+  static bool	GreyToRGB(float_Matrix& rgb_data, const float_Matrix& grey_data,
+                          bool alpha = false);
+  // #CAT_Convert convert greyscale image to rgb (replicates the grey to r,g,b) -- if alpha flag then add an alpha channel too (values set to 1.0)
+
+  static bool	RGBOuterToInner(float_Matrix& trg_data, const float_Matrix& src_data);
+  // #CAT_Convert transpose the RGB (and alpha if present) channels from the outer-most index of the 3D rgb source matrix into the inner-most 3x1 or 4x1 indexes of the target matrix, which is then a form suitable for presentation directly to a network as a raw image
+  static bool	RGBInnerToOuter(float_Matrix& rgb_trg_data, const float_Matrix& src_data);
+  // #CAT_Convert transpose the RGB (and alpha if present) channels from the inner-most index(es) of the rgb source matrix (can either be 3D or 4D) into the outer-most index of the 3D target matrix, which is the standard format used for most of our image processing routines (i.e., each color is a separate complete 2D plane)
+
+  static bool	GetBorderColor_float(const float_Matrix& img_data,
                                      float& r, float& g, float& b, float& a,
                                      bool median = false);
   // #CAT_Render get the average color around a 1 pixel border region of the image -- if grey-scale image, r,g,b are all set to the single grey value -- median = use median color value instead of mean
-  static bool	GetBorderColor_float_rgb(float_Matrix& img_data,
+  static bool	GetBorderColor_float_rgb(const float_Matrix& img_data,
                                          float& r, float& g, float& b, float& a,
                                          bool median = false);
     // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for rgb(a) image -- median = use median color value instead of mean
-  static bool	GetBorderColor_float_grey(float_Matrix& img_data, float& grey,
+  static bool	GetBorderColor_float_grey(const float_Matrix& img_data, float& grey,
                                           bool median = false);
     // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for grey scale image -- median = use median color value instead of mean
 
@@ -66,33 +91,26 @@ public:
   static bool	RenderFill(float_Matrix& img_data, float r, float g, float b, float a);
   // #CAT_Render render a "blank" image at a specified color
 
-  static bool	RGBToGrey(float_Matrix& grey_data, const float_Matrix& rgb_data);
-  // #CAT_Convert convert rgb image to greyscale (averages the r,g,b values)
-
-  static bool	GreyToRGB(float_Matrix& rgb_data, const float_Matrix& grey_data,
-                          bool alpha = false);
-  // #CAT_Convert convert greyscale image to rgb (replicates the grey to r,g,b) -- if alpha flag then add an alpha channel too (values set to 1.0)
-
-    static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
+  static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
   // #IGNORE helper function: get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
 
-  static bool   TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img, 
+  static bool   TranslateImagePix_float(float_Matrix& xlated_img, const float_Matrix& orig_img, 
 					int move_x, int move_y, EdgeMode edge=BORDER);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform move (translate) image by pixel move_x, move_y factors
-  static bool   TranslateImage_float(float_Matrix& xlated_img, float_Matrix& orig_img, 
+  static bool   TranslateImage_float(float_Matrix& xlated_img, const float_Matrix& orig_img, 
 				   float move_x, float move_y, EdgeMode edge=BORDER);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform move (translate) image by normalized move_x, move_y factors: 1 = center of image moves to right/top edge, -1 center moves to bottom/left
-  static bool	RotateImage_float(float_Matrix& rotated_img, float_Matrix& orig_img,
+  static bool	RotateImage_float(float_Matrix& rotated_img, const float_Matrix& orig_img,
 				  float rotation, EdgeMode edge=BORDER);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform rotate the image: rotation = normalized 0-1 = 0-360 degrees 
-  static bool	ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_img, float scale,
+  static bool	ScaleImage_float(float_Matrix& scaled_img, const float_Matrix& orig_img, float scale,
 				 EdgeMode edge=BORDER);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform change the size of the image by normalized scaling factor (either rgb=3 dim or grey=2 dim)
-  static bool   CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img, 
+  static bool   CropImage_float(float_Matrix& crop_img, const float_Matrix& orig_img, 
 				int crop_width, int crop_height, EdgeMode edge=BORDER, bool random_origin = false);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform crop image to given size (-1 = use original image size), centered if random_origin == false; border color of original image is used to fill in missing values
 
-  static bool	TransformImage_float(float_Matrix& xformed_img, float_Matrix& orig_img,
+  static bool	TransformImage_float(float_Matrix& xformed_img, const float_Matrix& orig_img,
 				     float move_x=0.0f, float move_y=0.0f, float rotate=0.0f,
 				     float scale=1.0f, int crop_width=-1, int crop_height=-1,
 				     EdgeMode edge=BORDER);
@@ -152,19 +170,16 @@ public:
   static bool	AdjustContrast(float_Matrix& img, float new_contrast, float bg_color=-1.0f);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant at passed in value or if not specified, checks border. new_contrast is a scalar in range [0 1] and bg_color is an integer in range [0 1]
   
-  static bool	CompositeImages(float_Matrix& img1, float_Matrix& img2);
+  static bool	CompositeImages(float_Matrix& img1, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.  img2 can be greyscale or rgb
 
-  static bool	CompositePartialImages(float_Matrix& img1, int x, int y, float_Matrix& img2);
+  static bool	CompositePartialImages(float_Matrix& img1, int x, int y, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. X/Y are coordinates within img1 where to place img2
 
-  static bool	CompositeAndCenterImage(float_Matrix& img1, float_Matrix& img2);
+  static bool	CompositeAndCenterImage(float_Matrix& img1, const float_Matrix& img2);
   // #CAT_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. img2 will be centered in img1
   
-  static bool   FlipY(float_Matrix& img1);
-  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc invert the image in the Y axis -- emergent has 0,0 at lower-left, while many images have that as the top-left -- this deals with that..
-  
-  static bool	OverlayImages(float_Matrix& img1, float_Matrix& img2);
+  static bool	OverlayImages(float_Matrix& img1, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
 
   String 	GetTypeDecoKey() const override { return "DataTable"; }

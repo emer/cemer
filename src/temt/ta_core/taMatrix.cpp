@@ -1600,7 +1600,7 @@ int taMatrix::SafeElIndexN(const MatrixIndex& indices) const {
 }
 
 
-taMatrix* taMatrix::GetFrameSlice_(int frame) {
+taMatrix* taMatrix::GetFrameSlice_(int frame) const {
   int dims_m1 = dims() - 1; //cache
   if(TestError((dims_m1 <= 0),"GetFrameSlice_", "dims must be >1 to GetFrameSlice"))
     return NULL;
@@ -1613,7 +1613,7 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
   for (int i = 0; i < dims_m1; ++i)
     slice_geom.Set(i, dim(i));
   int sl_i = FrameStartIdx(frame); //note: must be valid because of prior checks
-  void* base_el = FastEl_Flat_(sl_i);
+  void* base_el = const_cast<void*>(FastEl_Flat_(sl_i));
   taMatrix* rval = FindSlice(base_el, slice_geom);
   if (rval) return rval;
 
@@ -1622,12 +1622,12 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
 
   rval->SetFixedData_(base_el, slice_geom);
   // we do all the funky ref counting etc. in one place
-  SliceInitialize(this, rval);
+  SliceInitialize(const_cast<taMatrix*>(this), rval);
   return rval;
 }
 
 taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
-    int slice_frame_dims, int num_slice_frames)
+    int slice_frame_dims, int num_slice_frames) const
 {
   if(TestError((num_slice_frames <= 0), "GetSlice_", "num_slice_frames must be >= 1"))
     return NULL;
@@ -1679,7 +1679,7 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
     slice_geom.Set(i, dim(i));
   slice_geom.Set(slice_frame_dims, num_slice_frames);
 
-  void* base_el = FastEl_Flat_(sl_i);
+  void* base_el = const_cast<void*>(FastEl_Flat_(sl_i));
   taMatrix* rval = FindSlice(base_el, slice_geom);
   if (rval) return rval;
 
@@ -1693,11 +1693,11 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
 
   rval->SetFixedData_(base_el, slice_geom);
   // we do all the funky ref counting etc. in one place
-  SliceInitialize(this, rval);
+  SliceInitialize(const_cast<taMatrix*>(this), rval);
   return rval;
 }
 
-taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
+taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) const {
   const int dm = dims();
   MatrixIndex base(dm);
   for (int i = 0; i < dm-1; ++i)
@@ -1706,7 +1706,7 @@ taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
   return GetSlice_(base, dm-1, n_frames);
 }
 
-taMatrix* taMatrix::FindSlice(void* el_, const MatrixGeom& geom_) {
+taMatrix* taMatrix::FindSlice(void* el_, const MatrixGeom& geom_) const {
   if (slices) {
     for (int i = 0; i < slices->size; ++i) {
       taMatrix* mat = slices->FastEl(i);

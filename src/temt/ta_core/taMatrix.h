@@ -540,12 +540,12 @@ public:
   // 5. if parent is redimensioned, all slices are collapsed to [0]
 
   virtual taMatrix*     GetSlice_(const MatrixIndex& base,
-    int slice_frame_dims = -1, int num_slice_frames = 1);
-  // #CAT_Access return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary
-  virtual taMatrix*     GetFrameSlice_(int frame);
-  // #CAT_Access return a slice, of exactly one frame; will have dim-1 of us
-  virtual taMatrix*     GetFrameRangeSlice_(int st_frame, int n_frames);
-  // #CAT_Access return a slice, of n_frames frames starting at st_frame
+    int slice_frame_dims = -1, int num_slice_frames = 1) const;
+  // #CAT_Access return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary -- this is not technically const as we maintain a list of sub-items, but it is 'logically' const so we allow that
+  virtual taMatrix*     GetFrameSlice_(int frame) const;
+  // #CAT_Access return a slice, of exactly one frame; will have dim-1 of us -- this is not technically const as we maintain a list of sub-items, but it is 'logically' const so we allow that
+  virtual taMatrix*     GetFrameRangeSlice_(int st_frame, int n_frames) const;
+  // #CAT_Access return a slice, of n_frames frames starting at st_frame -- this is not technically const as we maintain a list of sub-items, but it is 'logically' const so we allow that
 
   virtual bool          StrValIsValid(const String& str, String* err_msg = NULL) const
   { return true; }
@@ -738,9 +738,9 @@ protected:
   void         BatchUpdate(bool begin, bool struc) override;
 
   static void           SliceInitialize(taMatrix* par_slice, taMatrix* child_slice);
-   // called after slice created -- static for consistency
+  // called after slice created -- static for consistency
   static void           SliceDestroying(taMatrix* par_slice, taMatrix* child_slice);
-   //called by child slice on destroy -- static because it can cause destruction
+  // called by child slice on destroy -- static because it can cause destruction
 
   int                   alloc_size; // -1 means fixed (external data)
   taMatrix_PList*       slices; // list of extant slices -- created on first slice
@@ -789,7 +789,7 @@ protected:
 
   void                  Slice_Collapse();
   void                  Slice_Realloc(ta_intptr_t base_delta);
-  taMatrix*             FindSlice(void* el_, const MatrixGeom& geom_);
+  taMatrix*             FindSlice(void* el_, const MatrixGeom& geom_) const;
 
   virtual void          UpdateGeom();
   // called to potentially update the allocation based on new geom info -- will fix if in error

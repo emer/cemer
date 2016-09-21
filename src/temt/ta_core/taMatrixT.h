@@ -177,10 +177,10 @@ private:
 };
 
 #define TA_MATRIX_FUNS(y,T) \
-  y* GetSlice(const MatrixIndex& base, int sfd = -1, int nsf = 1) \
+  y* GetSlice(const MatrixIndex& base, int sfd = -1, int nsf = 1) const \
    {return (y*)GetSlice_(base, sfd, nsf);} \
-  y* GetFrameSlice(int frame) {return (y*) GetFrameSlice_(frame);} \
-  y* GetFrameRangeSlice(int frame, int n_frames) {return (y*) GetFrameRangeSlice_(frame, n_frames);} \
+  y* GetFrameSlice(int frame) const {return (y*) GetFrameSlice_(frame);} \
+  y* GetFrameRangeSlice(int frame, int n_frames) const {return (y*) GetFrameRangeSlice_(frame, n_frames);} \
   y(int dims_,int d0,int d1=0,int d2=0,int d3=0,int d4=0,int d5=0,int d6=0) \
     {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
