@@ -349,7 +349,7 @@ public:
   inline void B_Compute_dWt(UnitVars* uv, Network* net, int thr_no) override;
   inline void B_Compute_Weights(UnitVars* uv, Network* net, int thr_no) override;
 
-  virtual void	LogLrateSched(int epcs_per_step = 50, float n_steps=7);
+  virtual void	LogLrateSched(int epcs_per_step = 50, int n_steps=7);
   // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
 
   virtual void	SetCurLrate(BpNetwork* net);

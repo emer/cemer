@@ -322,35 +322,64 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   }
 }
 
-void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
+void LeabraConSpec::LogLrateSched(int epcs_per_step, int n_steps, int bump_step) {
   float log_ns[3] = {1, .5f, .2f};
 
-  lrate_sched.SetSize((int)n_steps);
-  for(int i=0;i<n_steps;i++) {
-    lrate_sched[i]->start_ctr = i * epcs_per_step;
-    lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+  if(bump_step <= 0) {
+    lrate_sched.SetSize(n_steps);
+    for(int i=0;i<n_steps;i++) {
+      lrate_sched[i]->start_ctr = i * epcs_per_step;
+      lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+      lrate_sched[i]->UpdateAfterEdit();
+    }
   }
+  else {
+    int tot_steps = 2*bump_step + (n_steps - bump_step);
+    lrate_sched.SetSize(tot_steps);
+    int i;
+    for(i=0;i<bump_step;i++) {
+      lrate_sched[i]->start_ctr = i * epcs_per_step;
+      lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+      lrate_sched[i]->UpdateAfterEdit();
+    }
+    int st_i = bump_step;
+    for(i=0;i<bump_step;i++) {
+      lrate_sched[st_i + i]->start_ctr = bump_step * epcs_per_step + (i-1) * (epcs_per_step / 2);
+      lrate_sched[st_i + i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+      lrate_sched[st_i + i]->UpdateAfterEdit();
+    }
+    int st_i2 = bump_step*2;
+    int last_ctr = lrate_sched[st_i2-1]->start_ctr + (epcs_per_step/2);
+    for(i=bump_step;i<n_steps;i++) {
+      lrate_sched[st_i + i]->start_ctr = last_ctr + (i-bump_step) * epcs_per_step;
+      lrate_sched[st_i + i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+      lrate_sched[st_i + i]->UpdateAfterEdit();
+    }
+  }
+    
   UpdateAfterEdit();            // needed to update the sub guys
 }
 
-void LeabraConSpec::ExpLrateSched(int epcs_per_step, float n_steps, float pct_per_step) {
+void LeabraConSpec::ExpLrateSched(int epcs_per_step, int n_steps, float pct_per_step) {
   float cur_pct = 1.0f;
-  lrate_sched.SetSize((int)n_steps);
+  lrate_sched.SetSize(n_steps);
   for(int i=0;i<n_steps;i++) {
     lrate_sched[i]->start_ctr = i * epcs_per_step;
     lrate_sched[i]->start_val = cur_pct;
+    lrate_sched[i]->UpdateAfterEdit();
     cur_pct *= pct_per_step;
   }
   UpdateAfterEdit();            // needed to update the sub guys
 }
 
-void LeabraConSpec::LinearLrateSched(int epcs_per_step, float n_steps, float final_factor) {
+void LeabraConSpec::LinearLrateSched(int epcs_per_step, int n_steps, float final_factor) {
   float decr = (1.0f - final_factor) / (n_steps - 1.0f);
   float cur_pct = 1.0f;
-  lrate_sched.SetSize((int)n_steps);
+  lrate_sched.SetSize(n_steps);
   for(int i=0;i<n_steps;i++) {
     lrate_sched[i]->start_ctr = i * epcs_per_step;
     lrate_sched[i]->start_val = cur_pct;
+    lrate_sched[i]->UpdateAfterEdit();
     cur_pct -= decr;
   }
   UpdateAfterEdit();            // needed to update the sub guys

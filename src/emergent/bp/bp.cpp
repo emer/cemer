@@ -146,13 +146,14 @@ void BpConSpec::SetCurLrate(BpNetwork* net) {
   }
 }
 
-void BpConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
+void BpConSpec::LogLrateSched(int epcs_per_step, int n_steps) {
   float log_ns[3] = {1, .5f, .2f};
 
-  lrate_sched.SetSize((int)n_steps);
+  lrate_sched.SetSize(n_steps);
   for(int i=0;i<n_steps;i++) {
     lrate_sched[i]->start_ctr = i * epcs_per_step;
     lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+    lrate_sched[i]->UpdateAfterEdit();
   }
   UpdateAfterEdit();            // needed to update the sub guys
 }
