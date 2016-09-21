@@ -232,6 +232,7 @@ bool ClusterRun::Update_impl(bool do_svn_update) {
   QDateTime clusterrun_backend_script_timestamp = QDateTime::fromString(clusterscript_timestamp.GetDataByName("timestamp").toQString(), Qt::ISODate);
   clusterrun_backend_script_timestamp.setTimeSpec(Qt::UTC);
   last_backend_checkin = clusterrun_backend_script_timestamp.toLocalTime().toString();
+  CheckBackendRunning();
   SortClusterInfoTable();
   
   if (jobs_done.HasBeenFiltered()) {
@@ -586,6 +587,14 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
   }
 }
 
+void ClusterRun::CheckBackendRunning() {
+  QDateTime clusterrun_backend_script_timestamp = QDateTime::fromString(clusterscript_timestamp.GetDataByName("timestamp").toQString(), Qt::ISODate);
+  clusterrun_backend_script_timestamp.setTimeSpec(Qt::UTC);
+  if (clusterrun_backend_script_timestamp.msecsTo(QDateTime().currentDateTime()) > 60*60*1000) {
+    taMisc::Confirm("The last update from the cluster (", cluster, ") was at ", last_backend_checkin, " which is more than an hour ago. Please check that your script is actually running on the cluster");
+  }
+}
+
 void ClusterRun::SelectCluster(bool do_svn_update) {
   if(!InitClusterManager())
     return;
@@ -593,6 +602,7 @@ void ClusterRun::SelectCluster(bool do_svn_update) {
   if(clust.empty()) return;
   cluster = clust;
   Update_impl(do_svn_update);
+  
   
   if (do_svn_update) {
     jobs_submit.ResetData();
@@ -2273,6 +2283,7 @@ void ClusterRun::AutoUpdateMe(bool clear_sels) {
   wait_proc_start.currentDateTime();
   wait_proc_last_updt.currentDateTime();
   SigEmitUpdated();             // get the latest revision
+  
 }
 
 bool ClusterRun::WaitProcAutoUpdate() {
@@ -2302,6 +2313,7 @@ bool ClusterRun::WaitProcAutoUpdate() {
   if(wait_proc_start.secsTo(curtime) > wait_proc_updt->auto_updt_timeout) {
     taMisc::Info("ClusterRun: time out on updating cluster run -- press the Update button manually to get the updates, cur rev:",
                  String(wait_proc_updt->cur_svn_rev));
+    
     wait_proc_updt = NULL;
     wait_proc_trg_rev = -1;
     return true;

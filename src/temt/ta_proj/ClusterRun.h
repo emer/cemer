@@ -319,6 +319,8 @@ public:
   // #IGNORE find my panel set, which contains all the more specific view panels (diff data tables)
   virtual bool        ViewPanelNumber(int panel_no);
   // #CAT_Display select the edit/middle panel view of this object to be the given number (0 = ControlPanel, 1 = jobs_running, 2 = jobs_done, 3 = jobs_archive, 4 = file_list, 5 = cluster_info, 6 = Properties)
+  virtual void        CheckBackendRunning();
+  // verify that the cluster run backend script is running
   virtual void        AutoUpdateMe(bool clear_sels = true);
   // set this cluster run to auto-update to the next revision after one that was just committed -- if clear_sels then clear all selections in tables (action is done -- generally should be true)
   static bool         WaitProcAutoUpdate();
