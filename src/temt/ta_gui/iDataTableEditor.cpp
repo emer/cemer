@@ -177,17 +177,17 @@ void iDataTableEditor::tvTable_layoutChanged() {
     return;
   ConfigView();
 
-  // jar - 8/9/2013
-  // keep column widths in sync for multiple views
-  // would be nice to be able to save multiple views so that the views could be independent
-  // but for now we only save column width on the panel not the dialog view so this was
-  // a way to get the sizes saved for someone like me that often opens a table as a dialog
-  for(int i=0; i<dt()->data.size; i++) {
-    DataCol* dc = dt()->data.FastEl(i);
-    if (dc->width > 0) {
-      tvTable->setColumnWidth(i, dc->width);
-    }
-  }
+//  this should be done with some update at a higher level
+//  // keep column widths in sync for multiple views --
+//  for(int col_idx=0; col_idx<dt()->data.size; col_idx++) {
+//    DataCol* dc = dt()->data.FastEl(col_idx);
+//    if (dc->size_to_contents) {
+//      tvTable->resizeColumnToContents(col_idx);
+//    }
+//    else {
+//      tvTable->SetColumnWidth(col_idx, dc->width);
+//    }
+//  }
 
   //no-causes recursive invocation!  Refresh();
   if ((bool)m_cell) {

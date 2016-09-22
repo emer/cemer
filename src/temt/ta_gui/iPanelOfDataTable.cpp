@@ -88,48 +88,11 @@ void iPanelOfDataTable::GetSelectedItems(ISelectable_PtrList& lst) {
 
 void iPanelOfDataTable::GetWinState_impl() {
   inherited::GetWinState_impl();
-  DataTable* dt = this->dt(); // cache
 
-  if (!dt || !dte) return;  // if the dt wasn't viewed no DataTableEditor will have been constructed
-
-  QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
-  // we store col widths as fraction of ctrl width
-  float fwd = (float)tv->width();
-  if (fwd <= 0.0f) return; // huh???
-  for (int i = 0; i < dt->data.size; ++i) {
-    DataCol* dc = dt->data.FastEl(i);
-    int iwd = tv->columnWidth(i);
-    if (iwd > 0) {
-      float fcolwd = iwd / fwd;
-      dc->SetUserData("view_panel_wd", fcolwd);
-    }
-  }
 }
 
 void iPanelOfDataTable::SetWinState_impl() {
   inherited::SetWinState_impl();
-  DataTable* dt = this->dt(); // cache
-
-  if (!dt || !dte) return;
-
-  QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
-  // we store col widths as fraction of ctrl width
-  float fwd = (float)tv->width();
-  if (fwd <= 0.0f) return; // huh???
-  for (int i = 0; i < dt->data.size; ++i) {
-    DataCol* dc = dt->data.FastEl(i);
-    if (dc->width > 0) { // use the current width
-      tv->setColumnWidth(i, dc->width);
-    }
-    else { // either a new table - fcolwd should be zero or first opening of this table from a saved project
-      float fcolwd = dc->GetUserDataAsFloat("view_panel_wd");
-      int iwd = (int)(fwd * fcolwd);
-      if (iwd > 0) {
-        tv->setColumnWidth(i, iwd);
-      }
-      // otherwise let it go to default value
-    }
-  }
 }
 
 String iPanelOfDataTable::panel_type() const {

@@ -1539,13 +1539,6 @@ int DataTable::CellsPerRow() const {
   }
   return rval;
 }
-void DataTable::SetColumnWidth(const Variant& col, int width_in_pixels) {
-  DataCol* column = data.FindName(col.toString());
-  if (column) {
-    column->width = width_in_pixels;
-  }
-}
-
 
 DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
   if (!NewColValid(col_nm)) return NULL;

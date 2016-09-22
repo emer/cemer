@@ -47,10 +47,12 @@ public:
     CA_HDR_MASK = 0x0C
   };
 
-  static int row_margin;  // #NO_SAVE #HIDDEN #CAT_GUI each row should have this margin top and bottom and between lines if more than one row of characters in table row
-  static int max_lines_per_row; // #NO_SAVE #HIDDEN #CAT_GUI maximum lines of text within one table row
+  static const int row_margin;  // #NO_SAVE #HIDDEN #CAT_GUI each row should have this margin top and bottom and between lines
+  static const int column_margin;  // #NO_SAVE #HIDDEN #CAT_GUI each column should have this margin on left and right for readability
+  static const int max_lines_per_row; // #NO_SAVE #HIDDEN #CAT_GUI maximum lines of text within one table row
+  static const int max_chars_per_line; // #NO_SAVE #HIDDEN #CAT_GUI maximum characters per line of text in column (don't let column get to wide)
+  static const int default_chars_per_line; // #NO_SAVE #HIDDEN #CAT_GUI default number of  characters per line of text in column
   
-
   int           edit_start_pos;  // position to start when editing
   bool          edit_start_kill; // start editing with kill
 #ifndef __MAKETA__
@@ -151,7 +153,14 @@ public:
   // set row height to given number of lines
   virtual void          SetRowHeightToContents();
   // set row height per row to size of contents up to max_lines_per_row
- protected slots:
+  virtual void          SetColumnWidth(int column, int n_chars);
+  // set column width to given number of characters - uses font metrics to calculate width in pixels
+  virtual int           ConvertCharsToPixels(int chars);
+  // uses max char width for conversion
+  virtual int           ConvertPixelsToChars(int pixels);
+  // uses max char width for conversion
+
+protected slots:
   void                  RowColOp(int op_code); // based on selection
 };
 

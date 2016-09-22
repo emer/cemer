@@ -32,8 +32,12 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 
-int iTableView::row_margin = 4;
-int iTableView::max_lines_per_row = 10;
+const int iTableView::row_margin = 4;
+const int iTableView::column_margin = 4;
+const int iTableView::max_lines_per_row = 10;
+const int iTableView::max_chars_per_line = 50;
+const int iTableView::default_chars_per_line = 16;
+
 
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)
@@ -52,7 +56,9 @@ iTableView::iTableView(QWidget* parent)
   vhead->sectionResizeMode(QHeaderView::Fixed);
 #else
   vhead->setResizeMode(QHeaderView::Fixed);
-#endif  
+#endif
+  horizontalHeader()->setDefaultSectionSize(ConvertCharsToPixels(default_chars_per_line));
+  horizontalHeader()->setMaximumSectionSize(ConvertCharsToPixels(max_chars_per_line));
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
@@ -534,7 +540,6 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
 
 void iTableView::SetRowHeight(int n_lines) {
   QFont cur_font = QFont();
-  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   // this already does the scaling by table font size, so we don't need anything else
   QFontMetrics metrics(cur_font);
   int eff_height = n_lines * metrics.height() + 2 * row_margin;
@@ -544,13 +549,36 @@ void iTableView::SetRowHeight(int n_lines) {
 
 void iTableView::SetRowHeightToContents() {
   QFont cur_font = QFont();
-  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   // this already does the scaling by table font size, so we don't need anything else
   QFontMetrics metrics(cur_font);
   int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
   verticalHeader()->setMaximumSectionSize(max_pixels);
   this->resizeRowsToContents();
 }
+
+void iTableView::SetColumnWidth(int column, int n_chars) {
+  QFont cur_font = QFont();
+  // this already does the scaling by table font size, so we don't need anything else
+  QFontMetrics metrics(cur_font);
+  if (n_chars < 1) n_chars = 1;
+  if (n_chars > iTableView::max_chars_per_line) n_chars = iTableView::max_chars_per_line;
+  int eff_width = n_chars * metrics.maxWidth();
+  this->setColumnWidth(column, eff_width);
+}
+
+int iTableView::ConvertPixelsToChars(int n_pixels) {
+  QFont cur_font = QFont();
+  QFontMetrics metrics(cur_font);
+  return n_pixels / metrics.maxWidth();
+}
+
+int iTableView::ConvertCharsToPixels(int chars) {
+  QFont cur_font = QFont();
+  QFontMetrics metrics(cur_font);
+  int foo =  metrics.maxWidth() * chars;
+  return metrics.maxWidth() * chars;
+}
+
 
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate

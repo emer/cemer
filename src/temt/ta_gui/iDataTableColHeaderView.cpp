@@ -75,7 +75,11 @@ void iDataTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int ne
   dt->StructUpdate(true);
   DataCol* dc = dt->data.FastEl(columnIdx);
   if (dc) {
-      dc->width = newWidth;
+    iTableView* view = dynamic_cast<iDataTableView*>(parent());
+    dc->size_to_contents = false;  // if resize is by content this will be set to true on return to calling method
+    if (view) {
+      dc->width = view->ConvertPixelsToChars(newWidth);
+    }
   }
   dt->StructUpdate(false);
 }

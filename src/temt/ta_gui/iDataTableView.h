@@ -34,8 +34,6 @@ class TA_API iDataTableView: public iTableView {
       Q_OBJECT
       friend class iDataTableEditor;
 public:
-  static const int          default_column_width_px; // in pixels
-
   bool                      gui_edit_op; // true if doing a gui editing operation
   void                      SetItemDelegates() override; // this is the place to associate column types with delegates
   

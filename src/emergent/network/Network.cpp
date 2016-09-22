@@ -3807,11 +3807,9 @@ void Network::SpecComparePeers(BaseSpec* key_spec, BaseSpec* peer_spec) {
     
     DataCol* dc_member = (DataCol*)spec_table->FindMakeCol("Member", taBase::VT_STRING);
     dc_member->SetColFlag(DataCol::READ_ONLY);
-    spec_table->SetColumnWidth("Member", 200);
     
     DataCol* dc_spec = (DataCol*)spec_table->FindMakeCol(key_spec->name, taBase::VT_STRING);
     dc_spec->SetColFlag(DataCol::READ_ONLY);
-    spec_table->SetColumnWidth(key_spec->name, 200);
     spec_table->StructUpdate(false);
     spec_table->RefreshViews();
     
@@ -3835,7 +3833,6 @@ void Network::AddPeerToSpecCompareTable(DataTable* spec_table, BaseSpec* peer_sp
     DataCol* dc = (DataCol*)spec_table->FindMakeCol(peer_spec->name, taBase::VT_STRING);
     if (dc) {
       dc->SetColFlag(DataCol::READ_ONLY);
-      spec_table->SetColumnWidth(peer_spec->name, 200);
     }
     spec_table->StructUpdate(false);
   }
@@ -3866,10 +3863,8 @@ void Network::SpecCompareWithChildren(BaseSpec* parent_spec) {
   
   DataCol* dc_member = (DataCol*)spec_table->NewColString("Member");
   dc_member->SetColFlag(DataCol::READ_ONLY);
-  spec_table->SetColumnWidth("Member", 200);
   DataCol* dc_spec = (DataCol*)spec_table->NewColString(parent_spec->name);
   dc_spec->SetColFlag(DataCol::READ_ONLY);
-  spec_table->SetColumnWidth(parent_spec->name, 200);
   spec_table->RefreshViews();
   
   WriteSpecMbrNamesToTable(spec_table, parent_spec);
@@ -3884,7 +3879,6 @@ void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) 
     DataCol* dc = (DataCol*)spec_table->NewColString(child->name);
     if (dc) {
       dc->SetColFlag(DataCol::READ_ONLY);
-      spec_table->SetColumnWidth(child->name, 200);
     }
     WriteSpecMbrNamesToTable(spec_table, child);  // and any members not in parent
     WriteSpecMbrValsToTable(spec_table, child, true, false); // rows already add by parent - pass false

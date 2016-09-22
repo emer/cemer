@@ -52,6 +52,7 @@ void DataCol::Initialize() {
   cell_geom.Set(0, 1);
   hash_table = NULL;
   width = 0;
+  size_to_contents = true;
 }
 
 void DataCol::InitLinks() {
