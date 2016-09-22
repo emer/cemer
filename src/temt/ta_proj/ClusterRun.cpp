@@ -588,9 +588,12 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
 }
 
 void ClusterRun::CheckBackendRunning() {
-  QDateTime clusterrun_backend_script_timestamp = QDateTime::fromString(clusterscript_timestamp.GetDataByName("timestamp").toQString(), Qt::ISODate);
+  QDateTime clusterrun_backend_script_timestamp =
+    QDateTime::fromString(clusterscript_timestamp.GetDataByName("timestamp").toQString(),
+                          Qt::ISODate);
   clusterrun_backend_script_timestamp.setTimeSpec(Qt::UTC);
-  if (clusterrun_backend_script_timestamp.msecsTo(QDateTime().currentDateTime()) > 60*60*1000) {
+  if (clusterrun_backend_script_timestamp.secsTo(QDateTime().currentDateTime()) >
+      60*60) {
     taMisc::Confirm("The last update from the cluster (", cluster, ") was at ", last_backend_checkin, " which is more than an hour ago. Please check that your script is actually running on the cluster");
   }
 }
