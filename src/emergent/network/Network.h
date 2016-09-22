@@ -765,6 +765,8 @@ public:
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void  CountCons();
   // #CAT_Structure count connections for all units in network
+  virtual void  CountNonSharedRecvCons_Thr(int thr_no);
+  // #IGNORE count non-shared recv cons, after cons all made..
   virtual bool  RecvOwnsCons() { return true; }
   // #CAT_Structure does the receiver own the connections (default) or does the sender?
 

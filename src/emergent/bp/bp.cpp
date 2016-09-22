@@ -256,14 +256,20 @@ void BpUnitSpec::UpdateAfterEdit_impl() {
   case SIGMOID:
   case NLXX1:
   case BINARY:
+  case GAUSS:
+  case RBF:
   case SOFTMAX:
     act_range.min = 0.0f; act_range.max = 1.0f;
+    if(act_fun == SOFTMAX)
+      err_tol = 0.0f;             // very bad with softmax
     break;
   case TANH:
     act_range.min = -1.0f; act_range.max = 1.0f;
     break;
   case RELU:
     act_range.min = 0.0f;
+    if(act_range.max == 1.0f)
+      act_range.max = 1.0e4f;
     break;
   default:
     break;

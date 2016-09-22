@@ -448,6 +448,24 @@ void Network::CountCons() {
     max_prjns = MAX(l->projections.size, max_prjns);
     l->CountCons(this);
   }
+
+  if(RecvOwnsCons()) {
+    NET_THREAD_CALL(Network::CountNonSharedRecvCons_Thr);
+  }
+  // cannot share any sending connections!
+}
+
+void Network::CountNonSharedRecvCons_Thr(int thr_no) {
+  int64_t ocsum_nonshared = 0;
+  // recv cons only..
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    ConGroup* rcg = ThrRecvConGroup(thr_no, i); // guaranteed to be active..
+    if(!rcg->Sharing()) {
+      ocsum_nonshared += rcg->alloc_size;
+    }
+  }
+  thrs_own_cons_tot_size_nonshared[thr_no] = ocsum_nonshared;
 }
 
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
@@ -1197,7 +1215,6 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
   thrs_own_cons_max_size[thr_no] = 0;
   thrs_own_cons_max_vars[thr_no] = 0;
   int64_t ocsum = 0;
-  int64_t ocsum_nonshared = 0;
   int ocn = 0;
 
   // recv cons
@@ -1211,8 +1228,6 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
       thrs_own_cons_max_vars[thr_no] = MAX(thrs_own_cons_max_vars[thr_no],
                                            rcg->NConVars());
       ocsum += rcg->alloc_size;
-      if(!rcg->Sharing())
-        ocsum_nonshared += rcg->alloc_size;
       ocn++;
     }
     else {
@@ -1231,7 +1246,6 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
       thrs_own_cons_max_vars[thr_no] = MAX(thrs_own_cons_max_vars[thr_no],
                                            scg->NConVars());
       ocsum += scg->alloc_size;
-      ocsum_nonshared += scg->alloc_size;
       ocn++;
     }
     else {
@@ -1240,7 +1254,8 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
   }
 
   thrs_own_cons_tot_size[thr_no] = ocsum;
-  thrs_own_cons_tot_size_nonshared[thr_no] = ocsum_nonshared;
+  thrs_own_cons_tot_size_nonshared[thr_no] = ocsum; // assume all nonshared for now..
+  // see CountNonSharedRecvCons_Thr later..
   if(ocn > 0) {
     thrs_own_cons_avg_size[thr_no] = round((float)ocsum / (float)ocn);
   }

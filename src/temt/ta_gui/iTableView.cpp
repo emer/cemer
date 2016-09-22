@@ -540,7 +540,7 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
 
 void iTableView::SetRowHeight(int n_lines) {
   QFont cur_font = QFont();
-  // this already does the scaling by table font size, so we don't need anything else
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int eff_height = n_lines * metrics.height() + 2 * row_margin;
   QHeaderView* vhead = verticalHeader();
@@ -549,7 +549,7 @@ void iTableView::SetRowHeight(int n_lines) {
 
 void iTableView::SetRowHeightToContents() {
   QFont cur_font = QFont();
-  // this already does the scaling by table font size, so we don't need anything else
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
   verticalHeader()->setMaximumSectionSize(max_pixels);
@@ -558,7 +558,7 @@ void iTableView::SetRowHeightToContents() {
 
 void iTableView::SetColumnWidth(int column, int n_chars) {
   QFont cur_font = QFont();
-  // this already does the scaling by table font size, so we don't need anything else
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   if (n_chars < 1) n_chars = 1;
   if (n_chars > iTableView::max_chars_per_line) n_chars = iTableView::max_chars_per_line;
@@ -568,12 +568,14 @@ void iTableView::SetColumnWidth(int column, int n_chars) {
 
 int iTableView::ConvertPixelsToChars(int n_pixels) {
   QFont cur_font = QFont();
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   return n_pixels / metrics.maxWidth();
 }
 
 int iTableView::ConvertCharsToPixels(int chars) {
   QFont cur_font = QFont();
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int foo =  metrics.maxWidth() * chars;
   return metrics.maxWidth() * chars;
