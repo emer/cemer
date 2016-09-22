@@ -534,6 +534,8 @@ public:
       return gauss.GaussActFun(netin);
     case RBF:
       return gauss.GaussActFun(netin);
+    case MAX_POOL:
+      return netin;
     default:
       return 0.0f;
     }
@@ -559,6 +561,8 @@ public:
     case RBF:
       return -act;
     case SOFTMAX:
+      return 1.0f;
+    case MAX_POOL:
       return 1.0f;
     default:
       return 0.0f;

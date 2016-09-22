@@ -296,6 +296,7 @@ void BpUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
   inherited::Init_Acts(u, net, thr_no);
   BpUnitVars* bu = (BpUnitVars*)u;
   bu->err = bu->dEdA = bu->dEdNet = 0.0f;
+  u->ClearExtFlag(UnitVars::UN_FLAG_1);
 }
 
 void BpUnitSpec::Compute_MaxPoolNetin(BpUnitVars* u, Network* net, int thr_no) {
