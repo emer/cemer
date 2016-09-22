@@ -81,7 +81,7 @@ bool taImageProc::FlipY(float_Matrix& trg_data, const float_Matrix& src_data) {
     for (int yi = 0; yi < img_size.y; yi++) {
       for (int xi = 0; xi < img_size.x; xi++) {
         for (int ci = 0; ci < nclrs; ci++) {
-          trg_data.FastEl3d(xi, yi, ci) = src_data.FastEl3d(xi, yi, ci); 
+          trg_data.FastEl3d(xi, yi, ci) = src_data.FastEl3d(xi, img_size.y-yi, ci); 
         }
       }
     }
@@ -90,7 +90,7 @@ bool taImageProc::FlipY(float_Matrix& trg_data, const float_Matrix& src_data) {
     trg_data.SetGeom(2, img_size.x, img_size.y);
     for (int yi = 0; yi < img_size.y; yi++) {
       for (int xi = 0; xi < img_size.x; xi++) {
-        trg_data.FastEl2d(xi, yi) = src_data.FastEl2d(xi, yi); 
+        trg_data.FastEl2d(xi, yi) = src_data.FastEl2d(xi, img_size.y-yi); 
       }
     }
   }
