@@ -178,16 +178,17 @@ void iDataTableEditor::tvTable_layoutChanged() {
   ConfigView();
 
 //  this should be done with some update at a higher level
-//  // keep column widths in sync for multiple views --
-//  for(int col_idx=0; col_idx<dt()->data.size; col_idx++) {
-//    DataCol* dc = dt()->data.FastEl(col_idx);
-//    if (dc->size_to_contents) {
-//      tvTable->resizeColumnToContents(col_idx);
-//    }
-//    else {
-//      tvTable->SetColumnWidth(col_idx, dc->width);
-//    }
-//  }
+  // keep column widths in sync for multiple views --
+  for(int i=0; i < dt()->data.size; i++) {
+    DataCol* dc = dt()->GetColData(i);
+    if (dc->size_to_contents) {
+      tvTable->resizeColumnToContents(i);
+      dc->size_to_contents = true;  // critical to do this!
+    }
+    else {
+      tvTable->SetColumnWidth(i, dc->width);
+    }
+  }
 
   //no-causes recursive invocation!  Refresh();
   if ((bool)m_cell) {

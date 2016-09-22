@@ -579,7 +579,6 @@ int iTableView::ConvertCharsToPixels(int chars) {
   return metrics.maxWidth() * chars;
 }
 
-
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate
 

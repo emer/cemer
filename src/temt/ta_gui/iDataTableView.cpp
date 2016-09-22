@@ -285,7 +285,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         SetRowHeight(tab->row_height);
         dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
-
+      
       if (rval) {
         this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
         this->setCurrentIndex(newIndex);
@@ -336,21 +336,19 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
           this->setColumnWidth(col, width);
           dataTable()->GetColData(col)->size_to_contents = false;
-       }
+        }
       }
     }
     else if (op_code & OP_RESIZE_TO_CONTENT) {
       for (int col = sel.col_to; col >= sel.col_fr; --col) {
-        this->resizeColumnToContents(col);
-        dataTable()->GetColData(col)->size_to_contents = true;
+        this->ResizeColumnToContents(col);
       }
     }
     else if (op_code & OP_RESIZE_TO_CONTENT_ALL) {
       int cols = tab->data.size;
       for (int col = cols-1; col >= 0; --col) {
-        this->resizeColumnToContents(col);
-        dataTable()->GetColData(col)->size_to_contents = true;
-     }
+        this->ResizeColumnToContents(col);
+      }
     }
   }
   bail:
@@ -494,6 +492,11 @@ void iDataTableView::Refresh() {
   }
   
   update();
+}
+
+void iDataTableView::ResizeColumnToContents(int column) {
+  inherited::resizeColumnToContents(column);
+  dataTable()->GetColData(column)->size_to_contents = true;
 }
 
 ////////////////////////////////////////////////

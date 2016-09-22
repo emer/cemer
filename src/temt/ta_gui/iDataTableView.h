@@ -83,6 +83,8 @@ protected slots:
   // remove the control panel item for the selected table column
   void          RemoveColumnFromControlPanel(int menu_item_position);
   // remove the control panel item for the selected table column
+  void          ResizeColumnToContents(int column);
+  // can't override resizeColumnToContents - non-virtual 
 };
 
 class TA_API iTableViewCheckboxDelegate: public QStyledItemDelegate {
