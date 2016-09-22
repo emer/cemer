@@ -58,7 +58,9 @@ iTableView::iTableView(QWidget* parent)
   vhead->setResizeMode(QHeaderView::Fixed);
 #endif
   horizontalHeader()->setDefaultSectionSize(ConvertCharsToPixels(default_chars_per_line));
+#if (QT_VERSION >= 0x050200)
   horizontalHeader()->setMaximumSectionSize(ConvertCharsToPixels(max_chars_per_line));
+#endif
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
@@ -552,7 +554,9 @@ void iTableView::SetRowHeightToContents() {
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
+#if (QT_VERSION >= 0x050200)
   verticalHeader()->setMaximumSectionSize(max_pixels);
+#endif
   this->resizeRowsToContents();
 }
 
