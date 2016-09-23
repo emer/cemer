@@ -54,6 +54,8 @@ public:
   static const int default_chars_per_line; // #NO_SAVE #HIDDEN #CAT_GUI default number of  characters per line of text in column
   static const int resize_precision_rows; // #NO_SAVE #HIDDEN #CAT_GUI number of rows to include in auto-resizing columns
   
+  static int max_pixels_per_line; // #NO_SAVE #HIDDEN #CAT_GUI maximum characters per line of text in column (don't let column get to wide)
+
   int           edit_start_pos;  // position to start when editing
   bool          edit_start_kill; // start editing with kill
 #ifndef __MAKETA__

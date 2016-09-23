@@ -39,6 +39,7 @@ const int iTableView::max_chars_per_line = 50;
 const int iTableView::default_chars_per_line = 16;
 const int iTableView::resize_precision_rows = 100;
 
+int iTableView::max_pixels_per_line;
 
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)
@@ -52,7 +53,10 @@ iTableView::iTableView(QWidget* parent)
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   last_font_size = -1;
   setFont(cur_font);
-
+  QFontMetrics metrics(cur_font);
+  max_pixels_per_line = metrics.maxWidth() * max_chars_per_line;
+  
+  
   QHeaderView* vhead = verticalHeader();
 #if (QT_VERSION >= 0x050000)
   vhead->sectionResizeMode(QHeaderView::Fixed);

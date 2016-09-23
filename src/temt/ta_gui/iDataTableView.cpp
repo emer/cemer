@@ -471,6 +471,11 @@ void iDataTableView::Refresh() {
   if(last_font_size != taMisc::GetCurrentFontSize("table")) {
     last_font_size = taMisc::GetCurrentFontSize("table");
     
+    QFont cur_font = QFont();
+    setFont(cur_font);
+    QFontMetrics metrics(cur_font);
+    max_pixels_per_line = metrics.maxWidth() * max_chars_per_line;
+    
     DataTable* dt = dataTable();
     int row_height = 1;
     
@@ -508,8 +513,21 @@ void iDataTableView::Refresh() {
 }
 
 void iDataTableView::ResizeColumnToContents(int column) {
+  
+  DataCol* col = dataTable()->GetColData(column);
+  int old_width = col->width;
+  
   inherited::resizeColumnToContents(column);
   dataTable()->GetColData(column)->size_to_contents = true;
+  
+  int new_width = this->columnWidth(column);
+  if (new_width > max_pixels_per_line) {
+    this->setColumnWidth(column, max_pixels_per_line);
+  }
+  
+  if (col->width != old_width) {
+    col->width = old_width;
+  }
 }
 
 ////////////////////////////////////////////////
