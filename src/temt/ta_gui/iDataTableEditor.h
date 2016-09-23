@@ -100,11 +100,10 @@ protected:
   taMatrix*             m_cell_par; // parent of cell -- we link to it
   taMatrixPtr           m_cell; // current cell
   QModelIndex           m_cell_index; // we keep this to refresh cell if data changes
+  bool                  has_rows;
 
-  bool         eventFilter(QObject* obj, QEvent* event) override;
-
-  void                  setCellMat(taMatrix* cell, const QModelIndex& index,
-                                   bool pat_4d = false);
+  bool                  eventFilter(QObject* obj, QEvent* event) override;
+  void                  setCellMat(taMatrix* cell, const QModelIndex& index, bool pat_4d = false);
   void                  ConfigView(); // setup or change view, esp after col ins/deletes
 };
 

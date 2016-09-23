@@ -59,7 +59,8 @@ iDataTableEditor::iDataTableEditor(iDataTableView* table_view, QWidget* parent)
     this, SLOT(tvTable_currentChanged(const QModelIndex&)));
   connect(tvTable, SIGNAL(sig_dataChanged(const QModelIndex&, const QModelIndex&)),
     this, SLOT(tvTable_dataChanged(const QModelIndex&, const QModelIndex&)) );
-
+  
+  has_rows = false;  // when this changes to true resize the columns - otherwise columns size to header names
 }
 
 iDataTableEditor::~iDataTableEditor() {
@@ -177,8 +178,11 @@ void iDataTableEditor::tvTable_layoutChanged() {
     return;
   ConfigView();
   
-  if(tvTable->last_font_size != taMisc::GetCurrentFontSize("table")) {
+  if(tvTable->last_font_size != taMisc::GetCurrentFontSize("table") || (!has_rows && dt()->rows > 0)) {
     tvTable->last_font_size = taMisc::GetCurrentFontSize("table");
+    if (dt()->rows > 0) {
+      has_rows = true;
+    }
     
     //  this should be done with some update at a higher level
     // keep column widths in sync for multiple views --
