@@ -189,8 +189,7 @@ void iDataTableEditor::tvTable_layoutChanged() {
     for(int i=0; i < dt()->data.size; i++) {
       DataCol* dc = dt()->GetColData(i);
       if (dc->size_to_contents) {
-        tvTable->resizeColumnToContents(i);
-        dc->size_to_contents = true;  // critical to do this!
+        tvTable->ResizeColumnToContents(i);
       }
       else {
         tvTable->SetColumnWidth(i, dc->width);
