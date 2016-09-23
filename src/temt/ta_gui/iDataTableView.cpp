@@ -39,8 +39,6 @@
 #include <QWidget>
 #include <QModelIndex>
 #include <QApplication>
-#include <QFontMetrics>
-#include <QFont>
 #include <QHeaderView>
 
 iDataTableView::iDataTableView(QWidget* parent)
@@ -463,29 +461,32 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
 }
 
 void iDataTableView::Refresh() {
-  DataTable* dt = dataTable();
-  
-  int row_height = 1;
-  
-  if (dataTable()) {
-    if (!dataTable()->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
-      if(dataTable()->row_height < 1)
-        dataTable()->row_height = 1;
-      row_height = dataTable()->row_height;
-      SetRowHeight(row_height);
-    }
-    else {
-      SetRowHeightToContents();
-    }
+  if(last_font_size != taMisc::GetCurrentFontSize("table")) {
+    last_font_size = taMisc::GetCurrentFontSize("table");
     
-    for (int col_idx=0; col_idx<dataTable()->data.size; col_idx++) {
-      DataCol* data_col = dataTable()->GetColData(col_idx);
-      if (data_col) {
-        if (data_col->size_to_contents) {
-          this->resizeColumnToContents(col_idx);
-        }
-        else {
-          SetColumnWidth(col_idx, data_col->width);
+    DataTable* dt = dataTable();
+    int row_height = 1;
+    
+    if (dataTable()) {
+      if (!dataTable()->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
+        if(dataTable()->row_height < 1)
+          dataTable()->row_height = 1;
+        row_height = dataTable()->row_height;
+        SetRowHeight(row_height);
+      }
+      else {
+        SetRowHeightToContents();
+      }
+      
+      for (int col_idx=0; col_idx<dataTable()->data.size; col_idx++) {
+        DataCol* data_col = dataTable()->GetColData(col_idx);
+        if (data_col) {
+          if (data_col->size_to_contents) {
+            this->resizeColumnToContents(col_idx);
+          }
+          else {
+            SetColumnWidth(col_idx, data_col->width);
+          }
         }
       }
     }

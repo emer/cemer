@@ -176,20 +176,23 @@ void iDataTableEditor::tvTable_layoutChanged() {
   if(!isVisible())
     return;
   ConfigView();
-
-//  this should be done with some update at a higher level
-  // keep column widths in sync for multiple views --
-  for(int i=0; i < dt()->data.size; i++) {
-    DataCol* dc = dt()->GetColData(i);
-    if (dc->size_to_contents) {
-      tvTable->resizeColumnToContents(i);
-      dc->size_to_contents = true;  // critical to do this!
-    }
-    else {
-      tvTable->SetColumnWidth(i, dc->width);
+  
+  if(tvTable->last_font_size != taMisc::GetCurrentFontSize("table")) {
+    tvTable->last_font_size = taMisc::GetCurrentFontSize("table");
+    
+    //  this should be done with some update at a higher level
+    // keep column widths in sync for multiple views --
+    for(int i=0; i < dt()->data.size; i++) {
+      DataCol* dc = dt()->GetColData(i);
+      if (dc->size_to_contents) {
+        tvTable->resizeColumnToContents(i);
+        dc->size_to_contents = true;  // critical to do this!
+      }
+      else {
+        tvTable->SetColumnWidth(i, dc->width);
+      }
     }
   }
-
   //no-causes recursive invocation!  Refresh();
   if ((bool)m_cell) {
     iMatrixTableModel* mat_model = m_cell->GetTableModel();

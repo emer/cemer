@@ -49,6 +49,7 @@ iTableView::iTableView(QWidget* parent)
 
   QFont cur_font = QFont();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
+  last_font_size = -1;
   setFont(cur_font);
 
   QHeaderView* vhead = verticalHeader();
