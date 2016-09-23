@@ -56,6 +56,7 @@ iDataTableView::iDataTableView(QWidget* parent)
   col_header->setDefaultSectionSize(ConvertCharsToPixels(default_chars_per_line));
 #if (QT_VERSION >= 0x050200)
   col_header->setMaximumSectionSize(ConvertCharsToPixels(max_chars_per_line));
+  col_header->setResizeContentsPrecision(resize_precision_rows);
 #endif
 
   row_header = new iDataTableRowHeaderView(this); // subclass header
@@ -327,17 +328,18 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       }
     }
     else if (op_code & OP_SET_WIDTH) {
+      int width = ConvertPixelsToChars(columnWidth(sel.col_fr));
+      width = QInputDialog::getInt(0, "Set Column Width", "Width in Characters:", width, 1);
       if (sel.col_to == sel.col_fr) {
         int col_idx = sel.col_fr;
-        int width = QInputDialog::getInt(0, "Set Column Width", "Width in Characters:", columnWidth(sel.col_fr), 0, iTableView::max_chars_per_line);
         this->SetColumnWidth(col_idx, width);  // call our version -- not qtableview::setColumnWidth
         dataTable()->GetColData(col_idx)->width = width;
         dataTable()->GetColData(col_idx)->size_to_contents = false;
       }
       else {
-        int width = QInputDialog::getInt(0, "Set Column Width", "Width in Characters:", columnWidth(sel.col_fr), 0, iTableView::max_chars_per_line);
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
-          this->setColumnWidth(col, width);
+          this->SetColumnWidth(col, width);
+          dataTable()->GetColData(col)->width = width;
           dataTable()->GetColData(col)->size_to_contents = false;
         }
       }
@@ -487,14 +489,19 @@ void iDataTableView::Refresh() {
         DataCol* data_col = dataTable()->GetColData(col_idx);
         if (data_col) {
           if (data_col->size_to_contents) {
-            this->resizeColumnToContents(col_idx);
+            horizontalHeader()->setSectionResizeMode
+              (col_idx, QHeaderView::ResizeToContents);
           }
           else {
-            SetColumnWidth(col_idx, data_col->width);
+            horizontalHeader()->setSectionResizeMode
+              (col_idx, QHeaderView::Fixed);
+            SetColumnWidth(col_idx, ConvertCharsToPixels(data_col->width));
           }
         }
       }
     }
+
+    col_header->DoResizeSections();
   }
   
   update();

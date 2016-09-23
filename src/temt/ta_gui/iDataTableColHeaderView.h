@@ -28,22 +28,24 @@ class QWidget; //
 
 class TA_API iDataTableColHeaderView: public QHeaderView {
   INHERITED(QHeaderView)
-          Q_OBJECT
+  Q_OBJECT
+ public:
+  iDataTableColHeaderView(QWidget* parent = NULL);
+  ~iDataTableColHeaderView();
 
-public:
-          iDataTableColHeaderView(QWidget* parent = NULL);
-          ~iDataTableColHeaderView();
+  inline void  DoResizeSections() { resizeSections(); }
+  // call protected resizeSections() because it isn't being called appropriately!
+          
+  protected:
+  bool                  m_section_move_complete;
 
-protected:
-          bool                  m_section_move_complete;
-
-          protected slots:
-          void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
-          void                  resizedSection(int columnIdx, int oldWidth, int newWidth);
+protected slots:
+  void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
+  void                  resizedSection(int columnIdx, int oldWidth, int newWidth);
 
 #ifndef __MAKETA__
 signals:
-          void                  tableViewChange();
+  void                  tableViewChange();
 #endif // ndef __MAKETA__
 };
 

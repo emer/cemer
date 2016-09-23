@@ -37,6 +37,7 @@ const int iTableView::column_margin = 4;
 const int iTableView::max_lines_per_row = 10;
 const int iTableView::max_chars_per_line = 50;
 const int iTableView::default_chars_per_line = 16;
+const int iTableView::resize_precision_rows = 100;
 
 
 iTableView::iTableView(QWidget* parent)
@@ -61,6 +62,7 @@ iTableView::iTableView(QWidget* parent)
   horizontalHeader()->setDefaultSectionSize(ConvertCharsToPixels(default_chars_per_line));
 #if (QT_VERSION >= 0x050200)
   horizontalHeader()->setMaximumSectionSize(ConvertCharsToPixels(max_chars_per_line));
+  horizontalHeader()->setResizeContentsPrecision(resize_precision_rows);
 #endif
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
