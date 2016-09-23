@@ -81,67 +81,6 @@ TA_BASEFUNS_CTORS_DEFN(GraphTableView);
 
 float GraphTableView::tick_size = 0.05f;
 
-
-GraphTableView* DataTable::NewGraphView(T3Panel* fr) {
-  return GraphTableView::New(this, fr);
-}
-
-GraphTableView* DataTable::FindMakeGraphView(T3Panel* fr) {
-  taSigLink* dl = sig_link();
-  if(dl) {
-    taSigLinkItr itr;
-    GraphTableView* el;
-    FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
-      // update from user stuff
-      el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
-      el->InitDisplay();
-      el->UpdateDisplay();
-      fr = el->GetFrame();
-      if(fr) {
-        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-        if(mwv) {
-          mwv->SelectT3ViewTabName(fr->name);
-        }
-      }
-      return el;
-    }
-  }
-  return GraphTableView::New(this, fr);
-}
-
-GraphTableView* DataTable::FindGraphView() {
-  taSigLink* dl = sig_link();
-  if(dl) {
-    taSigLinkItr itr;
-    GraphTableView* el;
-    FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
-      return el;
-    }
-  }
-  return NULL;
-}
-
-bool DataTable::GraphViewGotoRow(int row_no) {
-  GraphTableView* gv = FindGraphView();
-  if(!gv) return false;
-  gv->ViewRow_At(row_no);
-  return true;
-}
-
-bool DataTable::GraphViewDefaultStyles() {
-  GraphTableView* gv = FindGraphView();
-  if(!gv) return false;
-  gv->CallFun("DefaultPlotStyles");
-  return true;
-}
-
-bool DataTable::GraphViewLineStyle() {
-  GraphTableView* gv = FindGraphView();
-  if(!gv) return false;
-  gv->CallFun("SetLineStyle");
-  return true;
-}
-
 // Add a new GraphTableView object to the frame for the given DataTable.
 GraphTableView* GraphTableView::New(DataTable* dt, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, dt, "table");

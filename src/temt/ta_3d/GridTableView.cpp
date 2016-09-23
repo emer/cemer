@@ -74,54 +74,6 @@
 
 TA_BASEFUNS_CTORS_DEFN(GridTableView);
 
-
-GridTableView* DataTable::NewGridView(T3Panel* fr) {
-  return GridTableView::New(this, fr);
-}
-
-GridTableView* DataTable::FindMakeGridView(T3Panel* fr) {
-  taSigLink* dl = sig_link();
-  if(dl) {
-    taSigLinkItr itr;
-    GridTableView* el;
-    FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
-      // update from user stuff
-      el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
-      el->InitDisplay();
-      el->UpdateDisplay();
-      fr = el->GetFrame();
-      if(fr) {
-        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-        if(mwv) {
-          mwv->SelectT3ViewTabName(fr->name);
-        }
-      }
-      return el;
-    }
-  }
-
-  return GridTableView::New(this, fr);
-}
-
-GridTableView* DataTable::FindGridView() {
-  taSigLink* dl = sig_link();
-  if(dl) {
-    taSigLinkItr itr;
-    GridTableView* el;
-    FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
-      return el;
-    }
-  }
-  return NULL;
-}
-
-bool DataTable::GridViewGotoRow(int row_no) {
-  GridTableView* gv = FindGridView();
-  if(!gv) return false;
-  gv->ViewRow_At(row_no);
-  return true;
-}
-
 GridTableView* GridTableView::New(DataTable* dt, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, dt, "table");
   if (!new_net_view.isValid()) return NULL;

@@ -814,7 +814,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 	}
       }
       dist_mat->StructUpdate(false);
-      if(view) dist_mat->FindMakeGridView();
+      if(view) dist_mat->FindMakeGridView(NULL, false); // don't select view
       return true;
     }
   }
@@ -831,7 +831,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   dmda->SetValAsMatrix(&dmat, -1);
   dist_mat->StructUpdate(false);
   if(view) {
-    GridTableView* gtv = dist_mat->FindMakeGridView();
+    GridTableView* gtv = dist_mat->FindMakeGridView(NULL, false); // don't select view
     if(name_labels && !name_col_nm.empty()) {
       DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
       if(nmda) {
@@ -1048,7 +1048,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 	}
       }
       dist_mat->StructUpdate(false);
-      if(view) dist_mat->FindMakeGridView();
+      if(view) dist_mat->FindMakeGridView(NULL, false); // don't select view
       return true;
     }
   }
@@ -1063,7 +1063,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
   dist_mat->StructUpdate(false);
-  if(view) dist_mat->FindMakeGridView();
+  if(view) dist_mat->FindMakeGridView(NULL, false); // don't select view
   return true;
 }
 
@@ -1115,7 +1115,7 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   correl_mat->SetUserData("AUTO_SCALE", true);
   correl_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
-  if(view) correl_mat->FindMakeGridView();
+  if(view) correl_mat->FindMakeGridView(NULL, false); // don't select view
   return true;
 }
 
@@ -1155,7 +1155,7 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 
   clust_data->StructUpdate(false);
 
-  if(view) clust_data->FindMakeGraphView();
+  if(view) clust_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -1210,7 +1210,7 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
     }
   }
   pca_data->StructUpdate(false);
-  if(view) pca_data->FindMakeGridView();
+  if(view) pca_data->FindMakeGridView(NULL, false); // don't select view
   return true;
 }
 
@@ -1287,7 +1287,7 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     yda->SetValAsFloat(yprjn.FastEl1d(i), -1);
   }
 
-  if(view) prjn_data->FindMakeGraphView();
+  if(view) prjn_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }  
 
@@ -1342,7 +1342,7 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     yda->SetValAsFloat(xy_coords.FastEl2d(1, i), -1);
   }
 
-  if(view) prjn_data->FindMakeGraphView();
+  if(view) prjn_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -1406,7 +1406,7 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
     yda->SetValAsFloat(yprjn.FastEl1d(i), -1);
   }
 
-  if(view) prjn_data->FindMakeGraphView();
+  if(view) prjn_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -1443,7 +1443,7 @@ bool taDataAnal::TimeAvg(DataTable* avg_data, bool view, DataTable* src_data,
     }
   }
 
-  if(view) avg_data->FindMakeGraphView();
+  if(view) avg_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -1516,7 +1516,7 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
   }
   smooth_data->StructUpdate(false);
 
-  if(view) smooth_data->FindMakeGraphView();
+  if(view) smooth_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -1678,7 +1678,7 @@ bool taDataAnal::Histogram(DataTable* hist_data, DataTable* src_data,
   hist_data->SetUserData("GRAPH_TYPE", "BAR");
   
   hist_data->StructUpdate(false);
-  if(view) hist_data->FindMakeGraphView();
+  if(view) hist_data->FindMakeGraphView(NULL, false); // don't select view
   
   return true;
 }

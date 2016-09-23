@@ -53,6 +53,11 @@ iDataTableView::iDataTableView(QWidget* parent)
   col_header = new iDataTableColHeaderView(this); // subclass header
   this->setHorizontalHeader(col_header);
 
+  col_header->setDefaultSectionSize(ConvertCharsToPixels(default_chars_per_line));
+#if (QT_VERSION >= 0x050200)
+  col_header->setMaximumSectionSize(ConvertCharsToPixels(max_chars_per_line));
+#endif
+
   row_header = new iDataTableRowHeaderView(this); // subclass header
   this->setVerticalHeader(row_header);
   

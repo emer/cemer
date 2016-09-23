@@ -344,12 +344,12 @@ void LeabraConSpec::LogLrateSched(int epcs_per_step, int n_steps, int bump_step)
     }
     int st_i = bump_step;
     for(i=0;i<bump_step;i++) {
-      lrate_sched[st_i + i]->start_ctr = bump_step * epcs_per_step + (i-1) * (epcs_per_step / 2);
+      lrate_sched[st_i + i]->start_ctr = (st_i + i) * epcs_per_step;
       lrate_sched[st_i + i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
       lrate_sched[st_i + i]->UpdateAfterEdit();
     }
     int st_i2 = bump_step*2;
-    int last_ctr = lrate_sched[st_i2-1]->start_ctr + (epcs_per_step/2);
+    int last_ctr = lrate_sched[st_i2-1]->start_ctr + epcs_per_step;
     for(i=bump_step;i<n_steps;i++) {
       lrate_sched[st_i + i]->start_ctr = last_ctr + (i-bump_step) * epcs_per_step;
       lrate_sched[st_i + i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));

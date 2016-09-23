@@ -618,7 +618,7 @@ public:
   // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv
 
   virtual void	LogLrateSched(int epcs_per_step = 50, int n_steps=5, int bump_step=-1);
-  // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks -- if bump_step > 0 (3 is a good default), the lrate bumps back up to 1 and back down to that step level, at .5 the given epcs_per_step, and then proceeds -- this can pop a model out of a local minimum and result in better final performance
+  // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks -- if bump_step > 0 (3 is a good default), the lrate bumps back up to 1 and back down to that step level, and then proceeds from there -- this can pop a model out of a local minimum and result in better final performance
   virtual void	ExpLrateSched(int epcs_per_step = 50, int n_steps=7, float pct_per_step = 0.5);
   // #BUTTON #CAT_Learning establish an exponentially-decreasing learning rate schedule with given total number of steps (including first step at lrate) and epochs per step -- learning rate changes by pct_per_step at each step in epoch increment
   virtual void	LinearLrateSched(int epcs_per_step = 50, int n_steps=7, float final_lrate_factor = 0.01);

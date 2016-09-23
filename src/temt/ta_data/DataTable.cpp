@@ -44,6 +44,14 @@
 #include <DataTableCell_List>
 #include <taiWidgetTokenChooser>
 
+#include <GridTableView>
+#include <GraphTableView>
+#include <taSigLink>
+#include <taSigLinkItr>
+#include <T3Panel>
+#include <MainWindowViewer>
+
+
 #if (QT_VERSION >= 0x050000)
 #include <QJsonDocument>
 #include <QJsonParseError>
@@ -5178,5 +5186,116 @@ void DataTable::NotifyControlPanel(DataTableCell* cell) {
   if (md) {
     cell->control_panel->MbrUpdated(cell, md);
   }
+}
+
+GridTableView* DataTable::NewGridView(T3Panel* fr) {
+  return GridTableView::New(this, fr);
+}
+
+GridTableView* DataTable::FindMakeGridView(T3Panel* fr, bool select_view) {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    GridTableView* el;
+    FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
+      // update from user stuff
+      el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
+      el->InitDisplay();
+      el->UpdateDisplay();
+      if(select_view) {
+        fr = el->GetFrame();
+        if(fr) {
+          MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+          if(mwv) {
+            mwv->SelectT3ViewTabName(fr->name);
+          }
+        }
+      }
+      return el;
+    }
+  }
+
+  return GridTableView::New(this, fr);
+}
+
+GridTableView* DataTable::FindGridView() {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    GridTableView* el;
+    FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
+}
+
+bool DataTable::GridViewGotoRow(int row_no) {
+  GridTableView* gv = FindGridView();
+  if(!gv) return false;
+  gv->ViewRow_At(row_no);
+  return true;
+}
+
+GraphTableView* DataTable::NewGraphView(T3Panel* fr) {
+  return GraphTableView::New(this, fr);
+}
+
+GraphTableView* DataTable::FindMakeGraphView(T3Panel* fr, bool select_view) {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    GraphTableView* el;
+    FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
+      // update from user stuff
+      el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
+      el->InitDisplay();
+      el->UpdateDisplay();
+      if(select_view) {
+        fr = el->GetFrame();
+        if(fr) {
+          MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+          if(mwv) {
+            mwv->SelectT3ViewTabName(fr->name);
+          }
+        }
+      }
+      return el;
+    }
+  }
+  return GraphTableView::New(this, fr);
+}
+
+GraphTableView* DataTable::FindGraphView() {
+  taSigLink* dl = sig_link();
+  if(dl) {
+    taSigLinkItr itr;
+    GraphTableView* el;
+    FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
+}
+
+bool DataTable::GraphViewGotoRow(int row_no) {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->ViewRow_At(row_no);
+  return true;
+}
+
+bool DataTable::GraphViewDefaultStyles() {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->CallFun("DefaultPlotStyles");
+  return true;
+}
+
+bool DataTable::GraphViewLineStyle() {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->CallFun("SetLineStyle");
+  return true;
 }
 

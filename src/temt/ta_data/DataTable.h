@@ -1150,10 +1150,10 @@ public:
   virtual GraphTableView* NewGraphView(T3Panel* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display open a graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
-  virtual GridTableView* FindMakeGridView(T3Panel* fr = NULL);
-  // #CAT_Display find existing or make a new grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
-  virtual GraphTableView* FindMakeGraphView(T3Panel* fr = NULL);
-  // #CAT_Display find existing or make a new graph view of this table (NULL=use existing empty frame if any, else make new frame)
+  virtual GridTableView* FindMakeGridView(T3Panel* fr = NULL, bool select_view = true);
+  // #CAT_Display find existing or make a new grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame) -- if select_view then existing view tab is selected
+  virtual GraphTableView* FindMakeGraphView(T3Panel* fr = NULL, bool select_view = true);
+  // #CAT_Display find existing or make a new graph view of this table (NULL=use existing empty frame if any, else make new frame) -- if select_view then existing view tab is selected
 
   virtual GridTableView* FindGridView();
   // #CAT_Display find first existing grid view (graphical rows and columns) of this table -- NULL if none
