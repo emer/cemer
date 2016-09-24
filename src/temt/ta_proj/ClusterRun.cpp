@@ -128,8 +128,8 @@ void ClusterRun::UpdateAfterEdit_impl() {
        jobs_submitted.cols() > jobs_running.cols()) {
       jobs_submit.Reset();          // get rid of any weirdness from prior bug
       jobs_submitted.Reset(); 
-      FormatTables();
     }
+    FormatTables();
     taVersion v784(7, 8, 4);
     if (taMisc::loading_version < v784) {
       if(cur_search_algo) {
@@ -1326,6 +1326,13 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   int idx;
 
   // NOTE: please update ClusterRunJob with any updates to job tables!
+
+  if(taMisc::is_loading) {
+    taVersion v803(8, 0, 3);
+    if(taMisc::loading_version < v803) {
+      dt.row_height = 2;           // good default now that it is avail
+    }
+  }
 
   dt.ClearDataFlag(DataTable::SAVE_ROWS);
 

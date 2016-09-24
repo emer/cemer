@@ -30,11 +30,13 @@
 iTextEdit::iTextEdit(QWidget* parent)
 :inherited(parent)
 {
+  ext_select_on = false;
 }
 
 iTextEdit::iTextEdit(const QString& text, QWidget* parent)
  :inherited(text, parent)
 {
+  ext_select_on = false;
 }
 
 iTextEdit::~iTextEdit()

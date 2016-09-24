@@ -27,12 +27,9 @@
 taTypeDef_Of(RandomSpec);
 
 class TA_API RandomSpec : public Random {
-  // Random Number Generation -- use this for inline members (hides name field)
+  // Random Number Generation -- use this for inline members 
 INHERITED(Random)
 public:
-#ifdef __MAKETA__
-  String        name;           // #HIDDEN_INLINE name of the object
-#endif
   TA_BASEFUNS_NOCOPY(RandomSpec);
  private:
   void  Initialize()            { };

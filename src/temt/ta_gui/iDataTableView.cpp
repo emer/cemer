@@ -61,6 +61,9 @@ iDataTableView::iDataTableView(QWidget* parent)
 
   row_header = new iDataTableRowHeaderView(this); // subclass header
   this->setVerticalHeader(row_header);
+#if (QT_VERSION >= 0x050200)
+  row_header->setResizeContentsPrecision(resize_precision_rows);
+#endif
   
   connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(doubleClicked(const QModelIndex&)) );
   installEventFilter(this);
@@ -279,15 +282,15 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
                                         tab->row_height, 1, iTableView::max_lines_per_row);
         SetRowHeight(rows);
         tab->row_height = rows;
-        dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+        tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
         SetRowHeightToContents();
-        dataTable()->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+        tab->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       else if (op_code & OP_RESTORE_HEIGHT) {
         SetRowHeight(tab->row_height);
-        dataTable()->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+        tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
       }
       
       if (rval) {
@@ -333,14 +336,10 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       if (sel.col_to == sel.col_fr) {
         int col_idx = sel.col_fr;
         this->SetColumnWidth(col_idx, width);  // call our version -- not qtableview::setColumnWidth
-        dataTable()->GetColData(col_idx)->width = width;
-        dataTable()->GetColData(col_idx)->size_to_contents = false;
       }
       else {
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
           this->SetColumnWidth(col, width);
-          dataTable()->GetColData(col)->width = width;
-          dataTable()->GetColData(col)->size_to_contents = false;
         }
       }
     }
@@ -467,68 +466,67 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
   inherited::keyPressEvent(key_event);
 }
 
-void iDataTableView::Refresh() {
-  if(last_font_size != taMisc::GetCurrentFontSize("table")) {
-    last_font_size = taMisc::GetCurrentFontSize("table");
-    
-    QFont cur_font = QFont();
-    setFont(cur_font);
-    QFontMetrics metrics(cur_font);
-    max_pixels_per_line = metrics.maxWidth() * max_chars_per_line;
-    
-    DataTable* dt = dataTable();
-    int row_height = 1;
-    
-    if (dataTable()) {
-      if (!dataTable()->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
-        if(dataTable()->row_height < 1)
-          dataTable()->row_height = 1;
-        row_height = dataTable()->row_height;
-        SetRowHeight(row_height);
+void iDataTableView::UpdateRowHeightColWidth() {
+  DataTable* dt = dataTable();
+  if(!dt) return;
+
+  int row_height = 1;
+  col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
+  
+  if (!dt->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
+    if(dt->row_height < 1)
+      dt->row_height = 1;
+    row_height = dt->row_height;
+    SetRowHeight(row_height);
+  }
+  else {
+    SetRowHeightToContents();
+  }
+      
+  for (int col_idx=0; col_idx<dt->data.size; col_idx++) {
+    DataCol* data_col = dt->GetColData(col_idx);
+    if (data_col) {
+      if (data_col->HasColFlag(DataCol::SIZE_TO_CONTENT)) {
+        horizontalHeader()->setSectionResizeMode(col_idx, QHeaderView::ResizeToContents);
       }
       else {
-        SetRowHeightToContents();
-      }
-      
-      for (int col_idx=0; col_idx<dataTable()->data.size; col_idx++) {
-        DataCol* data_col = dataTable()->GetColData(col_idx);
-        if (data_col) {
-          if (data_col->size_to_contents) {
-            horizontalHeader()->setSectionResizeMode
-              (col_idx, QHeaderView::ResizeToContents);
-          }
-          else {
-            horizontalHeader()->setSectionResizeMode
-              (col_idx, QHeaderView::Fixed);
-            SetColumnWidth(col_idx, ConvertCharsToPixels(data_col->width));
-          }
-        }
+        horizontalHeader()->setSectionResizeMode(col_idx, QHeaderView::Interactive);
+        setColumnWidth(col_idx, ConvertCharsToPixels(data_col->width)); // qt version
       }
     }
-
-    col_header->DoResizeSections();
   }
-  
+}
+
+void iDataTableView::Refresh() {
+  // this is called at initial display -- from there updates work as expected
+  UpdateRowHeightColWidth(); 
   update();
 }
 
 void iDataTableView::ResizeColumnToContents(int column) {
-  
   DataCol* col = dataTable()->GetColData(column);
-  int old_width = col->width;
-  
-  inherited::resizeColumnToContents(column);
-  dataTable()->GetColData(column)->size_to_contents = true;
-  
-  int new_width = this->columnWidth(column);
-  if (new_width > max_pixels_per_line) {
-    this->setColumnWidth(column, max_pixels_per_line);
-  }
-  
-  if (col->width != old_width) {
-    col->width = old_width;
+  col->SetColFlag(DataCol::SIZE_TO_CONTENT);
+  horizontalHeader()->setSectionResizeMode(column, QHeaderView::ResizeToContents);
+}
+
+void iDataTableView::SetColumnWidth(int column, int n_chars) {
+  inherited::SetColumnWidth(column, n_chars);
+  DataCol* col = dataTable()->GetColData(column);
+  col->ClearColFlag(DataCol::SIZE_TO_CONTENT);
+  col->width = n_chars;
+  UpdateMaxColWidth(n_chars);
+}
+
+void iDataTableView::UpdateMaxColWidth(int width) {
+  DataTable* dt = dataTable();
+  if(!dt) return;
+  if(width > dt->max_col_width) {
+    dt->max_col_width = width;
+    col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
   }
 }
+
+
 
 ////////////////////////////////////////////////
 //      iTableViewCheckboxDelegate

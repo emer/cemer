@@ -72,7 +72,7 @@ void GridColView::UpdateFromDataCol_impl(bool first){
   inherited::UpdateFromDataCol_impl(first);
   DataCol* dc = dataCol(); //note: exists, because we were called
   if (first) {
-    text_width = dc->displayWidth(); // this uses user data WIDTH key if present
+    text_width = dc->GridColDisplayWidth(); // this uses user data WIDTH key if present
     InitFromUserData();
   }
 }

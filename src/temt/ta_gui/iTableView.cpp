@@ -39,8 +39,6 @@ const int iTableView::max_chars_per_line = 50;
 const int iTableView::default_chars_per_line = 16;
 const int iTableView::resize_precision_rows = 100;
 
-int iTableView::max_pixels_per_line;
-
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)
 {
@@ -49,14 +47,6 @@ iTableView::iTableView(QWidget* parent)
   ext_select_on = false;
   m_saved_scroll_pos = 0;
 
-  QFont cur_font = QFont();
-  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
-  last_font_size = -1;
-  setFont(cur_font);
-  QFontMetrics metrics(cur_font);
-  max_pixels_per_line = metrics.maxWidth() * max_chars_per_line;
-  
-  
   QHeaderView* vhead = verticalHeader();
 #if (QT_VERSION >= 0x050000)
   vhead->sectionResizeMode(QHeaderView::Fixed);
@@ -67,6 +57,7 @@ iTableView::iTableView(QWidget* parent)
 #if (QT_VERSION >= 0x050200)
   horizontalHeader()->setMaximumSectionSize(ConvertCharsToPixels(max_chars_per_line));
   horizontalHeader()->setResizeContentsPrecision(resize_precision_rows);
+  verticalHeader()->setResizeContentsPrecision(resize_precision_rows);
 #endif
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
   setContextMenuPolicy(Qt::CustomContextMenu);
@@ -560,8 +551,8 @@ void iTableView::SetRowHeightToContents() {
   QFont cur_font = QFont();
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
-  int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
 #if (QT_VERSION >= 0x050200)
+  int max_pixels = max_lines_per_row * metrics.height() + 2 * row_margin;
   verticalHeader()->setMaximumSectionSize(max_pixels);
 #endif
   this->resizeRowsToContents();
@@ -572,9 +563,9 @@ void iTableView::SetColumnWidth(int column, int n_chars) {
   cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
   QFontMetrics metrics(cur_font);
   if (n_chars < 1) n_chars = 1;
-  if (n_chars > iTableView::max_chars_per_line) n_chars = iTableView::max_chars_per_line;
   int eff_width = n_chars * metrics.maxWidth();
   this->setColumnWidth(column, eff_width);
+  horizontalHeader()->setSectionResizeMode(column, QHeaderView::Interactive);
 }
 
 int iTableView::ConvertPixelsToChars(int n_pixels) {

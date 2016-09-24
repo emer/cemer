@@ -27,7 +27,7 @@
 eTypeDef_Of(SpecMemberBase);
 
 class E_API SpecMemberBase : public taOBase {
-  // ##EXT_spec ##SCOPE_Network ##CAT_Spec ##UAE_IN_PROGRAM base type for members of spec objects -- defines interface for default values
+  // ##EXT_spec ##SCOPE_Network ##CAT_Spec ##UAE_IN_PROGRAM ##NO_TOKENS base type for members of spec objects -- defines interface for default values
 friend class BaseSpec;
 INHERITED(taOBase)
 public:

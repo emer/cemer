@@ -88,7 +88,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   a_save_file = main_tb->addAction("Save File");
   connect(a_save_file, SIGNAL(triggered()), this, SLOT(a_save_file_do()));
   a_add_file =  main_tb->addAction("Add File");
-  connect(a_add_file, SIGNAL(triggered()), this, SLOT(a_add_file_do()));
+  connect(a_add_file, SIGNAL(triggered()), this, SLOT(a_add_file_wc_do()));
   a_rm_file =   main_tb->addAction("Del File");
   connect(a_rm_file, SIGNAL(triggered()), this, SLOT(a_rm_file_do()));
   a_cp_file =   main_tb->addAction("Copy File");

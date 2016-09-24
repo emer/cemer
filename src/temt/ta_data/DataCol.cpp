@@ -44,7 +44,7 @@ const String DataCol::udkey_narrow("NARROW");
 const String DataCol::udkey_hidden("HIDDEN");
 
 void DataCol::Initialize() {
-  col_flags = (ColFlags)(SAVE_DATA);
+  col_flags = (ColFlags)(SAVE_DATA | SIZE_TO_CONTENT);
   col_idx = -1;
   is_matrix = false;
   // default initialize to scalar
@@ -52,7 +52,6 @@ void DataCol::Initialize() {
   cell_geom.Set(0, 1);
   hash_table = NULL;
   width = 0;
-  size_to_contents = true;
 }
 
 void DataCol::InitLinks() {
@@ -237,6 +236,23 @@ void DataCol::UpdateAfterEdit_impl() {
   DataTable* dt = dataTable();
   if (dt) {
     dt->ColumnUpdate(this);
+  }
+  if(taMisc::is_loading) {
+    // new char-based column sizing introduced in 803 -- set default to auto-size for older
+    taVersion v803(8, 0, 3);
+    if(taMisc::loading_version < v803) {
+      SetColFlag(SIZE_TO_CONTENT);
+      width = MAX(GridColDisplayWidth(), name.length());
+    }
+  }
+  if(width == 0) {
+    SetColFlag(SIZE_TO_CONTENT);
+    width = MAX(GridColDisplayWidth(), name.length());
+  }
+  if(dt) {
+    if(width > dt->max_col_width) {
+      dt->max_col_width = width;
+    }
   }
 }
 
@@ -481,7 +497,7 @@ String DataCol::ColStats() {
   return _nilString;
 }
 
-int DataCol::displayWidth() const {
+int DataCol::GridColDisplayWidth() const {
   // explicit width has highest priority
   int rval = GetUserData(udkey_width).toInt();
   if (rval == 0) {

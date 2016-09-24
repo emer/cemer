@@ -66,6 +66,7 @@ public:
     CALC                = 0x0010, // calculate value of this column based on calc_expr expression
     READ_ONLY           = 0x0020, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
     PAT_4D              = 0x0040, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
+    SIZE_TO_CONTENT     = 0x0080, // columns size to the content, up to max_col_width in owner datatable
   };
 
   String                desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
@@ -78,10 +79,9 @@ public:
   ColCalcExpr           calc_expr; // #CONDEDIT_ON_col_flags:CALC expression for computing value of this column (only used if CALC flag is set)
   String_Matrix         dim_names; // special names for the dimensions of a matrix cell -- used for display purposes
   taHashTable*          hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
-  int	                  width; // the column display width in characters
-  bool                  size_to_contents; // #READ_ONLY #SHOW _width of column sized to fit contents up to  iTableView::max_chars_per_line 
+  int	                width; // the column display width in characters, for the editor view (not for grid view -- that uses user data) -- if 0 then implies SIZE_TO_CONTENT (see flags)
     
-  virtual const taMatrix*       AR() const = 0;
+  virtual const taMatrix* AR() const = 0;
   // #CAT_Access const version of the matrix pointer
   virtual taMatrix*     AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
@@ -388,8 +388,8 @@ public:
   virtual String        ColStats();
   // #CAT_DataProc #BUTTON #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL #GHOST_ON_is_matrix compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
-  int                   displayWidth() const;
-  // #CAT_Display low level display width, in chars, taken from options
+  virtual int           GridColDisplayWidth() const;
+  // #CAT_Display grid view display width, in chars, taken from options or defaults based on type of data -- does not use the editor width value
   virtual int           maxColWidth() const {return -1;}
   // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
   virtual bool          saveToDataFile() const { return HasColFlag(SAVE_DATA); }

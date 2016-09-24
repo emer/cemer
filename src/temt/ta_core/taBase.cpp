@@ -3672,8 +3672,15 @@ void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String&
 }
 
 void taBase::GetControlPanelLabel(MemberDef* mbr, String& label) const {
-  label = GetDisplayName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
+  taBase* mo = GetMemberOwner(true); // highest
+  if(mo) {
+    label = mo->GetName() + GetPath(NULL, mo);
+  }
+  else {
+    label = GetDisplayName();
+  }
   if (label.nonempty()) {
+    label.CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
     label += "_";
   }
   label += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);

@@ -99,7 +99,7 @@ public:
     AUTO_CALC           = 0x0004, // Automatically calculate columns.
     SAVE_FILE           = 0x0008, // If an AUTO_LOAD filename is set, this option causes row-data to be saved to that file whenever the project is saved.
     LOG_HEADER_OUT      = 0x0010, // #NO_BIT log file header has been output -- used to only output the header at the last possible moment when data first written to the log, to minimize possible pmismatch between data and header
-    ROWS_SIZE_TO_CONTENT = 0x0020, // #NO_SHOW track whether rows are currently size to content or specific equal size
+    ROWS_SIZE_TO_CONTENT = 0x0020, // should table editor rows be sized to content or all a specific equal size
   };
 
   enum AutoLoadMode {
@@ -128,6 +128,7 @@ public:
   String                auto_load_file;
   // #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
   int                   row_height; // #MIN_1 how high to make the rows in the data table editor, in terms of number of lines of text that can fit within each row -- text will auto-wrap
+  int                   max_col_width; // #MIN_1 maximum width of columns (in characters) in the editor -- this is enforced for auto-size of column width to contents, and for manual resizing -- if you specifically request a size larger than this value in the gui, it will be increased here automatically as well
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date

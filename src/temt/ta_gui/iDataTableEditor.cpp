@@ -25,6 +25,7 @@
 #include <iDataTableSearch>
 #include <taSigLink>
 #include <iMainWindowViewer>
+#include <iDataTableColHeaderView>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -108,15 +109,15 @@ iDataTableModel* iDataTableEditor::dtm() const {
 }
 
 void iDataTableEditor::Refresh() {
+  if (tvTable) {
+    tvTable->Refresh();
+  }
   iDataTableModel* dtm = this->dtm();
   if (dtm) {
     dtm->refreshViews();
   }
   if (m_cell) {
     tvCell->Refresh();
-  }
-  if (tvTable) {
-    tvTable->Refresh();
   }
 }
 
@@ -178,24 +179,10 @@ void iDataTableEditor::tvTable_layoutChanged() {
     return;
   ConfigView();
   
-  if(tvTable->last_font_size != taMisc::GetCurrentFontSize("table") || (!has_rows && dt()->rows > 0)) {
-    tvTable->last_font_size = taMisc::GetCurrentFontSize("table");
-    if (dt()->rows > 0) {
-      has_rows = true;
-    }
-    
-    //  this should be done with some update at a higher level
-    // keep column widths in sync for multiple views --
-    for(int i=0; i < dt()->data.size; i++) {
-      DataCol* dc = dt()->GetColData(i);
-      if (dc->size_to_contents) {
-        tvTable->ResizeColumnToContents(i);
-      }
-      else {
-        tvTable->SetColumnWidth(i, dc->width);
-      }
-    }
+  if (dt()->rows > 0) {
+    has_rows = true;
   }
+  
   //no-causes recursive invocation!  Refresh();
   if ((bool)m_cell) {
     iMatrixTableModel* mat_model = m_cell->GetTableModel();

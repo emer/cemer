@@ -72,13 +72,18 @@ void iDataTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int ne
   if (!dt)
     return;
 
+  // IMPORTANT: this is called from *programatic* resizes too!!  not just from gui
+  // interaction.  so we can't do too much here..
+  
   dt->StructUpdate(true);
   DataCol* dc = dt->data.FastEl(columnIdx);
-  if (dc) {
-    iTableView* view = dynamic_cast<iDataTableView*>(parent());
-    dc->size_to_contents = false;  // if resize is by content this will be set to true on return to calling method
+  if(dc) {
+    iDataTableView* view = dynamic_cast<iDataTableView*>(parent());
     if (view) {
-      dc->width = view->ConvertPixelsToChars(newWidth);
+      if(!dc->HasColFlag(DataCol::SIZE_TO_CONTENT)) {
+        dc->width = view->ConvertPixelsToChars(newWidth);
+        view->UpdateMaxColWidth(dc->width);
+      }
     }
   }
   dt->StructUpdate(false);

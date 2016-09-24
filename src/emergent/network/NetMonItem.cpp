@@ -118,6 +118,7 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
 
 void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
+  if(off) return;
   if(!computed) {
     CheckError(!owner, quiet, rval, "NetMonItem named:", name, "has no owner");
     CheckError(!object, quiet, rval, "object is NULL");

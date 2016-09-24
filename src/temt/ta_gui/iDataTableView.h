@@ -71,20 +71,22 @@ protected:
   bool                  eventFilter(QObject* obj, QEvent* event) override;
 
 public slots:
-  void                  doubleClicked(const QModelIndex & index);
-
-  
-protected slots:
-  void          AddCellToControlPanel(int menu_item_position);
+  virtual void          doubleClicked(const QModelIndex & index);
+  virtual void          UpdateRowHeightColWidth();
+  // update row height and column widths based on values in datatable
+  virtual void          AddCellToControlPanel(int menu_item_position);
   // calls DataTable to create a control panel item that points back into the data table
-  void          AddColumnToControlPanel(int menu_item_position);
+  virtual void          AddColumnToControlPanel(int menu_item_position);
   // calls DataTable to create a control panel item that points back into the data table
-  void          RemoveCellFromControlPanel(int menu_item_position);
+  virtual void          RemoveCellFromControlPanel(int menu_item_position);
   // remove the control panel item for the selected table column
-  void          RemoveColumnFromControlPanel(int menu_item_position);
+  virtual void          RemoveColumnFromControlPanel(int menu_item_position);
   // remove the control panel item for the selected table column
-  void          ResizeColumnToContents(int column);
-  // can't override resizeColumnToContents - non-virtual 
+  virtual void          ResizeColumnToContents(int column);
+  // can't override resizeColumnToContents - non-virtual
+  virtual void          UpdateMaxColWidth(int width);
+  // update the maximum column width based on the given column width -- if width is larger than current max, then update max to width, and update table max setting..
+  void                  SetColumnWidth(int column, int n_chars) override;
 };
 
 class TA_API iTableViewCheckboxDelegate: public QStyledItemDelegate {

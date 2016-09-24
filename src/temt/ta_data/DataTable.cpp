@@ -98,6 +98,7 @@ void DataTable::Initialize() {
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   auto_load = NO_AUTO_LOAD;
   row_height = 1;
+  max_col_width = 50;
   keygen.setType(Variant::T_Int64);
   calc_script = NULL;
   log_file = NULL;
