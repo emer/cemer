@@ -2200,10 +2200,13 @@ iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {
   // String strm;
   // dt.ListSigClients(strm);
   // taMisc::ConsoleOutput(strm);
-  if (!helper_is_connected) {
+  if (taMisc::gui_active && !helper_is_connected) {
     iPanelSet* ps = FindMyPanelSet();
-    QObject::connect(ps, SIGNAL(qt_sig_PanelChanged(int)), qt_object_helper, SLOT(UpdateEnabling(int)));
-    helper_is_connected = true;
+    if(ps) {
+      QObject::connect(ps, SIGNAL(qt_sig_PanelChanged(int)), qt_object_helper,
+                       SLOT(UpdateEnabling(int)));
+      helper_is_connected = true;
+    }
   }
   
   taSigLink* dl = dt.sig_link();
