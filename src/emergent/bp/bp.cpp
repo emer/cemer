@@ -385,33 +385,6 @@ void BpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
   }
 }
 
-void BpUnitSpec::Compute_Error(BpUnitVars* u, BpNetwork* net, int thr_no) {
-  if(!u->ext_flag & UnitVars::TARG) return;
-  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
-
-  float err = u->targ - u->act;
-  if(fabsf(err) < err_tol) {
-    if(save_err)
-      u->err = 0.0f;
-  }
-  else {
-    if(error_fun == SQUARED_ERR || act_fun == SOFTMAX) { // softmax always uses this!
-      u->dEdA += err;
-      if(save_err)
-        u->err = err * err;
-    }
-    else {                        // CROSS_ENTROPY
-      err /= (u->act - act_range.min) * (act_range.max - u->act) * act_range.scale;
-      u->dEdA += err;
-      if(save_err) {
-        float a = ClipSigAct(act_range.Normalize(u->act));
-        float t = act_range.Normalize(u->targ);
-        u->err = (t * logf(a) + (1.0f - t) * logf(1.0f - a));
-      }
-    }
-  }
-}
-
 void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
   // note: this has to be done at unit level b/c of sequencing with dEdNet etc
   // don't compute to inputs by default
@@ -435,6 +408,38 @@ void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
     }
     else {
       u->dEdA += ((BpConSpec*)sgp->con_spec)->Compute_dEdA(sgp, net, thr_no);
+    }
+  }
+}
+
+void BpUnitSpec::Compute_Error(BpUnitVars* u, BpNetwork* net, int thr_no) {
+  if(!u->ext_flag & UnitVars::TARG) return;
+  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
+
+  float err = u->targ - u->act;
+  if(fabsf(err) < err_tol) {
+    if(save_err)
+      u->err = 0.0f;
+  }
+  else {
+    if(error_fun == SQUARED_ERR || act_fun == SOFTMAX) { // softmax always uses this!
+      if(net->train_mode == Network::TRAIN) {
+        u->dEdA += err;
+      }
+      if(save_err) {
+        u->err = err * err;
+      }
+    }
+    else {                        // CROSS_ENTROPY
+      err /= (u->act - act_range.min) * (act_range.max - u->act) * act_range.scale;
+      if(net->train_mode == Network::TRAIN) {
+        u->dEdA += err;
+      }
+      if(save_err) {
+        float a = ClipSigAct(act_range.Normalize(u->act));
+        float t = act_range.Normalize(u->targ);
+        u->err = (t * logf(a) + (1.0f - t) * logf(1.0f - a));
+      }
     }
   }
 }
