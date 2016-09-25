@@ -567,7 +567,11 @@ void iTableView::SetColumnWidth(int column, int n_chars) {
   if (n_chars < 1) n_chars = 1;
   int eff_width = n_chars * metrics.maxWidth();
   this->setColumnWidth(column, eff_width);
+#if (QT_VERSION >= 0x050200)
   horizontalHeader()->setSectionResizeMode(column, QHeaderView::Interactive);
+#else
+  horizontalHeader()->setResizeMode(column, QHeaderView::Interactive);
+#endif
 }
 
 int iTableView::ConvertPixelsToChars(int n_pixels) {

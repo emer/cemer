@@ -471,9 +471,8 @@ void iDataTableView::UpdateRowHeightColWidth() {
   if(!dt) return;
 
   int row_height = 1;
-  col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
-  
 #if (QT_VERSION >= 0x050200)
+  col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
   // set precision based on number of columns!
   // could also use 0 to select visible area...
   int prec_rows = 1000 / dt->cols();
@@ -497,16 +496,29 @@ void iDataTableView::UpdateRowHeightColWidth() {
     DataCol* data_col = dt->GetColData(col_idx);
     if (data_col) {
       if (data_col->HasColFlag(DataCol::SIZE_TO_CONTENT)) {
+#if (QT_VERSION >= 0x050200)
         if(col_header->sectionResizeMode(col_idx) != QHeaderView::ResizeToContents) {
           col_header->setSectionResizeMode(col_idx, QHeaderView::ResizeToContents);
         }
+#else
+        if(col_header->resizeMode(col_idx) != QHeaderView::ResizeToContents) {
+          col_header->setResizeMode(col_idx, QHeaderView::ResizeToContents);
+        }
+#endif
       }
       else {
         int pix_wd = ConvertCharsToPixels(data_col->width);
+#if (QT_VERSION >= 0x050200)
         if(col_header->sectionResizeMode(col_idx) != QHeaderView::Interactive) {
           col_header->setSectionResizeMode(col_idx, QHeaderView::Interactive);
           setColumnWidth(col_idx, pix_wd); // qt version
         }
+#else
+        if(col_header->resizeMode(col_idx) != QHeaderView::Interactive) {
+          col_header->setResizeMode(col_idx, QHeaderView::Interactive);
+          setColumnWidth(col_idx, pix_wd); // qt version
+        }
+#endif        
         else {
           if(columnWidth(col_idx) != pix_wd) {
             setColumnWidth(col_idx, pix_wd); // qt version
@@ -526,7 +538,11 @@ void iDataTableView::Refresh() {
 void iDataTableView::ResizeColumnToContents(int column) {
   DataCol* col = dataTable()->GetColData(column);
   col->SetColFlag(DataCol::SIZE_TO_CONTENT);
+#if (QT_VERSION >= 0x050200)
   horizontalHeader()->setSectionResizeMode(column, QHeaderView::ResizeToContents);
+#else
+  horizontalHeader()->setResizeMode(column, QHeaderView::ResizeToContents);
+#endif
 }
 
 void iDataTableView::SetColumnWidth(int column, int n_chars) {
@@ -542,7 +558,9 @@ void iDataTableView::UpdateMaxColWidth(int width) {
   if(!dt) return;
   if(width > dt->max_col_width) {
     dt->max_col_width = width;
+#if (QT_VERSION >= 0x050200)
     col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
+#endif
   }
 }
 
