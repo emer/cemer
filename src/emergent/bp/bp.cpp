@@ -326,7 +326,7 @@ void BpUnitSpec::Compute_MaxPoolNetin(BpUnitVars* u, Network* net, int thr_no) {
 }
 
 void BpUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
-  if(u->ext_flag & UnitVars::EXT) return; // don't compute on clamped inputs
+  if(u->HasExtFlag(UnitVars::EXT)) return; // don't compute on clamped inputs
   if(act_fun == MAX_POOL) {
     Compute_MaxPoolNetin((BpUnitVars*)u, net, thr_no);
   }
@@ -357,7 +357,7 @@ void BpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
     u->net += noise.Gen(thr_no);
   }
 
-  if(u->ext_flag & UnitVars::EXT) {
+  if(u->HasExtFlag(UnitVars::EXT)) {
     u->act = u->ext;
   }
   else {
@@ -390,8 +390,8 @@ void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
   // don't compute to inputs by default
   u->dEdA = 0.0f;
   u->err = 0.0f;
-  if((u->ext_flag & UnitVars::EXT) && !net->bp_to_inputs) return;
-  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
+  if(u->HasExtFlag(UnitVars::EXT) && !net->bp_to_inputs) return;
+  if(u->HasExtFlag(UnitVars::UN_FLAG_1)) return; // dropout flag
   const int nscg = net->ThrUnNSendConGps(thr_no, u->thr_un_idx);
   for(int g=0; g<nscg; g++) {
     ConGroup* sgp = net->ThrUnSendConGroup(thr_no, u->thr_un_idx, g);
@@ -413,8 +413,8 @@ void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
 }
 
 void BpUnitSpec::Compute_Error(BpUnitVars* u, BpNetwork* net, int thr_no) {
-  if(!u->ext_flag & UnitVars::TARG) return;
-  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
+  if(!u->HasExtFlag(UnitVars::TARG)) return;
+  if(u->HasExtFlag(UnitVars::UN_FLAG_1)) return; // dropout flag
 
   float err = u->targ - u->act;
   if(fabsf(err) < err_tol) {
@@ -445,11 +445,11 @@ void BpUnitSpec::Compute_Error(BpUnitVars* u, BpNetwork* net, int thr_no) {
 }
 
 void BpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
-  if((u->ext_flag & UnitVars::EXT) && !net->bp_to_inputs) {
+  if(u->HasExtFlag(UnitVars::EXT) && !net->bp_to_inputs) {
     u->dEdNet = 0.0f;
     return;
   }
-  if(u->ext_flag & UnitVars::UN_FLAG_1) { // dropout flag
+  if(u->HasExtFlag(UnitVars::UN_FLAG_1)) { // dropout flag
     u->dEdNet = 0.0f;
     return;
   }
@@ -457,13 +457,13 @@ void BpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
 }
 
 void BpUnitSpec::Compute_dWt(UnitVars* u, Network* net, int thr_no) {
-  if(u->ext_flag & UnitVars::EXT)  return; // don't compute dwts for clamped units
-  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
+  if(u->HasExtFlag(UnitVars::EXT))  return; // don't compute dwts for clamped units
+  if(u->HasExtFlag(UnitVars::UN_FLAG_1)) return; // dropout flag
   inherited::Compute_dWt(u, net, thr_no);
 }
 
 void BpUnitSpec::Compute_Weights(UnitVars* u, Network* net, int thr_no) {
-  if(u->ext_flag & UnitVars::EXT)  return; // don't update for clamped units
+  if(u->HasExtFlag(UnitVars::EXT))  return; // don't update for clamped units
   inherited::Compute_Weights(u, net, thr_no);
 }
 

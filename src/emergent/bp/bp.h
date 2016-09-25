@@ -738,13 +738,13 @@ public:
 
   inline void Compute_dWt(ConGroup* cg, Network* net, int thr_no) override {
     BpUnitVars* ru = (BpUnitVars*)cg->ThrOwnUnVars(net, thr_no);
-    const float ru_act = (ru->ext_flag & UnitVars::TARG) ? ru->targ : ru->act;
+    const float ru_act = ru->HasExtFlag(UnitVars::TARG) ? ru->targ : ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->UnVars(i,net)->act));
   }
 
   inline void B_Compute_dWt(UnitVars* uv, Network* net, int thr_no) override {
-    const float ru_act = (uv->ext_flag & UnitVars::TARG) ? uv->targ : uv->act;
+    const float ru_act = uv->HasExtFlag(UnitVars::TARG) ? uv->targ : uv->act;
     uv->bias_dwt += ru_act;            // is this really what we want?
   }
 
