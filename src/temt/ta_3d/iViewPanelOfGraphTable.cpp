@@ -684,7 +684,13 @@ void iViewPanelOfGraphTable::GetValue_impl() {
     if (tcol && !glv->plots[i]->GetColPtr())
       oncYAxis[i]->setChecked(true);
     glv->plots[i]->on = oncYAxis[i]->isChecked();
-    pdtYAxis[i]->GetValue_(&(glv->plots[i]->fixed_range)); // this can change, so update
+    FixedMinMax& fmm = glv->plots[i]->fixed_range;
+    FixedMinMax fmm_orig; fmm_orig = fmm;
+    pdtYAxis[i]->GetValue_(&fmm); // this can change, so update
+    if(fmm.min != fmm_orig.min)
+      fmm.fix_min = true;
+    if(fmm.max != fmm_orig.max)
+      fmm.fix_max = true;
     glv->plots[i]->alt_y = chkYAltY[i]->isChecked();
     glv->plots[i]->SetColPtr(tcol);
     glv->plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();

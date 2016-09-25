@@ -87,8 +87,8 @@ public:
   { return (GridColView*)colView(vis_cols.SafeEl(i)); }
   // get visible column based on vis_cols index
 
-  void InitDisplay(bool init_panel = true) override;
-  void UpdateDisplay(bool update_panel = true) override;
+  void          InitDisplay(bool init_panel = true) override;
+  void          UpdateDisplay(bool update_panel = true) override;
   // note: we also don't update panel if it is updating
 
   void          ShowAllCols();
@@ -112,14 +112,24 @@ public:
   virtual void  ColFwdPg();
   virtual void  ColFwdAll();
   
-  virtual void  SetViewCols(int count); // method because we need to know if the value has changed
+  virtual void  SetViewCols(int count);
+  // set number of columns to view -- method because we need to know if the value has changed
+
+  virtual void  AddHorizLabels(const DataTable& tab, const Variant& label_col,
+                               bool gp_names = true, bool lines = true,
+                               float left_st=0.0f, float width=1.0f);
+  // Add labels along the top horizontal part of the grid view, from given data table, and column (name or index) -- as annotations (note: good idea to clear all existing annotations using AnnotClearAll() where relevant) -- text is rotated vertically, starting at given left starting point and for total width -- gp_names means group repetitions of the same label into a single label (else each shows up individually), optionally with lines going along the whole vertical distance between the grouped labels 
+  virtual void  AddVertLabels(const DataTable& tab, const Variant& label_col,
+                              bool gp_names = true, bool lines = true, 
+                              float top_st=0.0f, float height=1.0f);
+  // Add labels along the left vertical side of the grid view, from given data table, and column (name or index) -- as annotations (note: good idea to clear all existing annotations using AnnotClearAll() where relevant) -- text is rotated vertically, starting at given top starting point and for total height -- gp_names means group repetitions of the same label into a single label (else each shows up individually), optionally with lines going along the whole horizontal distance between the grouped labels 
 
   iViewPanelOfGridTable* lvp();
   // #IGNORE
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
   // #IGNORE
 
-  virtual void          InitFromUserData();
+  virtual void InitFromUserData();
 
   void         UpdateName() override;
   const String caption() const override;

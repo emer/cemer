@@ -302,7 +302,158 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
   }
 }
 
+void GridTableView::AddHorizLabels
+(const DataTable& tab, const Variant& label_col,
+ bool gp_names, bool lines, float left_st, float wd) {
+  
+  DataCol* nmda = tab.GetColData(label_col, true); // errmsg
+  if(!nmda) return;
+
+  int n = tab.rows;
+  if(n == 0) return;
+  
+  float oneon = wd / (float)n;
+  float txtlen = .20f;
+  float fontsz = .9f * oneon;
+  float lnwd = 1.0f;
+  if(gp_names) {
+    float_Array midcrds;
+    float_Array endcrds;
+    String_Array nms;
+    String lst_nm = nmda->GetValAsString(0);
+    nms.Add(lst_nm);
+    float lst_crd = 0.0f;
+    for(int i=1;i<n;i++) {
+      String nm = nmda->GetValAsString(i);
+      if(nm == lst_nm) continue;
+      float crd = (float)i * oneon;
+      float mcrd = .5f * (crd + lst_crd);
+      lst_crd = crd;
+      endcrds.Add(crd);
+      midcrds.Add(mcrd);
+      lst_nm = nm;
+      nms.Add(lst_nm);
+    }
+    float crd = left_st + (float)n * oneon;
+    float mcrd = .5f * (crd + lst_crd);
+    midcrds.Add(mcrd);
+    endcrds.Add(crd);
+
+    fontsz = 1.0f / (float)nms.size;
+    fontsz = MIN(0.05f, fontsz);
+    float exspc = (0.45f * fontsz) / width;
+          
+    for(int i=0;i<nms.size;i++) {
+      String nm = nms[i];
+      float crd = midcrds[i];
+      T3Annotation* t3a = AnnoteText(true, nm, crd + exspc, 1.0f, 0.0f,
+                                          fontsz, T3DataViewMain::LEFT);
+      t3a->RotateAroundZ(90.0f);
+      t3a->SetName(nm + "_hz_" + String(i));
+    }
+    if(lines) {
+      for(int i=0;i<nms.size;i++) {
+        String nm = nms[i];
+        float ecrd = endcrds[i];
+        if(ecrd < 1.0f) {
+          T3Annotation* t3a = AnnoteLine(true, ecrd, 0.0, 0.0f, 0.0f,
+                                         1.0f + txtlen, 0.0f, lnwd);
+          t3a->SetName(nm + "_hzl_" + String(i));
+        }
+      }
+    }
+  }
+  else {
+    for(int i=0;i<n;i++) {
+      String nm = nmda->GetValAsString(i);
+      float crd = left_st + (float)i * oneon;
+      T3Annotation* t3a = AnnoteText(true, nm, crd + fontsz, 1.0f, 0.0f,
+                                          fontsz, T3DataViewMain::LEFT);
+      t3a->RotateAroundZ(90.0f);
+      t3a->SetName(nm + "_hz_" + String(i));
+    }
+  }
+}
+                                   
+void GridTableView::AddVertLabels
+(const DataTable& tab, const Variant& label_col,
+ bool gp_names, bool lines, float top_st, float height) {
+  
+  DataCol* nmda = tab.GetColData(label_col, true); // errmsg
+  if(!nmda) return;
+
+  int n = tab.rows;
+  if(n == 0) return;
+  
+  float oneon = height / (float)n;
+  float txtlen = .20f;
+  float fontsz = .9f * oneon;
+  float lnwd = 1.0f;
+  if(gp_names) {
+    float_Array midcrds;
+    float_Array endcrds;
+    String_Array nms;
+    String lst_nm = nmda->GetValAsString(0);
+    nms.Add(lst_nm);
+    float lst_crd = 0.0f;
+    for(int i=1;i<n;i++) {
+      String nm = nmda->GetValAsString(i);
+      if(nm == lst_nm) continue;
+      float crd = top_st + (float)i * oneon;
+      float mcrd = .5f * (crd + lst_crd);
+      lst_crd = crd;
+      endcrds.Add(crd);
+      midcrds.Add(mcrd);
+      lst_nm = nm;
+      nms.Add(lst_nm);
+    }
+    float crd = top_st + (float)n * oneon;
+    float mcrd = .5f * (crd + lst_crd);
+    midcrds.Add(mcrd);
+    endcrds.Add(crd);
+
+    fontsz = 1.0f / (float)nms.size;
+    fontsz = MIN(0.05f, fontsz);
+    float exspc = 0.45f * fontsz;
+          
+    for(int i=0;i<nms.size;i++) {
+      String nm = nms[i];
+      float crd = midcrds[i];
+      T3Annotation* t3a = AnnoteText(true, nm, 0.0f, 1.0f - crd - exspc,
+                                          0.0f, fontsz, T3DataViewMain::RIGHT);
+      t3a->SetName(nm + "_vt_" + String(i));
+    }
+    for(int i=0;i<nms.size;i++) {
+      String nm = nms[i];
+      float ecrd = endcrds[i];
+      if(ecrd < 1.0f) {
+        T3Annotation* t3a = AnnoteLine(true, -txtlen, 1.0f - ecrd, 0.0f,
+                                            1.0f+txtlen, 0.0f, 0.0f, lnwd);
+        t3a->SetName(nm + "_vtl_" + String(i));
+      }
+    }
+  }
+  else {
+    for(int i=0;i<n;i++) {
+      String nm = nmda->GetValAsString(i);
+      float crd = top_st + (float)i * oneon;
+      T3Annotation* t3a = AnnoteText(true, nm, 0.0f, 1.0f - crd - fontsz,
+                                          0.0f, fontsz, T3DataViewMain::RIGHT);
+      t3a->SetName(nm + "_vt_" + String(i));
+    }
+  }
+}
+
+
+
 void GridTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
+  int n_cols = 1 + col_range.max - col_range.min;
+  if(row_num_on) n_cols++;
+  
+  if(col_widths.size != n_cols) {
+    CalcViewMetrics();
+  }
+  
   float gr_mg_sz2 = 2.0f * grid_margin;
 
   int trow = (int)pos.y;

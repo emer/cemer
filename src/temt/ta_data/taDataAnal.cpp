@@ -833,94 +833,9 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   if(view) {
     GridTableView* gtv = dist_mat->FindMakeGridView(NULL, false); // don't select view
     if(name_labels && !name_col_nm.empty()) {
-      DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
-      if(nmda) {
-        gtv->AnnoteClearAll();
-        int n = dmat.dim(0);
-        if(n == 0) return false;
-        float oneon = 1.0f / (float)n;
-        float txtlen = .20f;
-        float fontsz = .9f * oneon;
-        float lnwd = 1.0f;
-        if(gp_names) {
-          float_Array midcrds;
-          float_Array endcrds;
-          String_Array nms;
-          String lst_nm = nmda->GetValAsString(0);
-          nms.Add(lst_nm);
-          float lst_crd = 0.0f;
-          for(int i=1;i<n;i++) {
-            String nm = nmda->GetValAsString(i);
-            if(nm == lst_nm) continue;
-            float crd = (float)i * oneon;
-            float mcrd = .5f * (crd + lst_crd);
-            lst_crd = crd;
-            endcrds.Add(crd);
-            midcrds.Add(mcrd);
-            lst_nm = nm;
-            nms.Add(lst_nm);
-          }
-          float crd = (float)n * oneon;
-          float mcrd = .5f * (crd + lst_crd);
-          midcrds.Add(mcrd);
-          endcrds.Add(crd);
-
-          fontsz = 1.0f / (float)nms.size;
-          fontsz = MIN(0.05f, fontsz);
-          float exspc = 0.45f * fontsz;
-          
-          for(int i=0;i<nms.size;i++) {
-            String nm = nms[i];
-            float crd = midcrds[i];
-            T3Annotation* t3a = gtv->AnnoteText(true, nm, 0.0f, 1.0f - crd - exspc,
-                                                0.0f, fontsz, T3DataViewMain::RIGHT);
-            t3a->SetName(nm + "_r_" + String(i));
-          }
-          for(int i=0;i<nms.size;i++) {
-            String nm = nms[i];
-            float crd = midcrds[i];
-            T3Annotation* t3a = gtv->AnnoteText(true, nm, crd + exspc, 1.0f, 0.0f,
-                                                fontsz, T3DataViewMain::LEFT);
-            t3a->RotateAroundZ(90.0f);
-            t3a->SetName(nm + "_c_" + String(i));
-          }
-          for(int i=0;i<nms.size;i++) {
-            String nm = nms[i];
-            float ecrd = endcrds[i];
-            if(ecrd < 1.0f) {
-              T3Annotation* t3a = gtv->AnnoteLine(true, -txtlen, 1.0f - ecrd, 0.0f,
-                                                  1.0f+txtlen, 0.0f, 0.0f, lnwd);
-              t3a->SetName(nm + "_rl_" + String(i));
-            }
-          }
-          for(int i=0;i<nms.size;i++) {
-            String nm = nms[i];
-            float ecrd = endcrds[i];
-            if(ecrd < 1.0f) {
-              T3Annotation* t3a = gtv->AnnoteLine(true, ecrd, 0.0, 0.0f, 0.0f,
-                                                  1.0f + txtlen, 0.0f, lnwd);
-              t3a->SetName(nm + "_cl_" + String(i));
-            }
-          }
-        }
-        else {
-          for(int i=0;i<n;i++) {
-            String nm = nmda->GetValAsString(i);
-            float crd = (float)i * oneon;
-            T3Annotation* t3a = gtv->AnnoteText(true, nm, 0.0f, 1.0f - crd - fontsz,
-                                                0.0f, fontsz, T3DataViewMain::RIGHT);
-            t3a->SetName(nm + "_r_" + String(i));
-          }
-          for(int i=0;i<n;i++) {
-            String nm = nmda->GetValAsString(i);
-            float crd = (float)i * oneon;
-            T3Annotation* t3a = gtv->AnnoteText(true, nm, crd + fontsz, 1.0f, 0.0f,
-                                                fontsz, T3DataViewMain::LEFT);
-            t3a->RotateAroundZ(90.0f);
-            t3a->SetName(nm + "_c_" + String(i));
-          }
-        }
-      }
+      gtv->AnnoteClearAll();
+      gtv->AddHorizLabels(*src_data, name_col_nm, gp_names, true, 0.0f, 1.0f);
+      gtv->AddVertLabels(*src_data, name_col_nm, gp_names, true, 0.0f, 1.0f);
     }
   }
   return true;
