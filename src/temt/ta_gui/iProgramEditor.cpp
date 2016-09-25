@@ -198,37 +198,47 @@ void iProgramEditor::Init() {
   items->Connect_SelectableHostNotifySignal(this,
     SLOT(items_Notify(ISelectableHost*, int)) );
 
-  // browse history
-  historyBackAction = new iAction("Back", QKeySequence(), "historyBackAction" );
-  historyBackAction->setParent(this); // for shortcut functionality, and to delete
-  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
-  connect(brow_hist, SIGNAL(back_enabled(bool)), historyBackAction, SLOT(setEnabled(bool)) );
+  // browse history - backward
+  history_back_button = new QToolButton();
+  history_back_button->setPopupMode(QToolButton::DelayedPopup);
+  history_back_button->setArrowType(Qt::LeftArrow);
+  tb->addWidget(history_back_button);
 
-  historyForwardAction = new iAction("Forward", QKeySequence(), "historyForwardAction" );
-  historyForwardAction->setParent(this); // for shortcut functionality, and to delete
-  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
+  history_back_action = new QAction(this);
+  history_back_button->setDefaultAction(history_back_action);
 
-  connect(brow_hist, SIGNAL(forward_enabled(bool)), historyForwardAction,
+  history_back_menu = new QMenu(this);
+  connect(history_back_menu, SIGNAL(aboutToShow()), this, SLOT(BackMenuAboutToShow()));
+  history_back_button->setMenu(history_back_menu);
+  connect(history_back_menu, SIGNAL(triggered(QAction*)), this, SLOT(HistoryGoTo(QAction*)));
+
+  connect(history_back_action, SIGNAL(triggered()), brow_hist, SLOT(back()) );
+  connect(brow_hist, SIGNAL(back_enabled(bool)), history_back_action, SLOT(setEnabled(bool)) );
+  
+  // browse history - forward
+  history_forward_button = new QToolButton();
+  history_forward_button->setPopupMode(QToolButton::DelayedPopup);
+  history_forward_button->setArrowType(Qt::RightArrow);
+  tb->addWidget(history_forward_button);
+  
+  history_forward_action = new QAction(this);
+  history_forward_button->setDefaultAction(history_forward_action);
+  
+  history_forward_menu = new QMenu(this);  // used for forward and backward button
+  connect(history_forward_menu, SIGNAL(aboutToShow()), this, SLOT(ForwardMenuAboutToShow()));
+  history_forward_button->setMenu(history_forward_menu);
+  connect(history_forward_menu, SIGNAL(triggered(QAction*)), this, SLOT(HistoryGoTo(QAction*)));
+
+  connect(history_forward_action, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
+  connect(brow_hist, SIGNAL(forward_enabled(bool)), history_forward_action,
           SLOT(setEnabled(bool)) );
-  items->Connect_SelectableHostNotifySignal
-    (brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
-  connect(brow_hist, SIGNAL
-          (select_item(taiSigLink*)), this, SLOT(slot_AssertBrowserItem(taiSigLink*)) );
+  
+  items->Connect_SelectableHostNotifySignal(brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
+  connect(brow_hist, SIGNAL(select_item(taiSigLink*)), this, SLOT(slot_AssertBrowserItem(taiSigLink*)) );
 
-  // no history, just manually disable
-  historyBackAction->setEnabled(false);
-  historyForwardAction->setEnabled(false);
-
-  // toolbar
-  tb->addAction(historyBackAction);
-  tb->addAction(historyForwardAction);
-
-  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction))) {
-    but->setArrowType(Qt::LeftArrow);
-  }
-  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction))) {
-    but->setArrowType(Qt::RightArrow);
-  }
+  // no history yet
+  history_back_action->setEnabled(false);
+  history_forward_action->setEnabled(false);
 }
 
 bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
@@ -783,11 +793,35 @@ void iProgramEditor::UpdateButtons() {
   }
 }
 
+void iProgramEditor::BackMenuAboutToShow() {
+  history_back_menu->clear();
+  
+  for (int i = brow_hist->cur_item - 1; i >= 0; i--) {
+    String name = brow_hist->items.SafeEl(i)->GetDisplayName();
+    String menu_string = name.elidedTo(75);
+    QAction* action = new QAction(menu_string, this);
+    action->setData(i);
+    history_back_menu->addAction(action);
+  }
+}
+
+void iProgramEditor::ForwardMenuAboutToShow() {
+  history_forward_menu->clear();
+  
+  for (int i = brow_hist->cur_item + 1; i < brow_hist->items.size; i++) {
+    String name = brow_hist->items.SafeEl(i)->GetDisplayName();
+    String menu_string = name.elidedTo(75);
+    QAction* action = new QAction(menu_string, this);
+    action->setData(i);
+    history_forward_menu->addAction(action);
+  }
+}
+
+void iProgramEditor::HistoryGoTo(QAction* action) {
+  int index = action->data().toInt();
+  brow_hist->select_item(brow_hist->items.SafeEl(index));
+}
+
 iMainWindowViewer* iProgramEditor::window() const {
   return m_window;
 }
-
-//QSize iFlowLayout::sizeHint() const
-//{
-//    return minimumSize();
-//}

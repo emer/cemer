@@ -23,6 +23,7 @@
 // member includes:
 #include <taiMemberWidgets>
 #include <iColor>
+#include <iActionMenuButton>
 
 #ifndef __MAKETA__
 #include <QEvent>
@@ -74,8 +75,12 @@ public:
 #endif
 
   iBrowseHistory*       brow_hist;
-  iAction*              historyBackAction;
-  iAction*              historyForwardAction;
+  QAction*              history_back_action;
+  QAction*              history_forward_action;
+  QToolButton*          history_back_button;
+  QToolButton*          history_forward_button;
+  QMenu*                history_back_menu;
+  QMenu*                history_forward_menu;
 
   QWidget*              propsWidget; // container for widgets that set properties, apply button, etc.
   QWidget*              codeWidget;  // container for code tree and search field/controls
@@ -190,7 +195,10 @@ protected slots:
   void                  label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
   void                  items_Notify(ISelectableHost* src, int op); // note: NULL if none
   void                  DoAddToControlPanel(QAction* act);
-
+  void                  BackMenuAboutToShow();
+  void                  ForwardMenuAboutToShow();
+  void                  HistoryGoTo(QAction* action);
+                               
 private:
   void                  Init();
 };
