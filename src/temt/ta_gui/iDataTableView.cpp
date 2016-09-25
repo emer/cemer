@@ -473,6 +473,16 @@ void iDataTableView::UpdateRowHeightColWidth() {
   int row_height = 1;
   col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
   
+#if (QT_VERSION >= 0x050200)
+  // set precision based on number of columns!
+  // could also use 0 to select visible area...
+  int prec_rows = 1000 / dt->cols();
+  if(prec_rows < 10)
+    prec_rows = 10;
+  col_header->setResizeContentsPrecision(prec_rows);
+  row_header->setResizeContentsPrecision(prec_rows);
+#endif
+
   if (!dt->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
     if(dt->row_height < 1)
       dt->row_height = 1;
@@ -482,16 +492,26 @@ void iDataTableView::UpdateRowHeightColWidth() {
   else {
     SetRowHeightToContents();
   }
-      
+
   for (int col_idx=0; col_idx<dt->data.size; col_idx++) {
     DataCol* data_col = dt->GetColData(col_idx);
     if (data_col) {
       if (data_col->HasColFlag(DataCol::SIZE_TO_CONTENT)) {
-        horizontalHeader()->setSectionResizeMode(col_idx, QHeaderView::ResizeToContents);
+        if(col_header->sectionResizeMode(col_idx) != QHeaderView::ResizeToContents) {
+          col_header->setSectionResizeMode(col_idx, QHeaderView::ResizeToContents);
+        }
       }
       else {
-        horizontalHeader()->setSectionResizeMode(col_idx, QHeaderView::Interactive);
-        setColumnWidth(col_idx, ConvertCharsToPixels(data_col->width)); // qt version
+        int pix_wd = ConvertCharsToPixels(data_col->width);
+        if(col_header->sectionResizeMode(col_idx) != QHeaderView::Interactive) {
+          col_header->setSectionResizeMode(col_idx, QHeaderView::Interactive);
+          setColumnWidth(col_idx, pix_wd); // qt version
+        }
+        else {
+          if(columnWidth(col_idx) != pix_wd) {
+            setColumnWidth(col_idx, pix_wd); // qt version
+          }
+        }
       }
     }
   }

@@ -544,7 +544,9 @@ void iTableView::SetRowHeight(int n_lines) {
   QFontMetrics metrics(cur_font);
   int eff_height = n_lines * metrics.height() + 2 * row_margin;
   QHeaderView* vhead = verticalHeader();
-  vhead->setDefaultSectionSize(eff_height);  // sets all rows
+  if(vhead->defaultSectionSize() != eff_height) {
+    vhead->setDefaultSectionSize(eff_height);  // sets all rows
+  }
 }
 
 void iTableView::SetRowHeightToContents() {

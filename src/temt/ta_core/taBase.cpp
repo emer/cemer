@@ -3680,7 +3680,7 @@ void taBase::GetControlPanelLabel(MemberDef* mbr, String& label) const {
     label = GetDisplayName();
   }
   if (label.nonempty()) {
-    label.CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
+    label = label.CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
     label += "_";
   }
   label += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
