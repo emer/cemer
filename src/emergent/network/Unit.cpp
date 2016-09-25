@@ -666,7 +666,7 @@ void Unit::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projectio
   const int rsz = NRecvConGps();
   for(int g = 0; g < rsz; g++) {
     ConGroup* cg = RecvConGroup(g);
-    if(cg->NotActive() || (prjn && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || (prjn && (cg->prjn != prjn)) || cg->Sharing()) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, net, fmt);
     strm << "</Cg>\n";
