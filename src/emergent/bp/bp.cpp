@@ -302,6 +302,7 @@ void BpUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
   inherited::Init_Acts(u, net, thr_no);
   BpUnitVars* bu = (BpUnitVars*)u;
   bu->err = bu->dEdA = bu->dEdNet = 0.0f;
+  bu->misc1 = 0.0f;
   u->ClearExtFlag(UnitVars::UN_FLAG_1);
 }
 
@@ -785,6 +786,7 @@ void BpNetwork::Trial_Run_Thr(int thr_no) {
   else {
     Compute_Error();            // for display, stats purposes only..
   }
+  // note: no need to sync here b/c end of thread run always syncs
 }
 
 
