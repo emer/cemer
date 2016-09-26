@@ -35,13 +35,13 @@ class iDataTableView; //
 class iDataTableModel; //
 class iMatrixTableView; //
 class iMatrixTableModel; //
-class iActionMenuButton; //
 class iDataTableEditor; //
 class iMenuButton; //
 class DataCol; //
 class QToolBar; //
 class QLabel; //
 class QMenu; //
+class QToolButton; //
 
 
 class TA_API iDataTableSearch : public QWidget {
@@ -72,7 +72,7 @@ public:
   QAction*              repl_next;  // replace the current selection and move to next selection
 
   QMenu*                srch_mode_menu;
-  iActionMenuButton*    srch_mode_button;
+  QToolButton*          srch_mode_button;
   QAction*              contains_action;
   QAction*              matches_action;
   enum SearchMode       search_mode;

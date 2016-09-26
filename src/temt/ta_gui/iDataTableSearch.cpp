@@ -25,7 +25,6 @@
 #include <iMatrixEditor>
 #include <iMatrixTableView>
 #include <iMenuButton>
-#include <iActionMenuButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -68,7 +67,8 @@ void iDataTableSearch::Constr() {
   lay->setMargin(0);
   lay->setSpacing(0);
   
-  srch_mode_button = new iActionMenuButton();
+  srch_mode_button = new QToolButton();
+  srch_mode_button->setPopupMode(QToolButton::MenuButtonPopup);
   srch_bar->addWidget(srch_mode_button);
   
   contains_action = new QAction("Find/Replace", this);

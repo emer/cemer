@@ -22,7 +22,6 @@
 #include <iTreeView>
 #include <iTreeViewItem>
 #include <iLineEdit>
-#include <iActionMenuButton>
 #include <iMenuButton>
 
 #include <taMisc>
@@ -44,7 +43,8 @@ void iTreeSearch::Constr() {
   lay->setMargin(0);
   lay->setSpacing(0);
   
-  srch_mode_button = new iActionMenuButton();
+  srch_mode_button = new QToolButton();
+  srch_mode_button->setPopupMode(QToolButton::MenuButtonPopup);
   srch_bar->addWidget(srch_mode_button);
   
   find_action = new QAction("Find/Replace", this);

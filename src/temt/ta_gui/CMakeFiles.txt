@@ -273,7 +273,6 @@ set(ta_gui_HEADS_NOMAKETA_MOC
 
   iMenuButton.h
   iContextMenuButton.h
-  iActionMenuButton.h
   iColorButton.h
   iCheckBox.h
   iComboBox.h
@@ -769,7 +768,6 @@ set(ta_gui_SRCS_NOMAKETA
   iMenuButton.cpp
   iHiLightButton.cpp
   iContextMenuButton.cpp
-  iActionMenuButton.cpp
   iColorButton.cpp
   iCheckBox.cpp
   iComboBox.cpp

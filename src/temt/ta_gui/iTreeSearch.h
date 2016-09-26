@@ -32,10 +32,10 @@
 class iLineEdit; //
 class iTreeView; //
 class iTreeViewItem; //
-class iActionMenuButton; //
 class iMenuButton; //
 
 class QToolBar; //
+class QToolButton; //
 class QLabel; //
 class QMenu; //
 
@@ -61,7 +61,7 @@ public:
   QAction*              srch_next;
   QAction*              repl_next;  // replace the current selection and move to next selection
   
-  iActionMenuButton*    srch_mode_button;
+  QToolButton*          srch_mode_button;
   QMenu*                srch_mode_menu;
   QAction*              find_action;
   QAction*              find_deep_action;
