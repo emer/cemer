@@ -114,8 +114,9 @@ public:
   taiWidgetMenu*              generateMenu;      // data_gen methods
   taiWidgetMenu*              diffCompareMenu;   // all the types you can diff compare
 
-  iAction*            historyBackAction;
-  iAction*            historyForwardAction;
+  QAction*            history_back_action; // action for QToolButton
+  QAction*            history_forward_action; // action for QToolButton
+
   iAction*            fileNewAction;
   iAction*            fileOpenAction;
   iAction*            fileSaveAction;
@@ -320,6 +321,10 @@ public slots:
   void slot_AssertBrowserItem(taiSigLink* link) {
     AssertBrowserItem(link);
   }
+
+  virtual void  BackMenuAboutToShow();
+  virtual void  ForwardMenuAboutToShow();
+  virtual void  HistoryGoTo(QAction* action);
 
   virtual void  fileNew();      // New Project (in new viewer)
   virtual void  fileOpen();     // Open Project (in new viewer)

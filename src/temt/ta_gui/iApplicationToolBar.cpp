@@ -19,8 +19,9 @@
 
 #include <taMisc>
 #include <taiMisc>
+#include <iBrowseHistory>
 
-#include <QToolButton>
+#include <QAction>
 
 void iApplicationToolBar::Constr_post() {
   iMainWindowViewer* win = viewerWindow(); //cache
@@ -31,14 +32,30 @@ void iApplicationToolBar::Constr_post() {
   int icon_sz = taiM_->label_height(taiMisc::sizMedium);
   tb->setIconSize(QSize(icon_sz, icon_sz));
 
+  history_back_button = new QToolButton();
+  history_back_button->setPopupMode(QToolButton::DelayedPopup);
+  history_back_button->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(taMisc::app_toolbar_style));
+  tb->addWidget(history_back_button);
+  history_back_button->setDefaultAction(win->history_back_action);
+  history_back_menu = new QMenu(this);
+  connect(history_back_menu, SIGNAL(aboutToShow()), win, SLOT(BackMenuAboutToShow()));
+  history_back_button->setMenu(history_back_menu);
+  connect(history_back_menu, SIGNAL(triggered(QAction*)), win, SLOT(HistoryGoTo(QAction*)));
+  win->history_back_action->setIcon(QIcon(QPixmap(":/images/previous_icon.png")));
+  
+  history_forward_button = new QToolButton();
+  history_forward_button->setPopupMode(QToolButton::DelayedPopup);
+  history_forward_button->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(taMisc::app_toolbar_style));
+  tb->addWidget(history_forward_button);
+  history_forward_button->setDefaultAction(win->history_forward_action);
+  history_forward_menu = new QMenu(this);
+  connect(history_forward_menu, SIGNAL(aboutToShow()), win, SLOT(ForwardMenuAboutToShow()));
+  history_forward_button->setMenu(history_forward_menu);
+  connect(history_forward_menu, SIGNAL(triggered(QAction*)), win, SLOT(HistoryGoTo(QAction*)));
+  win->history_forward_action->setIcon(QIcon(QPixmap(":/images/next_icon.png")));
+
   // Actions have already been constructed for the viewer window's menus.
   // Now add these actions to the toolbar for convenient access.
-  tb->addAction(win->historyBackAction);
-  win->historyBackAction->setIcon(QIcon(QPixmap(":/images/previous_icon.png")));
-
-  tb->addAction(win->historyForwardAction);
-  win->historyForwardAction->setIcon(QIcon(QPixmap(":/images/next_icon.png")));
-
   tb->addSeparator();
   tb->addAction(win->editFindAction);
 
@@ -85,4 +102,3 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->fileOptionsAction);
   tb->addAction(win->helpFileBugAction);
 }
-

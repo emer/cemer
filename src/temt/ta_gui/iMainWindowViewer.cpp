@@ -56,6 +56,7 @@
 #include <KeyBindings_List>
 #include <iDialogKeyBindings>
 #include <taMediaWiki>
+#include <iApplicationToolBar>
 
 #include <taMisc>
 #include <taiMisc>
@@ -171,8 +172,8 @@ void iMainWindowViewer::Init() {
 
   // these are modal, so NULL them for when unused
   toolsMenu = NULL;
-  historyBackAction = NULL;
-  historyForwardAction = NULL;
+  history_back_action = NULL;
+  history_forward_action = NULL;
   fileNewAction = NULL;
   fileOpenAction = NULL;
   fileSaveAction = NULL;
@@ -698,26 +699,27 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 
   // Forward and back buttons -- note: on Win the icons don't show up if Action has text
-  historyBackAction = AddAction(new iAction("Back",
-      QKeySequence(Qt::ControlModifier + Qt::Key_Left), "historyBackAction"));
-  historyBackAction->setToolTip(taiMisc::ToolTipPreProcess("Move back in object browsing history\nCtrl + Left"));
-  historyBackAction->setStatusTip(historyBackAction->toolTip());
+  history_back_action = new QAction(this);
+  history_back_action->setIconText("Back");
+  history_back_action->setText("Back");
+  history_back_action->setToolTip(taiMisc::ToolTipPreProcess("Move back in object browsing history\nCtrl + Left"));
+  history_back_action->setStatusTip(history_back_action->toolTip());
+  
+  history_forward_action = new QAction(this);
+  history_forward_action->setIconText("Forward");
+  history_forward_action->setToolTip(taiMisc::ToolTipPreProcess("Move forward in object browsing history\nCtrl + Right"));
+  history_forward_action->setStatusTip(history_forward_action->toolTip());
 
-  historyForwardAction = AddAction(new iAction("Forward",
-      QKeySequence(Qt::ControlModifier + Qt::Key_Right), "historyForwardAction"));
-  historyForwardAction->setToolTip(taiMisc::ToolTipPreProcess("Move forward in object browsing history\nCtrl + Right"));
-  historyForwardAction->setStatusTip(historyForwardAction->toolTip());
-
-  // When window first created, there is no history, so manually disable.
-  historyBackAction->setEnabled(false);
-  historyForwardAction->setEnabled(false);
+  // When window first created, there is no history
+  history_back_action->setEnabled(false);
+  history_forward_action->setEnabled(false);
 
   // Build menu items.
   viewMenu->AddAction(viewRefreshAction);
 
   viewMenu->insertSeparator();
-  viewMenu->AddAction(historyBackAction);
-  viewMenu->AddAction(historyForwardAction);
+  viewMenu->menu()->addAction(history_back_action);
+  viewMenu->menu()->addAction(history_forward_action);
 
   viewMenu->insertSeparator();
   frameMenu = viewMenu->AddSubMenu("Frames");
@@ -756,11 +758,11 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewConsoleFrontAction->setToolTip(taiMisc::ToolTipPreProcess("Brings the console window to the top"));
 
   // Make connections.
-  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()));
-  connect(brow_hist, SIGNAL(back_enabled(bool)), historyBackAction, SLOT(setEnabled(bool)));
+  connect(history_back_action, SIGNAL(triggered()), brow_hist, SLOT(back()));
+  connect(brow_hist, SIGNAL(back_enabled(bool)), history_back_action, SLOT(setEnabled(bool)));
 
-  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()));
-  connect(brow_hist, SIGNAL(forward_enabled(bool)), historyForwardAction, SLOT(setEnabled(bool)));
+  connect(history_forward_action, SIGNAL(triggered()), brow_hist, SLOT(forward()));
+  connect(brow_hist, SIGNAL(forward_enabled(bool)), history_forward_action, SLOT(setEnabled(bool)));
 
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
       brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)));
@@ -3370,4 +3372,38 @@ void iMainWindowViewer::UpdateStateActions() {
     default:
       break;
   }
+}
+
+void iMainWindowViewer::BackMenuAboutToShow() {
+  ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
+  iApplicationToolBar* ap_toolbar = (iApplicationToolBar*)tb->widget();
+  ap_toolbar->history_back_menu->clear();
+  
+  for (int i = brow_hist->cur_item - 1; i >= 0; i--) {
+    String name = brow_hist->items.SafeEl(i)->GetDisplayName();
+    String menu_string = name.elidedTo(75);
+    QAction* action = new QAction(menu_string, this);
+    action->setData(i);
+    ap_toolbar->history_back_menu->addAction(action);
+  }
+}
+
+void iMainWindowViewer::ForwardMenuAboutToShow() {
+  ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
+  iApplicationToolBar* ap_toolbar = (iApplicationToolBar*)tb->widget();
+  ap_toolbar->history_forward_menu->clear();
+  
+  for (int i = brow_hist->cur_item + 1; i < brow_hist->items.size; i++) {
+    String name = brow_hist->items.SafeEl(i)->GetDisplayName();
+    String menu_string = name.elidedTo(75);
+    QAction* action = new QAction(menu_string, this);
+    action->setData(i);
+    ap_toolbar->history_forward_menu->addAction(action);
+  }
+}
+
+void iMainWindowViewer::HistoryGoTo(QAction* action) {
+  int index = action->data().toInt();
+  taiSigLink* link = brow_hist->items.SafeEl(index);
+  brow_hist->select_item(link);
 }

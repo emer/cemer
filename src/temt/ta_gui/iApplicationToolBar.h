@@ -18,20 +18,30 @@
 
 // parent includes:
 #include <iToolBar>
+#include <QToolButton>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-
 class TA_API iApplicationToolBar: public iToolBar {
   // widget for the Application toolbar -- created by ToolBar if name=Application
-INHERITED(iToolBar)
+  INHERITED(iToolBar)
 public:
   iApplicationToolBar(ToolBar* viewer, QWidget* parent = NULL)
   :iToolBar(viewer, parent){}
- protected:
-  void         Constr_post() override;
+
+  QMenu*                history_back_menu;
+  QMenu*                history_forward_menu;
+
+protected:
+  void                  Constr_post() override;
+  
+  QToolButton*          history_back_button;
+  QToolButton*          history_forward_button;
+  
+protected slots:
+
 };
 
 #endif // iApplicationToolBar_h
