@@ -475,9 +475,12 @@ void iDataTableView::UpdateRowHeightColWidth() {
   col_header->setMaximumSectionSize(ConvertCharsToPixels(dt->max_col_width));
   // set precision based on number of columns!
   // could also use 0 to select visible area...
-  int prec_rows = 1000 / dt->cols();
-  if(prec_rows < 10)
-    prec_rows = 10;
+  int prec_rows = 1000;
+  if(dt->cols() > 0) {
+    prec_rows = 1000 / dt->cols();
+    if(prec_rows < 10)
+      prec_rows = 10;
+  }
   col_header->setResizeContentsPrecision(prec_rows);
   row_header->setResizeContentsPrecision(prec_rows);
 #endif
