@@ -23,7 +23,6 @@
 // member includes:
 #include <taiMemberWidgets>
 #include <iColor>
-#include <iActionMenuButton>
 
 #ifndef __MAKETA__
 #include <QEvent>
@@ -56,6 +55,8 @@ class ISelectableHost; //
 class iSplitter;  //
 class QSize;  //
 class QShowEvent; //
+class QToolButton; //
+class QMenu; //
 
 
 taTypeDef_Of(iProgramEditor);
