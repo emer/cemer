@@ -227,6 +227,8 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
   if(!lay) return;
   Network* net = lay->own_net;
 
+  Layer* src_u_lay = src_u->own_lay();
+  
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
@@ -238,7 +240,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
       if (is_send) {
         for(int g=0;g<unit->NRecvConGps();g++) {
           ConGroup* tcong = unit->RecvConGroup(g);
-          if(check_prjn && tcong->prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
+          if(!tcong->prjn) continue;
+          if(tcong->prjn->from.ptr() != src_u_lay) continue;
+          if(check_prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
             continue;
           MemberDef* act_md = tcong->ConType()->members.FindName(nm);
           if (!act_md)  continue;
@@ -252,7 +256,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
       else {
         for(int g=0;g<unit->NSendConGps();g++) {
           ConGroup* tcong = unit->SendConGroup(g);
-          if(check_prjn && tcong->prjn && tcong->prjn->IsActive() &&
+          if(!tcong->prjn) continue;
+          if(tcong->prjn->layer != src_u_lay) continue;
+          if(check_prjn && tcong->prjn->IsActive() &&
              !tcong->prjn->name.startsWith(prjn_starts_with))
             continue;
           if(nm == "wt*act") {
