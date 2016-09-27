@@ -127,6 +127,8 @@ void iTabView::CloseTab(int tab) {
   if (tab < 0) return; // huh?
   // don't allow closing last tab for a modified panel
   if (tbPanels->count() > 1) {
+    iPanelBase* panel_base = tbPanels->panel(tbPanels->currentIndex());
+    panel_base->Unpin();
     tbPanels->removeTab(tab);
     panelSelected(tbPanels->currentIndex()); // needed to resync proper panel with tab
   } else { // last tab
