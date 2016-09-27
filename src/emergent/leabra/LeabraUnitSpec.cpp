@@ -658,7 +658,7 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_
     u->act_avg = 0.0f;
   else
     u->act_avg = act_misc.avg_init;
-  u->avg_l = act_misc.avg_init;
+  u->avg_l = avg_l.init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
 }
 
@@ -850,7 +850,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
     float eff_err = fmaxf(lay->cos_diff_avg_lrn, avg_l_2.err_min);
     u->avg_l_lrn *= eff_err;
   }
-  if(lay->layer_type != Layer::HIDDEN || deep.IsTRC()) {
+  if((lay->layer_type != Layer::HIDDEN) || deep.IsTRC()) {
     u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
   }
 
