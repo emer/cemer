@@ -292,6 +292,10 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
 void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m_avg = avg_act.targ_init;
   lay->acts_p_avg = avg_act.targ_init;
+  lay->acts_prvq.InitVals();
+  lay->acts_m.InitVals();
+  lay->acts_p.InitVals();
+  lay->acts_q0.InitVals();
   if(avg_act.fixed) {
     lay->acts_p_avg_eff = avg_act.targ_init;
   }
