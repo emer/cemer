@@ -209,95 +209,98 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED | OP_COMPARE | OP_CLEAR_COMPARE | OP_SHOW_ALL | OP_SET_HEIGHT | OP_RESIZE_HEIGHT_TO_CONTENT | OP_RESTORE_HEIGHT))) {
-      if (sel.height() < 1)
-        goto bail;
-      QModelIndex newIndex;
-      bool rval = false;
-
-      if (op_code & OP_APPEND) {
-        if(proj)
-          proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
-        rval = tab->AddRows(sel.height());
-        newIndex  = this->model()->index(tab->rows-1, 0);
+    if (sel.height() < 1)
+      goto bail;
+    QModelIndex newIndex;
+    bool rval = false;
+    
+    if (op_code & OP_APPEND) {
+      if(proj)
+        proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
+      rval = tab->AddRows(sel.height());
+      newIndex  = this->model()->index(tab->rows-1, 0);
+    }
+    else if (op_code & OP_INSERT) {
+      if(proj)
+        proj->undo_mgr.SaveUndo(tab, "InsertRows", tab);
+      rval = tab->InsertRows(sel.row_fr, sel.height());
+      newIndex  = this->model()->index(sel.row_fr, 0);
+    }
+    else if (op_code & OP_INSERT_AFTER) {
+      if(proj)
+        proj->undo_mgr.SaveUndo(tab, "InsertRowsAfter", tab);
+      rval = tab->InsertRowsAfter(sel.row_fr, sel.height());
+      newIndex  = this->model()->index(sel.row_fr + sel.height(), 0);
+    }
+    else if (op_code & OP_DUPLICATE) {
+      if(proj)
+        proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
+      rval = tab->DuplicateRows(sel.row_fr, sel.height());
+      newIndex  = this->model()->index(sel.row_fr + sel.height(), 0);
+    }
+    else if (op_code & OP_DELETE) {
+      if(taMisc::delete_prompts) {
+        if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0)
+          goto bail;
       }
-      else if (op_code & OP_INSERT) {
-        if(proj)
-          proj->undo_mgr.SaveUndo(tab, "InsertRows", tab);
-        rval = tab->InsertRows(sel.row_fr, sel.height());
-        newIndex  = this->model()->index(sel.row_fr, 0);
-      }
-      else if (op_code & OP_INSERT_AFTER) {
-        if(proj)
-          proj->undo_mgr.SaveUndo(tab, "InsertRowsAfter", tab);
-        rval = tab->InsertRowsAfter(sel.row_fr, sel.height());
-        newIndex  = this->model()->index(sel.row_fr + sel.height(), 0);
-      }
-      else if (op_code & OP_DUPLICATE) {
-        if(proj)
-          proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
-        rval = tab->DuplicateRows(sel.row_fr, sel.height());
-        newIndex  = this->model()->index(sel.row_fr + sel.height(), 0);
-      }
-      else if (op_code & OP_DELETE) {
-        if(taMisc::delete_prompts) {
-          if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0)
-            goto bail;
-        }
-        if(proj)
-          proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
-        rval = tab->RemoveRows(sel.row_fr, sel.height());
-        if (sel.row_fr != 0)
-          newIndex = this->model()->index(sel.row_fr - 1, 0);
-        else
-          newIndex = this->model()->index(0, 0);
-      }
-      else if (op_code & OP_DELETE_UNSELECTED) {
-        if(taMisc::delete_prompts) {
-          if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0)
-            goto bail;
-        }
-        if(proj)
-          proj->undo_mgr.SaveUndo(tab, "RemoveRowsUnselected", tab);
-        // we are using contiguous selection so remove rows above and below selection
-        if (sel.row_to != tab->rows-1) // i.e. last row not selected
-          rval = tab->RemoveRows(sel.row_to + 1, tab->rows - sel.row_to -1);
-        if (sel.row_fr != 0) // i.e. first row not selected
-          rval = tab->RemoveRows(0, sel.row_fr);
+      if(proj)
+        proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
+      rval = tab->RemoveRows(sel.row_fr, sel.height());
+      if (sel.row_fr != 0)
+        newIndex = this->model()->index(sel.row_fr - 1, 0);
+      else
         newIndex = this->model()->index(0, 0);
+    }
+    else if (op_code & OP_DELETE_UNSELECTED) {
+      if(taMisc::delete_prompts) {
+        if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0)
+          goto bail;
       }
-      else if (op_code & OP_SHOW_ALL) {
-        proj->undo_mgr.SaveUndo(tab, "ShowAllRows", tab);
-        tab->ShowAllRows();
-      }
-      else if (op_code & OP_COMPARE) {
-        tab->CompareRows(sel.row_fr, sel.height());
-        this->selectionModel()->clearSelection();
-      }
-      else if (op_code & OP_CLEAR_COMPARE) {
-        tab->ClearCompareRows();
-      }
-      else if (op_code & OP_SET_HEIGHT) {
-        int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in lines of text:",
-                                        tab->row_height, 1, iTableView::max_lines_per_row);
-        SetRowHeight(rows);
-        tab->row_height = rows;
-        tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
-      }
-      else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
-        SetRowHeightToContents();
-        tab->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
-      }
-      else if (op_code & OP_RESTORE_HEIGHT) {
-        SetRowHeight(tab->row_height);
-        tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
-      }
-      
-      if (rval) {
-        this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
-        this->setCurrentIndex(newIndex);
-        this->setFocus();
-      }
+      if(proj)
+        proj->undo_mgr.SaveUndo(tab, "RemoveRowsUnselected", tab);
+      // we are using contiguous selection so remove rows above and below selection
+      if (sel.row_to != tab->rows-1) // i.e. last row not selected
+        rval = tab->RemoveRows(sel.row_to + 1, tab->rows - sel.row_to -1);
+      if (sel.row_fr != 0) // i.e. first row not selected
+        rval = tab->RemoveRows(0, sel.row_fr);
+      newIndex = this->model()->index(0, 0);
+    }
+    else if (op_code & OP_SHOW_ALL) {
+      proj->undo_mgr.SaveUndo(tab, "ShowAllRows", tab);
+      tab->ShowAllRows();
+    }
+    else if (op_code & OP_COMPARE) {
+      tab->CompareRows(sel.row_fr, sel.height());
+      this->selectionModel()->clearSelection();
+    }
+    else if (op_code & OP_CLEAR_COMPARE) {
+      tab->ClearCompareRows();
+    }
+    else if (op_code & OP_SET_HEIGHT) {
+      int rows = QInputDialog::getInt(0, "Set Row Height - ", "Height in lines of text:",
+                                      tab->row_height, 1, iTableView::max_lines_per_row);
+      SetRowHeight(rows);
+      tab->row_height = rows;
+      tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+    }
+    else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
+      SetRowHeightToContents();
+      tab->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+    }
+    else if (op_code & OP_RESTORE_HEIGHT) {
+      SetRowHeight(tab->row_height);
+      tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+    }
+    else if (op_code & OP_HILITE) {
+      tab->row_with_hilite = tab->GetIndexRow(sel.row_fr);
+    }
+    else if (op_code & OP_CLEAR_HILITE) {
+      tab->row_with_hilite = -1;
+    }
+    if (rval) {
+      this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
+      this->setCurrentIndex(newIndex);
+      this->setFocus();
     }
   }
   
@@ -366,7 +369,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
   int row = sel.row_fr;
   if (!dc) return;
-  
+    
   // single cell or single column
   if (((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) ||
       ((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix())) {

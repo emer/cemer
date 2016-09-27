@@ -153,7 +153,8 @@ public:
   // #HIDDEN the last table sort specification
   DataSelectSpec        last_select_spec;
   // #HIDDEN #NO_SAVE the last table sort specification
-  
+  int                   row_with_hilite; // #NO_SAVE #HIDDEN -1 means no row is highlighted - uses underlying index to be robust to sort and filter
+
   DataTableCell_List    control_panel_cells;
   // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   

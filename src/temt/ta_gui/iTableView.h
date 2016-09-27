@@ -125,6 +125,8 @@ public:
     OP_CLEAR_COMPARE              = 0x00800,
     OP_SHOW_ALL                   = 0x01000,
     OP_SET_WIDTH                  = 0x02000,
+    OP_HILITE                     = 0X04000,
+    OP_CLEAR_HILITE               = 0X08000,
     OP_SET_HEIGHT                 = 0x10000, // row height
     OP_RESIZE_HEIGHT_TO_CONTENT   = 0X20000,
     OP_RESTORE_HEIGHT             = 0X40000,

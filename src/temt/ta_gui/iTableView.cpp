@@ -309,6 +309,12 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
       menu->AddSep();
     }
+    act = menu->AddItem("Highlight Row", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_HILITE) );
+    act = menu->AddItem("Clear Highlight", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_HILITE) );
     act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
                         iAction::int_act,
                         this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );

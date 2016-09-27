@@ -107,6 +107,7 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
+  row_with_hilite = -1; // no row highlighted
 }
 
 void DataTable::Destroy() {

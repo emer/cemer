@@ -109,6 +109,9 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
       if (TableCellHasMatch(index)) {
         return QColor(Qt::yellow);
       }
+      if (dataTable()->row_with_hilite == dataTable()->GetIndexRow(index.row())) {
+        return QColor(Qt::yellow);
+      }
       /* note: only used when !(option.showDecorationSelected && (option.state
        & QStyle::State_Selected)) */
       // note: only make it actual ro color if ro (not for "(matrix)" cells)
