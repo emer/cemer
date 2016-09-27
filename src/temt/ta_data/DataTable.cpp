@@ -4638,8 +4638,7 @@ bool DataTable::FilterBySpec(DataSelectSpec* spec) {
 }
 
 void DataTable::UnFilter() {
-  last_select_spec.ClearColumns();
-  ShowAllRows();
+   ShowAllRows();
 }
 
 void DataTable::CompareRows(int st_row, int n_rows) {
