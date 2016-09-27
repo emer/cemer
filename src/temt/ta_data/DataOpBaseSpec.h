@@ -40,7 +40,7 @@ public:
 
   virtual void 	GetColumns(DataTable* dt) { ops.GetColumns(dt); }
   // #CAT_DataOp get the column pointers for given data table (looking up by name)
-  virtual void 	ClearColumns() { ops.ClearColumns(); ops.RemoveAll(); }
+  virtual void 	ClearColumns() { ops.ClearColumns(); }
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt)
