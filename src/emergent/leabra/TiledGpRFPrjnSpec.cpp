@@ -81,7 +81,7 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
 
   Network* net = GET_MY_OWNER(Network);
   if(TestWarning(set_scale && net && !net->InheritsFromName("LeabraNetwork"),
-                 "Init_Weights_Prjn", "set_scale can only be used with Leabra networks -- turning off")) {
+                 "Connect_impl", "set_scale can only be used with Leabra networks -- turning off")) {
     set_scale = false;
   }
   
@@ -106,6 +106,16 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   int sg_sz_tot = send_gp_size.Product();
   int alloc_no = sg_sz_tot * su_nunits;
 
+  if(share_cons) {
+    if(TestError(ru_nunits % net->n_thrs_built != 0,
+                 "Connect_impl", "for share_cons = true, number of recv units per unit group:",
+                 String(ru_nunits), "must be an even multiple of number of threads:",
+                 String(net->n_thrs_built), "this is not true for layer:",
+                 recv_lay->name, "please fix or turn off share_cons")) {
+      return;
+    }
+  }
+  
   taVector2i ruc;
   int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {

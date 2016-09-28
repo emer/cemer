@@ -81,7 +81,7 @@ public:
 
   Projection*   prjn; // #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer to the projection which created these connections -- has the source con_type and con spec information
   ConSpec*      con_spec; // #IGNORE con spec that we use: controlled entirely by the projection!
-  int           share_idx;      // #CAT_Structure #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same number of connections, and must be *earlier* in the layer (typically the first unit group) -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
+  int           share_idx;      // #CAT_Structure #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same number of connections, and in the same thread (i.e., the number of units in a unit group must be an even multiple of the number of threads), and must be *earlier* in the layer (typically the first unit group) -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
   int           vec_chunked_size; // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections at start of list that are chunked according to vec_chunk_targ -- for sender-based, this means that the recv unit_idx's are sequential for each of the chunks (individually) -- between chunks can be non-sequential
 
   int           n_con_vars;     // #IGNORE number of connection variables

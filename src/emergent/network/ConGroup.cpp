@@ -100,8 +100,12 @@ bool ConGroup::SetShareFrom(Network* net, Unit* shu) {
     taMisc::Warning("SetShareFrom: can only set sharing for OwnCons side of the connection!");
     return false;
   }
-  if(shu->flat_idx >= OwnUn(net)->flat_idx) {
+  if(shu->flat_idx >= own_flat_idx) {
     taMisc::Warning("SetShareFrom: share source unit must be earlier in network than sharing unit");
+    return false;
+  }
+  if(net->UnThr(shu->flat_idx) != net->UnThr(own_flat_idx)) {
+    taMisc::Warning("SetShareFrom: share source and this unit must be on same thread -- requires unit groups to be even multiple of number of threads!");
     return false;
   }
   share_idx = shu->flat_idx;
