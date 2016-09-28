@@ -2011,7 +2011,8 @@ class SubversionPoller(object):
             if not os.path.isfile(os.path.join(results_dir,f)):
                 continue
             if re_tag_dat.match(f):
-                dat_files_set.add(f)
+                if "savetmp" not in f:
+                    dat_files_set.add(f)
             elif re_tag.match(f):
                 other_files_set.add(f)
         dat_files = ' '.join(dat_files_set)
