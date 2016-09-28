@@ -120,9 +120,9 @@ public:
                                float left_st=0.0f, float width=1.0f);
   // Add labels along the top horizontal part of the grid view, from given data table, and column (name or index) -- as annotations (note: good idea to clear all existing annotations using AnnotClearAll() where relevant) -- text is rotated vertically, starting at given left starting point and for total width -- gp_names means group repetitions of the same label into a single label (else each shows up individually), optionally with lines going along the whole vertical distance between the grouped labels 
   virtual void  AddVertLabels(const DataTable& tab, const Variant& label_col,
-                              bool gp_names = true, bool lines = true, 
-                              float top_st=0.0f, float height=1.0f);
-  // Add labels along the left vertical side of the grid view, from given data table, and column (name or index) -- as annotations (note: good idea to clear all existing annotations using AnnotClearAll() where relevant) -- text is rotated vertically, starting at given top starting point and for total height -- gp_names means group repetitions of the same label into a single label (else each shows up individually), optionally with lines going along the whole horizontal distance between the grouped labels 
+                              bool gp_names = true, bool lines = true, bool bot_zero = true,
+                              float start=0.0f, float height=1.0f);
+  // Add labels along the left vertical side of the grid view, from given data table, and column (name or index) -- as annotations (note: good idea to clear all existing annotations using AnnotClearAll() where relevant) -- starting at given starting point and for total height -- bot_zero means start at bottom, else top -- gp_names means group repetitions of the same label into a single label (else each shows up individually), optionally with lines going along the whole horizontal distance between the grouped labels 
 
   iViewPanelOfGridTable* lvp();
   // #IGNORE

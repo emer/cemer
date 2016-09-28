@@ -835,7 +835,8 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
     if(name_labels && !name_col_nm.empty()) {
       gtv->AnnoteClearAll();
       gtv->AddHorizLabels(*src_data, name_col_nm, gp_names, true, 0.0f, 1.0f);
-      gtv->AddVertLabels(*src_data, name_col_nm, gp_names, true, 0.0f, 1.0f);
+      gtv->AddVertLabels(*src_data, name_col_nm, gp_names, true, false, 0.0f, 1.0f);
+      // false = NOT bot zero
     }
   }
   return true;

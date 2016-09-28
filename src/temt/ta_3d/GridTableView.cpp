@@ -377,7 +377,7 @@ void GridTableView::AddHorizLabels
                                    
 void GridTableView::AddVertLabels
 (const DataTable& tab, const Variant& label_col,
- bool gp_names, bool lines, float top_st, float height) {
+ bool gp_names, bool lines, bool bot_zero, float top_st, float height) {
   
   DataCol* nmda = tab.GetColData(label_col, true); // errmsg
   if(!nmda) return;
@@ -418,16 +418,22 @@ void GridTableView::AddVertLabels
           
     for(int i=0;i<nms.size;i++) {
       String nm = nms[i];
-      float crd = midcrds[i];
-      T3Annotation* t3a = AnnoteText(true, nm, 0.0f, 1.0f - crd - exspc,
-                                          0.0f, fontsz, T3DataViewMain::RIGHT);
+      float ccrd = midcrds[i];
+      float yc = ccrd;
+      if(bot_zero)  yc = yc - exspc;
+      else          yc = 1.0f - yc - exspc;
+      T3Annotation* t3a = AnnoteText(true, nm, 0.0f, yc,
+                                     0.0f, fontsz, T3DataViewMain::RIGHT);
       t3a->SetName(nm + "_vt_" + String(i));
     }
     for(int i=0;i<nms.size;i++) {
       String nm = nms[i];
       float ecrd = endcrds[i];
       if(ecrd < 1.0f) {
-        T3Annotation* t3a = AnnoteLine(true, -txtlen, 1.0f - ecrd, 0.0f,
+        float yc = ecrd;
+        if(!bot_zero)
+          yc = 1.0f - yc;
+        T3Annotation* t3a = AnnoteLine(true, -txtlen, yc, 0.0f,
                                             1.0f+txtlen, 0.0f, 0.0f, lnwd);
         t3a->SetName(nm + "_vtl_" + String(i));
       }
@@ -436,9 +442,12 @@ void GridTableView::AddVertLabels
   else {
     for(int i=0;i<n;i++) {
       String nm = nmda->GetValAsString(i);
-      float crd = top_st + (float)i * oneon;
-      T3Annotation* t3a = AnnoteText(true, nm, 0.0f, 1.0f - crd - fontsz,
-                                          0.0f, fontsz, T3DataViewMain::RIGHT);
+      float ccrd = top_st + (float)i * oneon;
+      float yc = ccrd;
+      if(bot_zero)      yc = yc - fontsz;
+      else              yc = 1.0f - yc - fontsz;
+      T3Annotation* t3a = AnnoteText(true, nm, 0.0f, yc,
+                                     0.0f, fontsz, T3DataViewMain::RIGHT);
       t3a->SetName(nm + "_vt_" + String(i));
     }
   }
