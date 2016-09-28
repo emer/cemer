@@ -80,7 +80,7 @@ void iDataTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int ne
   if(dc) {
     iDataTableView* view = dynamic_cast<iDataTableView*>(parent());
     if (view) {
-      if(!dc->HasColFlag(DataCol::SIZE_TO_CONTENT)) {
+      if(!dc->HasColFlag(DataCol::AUTO_WIDTH)) {
         dc->width = view->ConvertPixelsToChars(newWidth);
         view->UpdateMaxColWidth(dc->width);
       }

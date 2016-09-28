@@ -77,6 +77,7 @@ public:
   bool                  m_is_viewer_xor_browser; // #READ_ONLY #SAVE #NO_SHOW (weird, for compat w <=4.0.6)
   bool                  m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
   bool                  m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
+  int                   revert_to_tab_no; // #READ_ONLY #NO_SHOW tab number to revert to in wait proc..
 
 #ifdef TA_GUI
   taiWidgetActions_List* ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
@@ -100,30 +101,35 @@ public:
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();}
   // #IGNORE
 
-  void                  AddDock(DockViewer* dv);
+  virtual void          AddDock(DockViewer* dv);
     // add the supplied dock
 
-  FrameViewer*          FindFrameByType(TypeDef* typ, int& at_index, int from_index = 0);
+  virtual FrameViewer*  FindFrameByType(TypeDef* typ, int& at_index, int from_index = 0);
     // find the first frame and index of given type from the given starting index;
-  void                  AddFrame(FrameViewer* fv, int at_index);
+  virtual void          AddFrame(FrameViewer* fv, int at_index);
     // add the supplied frame
-  FrameViewer*          AddFrameByType(TypeDef* typ, int at_index = -1);
+  virtual FrameViewer*  AddFrameByType(TypeDef* typ, int at_index = -1);
     // add a new frame of given type at index (-1 at end); no window made yet
 
-  DockViewer*           FindDockViewerByName(const String& dv_name);
-  ToolBar*              FindToolBarByType(TypeDef* typ, const String& tb_name); // finds existing toolbar by name and type; NULL if not found
-  bool                  AddToolBar(ToolBar* tb); // add a new toolbar; true if added (won't add a duplicate)
-  ToolBar*              AddToolBarByType(TypeDef* typ, const String& tb_name); // add a new toolbar by type; return inst if added (won't add a duplicate)
+  virtual DockViewer*   FindDockViewerByName(const String& dv_name);
+  virtual ToolBar*      FindToolBarByType(TypeDef* typ, const String& tb_name); // finds existing toolbar by name and type; NULL if not found
+  virtual bool          AddToolBar(ToolBar* tb); // add a new toolbar; true if added (won't add a duplicate)
+  virtual ToolBar*      AddToolBarByType(TypeDef* typ, const String& tb_name); // add a new toolbar by type; return inst if added (won't add a duplicate)
 
-  bool                  SelectPanelTabNo(int tab_no);
+  virtual bool          SelectPanelTabNo(int tab_no);
   // select PanelViewer (middle edit panel) tab by number
-  bool                  SelectPanelTabName(const String& tab_name);
+  virtual bool          SelectPanelTabName(const String& tab_name);
   // select PanelViewer  (middle edit panel) tab by name
 
-  bool                  SelectT3ViewTabNo(int tab_no);
+  virtual bool          SelectT3ViewTabNo(int tab_no);
   // select T3PanelViewer (3d view) (right view panel) tab by number
-  bool                  SelectT3ViewTabName(const String& tab_name);
+  virtual bool          SelectT3ViewTabName(const String& tab_name);
   // select T3PanelViewer (3d view) (right view panel) tab by name
+  virtual bool          SelectT3ViewTabName_temp(const String& tab_name);
+  // select T3PanelViewer (3d view) (right view panel) tab by name, and then revert to previously-selected tab in the wait proc
+  virtual void          RevertToPrevT3TabNo();
+  // #EXPERT revert to the previous T3 tab (waitproc callback)
+  
 
   BrowseViewer*         GetLeftBrowser();
   // get the BrowseViewer (left browser panel)

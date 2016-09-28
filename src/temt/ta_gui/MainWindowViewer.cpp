@@ -213,6 +213,7 @@ void MainWindowViewer::Initialize() {
   m_is_viewer_xor_browser = false; // note: weird, for compatability w <=4.0.6
   m_is_proj_viewer = false;
   m_is_dialog = false;
+  revert_to_tab_no = -1;
   menu = NULL;
   cur_menu = NULL;
   ta_menus = new taiWidgetActions_List;
@@ -593,6 +594,27 @@ bool MainWindowViewer::SelectT3ViewTabName(const String& tab_nm) {
     return itv->SetCurrentTabName(tab_nm);
   }
   return false;
+}
+
+bool MainWindowViewer::SelectT3ViewTabName_temp(const String& tab_nm) {
+  revert_to_tab_no = 0;
+  int idx;
+  T3PanelViewer* pv = (T3PanelViewer*)FindFrameByType(&TA_T3PanelViewer, idx);
+  if (pv && pv->widget()) {
+    iT3PanelViewer* itv = pv->widget();
+    if(revert_to_tab_no < 0) { // only do this if not already scheduled!
+      revert_to_tab_no = itv->CurrentTabNo();
+      tabMisc::DelayedFunCall_gui(this, "RevertToPrevT3TabNo");
+    }
+    return itv->SetCurrentTabName(tab_nm);
+  }
+  return false;
+}
+
+void MainWindowViewer::RevertToPrevT3TabNo() {
+  if(revert_to_tab_no >= 0)
+    SelectT3ViewTabNo(revert_to_tab_no);
+  revert_to_tab_no = -1;        // done!
 }
 
 BrowseViewer* MainWindowViewer::GetLeftBrowser() {

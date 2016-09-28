@@ -66,7 +66,7 @@ public:
     CALC                = 0x0010, // calculate value of this column based on calc_expr expression
     READ_ONLY           = 0x0020, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
     PAT_4D              = 0x0040, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
-    SIZE_TO_CONTENT     = 0x0080, // columns size to the content, up to max_col_width in owner datatable
+    AUTO_WIDTH          = 0x0080, // #AKA_SIZE_TO_CONTENT column width auto-sizes to the content, up to max_col_width in owner datatable
   };
 
   String                desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
@@ -79,7 +79,7 @@ public:
   ColCalcExpr           calc_expr; // #CONDEDIT_ON_col_flags:CALC expression for computing value of this column (only used if CALC flag is set)
   String_Matrix         dim_names; // special names for the dimensions of a matrix cell -- used for display purposes
   taHashTable*          hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
-  int	                width; // the column display width in characters, for the editor view (not for grid view -- that uses user data) -- if 0 then implies SIZE_TO_CONTENT (see flags)
+  int	                width; // the column display width in characters, for the editor view (not for grid view -- that uses user data) -- only applicable if AUTO_WIDTH not set -- if 0 then AUTO_WIDTH will be set
     
   virtual const taMatrix* AR() const = 0;
   // #CAT_Access const version of the matrix pointer

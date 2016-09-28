@@ -47,6 +47,8 @@ public:
   // focus indicated tab -- returns success
   bool                  SetCurrentTabName(const String& tab_nm);
   // focus indicated tab -- returns success
+  int                   CurrentTabNo();
+  // returns current tab tab index number
 
   void                  AddT3Panel(iT3Panel* dvf, int idx = -1);
   void                  UpdateTabNames();

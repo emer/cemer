@@ -201,6 +201,138 @@ void iDataTableView::GetEditActionsEnabled(int& ea) {
   ea = allowed & ~forbidden;
 }
 
+void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel)
+{
+  inherited::FillContextMenu_impl(ca, menu, sel);
+
+  iAction* act = NULL;
+  
+  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  int row = sel.row_fr;
+
+  // generic col guys
+  if (dc && ca == CA_COL_HDR) {
+    act = menu->AddItem("Set Fixed Column Width...", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_SET_WIDTH) );
+    act = menu->AddItem("Set Auto-Width Mode", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
+    if(dc->HasColFlag(DataCol::AUTO_WIDTH))
+      act->setEnabled(false);
+    act = menu->AddItem("Set Auto-Width Mode for All Cols", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
+    menu->AddSep();
+    if (!isFixedColCount()) {
+      act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
+      act = menu->AddItem("Duplicate Columns", taiWidgetMenu::normal, iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_COL | OP_DUPLICATE) );
+      menu->AddSep();
+    }
+  }
+  
+  // generic row guys
+  if (ca == CA_ROW_HDR) {
+    act = menu->AddItem("Set Fixed Row Height...", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_SET_HEIGHT) );
+    act = menu->AddItem("Set Row Auto-Height Mode", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_RESIZE_HEIGHT_TO_CONTENT) );
+    if(dataTable()->HasDataFlag(DataTable::ROW_AUTO_HEIGHT))
+      act->setEnabled(false);
+    act = menu->AddItem("Restore Fixed Row Height", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_RESTORE_HEIGHT) );
+    if(!dataTable()->HasDataFlag(DataTable::ROW_AUTO_HEIGHT))
+      act->setEnabled(false);
+    menu->AddSep();
+    if (!isFixedRowCount()) {
+      act = menu->AddItem("Append Rows", taiWidgetMenu::normal, iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
+      act = menu->AddItem("Insert Rows (Ctrl+I)", taiWidgetMenu::normal, iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
+      act = menu->AddItem("Insert Rows After (Ctrl+O)", taiWidgetMenu::normal,
+                          iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT_AFTER) );
+      act = menu->AddItem("Duplicate Rows (Ctrl+M)", taiWidgetMenu::normal,
+                          iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
+      act = menu->AddItem("Delete Rows (Ctrl+D)", taiWidgetMenu::normal, iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
+      menu->AddSep();
+    }
+    act = menu->AddItem("Highlight Row", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_HILITE) );
+    act = menu->AddItem("Clear Highlight", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_HILITE) );
+    act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
+    act = menu->AddItem("Show All Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_SHOW_ALL) );
+    menu->AddSep();
+  }
+
+
+  // single cell or single column
+  if (((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) ||
+      ((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix())) {
+    bool column_selected = (ca == CA_COL_HDR);
+    
+    menu->AddSep();
+    iAction* add_act = NULL;
+    iAction* remove_act = NULL;
+    taiWidgetMenu* add_menu = menu->AddSubMenu("Add To Control Panel");
+    taiWidgetMenu* remove_menu = menu->AddSubMenu("Remove From Control Panel");
+    taProject* proj = dataTable()->GetMyProj();
+    if(!proj) return;
+    for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
+      ControlPanel* cp = proj->ctrl_panels.Leaf(i);
+      String add_string;
+      add_string = "Add To " + cp->GetName();
+      if (column_selected) {
+        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddColumnToControlPanel(int)), i);
+      }
+      else {
+        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      }
+      add_act->setEnabled(true);
+      String remove_string = "Remove From " + cp->GetName();
+
+      if (column_selected) {
+        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveColumnFromControlPanel(int)), i);
+      }
+      else {
+        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveCellFromControlPanel(int)), i);
+      }
+      remove_act->setEnabled(false);
+      
+      // First check our list of cells on control panels - then check the control panel
+      DataTableCell* dtc = NULL;
+      if (column_selected) {
+        dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
+      }
+      else {
+        dtc = dataTable()->control_panel_cells.FindCell(dc, row);
+      }
+      if (dtc) {
+        MemberDef* md = dtc->FindMember("value");
+        // now check control panel
+        if (md && cp->FindMbrBase(dtc, md) > -1) {
+          add_act->setEnabled(false);
+          remove_act->setEnabled(true);
+        }
+      }
+    }
+  }
+}
+
 void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   DataTable* tab = this->dataTable(); // may not exist
   if (!tab) return;
@@ -281,15 +413,15 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
                                       tab->row_height, 1, iTableView::max_lines_per_row);
       SetRowHeight(rows);
       tab->row_height = rows;
-      tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+      tab->ClearDataFlag(DataTable::ROW_AUTO_HEIGHT);
     }
     else if (op_code & OP_RESIZE_HEIGHT_TO_CONTENT) {
       SetRowHeightToContents();
-      tab->SetDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+      tab->SetDataFlag(DataTable::ROW_AUTO_HEIGHT);
     }
     else if (op_code & OP_RESTORE_HEIGHT) {
       SetRowHeight(tab->row_height);
-      tab->ClearDataFlag(DataTable::ROWS_SIZE_TO_CONTENT);
+      tab->ClearDataFlag(DataTable::ROW_AUTO_HEIGHT);
     }
     else if (op_code & OP_HILITE) {
       tab->row_with_hilite = tab->GetIndexRow(sel.row_fr);
@@ -362,67 +494,6 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = false;
 }
 
-void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel)
-{
-  inherited::FillContextMenu_impl(ca, menu, sel);
-  
-  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-  int row = sel.row_fr;
-  if (!dc) return;
-    
-  // single cell or single column
-  if (((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) ||
-      ((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix())) {
-    bool column_selected = (ca == CA_COL_HDR);
-    
-    menu->AddSep();
-    iAction* add_act = NULL;
-    iAction* remove_act = NULL;
-    taiWidgetMenu* add_menu = menu->AddSubMenu("Add To Control Panel");
-    taiWidgetMenu* remove_menu = menu->AddSubMenu("Remove From Control Panel");
-    taProject* proj = dataTable()->GetMyProj();
-    if(!proj) return;
-    for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
-      ControlPanel* cp = proj->ctrl_panels.Leaf(i);
-      String add_string;
-      add_string = "Add To " + cp->GetName();
-      if (column_selected) {
-        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddColumnToControlPanel(int)), i);
-      }
-      else {
-        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
-      }
-      add_act->setEnabled(true);
-      String remove_string = "Remove From " + cp->GetName();
-
-      if (column_selected) {
-        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveColumnFromControlPanel(int)), i);
-      }
-      else {
-        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveCellFromControlPanel(int)), i);
-      }
-      remove_act->setEnabled(false);
-      
-      // First check our list of cells on control panels - then check the control panel
-      DataTableCell* dtc = NULL;
-      if (column_selected) {
-        dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
-      }
-      else {
-        dtc = dataTable()->control_panel_cells.FindCell(dc, row);
-      }
-      if (dtc) {
-        MemberDef* md = dtc->FindMember("value");
-        // now check control panel
-        if (md && cp->FindMbrBase(dtc, md) > -1) {
-          add_act->setEnabled(false);
-          remove_act->setEnabled(true);
-        }
-      }
-    }
-  }
-}
-
 void iDataTableView::doubleClicked(const QModelIndex& index) {
   iDataTableModel* model = dataTable()->GetTableModel();
   Qt::ItemFlags flags = model->flags(index);
@@ -488,7 +559,7 @@ void iDataTableView::UpdateRowHeightColWidth() {
   row_header->setResizeContentsPrecision(prec_rows);
 #endif
 
-  if (!dt->HasDataFlag(DataTable::ROWS_SIZE_TO_CONTENT)) {
+  if (!dt->HasDataFlag(DataTable::ROW_AUTO_HEIGHT)) {
     if(dt->row_height < 1)
       dt->row_height = 1;
     row_height = dt->row_height;
@@ -501,7 +572,7 @@ void iDataTableView::UpdateRowHeightColWidth() {
   for (int col_idx=0; col_idx<dt->data.size; col_idx++) {
     DataCol* data_col = dt->GetColData(col_idx);
     if (data_col) {
-      if (data_col->HasColFlag(DataCol::SIZE_TO_CONTENT)) {
+      if (data_col->HasColFlag(DataCol::AUTO_WIDTH)) {
 #if (QT_VERSION >= 0x050200)
         if(col_header->sectionResizeMode(col_idx) != QHeaderView::ResizeToContents) {
           col_header->setSectionResizeMode(col_idx, QHeaderView::ResizeToContents);
@@ -543,7 +614,7 @@ void iDataTableView::Refresh() {
 
 void iDataTableView::ResizeColumnToContents(int column) {
   DataCol* col = dataTable()->GetColData(column);
-  col->SetColFlag(DataCol::SIZE_TO_CONTENT);
+  col->SetColFlag(DataCol::AUTO_WIDTH);
 #if (QT_VERSION >= 0x050200)
   horizontalHeader()->setSectionResizeMode(column, QHeaderView::ResizeToContents);
 #else
@@ -554,7 +625,7 @@ void iDataTableView::ResizeColumnToContents(int column) {
 void iDataTableView::SetColumnWidth(int column, int n_chars) {
   inherited::SetColumnWidth(column, n_chars);
   DataCol* col = dataTable()->GetColData(column);
-  col->ClearColFlag(DataCol::SIZE_TO_CONTENT);
+  col->ClearColFlag(DataCol::AUTO_WIDTH);
   col->width = n_chars;
   UpdateMaxColWidth(n_chars);
 }

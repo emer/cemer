@@ -261,69 +261,6 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   taiWidgetMenu* menu, const CellRange& sel)
 {
   iAction* act = NULL;
-  // generic col guys
-  if (ca == CA_COL_HDR) {
-    act = menu->AddItem("Set Column Width...", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_COL | OP_SET_WIDTH) );
-    act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
-    act = menu->AddItem("Resize All Widths to Content", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
-    menu->AddSep();
-    if (!isFixedColCount()) {
-      act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
-      act = menu->AddItem("Duplicate Columns", taiWidgetMenu::normal, iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_COL | OP_DUPLICATE) );
-      menu->AddSep();
-    }
-  }
-  
-  // generic row guys
-  if (ca == CA_ROW_HDR) {
-    act = menu->AddItem("Set Row Height...", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_SET_HEIGHT) );
-    act = menu->AddItem("Resize Height to Content", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_RESIZE_HEIGHT_TO_CONTENT) );
-    act = menu->AddItem("Restore Row Height", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_RESTORE_HEIGHT) );
-    menu->AddSep();
-    if (!isFixedRowCount()) {
-      act = menu->AddItem("Append Rows", taiWidgetMenu::normal, iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
-      act = menu->AddItem("Insert Rows (Ctrl+I)", taiWidgetMenu::normal, iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
-      act = menu->AddItem("Insert Rows After (Ctrl+O)", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT_AFTER) );
-      act = menu->AddItem("Duplicate Rows (Ctrl+M)", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
-      act = menu->AddItem("Delete Rows (Ctrl+D)", taiWidgetMenu::normal, iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
-      menu->AddSep();
-    }
-    act = menu->AddItem("Highlight Row", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_HILITE) );
-    act = menu->AddItem("Clear Highlight", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_HILITE) );
-    act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
-    act = menu->AddItem("Show All Rows", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_SHOW_ALL) );
-    menu->AddSep();
-  }
-  
   // edit guys
   int ea = 0;
   GetEditActionsEnabled(ea);

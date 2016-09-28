@@ -251,6 +251,10 @@ bool iT3PanelViewer::SetCurrentTab(int tab_idx) {
   return true;
 }
 
+int iT3PanelViewer::CurrentTabNo() {
+  return tw->currentIndex();
+}
+
 bool iT3PanelViewer::SetCurrentTabName(const String& tab_nm) {
   int tab_idx = TabIndexByName(tab_nm);
   if(tab_idx >= 0) {

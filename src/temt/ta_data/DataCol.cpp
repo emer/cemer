@@ -44,7 +44,7 @@ const String DataCol::udkey_narrow("NARROW");
 const String DataCol::udkey_hidden("HIDDEN");
 
 void DataCol::Initialize() {
-  col_flags = (ColFlags)(SAVE_DATA | SIZE_TO_CONTENT);
+  col_flags = (ColFlags)(SAVE_DATA | AUTO_WIDTH);
   col_idx = -1;
   is_matrix = false;
   // default initialize to scalar
@@ -241,12 +241,12 @@ void DataCol::UpdateAfterEdit_impl() {
     // new char-based column sizing introduced in 803 -- set default to auto-size for older
     taVersion v803(8, 0, 3);
     if(taMisc::loading_version < v803) {
-      SetColFlag(SIZE_TO_CONTENT);
+      SetColFlag(AUTO_WIDTH);
       width = MAX(GridColDisplayWidth(), name.length());
     }
   }
   if(width == 0) {
-    SetColFlag(SIZE_TO_CONTENT);
+    SetColFlag(AUTO_WIDTH);
     width = MAX(GridColDisplayWidth(), name.length());
   }
   if(dt) {
