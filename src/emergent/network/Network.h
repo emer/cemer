@@ -839,8 +839,10 @@ public:
     // #IGNORE
   virtual void  Init_Weights();
   // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
-    virtual void  Init_Weights_Thr(int thr_no);
+    virtual void Init_Weights_Thr(int thr_no);
     // #IGNORE
+    virtual void Init_Weights_1Thr();
+    // #IGNORE for INIT_WTS_1_THREAD -- requires consistent order!
     virtual void Init_Weights_renorm();
     // #IGNORE renormalize weights after init, before sym
     virtual void Init_Weights_renorm_Thr(int thr_no);

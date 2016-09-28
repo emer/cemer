@@ -549,8 +549,6 @@ public:
   virtual void  Compute_dWt_VecVars_Thr(int thr_no);
   // #IGNORE copy over the vectorized variables for learning
 
-  void  Init_Weights_post() override;
-  
   void	Compute_dWt() override;
     void Compute_dWt_Thr(int thr_no) override;
   virtual void	Compute_WtBal_Thr(int thr_no);

@@ -1927,10 +1927,10 @@ void Network::Init_Weights() {
   needs_wt_sym = false;          // will get set to true if needed
 
   if(HasNetFlag(INIT_WTS_1_THREAD)) {
-    NET_THREAD_LOOP(Network::Init_Weights_Thr);
+    Init_Weights_1Thr();
     Init_Weights_renorm();
     if(needs_wt_sym) {
-      NET_THREAD_LOOP(Network::Init_Weights_sym);
+      NET_THREAD_CALL(Network::Init_Weights_sym);
     }
   }
   else {
@@ -1996,6 +1996,48 @@ void Network::Init_Weights_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     UnitVars* uv = ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
+    uv->unit_spec->Init_Weights(uv, this, thr_no);
+  }
+}
+
+void Network::Init_Weights_1Thr() {
+  for(int ui=1; ui<n_units_built; ui++) {
+    Unit* u = UnFmIdx(ui);
+    if(u->lesioned()) continue;
+
+    int thr_no = UnThr(ui);
+    
+    if(RecvOwnsCons()) {
+      const int nrcg = UnNRecvConGps(ui);
+      for(int i=0; i<nrcg; i++) {
+        ConGroup* rcg = RecvConGroup(ui, i);
+        if(rcg->NotActive() || rcg->Sharing()) continue;
+        if(rcg->prjn->spec->init_wts) {
+          rcg->prjn->Init_Weights_Prjn(rcg, this, thr_no);
+        }
+        else {
+          rcg->con_spec->Init_Weights(rcg, this, thr_no);
+        }
+      }
+    }
+    else {
+      const int nscg = UnNSendConGps(ui);
+      for(int i=0; i<nscg; i++) {
+        ConGroup* scg = SendConGroup(ui, i);
+        if(scg->NotActive()) continue;
+        if(scg->prjn->spec->init_wts) continue; // do with recv's below
+        scg->con_spec->Init_Weights(scg, this, thr_no);
+      }
+      const int nrcg = UnNRecvConGps(ui);
+      for(int i=0; i<nrcg; i++) {
+        ConGroup* rcg = RecvConGroup(ui, i);
+        if(rcg->NotActive()) continue;
+        if(rcg->prjn->spec->init_wts) {
+          rcg->prjn->Init_Weights_Prjn(rcg, this, thr_no);
+        }
+      }
+    }
+    UnitVars* uv = u->MyUnitVars();
     uv->unit_spec->Init_Weights(uv, this, thr_no);
   }
 }

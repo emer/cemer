@@ -1456,8 +1456,9 @@ void MTRndPar::InitSeed(uint32_t seed) {
   }
   mti = nn;
 
-  for (i=0; i<nn; i++)
+  for (i=0; i<nn; i++) {
     state[i] &= wmask;
+  }
 }
 
 uint32_t MTRndPar::GenRandInt32() {
@@ -1496,6 +1497,7 @@ uint32_t MTRndPar::GenRandInt32() {
   x ^= (x << shiftC) & maskC;
   x ^= x >> shift1;
 
+  // taMisc::Info(String(x));
   return x;
 }
 
@@ -1585,6 +1587,9 @@ void MTRnd::Destroy() {
 
 MTRndPar* MTRnd::GetRnd(int thr_no) {
   if(thr_no < 0) thr_no = taMisc::dmem_proc;
+  // if(thr_no > 0) {
+  //   taMisc::Info("rnd thr_no > 0:", String(thr_no));
+  // }
   if(thr_no >= mtrnds.size) {
     taMisc::Error("MTRnd: thread number:", String(thr_no),
                   "out of range for number of parallel RNG's:", String(mtrnds.size));

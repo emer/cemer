@@ -103,13 +103,15 @@ public:
   inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
 
+    int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+    
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], thr_no);
+        C_Init_Weight_Rnd(wts[i], eff_thr_no);
         C_Init_dWt(dwts[i]);
         pdws[i] = 0.0f;
       }
@@ -810,6 +812,8 @@ public:
   inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
 
+    int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+    
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
@@ -817,7 +821,7 @@ public:
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], thr_no);
+        C_Init_Weight_Rnd(wts[i], eff_thr_no);
         C_Init_dWt(dwts[i]);
         pdws[i] = 0.0f;
         lrs[i] = lrate;
