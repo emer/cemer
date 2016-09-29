@@ -99,6 +99,7 @@ TestInitialiseIdentical1ThreadFlag
     Should Match	"${diff.stdout}"		""
 
 TestInitialiseIdenticalMultiThreaded
+    Restart Emergent
     Ensure Emergent Free
     Set Emergent Var		TestInitialiseWeights	single_threaded_init	false
     Set Emergent Var		TestInitialiseWeights	batch_no	0
