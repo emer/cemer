@@ -597,16 +597,17 @@ bool MainWindowViewer::SelectT3ViewTabName(const String& tab_nm) {
 }
 
 bool MainWindowViewer::SelectT3ViewTabName_temp(const String& tab_nm) {
-  revert_to_tab_no = 0;
   int idx;
   T3PanelViewer* pv = (T3PanelViewer*)FindFrameByType(&TA_T3PanelViewer, idx);
   if (pv && pv->widget()) {
     iT3PanelViewer* itv = pv->widget();
+    int cur_tab_no = itv->CurrentTabNo();
+    bool rval = itv->SetCurrentTabName(tab_nm);
     if(revert_to_tab_no < 0) { // only do this if not already scheduled!
-      revert_to_tab_no = itv->CurrentTabNo();
+      revert_to_tab_no = cur_tab_no;
       tabMisc::DelayedFunCall_gui(this, "RevertToPrevT3TabNo");
     }
-    return itv->SetCurrentTabName(tab_nm);
+    return rval;
   }
   return false;
 }
