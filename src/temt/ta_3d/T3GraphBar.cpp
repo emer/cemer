@@ -72,7 +72,7 @@ void T3GraphBar::SetBar(iVec3f& pos, iVec3f& size, const T3Color& color) {
   mat->diffuseColor.setValue(color.r, color.g, color.b);
   // mat->transparency.setValue(1.0f - color.a);
   SoTransform* tx = transform();
-  tx->translation.setValue(pos.x, pos.y+0.5f*size.y, pos.z+0.5f*size.z);
+  tx->translation.setValue(pos.x, pos.y+0.5f*size.y, -(pos.z+0.5f*size.z));
   SoCube* sp = new SoCube;
   sp->width = size.x;
   sp->depth = size.z;

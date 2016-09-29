@@ -5203,15 +5203,12 @@ GridTableView* DataTable::FindMakeGridView(T3Panel* fr, bool select_view) {
       el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
       el->InitDisplay();
       el->UpdateDisplay();
-      fr = el->GetFrame();
-      if(fr) {
-        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-        if(mwv) {
-          if(select_view) {
+      if(!select_view) {
+        fr = el->GetFrame();
+        if(fr) {
+          MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+          if(mwv) {
             mwv->SelectT3ViewTabName(fr->name);
-          }
-          else {
-            mwv->SelectT3ViewTabName_temp(fr->name);
           }
         }
       }
@@ -5255,15 +5252,12 @@ GraphTableView* DataTable::FindMakeGraphView(T3Panel* fr, bool select_view) {
       el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
       el->InitDisplay();
       el->UpdateDisplay();
-      fr = el->GetFrame();
-      if(fr) {
-        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-        if(mwv) {
-          if(select_view) {
+      if(!select_view) {
+        fr = el->GetFrame();
+        if(fr) {
+          MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+          if(mwv) {
             mwv->SelectT3ViewTabName(fr->name);
-          }
-          else {
-            mwv->SelectT3ViewTabName_temp(fr->name);
           }
         }
       }

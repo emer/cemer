@@ -2484,8 +2484,8 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   bool matz = false;
   if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) matz = true;
   
-  float bar_wd_plt = bar_width * x_axis.axis_length / (float)view_range.Range();
-  float bar_off_plt = bar_off * x_axis.axis_length / (float)view_range.Range();
+  float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
+  float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
   
   String svg_labels;
   String svg_bars;
@@ -2554,7 +2554,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     iVec3f size;
     // draw the line
     pt = plt;  pt.x += bar_off_plt + bar_wd_plt * 0.5f;
-    pt.y = 0.0f; pt.z -= bar_depth;
+    pt.y = 0.0f; pt.z += bar_depth;
     size.x = bar_wd_plt;
     size.y = plt.y;
     size.z = bar_depth;
