@@ -845,7 +845,7 @@ bool taMisc::TestWarning_impl(const taBase* obj, bool test, const String& fun_na
   if(!test) return false;
   if(obj) {
     String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
-      + "() (path: " + obj->GetPathNames() + ")\n";
+      + "() (path: " + obj->GetPathNames() + " )\n";
     taMisc::Warning(objinfo, a, b, c, d, e, f, g, h);
   }
   else {

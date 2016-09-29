@@ -2213,7 +2213,7 @@ void taBase::DebugInfo(const String& fun_name,
                        const String& d, const String& e, const String& f,
                        const String& g, const String& h) const {
   String objinfo = "obj: " + GetTypeDef()->name + " "
-    + GetDisplayName() + "::" + fun_name + "() (path: " + GetPathNames() + ")\n";
+    + GetDisplayName() + "::" + fun_name + "() (path: " + GetPathNames() + " )\n";
   taMisc::DebugInfo(objinfo, a, b, c, d, e, f, g, h);
 }
 
