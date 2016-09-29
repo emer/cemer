@@ -76,9 +76,9 @@ void tabMisc::WaitProc() {
   rval = DoDelayedFunCalls();
   did |= rval;
   
-  if(!did) {
-    did = DoAutoSave();               // only once it is quiet
-  }
+  //if(!did) {
+  //  did = DoAutoSave();               // only once it is quiet
+  //}
   --in_wait_proc;
 }
 
