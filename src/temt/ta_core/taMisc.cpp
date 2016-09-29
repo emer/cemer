@@ -508,6 +508,7 @@ ContextFlag     taMisc::in_gui_multi_action;
 ContextFlag     taMisc::in_plugin_init;
 ContextFlag     taMisc::in_shutdown;
 ContextFlag     taMisc::in_waitproc;
+ContextFlag     taMisc::in_eventproc;
 ContextFlag     taMisc::no_auto_expand;
 TypeDef*        taMisc::plugin_loading;
 

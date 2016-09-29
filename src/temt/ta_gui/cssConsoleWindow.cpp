@@ -322,7 +322,6 @@ void cssConsoleWindow::UpdateUi() {
 void cssConsoleWindow::showEvent(QShowEvent* e) {
   inherited::showEvent(e);
   QTimer::singleShot(150, this, SLOT(Clear()));
-  taMisc::Info("show clear");
 }
 
 void cssConsoleWindow::Clear() {

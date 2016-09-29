@@ -94,7 +94,9 @@ void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
 
 int taiMiscCore::ProcessEvents() {
   if (taMisc::in_event_loop && !taMisc::in_waitproc) {
+    taMisc::in_eventproc++;     // todo: should we prevent recursive??
     QCoreApplication::processEvents();
+    taMisc::in_eventproc--;
   }
   return 0;
 }
@@ -102,7 +104,9 @@ int taiMiscCore::ProcessEvents() {
 int taiMiscCore::RunPending() {
   if (taMisc::in_event_loop && !taMisc::in_waitproc) {
     if(QCoreApplication::hasPendingEvents()) {
+      taMisc::in_eventproc++;     // todo: should we prevent recursive??
       QCoreApplication::processEvents();
+      taMisc::in_eventproc--;
       return true;
     }
   }
@@ -111,6 +115,7 @@ int taiMiscCore::RunPending() {
 
 void taiMiscCore::WaitProc() {
   if(taMisc::in_waitproc) return; // actually no recursive waitproc!!!
+  if(taMisc::in_eventproc) return; // and don't do while in event proc!
 
   taMisc::in_waitproc++;
 

@@ -569,6 +569,7 @@ public:
   static ContextFlag    in_plugin_init; // #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading typeinfo for a plugin
   static ContextFlag    in_shutdown;    // #READ_ONLY #NO_SAVE #NO_SHOW true if currently shutting down and cleaning up
   static ContextFlag    in_waitproc; // #READ_ONLY #NO_SAVE #NO_SHOW true if we are inside a delayed wait processing function and thus should NOT do ProcessEvents or other async operations
+  static ContextFlag    in_eventproc; // #READ_ONLY #NO_SAVE #NO_SHOW true if we are inside a process events or run pending function and thus should NOT do wait proc events..
   static ContextFlag    no_auto_expand; // #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 

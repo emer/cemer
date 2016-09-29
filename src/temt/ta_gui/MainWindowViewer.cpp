@@ -603,6 +603,7 @@ bool MainWindowViewer::SelectT3ViewTabName_temp(const String& tab_nm) {
     iT3PanelViewer* itv = pv->widget();
     int cur_tab_no = itv->CurrentTabNo();
     bool rval = itv->SetCurrentTabName(tab_nm);
+    taMisc::ProcessEvents();
     if(revert_to_tab_no < 0) { // only do this if not already scheduled!
       revert_to_tab_no = cur_tab_no;
       tabMisc::DelayedFunCall_gui(this, "RevertToPrevT3TabNo");
