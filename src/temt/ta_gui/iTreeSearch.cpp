@@ -23,6 +23,7 @@
 #include <iTreeViewItem>
 #include <iLineEdit>
 #include <iMenuButton>
+#include <iActionMenuButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -43,11 +44,11 @@ void iTreeSearch::Constr() {
   lay->setMargin(0);
   lay->setSpacing(0);
   
-  srch_mode_button = new QToolButton();
-  srch_mode_button->setPopupMode(QToolButton::MenuButtonPopup);
+  srch_mode_button = new iActionMenuButton();
   srch_bar->addWidget(srch_mode_button);
   
-  find_action = new QAction("Find/Replace", this);
+  find_action = new QAction("Find", this);
+  replace_action = new QAction("Find/Replace", this);
   find_deep_action = new QAction("Find Deep", this);
   
   srch_mode_menu = new QMenu(this);
@@ -59,12 +60,12 @@ void iTreeSearch::Constr() {
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
   repl_text = new iLineEdit();
-  srch_bar->addWidget(repl_text);
+  repl_text_action = srch_bar->addWidget(repl_text);
   
   srch_nfound = new QLabel(" 0");
   srch_nfound->setFont(taiM->nameFont(font_size));
   srch_nfound->setToolTip(taiMisc::ToolTipPreProcess("Number of items found"));
-  srch_bar->addWidget(srch_nfound);
+  srch_nfound_action = srch_bar->addWidget(srch_nfound);
   
   srch_clear = srch_bar->addAction("x");
   srch_clear->setToolTip(taiMisc::ToolTipPreProcess("Clear search text and highlighting"));
@@ -76,8 +77,9 @@ void iTreeSearch::Constr() {
   repl_next->setToolTip(taiMisc::ToolTipPreProcess("Replace current selection, then find next occurrence"));
   
   srch_mode_menu->addAction(find_action);
+  srch_mode_menu->addAction(replace_action);
   srch_mode_menu->addAction(find_deep_action);
-  
+
   connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
   connect(srch_prev, SIGNAL(triggered()), this, SLOT(srch_prev_clicked()) );
   connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );
@@ -87,7 +89,11 @@ void iTreeSearch::Constr() {
   connect(tree_view, SIGNAL(TreeStructToUpdate()), this, SLOT(treeview_to_updt()) );
   
   connect(find_action, SIGNAL(triggered()), this, SLOT(TextFindSelected()));
+  connect(replace_action, SIGNAL(triggered()), this, SLOT(TextReplaceSelected()));
   connect(find_deep_action, SIGNAL(triggered()), this, SLOT(DeepFindSelected()));
+  
+  srch_bar->removeAction(repl_text_action);  // find is default state - don't show replace
+  srch_bar->removeAction(repl_next);
 }
 
 iTreeSearch::iTreeSearch(QWidget* parent) : QWidget(parent) {
@@ -219,6 +225,7 @@ void iTreeSearch::selectCurrent(bool replace) {
 }
 
 void iTreeSearch::srch_text_entered() {
+  repl_text->hide();
   Search(search_mode);
 }
 
@@ -271,14 +278,23 @@ void iTreeSearch::srch_prev_clicked() {
 
 void iTreeSearch::TextFindSelected() {
   search_mode = TEXT;
-  repl_text->setEnabled(true);
-  repl_next->setEnabled(true);  // R>
+  srch_bar->removeAction(repl_next);
+  srch_bar->removeAction(repl_text_action);
+
 }
 
 void iTreeSearch::DeepFindSelected() {
   search_mode = DEEP;
-  repl_text->setEnabled(false);
-  repl_next->setEnabled(false);  // R>
+  repl_text->hide();
+  srch_bar->removeAction(repl_next);
+  srch_bar->removeAction(repl_text_action);
+}
+
+void iTreeSearch::TextReplaceSelected() {
+  search_mode = TEXT;
+  srch_bar->addAction(repl_next);
+  srch_bar->insertAction(srch_nfound_action, repl_text_action);
+  
 }
 
 

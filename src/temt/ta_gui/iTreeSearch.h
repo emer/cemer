@@ -33,9 +33,9 @@ class iLineEdit; //
 class iTreeView; //
 class iTreeViewItem; //
 class iMenuButton; //
+class iActionMenuButton; //
 
 class QToolBar; //
-class QToolButton; //
 class QLabel; //
 class QMenu; //
 
@@ -56,15 +56,17 @@ public:
   iLineEdit*            srch_text;
   iLineEdit*            repl_text;  // this text replaces srch_text in replace mode
   QLabel*               srch_nfound;
+  iActionMenuButton*    srch_mode_button;
+  QMenu*                srch_mode_menu;
   QAction*              srch_clear;
   QAction*              srch_prev;
   QAction*              srch_next;
   QAction*              repl_next;  // replace the current selection and move to next selection
-  
-  QToolButton*          srch_mode_button;
-  QMenu*                srch_mode_menu;
+  QAction*              repl_text_action; // this is the iLineEdit for entering the replace text
+  QAction*              srch_nfound_action; // we need the action so we can do an insert just before this label
   QAction*              find_action;
   QAction*              find_deep_action;
+  QAction*              replace_action;
   
   enum SearchMode       search_mode;
   
@@ -97,6 +99,7 @@ public:
   void                  repl_next_clicked();
   void                  srch_prev_clicked();
   void                  TextFindSelected();
+  void                  TextReplaceSelected();
   void                  DeepFindSelected();
   
 private:
