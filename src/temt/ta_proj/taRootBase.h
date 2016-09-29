@@ -181,6 +181,8 @@ public:
 
   virtual bool  OpenProjectFromWeb(const String& proj_file_name, const String& wiki_name);
   // #CAT_File upload a list of files associated with project to the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
+  virtual void  DelayedOpenProject();
+  // #EXPERT open project in event loop
 
   
 #ifdef DMEM_COMPILE
@@ -224,6 +226,7 @@ public:
 
 protected:
   static int            console_options; //#IGNORE taMisc::ConsoleOptions
+  String                delayed_proj_open; // #IGNORE file to open in event loop
 
   static bool           Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
   static bool           Startup_InitTA_InitUserAppDir();  // #IGNORE once found

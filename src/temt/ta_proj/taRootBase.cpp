@@ -2538,8 +2538,14 @@ bool taRootBase::OpenProjectFromWeb(const String& proj_file_name, const String& 
   taMisc::Busy();
   taMediaWiki::DownloadFile(act_wiki_name, proj_file_name, proj_file);
   taMisc::DoneBusy();
-  taBase* el = NULL;
-  projects.Load(proj_file, &el);
-  taMisc::Confirm("The project has been downloaded and stored in your Desktop directory. Please resave project in an appropriate location.");
+  delayed_proj_open = proj_file;
+  tabMisc::DelayedFunCall_gui(this, "DelayedOpenProject");
   return true;
+}
+
+void taRootBase::DelayedOpenProject() {
+  if(delayed_proj_open.empty()) return;
+  taBase* el = NULL;
+  projects.Load(delayed_proj_open, &el);
+  delayed_proj_open = "";
 }

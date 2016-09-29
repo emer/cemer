@@ -272,6 +272,7 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iSynchronousNetRequest.h
 
   iMenuButton.h
+  iActionMenuButton.h
   iContextMenuButton.h
   iColorButton.h
   iCheckBox.h
@@ -766,6 +767,7 @@ set(ta_gui_SRCS_NOMAKETA
   iSynchronousNetRequest.cpp
 
   iMenuButton.cpp
+  iActionMenuButton.cpp
   iHiLightButton.cpp
   iContextMenuButton.cpp
   iColorButton.cpp
