@@ -1556,7 +1556,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   laysp->avg_act.targ_init = 0.25f;
   laysp->avg_act.fixed = true;
   laysp->inhib_misc.self_fb = 0.3f;
-  laysp->decay.trial = 0.0f;
+  laysp->decay.trial = 1.0f;
 
   dasp->SetUnique("inhib_misc", true);
   dasp->inhib_misc.self_fb = 0.8f; // only relevant for PPTg units
