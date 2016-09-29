@@ -66,7 +66,7 @@ TestInitialiseIdentical1ThreadFlag
     ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise2_1.wts
     Should Match	"${diff.stdout}"		"Files ./test-projects/TestRandomWeightsInitialise0_0.wts and ./test-projects/TestRandomWeightsInitialise2_1.wts differ"
 
-    Restart Emergent
+    Restart Emergent        n_threads=2
 
     Set Emergent Var		TestInitialiseWeights	single_threaded_init	true
     Set Emergent Var		TestInitialiseWeights	batch_no	0
@@ -80,6 +80,22 @@ TestInitialiseIdentical1ThreadFlag
     ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise3_0.wts
     Should Match	"${diff.stdout}"		""
     ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise4_1.wts
+    Should Match	"${diff.stdout}"		""
+
+    Restart Emergent        n_threads=3
+
+    Set Emergent Var		TestInitialiseWeights	single_threaded_init	true
+    Set Emergent Var		TestInitialiseWeights	batch_no	0
+    Set Emergent Var		TestInitialiseWeights	test_no		10
+    Run Emergent Program	TestInitialiseWeights
+
+    Set Emergent Var		TestInitialiseWeights	batch_no	1
+    Set Emergent Var		TestInitialiseWeights	test_no		11
+    Run Emergent Program	TestInitialiseWeights
+
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise10_0.wts
+    Should Match	"${diff.stdout}"		""
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise11_1.wts
     Should Match	"${diff.stdout}"		""
 
 TestInitialiseIdenticalMultiThreaded
