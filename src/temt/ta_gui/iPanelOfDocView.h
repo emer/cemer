@@ -54,6 +54,7 @@ public:
   QAction*              go_but; // load web page
   QProgressBar*         prog_bar;   // progress bar
   QAction*              seturl_but; // save this location as our url!
+  QAction*              ext_brow_but; // open in external browser button..
   QLabel*               find_lbl;
   iLineEdit*            find_text;
   QAction*              find_clear;
@@ -99,6 +100,7 @@ protected slots:
   void                  doc_bakPressed();
   void                  doc_fwdPressed();
   void                  doc_seturlPressed();
+  void                  doc_extBrowPressed();
   void                  doc_loadStarted();
   void                  doc_loadFinished(bool ok);
 

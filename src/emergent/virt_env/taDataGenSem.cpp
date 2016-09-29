@@ -273,14 +273,38 @@ void taDataGenSem::SemVecGenGA_Mate(DataTable* kid, const String& dest_col,
 
 float taDataGenSem::SemVecGen_DistMatDist(DataTable* dist_mat, DataTable* dist_mat2,
 					  DataTable* delta_mat) {
-  int n_vecs = dist_mat->rows;	// number of vectors..
+  bool d1_1c = (dist_mat->rows == 1); // one cell
+  float_MatrixPtr d1vec;
+  int n_vecs;
+  if(d1_1c) {
+    d1vec = (float_Matrix*)dist_mat->GetValAsMatrix(0, 0);
+    n_vecs = d1vec->dim(0);
+  }
+  else {
+    n_vecs = dist_mat->rows;
+  }
+
+  bool d2_1c = (dist_mat2->rows == 1); // one cell
+  float_MatrixPtr d2vec;
+  if(d2_1c) {
+    d2vec = (float_Matrix*)dist_mat2->GetValAsMatrix(0, 0);
+  }
+  
   float ss_norm = 1.0f / (float)(n_vecs * n_vecs);
   float ss_dist = 0.0f;
   // now add up the ss-distances between the distance table and the original distance table
   for(int row=0; row < n_vecs; row++) {
     for(int col=1; col < n_vecs+1; col++) {
-      float org_dist = dist_mat->GetValAsFloat(col, row);
-      float indv_dist = dist_mat2->GetValAsFloat(col, row);
+      float org_dist;
+      if(d1_1c)
+        org_dist = d1vec->FastEl2d(row, col-1);
+      else
+        org_dist = dist_mat->GetValAsFloat(col, row);
+      float indv_dist;
+      if(d2_1c)
+        indv_dist = d2vec->FastEl2d(row, col-1);
+      else
+        indv_dist = dist_mat2->GetValAsFloat(col, row);
       float dst = org_dist - indv_dist;
       if(delta_mat) {
 	delta_mat->SetValAsFloat(dst, col, row);
@@ -568,8 +592,8 @@ bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
   // then compute softmax on flip probs and actually flip a bit
   for(int sidx=0;sidx < n_flip_bit; sidx++) {
     int srow = sorder[sidx];
-    float_Matrix* kmat = (float_Matrix*)dest_tmp_vec_da->GetValAsMatrix(srow);
-    taBase::Ref(kmat);
+    float_MatrixPtr kmat;
+    kmat = (float_Matrix*)dest_tmp_vec_da->GetValAsMatrix(srow);
     float flip_on_sum = 0.0f;
     float flip_off_sum = 0.0f;
     for(int k=0;k<vec_bits;k++) {
@@ -619,8 +643,6 @@ bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
       dest_vec_da->SetValAsFloatM(-1.0f, srow, bit_off);
       dest_vec_da->SetValAsFloatM(1.0f, srow, bit_on);
     }
-
-    taBase::unRefDone(kmat);
   }
   return true;
 }
@@ -697,8 +719,8 @@ bool taDataGenSem::SemVecGenLearn_FlipOff(DataTable* dest, DataTable* dest_tmp,
   // then compute softmax on flip probs and actually flip a bit
   for(int sidx=0;sidx < n_flip_bit; sidx++) {
     int srow = sorder[sidx];
-    float_Matrix* kmat = (float_Matrix*)dest_tmp_vec_da->GetValAsMatrix(srow);
-    taBase::Ref(kmat);
+    float_MatrixPtr kmat;
+    kmat = (float_Matrix*)dest_tmp_vec_da->GetValAsMatrix(srow);
     float flip_on_sum = 0.0f;
     float flip_off_sum = 0.0f;
     for(int k=0;k<vec_bits;k++) {
@@ -743,8 +765,6 @@ bool taDataGenSem::SemVecGenLearn_FlipOff(DataTable* dest, DataTable* dest_tmp,
       dest_vec_da->SetValAsFloatM(-1.0f, srow, bit_off);
       dest_vec_da->SetValAsFloatM(1.0f, srow, bit_on);
     }
-
-    taBase::unRefDone(kmat);
   }
   return true;
 }

@@ -63,6 +63,9 @@ taTypeDef_Of(EnumDef);
 #include <QDateTime>
 #include <QNetworkInterface>
 #include <QNetworkAddressEntry>
+#include <QDesktopServices>
+#include <iMainWindowViewer>
+#include <QUrl>
 #include <QHostAddress>
 #include <QList>
 #include <QThread>
@@ -3232,6 +3235,25 @@ int taMisc::GetUniqueFileNumber(int st_no, const String& prefix, const String& s
   strm.open(fname, ios::out);   // this should hold the place for the file
   strm.close(); strm.clear();           // while it is being saved, etc..
   return i;
+}
+
+bool taMisc::OpenURL(const String& url, bool internal_browser) {
+#ifndef NO_TA_BASE
+  if(!internal_browser) {
+    QDesktopServices::unsetUrlHandler("http");
+    QDesktopServices::unsetUrlHandler("https");
+  }
+  
+  bool rval = QDesktopServices::openUrl(url.toQString());
+  
+  if(!internal_browser) {
+    QDesktopServices::setUrlHandler("http", taiMisc::main_window, "httpUrlHandler");
+    QDesktopServices::setUrlHandler("https", taiMisc::main_window, "httpUrlHandler");
+  }
+  return rval;
+#else
+  return false;
+#endif
 }
 
 String taMisc::GetWikiURL(const String& wiki_name, bool add_index) {

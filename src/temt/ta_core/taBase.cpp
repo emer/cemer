@@ -2330,8 +2330,10 @@ bool taBase::CopyFrom(const taBase* cp) {
   // copyfrom is used widely but really Copy has the best semantics and is the one and only
   bool rval = false;
   String saved_name = this->GetName();
+  StructUpdate(true); // wrap in struct update so name gets set -- CopyCustom otherwise does it..
   rval = CanDoCopy_impl(cp, false, true);
-  this->SetName(saved_name);
+  this->SetName(saved_name);  
+  StructUpdate(false);
   return rval;
   // // this one is easy, since it is really just the same as Copy, but with warnings
   // if (!CanCopy(cpy_from, false)) return false;

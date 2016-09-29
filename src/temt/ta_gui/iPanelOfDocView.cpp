@@ -106,6 +106,9 @@ iPanelOfDocView::iPanelOfDocView()
   seturl_but = url_bar->addAction("Set");
   seturl_but->setToolTip(taiMisc::ToolTipPreProcess("Set current web page to be the URL for this document -- each document is associated with a single URL"));
 
+  ext_brow_but = url_bar->addAction("Ext");
+  ext_brow_but->setToolTip(taiMisc::ToolTipPreProcess("Open this page in your default external browser -- sometimes easier for editing -- magic links won't work however"));
+
   // find within item
   url_bar->addSeparator();
   find_lbl = taiM->NewLabel("find:", wb_widg, font_spec);
@@ -135,6 +138,7 @@ iPanelOfDocView::iPanelOfDocView()
   connect(url_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(wiki_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(seturl_but, SIGNAL(triggered()), this, SLOT(doc_seturlPressed()) );
+  connect(ext_brow_but, SIGNAL(triggered()), this, SLOT(doc_extBrowPressed()) );
 
   connect(find_clear, SIGNAL(triggered()), this, SLOT(find_clear_clicked()) );
   connect(find_next, SIGNAL(triggered()), this, SLOT(find_next_clicked()) );
@@ -264,6 +268,13 @@ void iPanelOfDocView::doc_seturlPressed() {
 
   String url = webview->url().toString();
   doc_->SetURL(url);
+}
+
+void iPanelOfDocView::doc_extBrowPressed() {
+  taDoc* doc_ = this->doc();
+  if(!doc_) return;
+
+  taMisc::OpenURL(webview->url().toString(), false); // false = use external browser!
 }
 
 void iPanelOfDocView::find_clear_clicked() {

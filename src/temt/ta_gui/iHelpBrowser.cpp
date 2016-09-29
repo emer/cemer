@@ -209,6 +209,9 @@ void iHelpBrowser::init() {
   actStop = tool_bar->addAction("X");
   actStop->setToolTip(taiMisc::ToolTipPreProcess("Stop"));
 
+  actExt = tool_bar->addAction("Ext");
+  actExt->setToolTip(taiMisc::ToolTipPreProcess("Open this page in your default external browser -- sometimes easier for editing -- magic links won't work however"));
+  
   // find within item
 //   find_lbl = taiM->NewLabel("| find:", wid_tab, font_spec);
   tool_bar->addSeparator();
@@ -264,6 +267,7 @@ void iHelpBrowser::init() {
 
   connect(actGo, SIGNAL(triggered()), this, SLOT(go_clicked()) );
   connect(actStop, SIGNAL(triggered()), this, SLOT(stop_clicked()) );
+  connect(actExt, SIGNAL(triggered()), this, SLOT(ext_clicked()) );
   connect(btnAdd, SIGNAL(clicked()), this, SLOT(addTab_clicked()) );
   connect(url_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
   connect(actBack, SIGNAL(triggered()), this, SLOT(back_clicked()) );
@@ -405,9 +409,6 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
   tab->setCurrentIndex(tidx); // not automatic
   url_text->setText("");// something else has to make it valid
 
-  connect(brow, SIGNAL(statusBarMessage(const QString&)),
-          status_bar, SLOT(showMessage(const QString&)) );
-
 #ifdef USE_QT_WEBENGINE
   connect(brow,
           SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)), this,
@@ -417,6 +418,9 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
 
   QWebPage* wp = brow->page();
   
+  connect(brow, SIGNAL(statusBarMessage(const QString&)),
+          status_bar, SLOT(showMessage(const QString&)) );
+
   wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
   connect(brow, SIGNAL(linkClicked(const QUrl&)),
     this, SLOT(brow_linkClicked(const QUrl&)) );
@@ -601,6 +605,12 @@ void iHelpBrowser::go_clicked() {
   if(urltxt.empty()) return;
   urltxt = taMisc::FixURL(urltxt);
   StatLoadUrl(urltxt);
+}
+
+void iHelpBrowser::ext_clicked() {
+  String urltxt = url_text->text();
+  if(urltxt.empty()) return;
+  taMisc::OpenURL(urltxt, false); // false = external browser
 }
 
 void iHelpBrowser::ItemChanged(QTreeWidgetItem* item) {

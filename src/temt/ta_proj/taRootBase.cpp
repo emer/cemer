@@ -1750,17 +1750,16 @@ bool taRootBase::Startup_MakeMainWin() {
   }
   vwr->ViewWindow();
 
-  // TODO: 'bw' stands for base window??
-  iMainWindowViewer* bw = vwr->viewerWindow();
-  if (bw) { //note: already constrained to max screen size, so we don't have to check
+  iMainWindowViewer* rootwin = vwr->viewerWindow();
+  if (rootwin) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
-    taiMisc::main_window = bw;
+    taiMisc::main_window = rootwin;
     if(taiMisc::net_access_mgr)
-      taiMisc::net_access_mgr->setMainWindow(bw);
-    QDesktopServices::setUrlHandler("ta", bw, "taUrlHandler");
-    QDesktopServices::setUrlHandler("http", bw, "httpUrlHandler");
-    QDesktopServices::setUrlHandler("https", bw, "httpUrlHandler");
-    bw->show(); // when we start event loop
+      taiMisc::net_access_mgr->setMainWindow(rootwin);
+    QDesktopServices::setUrlHandler("ta", rootwin, "taUrlHandler");
+    QDesktopServices::setUrlHandler("http", rootwin, "httpUrlHandler");
+    QDesktopServices::setUrlHandler("https", rootwin, "httpUrlHandler");
+    rootwin->show(); // when we start event loop
   }
 
   // needs extra time to process window opening
@@ -1768,7 +1767,7 @@ bool taRootBase::Startup_MakeMainWin() {
   // tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 
-  bw->setFocus();
+  rootwin->setFocus();
 
   //TODO: following prob not necessary
   //  if (taMisc::gui_active) taiMisc::OpenWindows();

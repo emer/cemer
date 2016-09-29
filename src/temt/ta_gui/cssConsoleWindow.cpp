@@ -306,11 +306,12 @@ void cssConsoleWindow::windowActivateByName(const Variant& title_) {
 }
 
 void cssConsoleWindow::changeEvent(QEvent* ev) {
-  if(ev->type() == QEvent::ActivationChange) {
-    if (isActiveWindow()) {
-      UpdateUi();
-    }
-  }
+  // this is bad: keeps resetting prompt all the time
+  // if(ev->type() == QEvent::ActivationChange) {
+  //   if (isActiveWindow()) {
+  //     UpdateUi();
+  //   }
+  // }
   inherited::changeEvent(ev);
 }
 
@@ -321,6 +322,7 @@ void cssConsoleWindow::UpdateUi() {
 void cssConsoleWindow::showEvent(QShowEvent* e) {
   inherited::showEvent(e);
   QTimer::singleShot(150, this, SLOT(Clear()));
+  taMisc::Info("show clear");
 }
 
 void cssConsoleWindow::Clear() {

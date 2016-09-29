@@ -92,6 +92,7 @@ public:
   QProgressBar*           prog_bar;
   QAction*                actGo;
   QAction*                actStop;
+  QAction*                actExt;
   QLabel*                 find_lbl;
   iLineEdit*              find_text;
   QAction*                find_clear;
@@ -151,8 +152,9 @@ protected slots:
   void                  brow_urlChanged(const QUrl& url);
   void                  page_unsupportedContent(QNetworkReply* reply);
   void                  filter_textChanged(const QString& text);
-  void                  go_clicked(); // or return in url_text
-  void                  stop_clicked(); // or return in url_text
+  void                  go_clicked();
+  void                  stop_clicked();
+  void                  ext_clicked(); 
   void                  show_timeout(); // for scrolling to item
 
   void                  find_clear_clicked();

@@ -1000,6 +1000,9 @@ public:
   static int    GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix);
   // #CAT_File get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
 
+  static bool   OpenURL(const String& url, bool internal_browser = true);
+  // #CAT_File open given url, using internal (help)( browser for http / https links if internal_browser is true -- otherwise uses users default external browser
+  
   static String GetWikiURL(const String& wiki_name, bool add_index=true);
   // #CAT_File get the url for a given wiki name, optionally adding /index.php/ if add_index is true
   static String FixURL(const String& url_str);
