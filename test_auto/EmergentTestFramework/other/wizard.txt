@@ -71,3 +71,9 @@ PVLV
     Ensure Emergent Free
     Run Emergent Program	TestPVLV
     Run Emergent Program	MasterTrain
+
+PBWM
+    Restart Emergent
+    Ensure Emergent Free
+    Run Emergent Program	TestPBWM
+    Run Emergent Program	MasterTrain
