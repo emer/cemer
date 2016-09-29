@@ -2540,6 +2540,7 @@ bool taRootBase::OpenProjectFromWeb(const String& proj_file_name, const String& 
   taMisc::DoneBusy();
   delayed_proj_open = proj_file;
   tabMisc::DelayedFunCall_gui(this, "DelayedOpenProject");
+  taMisc::Info("Opening project from:", proj_file, "now -- may take a few moments..");
   return true;
 }
 
