@@ -34,6 +34,7 @@ INHERITED(SpecMemberBase)
 public:
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
   bool          msn_deriv;      // #DEF_true use the sigmoid derivative factor msn * (1-msn) in modulating learning -- otherwise just multiply by msn activation directly -- this is generally beneficial for learning to prevent weights from continuing to increase when activations are already strong (and vice-versa for decreases)
+  float         max_vs_deep_mod; // for VS matrix TRACE_NO_THAL_VS and DA_HEBB_VS learning rules, this is the maximum value that the deep_mod_net modulatory inputs from the basal amygdala (up state enabling signal) can contribute to learning
 
   inline float  MsnActLrnFactor(const float msn_act) {
     if(!msn_deriv) return msn_act;
@@ -148,7 +149,7 @@ public:
     DA_HEBB_VS,                 // ventral striatum version of DA_HEBB, which uses MAX(deep_lrn, ru_act) for recv term in dopamine * send * recv activation triplet to drive learning
     TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine, and the amount of dopamine and/or any above-threshold ach from TAN units resets the trace
     TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
-    TRACE_NO_THAL_VS,           // ventral striatum version of TRACE_NO_THAL, which uses MAX(deep_lrn, ru_act) for recv term to set trace
+    TRACE_NO_THAL_VS,           // ventral striatum version of TRACE_NO_THAL, which uses MAX(MIN(deep_mod_net, max_vs_deep_mod), ru_act) for recv term to set trace
     WM_DEPENDENT,               // learning depends on a working memory trace.. 
   };
     
@@ -223,8 +224,9 @@ public:
   // #IGNORE
   inline void C_Compute_dWt_DaHebbVS
     (float& dwt, const float da_p, const bool d2r, const float ru_act,
-     const float deep_lrn, const float su_act, const float lrate_eff) {
-    dwt += lrate_eff * GetDa(da_p, d2r) * fmaxf(ru_act, deep_lrn) * su_act;
+     const float deep_mod_net, const float su_act, const float lrate_eff) {
+    float eff_ru_act = fmaxf(ru_act, fminf(deep_mod_net, trace.max_vs_deep_mod));
+    dwt += lrate_eff * GetDa(da_p, d2r) * eff_ru_act * su_act;
   }
   // #IGNORE
 
@@ -278,7 +280,7 @@ public:
   
   inline void C_Compute_dWt_Trace_NoThalVS
   (float& dwt, float& ntr, float& tr, const float da_p, const float ach, const bool d2r,
-   const float ru_act, const float deep_lrn, const float su_act, const float lrate_eff) {
+   const float ru_act, const float deep_mod_net, const float su_act, const float lrate_eff) {
     
     const float da = GetDa(da_p, d2r);
     dwt += lrate_eff * da * tr;
@@ -287,7 +289,8 @@ public:
       tr = 0.0f;
     }
     
-    ntr = trace.MsnActLrnFactor(fmaxf(ru_act, deep_lrn)) * su_act;
+    float eff_ru_act = fmaxf(ru_act, fminf(deep_mod_net, trace.max_vs_deep_mod));
+    ntr = trace.MsnActLrnFactor(eff_ru_act) * su_act;
     
     float decay_factor = fabs(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;
@@ -346,7 +349,7 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         const float ru_act = GetActVal(ru, ru_act_var);
-        C_Compute_dWt_DaHebbVS(dwts[i], ru->da_p, d2r, ru_act, ru->deep_lrn,
+        C_Compute_dWt_DaHebbVS(dwts[i], ru->da_p, d2r, ru_act, ru->deep_mod_net,
                                su_act, lrate_eff);
       }
       break;
@@ -391,7 +394,7 @@ public:
         const float ru_act = GetActVal(ru, ru_act_var);
         const float ach = q4 ? ru->ach : 0.0f;
         C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ach, d2r,
-                                     ru_act, ru->deep_lrn, su_act, lrate_eff);
+                                     ru_act, ru->deep_mod_net, su_act, lrate_eff);
       }
       break;
     }

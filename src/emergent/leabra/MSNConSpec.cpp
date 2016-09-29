@@ -26,6 +26,7 @@ void MSNTraceSpec::Initialize() {
 void MSNTraceSpec::Defaults_init() {
   ach_reset_thr = 0.5f;
   msn_deriv = true;
+  max_vs_deep_mod = 0.5f;
 }
 
 // void MSNTraceSpec::UpdateAfterEdit_impl() {
