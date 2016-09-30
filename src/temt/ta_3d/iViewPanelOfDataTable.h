@@ -49,6 +49,9 @@ public: // ISigLinkClient interface
   TypeDef*     GetTypeDef() const override {return &TA_iViewPanelOfDataTable;}
 
 protected:
+
+  void         UpdatePanel_impl() override;
+  
 };
 
 #endif // iViewPanelOfDataTable_h

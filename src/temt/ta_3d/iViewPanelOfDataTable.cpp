@@ -51,6 +51,11 @@ iViewPanelOfDataTable::iViewPanelOfDataTable(DataTableView* lv)
 iViewPanelOfDataTable::~iViewPanelOfDataTable() {
 }
 
+void iViewPanelOfDataTable::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl();
+  meth_but_mgr->GetImage();
+}
+
 String iViewPanelOfDataTable::TabText() const {
   if (m_dv) {
     String rval = m_dv->GetLabel();

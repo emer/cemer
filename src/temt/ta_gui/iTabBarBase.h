@@ -44,6 +44,12 @@ public slots:
   virtual bool  TabWasSelected() { return tab_was_selected; }
 
 protected:
+  QList<QRect> tabRectangle;
+  
+  void          paintEvent(QPaintEvent *event) override;
+  void          resizeEvent(QResizeEvent *event) override;
+  void          mousePressEvent(QMouseEvent *event) override;
+    
   void          keyPressEvent(QKeyEvent* e) override;
   void          mouseReleaseEvent(QMouseEvent * event) override;
   

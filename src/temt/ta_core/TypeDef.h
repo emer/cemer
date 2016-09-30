@@ -458,7 +458,7 @@ public:
   // get the name of enum with given value in enum list of given type (e.g., enum defined within class)
   String        GetEnumLabel(const String& enum_tp_nm, int enum_val) const;
   // get the label (for printing or other display purposes) of enum with given value in enum list of given type (e.g., enum defined within class)
-  const String  Get_C_EnumString(int enum_val, bool show_scope=true) const;
+  const String  Get_C_EnumString(int enum_val, bool show_scope=true, StrContext vc = SC_DEFAULT) const;
   // get a C-code string representing the given value in enum list of given type (e.g., enum defined within class); for BIT types, will compose the bits and cast; worst case will cast int to type
   String        GetEnumPrefix() const;
   // if all enum names start with the same prefix before an _ (underbar), then this returns that prefix, else an empty string -- useful for removing that prefix etc

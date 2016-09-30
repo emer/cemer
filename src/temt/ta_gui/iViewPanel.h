@@ -58,75 +58,74 @@ public:
   iHiLightButton*          btnRevert;
   iHiLightButton*          btnCopyFrom;
 
-  int                   vp_flags;
-  bool                  read_only; // set true if we are
+  int            vp_flags;
+  bool           read_only; // set true if we are
 
-  taDataView*           dv() {return m_dv;} // can be statically replaced with subclass
-  bool         lockInPlace() const override {return true;}
-    // true if panel should not be replaced, ex. if dirty, or viewpanel
-  taiSigLink* par_link() const override {return NULL;} // n/a
-  MemberDef*   par_md() const override {return NULL;}
+  taDataView*    dv() {return m_dv;} // can be statically replaced with subclass
+  bool           lockInPlace() const override {return true;} // true if panel should not be replaced, ex. if dirty, or viewpanel
+  taiSigLink*    par_link() const override {return NULL;} // n/a
+  MemberDef*     par_md() const override {return NULL;}
   iPanelViewer*  tabViewerWin() const override;
-  bool         isViewPanelFrame() const override {return true;}
+  bool           isViewPanelFrame() const override {return true;}
 
 
-  void         ClearDataPanelSet() override {m_dps = NULL;}
-  void                  MakeButtons(QBoxLayout* par_lay = NULL, QWidget* par_widg = NULL);
-    // make the Apply/Revert btns, par=this if NULL, if no lay, use par_widg
-  void         InitPanel() override; // we do a more elaborate check for m_dv and !updating
-  void         UpdatePanel() override; // ditto
-  void         ClosePanel() override;
-  String       TabText() const override; // text for the panel tab -- usually just the text of the sel_node
+  void           ClearDataPanelSet() override {m_dps = NULL;}
+  void           MakeButtons(QBoxLayout* par_lay = NULL, QWidget* par_widg = NULL);
+    // make the Avert btns, par=this if NULL, if no lay, use par_widg
+  void           InitPanel() override; // we do a more elaborate check for m_dv and !updating
+  void           UpdatePanel() override; // ditto
+  void           ClosePanel() override;
+  String         TabText() const override; // text for the panel tab -- usually just the text of the sel_node
 
   iViewPanel(taDataView* dv_);
     // NOTE: dv will be nulled out if it destroys
   ~iViewPanel();
 
 public slots:
-  void                  Apply();
-  void                  Revert();
-  void                  CopyFrom();
+  void           Apply();
+  void           Revert();
+  void           CopyFrom();
 
 public: // ISigLinkClient interface
-  void*        This() override {return (void*)this;} //
-  void         SigLinkDestroying(taSigLink* dl) override; //note: dl is on the view, not underlying data
-  TypeDef*     GetTypeDef() const override {return &TA_iViewPanel;}
+  void*         This() override {return (void*)this;} //
+  void          SigLinkDestroying(taSigLink* dl) override; //note: dl is on the view, not underlying data
+  TypeDef*      GetTypeDef() const override {return &TA_iViewPanel;}
 
 public: // IWidgetHost i/f -- some delegate up to mommy
-  const iColor          colorOfCurRow() const override; // #IGNORE probably not used, we just return our own bg color
-  bool                  HasChanged() override {return m_modified;}
-  bool                  isConstructed() override {return true;}
-  bool                  isModal() override {return false;} // never for us
-  bool                  isReadOnly() override {return read_only;}
+  const iColor  colorOfCurRow() const override; // #IGNORE probably not used, we just return our own bg color
+  bool          HasChanged() override {return m_modified;}
+  bool          isConstructed() override {return true;}
+  bool          isModal() override {return false;} // never for us
+  bool          isReadOnly() override {return read_only;}
   TypeItem::ShowMembs   show() const override;
     // used by polydata
   iMainWindowViewer*    window() const {return (tabView()) ? tabView()->viewerWindow() : NULL;}
-  void*                 Root() const override {return (void*)m_dv;} // (typical, could replace)
-  taBase*               Base() const override {return m_dv;} // (typical, could replace)
-  TypeDef*              GetRootTypeDef() const override {return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
-  void                  GetValue() override; // does setup, override the impl
-  void                  GetImage() override {UpdatePanel();}
+  void*         Root() const override {return (void*)m_dv;} // (typical, could replace)
+  taBase*       Base() const override {return m_dv;} // (typical, could replace)
+  TypeDef*      GetRootTypeDef() const override {return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
+  void          GetValue() override; // does setup, override the impl
+  void          GetImage() override {UpdatePanel();}
 public slots:
-  void                  Changed() override; // called by embedded item to indicate contents have changed
-  void                  Apply_Async() override;
+  void          Changed() override; // called by embedded item to indicate contents have changed
+  void          Apply_Async() override;
 
 protected:
-  taiWidget_List           dl; // add any taiWidget guys you make to this, so they get deleted
-  iViewPanelSet*        m_dps; // set if we are in a viewpanelset
-  taDataView*           m_dv;
-  int                   updating; // #IGNORE >0 used to suppress update-related widget signals
-  bool                  m_modified;
-  bool                  apply_req;
-  bool                  warn_clobber; // set if we get a notify and are already modified
+  taiWidget_List dl; // add any taiWidget guys you make to this, so they get deleted
+  iViewPanelSet* m_dps; // set if we are in a viewpanelset
+  taDataView*   m_dv;
+  int           updating; // #IGNORE >0 used to suppress update-related widget signals
+  bool          m_modified;
+  bool          apply_req;
+  bool          warn_clobber; // set if we get a notify and are already modified
 
-  void         customEvent(QEvent* ev_) override;
-  void         keyPressEvent(QKeyEvent* e) override;
+  void          customEvent(QEvent* ev_) override;
+  void          keyPressEvent(QKeyEvent* e) override;
 
-  virtual void          CopyFrom_impl() {}
-  virtual void          GetValue_impl() {}
-  void                  InternalSetModified(bool value); // does all the gui config
-  void         ResolveChanges_impl(CancelOp& cancel_op) override; //generic behavior
-  void                  UpdateButtons();
+  virtual void  CopyFrom_impl() {}
+  virtual void  GetValue_impl() {}
+  void          InternalSetModified(bool value); // does all the gui config
+  void          ResolveChanges_impl(CancelOp& cancel_op) override; //generic behavior
+  void          UpdateButtons();
 };
 
 #endif // iViewPanel_h

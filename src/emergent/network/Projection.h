@@ -172,7 +172,7 @@ public:
   virtual void  SaveWeights(const String& fname="");
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (leave fname empty to pull up file chooser)
   virtual bool  LoadWeights(const String& fname="", bool quiet = false);
-  // #BUTTON #MENU #EXT_wts #GHOST_OFF_flags:BUILT,INTACT #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual DataTable*    WeightsToTable(DataTable* dt, const String& col_nm = "",
                                        bool recv_wts = true);

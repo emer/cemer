@@ -217,7 +217,7 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     }
     else {
       // explicit value mode
-      String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_DEFAULT, true); // inline
+      String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_VALUE, true); // inline
       while (true) {
         String nxtval;
         if (val.contains(',')) {

@@ -19,10 +19,12 @@
 #include <taMisc>
 
 #include <QKeyEvent>
-
+#include <QStylePainter>
+#include <QStyleOptionTab>
 
 iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
   tab_was_selected = false;
+  setUsesScrollButtons(false);
 }
 
 void iTabBarBase::selectNextTab() {
@@ -75,6 +77,59 @@ void iTabBarBase::keyPressEvent(QKeyEvent* key_event) {
 void iTabBarBase::mouseReleaseEvent(QMouseEvent * event) {
   tab_was_selected = true;
   inherited::mouseReleaseEvent(event);
+}
+
+void iTabBarBase::paintEvent(QPaintEvent *event)
+{
+  QStylePainter p(this);
+
+  bool resized=false;
+  int moveIt = 0;
+  int nrRows = 1 ;
+  tabRectangle.clear();
+
+  for (int i=0; i< count(); i++) {
+    QStyleOptionTab tab;
+    initStyleOption(&tab, i);
+
+    if (tab.rect.right() > width()*nrRows) {
+      if (!resized) {
+        setGeometry(0, 0, width(), tab.rect.height()*(nrRows+1));
+        resized=true;
+      }
+      tab.rect.moveTo(moveIt, tab.rect.height()*nrRows);
+      if (tab.rect.right() > width()) {
+        nrRows++;
+        moveIt=0;
+        setGeometry(0, 0, width(), tab.rect.height()*(nrRows+1));
+        tab.rect.moveTo(moveIt, tab.rect.height()*nrRows);
+      }
+      moveIt+=tab.rect.width();
+    }
+    p.drawControl(QStyle::CE_TabBarTab, tab);
+
+    tabRectangle.append(tab.rect);
+  }
+}
+
+void iTabBarBase::resizeEvent(QResizeEvent *event)
+{
+  QTabBar::resizeEvent(event);
+  update();
+}
+
+void iTabBarBase::mousePressEvent(QMouseEvent *event)
+{
+  if (event->button() != Qt::LeftButton) {
+    event->ignore();
+    return;
+  }
+
+  for (int i=0; i<count(); i++) {
+    if (tabRectangle[i].contains(event->pos())) {
+      setCurrentIndex(i);
+    }
+  }
 }
 
 

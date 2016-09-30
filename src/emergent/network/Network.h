@@ -795,12 +795,12 @@ public:
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
 
   virtual void  SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
-  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #BUTTON #MENU #EXT_wts #COMPRESS #GHOST_OFF_flags:BUILT,INTACT #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual bool  LoadWeights(const String& fname="", bool quiet = false);
-  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+  // #BUTTON #MENU #EXT_wts #COMPRESS #GHOST_OFF_flags:BUILT,INTACT #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  SaveToWeights(Weights* wts);
-  // #BUTTON #MENU #NULL_OK #NULL_TEXT_NewWeightsObj write weight values out to given weights object (NULL = make a new one)
+  // #BUTTON #MENU #NULL_OK #GHOST_OFF_flags:BUILT,INTACT #NULL_TEXT_NewWeightsObj write weight values out to given weights object (NULL = make a new one)
   virtual bool  LoadFmWeights(Weights* wts, bool quiet = false);
   // #MENU #FROM_LIST_weights load weight values from given weights object
 
@@ -838,7 +838,7 @@ public:
     virtual void  Init_dWt_Thr(int thr_no);
     // #IGNORE
   virtual void  Init_Weights();
-  // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+  // #BUTTON #MENU #CONFIRM #GHOST_OFF_flags:BUILT,INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
     virtual void Init_Weights_Thr(int thr_no);
     // #IGNORE
     virtual void Init_Weights_1Thr();

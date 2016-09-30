@@ -469,6 +469,8 @@ iViewPanelOfNetwork::~iViewPanelOfNetwork()
 
 void iViewPanelOfNetwork::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
+  meth_but_mgr->GetImage();
+  
   ++updating;
   NetView* nv = getNetView(); // cache
   if (!nv) return;

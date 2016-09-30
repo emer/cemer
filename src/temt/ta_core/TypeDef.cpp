@@ -1324,7 +1324,7 @@ String TypeDef::GetEnumLabel(const String& enum_tp_nm, int enum_val) const {
   return "";
 }
 
-const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
+const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope, StrContext sc) const {
   STRING_BUF(rval, 80); // extends if needed
 
   // If rendering string for CSS, need to scope the enum value properly.
@@ -1340,7 +1340,9 @@ const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
   if (HasOption(opt_bits)) {
     for (int i = 0; i < enum_vals.size; ++i) {
       EnumDef* ed = enum_vals[i];
-      if (ed->HasOption("NO_BIT") || ed->HasOption("NO_SAVE")) continue;
+      if (ed->HasOption("NO_BIT")) continue;
+      if(sc != SC_VALUE && sc != SC_SEARCH)
+        if(ed->HasOption("NO_SAVE")) continue;
       if (enum_val & ed->enum_no) {
         if (!rval.empty()) rval.cat("|");
         rval.cat(scope_prefix).cat(ed->name);
@@ -1485,7 +1487,7 @@ String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
 {
   int enval = *static_cast<const int *>(base);
   bool show_scope = false;
-  return Get_C_EnumString(enval, show_scope);
+  return Get_C_EnumString(enval, show_scope, sc);
 }
 
 String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* memb_def,
