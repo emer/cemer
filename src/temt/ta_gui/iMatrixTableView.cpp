@@ -24,6 +24,7 @@
 #include <taMisc>
 #include <taiMisc>
 
+#include <QHeaderView>
 
 
 iMatrixTableView::iMatrixTableView(QWidget* parent)
@@ -31,6 +32,8 @@ iMatrixTableView::iMatrixTableView(QWidget* parent)
 {
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
           SLOT(this_customContextMenuRequested(const QPoint&)) );
+  
+  UpdateRowHeight();
 }
 
 taMatrix* iMatrixTableView::mat() const {
@@ -111,4 +114,19 @@ bool iMatrixTableView::isFixedRowCount() const {
   if (!mat) return true;
   return (!mat->canResize());
 }
+
+void iMatrixTableView::Refresh() {
+  UpdateRowHeight();
+  update();
+}
+
+void iMatrixTableView::UpdateRowHeight() {
+  QFont cur_font = QFont();
+  cur_font.setPointSize(taMisc::GetCurrentFontSize("table"));
+  QFontMetrics metrics(cur_font);
+  int max_pixels = metrics.height() + 2 * row_margin;
+  verticalHeader()->setDefaultSectionSize(max_pixels);
+}
+
+
 

@@ -37,8 +37,8 @@ INHERITED(QWidget)
   Q_OBJECT
 public:
   QVBoxLayout*          layOuter; // #IGNORE 
-  QHBoxLayout*            layDims; // #IGNORE
-  iMatrixTableView*       tv; // #IGNORE
+  QHBoxLayout*          layDims; // #IGNORE
+  iMatrixTableView*     tv; // #IGNORE
 
   void                  setMatrix(taMatrix* mat, bool pat_4d = false);
 
@@ -48,7 +48,7 @@ public:
   ~iMatrixEditor();
 
 protected:
-  taMatrix*             m_mat;
+  taMatrix*              m_mat;
 
 private:
   void          init();
