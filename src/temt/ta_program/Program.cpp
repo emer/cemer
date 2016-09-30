@@ -923,6 +923,7 @@ bool Program::StopCheck() {
   // have other ways of stopping, such as something from a socket etc.
   // if(taMisc::gui_active)
   taiM->ProcessEvents();
+  taMisc::WaitProc();
   // note: this has to be the full processevents and not RunPending,
   // otherwise it never seems to get the events.
   //  taiMiscCore::ProcessEvents();

@@ -3547,6 +3547,7 @@ cssEl* cssProg::Cont() {
 
   if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
     taMisc::RunPending();
+    taMisc::WaitProc();         // manually run waitproc as it doesn't happen in pending now
     cssMisc::proc_events_timer.restart();
   }
 
