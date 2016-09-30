@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9438
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9447
 LeabraProject .projects["TestLoadSaveWeight"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -374,10 +374,27 @@ LeabraProject .projects["TestLoadSaveWeight"] {
  DataTable_Group @.data = [0] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["StdInputData"] { 
-    DataTableCols @.data = [3] {
-     String_Data @["Name"] { };
-     float_Data @["Output"] { };
-     float_Data @["Input"] { };
+    DataTableCols @.data = [4] {
+     String_Data @["Name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Input"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["ScalarLayer"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -549,7 +566,7 @@ LeabraProject .projects["TestLoadSaveWeight"] {
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [40] {
+    DataTableCols @.data = [41] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -743,6 +760,11 @@ LeabraProject .projects["TestLoadSaveWeight"] {
       };
      };
      float_Data @["Hidden_Fm_Output_netrel"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_Fm_ScalarLayer_netrel"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
@@ -1703,10 +1725,11 @@ LeabraProject .projects["TestLoadSaveWeight"] {
    Program @["ApplyInputs"] { 
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
-      LayerDataEl_List @.layer_data = [3] {
+      LayerDataEl_List @.layer_data = [4] {
        LayerWriterEl @[0] { };
        LayerWriterEl @[1] { };
        LayerWriterEl @[2] { };
+       LayerWriterEl @[3] { };
       };
      };
     };
@@ -3353,8 +3376,11 @@ LeabraProject .projects["TestLoadSaveWeight"] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 ScaleRange_List @.scale_ranges = [1] {
+	 ScaleRange_List @.scale_ranges = [4] {
 	  ScaleRange @[0] { };
+	  ScaleRange @[1] { };
+	  ScaleRange @[2] { };
+	  ScaleRange @[3] { };
 	 };
 	};
        };
@@ -3375,7 +3401,7 @@ LeabraProject .projects["TestLoadSaveWeight"] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
-	 T3DataView_List @.children = [40] {
+	 T3DataView_List @.children = [41] {
 	  GraphColView @["batch"] { };
 	  GraphColView @["epoch"] { };
 	  GraphColView @["avg_sse"] { };
@@ -3415,6 +3441,7 @@ LeabraProject .projects["TestLoadSaveWeight"] {
 	  GraphColView @["Output_avg_act"] { };
 	  GraphColView @["Hidden_Fm_Input_netrel"] { };
 	  GraphColView @["Hidden_Fm_Output_netrel"] { };
+	  GraphColView @["Hidden_Fm_ScalarLayer_netrel"] { };
 	  GraphColView @["Output_Fm_Hidden_netrel"] { };
 	 };
 
@@ -3531,7 +3558,7 @@ LeabraProject .projects["TestLoadSaveWeight"] {
    DataTable_Group @.spec_tables = [0] {
    };
 
-   BaseSpec_Group @.specs = [4] {
+   BaseSpec_Group @.specs = [5] {
     LeabraLayerSpec @["HiddenLayer"] { 
      BaseSpec_Group @.children = [1] {
       LeabraLayerSpec @["Input_Output"] { 
@@ -3593,9 +3620,13 @@ LeabraProject .projects["TestLoadSaveWeight"] {
      BaseSpec_Group @.children = [0] {
      };
     };
+    ScalarValLayerSpec @["ScalarValLayerSpec_1"] { 
+     BaseSpec_Group @.children = [0] {
+     };
+    };
    };
 
-   Layer_Group @.layers = [3] {
+   Layer_Group @.layers = [4] {
     LeabraLayer @["Input"] { 
      Projection_Group @.projections = [0] {
      };
@@ -3604,9 +3635,10 @@ LeabraProject .projects["TestLoadSaveWeight"] {
      };
     };
     LeabraLayer @["Hidden"] { 
-     Projection_Group @.projections = [2] {
+     Projection_Group @.projections = [3] {
       LeabraPrjn @["Fm_Input"] { };
       LeabraPrjn @["Fm_Output"] { };
+      LeabraPrjn @["Fm_ScalarLayer"] { };
      };
 
      Unit_Group @.units = [25] {
@@ -3618,6 +3650,13 @@ LeabraProject .projects["TestLoadSaveWeight"] {
      };
 
      Unit_Group @.units = [25] {
+     };
+    };
+    LeabraLayer @["ScalarLayer"] { 
+     Projection_Group @.projections = [0] {
+     };
+
+     Unit_Group @.units = [10] {
      };
     };
    };
@@ -3761,11 +3800,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160429042222
+Cached time: 20160503174203
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.016 seconds
-Real time usage: 0.019 seconds
+CPU time usage: 0.017 seconds
+Real time usage: 0.020 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3779,7 +3818,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160429042222 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160503174203 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3888,7 +3927,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":150});
+mw.config.set({\"wgBackendResponseTime\":159});
 } );</script>
 	
 
@@ -6655,7 +6694,6 @@ mw.config.set({\"wgBackendResponseTime\":150});
    label=;
    extra_files=;
    svn_repo=;
-   load_only=1;
    repo_url=;
    queue=;
    run_time=;
@@ -6697,6 +6735,16 @@ mw.config.set({\"wgBackendResponseTime\":150});
      el_typ=float_Data;
      el_def=0;
      String_Data @["Name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_201";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1506024;
+	val_type_fixed=0;
+       };
+      };
       name="Name";
       col_flags=SAVE_DATA;
       is_matrix=0;
@@ -6713,6 +6761,16 @@ mw.config.set({\"wgBackendResponseTime\":150});
       [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      float_Data @["Output"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_202";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1506024;
+	val_type_fixed=0;
+       };
+      };
       name="Output";
       col_flags=SAVE_DATA;
       is_matrix=1;
@@ -6728,22 +6786,32 @@ mw.config.set({\"wgBackendResponseTime\":150});
        name="ar";
       [5 5 6] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
-1;0;0;0;1;0;0;1;0;0;
+1;0;0;0;1;0;0;1;0;1;
 0;0;1;0;0;0;0;1;0;0;
 0;0;1;0;0;0;0;1;0;0;
-0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
 1;1;1;1;1;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;1;
 0;0;0;1;0;0;0;1;0;0;
 0;1;0;0;0;1;0;0;0;0;
-1;0;0;0;0;0;1;0;0;0;
+1;0;0;0;1;0;1;0;0;0;
 0;0;1;0;0;0;0;0;1;0;
-0;0;0;0;1;1;0;0;0;0;
+0;0;0;0;1;1;0;0;0;1;
 0;0;0;1;0;0;1;0;0;1;
 1;0;0;0;0;0;0;0;0;0;
       };
      };
      float_Data @["Input"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_203";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1506024;
+	val_type_fixed=0;
+       };
+      };
       name="Input";
       col_flags=SAVE_DATA;
       is_matrix=1;
@@ -6773,6 +6841,32 @@ mw.config.set({\"wgBackendResponseTime\":150});
 0;0;0;1;0;0;1;0;0;0;
 1;0;0;0;1;0;0;0;0;0;
       };
+     };
+     float_Data @["ScalarLayer"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_204";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1506024;
+	val_type_fixed=0;
+       };
+      };
+      name="ScalarLayer";
+      col_flags=SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 1;1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=0;
+      ar {
+       name="ar";
+      [1 1 6] 0.2;0.40000001;0.60000002;0.80000001;1;1.2;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -7508,7 +7602,12 @@ mw.config.set({\"wgBackendResponseTime\":150});
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [50] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -8437,6 +8536,29 @@ mw.config.set({\"wgBackendResponseTime\":150});
       [0]       };
       width=0;
      };
+     float_Data @["Hidden_Fm_ScalarLayer_netrel"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_205";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
+      name="Hidden_Fm_ScalarLayer_netrel";
+      col_flags=MARK|PIN|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      float_Data @["Output_Fm_Hidden_netrel"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_198";
@@ -8467,7 +8589,7 @@ mw.config.set({\"wgBackendResponseTime\":150});
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [8] 0;1;2;3;4;5;6;7;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -10324,7 +10446,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["config_id"] {
       name="config_id";
       var_type=T_String;
-      string_val="basic_train_load";
+      string_val="basic_train";
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="configuration to use -- auto set from cur_config -- lookup in Config table";
@@ -10715,7 +10837,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["config_id"] {
       name="config_id";
       var_type=T_String;
-      string_val="basic_train_load";
+      string_val="basic_train";
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="configuration to use -- lookup in Config table";
@@ -10994,7 +11116,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @["config_id"] {
        name="config_id";
        var_type=T_String;
-       string_val="basic_train_load";
+       string_val="basic_train";
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="configuration to use -- lookup in Config table";
@@ -11221,7 +11343,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @["config_id"] {
        name="config_id";
        var_type=T_String;
-       string_val="basic_train_load";
+       string_val="basic_train";
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="configuration to use -- lookup in Config table";
@@ -11244,7 +11366,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @["train_epochs"] {
        name="train_epochs";
        var_type=T_Int;
-       int_val=6;
+       int_val=8;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -11514,7 +11636,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=33071: sys=28299: tot=145797275660: }: end={usr=33072: sys=28299: tot=145797275660: }: used={usr=26: sys=6: tot=18: }: s_used=0.18: n_used=50: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=18579: sys=11528: tot=146234561018: }: end={usr=18580: sys=11528: tot=146234561020: }: used={usr=69: sys=12: tot=68: }: s_used=0.68: n_used=50: };
     };
     types {
      name="types";
@@ -12035,7 +12157,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 5;1;0;3;4;2;      };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -12099,7 +12221,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cur_idx"] {
       name="cur_idx";
       var_type=T_Int;
-      int_val=4;
+      int_val=2;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -12108,7 +12230,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=2;
+      int_val=1;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -12932,6 +13054,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	ext_flags=0;
 	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
        };
+       LayerWriterEl @[3] {
+	col_name="ScalarLayer";
+	net_target=LAYER;
+	layer_name="ScalarLayer";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	quiet=0;
+	na_by_range=0;
+	ext_flags=EXT;
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
+       };
       };
      };
     };
@@ -13192,7 +13325,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["config_id"] {
       name="config_id";
       var_type=T_String;
-      string_val="basic_train_load";
+      string_val="basic_train";
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="configuration to use -- lookup in Config table";
@@ -13235,7 +13368,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["train_epochs"] {
       name="train_epochs";
       var_type=T_Int;
-      int_val=6;
+      int_val=8;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -22029,7 +22162,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993159;
+     value 8 0=0.8244014;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22156,8 +22289,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
-	  cur_unit_vals{ act;	  };
-	  unit_src_path=".layers[2].units[0]";
+	  cur_unit_vals{ bias_wt;	  };
+	  unit_src_path=".layers[2].units[4]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -22165,9 +22298,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  hist_ff=5;
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=5: y=5: z=2.333333: };
-	  max_size2d {x=5: y=18: z=1: };
-	  eff_max_size {x=5: y=5: z=2.333333: };
+	  max_size {x=5: y=10: z=3.25: };
+	  max_size2d {x=5: y=30: z=1: };
+	  eff_max_size {x=5: y=10: z=3.25: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -22221,8 +22354,26 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    min=-1;
 	    max=1;
 	   };
+	   ScaleRange @[1] {
+	    var_name="bias_dwt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[2] {
+	    var_name="bias_wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[3] {
+	    var_name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
 	  };
-	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;ScalarLayer=-1;	  };
 	 };
 	};
        };
@@ -22686,6 +22837,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
+	   GraphColView @["Hidden_Fm_ScalarLayer_netrel"] {
+	    name="Hidden_Fm_ScalarLayer_netrel";
+	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_ScalarLayer_netrel"]$$;
+	    cur_font_size=12;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
 	   GraphColView @["Output_Fm_Hidden_netrel"] {
 	    name="Output_Fm_Hidden_netrel";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_Fm_Hidden_netrel"]$$;
@@ -22708,7 +22868,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=7: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -22738,7 +22898,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -22783,7 +22943,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=3.75618: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -22805,7 +22965,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.427: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -22827,7 +22987,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=44: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -23661,7 +23821,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6944128;
+       value 8 0=0.7194983;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -24014,7 +24174,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="LeabraBiasSpec_0";
        is_used=1;
        desc=;
-       unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;dwt_thresh;       };
        children {
 	name="children";
 	el_typ=LeabraBiasSpec;
@@ -24094,7 +24254,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       dwt_thresh=0.1;
+       dwt_thresh=0.01;
       };
       LeabraConSpec @["TopDownCons"] {
        name="TopDownCons";
@@ -24273,6 +24433,40 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      add_rnd_var=0;
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+    ScalarValLayerSpec @["ScalarValLayerSpec_1"] {
+     name="ScalarValLayerSpec_1";
+     is_used=1;
+     desc=;
+     unique{      };
+     children {
+      name="children";
+      el_typ=ScalarValLayerSpec;
+      el_def=0;
+     };
+     lay_inhib {on=1: gi=2.2: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2.2: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.15: fixed=0: tau=100: adjust=1: dt=0.01: };
+     inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
+     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     clamp {hard=1: gain=0.2: };
+     decay {trial=1: };
+     del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lstats {
+      cos_diff_avg_tau=100;
+      hog_thr=0.3;
+      dead_thr=0.01;
+      cos_diff_avg_dt=0.01;
+     };
+     lay_lrate=1;
+     scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: clip_val=1: send_thr=0: init_nms=1: };
+     unit_range {min=-0.5: max=1.5: range=2: scale=0.5: };
+     bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
+     avg_act_range {min=0.1: max=0.9: range=0.8: scale=1.25: };
+     val_range {min=-0.5: max=1.5: range=2: scale=0.5: };
+    };
    };
    layers {
     name="layers";
@@ -24280,8 +24474,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_def=0;
     pos {x=0: y=0: z=0: };
     pos2d {x=0: y=0: };
-    max_disp_size {x=5: y=5: z=3: };
-    max_disp_size2d {x=5: y=18: };
+    max_disp_size {x=5: y=10: z=4: };
+    max_disp_size2d {x=5: y=30: };
     LeabraLayer @["Input"] {
      name="Input";
      desc=;
@@ -24329,9 +24523,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=0.1;
+     acts_m_avg=0.1883844;
+     acts_p_avg=0.1883844;
+     acts_p_avg_eff=0.1883844;
      spec {type=LeabraLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -24353,7 +24547,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
-     n_recv_prjns=2;
+     n_recv_prjns=3;
      n_send_prjns=1;
      projections {
       name="projections";
@@ -24395,6 +24589,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        direction=FM_OUTPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
+      LeabraPrjn @["Fm_ScalarLayer"] {
+       name="Fm_ScalarLayer";
+       off=0;
+       disp=1;
+       from_type=CUSTOM;
+       from=.projects["TestLoadSaveWeight"].networks["Network_0"].layers["ScalarLayer"]$$;
+       spec {type=FullPrjnSpec: spec=$.projects["TestLoadSaveWeight"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
+       con_type=LeabraCon;
+       con_spec {type=LeabraConSpec: spec=$.projects["TestLoadSaveWeight"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
+       recv_idx=2;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       dir_fixed=0;
+       direction=FM_INPUT;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
+      };
      };
      send_prjns {
       name="send_prjns";
@@ -24418,9 +24630,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=0.1;
+     acts_m_avg=0.2039944;
+     acts_p_avg=0.2045659;
+     acts_p_avg_eff=0.2045659;
      spec {type=LeabraLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
@@ -24489,10 +24701,63 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=0.1;
+     acts_m_avg=0.1932667;
+     acts_p_avg=0.2138747;
+     acts_p_avg_eff=0.2138747;
      spec {type=LeabraLayerSpec: spec=$.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
+     adapt_gi=1;
+    };
+    LeabraLayer @["ScalarLayer"] {
+     name="ScalarLayer";
+     desc=;
+     flags=ABS_POS;
+     layer_type=INPUT;
+     pos {x=0: y=0: z=3: };
+     pos_abs {x=0: y=0: z=3: };
+     pos2d {x=0: y=20: };
+     pos2d_abs {x=0: y=20: };
+     disp_scale=1;
+     un_geom {x=1: y=10: n_not_xy=0: n=10: };
+     unit_groups=0;
+     virt_groups=1;
+     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
+     gp_spc {x=1: y=1: };
+     flat_geom {x=1: y=10: n_not_xy=0: n=10: };
+     disp_geom {x=1: y=10: n_not_xy=0: n=10: };
+     scaled_disp_geom {x=1: y=10: n_not_xy=0: n=1: };
+     n_recv_prjns=0;
+     n_send_prjns=1;
+     projections {
+      name="projections";
+      el_typ=LeabraPrjn;
+      el_def=0;
+     };
+     send_prjns {
+      name="send_prjns";
+      el_typ=LeabraPrjn;
+      el_def=0;
+      Projection_Group @. = [0] = LeabraPrjn .projects["TestLoadSaveWeight"].networks["Network_0"].layers["Hidden"].projections["Fm_ScalarLayer"];
+     };
+     units {
+      name="units";
+      el_typ=LeabraUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      output_name=;
+     };
+     unit_spec {type=LeabraUnitSpec: spec=$.projects["TestLoadSaveWeight"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
+     dist {
+      fm_input=0;
+      fm_output=2;
+     };
+     units_lesioned=0;
+     gp_unit_names_4d=0;
+     brain_area=;
+     voxel_fill_pct=1;
+     acts_m_avg=0.09919548;
+     acts_p_avg=0.09919548;
+     acts_p_avg_eff=0.09919548;
+     spec {type=ScalarValLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["ScalarValLayerSpec_1"]$$: };
      adapt_gi=1;
     };
    };
@@ -24566,11 +24831,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
-   n_units=76;
-   n_cons=1875;
-   max_prjns=2;
-   max_disp_size {x=5: y=5: z=3: };
-   max_disp_size2d {x=5: y=18: };
+   n_units=86;
+   n_cons=2125;
+   max_prjns=3;
+   max_disp_size {x=5: y=10: z=4: };
+   max_disp_size2d {x=5: y=30: };
    cuda {
     min_threads=32;
     max_threads=1024;
