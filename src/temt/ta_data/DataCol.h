@@ -80,7 +80,8 @@ public:
   String_Matrix         dim_names; // special names for the dimensions of a matrix cell -- used for display purposes
   taHashTable*          hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
   int	                width; // the column display width in characters, for the editor view (not for grid view -- that uses user data) -- only applicable if AUTO_WIDTH not set -- if 0 then AUTO_WIDTH will be set
-    
+  int	                matrix_col_width; // the column display width in characters, for the matrix table view
+  
   virtual const taMatrix* AR() const = 0;
   // #CAT_Access const version of the matrix pointer
   virtual taMatrix*     AR() = 0;

@@ -22,6 +22,7 @@
 #include <iClipData>
 #include <iTableView>
 #include <iDataTableColHeaderView>
+#include <DataTable>
 
 #include <taMisc>
 #include <taiMisc>
@@ -166,7 +167,11 @@ void iMatrixTableView::RowColOp_impl(int op_code, const CellRange& sel) {
     if (op_code & OP_SET_WIDTH) {
       int width = ConvertPixelsToChars(columnWidth(sel.col_fr));
       width = QInputDialog::getInt(0, "Set All Column Widths", "Width in Characters:", width, 1);
-    
+      DataCol* data_col = (DataCol*)mat()->GetOwner(&TA_DataCol);
+      if (data_col) {
+        data_col->matrix_col_width = width;
+      }
+      
       for (int col = mat()->colCount() - 1; col >= 0; --col) {
         this->SetColumnWidth(col, width);
       }
@@ -174,4 +179,16 @@ void iMatrixTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   }
 }
 
+void iMatrixTableView::showEvent(QShowEvent* event) {
+  inherited::showEvent(event);
+  
+  if (mat()) {
+    DataCol* data_col = (DataCol*)mat()->GetOwner(&TA_DataCol);
+    if (data_col) {
+      for (int col = mat()->colCount() - 1; col >= 0; --col) {
+        this->SetColumnWidth(col, data_col->matrix_col_width);
+      }
+    }
+  }
 
+}

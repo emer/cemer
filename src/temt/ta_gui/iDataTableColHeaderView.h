@@ -59,8 +59,6 @@ public:
   inline void  DoResizeSections() { resizeSections(); }
   // call protected resizeSections() because it isn't being called appropriately!
   
-protected slots:
-  void                  resizedSection(int columnIdx, int oldWidth, int newWidth);
   
 #ifndef __MAKETA__
 signals:

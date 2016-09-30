@@ -103,33 +103,8 @@ iMatrixTableColHeaderView::iMatrixTableColHeaderView(QWidget* parent)
   this->setSelectionBehavior(QAbstractItemView::SelectColumns);
   this->setContextMenuPolicy(Qt::CustomContextMenu);
   
-  connect(this, SIGNAL(sectionResized(int, int, int)), this, SLOT(resizedSection(int, int, int)));
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), parent, SLOT(hor_customContextMenuRequested(const QPoint&)) );
 }
 
 iMatrixTableColHeaderView::~iMatrixTableColHeaderView() {
 }
-
-void iMatrixTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int newWidth)
-{
-//  DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
-//  if (!dt)
-//    return;
-//  
-//  // IMPORTANT: this is called from *programatic* resizes too!!  not just from gui
-//  // interaction.  so we can't do too much here..
-//  
-//  dt->StructUpdate(true);
-//  DataCol* dc = dt->data.FastEl(columnIdx);
-//  if(dc) {
-//    iDataTableView* view = dynamic_cast<iDataTableView*>(parent());
-//    if (view) {
-//      if(!dc->HasColFlag(DataCol::AUTO_WIDTH)) {
-//        dc->width = view->ConvertPixelsToChars(newWidth);
-//        view->UpdateMaxColWidth(dc->width);
-//      }
-//    }
-//  }
-//  dt->StructUpdate(false);
-}
-

@@ -51,6 +51,7 @@ protected:
   virtual void          UpdateRowHeight();
   void                  FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
   void                  RowColOp_impl(int op_code, const CellRange& sel) override;
+  void                  showEvent(QShowEvent* event) override;
 
 public: // cliphandler i/f
   void         EditAction(int ea) override;
