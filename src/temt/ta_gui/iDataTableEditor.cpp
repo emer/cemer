@@ -205,6 +205,7 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
       iMatrixTableModel* mat_model = tcell->GetTableModel();
       mat_model->setDimNames(&col->dim_names);
       tvCell->setVisible(true);
+      tvCell->Refresh();
       return;
     }
   }

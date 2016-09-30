@@ -123,6 +123,16 @@ bool iMatrixTableView::isFixedRowCount() const {
 
 void iMatrixTableView::Refresh() {
   UpdateRowHeight();
+  
+  if (mat()) {
+    DataCol* data_col = (DataCol*)mat()->GetOwner(&TA_DataCol);
+    if (data_col) {
+      for (int col = mat()->colCount() - 1; col >= 0; --col) {
+        this->SetColumnWidth(col, data_col->matrix_col_width);
+      }
+    }
+  }
+
   update();
 }
 
@@ -177,18 +187,4 @@ void iMatrixTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       }
     }
   }
-}
-
-void iMatrixTableView::showEvent(QShowEvent* event) {
-  inherited::showEvent(event);
-  
-  if (mat()) {
-    DataCol* data_col = (DataCol*)mat()->GetOwner(&TA_DataCol);
-    if (data_col) {
-      for (int col = mat()->colCount() - 1; col >= 0; --col) {
-        this->SetColumnWidth(col, data_col->matrix_col_width);
-      }
-    }
-  }
-
 }
