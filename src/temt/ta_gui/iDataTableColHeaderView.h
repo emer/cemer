@@ -49,4 +49,23 @@ signals:
 #endif // ndef __MAKETA__
 };
 
+class TA_API iMatrixTableColHeaderView: public QHeaderView {
+  INHERITED(QHeaderView)
+  Q_OBJECT
+public:
+  iMatrixTableColHeaderView(QWidget* parent = NULL);
+  ~iMatrixTableColHeaderView();
+  
+  inline void  DoResizeSections() { resizeSections(); }
+  // call protected resizeSections() because it isn't being called appropriately!
+  
+protected slots:
+  void                  resizedSection(int columnIdx, int oldWidth, int newWidth);
+  
+#ifndef __MAKETA__
+signals:
+  void                  tableViewChange();
+#endif // ndef __MAKETA__
+};
+
 #endif // iDataTableColHeaderView_h

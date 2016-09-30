@@ -20,16 +20,21 @@
 #include <CellRange>
 #include <taiMimeSource>
 #include <iClipData>
+#include <iTableView>
+#include <iDataTableColHeaderView>
 
 #include <taMisc>
 #include <taiMisc>
 
 #include <QHeaderView>
-
+#include <QInputDialog>
 
 iMatrixTableView::iMatrixTableView(QWidget* parent)
 :inherited(parent)
 {
+  col_header = new iMatrixTableColHeaderView(this); // subclass header
+  this->setHorizontalHeader(col_header);
+
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
           SLOT(this_customContextMenuRequested(const QPoint&)) );
   
@@ -128,5 +133,45 @@ void iMatrixTableView::UpdateRowHeight() {
   verticalHeader()->setDefaultSectionSize(max_pixels);
 }
 
+void iMatrixTableView::hor_customContextMenuRequested(const QPoint& pos) {
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+  CellRange sel(selectionModel()->selectedIndexes());
+  FillContextMenu_impl(CA_COL_HDR, menu, sel);
+  if (menu->count() > 0) {
+    menu->exec(horizontalHeader()->mapToGlobal(pos));
+  }
+  delete menu;
+}
+
+void iMatrixTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel)
+{
+  // inherited::FillContextMenu_impl(ca, menu, sel);  // would be okay if we want some other generic items
+  
+  iAction* act = NULL;
+  
+  // generic col guys
+  if (ca == CA_COL_HDR) {
+    act = menu->AddItem("Set Fixed Column Width...", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_SET_WIDTH) );
+  }
+}
+
+void iMatrixTableView::RowColOp_impl(int op_code, const CellRange& sel) {
+  if (op_code & OP_ROW) {
+    // nothing for matrix rows
+  }
+  
+  if (op_code & OP_COL) {
+    if (op_code & OP_SET_WIDTH) {
+      int width = ConvertPixelsToChars(columnWidth(sel.col_fr));
+      width = QInputDialog::getInt(0, "Set All Column Widths", "Width in Characters:", width, 1);
+    
+      for (int col = mat()->colCount() - 1; col >= 0; --col) {
+        this->SetColumnWidth(col, width);
+      }
+    }
+  }
+}
 
 

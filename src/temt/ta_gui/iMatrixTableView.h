@@ -17,13 +17,14 @@
 #define iMatrixTableView_h 1
 
 // parent includes:
-#include <iTableView>
+#include <iDataTableView>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taMatrix; // 
 class CellRange; // 
+class iMatrixTableColHeaderView; //
 
 
 class TA_API iMatrixTableView: public iTableView {
@@ -33,6 +34,8 @@ INHERITED(iTableView)
 public:
   taMatrix*             mat() const;
 
+  iMatrixTableColHeaderView*  col_header;
+
   bool                  isFixedRowCount() const override;
   bool                  isFixedColCount() const override {return true;}
 
@@ -40,12 +43,14 @@ public:
    // gets current selection, factoring in BOT_ZERO if needed
   void                  Refresh();
   // for manual refresh -- e.g. when font size changes
+  void                  hor_customContextMenuRequested(const QPoint& pos) override;
 
   iMatrixTableView(QWidget* parent = NULL);
   
 protected:
-  void                  UpdateRowHeight();
-
+  virtual void          UpdateRowHeight();
+  void                  FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
+  void                  RowColOp_impl(int op_code, const CellRange& sel) override;
 
 public: // cliphandler i/f
   void         EditAction(int ea) override;
