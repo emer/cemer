@@ -69,6 +69,10 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   max_slices = dv_->MaxSlices();
   net = dv_->net();
 
+  bool ok;
+  this->setStyleSheet("iViewPanel { background-color: #" +
+                      net->GetEditColor(ok).toString() + "; }");
+  
   int font_spec = taiMisc::fonMedium;
   req_full_render = true;
   req_full_build = false;

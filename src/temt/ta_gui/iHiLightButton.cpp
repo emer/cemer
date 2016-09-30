@@ -43,7 +43,7 @@ void iHiLightButton::init(const char* script_) {
   mouse_button = Qt::NoButton;
   if (script_ != NULL)
     mscript = script_;
-  mhiLight_color.setRgb(0x66, 0xFF, 0x66); // medium-light green
+  mhiLight_color.setRgb(0x00, 0x80, 0x00); // dark green 
 
   // button should use same font as other buttons
   taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
@@ -62,18 +62,12 @@ void iHiLightButton::released() {
 
 void iHiLightButton::setHiLight(bool value) {
   if (mhiLight == value) return;
-  // TODO: in qt5 (at least 5.6.1) this is having NO effect
-  // the docs: http://doc.qt.io/qt-5/stylesheet-examples.html
-  // explain that 
-  QPalette palette;
+  // docs for style sheet: http://doc.qt.io/qt-5/stylesheet-examples.html
   if (value) {
-    palette.setColor(backgroundRole(), mhiLight_color);
-    setPalette(palette);    
+    this->setStyleSheet("color: #" + mhiLight_color.toString() + ";");
   }
   else {
-    palette.setColor(backgroundRole(),
-                     QApplication::palette().color(QPalette::Active, QPalette::Button));
-    setPalette(palette);    
+    this->setStyleSheet("color: black");
   }
   mhiLight = value;
 }

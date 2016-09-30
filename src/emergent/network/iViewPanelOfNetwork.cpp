@@ -49,6 +49,10 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   req_full_render = false;
   req_full_build = false;
 
+  bool ok;
+  this->setStyleSheet("iViewPanel { background-color: #" +
+                      dv_->net()->GetEditColor(ok).toString() + "; }");
+  
   T3ExaminerViewer* vw = dv_->GetViewer();
   if(vw) {
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );

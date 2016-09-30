@@ -226,9 +226,12 @@ void iViewPanel::UpdateButtons() {
   if (!(vp_flags & VP_USE_BTNS)) return;
   if (Root() && m_modified) {
     btnApply->setEnabled(true);
+    btnApply->setHiLight(true);
     btnRevert->setEnabled(true);
-  } else {
+  }
+  else {
     btnApply->setEnabled(false);
+    btnApply->setHiLight(false);
     btnRevert->setEnabled(false);
   }
 }

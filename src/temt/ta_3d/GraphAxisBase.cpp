@@ -202,7 +202,7 @@ void GraphAxisBase::InitFromUserData() {
     fixed_range.max = da->GetUserDataAsFloat("MAX");
   }
   UpdateOnFlag();
-  taMisc::DebugInfo("init fm user data:", col_name, "on:", String(on));
+  // taMisc::DebugInfo("init fm user data:", col_name, "on:", String(on));
   UpdateFmDataCol();
 }
 

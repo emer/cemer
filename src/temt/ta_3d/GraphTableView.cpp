@@ -660,6 +660,7 @@ void GraphTableView::Render_impl() {
 
 void GraphTableView::Render_post() {
   inherited::Render_post();
+  UpdatePanel();                // works for initial render but not called in update display!
 }
 
 void GraphTableView::InitDisplay(bool init_panel) {

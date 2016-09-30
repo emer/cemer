@@ -29,6 +29,9 @@ iViewPanelOfDataTable::iViewPanelOfDataTable(DataTableView* lv)
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2
   layWidg->setMargin(0); layWidg->setSpacing(2);
+  bool ok;
+  this->setStyleSheet("iViewPanel { background-color: #" +
+                      lv->dataTable()->GetEditColor(ok).toString() + "; }");
 
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
