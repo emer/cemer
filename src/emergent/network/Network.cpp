@@ -583,9 +583,11 @@ void Network::Build() {
   SetNetFlag(BUILT);
   SetNetFlag(INTACT);
   
-  specs.RestorePanels();
-  layers.RestorePanels();
-
+  if (taMisc::is_post_loading) {
+    specs.RestorePanels();
+    layers.RestorePanels();
+  }
+  
   net_timing.SetSize(n_thrs_built + 1);
 
   Compute_PrjnDirections();
