@@ -5203,7 +5203,7 @@ GridTableView* DataTable::FindMakeGridView(T3Panel* fr, bool select_view) {
       el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
       el->InitDisplay();
       el->UpdateDisplay();
-      if(!select_view) {
+      if(select_view) {
         fr = el->GetFrame();
         if(fr) {
           MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
@@ -5252,7 +5252,7 @@ GraphTableView* DataTable::FindMakeGraphView(T3Panel* fr, bool select_view) {
       el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
       el->InitDisplay();
       el->UpdateDisplay();
-      if(!select_view) {
+      if(select_view) {
         fr = el->GetFrame();
         if(fr) {
           MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
