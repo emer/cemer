@@ -114,10 +114,7 @@ int taiMiscCore::RunPending() {
 }
 
 void taiMiscCore::WaitProc() {
-  if(taMisc::in_waitproc) return; // actually no recursive waitproc!!!
-  if(taMisc::in_eventproc) return; // and don't do while in event proc!
-
-  taMisc::in_waitproc++;
+  // note: taiMisc::WaitProc does all the in_waitproc and in_eventproc checking!
 
   ClusterRun::WaitProcAutoUpdate();
   if(!taMisc::do_wait_proc && taMisc::err_cancel) { // only count if not calling back
@@ -128,12 +125,11 @@ void taiMiscCore::WaitProc() {
     }
   }
   if(!taMisc::do_wait_proc) {
-    taMisc::in_waitproc--;
     return;
   }
+  // taMisc::Info("w");
   taMisc::do_wait_proc = false; // reset at the START so other waitproc guys can get on the list from within the current waitproc
   tabMisc::WaitProc();
-  taMisc::in_waitproc--;
 }
 
 taiMiscCore::taiMiscCore(QObject* parent)

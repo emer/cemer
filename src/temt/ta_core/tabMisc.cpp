@@ -33,8 +33,8 @@ ContextFlag  tabMisc::in_wait_proc;
 
 void tabMisc::DelayedClose(taBase* obj) {
   if(taMisc::quitting) return;
-  taMisc::do_wait_proc = true;
   if(obj->isDestroying()) return;
+  taMisc::do_wait_proc = true;
   delayed_close.LinkUnique(obj); // only add once!!!
 }
 

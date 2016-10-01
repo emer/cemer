@@ -69,13 +69,7 @@ public:
   QButtonGroup* bgChoiceButtons; //note: not a widget
 
   void done(int r) override;
-
-#ifdef RESTORE_PREV_ACTIVE_WINDOW
-  // Note: QMessageBox::exec() is not virtual, so this is not an override.
-  // Make it virtual from this point forward, in case subclasses need
-  // to override for some reason.
-  virtual int exec();
-#endif
+  int exec() override;
   
   ~iDialogChoice() { }
 

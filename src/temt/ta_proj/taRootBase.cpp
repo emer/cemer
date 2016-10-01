@@ -1784,7 +1784,7 @@ void taRootBase::WindowShowHook() {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.SafeEl(0)); // always the default
     if (vwr) {
       vwr->SelectPanelTabNo(1);
-      taiMiscCore::ProcessEvents();
+      taMisc::ProcessEvents(true);
       vwr->widget()->setFocus();
     }
 

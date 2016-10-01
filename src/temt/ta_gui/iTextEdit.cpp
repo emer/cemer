@@ -175,7 +175,9 @@ void iTextEdit::contextMenuEvent(QContextMenuEvent *event) {
   QMenu* menu = createStandardContextMenu();
   menu->addSeparator();
   menu->addAction("&Find..", this, SLOT(findPrompt()), QKeySequence("Ctrl+S"));
+  taMisc::in_eventproc++;       // this is an event proc!
   menu->exec(event->globalPos());
+  taMisc::in_eventproc--;
   delete menu;
 }
 

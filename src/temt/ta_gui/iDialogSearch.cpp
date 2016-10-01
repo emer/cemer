@@ -269,7 +269,7 @@ void iDialogSearch::Reset()
   m_items.ResetData();
   m_row = 0;
   results->setText("");
-  taiMisc::ProcessEvents();
+  taMisc::ProcessEvents();
 }
 
 void iDialogSearch::Start()
@@ -422,7 +422,7 @@ String iDialogSearch::searchStr() const {
 
 bool iDialogSearch::stop() const {
   if(proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
-    taiM->RunPending();
+    taMisc::RunPending();
     const_cast<iDialogSearch*>(this)->proc_events_timer.restart();
   }
   return m_stop;

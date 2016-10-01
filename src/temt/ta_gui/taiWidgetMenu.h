@@ -24,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 class iVec2i; //
 class QPoint; //
+class QAction; //
 
 class TA_API taiWidgetMenu : public taiWidgetActions {
   // (possibly) hierarchical menu for selecting a single item
@@ -38,8 +39,8 @@ public:
   // constructor for Browser and context menus ft=0 means default font size;
   ~taiWidgetMenu();
 
-  void         exec(const iVec2i& pos);
-  void         exec(const QPoint& pos);
+  QAction*     exec(const iVec2i& pos);
+  QAction*     exec(const QPoint& pos);
   iAction*     insertItem(const char* val, const QObject *receiver = NULL,
                           const char* member = NULL,
                           const QKeySequence* accel = NULL);

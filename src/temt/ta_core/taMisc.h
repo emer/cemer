@@ -725,10 +725,10 @@ public:
   // #CAT_Utility returns the console output collected since the hold state was set to true (default is off)
   static void   ClearConsoleHold();
   // #CAT_Utility set the console hold to the empty string - note this does not stop collection - use SetConsoleHoldState for that
-  static int    ProcessEvents();
-  // #CAT_GlobalState run any pending qt events that might need processed
-  static int    RunPending();
-  // #CAT_GlobalState check to see if any events are pending, and run if true -- MUCH faster than processevents, but also likely to miss some events along the way.
+  static int    ProcessEvents(bool waitproc_after = false);
+  // #CAT_GlobalState run any pending qt events that might need processed -- this is the full event loop and is *quite slow* -- use only in gui code where absolutely necessary -- the waitproc_after flag runs the WaitProc() after processing the events -- needed for some follow-up processing in some cases
+  static int    RunPending(bool waitproc_after = false);
+  // #CAT_GlobalState check to see if any events are pending, and run if true -- somewhat faster than processevents but still slowish, and also likely to miss some events along the way -- the waitproc_after flag runs the WaitProc() after processing the events -- needed for some follow-up processing in some cases
 
   static void   Busy(bool busy = true);
   // #CAT_GlobalState puts system in a 'busy' state

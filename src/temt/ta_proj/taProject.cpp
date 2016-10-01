@@ -380,7 +380,7 @@ void taProject::DoView() {
   
   // this is very hacky... select the 2nd tab, which will
   // be the first auto guy if there were any
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   main_window_viewer->SelectPanelTabNo(1);
 }
 

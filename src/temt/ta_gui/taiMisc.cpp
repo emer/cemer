@@ -120,7 +120,7 @@ taiMisc::taiMisc(QObject* parent)
 void taiMisc::Init(bool gui) {
   inherited::Init(gui);
 
-  taMisc::WaitProc = &WaitProc; // typically gets replaced in pdpbase.cpp
+  taMisc::WaitProc = &WaitProc; // this is it!
 
   taMisc::ScriptRecordingGui_Hook = &ScriptRecordingGui_; // note: ok to do more than once
   load_dlg = NULL;
@@ -783,12 +783,20 @@ void taiMisc::OpenWindows(){
 }
 
 void taiMisc::WaitProc() {
+  if(taMisc::in_waitproc) return; // actually no recursive waitproc!!!
+  if(taMisc::in_eventproc) return; // and don't do while in event proc!
+
+  taMisc::in_waitproc++;
+
   if(taMisc::gui_active) {
     taiMisc::OpenWindows();
   }
   taiMiscCore::WaitProc();
-  if (!taMisc::gui_active) return;
-  AbstractScriptBase::Wait_RecompileScripts();
+  if (taMisc::gui_active)  {
+    AbstractScriptBase::Wait_RecompileScripts();
+  }
+  
+  taMisc::in_waitproc--;
 }
 
 void taiMisc::ScriptIconify(void*, int) {

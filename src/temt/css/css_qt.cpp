@@ -22,6 +22,7 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 
+#include <taMisc>
 #include <taiMisc>
 
 void cssiSession::CancelProgEdits(cssProgSpace* prsp) {
@@ -56,12 +57,12 @@ void cssiSession::CancelObjEdits(cssClassInst* clobj) {
 
 void cssiSession::RaiseObjEdits() {
   int i;
-  taiMiscCore::RunPending();
+  taMisc::RunPending();
   for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
     cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
     if (dlg->state == taiEditorWidgetsMain::ACTIVE)
       dlg->Raise();
   }
-  taiMiscCore::RunPending();
+  taMisc::RunPending();
 }
 

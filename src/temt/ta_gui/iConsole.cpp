@@ -658,7 +658,9 @@ void iConsole::contextMenuEvent(QContextMenuEvent *event) {
   QMenu* menu = createStandardContextMenu();
   menu->addSeparator();
   menu->addAction("&Clear All", this, SLOT(clear()),  QKeySequence("Ctrl+."));
+  taMisc::in_eventproc++;       // this is an event proc!
   menu->exec(event->globalPos());
+  taMisc::in_eventproc--;
   delete menu;
 }
 

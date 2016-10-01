@@ -68,9 +68,9 @@ iHelpBrowser* iHelpBrowser::instance() {
     inst->show();
     inst->raise();
     // this causes crashing in Qt5.6:
-    // taiMiscCore::ProcessEvents(); // run default stuff
-    // taiMiscCore::ProcessEvents(); // run default stuff
-    // taiMiscCore::ProcessEvents(); // run default stuff
+    // taMisc::ProcessEvents(); // run default stuff
+    // taMisc::ProcessEvents(); // run default stuff
+    // taMisc::ProcessEvents(); // run default stuff
   }
   else {
     inst->show();

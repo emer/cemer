@@ -1502,7 +1502,7 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
     if(!inside_event_loop) {
       inside_event_loop = true;
       while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
-        taiMiscCore::ProcessEvents();
+        taMisc::ProcessEvents();
       }
       inside_event_loop = false;
     }
@@ -1542,7 +1542,7 @@ do_inherited:
     if(!inside_event_loop) {
       inside_event_loop = true;
       while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
-        taiMiscCore::ProcessEvents();
+        taMisc::ProcessEvents();
       }
       inside_event_loop = false;
     }

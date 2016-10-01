@@ -21,6 +21,7 @@
 #include <QDrag>
 #include <QMouseEvent>
 
+#include <taMisc>
 
 iClipToolWidget::iClipToolWidget(iClipWidgetAction* cwa_, QWidget* parent) 
 :inherited(parent)
@@ -69,7 +70,9 @@ void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
     QDrag* drag = new QDrag(this);
     drag->setMimeData(md);
     //Qt::DropAction dropAction = 
+    taMisc::in_eventproc++;       // this is an event proc!
     drag->exec(supportedDropActions());
+    taMisc::in_eventproc--;
   }
   setDown(false);		// un-down it
 }

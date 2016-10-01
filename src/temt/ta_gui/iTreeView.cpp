@@ -209,7 +209,7 @@ iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
     if (!link->taData()->InheritsFrom(&TA_taDataView)) {
       own_el->setExpanded(true);
     }
-    taiMisc::ProcessEvents();
+    taMisc::ProcessEvents();
   }
   // and try again, but not supercursively of course!
   return AssertItem(link, false);

@@ -773,7 +773,9 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fde->cbCompress->setChecked(is_default_filename_compressed);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  taMisc::in_eventproc++;       // this is an event proc!
   int rval = fd->exec();
+  taMisc::in_eventproc--;
   QApplication::restoreOverrideCursor();
 
   if (rval != QDialog::Accepted) {

@@ -16,6 +16,7 @@
 #include "iNumberBar.h"
 
 #include <iTextEdit>
+#include <taMisc>
 
 #include <QTextDocument>
 #include <QTextBlock>
@@ -204,7 +205,9 @@ void iNumberBar::contextMenuEvent(QContextMenuEvent * e) {
   else
     menu->addAction("Set Breakpoint", this, SLOT(setBreakpointSlot())); 
   menu->addAction("View Source", this, SLOT(viewSourceSlot())); 
+  taMisc::in_eventproc++;       // this is an event proc!
   menu->exec(QCursor::pos());
+  taMisc::in_eventproc--;
   delete menu;
 }
 

@@ -102,9 +102,6 @@ void ProjectBase::AutoBuildNets() {
 
 Network* ProjectBase::GetNewNetwork(TypeDef* typ) {
   Network* rval = (Network*)networks.New(1, typ);
-// #ifdef TA_GUI
-//   taiMisc::RunPending();
-// #endif
   return rval;
 }
 

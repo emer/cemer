@@ -1470,17 +1470,27 @@ void taMisc::ClearConsoleHold() {
   console_hold = "";
 }
 
-int taMisc::ProcessEvents() {
+int taMisc::ProcessEvents(bool waitproc_after) {
 #ifndef NO_TA_BASE
-  return taiMiscCore::ProcessEvents();
+  int rval = taiMiscCore::ProcessEvents();
+  if(waitproc_after) {
+    if(taMisc::WaitProc)
+      taMisc::WaitProc();
+  }
+  return rval;
 #else
   return 0;
 #endif
 }
 
-int taMisc::RunPending() {
+int taMisc::RunPending(bool waitproc_after) {
 #ifndef NO_TA_BASE
-  return taiMiscCore::RunPending();
+  int rval = taiMiscCore::RunPending();
+  if(waitproc_after) {
+    if(taMisc::WaitProc)
+      taMisc::WaitProc();
+  }
+  return rval;
 #else
   return 0;
 #endif

@@ -302,7 +302,7 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   // now, if we are the last proj window, close us!
   if (m_close_proj_now) {
     hide();                     // prevent a possible bug on mac associated with hide and delete
-    taiMiscCore::ProcessEvents();
+    taMisc::ProcessEvents();
     curProject()->CloseLater();
   }
 }
@@ -1287,7 +1287,7 @@ taProject* iMainWindowViewer::myProject() const {
 
 void iMainWindowViewer::emit_EditAction(int param) {
   emit EditAction(param);
-  taiMisc::RunPending();
+  taMisc::RunPending();
   UpdateUi();
 }
 
@@ -1770,7 +1770,7 @@ void iMainWindowViewer::fileClose() {
     }
   }
   hide();       // prevent a possible bug on mac associated with hide and delete
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   proj->CloseLater();
 }
 
@@ -2019,7 +2019,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
   if(!itv) return NULL;
   // note: waitproc is now insulated against recurrent calls..
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
     if(!(itv == cur_tree_view && rval == itv->topLevelItem(0))) {
@@ -2049,7 +2049,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
     }
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return rval;
 }
 
@@ -2058,7 +2058,7 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiSigLink* link) {
   if(!itv) return NULL;
   // note: waitproc is now insulated against recurrent calls..
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
     itv->ExpandAllUnder(rval);
@@ -2071,7 +2071,7 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiSigLink* link) {
     }
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return rval;
 }
 
@@ -2079,7 +2079,7 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiSigLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
   if(!itv) return NULL;
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
     itv->CollapseAllUnder(rval);
@@ -2092,7 +2092,7 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiSigLink* link) {
     }
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return rval;
 }
 
@@ -2112,7 +2112,7 @@ bool iMainWindowViewer::AssertPanel(taiSigLink* link,
     itv->AddPanel(pan);
   }
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return true;
 }
 

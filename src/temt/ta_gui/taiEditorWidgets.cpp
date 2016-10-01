@@ -297,8 +297,11 @@ void taiEditorWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEven
     sel_item_base = NULL;
   }
   FillLabelContextMenu(menu, last_id);
-  if (menu->actions().count() > 0)
+  if (menu->actions().count() > 0) {
+    taMisc::in_eventproc++;       // this is an event proc!
     menu->exec(sender->mapToGlobal(e->pos()));
+    taMisc::in_eventproc--;
+  }
   delete menu;
 }
 

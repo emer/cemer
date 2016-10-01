@@ -97,7 +97,10 @@ void iT3Panel::fileExportInventor() {
 #endif
   }
   fd->setFileMode(QFileDialog::AnyFile);
-  if (!fd->exec()) return;
+  taMisc::in_eventproc++;       // this is an event proc!
+  bool fdrv = fd->exec();
+  taMisc::in_eventproc--;
+  if (!fdrv) return;
   QString fileName;
   {QStringList files = fd->selectedFiles();
   QString selected;

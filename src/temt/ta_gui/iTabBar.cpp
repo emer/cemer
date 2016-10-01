@@ -21,6 +21,7 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 
+#include <taMisc>
 
 QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1];
 
@@ -69,7 +70,9 @@ void iTabBar::contextMenuEvent(QContextMenuEvent * e) {
   // put up the context menu
   QMenu* menu = new QMenu(this);
   tabView()->FillTabBarContextMenu(menu, idx);
+  taMisc::in_eventproc++;       // this is an event proc!
   menu->exec(QCursor::pos());
+  taMisc::in_eventproc--;
   delete menu;
 }
 

@@ -208,13 +208,13 @@ show_menu:
 
   // if any appropriate drop actions, then add them!
   menu->AddSep();
-    host_->UpdateMethodsActionsForDrop();
+  host_->UpdateMethodsActionsForDrop();
     
-    if (is_acceptable) {
-      host_->AddDynActions(menu, 0);
-    }
+  if (is_acceptable) {
+    host_->AddDynActions(menu, 0);
+  }
     
-    menu->AddSep();
+  menu->AddSep();
   act = menu->AddItem("C&ancel", -1);
   act->setShortcut(QKeySequence("Esc"));
 
@@ -224,7 +224,7 @@ show_menu:
   // not good: causes crash!
   // taMisc::RunPending();         // clear out any other events prior to popping menu
 
-  act = menu->menu()->exec(men_pos);
+  act = menu->exec(men_pos);
   //menu->deleteLater();
   delete menu;
   } // block for jump

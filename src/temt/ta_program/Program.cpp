@@ -888,7 +888,7 @@ void Program::UpdateUi() {
   taProject* proj = GetMyProj();
   if(!proj) return;
   proj->UpdateUi();
-  taiM->ProcessEvents();
+  taMisc::ProcessEvents();
 }
 
 void Program::Stop() {
@@ -922,11 +922,10 @@ bool Program::StopCheck() {
   //NOTE: we call event loop even in non-gui compile, since we can presumably
   // have other ways of stopping, such as something from a socket etc.
   // if(taMisc::gui_active)
-  taiM->ProcessEvents();
-  taMisc::WaitProc();
+  taMisc::ProcessEvents(true);    // also run waitproc
   // note: this has to be the full processevents and not RunPending,
   // otherwise it never seems to get the events.
-  //  taiMiscCore::ProcessEvents();
+  //  taMisc::ProcessEvents();
   // NOTE: the return value of this function is not actually what determines stopping
   // the above processEvents will process any Stop events and this will directly cause
   // css to stop in its tracks.
@@ -2309,7 +2308,7 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
     itv->scrollTo(iti);
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
     // make sure our operations are finished
-    taiMiscCore::ProcessEvents();
+    taMisc::ProcessEvents();
     // edit ProgCode but not other ProgEls, and tab into all other items
     if(itm->InheritsFrom(&TA_ProgEl)) {
       ProgEl* pel = (ProgEl*)itm;
@@ -2382,7 +2381,7 @@ bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
     itv->ExpandAllUnder(iti);
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return (bool)iti;
 }
 
@@ -2400,7 +2399,7 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
     itv->CollapseAllUnder(iti);
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return (bool)iti;
 }
 

@@ -461,7 +461,6 @@ void iProgramEditor::Controls_Remove() {
   membs.Reset();
   meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
   body->clearLater();
-//nn and dangerous!  taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
 }
 
 bool iProgramEditor::miniEditVisible() {
@@ -524,7 +523,7 @@ void iProgramEditor::Help() {
 iTreeViewItem* iProgramEditor::AssertBrowserItem(taiSigLink* link)
 {
   // note: waitproc is insulated against recurrent calls..
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   iTreeViewItem* rval = items->AssertItem(link);
   if (rval) {
     items->setFocus();
@@ -533,7 +532,7 @@ iTreeViewItem* iProgramEditor::AssertBrowserItem(taiSigLink* link)
     items->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+  taMisc::ProcessEvents();
   return rval;
 }
 
@@ -705,8 +704,11 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
     this, SLOT(DoAddToControlPanel(QAction*)));
   }
 
-  if (menu->actions().count() > 0)
+  if (menu->actions().count() > 0) {
+    taMisc::in_eventproc++;       // this is an event proc!
     menu->exec(sender->mapToGlobal(e->pos()));
+    taMisc::in_eventproc--;
+  }
   delete menu;
 }
 

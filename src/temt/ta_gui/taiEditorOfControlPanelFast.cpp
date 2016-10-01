@@ -306,8 +306,11 @@ void taiEditorOfControlPanelFast::tw_customContextMenuRequested(const QPoint& po
   QMenu* menu = new QMenu(widget());
   int last_id = -1;
   FillLabelContextMenu(menu, last_id);
-  if (menu->actions().count() > 0)
+  if (menu->actions().count() > 0) {
+    taMisc::in_eventproc++;       // this is an event proc!
     menu->exec(tw->mapToGlobal(pos));
+    taMisc::in_eventproc--;
+  }
   delete menu;
 
 }

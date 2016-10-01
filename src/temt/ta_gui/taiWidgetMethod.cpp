@@ -240,7 +240,7 @@ void taiWidgetMethod::ApplyBefore() {
 
 /*was:  applyNow();
   // note: applyNow is async, so we have to do event loop
-  taiMiscCore::ProcessEvents(); */
+  taMisc::ProcessEvents(); */
   // send the RESOLVE_NOW operator to all clients
   taBase* base = host->Base();
   if (base) {
