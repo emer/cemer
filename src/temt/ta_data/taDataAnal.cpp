@@ -1599,6 +1599,80 @@ bool taDataAnal::Histogram(DataTable* hist_data, DataTable* src_data,
   return true;
 }
 
+bool taDataAnal::MatrixCellFreq
+(DataTable* freq_data, DataTable* src_data, const String& src_col,
+ bool thresh, float thr_val, bool mean, bool view) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::MatrixCellFreq -- src_data is NULL or has no data -- must pass in this data");
+    return false;
+  }
+  
+  GetDest(freq_data, src_data, "MatrixCellFreq");
+
+  DataCol* da = GetMatrixDataCol(src_data, src_col);
+  if(!da) return false;
+
+  freq_data->StructUpdate(true);
+  int idx;
+
+  DataCol* freqda = freq_data->FindMakeColMatrixN
+    (da->name, VT_FLOAT, da->cell_geom, idx);
+
+  freq_data->EnforceRows(1);
+  freqda->InitVals(0.0f);
+  float_MatrixPtr freq_mtx;
+  freq_mtx = (float_Matrix*)freqda->GetValAsMatrix(0);
+
+  float_Matrix tmp;
+  
+  for(int ri=0; ri < src_data->rows; ri++) {
+    if(da->valType() == VT_FLOAT) {
+      float_MatrixPtr mtx;
+      mtx = (float_Matrix*)da->GetValAsMatrix(ri);
+      if(thresh) {
+        tmp.CopyFrom(mtx);
+        taMath_float::vec_threshold(&tmp, thr_val);
+        *(freq_mtx.ptr()) += tmp;
+      }
+      else {
+        *(freq_mtx.ptr()) += *(mtx.ptr());
+      }
+    }
+    else if(da->valType() == VT_DOUBLE) {
+      double_MatrixPtr mtx;
+      mtx = (double_Matrix*)da->GetValAsMatrix(ri);
+      tmp.CopyFrom(mtx);
+      if(thresh) {
+        taMath_float::vec_threshold(&tmp, thr_val);
+      }
+      *(freq_mtx.ptr()) += tmp;
+    }
+    else if(da->valType() == VT_INT) { // convert
+      int_MatrixPtr mtx;
+      mtx = (int_Matrix*)da->GetValAsMatrix(ri);
+      tmp.CopyFrom(mtx);
+      if(thresh) {
+        taMath_float::vec_threshold(&tmp, thr_val);
+      }
+      *(freq_mtx.ptr()) += tmp;
+    }
+  }
+
+  if(mean) {
+    *(freq_mtx.ptr()) /= (float)src_data->rows;
+  }
+  
+  if(view) {
+    freq_data->SetUserData("N_ROWS", 1);
+    freq_data->SetUserData("AUTO_SCALE", true);
+    freq_data->SetUserData("HEADER_OFF", true);
+  }
+  freq_data->StructUpdate(false);
+  if(view) freq_data->FindMakeGridView(NULL, false); // don't select view
+  
+  return true;
+}
+
 /*
 void Environment::PatFreqGrid(GridLog* disp_log, float act_thresh, bool prop) {
   if(events.leaves == 0)

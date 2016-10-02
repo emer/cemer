@@ -197,6 +197,11 @@ public:
                           float min_val = 0.0, float max_val = 0.0, bool view = true);
   // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph create a histogram of src_col data in src_data data table, using bin size, and optionally specifying fixed min and max values (only used if range between is non-zero) -- results go into hist_data table, by default creates a bar graph (can turn this off with the view option)
 
+  static bool   MatrixCellFreq(DataTable* freq_data, DataTable* src_data,
+                               const String& src_col, bool thresh = false,
+                               float thr_val = 0.5f, bool mean = true, bool view = true);
+  // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph average (or sum if mean = false) the values across all rows of the source data for given matrix column, and optionally generate a grid view matrix plot of the results, which tells you the frequency of activity of the individual cells of the matrix across the rows -- useful for seeing the overall distribution of unit activations in input / output patterns, for example
+  
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };

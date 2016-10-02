@@ -49,12 +49,6 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   req_full_render = false;
   req_full_build = false;
 
-  if(dv_ && dv_->net()) {
-    bool ok;
-    this->setStyleSheet("iViewPanel { background-color: #" +
-                        dv_->net()->GetEditColor(ok).toString() + "; }");
-  }
-  
   T3ExaminerViewer* vw = dv_->GetViewer();
   if(vw) {
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
@@ -486,6 +480,12 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
     nv->Render();
   }
 
+  if(nv->net()) {
+    bool ok;
+    this->setStyleSheet("iViewPanel { background-color: #" +
+                        nv->net()->GetEditColor(ok).toString() + "; }");
+  }
+  
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
   chkNetText->setChecked(nv->net_text);

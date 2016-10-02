@@ -29,11 +29,6 @@ iViewPanelOfDataTable::iViewPanelOfDataTable(DataTableView* lv)
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2
   layWidg->setMargin(0); layWidg->setSpacing(2);
-  bool ok;
-  if (lv && lv->dataTable()) {
-    this->setStyleSheet("iViewPanel { background-color: #" +
-                        lv->dataTable()->GetEditColor(ok).toString() + "; }");
-  }
 
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
@@ -55,6 +50,14 @@ iViewPanelOfDataTable::~iViewPanelOfDataTable() {
 
 void iViewPanelOfDataTable::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
+  if (m_dv) {
+    DataTableView* dv = (DataTableView*)m_dv;
+    if (dv && dv->dataTable()) {
+      bool ok;
+      this->setStyleSheet("iViewPanel { background-color: #" +
+                          dv->dataTable()->GetEditColor(ok).toString() + "; }");
+    }
+  }
   meth_but_mgr->GetImage();
 }
 
