@@ -22,11 +22,11 @@
 #include <QEvent>
 #include <QPainter>
 #include <QStyle>
-#include <QStyleoption>
-#include <QStylepainter>
+#include <QStyleOption>
+#include <QStylePainter>
 #include <QTabwidget>
 #include <QTooltip>
-#include <QWhatsthis>
+#include <QWhatsThis>
 #include <QToolButton>
 #ifndef QT_NO_ACCESSIBILITY
 #include <QAccessible>
