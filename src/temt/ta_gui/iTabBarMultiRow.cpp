@@ -1756,8 +1756,8 @@ void iTabBarMultiRowPrivate::setupMovableTab()
   QRect grabRect = q->tabRect(pressedIndex);
   grabRect.adjust(-taboverlap, 0, taboverlap, 0);
 
-  QPixmap grabImage(grabRect.size() * q->devicePixelRatioF());
-  grabImage.setDevicePixelRatio(q->devicePixelRatioF());
+  QPixmap grabImage(grabRect.size());
+  // grabImage.setDevicePixelRatio(q->devicePixelRatioF());
   grabImage.fill(Qt::transparent);
   QStylePainter p(&grabImage, q);
   p.initFrom(q);
