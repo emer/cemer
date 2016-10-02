@@ -24,8 +24,8 @@
 #include <QStyle>
 #include <QStyleOption>
 #include <QStylePainter>
-#include <QTabwidget>
-#include <QTooltip>
+#include <QTabWidget>
+#include <QToolTip>
 #include <QWhatsThis>
 #include <QToolButton>
 #ifndef QT_NO_ACCESSIBILITY
