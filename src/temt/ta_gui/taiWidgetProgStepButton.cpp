@@ -120,6 +120,10 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
       tbut->setShortcut(QKeySequence("F10"));
     }
     QSize sz = tbut->minimumSizeHint();
+    
+#ifdef TA_OS_WIN
+   tbut->setMinimumWidth(sz.width() + 20);
+#endif
     tbut->setMaximumWidth(sz.width() - but_marg_minus);
     newbar->addSeparator();
     newbar->addWidget(tbut);

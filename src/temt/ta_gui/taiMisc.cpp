@@ -318,9 +318,16 @@ void taiMisc::InitMetrics(bool reinit) {
   else
     base_height = 29;
 
+#ifdef TA_OS_WIN
+  mbutton_ht[0] = resizeByMainFont(26);
+  mbutton_ht[1] = resizeByMainFont(27);
+  mbutton_ht[2] = resizeByMainFont(29);
+#else
   mbutton_ht[0] = resizeByMainFont(22);
   mbutton_ht[1] = resizeByMainFont(23);
   mbutton_ht[2] = resizeByMainFont(25);
+#endif
+
 
   mlabel_ht[0] = resizeByMainFont(20);
   mlabel_ht[1] = resizeByMainFont(21);
