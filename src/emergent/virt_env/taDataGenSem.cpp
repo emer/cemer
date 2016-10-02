@@ -108,24 +108,25 @@ void taDataGenSem::SemVecGen_GetDistBotK(DataTable* dist_mat, int k_n, DataTable
   dist_botk->StructUpdate(false);
 }
 
-bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
-				       Variant dest_name_col, Variant dest_vec_col,
-				       DataTable* dist_mat, DataTable* dist_topk,
-				       bool topk_thr, float softmax_gain, float p_flip_bit) {
+bool taDataGenSem::SemVecGen_Flip
+(bool toward, DataTable* dest, DataTable* dest_tmp, Variant dest_name_col,
+ Variant dest_vec_col, DataTable* trg_dist_mat, DataTable* dist_kmat,
+ DataTable* bit_freqs, bool use_k_thr, float softmax_thr, float softmax_gain,
+ float p_flip_items, float freq_weight) {
   if(!dest) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dest is NULL -- must exist and be properly formatted");
+    taMisc::Error("taDataGenSem::SemVecGen_Flip dest is NULL -- must exist and be properly formatted");
     return false;
   }
   if(!dest_tmp) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dest_tmp is NULL -- must exist and be properly formatted");
+    taMisc::Error("taDataGenSem::SemVecGen_Flip dest_tmp is NULL -- must exist and be properly formatted");
     return false;
   }
-  if(!dist_mat) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dist_mat is NULL -- must exist and be properly formatted");
+  if(!trg_dist_mat) {
+    taMisc::Error("taDataGenSem::SemVecGen_Flip trg_dist_mat is NULL -- must exist and be properly formatted");
     return false;
   }
-  if(!dist_topk) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dist_topk is NULL -- must exist and be properly formatted");
+  if(!dist_kmat) {
+    taMisc::Error("taDataGenSem::SemVecGen_Flip dist_kmat is NULL -- must exist and be properly formatted");
     return false;
   }
 
@@ -137,14 +138,17 @@ bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
   DataCol* dest_tmp_vec_da = dest_tmp->GetColData(dest_vec_col); // gives err
   if(!dest_tmp_vec_da) return false;
 
-  DataCol* topk_da = dist_topk->GetColData("kval"); // gives err
-  if(!topk_da) return false;
+  DataCol* k_da = dist_kmat->GetColData("kval"); // gives err
+  if(!k_da) return false;
+
+  DataCol* freq_da = bit_freqs->GetColData(0); // gives err
+  if(!freq_da) return false;
 
   dest_tmp_vec_da->InitVals(0.0f);
 
   int vec_bits = dest_vec_da->cell_size();
 
-  int n_flip_bit = (int)(p_flip_bit * (float)dest->rows + .5f);
+  int n_flip_bit = (int)(p_flip_items * (float)dest->rows + .5f);
   if(n_flip_bit < 1) n_flip_bit = 1;
 
   static int_Array sorder;
@@ -156,20 +160,31 @@ bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
   // first gather probability votes for flipping bits
   for(int sidx=0;sidx < n_flip_bit; sidx++) {
     int srow = sorder[sidx];
-    float dkval = topk_da->GetValAsFloat(srow);
+    float dkval = k_da->GetValAsFloat(srow);
     for(int orow=0;orow < dest->rows; orow++) {
       if(orow == srow) continue;			    // skip self!
-      float dist = dist_mat->GetValAsFloat(orow + 1, srow); // col, row -- assume 1 offset
-      if(topk_thr && (dist < dkval)) continue;		     // don't do anything for non-top-k guys
+      float dist = trg_dist_mat->GetValAsFloat(orow + 1, srow); // col, row -- assume 1 offset
+      if(toward) {
+        if(use_k_thr && (dist < dkval)) continue; // don't do anything for non-top-k guys
+      }
+      else {
+        if(use_k_thr && (dist > dkval)) continue; // don't do anything for non-bot-k guys
+        dist = 1.0f - dist;
+      }
+        
       for(int k=0;k<vec_bits;k++) {
 	float schg = dest_tmp_vec_da->GetValAsFloatM(srow, k);
 	float sbit = dest_vec_da->GetValAsFloatM(srow, k);
 	float obit = dest_vec_da->GetValAsFloatM(orow, k);
 	float chg;
-	if(sbit > 0.0f)	// if our bit is on, see if we should turn it off
-	  chg = -dist * obit;	// if obit is -1, we get +1 vote for off, else -1 vote for off
-	else
-	  chg = dist * obit;	// if obit is +1 we want to turn it on, else keep off
+        if(sbit  == obit) {        // bits are the same
+          if(toward) chg += -dist; // punish changing same bits in proportion to similarity
+          else       chg += dist;  // reward changing same bits in proportion to distance
+        }
+        else {
+          if(toward) chg += dist; // reward changing diff bits in proportion to similarity
+          else       chg += -dist;  // punish changing diff bits in proportion to distance
+        }          
 	float nwval = schg + chg;
 	dest_tmp_vec_da->SetValAsFloatM(nwval, srow, k);
       }
@@ -185,17 +200,17 @@ bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
     float flip_off_sum = 0.0f;
     for(int k=0;k<vec_bits;k++) {
       float& el = kmat->FastEl_Flat(k);
-      // this turns out to be very bad -- nuke!!
-//       if(el <= 0.0f) {
-// 	el = 0.0f;
-// 	continue;
-//       }
-      el = expf(softmax_gain * MAX(el, 0.0f));
+      float freq = freq_da->GetValAsFloatM(0, k);
       float sbit = dest_vec_da->GetValAsFloatM(srow, k);
-      if(sbit > 0.0f)
+      if(el > softmax_thr) el = softmax_thr; // this turns out to be critical!
+      if(sbit > 0.0f) {         // bit is currently on
+        el = expf(softmax_gain * el + freq_weight * freq); // more likely to flip off
 	flip_off_sum += el;
-      else
+      }
+      else {
+        el = expf(softmax_gain * el - freq_weight * freq); // less likely to flip on
 	flip_on_sum += el;
+      }
     }
     float pon = Random::ZeroOne();
     float poff = Random::ZeroOne();
@@ -234,134 +249,10 @@ bool taDataGenSem::SemVecGenLearn_FlipOn(DataTable* dest, DataTable* dest_tmp,
   return true;
 }
 
-bool taDataGenSem::SemVecGenLearn_FlipOff(DataTable* dest, DataTable* dest_tmp,
-			       Variant dest_name_col, Variant dest_vec_col,
-			       DataTable* dist_mat, DataTable* dist_botk,
-			       bool botk_thr, float softmax_gain, float p_flip_bit) {
-  if(!dest) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dest is NULL -- must exist and be properly formatted");
-    return false;
-  }
-  if(!dest_tmp) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dest_tmp is NULL -- must exist and be properly formatted");
-    return false;
-  }
-  if(!dist_mat) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dist_mat is NULL -- must exist and be properly formatted");
-    return false;
-  }
-  if(!dist_botk) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Grad dist_botk is NULL -- must exist and be properly formatted");
-    return false;
-  }
-
-  DataCol* dest_nm_da = dest->GetColData(dest_name_col); // gives err
-  if(!dest_nm_da) return false;
-  DataCol* dest_vec_da = dest->GetColData(dest_vec_col); // gives err
-  if(!dest_vec_da) return false;
-
-  DataCol* dest_tmp_vec_da = dest_tmp->GetColData(dest_vec_col); // gives err
-  if(!dest_tmp_vec_da) return false;
-
-  DataCol* botk_da = dist_botk->GetColData("kval"); // gives err
-  if(!botk_da) return false;
-
-  dest_tmp_vec_da->InitVals(0.0f);
-
-  int vec_bits = dest_vec_da->cell_size();
-
-  int n_flip_bit = (int)(p_flip_bit * (float)dest->rows + .5f);
-  if(n_flip_bit < 1) n_flip_bit = 1;
-
-  static int_Array sorder;
-  if(sorder.size != dest->rows) {
-    sorder.SetSize(dest->rows);
-    sorder.FillSeq();
-  }
-  sorder.Permute();
-  // first gather probability votes for flipping bits
-  for(int sidx=0;sidx < n_flip_bit; sidx++) {
-    int srow = sorder[sidx];
-    float dkval = botk_da->GetValAsFloat(srow);
-    for(int orow=0;orow < dest->rows; orow++) {
-      if(orow == srow) continue;			    // skip self!
-      float dist = dist_mat->GetValAsFloat(orow + 1, srow); // col, row -- assume 1 offset
-      if(botk_thr && (dist > dkval)) continue;		     // don't do anything for non-top-k guys
-      float inv_dist = 1.0f - dist;
-      for(int k=0;k<vec_bits;k++) {
-	float schg = dest_tmp_vec_da->GetValAsFloatM(srow, k);
-	float sbit = dest_vec_da->GetValAsFloatM(srow, k);
-	float obit = dest_vec_da->GetValAsFloatM(orow, k);
-	float chg;
-	if(sbit > 0.0f)	// if our bit is on, see if we should turn it off
-	  chg = inv_dist * obit; // if obit is +1, we get +1 vote for off, else -1 vote for off
-	else
-	  chg = -inv_dist * obit; // if obit is -1 we want to turn it on, else keep off
-	float nwval = schg + chg;
-	dest_tmp_vec_da->SetValAsFloatM(nwval, srow, k);
-      }
-    }
-  }
-
-  // then compute softmax on flip probs and actually flip a bit
-  for(int sidx=0;sidx < n_flip_bit; sidx++) {
-    int srow = sorder[sidx];
-    float_MatrixPtr kmat;
-    kmat = (float_Matrix*)dest_tmp_vec_da->GetValAsMatrix(srow);
-    float flip_on_sum = 0.0f;
-    float flip_off_sum = 0.0f;
-    for(int k=0;k<vec_bits;k++) {
-      float& el = kmat->FastEl_Flat(k);
-      el = expf(softmax_gain * MAX(el, 0.0f));
-      float sbit = dest_vec_da->GetValAsFloatM(srow, k);
-      if(sbit > 0.0f)
-	flip_off_sum += el;
-      else
-	flip_on_sum += el;
-    }
-    float pon = Random::ZeroOne();
-    float poff = Random::ZeroOne();
-    float sum_on_p = 0.0f;
-    float sum_off_p = 0.0f;
-    int bit_on = -1;
-    int bit_off = -1;
-    for(int k=0;k<vec_bits;k++) {
-      float& el = kmat->FastEl_Flat(k);
-      float sbit = dest_vec_da->GetValAsFloatM(srow, k);
-      if(sbit > 0.0f) {
-	if(bit_off < 0) {
-	  float pel = el / flip_off_sum;
-	  sum_off_p += pel;
-	  if(sum_off_p >= poff) {
-	    bit_off = k;
-	  }
-	}
-      }
-      else {
-	if(bit_on < 0) {
-	  float pel = el / flip_on_sum;
-	  sum_on_p += pel;
-	  if(sum_on_p >= pon) {
-	    bit_on = k;
-	  }
-	}
-      }
-    }
-    if(bit_on >= 0 && bit_off >= 0) {
-      // flip bits!
-      dest_vec_da->SetValAsFloatM(-1.0f, srow, bit_off);
-      dest_vec_da->SetValAsFloatM(1.0f, srow, bit_on);
-    }
-  }
-  return true;
-}
-
-bool taDataGenSem::SemVecGenLearn_FlipStats(DataTable* dest, Variant dest_name_col,
-			Variant dest_vec_col,
-		      DataTable* dist_mat, DataTable* lrn_stats,
-		      DataTable* dest_dist, 
-		      float softmax_gain, float p_flip_bit,
-		      taMath::DistMetric metric, bool norm, float tol) {
+bool taDataGenSem::SemVecGen_FlipStats
+(DataTable* dest, Variant dest_name_col, Variant dest_vec_col, DataTable* dist_mat,
+ DataTable* lrn_stats, DataTable* dest_dist,  float softmax_gain, float p_flip_items,
+ taMath::DistMetric metric, bool norm, float tol) {
   if(!dest) {
     taMisc::Error("taDataGenSem::SemVecGenLearn_Stats dest is NULL -- must exist and be properly formatted");
     return false;
@@ -389,7 +280,7 @@ bool taDataGenSem::SemVecGenLearn_FlipStats(DataTable* dest, Variant dest_name_c
   lrn_stats->FindMakeColName("iter", idx, VT_INT);
   lrn_stats->FindMakeColName("err", idx, VT_FLOAT);
   lrn_stats->FindMakeColName("softmax_gain", idx, VT_FLOAT);
-  lrn_stats->FindMakeColName("p_flip_bit", idx, VT_FLOAT);
+  lrn_stats->FindMakeColName("p_flip_items", idx, VT_FLOAT);
   lrn_stats->StructUpdate(false);
 
   taDataAnal::DistMatrixTable(dest_dist, false, dest, dest_vec_da->name, dest_nm_da->name,
@@ -401,7 +292,7 @@ bool taDataGenSem::SemVecGenLearn_FlipStats(DataTable* dest, Variant dest_name_c
   lrn_stats->SetValAsInt(lrn_stats->rows, "iter", -1);
   lrn_stats->SetValAsFloat(err, "err", -1);
   lrn_stats->SetValAsFloat(softmax_gain, "softmax_gain", -1);
-  lrn_stats->SetValAsFloat(p_flip_bit, "p_flip_bit", -1);
+  lrn_stats->SetValAsFloat(p_flip_items, "p_flip_items", -1);
   lrn_stats->WriteClose();
   return true;
 }
