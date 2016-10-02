@@ -821,7 +821,8 @@ void iProgramEditor::ForwardMenuAboutToShow() {
 
 void iProgramEditor::HistoryGoTo(QAction* action) {
   int index = action->data().toInt();
-  brow_hist->select_item(brow_hist->items.SafeEl(index));
+  taiSigLink* link = brow_hist->items.SafeEl(index);
+  AssertBrowserItem(link);
 }
 
 iMainWindowViewer* iProgramEditor::window() const {

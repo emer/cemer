@@ -3405,5 +3405,5 @@ void iMainWindowViewer::ForwardMenuAboutToShow() {
 void iMainWindowViewer::HistoryGoTo(QAction* action) {
   int index = action->data().toInt();
   taiSigLink* link = brow_hist->items.SafeEl(index);
-  brow_hist->select_item(link);
+  AssertBrowserItem(link);
 }
