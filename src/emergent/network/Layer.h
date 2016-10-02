@@ -345,7 +345,7 @@ public:
   // position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space
   
   virtual void  Copy_Weights(const Layer* src);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
 
   virtual void  SaveWeights_strm(std::ostream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, Projection* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
@@ -447,7 +447,7 @@ public:
   // #CAT_Learning #IGNORE layer-level initialization taking place after Init_Weights on units
 
   virtual void  Init_Weights(bool recv_cons);
-  // #CAT_Learning initialize weights for all of the projections into (recv_cons = true) or out of (recv_cons = false) this layer 
+  // #CAT_Learning #MENU #MENU_ON_State #MENU_SEP_BEFORE initialize weights for all of the projections into (recv_cons = true) or out of (recv_cons = false) this layer 
   
   virtual void  Init_Stats(Network* net);
   // #EXPERT #CAT_Statistic initialize statistic variables on layer -- called by Network Init_Stats
@@ -490,7 +490,7 @@ public:
   
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
-  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
+  // #MENU #MENU_ON_State #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   virtual void  AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   virtual int   PruneCons(const SimpleMathSpec& pre_proc,

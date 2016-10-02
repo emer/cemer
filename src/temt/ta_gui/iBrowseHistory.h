@@ -37,7 +37,7 @@ typedef taPtrList<taiSigLink> taiSigLink_PList; // list of taiSigLink
 taTypeDef_Of(iBrowseHistory);
 
 class TA_API iBrowseHistory: public QObject, public IMultiSigLinkClient {
-  // #NO_INSTANCE #NO_CSS retains browsing history
+  // #NO_CSS retains browsing history
 INHERITED(QObject)
   Q_OBJECT
 public:

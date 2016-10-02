@@ -110,7 +110,7 @@ public:
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
 
   virtual void  Copy_Weights(const Projection* src);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
+  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
 
  virtual void  CheckSpecs();
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
@@ -133,10 +133,10 @@ public:
   // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
 
   virtual void  Init_Weights();
-  // #CAT_Weights initialize weights for all the connections associated with this projection
+  // #CAT_Weights #MENU #MENU_SEP_BEFORE initialize weights for all the connections associated with this projection
   
   virtual void  TransformWeights(const SimpleMathSpec& trans);
-  // #MENU #MENU_SEP_BEFORE #CAT_Weights apply given transformation to weights -- must call Init_Weights_post at network level after running this!
+  // #MENU #CAT_Weights apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   virtual void  RenormWeights(bool mult_norm, float avg_wt);
   // #MENU #CAT_Weights renormalize the weight values using either multiplicative (for positive-only weight values such as Leabra) or subtractive normalization (for pos/neg weight values, such as backprop) to hit the given average weight value -- must call Init_Weights_post at network level after running this!
   virtual void  RescaleWeights(const float rescale_factor);
