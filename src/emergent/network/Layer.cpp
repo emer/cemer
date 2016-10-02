@@ -1129,6 +1129,23 @@ void  Layer::Init_Acts(Network* net) {
 void Layer::Init_Weights_Layer(Network* net) {
 }
 
+void Layer::Init_Weights(bool recv_cons) {
+  if(!own_net) return;
+  if(!own_net->IsBuiltIntact()) return;
+  if(recv_cons) {
+    FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+      if(p->NotActive()) continue;
+      p->Init_Weights();
+    }
+  }
+  else {
+    FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {
+      if(p->NotActive()) continue;
+      p->Init_Weights();
+    }
+  }
+}
+
 void Layer::Init_Stats(Network* net) {
   sse = 0.0f;
   avg_sse.ResetAvg();

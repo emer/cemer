@@ -48,7 +48,7 @@ public:
   iTabView*             tabView() {return (iTabView*)parent();} // #IGNORE
 
 #ifndef __MAKETA__
-  using                 QTabBar::addTab; // bring also into scope
+  using                 inherited::addTab; // bring also into scope
 #endif
   int                   addTab(iPanelBase* panel); //#IGNORE puts at end if locked else inserts at end of unlocked
   void                  setTabIcon(int idx, TabIcon ti);

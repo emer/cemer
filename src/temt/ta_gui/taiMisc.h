@@ -396,41 +396,35 @@ public:
   static iTopLevelWindow_List    active_wins; // #IGNORE currently open windows
   static iNetworkAccessManager*  net_access_mgr; // #IGNORE network access manager for web browser
     
-  static int                    busy_count; // levels of busy
+  static int            busy_count; // levels of busy
 
-  static TypeSpace              arg_types;      // list of all taiArgTypes
-  static void (*Update_Hook)(taBase*);
+  static TypeSpace      arg_types;      // list of all taiArgTypes
+  static void           (*Update_Hook)(taBase*);
   // #IGNORE called after apply in a dialog, etc. obj is the object that was edited
 #ifndef __MAKETA__
   static QPointer<iMainWindowViewer> main_window; // the main window (dialogs are parented to this)
 
 #endif
-  static taBase_PtrList         unopened_windows;
+  static taBase_PtrList unopened_windows;
   // #HIDDEN unopened windows waiting to be opened
 
 #ifndef __MAKETA__
-  static void                   GetWindowList(iWidget_List& rval);
+  static void           GetWindowList(iWidget_List& rval);
     // returns, as widgets, all "top level" windows, for use in a Windows menu; you can only use these transiently, i.e. in an on-demand popup
 #endif
-  static taiMisc*               New(bool gui, QObject* parent = NULL);
+  static taiMisc*       New(bool gui, QObject* parent = NULL);
    // #IGNORE initialize Qt interface system -- launch main window if gui;
 
-  static void   OpenWindows(); //  open all unopened windows
-  static void   WaitProc();     // waiting process function
+  static void           OpenWindows(); //  open all unopened windows
+  static void           WaitProc();     // waiting process function
   // update menus relevant to the given object, which might have changed
-  static void   ScriptIconify(void* obj, int onoff); // record iconify command for obj to script
-//obs  static int       SetIconify(void* obj, int onoff); // set iconified field of winbase obj to onoff
+  static void           ScriptIconify(void* obj, int onoff); // record iconify command for obj to script
+  static void           Update(taBase* obj); // #IGNORE update stuff after modification (uses hook fun)
+  static void           DummyEvent(int msec=20); // trigger a dummy singleShot event after given delay in msec to make sure the event loop will be activated at least once..
 
-
-  static void   Update(taBase* obj); // #IGNORE update stuff after modification (uses hook fun)
-
-  static void   PurgeDialogs();
+  static void           PurgeDialogs();
   // remove any 'NoBlock' dialogs from active list (& delete them)
 
-//obs  static bool      RevertEdits(void* obj, TypeDef* td);
-  // revert any open edit dialogs for given object
-//  static bool ReShowEdits(void* obj, TypeDef* td, bool force = true);
-  // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
 #ifndef __MAKETA__
   static taiEditorOfClass* FindEdit(void* base, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
@@ -445,38 +439,38 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // find the iMainWindowViewer parent of a given gui object, if it can be found through successive parent() calls -- otherwise NULL
 #endif
 
-  static void   Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
+  static void           Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
 
-  void          InitMetrics(bool reinit=false); // initializes all the sizes/fonts/etc. -- QApplication object must be created
-  void          AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
-  void          ResolveEditChanges(CancelOp& cancel_op); // #IGNORE resolve all changes on ALL edits panels and dialogs
-  void          ResolveViewerChanges(CancelOp& cancel_op); // #IGNORE resolve all changes on ALL top level viewers
-  void          Busy_(bool busy) override;// #IGNORE impl for taMisc, puts system in a 'busy' state (pointer, no input)
-  void          CheckConfigResult_(bool ok) override; 
+  virtual void          InitMetrics(bool reinit=false); // initializes all the sizes/fonts/etc. -- QApplication object must be created
+  virtual void          AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
+  virtual void          ResolveEditChanges(CancelOp& cancel_op); // #IGNORE resolve all changes on ALL edits panels and dialogs
+  virtual void          ResolveViewerChanges(CancelOp& cancel_op); // #IGNORE resolve all changes on ALL top level viewers
+  virtual void          Busy_(bool busy) override;// #IGNORE impl for taMisc, puts system in a 'busy' state (pointer, no input)
+  virtual void          CheckConfigResult_(bool ok) override; 
 
 #ifndef __MAKETA__
-  static bool   UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e);
+  static bool           UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e);
   // call UpdateUi on iMainWindowViewer associated with given object if the given keyboard event or the global keyboardModifiers status indicates that a ctrl key is pressed -- this enables just-in-time updating of the global cut/copy/paste edit action shortcuts -- should be called in keyboard event processing routines for objects that have such routines and depend on shortcuts..
-  static bool   KeyEventCtrlPressed(QKeyEvent* e);
+  static bool           KeyEventCtrlPressed(QKeyEvent* e);
   // #IGNORE process given event to see if the ctrl key was pressed -- uses MetaModifier on Mac = actual Ctrl key..
   static taiMisc::BoundAction GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event);
   // #IGNORE translate the key_event into the bound action
-  static QKeySequence GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action);
+  static QKeySequence   GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action);
   // #IGNORE get the key sequence bound to this action - will get the first it comes to (but shouldn't be more than one)
-  static String GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action, int kb_set);
+  static String         GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action, int kb_set);
   // #IGNORE get the key sequence bound to this action - and convert to human friendly and platform specific string  -- kb_set should be taMisc::KeyBindingSet but I don't want to include taMisc!! kb_set = 0 is KEY_BINDINGS_DEFAULT
 #endif
-  static void   LoadDefaultKeyBindings();
+  static void           LoadDefaultKeyBindings();
   // #IGNORE add all of the default key/action bindings - these are set in code
-  static void   LoadCustomKeyBindings();
+  static void           LoadCustomKeyBindings();
   // #IGNORE the custom key/action bindings are loaded from a file
-  static void   ResetKeyBindings();
+  static void           ResetKeyBindings();
   // #IGNORE move the custom key bindings file and create new one with the default values
-  static void   DefaultCustomKeyBindings();
+  static void           DefaultCustomKeyBindings();
   // #IGNORE create a custom key binding file that starts with the default bindings
-  static void   UpdateCustomKeyBindings();
+  static void           UpdateCustomKeyBindings();
   // #IGNORE reconcile custom key bindings loaded with current set actions supported for key binding
-  static void   SaveCustomKeyBindings();
+  static void           SaveCustomKeyBindings();
   // #IGNORE save custom key bindings to file
   
   /////////////////////////////////////////////////////////////////
@@ -501,34 +495,34 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   
   //		Delete children
 #ifndef __MAKETA__
-  static void	DeleteChildrenLater(QObject* obj);
+  static void	        DeleteChildrenLater(QObject* obj);
   // convenience function -- deleteLater all children
-  static void	DeleteChildrenNow(QObject* obj);
+  static void	        DeleteChildrenNow(QObject* obj);
   // convenience function -- delete *now* all children
-  static void	DeleteWidgetsLater(QObject* obj);
+  static void	        DeleteWidgetsLater(QObject* obj);
   // convenience function -- deleteLater all widgets -- does hide first -- prevents bugs
 #endif
   
-  static QString ToolTipPreProcess(const String& tip_str);
+  static QString        ToolTipPreProcess(const String& tip_str);
   // #IGNORE the only tool tips that get word-wrapped are rich text so plain text needs to be modified
   
 
 protected:
-  static void   SetWinCursors();
+  static void           SetWinCursors();
   // #IGNORE sets cursors for all active windows based on busy and record status
-  static void   RestoreWinCursors();
+  static void           RestoreWinCursors();
   // #IGNORE restores cursors to previous state -- Set/Restore always called in pairs
-  static void   ScriptRecordingGui_(bool start); // callback from taMisc
+  static void           ScriptRecordingGui_(bool start); // callback from taMisc
 
 
 public:
   QProgressDialog*      load_dlg;       // #IGNORE load dialog
 
 protected slots:
-  void          LoadDialogDestroyed();
-
-  void          desktopWidget_resized(int screen);
-  void          desktopWidget_workAreaResized(int screen);
+  virtual void          LoadDialogDestroyed();
+  virtual void          desktopWidget_resized(int screen);
+  virtual void          desktopWidget_workAreaResized(int screen);
+  virtual void          DummyEventSlot();
 
 #ifndef __MAKETA__
 public:
@@ -578,7 +572,7 @@ public:
   QLabel*       NewLabel(const String& text, QWidget* parent = NULL, int fontSpec = 0);
   
   // convenience, for making a label with indicated fontspec
-  void          FormatButton(QAbstractButton* but, const String& text,
+  virtual void  FormatButton(QAbstractButton* but, const String& text,
                              int font_spec = 0); // sets max width, text, and adds a tooltip
 
   static  iColor ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness);

@@ -26,7 +26,7 @@ iViewPanelSet::iViewPanelSet(taiSigLink* link_)
 {
   layDetail->addWidget(wsSubPanels, 1);
   tbSubPanels = new iTabBarBase(widg);
-  tbSubPanels->setShape(QTabBar::TriangularSouth);
+  tbSubPanels->setShape(iTabBarBase::TriangularSouth);
   layDetail->addWidget(tbSubPanels);
 
   connect(tbSubPanels, SIGNAL(currentChanged(int)), this, SLOT(setCurrentPanelId(int)));

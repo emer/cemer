@@ -65,7 +65,8 @@ taiWidgetActions::~taiWidgetActions() {
   Reset();
   if (m_menu) {
     m_menu->setParent(NULL); // avoid potential issues
-    m_menu->deleteLater();
+    // m_menu->deleteLater();
+    delete m_menu;
     m_menu = NULL;
   }
 }

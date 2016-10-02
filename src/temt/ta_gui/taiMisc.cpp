@@ -41,6 +41,7 @@
 #include <QMenuBar>
 #include <QScrollBar>
 #include <QDebug>
+#include <QTimer>
 
 #ifdef USE_QT_WEBENGINE
 #include <QWebEngineSettings>
@@ -627,6 +628,16 @@ void taiMisc::ResolveViewerChanges(CancelOp& cancel_op) {
 void taiMisc::Update(taBase* obj) {
   if (Update_Hook != NULL)
     (*Update_Hook)(obj);
+}
+
+void taiMisc::DummyEvent(int msec) {
+  QEvent* ev = new QEvent(QEvent::User);
+  QCoreApplication::postEvent(taiM_, ev);
+  QTimer::singleShot(msec, taiM_, SLOT(DummyEventSlot()));
+}
+
+void taiMisc::DummyEventSlot() {
+  // taMisc::Info("dummy!");
 }
 
 void taiMisc::PurgeDialogs() {

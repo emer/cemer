@@ -16,6 +16,7 @@
 #include "taiWidgetMenu.h"
 #include <iVec2i>
 #include <taMisc>
+#include <taiMisc>
 
 taiWidgetMenu::taiWidgetMenu(int st, int ft, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                  QWidget* gui_parent_, int flags_, taiWidgetActions* par_menu_)
@@ -48,6 +49,7 @@ QAction* taiWidgetMenu::exec(const iVec2i& pos) {
   taMisc::in_eventproc++;       // this is an event proc!
   QAction* rval = menu()->exec((QPoint)pos);
   taMisc::in_eventproc--;
+  // taiMisc::DummyEvent(20);
   return rval;
 }
 
@@ -55,6 +57,7 @@ QAction* taiWidgetMenu::exec(const QPoint& pos) {
   taMisc::in_eventproc++;       // this is an event proc!
   QAction* rval = menu()->exec(pos);
   taMisc::in_eventproc--;
+  // taiMisc::DummyEvent(20);
   return rval;
 }
 

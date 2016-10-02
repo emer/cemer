@@ -127,11 +127,14 @@ public:
 
   void  Init_Weights_Prjn(ConGroup* cg, Network* net, int thr_no)
   { spec->Init_Weights_Prjn(this, cg, net, thr_no); }
-  // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
+  // #CAT_Weights #IGNORE when ProjectionSpec has init_wts set, this is called by network init weights routine for a given con group for given receiving unit ru
   void  Init_Weights_renorm(ConGroup* cg, Network* net, int thr_no)
   { spec->Init_Weights_renorm(this, cg, net, thr_no); }
   // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
 
+  virtual void  Init_Weights();
+  // #CAT_Weights initialize weights for all the connections associated with this projection
+  
   virtual void  TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Weights apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   virtual void  RenormWeights(bool mult_norm, float avg_wt);

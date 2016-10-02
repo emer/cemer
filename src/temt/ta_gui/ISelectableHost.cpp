@@ -183,7 +183,8 @@ void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
                               tab->GetOwner());
     else
       proj->undo_mgr.SaveUndo(tab, "Delete", NULL, false, tab->GetOwner());
-    taMisc::ProcessEvents();
+    // taMisc::ProcessEvents();  // NO! this makes menu exec confused and it doesnt' return
+    // to the global event loop, so the delete doesn't happen.
   }
 
   for (int i = ta_items.size - 1; i >= 0; --i) {

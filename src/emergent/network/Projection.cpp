@@ -514,6 +514,41 @@ void Projection::Copy_Weights(const Projection* src) {
   }
 }
 
+
+void Projection::Init_Weights() {
+  Network* net = layer->own_net;
+  if(net->RecvOwnsCons() || spec->init_wts) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
+      int thr_no = u->ThrNo();
+      const int nrcg = u->NRecvConGps();
+      for(int i=0; i<nrcg; i++) {
+        ConGroup* rcg = u->RecvConGroup(i);
+        if(rcg->NotActive() || rcg->Sharing()) continue;
+        if(rcg->prjn != this) continue;
+        if(rcg->prjn->spec->init_wts) {
+          rcg->prjn->Init_Weights_Prjn(rcg, net, thr_no);
+        }
+        else {
+          rcg->con_spec->Init_Weights(rcg, net, thr_no);
+        }
+      }
+    }
+  }
+  else { // send owns cons, not prjn init
+    Layer* fmlay = from.ptr();
+    FOREACH_ELEM_IN_GROUP(Unit, u, fmlay->units) {
+      int thr_no = u->ThrNo();
+      const int nscg = u->NSendConGps();
+      for(int i=0; i<nscg; i++) {
+        ConGroup* scg = u->SendConGroup(i);
+        if(scg->NotActive()) continue;
+        if(scg->prjn != this) continue;
+        scg->con_spec->Init_Weights(scg, net, thr_no);
+      }
+    }
+  }
+}
+
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
   FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->TransformWeights(trans, this);
