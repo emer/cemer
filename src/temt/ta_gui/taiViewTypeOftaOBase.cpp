@@ -85,9 +85,9 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
   if (typ && typ->OptionAfter("DEF_CHILD_").nonempty()) {
     String custom_name = typ->OptionAfter("DEF_CHILDNAME_"); // optional
     custom_name.gsub("_", " ");
-    dl_ = dynamic_cast<taSigLinkTaOBase*>(dl_)->listLink();
-    if(dl_) {
-      iPanelOfList* bldp = new iPanelOfList(dl_, custom_name);
+    taiSigLink* ldl_ = dynamic_cast<taSigLinkTaOBase*>(dl_)->listLink();
+    if(ldl_) {
+      iPanelOfList* bldp = new iPanelOfList(ldl_, custom_name);
       DataPanelCreated(bldp);
     }
   }

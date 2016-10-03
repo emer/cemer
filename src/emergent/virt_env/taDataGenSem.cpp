@@ -109,16 +109,21 @@ void taDataGenSem::SemVecGen_GetDistBotK(DataTable* dist_mat, int k_n, DataTable
 }
 
 bool taDataGenSem::SemVecGen_Flip
-(bool toward, DataTable* dest, DataTable* dest_tmp, Variant dest_name_col,
- Variant dest_vec_col, DataTable* trg_dist_mat, DataTable* dist_kmat,
- DataTable* bit_freqs, bool use_k_thr, float softmax_thr, float softmax_gain,
- float p_flip_items, float freq_weight) {
+(bool toward, DataTable* dest, DataTable* work, DataTable* work_sum,
+ Variant dest_name_col, Variant dest_vec_col,
+ DataTable* trg_dist_mat, DataTable* dist_kmat, DataTable* bit_freqs,
+ bool use_k_thr, int k_val, float p_flip_items, float same_wt, float diff_wt,
+ float softmax_gain, float freq_wt, float trg_freq) {
   if(!dest) {
     taMisc::Error("taDataGenSem::SemVecGen_Flip dest is NULL -- must exist and be properly formatted");
     return false;
   }
-  if(!dest_tmp) {
-    taMisc::Error("taDataGenSem::SemVecGen_Flip dest_tmp is NULL -- must exist and be properly formatted");
+  if(!work) {
+    taMisc::Error("taDataGenSem::SemVecGen_Flip work is NULL -- must exist -- will be automatically formatted");
+    return false;
+  }
+  if(!work_sum) {
+    taMisc::Error("taDataGenSem::SemVecGen_Flip work_sum is NULL -- must exist -- will be automatically formatted");
     return false;
   }
   if(!trg_dist_mat) {
@@ -135,22 +140,54 @@ bool taDataGenSem::SemVecGen_Flip
   DataCol* dest_vec_da = dest->GetColData(dest_vec_col); // gives err
   if(!dest_vec_da) return false;
 
-  DataCol* dest_tmp_vec_da = dest_tmp->GetColData(dest_vec_col); // gives err
-  if(!dest_tmp_vec_da) return false;
-
+  int idx;
+  DataCol* wts = work->FindMakeColMatrixN
+    ("weights", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  wts->InitVals(0.0f);
+  wts->desc = "raw weights accumulated from the distance factors, for all bits";
+  DataCol* wts_on = work->FindMakeColMatrixN
+    ("wts_on", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  wts_on->InitVals(0.0f);
+  wts_on->desc = "weights after multiplication by softmax_gain and with the freq penalty, for bits that are CURRENTLY ON (for selecting one to turn OFF)";
+  DataCol* wts_off = work->FindMakeColMatrixN
+    ("wts_off", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  wts_off->InitVals(0.0f);
+  wts_off->desc = "weights after multiplication by softmax_gain and with the freq penalty, for bits that are CURRENTLY OFF (for selecting one to turn ON)";
+  DataCol* exps_on = work->FindMakeColMatrixN
+    ("exps_on", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  exps_on->InitVals(0.0f);
+  exps_on->desc = "exponential of weights for bits that are CURRENTLY ON (for selecting one to turn OFF)";
+  DataCol* exps_off = work->FindMakeColMatrixN
+    ("exps_off", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  exps_off->InitVals(0.0f);
+  exps_off->desc = "exponential of weights for bits that are CURRENTLY OFF (for selecting one to turn ON)";
+  DataCol* probs_on = work->FindMakeColMatrixN
+    ("probs_on", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  probs_on->InitVals(0.0f);
+  probs_on->desc = "final probabilities for bits that are CURRENTLY ON (for selecting one to turn OFF)";
+  DataCol* probs_off = work->FindMakeColMatrixN
+    ("probs_off", VT_FLOAT, dest_vec_da->cell_geom, idx);
+  probs_off->InitVals(0.0f);
+  probs_off->desc = "final probabilities for bits that are CURRENTLY OFF (for selecting one to turn ON)";
+  
+  work->EnforceRows(dest->rows);
+  
   DataCol* k_da = dist_kmat->GetColData("kval"); // gives err
   if(!k_da) return false;
 
   DataCol* freq_da = bit_freqs->GetColData(0); // gives err
   if(!freq_da) return false;
 
-  dest_tmp_vec_da->InitVals(0.0f);
-
   int vec_bits = dest_vec_da->cell_size();
 
   int n_flip_bit = (int)(p_flip_items * (float)dest->rows + .5f);
   if(n_flip_bit < 1) n_flip_bit = 1;
 
+  float freq_wt_eff = (float)n_flip_bit * freq_wt; // scale proportionally
+  if(use_k_thr) {
+    freq_wt_eff *= (float)k_val / (float)dest->rows; // correct for freq
+  }
+  
   static int_Array sorder;
   if(sorder.size != dest->rows) {
     sorder.SetSize(dest->rows);
@@ -173,20 +210,21 @@ bool taDataGenSem::SemVecGen_Flip
       }
         
       for(int k=0;k<vec_bits;k++) {
-	float schg = dest_tmp_vec_da->GetValAsFloatM(srow, k);
+	float chg_wt = wts->GetValAsFloatM(srow, k); // weight toward changing
 	float sbit = dest_vec_da->GetValAsFloatM(srow, k);
 	float obit = dest_vec_da->GetValAsFloatM(orow, k);
-	float chg;
-        if(sbit  == obit) {        // bits are the same
-          if(toward) chg += -dist; // punish changing same bits in proportion to similarity
-          else       chg += dist;  // reward changing same bits in proportion to distance
+	float dwt;
+
+        if(sbit == obit) {        // bits are the same
+          if(toward) dwt = -same_wt * dist; // punish changing same bits in proportion to similarity
+          else       dwt = same_wt * dist;  // reward changing same bits in proportion to distance
         }
         else {
-          if(toward) chg += dist; // reward changing diff bits in proportion to similarity
-          else       chg += -dist;  // punish changing diff bits in proportion to distance
+          if(toward) dwt = diff_wt * dist; // reward changing diff bits in proportion to similarity
+          else       dwt = -diff_wt * dist;  // punish changing diff bits in proportion to distance
         }          
-	float nwval = schg + chg;
-	dest_tmp_vec_da->SetValAsFloatM(nwval, srow, k);
+        chg_wt += dwt;
+	wts->SetValAsFloatM(chg_wt, srow, k);
       }
     }
   }
@@ -194,58 +232,96 @@ bool taDataGenSem::SemVecGen_Flip
   // then compute softmax on flip probs and actually flip a bit
   for(int sidx=0;sidx < n_flip_bit; sidx++) {
     int srow = sorder[sidx];
-    float_MatrixPtr kmat;
-    kmat = (float_Matrix*)dest_tmp_vec_da->GetValAsMatrix(srow);
-    float flip_on_sum = 0.0f;
-    float flip_off_sum = 0.0f;
+    float_MatrixPtr wt_mat;
+    wt_mat = (float_Matrix*)wts->GetValAsMatrix(srow);
+    float_MatrixPtr wton_mat;
+    wton_mat = (float_Matrix*)wts_on->GetValAsMatrix(srow);
+    float_MatrixPtr wtoff_mat;
+    wtoff_mat = (float_Matrix*)wts_off->GetValAsMatrix(srow);
+    float_MatrixPtr expon_mat;
+    expon_mat = (float_Matrix*)exps_on->GetValAsMatrix(srow);
+    float_MatrixPtr expoff_mat;
+    expoff_mat = (float_Matrix*)exps_off->GetValAsMatrix(srow);
+    float_MatrixPtr pon_mat;
+    pon_mat = (float_Matrix*)probs_on->GetValAsMatrix(srow);
+    float_MatrixPtr poff_mat;
+    poff_mat = (float_Matrix*)probs_off->GetValAsMatrix(srow);
+    float on_sum = 0.0f;
+    float off_sum = 0.0f;
     for(int k=0;k<vec_bits;k++) {
-      float& el = kmat->FastEl_Flat(k);
-      float freq = freq_da->GetValAsFloatM(0, k);
+      float& wt = wt_mat->FastEl_Flat(k);
+      float& wt_on = wton_mat->FastEl_Flat(k);
+      float& wt_off = wtoff_mat->FastEl_Flat(k);
+      float& exp_on = expon_mat->FastEl_Flat(k);
+      float& exp_off = expoff_mat->FastEl_Flat(k);
+      float freq = (freq_da->GetValAsFloatM(0, k) - trg_freq);
       float sbit = dest_vec_da->GetValAsFloatM(srow, k);
-      if(el > softmax_thr) el = softmax_thr; // this turns out to be critical!
-      if(sbit > 0.0f) {         // bit is currently on
-        el = expf(softmax_gain * el + freq_weight * freq); // more likely to flip off
-	flip_off_sum += el;
+      if(sbit > 0.0f) {         // bit is currently on -- flip it off..
+        wt_on = softmax_gain * wt + freq_wt_eff * freq;
+        exp_on = expf(wt_on);
+	on_sum += exp_on;
       }
       else {
-        el = expf(softmax_gain * el - freq_weight * freq); // less likely to flip on
-	flip_on_sum += el;
+        wt_off = softmax_gain * wt - freq_wt_eff * freq; // less likely to flip on
+        exp_off = expf(wt_off);
+	off_sum += exp_off;
       }
     }
-    float pon = Random::ZeroOne();
-    float poff = Random::ZeroOne();
+    float pon_trg = Random::ZeroOne();
+    float poff_trg = Random::ZeroOne();
     float sum_on_p = 0.0f;
     float sum_off_p = 0.0f;
     int bit_on = -1;
     int bit_off = -1;
     for(int k=0;k<vec_bits;k++) {
-      float& el = kmat->FastEl_Flat(k);
+      float& exp_on = expon_mat->FastEl_Flat(k);
+      float& exp_off = expoff_mat->FastEl_Flat(k);
+      float& p_on = pon_mat->FastEl_Flat(k);
+      float& p_off = poff_mat->FastEl_Flat(k);
       float sbit = dest_vec_da->GetValAsFloatM(srow, k);
       if(sbit > 0.0f) {
-	if(bit_off < 0) {
-	  float pel = el / flip_off_sum;
-	  sum_off_p += pel;
-	  if(sum_off_p >= poff) {
-	    bit_off = k;
+        p_on = exp_on / on_sum; // normalize
+	if(bit_on < 0) {
+	  sum_on_p += p_on;
+	  if(sum_on_p >= pon_trg) {
+	    bit_on = k;
 	  }
 	}
       }
       else {
-	if(bit_on < 0) {
-	  float pel = el / flip_on_sum;
-	  sum_on_p += pel;
-	  if(sum_on_p >= pon) {
-	    bit_on = k;
+        p_off = exp_off / off_sum;
+	if(bit_off < 0) {
+	  sum_off_p += p_off;
+	  if(sum_off_p >= poff_trg) {
+	    bit_off = k;
 	  }
 	}
       }
     }
     if(bit_on >= 0 && bit_off >= 0) {
-      // flip bits!
-      dest_vec_da->SetValAsFloatM(-1.0f, srow, bit_off);
-      dest_vec_da->SetValAsFloatM(1.0f, srow, bit_on);
+      // flip bits!  on -> off and off -> on
+      dest_vec_da->SetValAsFloatM(1.0f, srow, bit_off);
+      dest_vec_da->SetValAsFloatM(0.0f, srow, bit_on);
     }
   }
+
+  // compute summary stats
+
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "weights", false, 0.5f, false, false);
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "wts_on", false, 0.5f, false, false);
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "wts_off", false, 0.5f, false, false);
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "exps_on", false, 0.5f, false, false);
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "exps_off", false, 0.5f, false, false);
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "probs_on", false, 0.5f, false, false);
+  taDataAnal::MatrixCellFreq
+    (work_sum, work, "probs_off", false, 0.5f, false, false);
+  
   return true;
 }
 

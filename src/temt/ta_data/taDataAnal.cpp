@@ -36,9 +36,10 @@
 TA_BASEFUNS_CTORS_DEFN(taDataAnal);
 
 
-bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
+bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& suffix, bool reset) {
   if(dest) {
-    dest->ResetData();		// always clear out for new data
+    if(reset)
+      dest->ResetData();		// always clear out for new data
     return false;
   }
   taProject* proj = src->GetMyProj();
@@ -1607,7 +1608,7 @@ bool taDataAnal::MatrixCellFreq
     return false;
   }
   
-  GetDest(freq_data, src_data, "MatrixCellFreq");
+  GetDest(freq_data, src_data, "MatrixCellFreq", false); // false = don't reset
 
   DataCol* da = GetMatrixDataCol(src_data, src_col);
   if(!da) return false;
@@ -1664,8 +1665,7 @@ bool taDataAnal::MatrixCellFreq
   
   if(view) {
     freq_data->SetUserData("N_ROWS", 1);
-    freq_data->SetUserData("AUTO_SCALE", true);
-    freq_data->SetUserData("HEADER_OFF", true);
+    // freq_data->SetUserData("AUTO_SCALE", true);
   }
   freq_data->StructUpdate(false);
   if(view) freq_data->FindMakeGridView(NULL, false); // don't select view
