@@ -1,7 +1,17 @@
-The Emergent software was developed primarily by:
+Emergent version 8 was developed by:
+    * Randall O'Reilly
+    * John Rohrlich
+    * Kai Kruger
+
+Earlier versions of Emergent software were developed primarily by:
     * Brad Aisa
     * Randall O'Reilly
     * Brian Mingus
+    
+Other contributors (in alphabetical order) include:
+Michol Bauer, Houman Farokhzad, Dan Furlani, Thomas Hazy, Dave Jilk, Tom Kelly, Kenneth Latimer,
+Tanaya Mankad, , Wolfgang Pauli, Jeremy Reynolds, Sergio Verduzco, Dean Wyatte
+
 All at the University of Colorado, Boulder
 
 The PDP++ software, upon which Emergent is based, was originally written by
