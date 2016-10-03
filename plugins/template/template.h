@@ -38,7 +38,7 @@ public:
   // defines a default set of constructors and copy code -- all the infrastructure 
 protected:
   // use the 'override' pseudo-keyword to indicate overridden virtual methods
-  override void		UpdateAfterEdit_impl(); // called when a class changes, just prior to gui updates and client class notifications
+  void		UpdateAfterEdit_impl() override; // called when a class changes, just prior to gui updates and client class notifications
 private:
   // these are the basic constructor and destructor code for this object -- just initialize
   // the members of this class -- usually destroy is not needed unless something special needs
@@ -74,7 +74,7 @@ public:
   SIMPLE_LINKS(TemplatePluginState)
   TA_BASEFUNS(TemplatePluginState)
 protected:
-  override void		UpdateAfterEdit_impl();
+  void		UpdateAfterEdit_impl() override;
 private:
   SIMPLE_COPY(TemplatePluginState)
   void	Initialize();
