@@ -79,6 +79,13 @@ void iTabBarBase::mouseReleaseEvent(QMouseEvent * event) {
   inherited::mouseReleaseEvent(event);
 }
 
+
+QSize iTabBarBase::minimumTabSizeHint(int index) const {
+  QSize sz = inherited::minimumTabSizeHint(index);
+  sz.setWidth(sz.width() + taMisc::GetCurrentFontSize("labels")); // expand x so it doesn't go away entirely!
+  return sz;
+}
+
 // void iTabBarBase::paintEvent(QPaintEvent *event)
 // {
 //   QStylePainter p(this);

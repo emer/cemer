@@ -19,7 +19,7 @@
 // parent includes:
 #include "ta_def.h"
 #ifndef __MAKETA__
-#include <iTabBarMultiRow>
+#include <QTabBar>
 #endif
 
 // member includes:
@@ -45,10 +45,13 @@ public slots:
 
 protected:
   QList<QRect> tabRectangle;
-  
+
+  // these do a hacky version of multi-row tabs but there are many limitations..
   // void          paintEvent(QPaintEvent *event) override;
   // void          resizeEvent(QResizeEvent *event) override;
   // void          mousePressEvent(QMouseEvent *event) override;
+
+  QSize minimumTabSizeHint(int index) const override;
     
   void          keyPressEvent(QKeyEvent* e) override;
   void          mouseReleaseEvent(QMouseEvent * event) override;

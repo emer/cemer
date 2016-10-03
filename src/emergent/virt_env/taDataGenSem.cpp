@@ -28,8 +28,8 @@
 
 TA_BASEFUNS_CTORS_DEFN(taDataGenSem);
 
-float taDataGenSem::SemVecGen_DistMatDist(DataTable* dist_mat, DataTable* dist_mat2,
-					  DataTable* delta_mat) {
+float taDataGenSem::SemVecGen_DistMatDist
+(DataTable* dist_mat, DataTable* dist_mat2, DataTable* delta_mat, float dist_off) {
   bool d1_1c = (dist_mat->rows == 1); // one cell
   float_MatrixPtr d1vec;
   int n_vecs;
@@ -57,6 +57,7 @@ float taDataGenSem::SemVecGen_DistMatDist(DataTable* dist_mat, DataTable* dist_m
         org_dist = d1vec->FastEl2d(row, col-1);
       else
         org_dist = dist_mat->GetValAsFloat(col, row);
+      org_dist -= dist_off;
       float indv_dist;
       if(d2_1c)
         indv_dist = d2vec->FastEl2d(row, col-1);
@@ -113,7 +114,7 @@ bool taDataGenSem::SemVecGen_Flip
  Variant dest_name_col, Variant dest_vec_col,
  DataTable* trg_dist_mat, DataTable* dist_kmat, DataTable* bit_freqs,
  bool use_k_thr, int k_val, float p_flip_items, float same_wt, float diff_wt,
- float softmax_gain, float freq_wt, float trg_freq) {
+ float softmax_gain, float freq_wt, float trg_freq, float dist_off) {
   if(!dest) {
     taMisc::Error("taDataGenSem::SemVecGen_Flip dest is NULL -- must exist and be properly formatted");
     return false;
@@ -183,7 +184,7 @@ bool taDataGenSem::SemVecGen_Flip
   int n_flip_bit = (int)(p_flip_items * (float)dest->rows + .5f);
   if(n_flip_bit < 1) n_flip_bit = 1;
 
-  float freq_wt_eff = (float)n_flip_bit * freq_wt; // scale proportionally
+  float freq_wt_eff = freq_wt; // scale proportionally
   if(use_k_thr) {
     freq_wt_eff *= (float)k_val / (float)dest->rows; // correct for freq
   }
@@ -206,8 +207,11 @@ bool taDataGenSem::SemVecGen_Flip
       }
       else {
         if(use_k_thr && (dist > dkval)) continue; // don't do anything for non-bot-k guys
-        dist = 1.0f - dist;
       }
+
+      dist -= dist_off;
+      if(!toward)
+        dist = 1.0f - dist;
         
       for(int k=0;k<vec_bits;k++) {
 	float chg_wt = wts->GetValAsFloatM(srow, k); // weight toward changing
@@ -326,15 +330,15 @@ bool taDataGenSem::SemVecGen_Flip
 }
 
 bool taDataGenSem::SemVecGen_FlipStats
-(DataTable* dest, Variant dest_name_col, Variant dest_vec_col, DataTable* dist_mat,
- DataTable* lrn_stats, DataTable* dest_dist,  float softmax_gain, float p_flip_items,
+(DataTable* dest, Variant dest_name_col, Variant dest_vec_col, DataTable* trg_dist_mat,
+ DataTable* lrn_stats, DataTable* dest_dist, float dist_off, float softmax_gain, float p_flip_items,
  taMath::DistMetric metric, bool norm, float tol) {
   if(!dest) {
     taMisc::Error("taDataGenSem::SemVecGenLearn_Stats dest is NULL -- must exist and be properly formatted");
     return false;
   }
-  if(!dist_mat) {
-    taMisc::Error("taDataGenSem::SemVecGenLearn_Stats dist_mat is NULL -- must exist and be properly formatted");
+  if(!trg_dist_mat) {
+    taMisc::Error("taDataGenSem::SemVecGenLearn_Stats trg_dist_mat is NULL -- must exist and be properly formatted");
     return false;
   }
   if(!lrn_stats) {
@@ -362,7 +366,7 @@ bool taDataGenSem::SemVecGen_FlipStats
   taDataAnal::DistMatrixTable(dest_dist, false, dest, dest_vec_da->name, dest_nm_da->name,
 			      metric, norm, tol);
 
-  float err = SemVecGen_DistMatDist(dist_mat, dest_dist);
+  float err = SemVecGen_DistMatDist(trg_dist_mat, dest_dist, NULL, dist_off);
 
   lrn_stats->AddBlankRow();
   lrn_stats->SetValAsInt(lrn_stats->rows, "iter", -1);
