@@ -23,6 +23,8 @@ TA_BASEFUNS_CTORS_DEFN(MatrixActSpec);
 TA_BASEFUNS_CTORS_DEFN(MSNUnitSpec);
 
 void MatrixActSpec::Initialize() {
+  n_mnt_x = -1;
+  n_out_x = =1;
   Defaults_init();
 }
 
@@ -51,10 +53,12 @@ MSNUnitSpec::GateType MSNUnitSpec::MatrixGateType(LeabraUnitVars* u, LeabraNetwo
   int ugidx = un->UnitGpIdx();
   int x_pos = ugidx % lay->gp_geom.x;
   int half_x = lay->gp_geom.x / 2;
-  if(x_pos < half_x)            // maint on left, out on right..
-    return MAINT;
-  else
-    return OUT;
+  if(matrix.n_mnt_x < 0 && matrix.n_out_x < 0) {
+    if(x_pos < half_x)            // maint on left, out on right..
+      return MAINT;
+    else
+      return OUT;
+  }
 }
 
 void MSNUnitSpec::Compute_ApplyInhib

@@ -87,7 +87,7 @@ const QString iMainWindowViewer::cmd_str = "Ctrl+";
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::Window
-    | Qt:: WindowSystemMenuHint
+    | Qt::WindowSystemMenuHint
     | Qt::WindowMinMaxButtonsHint
 #if (QT_VERSION >= 0x040500)
     | Qt::WindowCloseButtonHint
