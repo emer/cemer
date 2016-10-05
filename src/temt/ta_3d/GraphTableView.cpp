@@ -2484,9 +2484,15 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   
   bool matz = false;
   if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) matz = true;
+
+  float n_x_vals = (float)view_range.Range();  // number of rows = number of bars..
+  if(z_axis.on) { // without binning every value, we have no idea.. so just guess that it is a square
+    n_x_vals = sqrtf(n_x_vals);
+  }
+  n_x_vals = fmaxf(1.0f, n_x_vals);
   
-  float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
-  float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
+  float bar_wd_plt = bar_width * x_axis.axis_length / n_x_vals;
+  float bar_off_plt = bar_off * x_axis.axis_length / n_x_vals;
   
   String svg_labels;
   String svg_bars;
