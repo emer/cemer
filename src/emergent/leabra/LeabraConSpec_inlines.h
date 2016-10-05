@@ -208,7 +208,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 // #else
   for(int i=0; i<sz; i++) {
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-    if(((LeabraUnitSpec*)us->unit_spec)->lrn_thr.on) {
+    if(((LeabraUnitSpec*)ru->unit_spec)->lrn_thr.on) {
       if(ru->misc_2 == 0.0f) continue; // misc_2 stores learn thr state -- could use flag..
     }
     float lrate_eff = clrate;
