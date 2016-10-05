@@ -80,11 +80,13 @@ void iTabBarBase::mouseReleaseEvent(QMouseEvent * event) {
 }
 
 
+#if (QT_VERSION >= 0x050000)
 QSize iTabBarBase::minimumTabSizeHint(int index) const {
   QSize sz = inherited::minimumTabSizeHint(index);
   sz.setWidth(sz.width() + taMisc::GetCurrentFontSize("labels")); // expand x so it doesn't go away entirely!
   return sz;
 }
+#endif
 
 // void iTabBarBase::paintEvent(QPaintEvent *event)
 // {

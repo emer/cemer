@@ -51,7 +51,9 @@ protected:
   // void          resizeEvent(QResizeEvent *event) override;
   // void          mousePressEvent(QMouseEvent *event) override;
 
+#if (QT_VERSION >= 0x050000)
   QSize minimumTabSizeHint(int index) const override;
+#endif
     
   void          keyPressEvent(QKeyEvent* e) override;
   void          mouseReleaseEvent(QMouseEvent * event) override;
