@@ -105,6 +105,7 @@ void DataCol::Copy_Common_(const DataCol& cp) {
   calc_expr = cp.calc_expr;
   dim_names = cp.dim_names;
   width = cp.width;
+  matrix_col_width = cp.matrix_col_width;
 }
 
 void DataCol::Copy_(const DataCol& cp) {
@@ -193,6 +194,7 @@ void DataCol::CopyExtras(const DataCol& cp) {
   calc_expr = cp.calc_expr;
   dim_names = cp.dim_names;
   width = cp.width;
+  matrix_col_width = cp.matrix_col_width;
   CopyUserData(cp);
 }
 

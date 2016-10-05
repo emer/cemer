@@ -31,7 +31,6 @@ INHERITED(SpecMemberBase)
 public:
   float         out_ach_inhib;  // #DEF_0:0.3 how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials -- do NOT apply to NoGo, only Go -- this is a key param -- between 0.1-0.3 usu good -- see how much output gating happening and change accordingly
   int           n_mnt_x; // #DEF_-1 number of maintenance gating stripes along the x axis -- -1 = divide evenly between mnt and out -- if uneven numbers or only one or the other is present then you need to set this
-  int           n_out_x;   // #DEF_-1 number of output gating stripes along the x axis -- -1 = divide evenly between mnt and out -- if uneven numbers or only one or the other is present then you need to set this
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
