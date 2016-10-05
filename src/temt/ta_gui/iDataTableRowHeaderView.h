@@ -28,21 +28,24 @@ class QWidget; //
 
 class TA_API iDataTableRowHeaderView: public QHeaderView {
   INHERITED(QHeaderView)
-          Q_OBJECT
+  Q_OBJECT
 
 public:
           iDataTableRowHeaderView(QWidget* parent = NULL);
           ~iDataTableRowHeaderView();
 
+public slots:
+  virtual void          OnDoubleClick(int index);
+
 protected:
-          bool                  m_section_move_complete;
+          bool          m_section_move_complete;
 
 protected slots:
-          void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
+          void          movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
 
 #ifndef __MAKETA__
 signals:
-          void                  tableViewChange();
+          void          tableViewChange();
 #endif // ndef __MAKETA__
 
 };

@@ -87,6 +87,7 @@ public slots:
   virtual void          UpdateMaxColWidth(int width);
   // update the maximum column width based on the given column width -- if width is larger than current max, then update max to width, and update table max setting..
   void                  SetColumnWidth(int column, int n_chars) override;
+  virtual void          SetRowHighlight(int row);
 };
 
 class TA_API iTableViewCheckboxDelegate: public QStyledItemDelegate {

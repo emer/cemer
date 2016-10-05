@@ -424,10 +424,10 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       tab->ClearDataFlag(DataTable::ROW_AUTO_HEIGHT);
     }
     else if (op_code & OP_HILITE) {
-      tab->row_with_hilite = tab->GetIndexRow(sel.row_fr);
+      SetRowHighlight(sel.row_fr);
     }
     else if (op_code & OP_CLEAR_HILITE) {
-      tab->row_with_hilite = -1;
+      SetRowHighlight(-1);
     }
     if (rval) {
       this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
@@ -641,6 +641,18 @@ void iDataTableView::UpdateMaxColWidth(int width) {
   }
 }
 
+void iDataTableView::SetRowHighlight(int row) {
+  if (dataTable()->row_with_hilite == row) {
+    dataTable()->row_with_hilite = -1; // toggles off highlight
+  }
+  else {
+    dataTable()->row_with_hilite = row;
+  }
+  iDataTableModel* mod = qobject_cast<iDataTableModel*>(model());
+  if (mod) {
+    mod->refreshViews();
+  }
+}
 
 
 ////////////////////////////////////////////////

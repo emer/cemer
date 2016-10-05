@@ -46,6 +46,7 @@ iDataTableRowHeaderView::iDataTableRowHeaderView(QWidget* parent)
 
   connect(this, SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), parent, SLOT(ver_customContextMenuRequested(const QPoint&)) );
+  connect(this, SIGNAL(sectionDoubleClicked(int) ), this, SLOT(OnDoubleClick(int) ));
 }
 
 iDataTableRowHeaderView::~iDataTableRowHeaderView() {
@@ -66,5 +67,12 @@ void iDataTableRowHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int
   }
   else {
     m_section_move_complete = false;  // ready for another move
+  }
+}
+
+void iDataTableRowHeaderView::OnDoubleClick(int index) {
+  iDataTableView* table_view = dynamic_cast<iDataTableView*>(parent());
+  if (table_view) {
+    table_view->SetRowHighlight(index);
   }
 }
