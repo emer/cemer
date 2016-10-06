@@ -1533,7 +1533,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baa_to_vs_dmod->SetUnique("rnd", false);
 
   vsm_to_vsm_dmod->SetUnique("wt_scale", true);
-  vsm_to_vsm_dmod->wt_scale.abs = 0.1f; // todo: does this do anything??
+  vsm_to_vsm_dmod->wt_scale.abs = 1.0f; // todo: does this do anything??
   vsm_to_vsm_dmod->SetUnique("rnd", false);
 
   pv_to_ba_draw->SetUnique("rnd", true);

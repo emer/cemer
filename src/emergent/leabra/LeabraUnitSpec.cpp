@@ -41,7 +41,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
-TA_BASEFUNS_CTORS_DEFN(LearnThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
@@ -338,18 +337,6 @@ void SynDelaySpec::Initialize() {
   on = false;
   delay = 4;
 }
-
-void LearnThreshSpec::Initialize() {
-  on = false;
-  mode = RUN_MAX;
-  p_lrn = 0.1f;
-  max_decay = 0.01f;
-  Defaults_init();
-}
-
-void LearnThreshSpec::Defaults_init() {
-}
-
 
 void DeepSpec::Initialize() {
   on = false;
@@ -2019,15 +2006,6 @@ void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnitVars* u, LeabraNetwork* net, i
   else {
     if(act_misc.avg_dt <= 0.0f) return;
     u->act_avg += act_misc.avg_dt * (u->act_nd - u->act_avg);
-  }
-  if(lrn_thr.on) {
-    // todo: if this works, make dedicated variables
-    if(lrn_thr.mode == LearnThreshSpec::RUN_MAX) {
-      u->misc_2 = lrn_thr.RunMaxUpdt(u->misc_1, u->act_m, u-> act_p) ? 1.0f : 0.0f;
-    }
-    else {                      // RANDOM
-      u->misc_2 = Random::BoolProb(lrn_thr.p_lrn) ? 1.0f : 0.0f;
-    }
   }
 }
 

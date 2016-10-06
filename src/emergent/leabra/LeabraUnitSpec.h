@@ -464,46 +464,6 @@ private:
 };
 
 
-eTypeDef_Of(LearnThreshSpec);
-
-class E_API LearnThreshSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning threshold specification -- extra control over when a Leabra unit is allowed to learn -- can prevent hog units for difficult problems
-INHERITED(SpecMemberBase)
-public:
-  enum LrnThrMode {             // what type of learning threshold to use
-    RANDOM,                     // just randomly select units to learn
-    RUN_MAX,                    // running maximum -- only learn at local peaks in running maximum computation:  if current trial max activation is greater than current running max, it is the new max, and learning occurs -- otherwise the running max decays down until a new max is hit
-  };
-
- 
-  bool          on;                // is learning threshold engaged?
-  LrnThrMode    mode;              // #CONDSHOW_ON_on what mode of learning threshold to use
-  float         p_lrn;             // #CONDSHOW_ON_on&&mode:RANDOM #MIN_0 #MAX_1 probability of learning in random mode
-  float         max_decay;         // #CONDSHOW_ON_on&&mode:RUN_MAX #MIN_0 #MAX_1 rate of decay for the running max computation -- determines effectively how frequently learning happens -- higher decay means more frequent learning
-
-  inline bool   RunMaxUpdt(float& run_max, const float act_m, const float act_p) {
-    float mx_trl = fmaxf(act_m, act_p);
-    if(mx_trl > run_max) {      // new max
-      run_max = mx_trl;
-      return true;
-    }
-    run_max -= max_decay * run_max;
-    return false;
-  }
-  // update the running average -- returns true if a new maximum, and false otherwise
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LearnThreshSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
-
 eTypeDef_Of(DeepSpec);
 
 class E_API DeepSpec : public SpecMemberBase {
@@ -659,7 +619,6 @@ public:
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
-  LearnThreshSpec   lrn_thr;        // #CAT_Learning learning threshold specification -- extra control over when a Leabra unit is allowed to learn -- can prevent hog units for difficult problems
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
