@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9487
-Program .projects[0].programs.gp[5].gp[0][8] { 
+// ta_Dump File v3.0 -- code v8.0.3.0 rev10135
+Program .projects[0].programs.gp[4].gp[0][18] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
  };
@@ -79,13 +79,9 @@ Program .projects[0].programs.gp[5].gp[0][8] {
     };
     AssignExpr @[1] { };
     If @[2] { 
-     ProgEl_List @.true_code = [2] {
+     ProgEl_List @.true_code = [1] {
       FunctionCall @[0] { 
        ProgArg_List @.fun_args = [0] {
-       };
-      };
-      MethodCall @[1] { 
-       ProgArg_List @.meth_args = [0] {
        };
       };
      };
@@ -186,8 +182,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 
    ProgEl_List @.fun_code = [3] {
     LocalVars @[0] { 
-     ProgVar_List @.local_vars = [1] {
-      ProgVar @[0] { };
+     ProgVar_List @.local_vars = [0] {
      };
     };
     DataProcCall @[1] { 
@@ -295,8 +290,12 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 
  ProgEl_List @.init_code = [2] {
   If @[0] { 
-   ProgEl_List @.true_code = [1] {
+   ProgEl_List @.true_code = [2] {
     MethodCall @[0] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[1] { 
      ProgArg_List @.meth_args = [0] {
      };
     };
@@ -332,20 +331,27 @@ Program .projects[0].programs.gp[5].gp[0][8] {
   };
  };
 };
-Program .projects[0].programs.gp[5].gp[0][8] {
+Program .projects[0].programs.gp[4].gp[0][18] {
  UserDataItem_List @*(.user_data_) {
   name=;
   el_typ=UserData_DocLink;
   el_def=0;
   UserData_DocLink @[0] {
    name="DocLink";
-   doc=.projects[0].programs.gp[5].gp[0][8].doc$$;
+   doc=.projects[0].programs.gp[4].gp[0][18].doc$$;
   };
  };
  name="TickAnalysis";
  short_nm="Tcknly";
  tags="Analysis, Statistic, Monitor, Errors, Trial, Tick";
  desc="Analyze trial-level data grouping according to ticks, which are used for organizing sequences of trials over time -- allows you to see all the results in aggregate for each tick in an epoch-level log, which is very convenient for analyzing overall network behavior as a function of time ticks.";
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  flags=NO_STOP_STEP;
  stop_step_cond {
   expr=;
@@ -365,10 +371,9 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -394,10 +399,9 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -453,10 +457,9 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -499,7 +502,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    name="trial_output_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrainTrialOutputData>;
+   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrainTrialOutData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -540,13 +543,13 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
    reference=0;
    desc="number of trial types to aggregate into the top analysis";
-   init_from=.projects[0].programs.gp[5][0]$$<Program,StdGlobalsInit>;
+   init_from=.projects[0].programs.gp[4][0]$$<Program,StdGlobalsInit>;
   };
   ProgVar @[5] {
    name="AllTrialData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[5].gp[0][8].objs[0]$$;
+   object_val=.projects[0].programs.gp[4].gp[0][18].objs[0]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -557,7 +560,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    name="TickData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[5].gp[0][8].objs[1]$$;
+   object_val=.projects[0].programs.gp[4].gp[0][18].objs[1]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -568,7 +571,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    name="TickDataLog";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[5].gp[0][8].objs[2]$$;
+   object_val=.projects[0].programs.gp[4].gp[0][18].objs[2]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -579,7 +582,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    name="TickGroupSpec";
    var_type=T_Object;
    object_type=DataGroupSpec;
-   object_val=.projects[0].programs.gp[5].gp[0][8].objs[3]$$;
+   object_val=.projects[0].programs.gp[4].gp[0][18].objs[3]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -621,7 +624,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        name="trl_rows";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -630,7 +633,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        name="old_rows";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -642,7 +645,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      flags=CAN_REVERT_TO_CODE;
      code_string="trl_rows = trial_output_data.rows";
      pre_compile_code_string="trl_rows = trial_output_data.rows";
-     result_var=.projects[0].programs.gp[5].gp[0][8].functions[0].fun_code[0].local_vars[0]$$;
+     result_var=.projects[0].programs.gp[4].gp[0][18].functions[0].fun_code[0].local_vars[0]$$;
      expr {
       expr="trial_output_data.rows";
      };
@@ -665,28 +668,12 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="ConfigGroupSpec()";
        pre_compile_code_string="ConfigGroupSpec()";
        result_var=NULL;
-       fun=.projects[0].programs.gp[5].gp[0][8].functions[1]$$;
+       fun=.projects[0].programs.gp[4].gp[0][18].functions[1]$$;
        fun_args {
 	name="fun_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
-      };
-      MethodCall @[1] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="TickDataLog->Reset()";
-       pre_compile_code_string="TickDataLog->Reset()";
-       result_var=NULL;
-       obj=.projects[0].programs.gp[5].gp[0][8].vars[7]$$;
-       method=DataTable::Reset;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-       };
-       meth_sig="void Reset()";
-       meth_desc=" remove all columns (and data) -- this cannot be undone!";
       };
      };
     };
@@ -708,14 +695,14 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="AllTrialData->CopyFrom(trial_output_data)";
        pre_compile_code_string="AllTrialData->CopyFrom(trial_output_data)";
        result_var=NULL;
-       obj=.projects[0].programs.gp[5].gp[0][8].vars[5]$$;
+       obj=.projects[0].programs.gp[4].gp[0][18].vars[5]$$;
        method=taBase::CopyFrom;
        meth_args {
 	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
-	 arg_type=taBase_ptr;
+	 arg_type=const_taBase_ptr;
 	 type="taBase*";
 	 name="cpy_from";
 	 required=1;
@@ -735,7 +722,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
        pre_compile_code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+       obj=$.projects[0].programs.gp[4].gp[0][18].vars[5]$;
        method=DataTable::ClearDataFlag;
        meth_args {
 	name="meth_args";
@@ -772,7 +759,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        flags=CAN_REVERT_TO_CODE;
        code_string="old_rows = n_trials - trl_rows";
        pre_compile_code_string="old_rows = n_trials - trl_rows";
-       result_var=.projects[0].programs.gp[5].gp[0][8].functions[0].fun_code[0].local_vars[1]$$;
+       result_var=.projects[0].programs.gp[4].gp[0][18].functions[0].fun_code[0].local_vars[1]$$;
        expr {
 	expr="n_trials - trl_rows";
        };
@@ -795,7 +782,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	 code_string="AllTrialData->RemoveRows(0, AllTrialData.rows - old_rows)";
 	 pre_compile_code_string="AllTrialData->RemoveRows(0, AllTrialData.rows - old_rows)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+	 obj=$.projects[0].programs.gp[4].gp[0][18].vars[5]$;
 	 method=DataTable::RemoveRows;
 	 meth_args {
 	  name="meth_args";
@@ -825,7 +812,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	  };
 	 };
 	 meth_sig="bool RemoveRows(int st_row, int n_rows = 1)";
-	 meth_desc=" Remove n rows of data, starting at st_row. st_row = -1 means last row, and n_rows = -1 means remove from starting row to end";
+	 meth_desc=" Remove n rows of data, starting at st_row. st_row = -1 means last row, and n_rows = -1 means remove from starting row to end, n_rows = -2 means remove upto and including the next to last row, etc.";
 	};
        };
       };
@@ -835,7 +822,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="AllTrialData->AppendRows(trial_output_data)";
        pre_compile_code_string="AllTrialData->AppendRows(trial_output_data)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+       obj=$.projects[0].programs.gp[4].gp[0][18].vars[5]$;
        method=DataTable::AppendRows;
        meth_args {
 	name="meth_args";
@@ -892,7 +879,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        object_type=DataGroupEl;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -904,7 +891,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      flags=CAN_REVERT_TO_CODE;
      code_string="TickGroupSpec.ops.Reset()";
      pre_compile_code_string="TickGroupSpec.ops.Reset()";
-     obj=.projects[0].programs.gp[5].gp[0][8].vars[8]$$;
+     obj=.projects[0].programs.gp[4].gp[0][18].vars[8]$$;
      path="ops";
      result_var=NULL;
      method=taList_impl::Reset;
@@ -922,7 +909,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="TickGroupSpec->AddAllColumns(trial_output_data)";
      pre_compile_code_string="TickGroupSpec->AddAllColumns(trial_output_data)";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[8]$;
      method=DataOpBaseSpec::AddAllColumns;
      meth_args {
       name="meth_args";
@@ -957,7 +944,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        flags=CAN_REVERT_TO_CODE;
        code_string="TickGroupSpec.ops.RemoveIdx(0)";
        pre_compile_code_string="TickGroupSpec.ops.RemoveIdx(0)";
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+       obj=$.projects[0].programs.gp[4].gp[0][18].vars[8]$;
        path="ops";
        result_var=NULL;
        method=taList_impl::RemoveIdx;
@@ -990,7 +977,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      flags=CAN_REVERT_TO_CODE;
      code_string="TickGroupSpec.ops.RemoveIdx(1)";
      pre_compile_code_string="TickGroupSpec.ops.RemoveIdx(1)";
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[8]$;
      path="ops";
      result_var=NULL;
      method=taList_impl::RemoveIdx;
@@ -1018,7 +1005,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      flags=CAN_REVERT_TO_CODE;
      code_string="TickGroupSpec.ops.RemoveIdx(1)";
      pre_compile_code_string="TickGroupSpec.ops.RemoveIdx(1)";
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[8]$;
      path="ops";
      result_var=NULL;
      method=taList_impl::RemoveIdx;
@@ -1067,7 +1054,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="op.agg.op = Aggregate::GROUP";
 	 pre_compile_code_string="op.agg.op = Aggregate::GROUP";
-	 obj=.projects[0].programs.gp[5].gp[0][8].functions[1].fun_code[0].local_vars[0]$$;
+	 obj=.projects[0].programs.gp[4].gp[0][18].functions[1].fun_code[0].local_vars[0]$$;
 	 path="agg.op";
 	 expr {
 	  expr="Aggregate::GROUP";
@@ -1090,7 +1077,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="op.agg.op = Aggregate::MEAN";
 	 pre_compile_code_string="op.agg.op = Aggregate::MEAN";
-	 obj=$.projects[0].programs.gp[5].gp[0][8].functions[1].fun_code[0].local_vars[0]$;
+	 obj=$.projects[0].programs.gp[4].gp[0][18].functions[1].fun_code[0].local_vars[0]$;
 	 path="agg.op";
 	 expr {
 	  expr="Aggregate::MEAN";
@@ -1100,7 +1087,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        };
       };
      };
-     el_var=$.projects[0].programs.gp[5].gp[0][8].functions[1].fun_code[0].local_vars[0]$;
+     el_var=$.projects[0].programs.gp[4].gp[0][18].functions[1].fun_code[0].local_vars[0]$;
      in {
       expr="TickGroupSpec.ops";
      };
@@ -1133,15 +1120,6 @@ Program .projects[0].programs.gp[5].gp[0][8] {
       name="local_vars";
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @[0] {
-       name="extra_rows";
-       var_type=T_Int;
-       int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
      };
     };
     DataProcCall @[1] {
@@ -1197,7 +1175,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="LogTickData(false)";
      pre_compile_code_string="LogTickData(false)";
      result_var=NULL;
-     fun=.projects[0].programs.gp[5].gp[0][8].functions[3]$$;
+     fun=.projects[0].programs.gp[4].gp[0][18].functions[3]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1233,7 +1211,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      name="init_only";
      var_type=T_Bool;
      bool_val=0;
-     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -1256,7 +1234,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        name="i";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1265,7 +1243,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        name="trnm";
        var_type=T_String;
        string_val=;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1274,7 +1252,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        name="j";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -1299,7 +1277,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="TickDataLog->ResetData()";
        pre_compile_code_string="TickDataLog->ResetData()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       obj=.projects[0].programs.gp[4].gp[0][18].vars[7]$$;
        method=DataTable::ResetData;
        meth_args {
 	name="meth_args";
@@ -1317,7 +1295,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="TickDataLog->FindMakeCol(\"batch\", taBase::VT_INT)";
      pre_compile_code_string="TickDataLog->FindMakeCol(\"batch\", taBase::VT_INT)";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
      method=DataTable::FindMakeCol;
      meth_args {
       name="meth_args";
@@ -1355,7 +1333,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="TickDataLog->FindMakeCol(\"epoch\", taBase::VT_INT)";
      pre_compile_code_string="TickDataLog->FindMakeCol(\"epoch\", taBase::VT_INT)";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
      method=DataTable::FindMakeCol;
      meth_args {
       name="meth_args";
@@ -1405,7 +1383,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="TickDataLog->AddBlankRow()";
        pre_compile_code_string="TickDataLog->AddBlankRow()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
        method=DataTable::AddBlankRow;
        meth_args {
 	name="meth_args";
@@ -1421,7 +1399,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"batch\", -1), \"batch\", -1)";
        pre_compile_code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"batch\", -1), \"batch\", -1)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
        method=DataTable::SetVal;
        meth_args {
 	name="meth_args";
@@ -1470,7 +1448,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"epoch\", -1), \"epoch\", -1)";
        pre_compile_code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"epoch\", -1), \"epoch\", -1)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
        method=DataTable::SetVal;
        meth_args {
 	name="meth_args";
@@ -1538,7 +1516,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trnm = TickData.data[j].name + \"_\" + i";
 	 pre_compile_code_string="trnm = TickData.data[j].name + \"_\" + i";
-	 result_var=.projects[0].programs.gp[5].gp[0][8].functions[3].fun_code[0].local_vars[1]$$;
+	 result_var=.projects[0].programs.gp[4].gp[0][18].functions[3].fun_code[0].local_vars[1]$$;
 	 expr {
 	  expr="TickData.data[j].name + \"_\" + i";
 	 };
@@ -1549,7 +1527,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	 code_string="TickDataLog->FindMakeCol(trnm, taBase::VT_FLOAT)";
 	 pre_compile_code_string="TickDataLog->FindMakeCol(trnm, taBase::VT_FLOAT)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+	 obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
 	 method=DataTable::FindMakeCol;
 	 meth_args {
 	  name="meth_args";
@@ -1599,7 +1577,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	   code_string="TickDataLog->SetVal(TickData.GetVal(j, i), trnm, -1)";
 	   pre_compile_code_string="TickDataLog->SetVal(TickData.GetVal(j, i), trnm, -1)";
 	   result_var=NULL;
-	   obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+	   obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
 	   method=DataTable::SetVal;
 	   meth_args {
 	    name="meth_args";
@@ -1672,7 +1650,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="TickDataLog->WriteClose()";
      pre_compile_code_string="TickDataLog->WriteClose()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
      method=DataTable::WriteClose;
      meth_args {
       name="meth_args";
@@ -1707,7 +1685,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="AllTrialData->ResetData()";
      pre_compile_code_string="AllTrialData->ResetData()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[5]$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -1717,6 +1695,22 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      meth_sig="void ResetData()";
      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
     };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickDataLog->Reset()";
+     pre_compile_code_string="TickDataLog->Reset()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4].gp[0][18].vars[7]$;
+     method=DataTable::Reset;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void Reset()";
+     meth_desc=" remove all columns (and data) -- this cannot be undone!";
+    };
    };
   };
   MethodCall @[1] {
@@ -1725,7 +1719,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
    code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
    pre_compile_code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+   obj=$.projects[0].programs.gp[4].gp[0][18].vars[5]$;
    method=DataTable::ClearDataFlag;
    meth_args {
     name="meth_args";
@@ -1780,7 +1774,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="GetNewData()";
      pre_compile_code_string="GetNewData()";
      result_var=NULL;
-     fun=.projects[0].programs.gp[5].gp[0][8].functions[0]$$;
+     fun=.projects[0].programs.gp[4].gp[0][18].functions[0]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1807,7 +1801,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      code_string="AnalyzeTicks()";
      pre_compile_code_string="AnalyzeTicks()";
      result_var=NULL;
-     fun=.projects[0].programs.gp[5].gp[0][8].functions[2]$$;
+     fun=.projects[0].programs.gp[4].gp[0][18].functions[2]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
