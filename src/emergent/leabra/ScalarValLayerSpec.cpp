@@ -585,8 +585,8 @@ float ScalarValLayerSpec::Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,
 float ScalarValLayerSpec::Compute_SSE
 (LeabraLayer* lay, LeabraNetwork* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(lay->HasExtFlag(UnitVars::COMP_TARG))) return 0.0f;
   lay->sse = 0.0f;
+  if(!(lay->HasExtFlag(UnitVars::COMP_TARG))) return 0.0f;
   UNIT_GP_ITR(lay, lay->sse += Compute_SSE_ugp(lay, net, acc_md, gpidx, n_vals); );
   float rval = lay->sse;
   if(unit_avg && n_vals > 0)
