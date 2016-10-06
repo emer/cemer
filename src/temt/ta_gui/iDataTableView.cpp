@@ -646,7 +646,7 @@ void iDataTableView::SetRowHighlight(int row) {
     dataTable()->row_with_hilite = -1; // toggles off highlight
   }
   else {
-    dataTable()->row_with_hilite = row;
+    dataTable()->row_with_hilite = dataTable()->GetIndexRow(row);
   }
   iDataTableModel* mod = qobject_cast<iDataTableModel*>(model());
   if (mod) {

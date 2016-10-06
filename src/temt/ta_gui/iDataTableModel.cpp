@@ -109,7 +109,7 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
       if (TableCellHasMatch(index)) {
         return QColor(Qt::yellow);
       }
-      if (dataTable()->row_with_hilite == dataTable()->GetIndexRow(index.row())) {
+      if (m_dt->GetViewRow(m_dt->row_with_hilite) == index.row()) {
         return QColor(Qt::yellow);
       }
       /* note: only used when !(option.showDecorationSelected && (option.state
