@@ -1788,6 +1788,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
   }
   int tot_procs = n_jobs_to_sub * n_threads;
   if(use_mpi) tot_procs *= mpi_nodes * mpi_per_node;
+  bool already_said_yes = false;
 
   taMisc::Info("total procs requested for this job:", String(tot_procs));
 
@@ -1796,6 +1797,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
       int chs = taMisc::Choice("You are requesting to run more than listed max number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " max: " +
                                String(cs.max_procs), "Continue Anyway", "Cancel");
       if(chs == 1) return false;
+      already_said_yes = true;
     }
   }
 
@@ -1807,10 +1809,10 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
     }
   }
 
-  if(tot_procs > cs.procs) {
-    taMisc::Error("You are requesting to run more than listed TOTAL number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " procs: " +
-                  String(cs.procs));
-    return false;
+  if(!already_said_yes && tot_procs > cs.procs) {
+    int chs = taMisc::Choice("You are requesting to run more than listed TOTAL number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " procs: " +  String(cs.procs), "Continue Anyway", "Cancel");
+    if(chs == 1) return false;
+    already_said_yes = true;
   }
 
   if(cs.max_ram > 0 && ram_gb > 0 && ram_gb > cs.max_ram)  {
@@ -1821,7 +1823,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
 
   // final sanity check for large-ish jobs..
   int tot_tasks = tot_procs / n_threads;
-  if(tot_tasks > 24) {
+  if(!already_said_yes && tot_tasks > 24) {
     int chs = taMisc::Choice("You are requesting to run a job using: " + String(tot_tasks) + " total processes on cluster: " + cluster + " using a total of: " + String(tot_procs) + " cores -- please confirm!", "Run", "Cancel");
     if(chs == 1) return false;
   }

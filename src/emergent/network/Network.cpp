@@ -2413,6 +2413,8 @@ void Network::Compute_SSE_Thr(int thr_no) {
     Layer* lay = ActiveLayer(li);
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
+    if(lay->layer_type == Layer::HIDDEN)
+      continue;
 
     float lay_sse = 0.0f;   float lay_n = 0.0f;
     
@@ -2460,6 +2462,8 @@ void Network::Compute_PRerr_Thr(int thr_no) {
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
+      continue;
+    if(lay->layer_type == Layer::HIDDEN)
       continue;
 
     float true_pos = 0.0f; float false_pos = 0.0f; float false_neg = 0.0f;

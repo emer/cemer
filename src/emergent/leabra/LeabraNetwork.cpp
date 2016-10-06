@@ -1885,6 +1885,8 @@ void LeabraNetwork::Compute_NormErr_Thr(int thr_no) {
     Layer* lay = ActiveLayer(li);
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
+    if(lay->layer_type == Layer::HIDDEN)
+      continue;
 
     float lay_nerr = 0.0f;    float lay_trg_n = 0.0f;
     
@@ -1935,6 +1937,8 @@ void LeabraNetwork::Compute_CosErr_Thr(int thr_no) {
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
+      continue;
+    if(lay->layer_type == Layer::HIDDEN)
       continue;
 
     float cosv = 0.0f;  float cosvp = 0.0f;  float ssm = 0.0f;

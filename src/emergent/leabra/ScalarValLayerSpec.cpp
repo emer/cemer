@@ -587,6 +587,7 @@ float ScalarValLayerSpec::Compute_SSE
   n_vals = 0;
   lay->sse = 0.0f;
   if(!(lay->HasExtFlag(UnitVars::COMP_TARG))) return 0.0f;
+  if(lay->layer_type == Layer::HIDDEN) return 0.0f;
   UNIT_GP_ITR(lay, lay->sse += Compute_SSE_ugp(lay, net, acc_md, gpidx, n_vals); );
   float rval = lay->sse;
   if(unit_avg && n_vals > 0)
@@ -622,6 +623,7 @@ float ScalarValLayerSpec::Compute_NormErr_ugp
 float ScalarValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;                                         // assume not contributing
   if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return -1.0f; // indicates not applicable
+  if(lay->layer_type == Layer::HIDDEN) return -1.0f;
 
   float nerr = 0.0f;
   float ntot = 0;

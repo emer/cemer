@@ -662,8 +662,9 @@ float TwoDValLayerSpec::Compute_SSE_ugp(LeabraLayer* ly,
 float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
                                     int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(lay->ext_flag & (UnitVars::COMP_TARG))) return 0.0f;
   lay->sse = 0.0f;
+  if(!(lay->ext_flag & (UnitVars::COMP_TARG))) return 0.0f;
+  if(lay->layer_type == Layer::HIDDEN) return 0.0f;
   UNIT_GP_ITR(lay,
               lay->sse += Compute_SSE_ugp(lay, acc_md, gpidx, n_vals);
               );
@@ -716,6 +717,7 @@ float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly,
 float TwoDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;                                         // assume not contributing
   if(!(lay->ext_flag & (UnitVars::COMP_TARG))) return -1.0f; // indicates not applicable
+  if(lay->layer_type == Layer::HIDDEN) return -1.0f;
 
   float nerr = 0.0f;
   float ntot = 0;

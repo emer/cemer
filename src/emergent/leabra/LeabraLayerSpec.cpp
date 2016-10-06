@@ -811,6 +811,7 @@ float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
   float rval = lay->Layer::Compute_SSE(net, n_vals, unit_avg, sqrt);
   lay->bin_err = 0.0f;
   if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return rval;
+  if(lay->layer_type == Layer::HIDDEN) return rval;
   lay->bin_err = (lay->sse > net->stats.cnt_err_tol) ? 1.0f : 0.0f;
   return rval;
 }
@@ -818,6 +819,7 @@ float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
 float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;        // assume not contributing
   if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return -1.0f; // indicates not applicable
+  if(lay->layer_type == Layer::HIDDEN) return -1.0f;
 
   float nerr = 0.0f;
   int ntrg_act = 0;
@@ -856,6 +858,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   lay->cos_err_vs_prv = 0.0f;
   n_vals = 0;
   if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
+  if(lay->layer_type == Layer::HIDDEN) return 0.0f;
   float cosv = 0.0f;
   float cosvp = 0.0f;
   float ssm = 0.0f;

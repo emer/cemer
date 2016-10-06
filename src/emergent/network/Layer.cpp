@@ -1164,7 +1164,8 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   sse = 0.0f;
   if(!HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
-
+  if(layer_type == HIDDEN) return 0.0f;
+  
   const int li = active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
@@ -1197,6 +1198,7 @@ int Layer::Compute_PRerr(Network* net) {
   int n_vals = 0;
   prerr.InitVals();
   if(!HasExtFlag(UnitVars::COMP_TARG)) return 0;
+  if(layer_type == HIDDEN) return 0;
 
   const int li = active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
