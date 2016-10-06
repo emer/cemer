@@ -126,6 +126,11 @@ void Program_Group::RestorePanels() {
     if(prog->GetUserDataAsBool("user_pinned")) {
       prog->EditPanel(true, true);
     }
+    FOREACH_ELEM_IN_LIST(taBase, obj, (prog->objs)) {
+      if(obj->GetUserDataAsBool("user_pinned")) {
+        obj->EditPanel(true, true);
+      }
+    }
   }
 }
 
