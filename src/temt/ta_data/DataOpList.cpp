@@ -77,10 +77,11 @@ DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
   return dop;
 }
 
-void DataOpList::AddAllColumns(DataTable* dt) {
+void DataOpList::AddAllColumns(DataTable* dt, bool excl_strings) {
   if(!dt) return;
   for(int i=0;i<dt->data.size; i++) {
     DataCol* da = dt->data[i];
+    if(excl_strings && da->isString()) continue;
     DataOpEl* dop = FindName(da->name);
     if(dop) continue;
     dop = (DataOpEl*)New(1);
@@ -93,9 +94,9 @@ void DataOpList::AddAllColumns(DataTable* dt) {
   SetDataTable(dt);
 }
 
-void DataOpList::AddAllColumns_gui(DataTable* dt) {
+void DataOpList::AddAllColumns_gui(DataTable* dt, bool excl_strings) {
   if(!dt) return;
-  AddAllColumns(dt);
+  AddAllColumns(dt, excl_strings);
   if(size > 0 && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(FastEl(size-1), "BrowserSelectMe");
   }

@@ -191,6 +191,12 @@ INHERITED(SpecMemberBase)
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of quarter) or do soft clamping where ext is added into net input (net += gain * ext)
   float		gain;		// #CONDSHOW_OFF_hard #DEF_0.02:0.5 soft clamp gain factor (net += gain * ext)
+  bool		avg;		// #CONDSHOW_OFF_hard compute soft clamp as the average of current and target netins, not the sum -- prevents some of the main effect problems associated with adding
+  float         avg_gain;       // #CONDSHOW_OFF_hard||!avg gain factor for averaging the netinput -- clamp value contributes with avg_gain and current netin as (1-avg_gain)
+
+
+  inline  float ClampAvgNetin(const float ext, const float net_syn)
+  { return avg_gain * gain * ext + (1.0f - avg_gain) * net_syn; }
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 

@@ -43,10 +43,10 @@ public:
 
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt);
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
-  virtual void	AddAllColumns(DataTable* dt);
+  virtual void	AddAllColumns(DataTable* dt, bool exclude_strings = false);
   // #CAT_DataOp add all columns from given data table
-  virtual void	AddAllColumns_gui(DataTable* dt);
-  // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table
+  virtual void	AddAllColumns_gui(DataTable* dt, bool exclude_strings = false);
+  // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table, optionally excluding string-valued columns
 
   void	SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 

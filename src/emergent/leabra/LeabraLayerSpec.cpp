@@ -123,6 +123,8 @@ void LeabraInhibMisc::UpdateAfterEdit_impl() {
 
 void LeabraClampSpec::Initialize() {
   hard = true;
+  avg = false;
+  avg_gain = 0.2f;
   Defaults_init();
 }
 

@@ -483,9 +483,11 @@ public:
   float      mod_min;     // #CONDSHOW_ON_on&&role:SUPER #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep-layer modulation
   bool       trc_p_only_m; // #CONDSHOW_ON_on&&role:TRC TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
   bool       trc_thal_gate; // #CONDSHOW_ON_on&&role:TRC apply thalamic gating to TRC activations -- multiply netin by current thal parameter
-  bool       trc_trace;   // #CONDSHOW_ON_on&&role:TRC TRC plus-phase activation is MAX  of prior alpha trial's deep clamp activation and whatever is computed for this trial
+  bool       trc_avg_clamp;  // #CONDSHOW_ON_on&&role:TRC TRC plus-phase netinput is weighted average (see trc_deep_gain) of current plus-phase deep netin and standard netin -- produces a better clamping dynamic
+  float      trc_deep_gain;  // #CONDSHOW_ON_on&&role:TRC&&trc_avg_clamp how much to weight the deep netin relative to standard netin  (1.0-trc_deep_gain) for trc_avg_clamp
 
   float      mod_range;  // #READ_ONLY #EXPERT 1 - mod_min -- range for the netinput to modulate value of deep_mod, between min and 1 value
+  float      trc_std_gain;      // #READ_ONLY #HIDDEN 1-trc_deep_gain
 
   inline bool   IsSuper()
   { return on && role == SUPER; }
@@ -509,6 +511,12 @@ public:
   { return on && role == DEEP; }
   // should we apply deep context netinput?  only for deep guys
 
+  inline float  TRCClampNet(const float deep_raw_net, const float net_syn)
+  { if(trc_avg_clamp) return trc_deep_gain * deep_raw_net + trc_std_gain * net_syn;
+    else              return deep_raw_net; }
+  // compute TRC plus-phase clamp netinput
+  
+  
   String     GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DeepSpec);

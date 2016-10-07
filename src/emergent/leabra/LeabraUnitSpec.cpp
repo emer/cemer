@@ -341,6 +341,7 @@ void SynDelaySpec::Initialize() {
 void DeepSpec::Initialize() {
   on = false;
   role = SUPER;
+  trc_avg_clamp = false;
   Defaults_init();
 }
 
@@ -350,13 +351,15 @@ void DeepSpec::Defaults_init() {
   mod_min = 0.8f;
   trc_p_only_m = false;
   trc_thal_gate = false;
-  trc_trace = false;
+  trc_deep_gain = 0.2f;
+  trc_std_gain = 1.0f - trc_deep_gain;
   mod_range = 1.0f - mod_min;
 }
 
 void DeepSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   mod_range = 1.0f - mod_min;
+  trc_std_gain = 1.0f - trc_deep_gain;
 }
 
 void DaModSpec::Initialize() {
@@ -1311,14 +1314,14 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
         LeabraUnGpData* ugd = lay->UnGpDataUn(un);
         if(ugd->acts_prvq.max > 0.1f) {
           // only activate if we got prior and current activation
-          net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
+          net_syn = deep.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
         }
         else {
           net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
         }
       }
       else {                       // always do it
-        net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
+        net_syn = deep.TRCClampNet(u->deep_raw_net, net_syn); // u->net_prv_q); 
       }
     }
     else {
@@ -1362,7 +1365,10 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
     net_ex += u->bias_scale * u->bias_wt;
   }
   if(u->HasExtFlag(UnitVars::EXT)) {
-    net_ex += u->ext * ls->clamp.gain;
+    if(ls->clamp.avg)
+      net_syn = ls->clamp.ClampAvgNetin(u->ext, net_syn);
+    else
+      net_ex += u->ext * ls->clamp.gain;
   }
   if(deep.ApplyDeepCtxt()) {
     net_ex += u->deep_ctxt;
@@ -1550,11 +1556,6 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   u->act_raw = new_act;
   if(deep.ApplyDeepMod()) { // apply attention directly to act
     new_act *= u->deep_mod;
-  }
-  if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
-    if(deep.trc_trace) {
-      new_act = fmaxf(u->act_q0, new_act);
-    }
   }
   u->act_nd = act_range.Clip(new_act);
 

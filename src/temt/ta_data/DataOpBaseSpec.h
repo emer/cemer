@@ -46,8 +46,9 @@ public:
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt)
   { return ops.AddColumn(col_name, dt); }
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
-  virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns_gui(dt); }
-  // #CAT_DataOp #BUTTON add all columns from given data table
+  virtual void	AddAllColumns(DataTable* dt, bool exclude_strings = false)
+  { ops.AddAllColumns_gui(dt, exclude_strings); }
+  // #CAT_DataOp #BUTTON add all columns from given data table -- optionally excluding string-valued columns
 
   taList_impl*	children_() override {return &ops;}	
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
