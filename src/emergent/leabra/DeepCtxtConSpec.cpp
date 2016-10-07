@@ -38,7 +38,7 @@ bool DeepCtxtConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   LeabraLayerSpec* rls = (LeabraLayerSpec*)rlay->GetLayerSpec();
   
   if(rlay->CheckError(rls->decay.trial == 1.0f, quiet, rval,
-                      "cannot have layer decay.trial = 1 when using temporal integration deep context learning -- set to 0 -- you can use .99f if you really want to")) {
+                      "cannot have layer decay.trial = 1 when using temporal integration deep context learning -- this value will be set to 0 -- you can use .99f if you really want to")) {
     rls->decay.trial = 0.0f;
     rval = false;
   }
@@ -46,7 +46,7 @@ bool DeepCtxtConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   LeabraLayer* slay = (LeabraLayer*)prjn->from.ptr();
   LeabraLayerSpec* sls = (LeabraLayerSpec*)slay->GetLayerSpec();
   if(slay->CheckError(sls->decay.trial == 1.0f, quiet, rval,
-                      "cannot have layer decay.trial = 1 when using temporal integration deep context learning -- set to 0 -- you can use .99f if you really want to")) {
+                      "cannot have layer decay.trial = 1 when using temporal integration deep context learning -- this value will be set to 0 -- you can use .99f if you really want to")) {
     sls->decay.trial = 0.0f;
     rval = false;
   }
