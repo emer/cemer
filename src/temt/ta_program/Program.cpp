@@ -1005,6 +1005,13 @@ void Program::ListCallers() {
   proj->programs.GuiFindFromMe("\"" + name + "(\"");   // find all refs to me in programs
 }
 
+void Program::RenameVarsToObj() {
+  StructUpdate(true);
+  args.RenameToObj();
+  vars.RenameToObj();
+  StructUpdate(false);
+}
+
 void Program::UpdateCallerArgs() {
   taProject* proj = GetMyProj();
   if(!proj)

@@ -2069,11 +2069,14 @@ void DataTable::RemoveCol(const Variant& col) {
   if(!da) return;
   
   // Remove the DataTableCell objects and the corresponding control panel items from all the rows (visible or hidden) in the column
-  for (int row = 0; row < row_indexes.size; row++) {
-    DataTableCell* dtc = NULL;
-    while ((dtc = control_panel_cells.FindCellIndexRow(da, row)) != NULL) {
-      RemoveCellFromControlPanel(dtc->control_panel, dtc->value_column, row);
-      control_panel_cells.RemoveEl(dtc);
+  if(control_panel_cells.size > 0) {
+    // todo: this could be extremely expensive!  much better to iterate over ctrl panel cells!
+    for (int row = 0; row < row_indexes.size; row++) {
+      DataTableCell* dtc = NULL;
+      while ((dtc = control_panel_cells.FindCellIndexRow(da, row)) != NULL) {
+        RemoveCellFromControlPanel(dtc->control_panel, dtc->value_column, row);
+        control_panel_cells.RemoveEl(dtc);
+      }
     }
   }
   // Don't forget the column type DTC
@@ -2194,10 +2197,12 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
   
   // Remove the DataTableCell objects and the corresponding control panel items from all the rows
   // can be as many as one per column of each row
-  for (int row = end_row; row >= st_row; row--) {
-    DataTableCell* cell = NULL;
-    while ((cell = control_panel_cells.FindCellEnabled(NULL, row)) != NULL) {
-      cell->SetControlPanelEnabled(false);
+  if(control_panel_cells.size > 0) {
+    for (int row = end_row; row >= st_row; row--) {
+      DataTableCell* cell = NULL;
+      while ((cell = control_panel_cells.FindCellEnabled(NULL, row)) != NULL) {
+        cell->SetControlPanelEnabled(false);
+      }
     }
   }
   
@@ -4641,6 +4646,33 @@ void DataTable::UnFilter() {
    ShowAllRows();
 }
 
+void DataTable::FilterRowNumbers(const int_Matrix* row_list, bool include_rows) {
+  DataUpdate(true);
+  if(!include_rows) {
+    for(int i=row_list->size-1; i >= 0; i--) {
+      int rw = row_list->FastEl_Flat(i);
+      RemoveRows(rw, 1);
+    }
+  }
+  else {
+    int_Matrix srt_list;
+    srt_list.CopyFrom(row_list);
+    srt_list.Sort(false);       // ascending
+    int lst_row = rows;
+    for(int i=srt_list.size-1; i >= 0; i--) {
+      int rw = srt_list.FastEl_Flat(i);
+      int rw1 = rw+1;           // remove everyone above me up to lst guy
+      if(rw1 < rows) {
+        int n_rm = lst_row - rw1;
+        RemoveRows(rw1, n_rm);
+      }
+      lst_row = rw;
+    }
+  }
+  DataUpdate(false);
+}
+
+
 void DataTable::CompareRows(int st_row, int n_rows) {
   if (n_rows > 1) {
     DataUpdate(true);
@@ -4924,6 +4956,25 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   DataUpdate(false);
 #endif  // DMEM_COMPILE
 }
+
+void DataTable::DMem_SplitRowsAcrossProcs() {
+  if(taMisc::dmem_nprocs <= 1) return;
+  DataUpdate(true);
+  for(int rw=rows-1; rw >= 0; rw--) {
+    if(rw % taMisc::dmem_nprocs == taMisc::dmem_proc) {
+      int rw1 = rw+1;
+      if(rw1 < rows) {
+        int n_rm = taMisc::dmem_nprocs-1;
+        if(rw1 + n_rm > rows) {
+          n_rm = rows - rw1;
+        }
+        RemoveRows(rw1, n_rm);
+      }
+    }
+  }
+  DataUpdate(false);
+}
+
 
 bool DataTable::idx(int row_num, int& act_idx) const {
   act_idx = row_num;

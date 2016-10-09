@@ -174,6 +174,8 @@ public:
   // #MENU #DYN1 #CAT_Display #GHOST_ON_flags:CTRL_READ_ONLY show variable in the program control panel - make readonly
   inline void   HideInCtrlPanel()      { NoCtrlPanel(); }
   // #MENU #DYN1 #CAT_Display #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY do not show this variable in the program the control panel
+  virtual void  RenameToObj();
+  // #MENU #DYN1 #CAT_ProgVar #GHOST_OFF_var_type:Object* rename variable based on the name of the object that this variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
 
   bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) override;
   // Leave member as NULL for default

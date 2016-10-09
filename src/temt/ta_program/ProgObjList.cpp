@@ -38,56 +38,38 @@ void ProgObjList::GetVarsForObjs() {
   for(int i = 0; i < size; ++i) {
     taBase* obj = FastEl(i);
     String nm = obj->GetName();
-    if(nm.empty()) continue;
-    ProgVar* var = prog->vars.FindName(nm);
+    nm = nm.CamelToSnake();
+    ProgVar* var = prog->vars.FindObjVar(obj);
     if(var) {
-      if((var->var_type != ProgVar::T_Object) || (var->object_val != obj)) {
-        taMisc::Error("Program error: variable named:", nm,
-                      "exists, but does not refer to object in objs list -- rename either to avoid conflict");
-      }
-      else {
-        var->objs_ptr = true;   // make sure
+      var->objs_ptr = true;   // make sure
+      if(var->object_type != obj->GetTypeDef() || var->name != nm) {
         var->object_type = obj->GetTypeDef();
-        var->SigEmitUpdated();
+        var->SetName(nm);
+        var->UpdateAfterEdit(); // trigger more updating..
       }
     }
     else {
-      bool found_it = false;
-      for(int j=0;j<prog->vars.size; j++) {
-        ProgVar* tv = prog->vars[j];
-        if((tv->var_type == ProgVar::T_Object) && (tv->object_val.ptr() == obj)) {
-          found_it = true;
-          tv->name = nm;        // update the name
-          tv->objs_ptr = true;  // make sure
-          tv->object_type = obj->GetTypeDef();
-          tv->UpdateAfterEdit(); // need UAE to update schema sig to cascade to progvar
-          //      tv->SigEmitUpdated();
-          break;
-        }
-      }
-      if(!found_it) {
-        var = (ProgVar*)prog->vars.New(1, &TA_ProgVar);
-        var->name = nm;
-        var->var_type = ProgVar::T_Object;
-        var->object_val = obj;
-        var->objs_ptr = true;
-        var->object_type = obj->GetTypeDef();
-        var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
-        var->SigEmitUpdated();
-      }
+      var = (ProgVar*)prog->vars.New(1, &TA_ProgVar);
+      var->name = nm;
+      var->var_type = ProgVar::T_Object;
+      var->object_val = obj;
+      var->objs_ptr = true;
+      var->object_type = obj->GetTypeDef();
+      var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
+      var->UpdateAfterEdit();
     }
   }
-  // now cleanup any orphaned
+  // now cleanup any orphaned 
   for(int i = prog->vars.size-1; i >= 0; --i) {
     ProgVar* var = prog->vars[i];
     if(!(var->objs_ptr && var->var_type == ProgVar::T_Object)) continue;
-    taBase* obj = FindName(var->name);
-    if(obj == NULL) {
-      if (is_transfer) {
+    int obj_idx = FindEl(var->object_val);
+    if(obj_idx < 0) {
+      if(is_transfer) {           // flag on taPtrList_impl -- means transferring list not deleting items
         var->objs_ptr = false;
       }
       else {
-        prog->vars.RemoveIdx(i);          // get rid of it
+        prog->vars.RemoveIdx(i); // get rid of it -- not clear if this ever happens...
       }
     }
   }

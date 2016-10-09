@@ -1099,6 +1099,9 @@ public:
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual void          UnFilter();
   // #CAT_DataProc clears last_select_spec and executes ShowAllRows
+  virtual void          FilterRowNumbers(const int_Matrix* row_list,
+                                         bool include_rows);
+  // #CAT_DataProc filter table by a list of row numbers to either include or exclude
   
   virtual void          FindAllScalar(taVector2i_List* found_list, const String& search_str, bool contains);
   // #CAT_DataProc search for all instances of value, non-matrix columns - contains false means match full string
@@ -1190,7 +1193,9 @@ public:
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)
 
   virtual void  DMem_ShareRows(MPI_Comm comm, int n_rows = 1);
-  // #CAT_DMem #IGNORE Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
+  // #CAT_DMem #IGNORE Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table -- see Network::DMem_ShareTrialData for version called on network dmem split
+  virtual void  DMem_SplitRowsAcrossProcs();
+  // #CAT_DMem split the rows of this table across different processors -- i.e., each processor takes every row % taMisc::ndmem_procs == taMisc::dmem_proc row of this table
 
    virtual bool         AutoLoadData();
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded

@@ -321,7 +321,8 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
     if(object_type) {
       if(!HasVarFlag(QUIET)) {
-        TestWarning(!objs_ptr && !IsLocal() && object_type->InheritsFrom(&TA_taMatrix),
+        TestWarning(!objs_ptr && !IsLocal() && object_type->InheritsFrom(&TA_taMatrix) &&
+                    !HasVarFlag(NEW_OBJ),
                     "ProgVar", "for Matrix* ProgVar named:",name,
                     "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
       }
@@ -1152,4 +1153,18 @@ bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   return ctrl_panel->SelectMemberPrompt(base, mbr);
+}
+
+void ProgVar::RenameToObj() {
+  if(var_type != T_Object) return;
+  if(object_val) {
+    String nm = object_val->GetName();
+    if(nm.nonempty()) {
+      String nw_nm = nm.CamelToSnake();
+      if(name != nw_nm) {
+        SetName(nw_nm);
+        UpdateAfterEdit();        // apply!
+      }
+    }
+  }
 }

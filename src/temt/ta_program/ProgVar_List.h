@@ -51,9 +51,14 @@ public:
   // #DROPN #EXCLUDE_METHOD_FOR_ProgVar add a var to the given object
   virtual void  CreateDataColVars(DataTable* src);
   // #DROP1 #BUTTON create column variables for given database object (only for scalar vals -- not matrix ones)
+  virtual void  RenameToObj();
+  // #BUTTON rename all Object* variables in list based on the name of the object that the variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
 
   virtual ProgVar* FindVarType(int vart, TypeDef* td = NULL);
   // find first variable of given type (ProgVar::VarType) (if hard enum or object type, td specifies type of object to find if not null)
+
+  virtual ProgVar* FindObjVar(taBase* obj);
+  // find first variable in list that points to the given object -- returns NULL if not found
 
   String GetTypeDecoKey() const override { return "ProgVar"; }
 

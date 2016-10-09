@@ -279,6 +279,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Debug #MENU_SEP_BEFORE #CAT_Code run UpdateArgs on all the other programs that call me, and also display all these calls in the Find dialog (searching on this program's name) so you can make sure the args are correct for each such program
   virtual void  ListCallers();
   // #MENU_BUTTON #MENU_ON_Debug #CAT_Code Display all callers of this program in the Find dialog (searching on this program's name)
+  virtual void  RenameVarsToObj();
+  // #MENU_BUTTON #MENU_ON_Debug #CAT_Code #MENU_SEP_BEFORE rename all Object* variables in vars and args based on the name of the object that the variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
   
   virtual void  CssError(int src_ln_no, bool running, const String& err_msg);
   // #IGNORE an error was triggered by css -- this is callback from css Error handling routine for program to update gui with relevant info

@@ -152,6 +152,24 @@ ProgVar* ProgVar_List::FindVarType(int varttmp, TypeDef* td) {
   return NULL;
 }
 
+ProgVar* ProgVar_List::FindObjVar(taBase* obj) {
+  for(int i=0; i<size; i++) {
+    ProgVar* it = FastEl(i);
+    if(it->var_type != ProgVar::T_Object) continue;
+    if(it->object_val == obj) {
+      return it;
+    }
+  }
+  return NULL;
+}
+
+void ProgVar_List::RenameToObj() {
+  for(int i=0; i<size; i++) {
+    ProgVar* it = FastEl(i);
+    it->RenameToObj();
+  }
+}
+
 void ProgVar_List::setStale() {
   inherited::setStale();
   // note: there are no vars just in program groups anymore..
@@ -184,28 +202,29 @@ bool ProgVar_List::BrowserCollapseAll() {
 }
 
 taBase* ProgVar_List::ChooseNew(taBase* origin) {
-    String var_nm;
-    ProgVar* rval = NULL;
-    ProgElChoiceDlg dlg;
-    taBase::Ref(dlg);
-    int choice = 2;
-    ProgVar::VarType var_type = ProgVar::T_UnDef;
-    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
-    if (result == 1) {
-      if(choice == 0) {
-        rval = (ProgVar*)New(1, NULL, var_nm);
-        if(taMisc::gui_active)
-          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
-      }
-      else if(choice == 1) {
-        rval = (ProgVar*)New(1, NULL, var_nm);
-        if(taMisc::gui_active)
-          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
-       }
-     }
-    if(rval) {
-      rval->var_type = var_type;
-      rval->UpdateAfterEdit();
+  String var_nm;
+  ProgVar* rval = NULL;
+  ProgElChoiceDlg dlg;
+  taBase::Ref(dlg);
+  int choice = 2;
+  ProgVar::VarType var_type = ProgVar::T_UnDef;
+  int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
+  if (result == 1) {
+    if(choice == 0) {
+      rval = (ProgVar*)New(1, NULL, var_nm);
+      if(taMisc::gui_active)
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
-    return rval;
+    else if(choice == 1) {
+      rval = (ProgVar*)New(1, NULL, var_nm);
+      if(taMisc::gui_active)
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    }
+  }
+  if(rval) {
+    rval->var_type = var_type;
+    rval->UpdateAfterEdit();
+  }
+  return rval;
 }
+
