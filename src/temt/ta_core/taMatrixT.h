@@ -53,7 +53,7 @@ public:
   const T&              FastEl3d(int d0, int d1, int d2) const
   { return el[FastElIndex3d(d0, d1, d2)]; }
   const T&              FastEl4d(int d0, int d1, int d2, int d3) const
-  { return el[FastElIndex3d(d0, d1, d2)]; }
+  { return el[FastElIndex4d(d0, d1, d2, d3)]; }
   const T&              FastElN(const MatrixIndex& indices) const
   { return el[FastElIndexN(indices)]; }
   const T&              FastEl_Flat(int idx) const { return el[idx]; }
