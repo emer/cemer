@@ -549,9 +549,13 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
       // special case for Average objects -- they automatically get their avg member
       if(md->type->IsActualTaBase() && md->type->InheritsFrom(&TA_Average) &&
          !md->type->IsAnyPtr()) {
-        taBase* ths = (taBase*) md->GetOff((void*)obj);
-        md = ths->FindMember("avg");
-        obj = ths;              // obj is now this..
+        Average* ths = (Average*) md->GetOff((void*)obj);
+        if (ths) {
+          // the line below was finding the wrong FindMember method - maybe something to do with ta and overloaded methods - specific to Windows
+          //md = ths->FindMember("avg");
+          md = ths->GetTypeDef()->members.FindName("avg");
+          obj = ths;              // obj is now this..
+        }
       }
       if(md && name_obj) {
         String valname = GetColName(name_obj, val_specs.size);
