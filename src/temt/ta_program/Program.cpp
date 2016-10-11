@@ -86,6 +86,7 @@ void Program::Initialize() {
   run_state = NOT_INIT;
   flags = NO_STOP_STEP;         // most new progs should not be..
   objs.SetBaseType(&TA_taNBase);
+  objs.el_typ = &TA_DataTable;  // make data tables by default..
   ret_val = 0;
   sub_progs_updtd = false;
   m_stale = true;

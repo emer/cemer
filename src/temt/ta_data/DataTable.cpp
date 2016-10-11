@@ -4648,25 +4648,30 @@ void DataTable::UnFilter() {
 
 void DataTable::FilterRowNumbers(const int_Matrix* row_list, bool include_rows) {
   DataUpdate(true);
+  int_Matrix srt_list;
+  srt_list.CopyFrom(row_list);
+  srt_list.Sort(false);       // ascending
   if(!include_rows) {
-    for(int i=row_list->size-1; i >= 0; i--) {
-      int rw = row_list->FastEl_Flat(i);
+    for(int i=srt_list.size-1; i >= 0; i--) {
+      int rw = srt_list.FastEl_Flat(i);
       RemoveRows(rw, 1);
     }
   }
   else {
-    int_Matrix srt_list;
-    srt_list.CopyFrom(row_list);
-    srt_list.Sort(false);       // ascending
     int lst_row = rows;
     for(int i=srt_list.size-1; i >= 0; i--) {
       int rw = srt_list.FastEl_Flat(i);
-      int rw1 = rw+1;           // remove everyone above me up to lst guy
+      int rw1 = rw+1;           // remove everyone above me up to last guy
       if(rw1 < rows) {
         int n_rm = lst_row - rw1;
-        RemoveRows(rw1, n_rm);
+        if(n_rm > 0) {
+          RemoveRows(rw1, n_rm);
+        }
       }
       lst_row = rw;
+    }
+    if(lst_row != 0) {
+      RemoveRows(0,lst_row);    // remove up to last guy
     }
   }
   DataUpdate(false);
@@ -4970,6 +4975,9 @@ void DataTable::DMem_SplitRowsAcrossProcs() {
         }
         RemoveRows(rw1, n_rm);
       }
+    }
+    else if(rw == 0) {
+      RemoveRows(0, taMisc::dmem_nprocs); // get rid of the first guys!
     }
   }
   DataUpdate(false);
