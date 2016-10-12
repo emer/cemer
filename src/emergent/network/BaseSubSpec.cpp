@@ -65,7 +65,7 @@ BaseSubSpec* BaseSubSpec::FindParent() {
 }
 
 void BaseSubSpec::SetUnique(const char* memb_nm, bool on) {
-  MemberDef* md = FindMember(memb_nm);
+  MemberDef* md = FindMemberName(memb_nm);
   if(md)
     SetUnique(md->idx, on);
   else {
@@ -89,7 +89,7 @@ void BaseSubSpec::SetUnique(int memb_no, bool on) {
 }
 
 bool BaseSubSpec::GetUnique(const char* memb_nm) {
-  MemberDef* md = FindMember(memb_nm);
+  MemberDef* md = FindMemberName(memb_nm);
   if(md)
     return GetUnique(md->idx);
   TestError(true, "GetUnique", "Member named:", memb_nm, "not found");

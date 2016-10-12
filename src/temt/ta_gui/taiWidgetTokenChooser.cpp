@@ -201,7 +201,7 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
     if (owner) {
-      MemberDef* md = owner->FindMember(btmp->GetName());
+      MemberDef* md = owner->FindMemberName(btmp->GetName());
       if (md && md->HasOption("HIDDEN_CHOOSER"))
         continue;
     }

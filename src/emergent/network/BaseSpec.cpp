@@ -177,7 +177,7 @@ void BaseSpec::ComparePeers(BaseSpec* spec) {
 }
 
 void BaseSpec::SetUnique(const String& memb_nm, bool on) {
-  MemberDef* md = FindMember(memb_nm);
+  MemberDef* md = FindMemberName(memb_nm);
   if(md) {
     SetUnique(md->idx, on);
   }

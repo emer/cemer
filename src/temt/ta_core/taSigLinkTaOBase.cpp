@@ -88,7 +88,7 @@ int taSigLinkTaOBase::NumListCols() const {
 MemberDef* taSigLinkTaOBase::GetDataMemberDef() const {
   if (!m_data) return NULL;
   taBase* owner = data()->GetOwner();
-  if (owner) return owner->FindMember(data());
+  if (owner) return owner->FindMemberBase(data());
   else return NULL;
 }
 

@@ -42,7 +42,7 @@ void SpecMemberBase::MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog) {
   if(edit_dialog) return;
   if(!owner || !owner->InheritsFrom(&TA_BaseSpec)) return;
   BaseSpec* spown = (BaseSpec*)owner;
-  MemberDef* mymd = spown->FindMember((void*)this);
+  MemberDef* mymd = spown->FindMemberBase((void*)this);
   if(mymd)
     spown->MemberUpdateAfterEdit(mymd, edit_dialog);
 }

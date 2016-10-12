@@ -469,7 +469,7 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
     if(TestError(var.nonempty(),"ScanObject_InUserData",
       "UserDataItem: ", key, " expected to be simple; can't resolve remaining var: ", var))
       return true; //no mon, but we did handle it
-    MemberDef* md = udi->FindMember("value"); // should exist!
+    MemberDef* md = udi->FindMemberName("value"); // should exist!
     if(TestError(!md,"ScanObject_InUserData",
       "unexpected: member 'value' supposed to exist"))
       return true; //no mon, but we did handle it
@@ -521,7 +521,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
       return ScanObject_InUserData(obj, var.after("."), name_obj);
     }
 
-    md = obj->FindMember(membname);
+    md = obj->FindMemberName(membname);
     //note: if memb not found, then we assume it is in an iterated subobj...
     if (!md) return false;
 
@@ -544,7 +544,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     return ScanObject_InObject(ths, var, name_obj);
   }
   else {
-    md = obj->FindMember(var);
+    md = obj->FindMemberName(var);
     if (md) {
       // special case for Average objects -- they automatically get their avg member
       if(md->type->IsActualTaBase() && md->type->InheritsFrom(&TA_Average) &&
@@ -552,8 +552,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
         Average* ths = (Average*) md->GetOff((void*)obj);
         if (ths) {
           // the line below was finding the wrong FindMember method - maybe something to do with ta and overloaded methods - specific to Windows
-          //md = ths->FindMember("avg");
-          md = ths->GetTypeDef()->members.FindName("avg");
+          md = ths->FindMemberName("avg");
           obj = ths;              // obj is now this..
         }
       }

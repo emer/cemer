@@ -1127,7 +1127,7 @@ String taBase::GetPath_Long(taBase* ta, taBase* par_stop) const {
     rval += "(" + GetName() + ")";
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
@@ -1156,7 +1156,7 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
@@ -1187,7 +1187,7 @@ String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
@@ -3049,7 +3049,7 @@ void taBase::BrowseMe() {
   taBase* own = GetOwner();
   MemberDef* md = NULL;
   if (own) {
-    md = own->FindMember((void*)this);
+    md = own->FindMemberBase((void*)this);
   }
   MainWindowViewer* wv = MainWindowViewer::NewBrowser(this, md);
   if (wv) wv->ViewWindow();

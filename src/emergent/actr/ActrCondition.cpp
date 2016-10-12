@@ -100,7 +100,7 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
       Layer* lay = (Layer*)src.ptr();
       Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
       if(un) {
-        MemberDef* md = un->FindMember(unit_val);
+        MemberDef* md = un->FindMemberName(unit_val);
         CheckError(!md, quiet, rval,
                    "network unit unit variable:", unit_val, "not found in unit");
       }
@@ -322,7 +322,7 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
     Layer* lay = (Layer*)src.ptr();
     Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
     if(un) {
-      MemberDef* md = un->FindMember(unit_val);
+      MemberDef* md = un->FindMemberName(unit_val);
       if(md) {
 	Variant tval = md->GetValVar(un);
 	match = MatchVarVal(tval, why_not);

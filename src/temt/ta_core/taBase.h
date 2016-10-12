@@ -1326,11 +1326,11 @@ public:
   TypeDef*      GetStemBase() const;
   // #IGNORE get first (from me) parent with STEM_BASE directive -- defines equivalence class -- if not found, then taBase is returned
 
-  virtual MemberDef*    FindMember(const String& nm) const // #IGNORE
+  virtual MemberDef*    FindMemberName(const String& nm) const // #IGNORE
   { return GetTypeDef()->members.FindName(nm); }
-  virtual MemberDef*    FindMember(TypeDef* it) const   // #IGNORE
+  virtual MemberDef*    FindMemberType(TypeDef* it) const   // #IGNORE
   { return GetTypeDef()->members.FindType(it); }
-  virtual MemberDef*    FindMember(void* mbr) const     // #IGNORE
+  virtual MemberDef*    FindMemberBase(void* mbr) const     // #IGNORE
   { int idx; return GetTypeDef()->members.FindAddr((void*)this, mbr, idx); }
   virtual MemberDef*    FindMemberPtr(void* mbr) const  // #IGNORE
   { int idx; return GetTypeDef()->members.FindAddrPtr((void*)this, mbr, idx); } // #IGNORE

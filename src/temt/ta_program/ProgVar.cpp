@@ -1137,7 +1137,7 @@ bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
   if (var_type == ProgVar::T_DynEnum) {
     base = (taBase*)&this->dyn_enum_val;
     if (base) {
-      mbr = base->FindMember("value");
+      mbr = base->FindMemberName("value");
       if(TestError(!mbr,"AddToControlPanel", "member is null")) return false;
     }
   }

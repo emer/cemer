@@ -1568,8 +1568,8 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
 #endif
   if (record && pjn) {
     taMisc::RecordScript(lay->projections.GetPath() + ".NewEl(1);\n");
-    taMisc::SREAssignment(pjn,pjn->FindMember("from_type"));
-    taMisc::ScriptRecordAssignment(pjn,pjn->FindMember("from"));
+    taMisc::SREAssignment(pjn,pjn->FindMemberName("from_type"));
+    taMisc::ScriptRecordAssignment(pjn,pjn->FindMemberName("from"));
     taMisc::RecordScript(pjn->GetPath() + ".spec.type = CustomPrjnSpec;");
   }
 }

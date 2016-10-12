@@ -163,7 +163,7 @@ void taiEditorOfUserData::Constr_Widget_Labels() {
       if (item_->isSimple()) {
         //UserDataItem* item = (UserDataItem*)item_;
       // simple (Variant) user data
-        MemberDef* mbr = item_->FindMember("value"); // better be found!
+        MemberDef* mbr = item_->FindMemberName("value"); // better be found!
         ms->memb_el.Add(mbr); // keep synced
         if (!mbr || (mbr->im == NULL)) continue; // shouldn't happen
 
@@ -203,7 +203,7 @@ void taiEditorOfUserData::GetImage_Item(int row) {
   if (item_ == NULL) return;
   if (item_->isSimple()) {
     UserDataItem* item = (UserDataItem*)item_;
-    MemberDef* mbr = item->FindMember("value"); // better be found!
+    MemberDef* mbr = item->FindMemberName("value"); // better be found!
     if (!mbr) return; // shouldn't happen
     String txt = mbr->GetValStr(item, TypeDef::SC_DISPLAY, true);
     // augment plain non-class vals with bg color

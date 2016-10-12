@@ -71,13 +71,13 @@ int TypeDefault::Dump_Load_Value(istream& strm, taBase* par) {
 }
 
 void TypeDefault::SetActive(char* memb_nm, bool onoff) {
-  MemberDef* md = FindMember(memb_nm);
+  MemberDef* md = FindMemberName(memb_nm);
   if(md != NULL)
     SetActive(md->idx, onoff);
 }
 
 bool TypeDefault::GetActive(char* memb_nm) {
-  MemberDef* md = FindMember(memb_nm);
+  MemberDef* md = FindMemberName(memb_nm);
   if(md != NULL)
     return GetActive(md->idx);
   return false;

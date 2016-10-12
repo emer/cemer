@@ -62,7 +62,7 @@ bool NetCounterInit::CvtFmCode(const String& code) {
   if(remainder.empty())
     return true;
   if(network_var && network_var->object_val) {
-    counter = network_var->object_val->FindMember(remainder);
+    counter = network_var->object_val->FindMemberName(remainder);
     SigEmitUpdated();
   }
   return true;

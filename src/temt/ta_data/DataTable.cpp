@@ -2361,7 +2361,7 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   cell->control_panel = cp;
   control_panel_cells.Add(cell);
     
-  MemberDef* md = cell->FindMember("value");
+  MemberDef* md = cell->FindMemberName("value");
   if (!md) return;
   
   cp->SelectMemberPrompt(cell, md);
@@ -2397,7 +2397,7 @@ void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // 
   // Get the column that will be used for row lookup
   cell->row_lookup_col =  GetColumnForDTCLookup();
   
-  MemberDef* md = cell->FindMember("value");
+  MemberDef* md = cell->FindMemberName("value");
   if (!md) return;
   
   cp->SelectMemberPrompt(cell, md);
@@ -2412,7 +2412,7 @@ void DataTable::RemoveCellFromControlPanel(ControlPanel* cp, DataCol* column, in
   DataTableCell* dtc = control_panel_cells.FindCell(column, row);
   
   if (dtc) {
-    MemberDef* md = dtc->FindMember("value");
+    MemberDef* md = dtc->FindMemberName("value");
     if (!md) return;
     int idx =  cp->FindMbrBase(dtc, md);
     if (idx > -1) {
@@ -2430,7 +2430,7 @@ void DataTable::RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* column) 
   DataTableCell* dtc = control_panel_cells.FindColumnTypeDTC(column);
   
   if (dtc) {
-    MemberDef* md = dtc->FindMember("value");
+    MemberDef* md = dtc->FindMemberName("value");
     if (!md) return;
     int idx =  cp->FindMbrBase(dtc, md);
     if (idx > -1) {
@@ -5242,7 +5242,7 @@ void DataTable::ColumnUpdate(DataCol* column) {
 
 void DataTable::NotifyControlPanel(DataTableCell* cell) {
   if (!cell) return;
-  MemberDef* md = cell->FindMember("value");
+  MemberDef* md = cell->FindMemberName("value");
   if (md) {
     cell->control_panel->MbrUpdated(cell, md);
   }

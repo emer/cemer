@@ -323,7 +323,7 @@ void iTreeView::InsertDefaultEl(bool after) {
   else {  // not a list
     String mbr = sb->GetTypeDef()->OptionAfter("DEF_CHILD_");
     if(mbr.nonempty()) {
-      MemberDef* md = sb->FindMember(mbr);
+      MemberDef* md = sb->FindMemberName(mbr);
       if(md) {   // should always be true
         sbo = (taList_impl*)md->GetOff(sb);
         if(sbo->size > 0 || sbo->HasOption("FIXED_SIZE")) {     // only select def child if nothing in it yet -- otherwise you should be inside list to add

@@ -322,7 +322,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
         dtc = dataTable()->control_panel_cells.FindCell(dc, row);
       }
       if (dtc) {
-        MemberDef* md = dtc->FindMember("value");
+        MemberDef* md = dtc->FindMemberName("value");
         // now check control panel
         if (md && cp->FindMbrBase(dtc, md) > -1) {
           add_act->setEnabled(false);

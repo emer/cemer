@@ -403,7 +403,7 @@ bool ControlPanel::SelectMemberNm(taBase* base, const String& md_nm,
   const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
-  MemberDef* md = (MemberDef*)base->FindMember(md_nm);
+  MemberDef* md = (MemberDef*)base->FindMemberName(md_nm);
   if (md == NULL) return false;
   return SelectMember(base, md, xtra_lbl, dscr, sub_gp_nm);
 }

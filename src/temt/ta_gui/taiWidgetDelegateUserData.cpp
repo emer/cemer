@@ -92,7 +92,7 @@ bool taiWidgetDelegateUserData::IndexToMembBase(const QModelIndex& index,
     base = item; // the item itself is the base
     if (item) {
       if (item->isSimple()) {
-        mbr = item->FindMember("value"); // better be found!
+        mbr = item->FindMemberName("value"); // better be found!
       } else { // complex
       //nothing
       }

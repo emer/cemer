@@ -1184,7 +1184,7 @@ String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
@@ -1218,7 +1218,7 @@ String taList_impl::GetGroupPath(taBase* ta, taBase* par_stop) const {
   }
     
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
@@ -1251,7 +1251,7 @@ String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
@@ -1291,7 +1291,7 @@ String taList_impl::GetPath_Long(taBase* ta, taBase* par_stop) const {
     rval += "(" + GetName() + ")";
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMember(ta)) {
+    if (MemberDef *md = FindMemberBase(ta)) {
       rval += "." + md->name;
     }
     else if (MemberDef *md = FindMemberPtr(ta)) {
