@@ -46,13 +46,13 @@ General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             4
 
-#ConvertSwitchWithBlank
-#    Ensure Emergent Free
-#    Code Should Convert To	"switch (i)"	Switch    "switch (i)"
+ConvertSwitchWithBlank
+    Ensure Emergent Free
+    Code Should Convert To	"switch (i)"	Switch    "switch(i)"
 
-#ConvertSwitchWithoutBlank
-#    Ensure Emergent Free
-#    Code Should Convert To	"switch(i)"	Switch    "switch(i)"
+ConvertSwitchWithoutBlank
+    Ensure Emergent Free
+    Code Should Convert To	"switch(i)"	Switch    "switch(i)"
 
 LocalVars
     Ensure Emergent Free
@@ -120,13 +120,14 @@ ProgEl Should Match
 Code Should Convert To
      [Arguments]    ${test_code_str}		${progel_type}	${converted_code_str}
     
-     Set Emergent Var	TestConvertProgCodeStringToProgEl		test_code_str	${test_code_str}
-     Set Emergent Var	TestConvertProgCodeStringToProgEl		should_match_type	"${progel_type}"
-     Set Emergent Var	TestConvertProgCodeStringToProgEl		should_match_code	${converted_code_str}
+     Set Emergent Var	TestConvertProgCodeStringToProgElCode		test_code_str	${test_code_str}
+     Set Emergent Var	TestConvertProgCodeStringToProgElVerify		should_match_type	"${progel_type}"
+     Set Emergent Var	TestConvertProgCodeStringToProgElVerify		should_match_code	${converted_code_str}
      
-     ${console}=		       Run Emergent Program       TestConvertProgCodeStringToProgEl
+     ${console}=		       Run Emergent Program       TestConvertProgCodeStringToProgElCode
+     ${console}=		       Run Emergent Program       TestConvertProgCodeStringToProgElVerify
 
-     ${does_match}=	       Get Emergent Var		  TestConvertProgCodeStringToProgEl		does_match
+     ${does_match}=	       Get Emergent Var		  TestConvertProgCodeStringToProgElVerify		does_match
 
      Run Keyword If      "${does_match}" <> "true"     Log	${console}	WARN
      Should Be Equal    ${does_match}     true
