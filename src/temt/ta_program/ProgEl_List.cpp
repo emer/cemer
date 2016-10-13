@@ -144,7 +144,7 @@ void ProgEl_List::ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl) {
   el_to_repl = el;
   el_to_repl_idx = idx;
   el_to_repl_fun = fun_on_repl;
-  tabMisc::DelayedFunCall_gui(this, "DoReplaceLater");
+  tabMisc::DelayedFunCall_nogui(this, "DoReplaceLater");
 }
 
 void ProgEl_List::DoReplaceLater() {
@@ -156,7 +156,7 @@ void ProgEl_List::DoReplaceLater() {
   tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserExpandAll");
   tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserSelectMe");
   if(el_to_repl_fun.nonempty()) {
-    tabMisc::DelayedFunCall_gui(el_to_repl, el_to_repl_fun); 
+    tabMisc::DelayedFunCall_nogui(el_to_repl, el_to_repl_fun);
   }
   el_to_repl = NULL;
 }
