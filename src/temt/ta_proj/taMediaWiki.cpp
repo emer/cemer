@@ -1571,7 +1571,7 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
         ((taProject*)obj)->RecordChangeLog(chlog);
       }
       
-      obj->Save();              // save current changes!
+      obj->SaveAs(file_name);              // save current changes!
 
       // double-check for existing page name now that it has been entered:
       if (taMediaWiki::PageExists(wiki_name, page_name)) {
@@ -1607,7 +1607,7 @@ bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish
     version.SetFromString(ver_str);
 
     taMisc::Busy();
-    obj->Save();              // save current changes!
+    obj->SaveAs(file_name);              // save current changes!
 
     bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false, "", "Version: " + ver_str + "; Emergent version: " + emer_version); // true - update new revision
     if (rval == false) {

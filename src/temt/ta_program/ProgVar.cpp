@@ -99,6 +99,13 @@ void ProgVar::SetFlagsByOwnership() {
                         "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
           }
         }
+
+        if(!HasVarFlag(SAVE_VAL) && HasVarFlag(NULL_CHECK)) {
+          if(!HasVarFlag(QUIET)) {
+            TestWarning(true, "ProgVar", "for Object* ProgVar named:",name,
+                        "has NULL_CHECK on but NOT SAVE_VAL -- this means that this variable WILL BE NULL when the program is loaded and you'll likely get an error message to this effect -- change one or the other of these settings to get rid of it.");
+          }
+        }
       }
     }
   }
