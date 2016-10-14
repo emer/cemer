@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.3.0 rev10121
+// ta_Dump File v3.0 -- code v8.0.3.0 rev10157
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -404,7 +404,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [29] {
+    DataTableCols @.data = [30] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -490,6 +490,7 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
+     float_Data @["Output_lay_bin_err"] { };
      float_Data @["Output_lay_norm_err"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -3268,7 +3269,7 @@ LeabraProject .projects["LeabraFlex"] {
 
      ProgObjList @.objs = [1] {
       NetMonitor @["trial_netmon"] { 
-       NetMonItem_List @.items = [25] {
+       NetMonItem_List @.items = [26] {
 	NetMonItem @["batch"] { };
 	NetMonItem @["epoch"] { };
 	NetMonItem @["train_mode"] { };
@@ -3285,6 +3286,7 @@ LeabraProject .projects["LeabraFlex"] {
 	NetMonItem @["cos_err"] { };
 	NetMonItem @["ext_rew"] { };
 	NetMonItem @["lay_sse"] { };
+	NetMonItem @["lay_bin_err"] { };
 	NetMonItem @["lay_norm_err"] { };
 	NetMonItem @["lay_cos_err"] { };
 	NetMonItem @["lay_net_sd"] { };
@@ -3825,8 +3827,8 @@ LeabraProject .projects["LeabraFlex"] {
   minor=0;
   step=0;
  };
- author=;
- email=;
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
  license {
   license=GPLv2;
   owner_name="Regents of the University of Colorado";
@@ -6995,7 +6997,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=16;
       matrix_col_width=10;
      };
      int_Data @["version"] {
@@ -7020,7 +7022,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=8;
       matrix_col_width=10;
      };
     };
@@ -7031,7 +7033,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
     max_col_width=50;
     keygen 4 0=0;
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -7039,7 +7041,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -7628,6 +7630,20 @@ mw.config.set({\"wgBackendResponseTime\":192});
        name="dim_names";
       [0]       };
       width=14;
+      matrix_col_width=10;
+     };
+     float_Data @["Output_lay_bin_err"] {
+      name="Output_lay_bin_err";
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
       matrix_col_width=10;
      };
      float_Data @["Output_lay_norm_err"] {
@@ -18694,7 +18710,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 7)";
-      pre_compile_code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 7)";
+      pre_compile_code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 7, )";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["LRSConSpec"]$$;
       method=LeabraConSpec::LogLrateSched;
@@ -21354,8 +21370,8 @@ also save specs.";
       minor=0;
       step=0;
      };
-     author=;
-     email=;
+     author="Randall C. O'Reilly";
+     email="emergent-users@grey.colorado.edu";
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -21887,6 +21903,40 @@ also save specs.";
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
 	 variable="layers.sse";
 	 var_label="lay_sse";
+	 name_style=AUTO_NAME;
+	 max_name_len=6;
+	 options=OUTPUT_LAYERS|TARGET_LAYERS;
+	 val_type=VT_FLOAT;
+	 matrix=0;
+	 matrix_geom{ 	 };
+	 data_agg=0;
+	 data_src=NULL;
+	 agg_col {
+	  col_name="agg_col";
+	 };
+	 agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+	 select_rows=0;
+	 select_spec {
+	  col_name="select_spec";
+	  name="select_spec_EQUAL_";
+	  on=1;
+	  rel=EQUAL;
+	  use_var=0;
+	  cmp 0 1;
+	  var=NULL;
+	  enable_var=NULL;
+	 };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+	};
+	NetMonItem @["lay_bin_err"] {
+	 name="lay_bin_err";
+	 computed=0;
+	 object_type=LeabraNetwork;
+	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
+	 variable="layers.bin_err";
+	 var_label="lay_bin_err";
 	 name_style=AUTO_NAME;
 	 max_name_len=6;
 	 options=OUTPUT_LAYERS|TARGET_LAYERS;
@@ -25876,7 +25926,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4][5].prog_code;.programs.gp[4][5].prog_code[6];.programs.gp[4][5].prog_code[6].meth_args[0];.programs.gp[4][5].prog_code[6].meth_args[1];.programs.gp[4][5].prog_code[6].meth_args[2];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -26055,7 +26105,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        avg_act {targ_init=0.15: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
        inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
-       clamp {hard=1: gain=0.2: };
+       clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
        lay_lrate=1;
@@ -26082,7 +26132,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      avg_act {targ_init=0.15: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
      inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
      lay_lrate=1;
@@ -26164,7 +26214,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       delay=4;
      };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
