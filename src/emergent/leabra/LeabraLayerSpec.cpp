@@ -484,16 +484,13 @@ void LeabraLayerSpec::Quarter_Init_AvgAct_Layer(LeabraLayer* lay, LeabraNetwork*
   if(avg_act.fixed) {
     lay->acts_p_avg_eff = avg_act.targ_init;
   }
-  else if(avg_act.use_ext_act) {
-    if(TestWarning(!(lay->HasExtFlag(UnitVars::EXT) || lay->HasExtFlag(UnitVars::TARG)),
-                   "Quarter_Init_AvgAct_Layer",
-                   "avg_act.use_ext_act is on but layer does not have EXT input!  falling back on avg_act.targ_init")) {
+  else if(lay->layer_type != Layer::HIDDEN && avg_act.use_ext_act) {
+    if(!(lay->HasExtFlag(UnitVars::EXT) || lay->HasExtFlag(UnitVars::TARG))) {
       lay->acts_p_avg_eff = avg_act.targ_init;
     }
     else {
       float avg_ext = Compute_AvgExt(lay, net);
-      if(TestWarning(avg_ext == 0.0f, "Quarter_Init_AvgAct",
-                     "avg_act.use_ext_act is on but avg ext is 0 -- falling back on avg_act.targ_init")) {
+      if(avg_ext == 0.0f) {
         lay->acts_p_avg_eff = avg_act.targ_init;
       }
       else {
