@@ -34,6 +34,9 @@ public:
 
   String GetTypeDecoKey() const override { return "ProgExpr"; }
 
+  virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
+  // #IGNORE update prog el vars after scope change (move, copy)
+  
   TA_BASEFUNS_NOCOPY(ProgExpr_List);
 protected:
   void CheckChildConfig_impl(bool quiet, bool& rval) override;

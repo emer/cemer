@@ -171,16 +171,7 @@ void ProgEl::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
     MemberDef* md = td->members[i];
     if(md->type->InheritsFrom(&TA_ProgExprBase)) {
       ProgExprBase* peb = (ProgExprBase*)md->GetOff((void*)this);
-      for(int vi=0; vi < peb->vars.size; vi++) {
-        ProgVarRef* pvr = peb->vars[vi];
-        if(pvr->ptr()) {
-          ProgVar* new_var = Program::FindMakeProgVarInNewScope(pvr->ptr(), old_scope, new_scope);
-          if(new_var) {
-            pvr->set(new_var);
-          }
-        }
-      }
-      peb->ReParseExpr(false);       // re-parse, but don't prompt..
+      peb->UpdateProgElVars(old_scope, new_scope);
     }
     else if(md->type->InheritsFromName("ProgVarRef")) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
@@ -193,20 +184,16 @@ void ProgEl::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
     }
     else if(md->type->InheritsFrom(&TA_ProgEl_List)) {
       ProgEl_List* pel = (ProgEl_List*)md->GetOff((void*)this);
-      for(int ei=0; ei<pel->size; ei++) {
-        ProgEl* pe = pel->FastEl(ei);
-        pe->UpdateProgElVars(old_scope, new_scope);
-      }
+      pel->UpdateProgElVars(old_scope, new_scope);
     }
-    // might need this commented out code
-//    else if(md->type->InheritsFrom(&TA_ProgArg_List)) {
-//      ProgArg_List* peb = (ProgArg_List*)md->GetOff((void*)this);
-//      peb->UpdateProgExpr_NewOwner();
-//    }
-//    else if(md->type->InheritsFrom(&TA_ProgExpr_List)) {
-//      ProgExpr_List* peb = (ProgExpr_List*)md->GetOff((void*)this);
-//      peb->UpdateProgExpr_NewOwner();
-//    }
+    else if(md->type->InheritsFrom(&TA_ProgArg_List)) {
+      ProgArg_List* pal = (ProgArg_List*)md->GetOff((void*)this);
+      pal->UpdateProgElVars(old_scope, new_scope);
+    }
+    else if(md->type->InheritsFrom(&TA_ProgExpr_List)) {
+      ProgExpr_List* pel = (ProgExpr_List*)md->GetOff((void*)this);
+      pel->UpdateProgElVars(old_scope, new_scope);
+    }
   }
 }
 

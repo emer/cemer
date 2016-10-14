@@ -251,3 +251,10 @@ bool ProgArg_List::BrowserCollapseAll() {
   if(!prog) return false;
   return prog->BrowserCollapseAll_ProgItem(this);
 }
+
+void ProgArg_List::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
+  for(int ei=0; ei<size; ei++) {
+    ProgArg* pa = FastEl(ei);
+    pa->expr.UpdateProgElVars(old_scope, new_scope);
+  }
+}

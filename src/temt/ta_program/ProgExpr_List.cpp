@@ -28,3 +28,9 @@ void ProgExpr_List::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
 }
 
+void ProgExpr_List::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
+  for(int ei=0; ei<size; ei++) {
+    ProgExpr* pe = FastEl(ei);
+    pe->UpdateProgElVars(old_scope, new_scope);
+  }
+}

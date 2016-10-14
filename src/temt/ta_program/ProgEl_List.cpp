@@ -243,3 +243,10 @@ bool ProgEl_List::IsAcceptable(taBase* candidate) {
   }
   return true;
 }
+
+void ProgEl_List::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
+  for(int ei=0; ei<size; ei++) {
+    ProgEl* pe = FastEl(ei);
+    pe->UpdateProgElVars(old_scope, new_scope);
+  }
+}

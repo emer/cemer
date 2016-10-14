@@ -75,6 +75,9 @@ public:
   bool  IsAcceptable(taBase* candidate) override;
  // is this candidate item acceptable for this list - Only used in drag and drop - must be at least type or subtype of el_base - Use the Add methods to include/exclude types
 
+  virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
+  // #IGNORE update prog el vars after scope change (move, copy)
+  
 
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);

@@ -54,6 +54,9 @@ public:
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 
+  virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
+  // #IGNORE update prog el vars after scope change (move, copy)
+
   TA_BASEFUNS_NOCOPY(ProgArg_List);
 protected:
   void CheckChildConfig_impl(bool quiet, bool& rval) override;

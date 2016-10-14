@@ -92,6 +92,19 @@ void ProgExprBase::UpdateAfterMove_impl(taBase* old_owner) {
   // ReParseExpr();
 }
 
+void ProgExprBase::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
+  for(int vi=0; vi < vars.size; vi++) {
+    ProgVarRef* pvr = vars[vi];
+    if(pvr->ptr()) {
+      ProgVar* new_var = Program::FindMakeProgVarInNewScope(pvr->ptr(), old_scope, new_scope);
+      if(new_var) {
+        pvr->set(new_var);
+      }
+    }
+  }
+  ReParseExpr(false);       // re-parse, but don't prompt..
+}
+
 void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
   if(HasExprFlag(NO_PARSE)) return;
   if(HasExprFlag(IN_PARSE)) return; // no loops!

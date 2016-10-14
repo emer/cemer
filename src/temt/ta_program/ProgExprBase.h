@@ -109,6 +109,9 @@ public:
   int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
   int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
 
+  virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
+  // #IGNORE update prog el vars after scope change (move, copy)
+  
   String GetDisplayName() const override;
   String GetName() const override;
   String GetTypeDecoKey() const override { return "ProgExpr"; }
