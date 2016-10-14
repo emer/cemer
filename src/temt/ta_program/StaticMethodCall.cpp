@@ -138,6 +138,9 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
     result_var = FindVarNameInScope(rval, true); // true = give option to make one
   UpdateAfterEdit_impl();                          // update based on obj
   MethodDef* md = object_type->methods.FindName(methnm);
+  
+  if (!md) return false;
+  
   if(md) {
     method = md;
     UpdateAfterEdit_impl();                        // update based on obj

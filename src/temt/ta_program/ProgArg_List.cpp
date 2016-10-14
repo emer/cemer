@@ -111,6 +111,8 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
 }
 
 bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
+  if (!md) return false;
+  
   SaveExprs();
   //NOTE: safe to call during loading
   bool any_changes = false;
