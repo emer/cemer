@@ -733,7 +733,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   }
   
   float_Matrix float_tmp(false);
-  int st_row = 0;
+  int_Array chg_rows;
   int row = 1;
   while(row <= ssrc.rows) {
     for(;row <= ssrc.rows; row++) {
@@ -754,9 +754,16 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
       }
       if(new_val) break;
     }
+    chg_rows.Add(row);
+    row++;                      // move on to next row!
+  }
+
+  int st_row = 0;
+   dest->EnforceRows(chg_rows.size);
+  for(int ri=0; ri<chg_rows.size; ri++) {
+    int row = chg_rows[ri];
     int n_rows = row - st_row;
     // now go through actual group ops!
-    dest->AddBlankRow();
     int dest_idx = 0;
     for(int i=0;i<spec->ops.size; i++) {
       DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
@@ -764,13 +771,13 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
       DataCol* sda = ssrc.data.FastEl(ds->col_idx);
       DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
       if(ds->agg.op == Aggregate::GROUP) {
-        dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
+        dda->SetValAsVar(sda->GetValAsVar(st_row), ri); 
       }
       else {
         if(sda->isMatrix()) {
           if(sda->valType() == taBase::VT_DOUBLE) {
             double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-            double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(-1);
+            double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(ri);
             if(mat && dmat) {
               taBase::Ref(mat); taBase::Ref(dmat);
               taMath_double::mat_frame_aggregate(dmat, mat, ds->agg);
@@ -779,7 +786,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
           }
           else if(sda->valType() == taBase::VT_FLOAT) {
             float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-            float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
+            float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(ri);
             if(mat && dmat) {
               taBase::Ref(mat); taBase::Ref(dmat);
               taMath_float::mat_frame_aggregate(dmat, mat, ds->agg);
@@ -788,7 +795,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
           }
           else if(sda->valType() == taBase::VT_INT) {
             int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-            float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
+            float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(ri);
             if(mat && dmat) {
               taBase::Ref(mat); taBase::Ref(dmat);
               taMath_float::vec_fm_ints(&float_tmp, mat);
@@ -802,7 +809,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
             double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
             if(mat) {
               taBase::Ref(mat);
-              dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+              dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), ri);
               taBase::unRefDone(mat);
             }
           }
@@ -810,7 +817,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
             float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
             if(mat) {
               taBase::Ref(mat);
-              dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+              dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), ri);
               taBase::unRefDone(mat);
             }
           }
@@ -818,8 +825,13 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
             int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
             if(mat) {
               taBase::Ref(mat);
-              taMath_float::vec_fm_ints(&float_tmp, mat);
-              dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
+              if(ds->agg.op == Aggregate::N) {
+                dda->SetValAsInt(mat->IterCount(), ri);
+              }
+              else {
+                taMath_float::vec_fm_ints(&float_tmp, mat); // this is very expensive!
+                dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), ri);
+              }
               taBase::unRefDone(mat);
             }
           }
@@ -838,7 +850,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                 else {
                   val = mat->SafeEl_Flat(0);
                 }
-                dda->SetValAsString(val, -1);
+                dda->SetValAsString(val, ri);
               }
               else if(ds->agg.op == Aggregate::LAST) {
                 String val;
@@ -851,7 +863,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                 else {
                   val = mat->SafeEl_Flat(mat->size-1);
                 }
-                dda->SetValAsString(val, -1);
+                dda->SetValAsString(val, ri);
               }
               else if(ds->agg.op == Aggregate::COUNT) {
                 int count = 0;
@@ -873,7 +885,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                   bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
                   count = mat->CountValAsString(ds->agg.rel.val_string, contains);
                 }
-                dda->SetValAsInt(count, -1);
+                dda->SetValAsInt(count, ri);
               }
               else if(ds->agg.op == Aggregate::FIND_FIRST) {
                 String val;
@@ -903,7 +915,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                     rval = mat->SafeElAsStr(idx);
                   }
                 }
-                dda->SetValAsString(rval, -1);
+                dda->SetValAsString(rval, ri);
               }
               else if(ds->agg.op == Aggregate::FIND_LAST) {
                 String val;
@@ -933,10 +945,10 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                     rval = mat->SafeElAsStr(idx);
                   }
                 }
-                dda->SetValAsString(rval, -1);
+                dda->SetValAsString(rval, ri);
               }
               else if(ds->agg.op == Aggregate::N) {
-                dda->SetValAsInt(mat->IterCount(), -1);
+                dda->SetValAsInt(mat->IterCount(), ri);
               }
               taBase::unRefDone(mat);
             }
@@ -945,7 +957,6 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
       }
     }
     st_row = row;
-    row++;                      // move on to next row!
   }
   return true;
 }
