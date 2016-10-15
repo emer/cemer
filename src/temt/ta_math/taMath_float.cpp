@@ -3712,3 +3712,11 @@ bool taMath_float::mat_frame_aggregate(float_Matrix* out_mat, const float_Matrix
   }
   return false;
 }
+
+#ifdef TA_OS_WIN
+// this is needed on windows to compile FastlEl4d which is otherwise only called in emergent and it generates a link error..
+float dummy_function(const float_Matrix& flt) {
+  float val = flt.FastEl4d(0, 0, 0, 0);
+  return val;
+}
+#endif
