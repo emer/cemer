@@ -546,6 +546,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   if(!spec) { taMisc::Error("taDataProc::Group: spec is NULL"); return false; }
   bool in_place_req = false;
   GetDest(dest, src, "Group", in_place_req);
+  DataTable* tmp_src = NULL;    // in case we need to convert column types
   dest->StructUpdate(true);
   spec->GetColumns(src);                // cache column pointers & indicies from names
   dest->Reset();
@@ -555,13 +556,27 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     if(ds->col_idx < 0) continue;
     DataCol* sda = src->data.FastEl(ds->col_idx);
     DataCol* nda;
-    // up-convert to float -- always needed for matrix
-    if((sda->valType() == VT_INT) && ((ds->agg.MinReturnType() == VT_FLOAT) || sda->isMatrix()))
+    // up-convert to float -- always needed for matrix -- and also convert source!
+    //   incrementally converting regions of ints to floats is MUCH slower than
+    //   just converting the whole source column at the start!
+    if((sda->valType() == VT_INT) &&
+       ((ds->agg.MinReturnType() == VT_FLOAT) || sda->isMatrix())) {
       nda = new float_Data;
-    else if((sda->valType() == VT_STRING) && (ds->agg.MinReturnType() == VT_INT)) // N
+      if(!tmp_src) {
+        tmp_src = new DataTable;
+        taBase::Ref(tmp_src);
+        tmp_src->CopyFrom(src);
+      }
+      // note: have to use data table based call -- datatable() on col doens't work!
+      tmp_src->ChangeColType(ds->col_idx, VT_FLOAT);
+      sda = tmp_src->data.FastEl(ds->col_idx); // new guy!
+    }
+    else if((sda->valType() == VT_STRING) && (ds->agg.MinReturnType() == VT_INT)) {// N
       nda = new int_Data;
-    else
+    }
+    else {
       nda = (DataCol*)sda->MakeToken();
+    }
     dest->data.Add(nda);
     nda->Copy_NoData(*sda);
     if(ds->agg.op == Aggregate::N) {
@@ -589,16 +604,19 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     ss->SetColName(ds->col_name);
   }
   if(sort_spec.ops.size == 0) {
-    Group_nogp(dest, src, spec); // no group ops: just simple aggs
+    Group_nogp(dest, tmp_src ? tmp_src : src, spec); // no group ops: just simple aggs
   }
   else {
-    Group_gp(dest, src, spec, &sort_spec); // grouping.
+    Group_gp(dest, tmp_src ? tmp_src : src, spec, &sort_spec); // grouping.
   }
   dest->StructUpdate(false);
   spec->ClearColumns();
   if(in_place_req) {
     src->Copy_DataOnly(*dest);
     delete dest;
+  }
+  if(tmp_src) {
+    delete tmp_src;
   }
   return true;
 }
