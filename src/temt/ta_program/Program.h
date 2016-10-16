@@ -251,6 +251,8 @@ public:
   // #CAT_Run is this program the currently selected step_prog? only true if in step_mode too
   virtual void  UpdateUi();
   // #IGNORE update gui from changes in run status etc -- for global program controls
+  virtual void  DelayedUpdateUi();
+  // #IGNORE update gui from changes in run status etc -- for global program controls
 
   virtual void  Compile();
   // #MENU_BUTTON #MENU_ON_Debug #GHOST_ON_script_compiled:true #CAT_Debug generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)

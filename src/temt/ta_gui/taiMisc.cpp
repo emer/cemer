@@ -98,6 +98,7 @@ taiDialogEditor_List        taiMisc::active_dialogs;
 taiEditorOfClass_List       taiMisc::active_edits;
 taiEditorOfClass_List       taiMisc::css_active_edits;
 iTopLevelWindow_List        taiMisc::active_wins;
+iTopLevelWindow_List        taiMisc::delayed_updateui;
 TypeSpace                   taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
 taBase_PtrList              taiMisc::unopened_windows;
@@ -806,6 +807,16 @@ void taiMisc::WaitProc() {
 
   taMisc::in_waitproc++;
 
+  if(delayed_updateui.size > 0) {
+    for(int i=0; i < delayed_updateui.size; i++) {
+      iMainWindowViewer* win = delayed_updateui.SafeElAsMainWindow(i);
+      if(win) {
+        win->UpdateUi();
+      }
+    }
+    delayed_updateui.Reset();
+  }
+  
   if(taMisc::gui_active) {
     taiMisc::OpenWindows();
   }
@@ -1012,6 +1023,11 @@ iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
     tobj = tobj->parent();
   }
   return NULL;
+}
+
+void taiMisc::DelayedUpdateUi(iMainWindowViewer* win) {
+  if(taMisc::in_waitproc) return; // no recursion!
+  delayed_updateui.AddUnique(win);
 }
 
 bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {

@@ -362,7 +362,7 @@ public slots:
   virtual void  editUndo();
   virtual void  editRedo();
   virtual void  editFind();
-  virtual void  viewRefresh() { Refresh(); UpdateUi(); } // manually rebuild/refresh the current view
+  virtual void  viewRefresh();
   virtual void  ViewReset(); // reset frames widths to original proportions
   virtual void  viewSaveView(); // save the current view state
   virtual void  viewIncrFontSize();
@@ -424,7 +424,10 @@ public slots:
     // see "Selection Handling" in .cpp
 
   virtual void  UpdateUi();
-    // Clipboard server: called by cliphandler after major events, to refresh menus, toolbars, etc.
+  // Clipboard server: called by cliphandler after major events, to refresh menus, toolbars, etc.
+  virtual void  DelayedUpdateUi();
+  // update our ui in the wait proc -- in case destructive..
+
 
 #ifndef __MAKETA__
   void          taUrlHandler(const QUrl& url);

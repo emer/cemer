@@ -465,6 +465,17 @@ void taProject::UpdateUi() {
   }
 }
 
+void taProject::DelayedUpdateUi() {
+  if(!taMisc::gui_active) return;
+  for (int i = 0; i < viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+    imwv->DelayedUpdateUi();
+  }
+}
+
 void taProject::SelectT3ViewTabNo(int tab_idx) {
   MainWindowViewer* proj_view = GetDefaultProjectViewer();
   if(!proj_view || !proj_view->SelectT3ViewTabNo(tab_idx)) {

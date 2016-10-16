@@ -2562,6 +2562,11 @@ void iMainWindowViewer::Refresh_impl() {
   }
 }
 
+void iMainWindowViewer::viewRefresh() {
+  Refresh();
+  DelayedUpdateUi();
+}
+
 void iMainWindowViewer::ViewReset() {
   ShowHideFrames(7);
   viewer()->ResetSplitterState();
@@ -2678,7 +2683,7 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
         SetClipboardHandler(NULL); // might as well do this now
       }
       last_sel_server = src_host;
-      UpdateUi();
+      DelayedUpdateUi();
     }
   } break;
   default: break; // shouldn't happen
@@ -2942,6 +2947,10 @@ void iMainWindowViewer::this_SaveView(iAction* me) {
   }
 }
 
+void iMainWindowViewer::DelayedUpdateUi() {
+  taiMisc::DelayedUpdateUi(this);
+}
+  
 void iMainWindowViewer::UpdateUi() {
 #if defined(TA_OS_MAC) && (QT_VERSION == 0x050200)
   // this is the only place it seems to work..

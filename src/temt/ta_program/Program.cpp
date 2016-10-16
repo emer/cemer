@@ -590,7 +590,7 @@ void Program::Init() {
       proj->last_run_prog = this;
   }
   stop_req = false;  // this does not do full clear, so that information can be queried
-  UpdateUi();
+  DelayedUpdateUi();
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
@@ -714,7 +714,7 @@ void Program::Run() {
   if(proj) {
     proj->last_run_prog = this;
   }
-  UpdateUi();
+  DelayedUpdateUi();
   stop_req = false;  // this does not do full clear, so that information can be queried
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
@@ -795,7 +795,7 @@ void Program::Step(Program* step_prg) {
     proj->last_run_prog = this;
     proj->last_step_prog = step_prg;    // the last step_pgm that was run -- called by gui repeat last step button
   }
-  UpdateUi();
+  DelayedUpdateUi();
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
@@ -853,7 +853,7 @@ void Program::RunFunction(Function* fun) {
   taProject* proj = GetMyProj();
   if(proj)
     proj->last_run_prog = this;
-  UpdateUi();
+  DelayedUpdateUi();
   stop_req = false;  // this does not do full clear, so that information can be queried
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
@@ -890,6 +890,13 @@ void Program::UpdateUi() {
   if(!proj) return;
   proj->UpdateUi();
   taMisc::ProcessEvents();
+}
+
+void Program::DelayedUpdateUi() {
+  if(!taMisc::gui_active) return;
+  taProject* proj = GetMyProj();
+  if(!proj) return;
+  proj->DelayedUpdateUi();
 }
 
 void Program::Stop() {
@@ -983,7 +990,7 @@ void Program::StepCss() {
     SetRunState(STOP);
   }
   stop_req = false;                 // this does not do full clear, so that information can be queried
-  UpdateUi();
+  DelayedUpdateUi();
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 

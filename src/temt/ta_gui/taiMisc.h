@@ -394,6 +394,7 @@ public:
   static taiEditorOfClass_List   active_edits;   // #IGNORE list of active edit dialogs
   static taiEditorOfClass_List   css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
   static iTopLevelWindow_List    active_wins; // #IGNORE currently open windows
+  static iTopLevelWindow_List    delayed_updateui; // #IGNORE windows to do updateui on in wait proc
   static iNetworkAccessManager*  net_access_mgr; // #IGNORE network access manager for web browser
     
   static int            busy_count; // levels of busy
@@ -451,6 +452,8 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
 #ifndef __MAKETA__
   static bool           UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e);
   // call UpdateUi on iMainWindowViewer associated with given object if the given keyboard event or the global keyboardModifiers status indicates that a ctrl key is pressed -- this enables just-in-time updating of the global cut/copy/paste edit action shortcuts -- should be called in keyboard event processing routines for objects that have such routines and depend on shortcuts..
+  static void           DelayedUpdateUi(iMainWindowViewer* win);
+  // #IGNORE call UpdateUi on given viewer window in the wait process
   static bool           KeyEventCtrlPressed(QKeyEvent* e);
   // #IGNORE process given event to see if the ctrl key was pressed -- uses MetaModifier on Mac = actual Ctrl key..
   static taiMisc::BoundAction GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event);
