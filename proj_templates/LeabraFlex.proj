@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.3.0 rev10157
+// ta_Dump File v3.0 -- code v8.0.3.0 rev10163
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -611,7 +611,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["ConfigData"] = [1] { 
    DataTable @["ConfigTable"] { 
-    DataTableCols @.data = [15] {
+    DataTableCols @.data = [16] {
      String_Data @["config_id"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -683,6 +683,12 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
      int_Data @["lrs_step_epochs"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["lrs_bump_step"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
        UserDataItem @["view_panel_wd"] { };
@@ -1666,7 +1672,7 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["config_id"] { };
     };
 
-    ProgVar_List @.vars = [12] {
+    ProgVar_List @.vars = [13] {
      ProgVar @["Config"] { };
      ProgVar @["trials_per_epoch"] { };
      ProgVar @["trials_per_epoch_orig"] { };
@@ -1679,6 +1685,7 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["weights_file"] { };
      ProgVar @["load_st_epc"] { };
      ProgVar @["lrs_step_epochs"] { };
+     ProgVar @["lrs_bump_step"] { };
     };
 
     Function_List @.functions = [0] {
@@ -2599,11 +2606,12 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [7] {
+    ProgVar_List @.vars = [8] {
      ProgVar @["weights_file"] { };
      ProgVar @["load_weights"] { };
      ProgVar @["load_st_epc"] { };
      ProgVar @["lrs_step_epochs"] { };
+     ProgVar @["lrs_bump_step"] { };
      ProgVar @["LRSConSpec"] { };
      ProgVar @["dmem_rnd_seed"] { };
      ProgVar @["dmem_new_seed"] { };
@@ -2621,8 +2629,12 @@ LeabraProject .projects["LeabraFlex"] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
+     If @[1] { 
+      ProgEl_List @.true_code = [1] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
       };
      };
      If @[2] { 
@@ -7634,7 +7646,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      };
      float_Data @["Output_lay_bin_err"] {
       name="Output_lay_bin_err";
-      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7643,7 +7655,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=18;
       matrix_col_width=10;
      };
      float_Data @["Output_lay_norm_err"] {
@@ -8990,6 +9002,39 @@ mw.config.set({\"wgBackendResponseTime\":192});
       ar {
        name="ar";
       [1] 50;      };
+     };
+     int_Data @["lrs_bump_step"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1112601;
+	val_type_fixed=0;
+       };
+      };
+      name="lrs_bump_step";
+      desc="what step to bump the lrate back up to 1 and then come back down -- 3 typical when used -- gets closer to global maximum, but requires 1.5x as many epochs";
+      col_flags=SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=15;
+      matrix_col_width=10;
+      ar {
+       name="ar";
+      [1] -1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -13583,8 +13628,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13733,6 +13778,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["lrs_bump_step"] {
+      name="lrs_bump_step";
+      var_type=T_Int;
+      int_val=-1;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -16015,7 +16069,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_def=0;
      UserDataItem @["user_pinned"] {
       name="user_pinned";
-      value 1 0=1;
+      value 1 0=0;
       val_type_fixed=0;
      };
      UserData_DocLink @["DocLink"] {
@@ -16049,7 +16103,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        UserDataItem @["user_pinned"] {
 	name="user_pinned";
-	value 1 0=1;
+	value 1 0=0;
 	val_type_fixed=0;
        };
       };
@@ -16358,7 +16412,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        UserDataItem @["user_pinned"] {
 	name="user_pinned";
-	value 1 0=1;
+	value 1 0=0;
 	val_type_fixed=0;
        };
       };
@@ -18402,8 +18456,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18478,6 +18532,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="fm enviro";
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
      };
+     ProgVar @["lrs_bump_step"] {
+      name="lrs_bump_step";
+      var_type=T_Int;
+      int_val=-1;
+      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
+      reference=0;
+      desc="fm enviro";
+      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+     };
      ProgVar @["LRSConSpec"] {
       name="LRSConSpec";
       var_type=T_Object;
@@ -18548,21 +18611,35 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["BatchRndSeed"]$$;
       targ_ld_init="*BatchRndSeed*";
      };
-     MethodCall @[1] {
-      desc="needs to have been built by now..";
+     If @[1] {
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="network->Build()";
-      pre_compile_code_string="network->Build()";
-      result_var=NULL;
-      obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$$;
-      method=Network::Build;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
+      code_string="if(!network->IsBuiltIntact())";
+      pre_compile_code_string="if (!network->IsBuiltIntact())";
+      cond {
+       expr="!network->IsBuiltIntact()";
       };
-      meth_sig="void Build()";
-      meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
+      true_code {
+       name="true_code";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc="needs to have been built by now..";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="network->Build()";
+	pre_compile_code_string="network->Build()";
+	result_var=NULL;
+	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$$;
+	method=Network::Build;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig="void Build()";
+	meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
+       };
+      };
      };
      If @[2] {
       desc="save log files for background, non-interactive jobs -- after network is fully configured and built";
@@ -18710,7 +18787,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 7)";
-      pre_compile_code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 7, )";
+      pre_compile_code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 5, lrs_bump_step)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["LRSConSpec"]$$;
       method=LeabraConSpec::LogLrateSched;
@@ -18737,7 +18814,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	def_val="5";
 	prev_expr="7";
 	expr {
-	 expr="7";
+	 expr="5";
 	};
        };
        ProgArg @[2] {
@@ -18748,7 +18825,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	def_val="-1";
 	prev_expr=;
 	expr {
-	 expr=;
+	 expr="lrs_bump_step";
 	};
        };
       };
@@ -24229,12 +24306,12 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.002111932;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.02948058;
+     value 8 0=0.06785213;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -25926,7 +26003,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4][3].objs;.networks;.networks[0];.networks[0].specs; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

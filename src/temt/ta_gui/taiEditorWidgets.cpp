@@ -44,7 +44,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   if (!rbase || !md) return;
   // get list of control panels
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
-  // if (!proj || proj->ctrl_panels.leaves == 0) return;
+  if (!proj) return;
 
   // if any edits, populate menu for adding, for all seledits not already on
   QMenu* sub = menu->addMenu("Add to ControlPanel");
