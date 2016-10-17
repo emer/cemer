@@ -412,11 +412,13 @@ void taThreadMgr::EndTimers(bool print_report) {
   }
 
   if(print_report) {
-    cout << GetTypeDef()->name << " thread report for n_threads: " << n_threads << endl;
-    cout << "total time:   " << total_time.s_used << endl;  
-    cout << "run time:     " << run_time.s_used << " \t%: " << run_time_pct << endl;  
-    cout << "sync time:    " << sync_time.s_used << " \t%: " << sync_time_pct << endl;  
-    cout << "wake in sync: " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << endl;  
+    String rpt;
+    rpt << GetTypeDef()->name << " thread report for n_threads: " << n_threads << "\n";
+    rpt << "total time:   " << total_time.s_used << "\n";  
+    rpt << "run time:     " << run_time.s_used << " \t%: " << run_time_pct << "\n";  
+    rpt << "sync time:    " << sync_time.s_used << " \t%: " << sync_time_pct << "\n";  
+    rpt << "wake in sync: " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << "\n";
+    taMisc::Info(rpt);
   }
 }
 
