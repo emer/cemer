@@ -843,10 +843,6 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlStopAction->setIcon(QIcon(QPixmap(":/images/stop_icon.png")));
   ctrlStopAction->setToolTip(taiMisc::ToolTipPreProcess("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button."));
 
-  ctrlContAction = new iAction("Cont", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_CONTINUE)), "ctrlContAction");
-  ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
-  ctrlContAction->setToolTip(taiMisc::ToolTipPreProcess("Continue: continue running the last program that was run, from wherever it was last stopped"));
-  
   ctrlStepAction = new iAction("Step", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP)), "ctrlStepAction");
   ctrlStepAction->setIcon(QIcon(QPixmap(":/images/step_icon.png")));
   ctrlStepAction->setToolTip(taiMisc::ToolTipPreProcess("Step: Step again"));
@@ -862,7 +858,6 @@ void iMainWindowViewer::Constr_ControlMenu()
   // Build menu items.
   ctrlMenu->AddAction(ctrlInitAction);
   ctrlMenu->AddAction(ctrlRunAction);
-  ctrlMenu->AddAction(ctrlContAction);
   ctrlMenu->AddAction(ctrlStopAction);
   ctrlMenu->AddAction(ctrlStepAction);
   ctrlMenu->AddAction(progStatusAction);
@@ -872,14 +867,12 @@ void iMainWindowViewer::Constr_ControlMenu()
   connect(ctrlInitAction, SIGNAL(Action()), this, SLOT(ctrlInit()));
   connect(ctrlRunAction, SIGNAL(Action()), this, SLOT(ctrlRun()));
   connect(ctrlStopAction, SIGNAL(Action()), this, SLOT(ctrlStop()));
-  connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
   connect(ctrlStepAction, SIGNAL(Action()), this, SLOT(ctrlStep()));
   connect(progStatusAction, SIGNAL(Action()), this, SLOT(progStatus()));
   connect(progTraceAction, SIGNAL(Action()), this, SLOT(progStatus()));
   
   ctrlStopAction->setEnabled(false);
   ctrlInitAction->setEnabled(false);
-  ctrlContAction->setEnabled(false);
   ctrlStepAction->setEnabled(false);
   ctrlRunAction->setEnabled(false);
   progTraceAction->setEnabled(false);
@@ -1793,16 +1786,6 @@ void iMainWindowViewer::ctrlStop() {
   Program::SetStopReq(Program::SR_USER_STOP, "Main window Stop Button");
 }
 
-void iMainWindowViewer::ctrlCont() {
-  taProject* proj = myProject();
-  if(proj && proj->last_run_prog) {
-    proj->last_run_prog->Run_Gui(); // same as Run!
-  }
-  else {
-    taMisc::Error("Continue: cannot continue because there is no record of which program was running previously in this project");
-  }
-}
-
 void iMainWindowViewer::ctrlRun() {
   taProject* proj = myProject();
   if(proj && proj->last_run_prog) {
@@ -2564,7 +2547,7 @@ void iMainWindowViewer::Refresh_impl() {
 
 void iMainWindowViewer::viewRefresh() {
   Refresh();
-  DelayedUpdateUi();
+  UpdateUi();
 }
 
 void iMainWindowViewer::ViewReset() {
@@ -3350,37 +3333,11 @@ void iMainWindowViewer::UpdateStateActions() {
     has_step_prog = true;
   }
   
+  ctrlRunAction->setEnabled(!css_running && has_run_prog);
   ctrlStopAction->setEnabled(css_running);
   ctrlInitAction->setEnabled(!css_running && has_run_prog);
-  ctrlContAction->setEnabled(!css_running && has_run_prog);
   ctrlStepAction->setEnabled(!css_running && has_run_prog && has_step_prog);
-  ctrlRunAction->setEnabled(!css_running && has_run_prog);
   progTraceAction->setEnabled(has_run_prog);
-  
-  switch (Program::global_run_state) {
-    case Program::RUN:
-      tb->widget()->insertAction(ctrlStopAction, ctrlContAction);
-      ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
-      tb->widget()->removeAction(ctrlRunAction);
-      break;
-    case Program::INIT:
-      ctrlStepAction->setEnabled(false);
-      break;
-    case Program::NOT_INIT:
-      break;
-    case Program::DONE:
-      tb->widget()->insertAction(ctrlStopAction, ctrlRunAction);
-      ctrlRunAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
-      tb->widget()->removeAction(ctrlContAction);
-      break;
-    case Program::STOP:
-      tb->widget()->insertAction(ctrlStopAction, ctrlContAction);
-      ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
-      tb->widget()->removeAction(ctrlRunAction);
-      break;
-    default:
-      break;
-  }
 }
 
 void iMainWindowViewer::BackMenuAboutToShow() {

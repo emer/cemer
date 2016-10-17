@@ -206,7 +206,6 @@ public:
   iAction*            ctrlInitAction;
   iAction*            ctrlRunAction;
   iAction*            ctrlStopAction;
-  iAction*            ctrlContAction;
   iAction*            ctrlStepAction;
   iAction*            progStatusAction; // program run status and button
   iAction*            progTraceAction;      // global trace button
@@ -399,7 +398,6 @@ public slots:
   virtual void  ctrlInit();
   virtual void  ctrlRun();
   virtual void  ctrlStop();
-  virtual void  ctrlCont();
   virtual void  ctrlStep();
   virtual void  progStatus();
   

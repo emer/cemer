@@ -3417,6 +3417,11 @@ bool cssProg::IsBreak(css_progdx pcval) {
       fh << "\nStopped on breakpoint: " << idx << " pc: " << pcval << " in prog: "
          << name << " of: " << top->name << "\n";
       taMisc::ConsoleOutput(fh + srcln, true, false);
+      taMisc::RunPending();
+      if(!top->AmCmdProg()) {
+        if(taMisc::WaitProc)
+          taMisc::WaitProc();         // manually run waitproc as it doesn't happen in pending now
+      }
     }
     return true;
   }
@@ -3435,6 +3440,11 @@ bool cssProg::CheckWatch() {
       nxt->PrintSrc(fh);
       taMisc::ConsoleOutput(fh, true, false);
       wp->GetAsPrvVal();
+      taMisc::RunPending();
+      if(!top->AmCmdProg()) {
+        if(taMisc::WaitProc)
+          taMisc::WaitProc();         // manually run waitproc as it doesn't happen in pending now
+      }
       return true;
     }
   }
