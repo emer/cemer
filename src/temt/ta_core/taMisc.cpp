@@ -191,12 +191,7 @@ String taMisc::compile_info;
 
 taThreadDefaults::taThreadDefaults() {
   cpus = 1;
-// remove ifdef if threading contention problem fixed
-#ifdef TA_OS_WIN
-  n_threads = 1;
-#else
   n_threads = -1; 
-#endif
   alt_mpi = false;
 }
 
@@ -1815,7 +1810,6 @@ void taMisc::Init_Defaults_PostLoadConfig() {
 
   // max_cpu
   int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
-#ifndef TA_OS_WIN
   if ((max_cpus > 0) && (max_cpus <= taMisc::CpuCount())) {
     thread_defaults.cpus = max_cpus;
     taMisc::Info("Set threads cpus:", String(max_cpus));
@@ -1834,9 +1828,6 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   }
   if(thread_defaults.n_threads > thread_defaults.cpus)
     thread_defaults.n_threads = thread_defaults.cpus;
-#else
-  thread_defaults.n_threads = 1;
-#endif
   UpdateAfterEdit();
 }
 

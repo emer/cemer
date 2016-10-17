@@ -100,8 +100,6 @@ void taManagedThread::run_spin() {
 #endif
 
     if(cur_to_run == 0) {       // nothing to run yet
-      if(mgr->sync_sleep_usec > 0)
-        taManagedThread::usleep(mgr->sync_sleep_usec);
       continue;
     }
  

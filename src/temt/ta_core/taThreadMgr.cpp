@@ -25,7 +25,6 @@ taThreadMgr_PList taThreadMgr::all_thread_mgrs;
 
 void taThreadMgr::Initialize() {
   n_threads = taMisc::thread_defaults.n_threads;
-  sync_sleep_usec = 1;
   terminate_max_wait = 10000;
   task_type = NULL;
   get_timing = false;
@@ -253,8 +252,6 @@ void taThreadMgr::RunThreads() {
     int cur_running = (int)n_running;
 #endif
     while(cur_running < cur_to_run) {
-      if(sync_sleep_usec > 0)
-        taManagedThread::usleep(sync_sleep_usec);
 #if (QT_VERSION >= 0x050000)
       cur_running = n_running.loadAcquire();
 #else
@@ -296,8 +293,6 @@ void taThreadMgr::SyncThreadsStart() {
 #endif
 
   while(cur_started < cur_to_run) {
-    if(sync_sleep_usec > 0)
-      taManagedThread::usleep(sync_sleep_usec);
 #if (QT_VERSION >= 0x050000)
     cur_started = n_started.loadAcquire();
 #else
@@ -335,8 +330,6 @@ void taThreadMgr::SyncThreads() {
   }
 
   while(cur_started < cur_to_run) {
-    if(sync_sleep_usec > 0)
-      taManagedThread::usleep(sync_sleep_usec);
 #if (QT_VERSION >= 0x050000)
     cur_started = n_started.loadAcquire();
 #else
@@ -350,8 +343,6 @@ void taThreadMgr::SyncThreads() {
   int cur_running = (int)n_running;
 #endif
   while(cur_running > 0) {
-    if(sync_sleep_usec > 0)
-      taManagedThread::usleep(sync_sleep_usec);
 #if (QT_VERSION >= 0x050000)
     cur_running = n_running.loadAcquire();
 #else

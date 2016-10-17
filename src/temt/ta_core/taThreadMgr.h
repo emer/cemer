@@ -46,7 +46,6 @@ public:
   static taThreadMgr_PList all_thread_mgrs; // #NO_SAVE #READ_ONLY all thread managers -- used for global termination as they must all be terminated through the manager -- managers automatically add and remove themselves from this list
 
   int			n_threads; 	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available -- see preferences/options thread_defaults field for details.
-  int			sync_sleep_usec; // #EXPERT #NO_SAVE microseconds to sleep while waiting for threads to synchronize -- not typically adjusted by the user, and not saved, but availble for testing purposes
   int			terminate_max_wait; // #EXPERT #NO_SAVE number of iterations to wait for threads to self-terminate before taking them out more forcefully
 
   TypeDef*		task_type;	 // #NO_SAVE #READ_ONLY the type of task object to create -- this should be set *prior* to calling InitAll() and should NOT change during the lifetime of the manager, unless an explicit RemoveAll() call is made first
