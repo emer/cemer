@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -21,6 +22,7 @@
 #include <taProject>
 #include <ProgElChoiceDlg>
 #include <iDialogChoice>
+//#include <Else>
 
 TA_BASEFUNS_CTORS_DEFN(ProgCode);
 
@@ -32,8 +34,8 @@ taTypeDef_Of(ElseIf);
 taTypeDef_Of(Else);
 taTypeDef_Of(UserScript);
 taTypeDef_Of(BlankLineEl);
-taTypeDef_Of(MethodCall
-             );
+taTypeDef_Of(MethodCall);
+taTypeDef_Of(CondBase);
 
 void ProgCode::Initialize() {
   SetProgExprFlags();
@@ -174,6 +176,10 @@ void ProgCode::ConvertToProgEl() {
   // if(code.expr.empty()) return;
   ProgEl* cvt = CvtCodeToProgEl();
   if(!cvt) return;
+  if(sub_code.GetSize() > 0 &&
+     (cvt->InheritsFrom(&TA_If) || cvt->InheritsFrom(&TA_Else) || cvt->InheritsFrom(&TA_ElseIf))) {
+    cvt->children_()->Copy(&sub_code);
+  }
   Program* prog = GET_OWNER(own, Program);
   if(prog) {
     taProject* proj = prog->GetMyProj();

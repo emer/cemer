@@ -21,9 +21,9 @@
 
 // member includes:
 #include <ProgExpr>
+#include <ProgEl_List>
 
 // declare all other types mentioned but not required to include:
-class ProgEl_List; //
 
 
 taTypeDef_Of(ProgCode);
@@ -33,13 +33,14 @@ class TA_API ProgCode: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr     code;   // #BROWSER_EDIT_LOOKUP program code statement that will be converted into an appropriate program element if possible
+  taList_impl  sub_code; // #HIDDEN a place to hold subcode when converting between ProgEl types
 
   void         SetProgExprFlags() override;
   String       GetDisplayName() const override;
   String       GetToolbarName() const override { return "code"; }
   String       GetTypeDecoKey() const override { return "ProgCode"; }
 
-  bool          BrowserEditSet(const String& code, int move_after=0) override;
+  bool         BrowserEditSet(const String& code, int move_after=0) override;
 
   virtual void ConvertToProgEl();
   // overall entry point for converting the code to an appropriate program element -- called in a delayed gui callback routine -- manages whole process
@@ -52,7 +53,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(ProgCode);
 protected:
   void          UpdateAfterEdit_impl() override;
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void  Initialize();

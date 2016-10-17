@@ -35,21 +35,23 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    else_code;  // #SHOW_TREE items to execute for else case
 
-  int 		ProgElChildrenCount() const override
+  int           ProgElChildrenCount() const override
   { return else_code.size; }
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+  bool          IsCtrlProgEl() 	override { return true; }
+  bool          HasSubCode() override { return true; }
 
   virtual bool  CheckAfterIf();
   // check if comes after if or else if
 
-  taList_impl*	children_() override { return &else_code; }	
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  ProgVar*	FindVarName(const String& var_nm) const override;
-  String	GetToolbarName() const override { return "else"; }
+  taList_impl*	children_() override { return &else_code; }
+
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgCtrl"; }
+  ProgVar*      FindVarName(const String& var_nm) const override;
+  String        GetToolbarName() const override { return "else"; }
 
   bool          BrowserEditTest() override;
   

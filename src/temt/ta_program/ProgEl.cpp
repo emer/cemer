@@ -687,6 +687,9 @@ bool ProgEl::RevertToCode() {
   ProgCode* cvt = new ProgCode;
   cvt->desc = desc;
   cvt->code.expr = code_string;
+  if (HasSubCode()) {
+    cvt->sub_code.Copy(*children_());  // save the subcode in the ProgCode object for later replacement in new ProgEl
+  }
   int myidx = own->FindEl(this);
   SetBaseFlag(BF_MISC4); // indicates that we're done..
   own->ReplaceLater(cvt, myidx, "");

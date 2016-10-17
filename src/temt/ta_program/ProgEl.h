@@ -169,6 +169,8 @@ public:
   // #EXPERT test the parsing functions of this program element -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
   virtual bool          BrowserEditTest_impl();
   // #IGNORE basic compare of just this element -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
+  virtual bool          HasSubCode() { return false; }
+  // #IGNORE elements like loops and conditionals have subcode
 
   virtual  bool         IsCtrlProgEl()  { return false; }
   // #IGNORE set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
