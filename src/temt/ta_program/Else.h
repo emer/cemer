@@ -30,7 +30,7 @@ class ProgVar; //
 taTypeDef_Of(Else);
 
 class TA_API Else: public CondBase {
-  // ##DEF_CHILD_else_code the other half of a conditional If test element: must come after an If or an ElseIf element, and is run if the condition there is false
+  // ##DEF_CHILD_true_code the other half of a conditional If test element: must come after an If or an ElseIf element, and is run if the condition there is false
 INHERITED(CondBase)
 public:
   bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
