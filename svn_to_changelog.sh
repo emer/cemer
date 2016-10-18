@@ -12,6 +12,21 @@ svn_gen() {
     svn add $fname
 }
 
+svn_index_gen() {
+    cd changelogs
+    echo "<html>" > index.html
+    echo "<head>" >> index.html
+    echo "<title>Emergent ChangeLogs Generated from SVN Logs</title>" >> index.html
+    echo "</head>" >> index.html
+    echo "<h1>Emergent ChangeLogs Generated from SVN Logs</h1>" >> index.html
+    echo "<ul>" >> index.html
+    for file in ChangeLog*.html; do
+	echo "<li><a href=$file>$file</a></li>" >> index.html
+    done 
+    echo "</ul>" >>index.html
+    echo "</html>" >> index.html
+}
+
 #svn_gen "" ""
 # svn_gen "" ""
 # svn_gen "" ""
@@ -54,3 +69,5 @@ svn_gen() {
 #svn_gen "2688:2744" "4.0.13"
 #svn_gen "2410:2687" "4.0.11"
 #svn_gen "1:2409" "4.0.5"    # first public release!
+
+svn_index_gen
