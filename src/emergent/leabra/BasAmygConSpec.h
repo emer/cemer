@@ -68,6 +68,7 @@ public:
     const float da = GetDa(da_p, d2r);
     if(ba_learn.us_delta) {
       if(us > 0.01f) {
+        // proposal: lrate_eff * su_act * (act_p - act_q0) -- requires PV drive on act_p and inhibition of others
         float delta = lrate_eff * su_act * (us - ru_act);
         if(ba_learn.delta_da) {
           delta *= fabsf(da);
@@ -88,6 +89,8 @@ public:
      const float da_p, const bool d2r, const float lrate_eff) {
     const float da = GetDa(da_p, d2r);
     if(ba_learn.us_delta) {
+      // todo: have pv inhibit corresponding BAe, and use delta-based learning
+      // previous trial delta.  
       if(us > 0.01f) {
         float delta = lrate_eff * su_act * ((1.0f-us) - ru_act); // inverse us..
         if(ba_learn.delta_da) {
