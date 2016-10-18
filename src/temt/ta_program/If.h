@@ -34,7 +34,6 @@ public:
 
   bool            CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool            CvtFmCode(const String& code) override;
-  taList_impl*    children_() override { return &true_code; }
 
   String          GetDisplayName() const override;
   String          GetTypeDecoKey() const override { return "ProgCtrl"; }

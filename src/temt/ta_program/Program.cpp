@@ -477,7 +477,7 @@ Program* Program::GetNextTarget(ProgEl_List* code_list, int& index) {
     }
     if (prog_el->DerivesFromName("Else")) {
       Else* else_el = (Else*)prog_el;
-      ProgEl_List* list = &else_el->else_code;
+      ProgEl_List* list = &else_el->true_code;
       int sub_index = 0;
       index = i + 1;
       return GetNextTarget(list, sub_index);

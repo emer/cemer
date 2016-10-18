@@ -42,7 +42,7 @@ void If::ConvertFromIfElse() {
   Else* nelse = new Else;
   own->Insert(nelse, idx+1);
   while(false_code.size > 0) {
-    nelse->else_code.Transfer(false_code[0]);
+    nelse->true_code.Transfer(false_code[0]);
   }
   nelse->flags = flags;         // get our flags
 }

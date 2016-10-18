@@ -66,7 +66,7 @@ void Else::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void Else::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  else_code.CheckConfig(quiet, rval);
+  true_code.CheckConfig(quiet, rval);
 }
 
 void Else::GenCssPre_impl(Program* prog) {
@@ -77,7 +77,7 @@ void Else::GenCssPre_impl(Program* prog) {
 }
 
 void Else::GenCssBody_impl(Program* prog) {
-  else_code.GenCss(prog);
+  true_code.GenCss(prog);
 }
 
 void Else::GenCssPost_impl(Program* prog) {
@@ -86,19 +86,19 @@ void Else::GenCssPost_impl(Program* prog) {
 }
 
 const String Else::GenListing_children(int indent_level) {
-  String rval = else_code.GenListing(indent_level + 1);
+  String rval = true_code.GenListing(indent_level + 1);
   return rval;
 }
 
 void Else::PreGenChildren_impl(int& item_id) {
   inherited::PreGenChildren_impl(item_id);
-  else_code.PreGen(item_id);
+  true_code.PreGen(item_id);
 }
 
 ProgVar* Else::FindVarName(const String& var_nm) const {
   ProgVar* pv = inherited::FindVarName(var_nm);
   if (pv) return pv;
-  return else_code.FindVarName(var_nm);
+  return true_code.FindVarName(var_nm);
 }
 
 String Else::GetDisplayName() const {
@@ -117,6 +117,6 @@ bool Else::CvtFmCode(const String& code) {
 
 bool Else::BrowserEditTest() {
   bool rval = inherited::BrowserEditTest();
-  bool rv2 = else_code.BrowserEditTest();
+  bool rv2 = true_code.BrowserEditTest();
   return rval && rv2;
 }

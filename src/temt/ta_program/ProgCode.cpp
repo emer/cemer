@@ -177,8 +177,7 @@ void ProgCode::ConvertToProgEl() {
   ProgEl* cvt = CvtCodeToProgEl();
   if(!cvt) return;
   if(sub_code.GetSize() > 0 &&
-     (cvt->InheritsFrom(&TA_If) || cvt->InheritsFrom(&TA_Else) || cvt->InheritsFrom(&TA_ElseIf)
-      || cvt->InheritsFrom(&TA_Loop))) {
+     (cvt->InheritsFrom(&TA_CondBase) || cvt->InheritsFrom(&TA_Loop))) {
     cvt->children_()->Copy(&sub_code);
   }
   Program* prog = GET_OWNER(own, Program);

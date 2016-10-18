@@ -17,7 +17,7 @@
 #define Else_h 1
 
 // parent includes:
-#include <ProgEl>
+#include <CondBase>
 
 // member includes:
 #include <ProgExpr>
@@ -29,24 +29,14 @@ class ProgVar; //
 
 taTypeDef_Of(Else);
 
-class TA_API Else: public ProgEl { 
+class TA_API Else: public CondBase {
   // ##DEF_CHILD_else_code the other half of a conditional If test element: must come after an If or an ElseIf element, and is run if the condition there is false
-INHERITED(ProgEl)
+INHERITED(CondBase)
 public:
-  ProgEl_List	    else_code;  // #SHOW_TREE items to execute for else case
-
-  int           ProgElChildrenCount() const override
-  { return else_code.size; }
-
   bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool          CvtFmCode(const String& code) override;
-  bool          IsCtrlProgEl() 	override { return true; }
-  bool          HasSubCode() override { return true; }
-
   virtual bool  CheckAfterIf();
   // check if comes after if or else if
-
-  taList_impl*	children_() override { return &else_code; }
 
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgCtrl"; }
