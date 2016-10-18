@@ -1,0 +1,753 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 6.1.0
+  Revisions 5575:5752</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>5575</pre></td>
+<td><pre>2012-08-30</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>need to pass all args not just $0</pre></td>
+</tr>
+<tr>
+<td><pre>5576</pre></td>
+<td><pre>2012-08-30</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>oops, can't forget $0</pre></td>
+</tr>
+<tr>
+<td><pre>5577</pre></td>
+<td><pre>2012-08-31</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixes for Brain View.  Bumped version to 6.0.1.
+* fixed bogus C-style casts in BrainViewPanel (cause of bug 1500).
+* need line "add_subdirectory(data/standard)" to have .nii file installed.
+* added some error logging in BrainView::SetDataName().
+* minor style cleanups.</pre></td>
+</tr>
+<tr>
+<td><pre>5579</pre></td>
+<td><pre>2012-09-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>support libode 0.12 which requires dSINGLE to be defined
+</pre></td>
+</tr>
+<tr>
+<td><pre>5580</pre></td>
+<td><pre>2012-09-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>script changes to build on precise</pre></td>
+</tr>
+<tr>
+<td><pre>5581</pre></td>
+<td><pre>2012-09-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>update all repos ($@), not just $1</pre></td>
+</tr>
+<tr>
+<td><pre>5582</pre></td>
+<td><pre>2012-09-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>update precise repo</pre></td>
+</tr>
+<tr>
+<td><pre>5584</pre></td>
+<td><pre>2012-09-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lvelayerspec: nopv_cost for cost factor whenver primary reward not recv'd
+</pre></td>
+</tr>
+<tr>
+<td><pre>5585</pre></td>
+<td><pre>2012-09-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nopv_val and nopv_lrate</pre></td>
+</tr>
+<tr>
+<td><pre>5586</pre></td>
+<td><pre>2012-09-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nopv_val and nopv_lrate important fix to actually work</pre></td>
+</tr>
+<tr>
+<td><pre>5588</pre></td>
+<td><pre>2012-09-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>properly pass EXTRA_SUFFIX arg to plugin compile
+</pre></td>
+</tr>
+<tr>
+<td><pre>5589</pre></td>
+<td><pre>2012-09-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>support building win packages with suffix</pre></td>
+</tr>
+<tr>
+<td><pre>5593</pre></td>
+<td><pre>2012-09-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>minor bugfix merged from pbwmv2 branch r5592</pre></td>
+</tr>
+<tr>
+<td><pre>5597</pre></td>
+<td><pre>2012-09-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Merged changes from branches/dpf:
+
+5557:
+Organized Constr_Menu_impl() into separate functions for each menu.
+Added Open From Web, Publish Docs on Web, and Publish Project on Web menu items (inoperative).
+Removed addTo() -- was added to allow old Qt3-style calls.  Changed those calls to use Qt's addAction() instead.
+Removed AddTo() -- was documented as "convenience function" but makes code more difficult to read.  Call AddAction() directly instead.
+
+5562:
+Added AddItemWithNumericAccel() function to auto-number submenu items like Windows and Recent Files.
+Added func to populate submenu of Open/Publish Web menu items.
+
+5594:
+Remove copy&amp;pasted code and call taiMisc::KeyEventCtrlPressed() instead.  Added comment regarding "override" of the exec() methods in dialog classes -- it's not virtual in base class.
+
+5595:
+Hook in the PublishDocsDialog.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5599</pre></td>
+<td><pre>2012-09-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>cleaned up a bunch of assignment-in-conditional and other anti-idioms</pre></td>
+</tr>
+<tr>
+<td><pre>5600</pre></td>
+<td><pre>2012-09-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>a few more assignment-in-conditional cleanups</pre></td>
+</tr>
+<tr>
+<td><pre>5601</pre></td>
+<td><pre>2012-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>adapt value now treated properly in Compute_IThresh and Compute_EThresh functions -- fixes
+behavior of new gelin with adapt on.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5602</pre></td>
+<td><pre>2012-09-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>the basic logic for PBWM v3.2 now in place -- really cleans things up and the code
+tells me this is clearly the right way to go!  wizard is still old and will need 
+to be fixed.  pretty sure we don't want to make it smart enough to fix an existing
+v3 project..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5603</pre></td>
+<td><pre>2012-09-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>half impl of double-d gated deep dynamics</pre></td>
+</tr>
+<tr>
+<td><pre>5604</pre></td>
+<td><pre>2012-09-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* deep -&gt; super gated cons should now be functional (still nothing tested)
+* got rid of ff_bal and FFBalanceSpec -- never worked and complicates code.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5605</pre></td>
+<td><pre>2012-09-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* finally fixed weird status of grouped inhibition in layers and unit groups -- moved out
+of KWTASpec and into own separate GpInhibSpec, so you can clearly have both unit and layer group pooled inhib at same time.  key for new matrix config
+* lots of progress on PBWM wizard: geometry stuff was getting intractable, so now using the layer group pooled inhib in matrix layers, with all separate matrix layers matched
+to corresponding pfc stripes -- this will GREATLY simplfy a huge number of things in
+the connectivity.  Only the SNRthal needs to be the one big mega guy for entire
+matrisome.  changes are only partially in place to support this -- lots of work 
+unfortunately..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5606</pre></td>
+<td><pre>2012-09-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new separate matrix code should all be in there now</pre></td>
+</tr>
+<tr>
+<td><pre>5607</pre></td>
+<td><pre>2012-09-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1511: Prompt user if there are too many search results to display in a reasonable amount of time.</pre></td>
+</tr>
+<tr>
+<td><pre>5608</pre></td>
+<td><pre>2012-09-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1511: If the user clicked the close button or hit escape to cancel the search, don't bother showing any results.</pre></td>
+</tr>
+<tr>
+<td><pre>5609</pre></td>
+<td><pre>2012-09-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard fully rendering!  now it is time to actually start testing the code..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5612</pre></td>
+<td><pre>2012-09-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mechanics all seem to be working but achieving good dynamic transition from in to mnt / out gating is difficult -- need to rescale netin!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5613</pre></td>
+<td><pre>2012-09-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Checkpointing an initial cut at reworking the ta_mediawiki code -- detailed comments in ta_mediawiki.cpp about the new SynchronousNetRequest class.  Fixed bug in iNetworkAccessManager that would prevent multiple instances from working properly.</pre></td>
+</tr>
+<tr>
+<td><pre>5614</pre></td>
+<td><pre>2012-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* PBWM V3.2 code is all working as tested on basic SIR
+* new netin mult form of inhibition works great -- use for pvr bias as well
+</pre></td>
+</tr>
+<tr>
+<td><pre>5615</pre></td>
+<td><pre>2012-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add qfile to ta_mediawiki</pre></td>
+</tr>
+<tr>
+<td><pre>5616</pre></td>
+<td><pre>2012-09-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Reworked SynchronousNetRequest to share the QNAM created for WebKit.  Minor changes to support Qt 4.5</pre></td>
+</tr>
+<tr>
+<td><pre>5617</pre></td>
+<td><pre>2012-09-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* minor fixes to pbwm param defaults
+* running a program will now fast-forward in netview history so you're always looking at the present -- was confusing before to always be x cycles in the past..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5618</pre></td>
+<td><pre>2012-09-24</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bump version to 6.0.2 for PBWM v3.2 release</pre></td>
+</tr>
+<tr>
+<td><pre>5619</pre></td>
+<td><pre>2012-09-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow alpha transparency in background colors in 3d viewer -- actually works</pre></td>
+</tr>
+<tr>
+<td><pre>5620</pre></td>
+<td><pre>2012-09-24</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Run dpkg-scanpackages with the --multiversion option so the repo package list contains all available packages, not just the most recent -- allows 'apt-get install emergent=5.2.0-0ubuntu1'</pre></td>
+</tr>
+<tr>
+<td><pre>5621</pre></td>
+<td><pre>2012-09-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Implemented GetLoggedInUsername() and Login() in taMediaWiki.  Extracted code from iNetworkAccessManager::authenticationRequired() into reusable free function getUsernamePassword() which prompts the user with a username/password dialog.</pre></td>
+</tr>
+<tr>
+<td><pre>5622</pre></td>
+<td><pre>2012-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clang didn't like QString convert in ta_mediawiki, changed arrays to be taNBase so you can create them in objs</pre></td>
+</tr>
+<tr>
+<td><pre>5623</pre></td>
+<td><pre>2012-09-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* diff_act_pct and act_pct_mult in GpInhibSpec (unit_gp_inhib, lay_gp_inhib) -- easier way
+to manage dif act pct stuff -- also added useful comments.
+* PFC Deep -&gt; Super cons should use new PFCDeepGatedConspec
+</pre></td>
+</tr>
+<tr>
+<td><pre>5625</pre></td>
+<td><pre>2012-09-26</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>image compositing function CompositeImages
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5626</pre></td>
+<td><pre>2012-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* critical fix to PBWM deep gated cons -- needed to call in plus phase, and also decay(0)
+to trigger netin update
+* added clear_decay to pfc gate spec
+* updated wizard to latest defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>5627</pre></td>
+<td><pre>2012-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>act_fm_frac convenience and pbwm wiz updates</pre></td>
+</tr>
+<tr>
+<td><pre>5628</pre></td>
+<td><pre>2012-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>5629</pre></td>
+<td><pre>2012-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more wiz fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>5630</pre></td>
+<td><pre>2012-09-28</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>error checking on compositing function
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5631</pre></td>
+<td><pre>2012-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major bug in PBWM V3.2 fixed -- matrix needs to use snr_st_idx too just like pfc
+* added pfc.gate.maint_drop and maint_thr is now functional as well
+</pre></td>
+</tr>
+<tr>
+<td><pre>5632</pre></td>
+<td><pre>2012-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor default fixes</pre></td>
+</tr>
+<tr>
+<td><pre>5633</pre></td>
+<td><pre>2012-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* #!$S$!%&amp;*# the PFCLayerSpec still had learning turned off, from the time it was only for Deep layer specs.  how did it take me this long to figure this out!?
+* refactored the drop act &amp; net code
+</pre></td>
+</tr>
+<tr>
+<td><pre>5634</pre></td>
+<td><pre>2012-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maint_pct instead of drop -- use gp_g also -- also may allow learning of maint reps
+</pre></td>
+</tr>
+<tr>
+<td><pre>5635</pre></td>
+<td><pre>2012-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maint_pct now impl in unit spec -- get inside act calc -- much more natural and less of the compounding effect</pre></td>
+</tr>
+<tr>
+<td><pre>5636</pre></td>
+<td><pre>2012-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>defaults and misc_1
+</pre></td>
+</tr>
+<tr>
+<td><pre>5637</pre></td>
+<td><pre>2012-10-01</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed regexps in Mac build script so full installer installs the correct version -- previous script only worked for 5.x.x versions.</pre></td>
+</tr>
+<tr>
+<td><pre>5638</pre></td>
+<td><pre>2012-10-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed problem with menubar (File, Edit, View...) not showing up on Ubuntu's Unity desktop, which has a global menubar similar to the Mac</pre></td>
+</tr>
+<tr>
+<td><pre>5640</pre></td>
+<td><pre>2012-10-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Prevent duplicate copy of trunk to tags in case a Mac package needs to be rebuilt.  Add 'precise' to list of linux distros to build packages for.</pre></td>
+</tr>
+<tr>
+<td><pre>5641</pre></td>
+<td><pre>2012-10-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Remove menubar workaround on Mac since the fix for Ubuntu Unity seems to be a valid fix on Mac too</pre></td>
+</tr>
+<tr>
+<td><pre>5643</pre></td>
+<td><pre>2012-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* wizard updates -- pfc to pfc specific for each, removed learn_only_deep, maint_pct .9
+</pre></td>
+</tr>
+<tr>
+<td><pre>5644</pre></td>
+<td><pre>2012-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>5645</pre></td>
+<td><pre>2012-10-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1424: Workaround for stupid CMake dependency scanner: when maketa is built, it will find dummy headers for svnrev.h and ta_TA_type.h.  This should prevent CMake from thinking maketa needs to be rebuilt when it really doesn't.</pre></td>
+</tr>
+<tr>
+<td><pre>5646</pre></td>
+<td><pre>2012-10-03</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>AdjustContrast supports RGB images, can specify bg color to use (or just use border color)
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5649</pre></td>
+<td><pre>2012-10-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Implemented and tested PageExists().</pre></td>
+</tr>
+<tr>
+<td><pre>5650</pre></td>
+<td><pre>2012-10-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Focus root window at startup instead of CSS console -- esp. nice on Mac/Unity where there is no menubar when the CSS console is focused.</pre></td>
+</tr>
+<tr>
+<td><pre>5651</pre></td>
+<td><pre>2012-10-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Code to focus root window (r5650) may bring the root window on top of a modal dialog; fixed by raising modal dialogs after raising the root window</pre></td>
+</tr>
+<tr>
+<td><pre>5652</pre></td>
+<td><pre>2012-10-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1515: unblock the CSS console so the application can shutdown</pre></td>
+</tr>
+<tr>
+<td><pre>5653</pre></td>
+<td><pre>2012-10-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1424: Reverted r5645 which didn't work, fixed a different way using IMPLICIT_DEPENDS_INCLUDE_TRANSFORM.  More detail in bugzilla.</pre></td>
+</tr>
+<tr>
+<td><pre>5654</pre></td>
+<td><pre>2012-10-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Deleting obsolete mediawiki files that were never used.</pre></td>
+</tr>
+<tr>
+<td><pre>5655</pre></td>
+<td><pre>2012-10-08</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bumped revision to 6.0.3 for build</pre></td>
+</tr>
+<tr>
+<td><pre>5657</pre></td>
+<td><pre>2012-10-08</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Don't fail just because .subversion directory already exists! Was bombing the precise EC2 nodes.</pre></td>
+</tr>
+<tr>
+<td><pre>5659</pre></td>
+<td><pre>2012-10-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>comments on how to fix the tiling problem for image xforms
+</pre></td>
+</tr>
+<tr>
+<td><pre>5660</pre></td>
+<td><pre>2012-10-16</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>scaling fixes in ta_imgproc -- no rgb (or rgba) support yet, GetBorderColor_float_rgb is broken
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5661</pre></td>
+<td><pre>2012-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* imgproc should now be fully rgba compliant for all functions
+* scale no-tiling function now working fully
+* fixed brain_area for pvlv pvi
+</pre></td>
+</tr>
+<tr>
+<td><pre>5662</pre></td>
+<td><pre>2012-10-16</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>fixes to adjustcontrast to not use alpha channel, checks to make sure bg_color is in range [0 1] or -1
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5663</pre></td>
+<td><pre>2012-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>OverlayImages fixed to deal with greyscale images -- wasn't working with cecn textbook proj.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5664</pre></td>
+<td><pre>2012-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>setNativeMenuBar only valid for qt v. 4.6+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5665</pre></td>
+<td><pre>2012-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre> paren fix</pre></td>
+</tr>
+<tr>
+<td><pre>5666</pre></td>
+<td><pre>2012-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>extra suffix must exclude standard suffixes like mpi and dbg</pre></td>
+</tr>
+<tr>
+<td><pre>5667</pre></td>
+<td><pre>2012-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre> bench update</pre></td>
+</tr>
+<tr>
+<td><pre>5668</pre></td>
+<td><pre>2012-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DOH!  woke up this morning realizing that the whole problem with tiling is using edge_mode
+= WRAP in the SampleImageWindow -- somehow that was a legacy setting and so changing it
+to BORDER fixes all the weird tiling issues!!  and the key difference is that the Sample
+method produces MUCH smoother results -- was getting really blocky bad aliasing effects 
+in the objrec model -- now looks so much better and performance is better too.  
+sorry for all the churn (at least we now have good alpha support and some handy new
+functions!)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5669</pre></td>
+<td><pre>2012-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DOUBLE-DOH: previous fix does not wrap around large images, which we actually want to do.  this is the best compromise: for WRAP setting: if scaled image size is &lt; retina, then it automatically switches to BORDER, otherwise uses WRAP.  Not perfect b/c if you have extreme translation on a small image, it doesnt' WRAP, but I don't think we have a better solution at this point -- the aliasing is really bad if we downscale in advance..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5670</pre></td>
+<td><pre>2012-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>partial impl of new nogo learning</pre></td>
+</tr>
+<tr>
+<td><pre>5672</pre></td>
+<td><pre>2012-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pbwm NoGo con spec new learning rule fully implemented with upscaling of wts in 2nd half of minus phase
+* optimization of wtscale modulation (con group scale_eff value) for all cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>5673</pre></td>
+<td><pre>2012-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix nogo learning sign reversal
+* wizard default pfc layer size is 7x7=49 -- need extra units for robust learning
+</pre></td>
+</tr>
+<tr>
+<td><pre>5674</pre></td>
+<td><pre>2012-10-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1528: better method for determining datatype of values being imported to a DataTable.</pre></td>
+</tr>
+<tr>
+<td><pre>5675</pre></td>
+<td><pre>2012-10-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1496: add &lt;unistd.h&gt; include to ta_global.h to address issue compiling with gcc 4.7.
+Got rid of unused ta_exception class.
+Minor update to maketa to avoid compile warning on Windows (warning C4101: 'sbt' : unreferenced local variable).</pre></td>
+</tr>
+<tr>
+<td><pre>5676</pre></td>
+<td><pre>2012-10-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>update for quantal quetzal</pre></td>
+</tr>
+<tr>
+<td><pre>5677</pre></td>
+<td><pre>2012-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>deep freeze option
+</pre></td>
+</tr>
+<tr>
+<td><pre>5678</pre></td>
+<td><pre>2012-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no std:: on strtol.. for dream
+</pre></td>
+</tr>
+<tr>
+<td><pre>5679</pre></td>
+<td><pre>2012-10-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>oops, forgot #include &lt;cstdlib&gt; for strtol and strtod.  reverted 5678.</pre></td>
+</tr>
+<tr>
+<td><pre>5681</pre></td>
+<td><pre>2012-10-24</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1534: off-by-one in taMatrix::GeomIsValid() caused it to never check the last dimension.</pre></td>
+</tr>
+<tr>
+<td><pre>5682</pre></td>
+<td><pre>2012-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* flex proj has TrainEnd in BasicTrial per Brad's suggestion
+* undo dim test -- didn't seem to cause prob in basic datatable creation but I think it
+is risky that it will break something somewhere, and not worth it..
+* params fixes in leabra, and fixes to lrate sched for ext rew stat to work with new matrix lrate sched.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5687</pre></td>
+<td><pre>2012-10-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraTI temporal integration specs -- seems to actually work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5688</pre></td>
+<td><pre>2012-10-28</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>add 2 PFC stripe types; rename 5 PFC stripe types - INPUT IN_MNT MNT_OUT OUT OUT_MNT and associated specs; no changes to wizard</pre></td>
+</tr>
+<tr>
+<td><pre>5689</pre></td>
+<td><pre>2012-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Leabra learn_mode defaults to CTLEABRA_XCAL
+* changed order of learn_mode enums to reflect preference of usage
+* LeabraTI wizard and defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>5690</pre></td>
+<td><pre>2012-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraLayerSpec.inhib.avg_boost -- make activations track average layer activity levels, in a kwta-robust way -- should be good for matrix and also probably metacog in lvis..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5691</pre></td>
+<td><pre>2012-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Hippo: Replace Quad -&gt; ThetaPhase
+* PBWM: update some param defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>5693</pre></td>
+<td><pre>2012-10-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Many little fixes of annoying bugs:
+* unit arrow key nav in netview (also fixed Layer::UnitLogPos for virtual unit groups)
+* project now has a proj_dir that is set dynamically when programs run or when gui project window is raised
+* Function now has taNBase functionality, and taBase has HasName instead of just checking for taNBase for unique names, etc.
+* tree view find no longer crashes if you have an active find and then modify the tree (add, delete) -- auto un-find's before changes hit
+* probably something else I forgot..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5694</pre></td>
+<td><pre>2012-10-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taBase::GetProjDir
+</pre></td>
+</tr>
+<tr>
+<td><pre>5696</pre></td>
+<td><pre>2012-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* version bumped to 6.1.0
+* nuked act_p2 and associated PLUS_PLUS stuff, which is no longer needed, and now that LeabraTI is taking shape, should never be needed..
+* undo_depth #MIN_10
+</pre></td>
+</tr>
+<tr>
+<td><pre>5701</pre></td>
+<td><pre>2012-11-01</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1518: reverted r5641 since Mac still glitches occasionally</pre></td>
+</tr>
+<tr>
+<td><pre>5705</pre></td>
+<td><pre>2012-11-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>act_m2 -&gt; act_mid for pbwm, thetaphase
+</pre></td>
+</tr>
+<tr>
+<td><pre>5734</pre></td>
+<td><pre>2012-11-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1537: better parsing of "print var" code</pre></td>
+</tr>
+<tr>
+<td><pre>5739</pre></td>
+<td><pre>2012-11-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Final changes for emergent 6.1.0!
+* pbwm wizard final fixes
+* leabra ti wizard fixes
+* nan prevention code back in virtenv, and a crash prevention fix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5740</pre></td>
+<td><pre>2012-11-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>of course, one last change -- pbwm default fixes and no auto-naming of matrix units
+</pre></td>
+</tr>
+<tr>
+<td><pre>5741</pre></td>
+<td><pre>2012-11-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>isnan() is #defined in ta_global.h for MS compilers.  This works on Windows (VS2008 and VS2010), no need to #ifndef around it.  If it stops working, see http://stackoverflow.com/a/2123781 and boost: http://www.boost.org/doc/libs/1_52_0/libs/math/doc/sf_and_dist/html/math_toolkit/utils/fpclass.html</pre></td>
+</tr>
+<tr>
+<td><pre>5742</pre></td>
+<td><pre>2012-11-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>cleanup build_emergent()</pre></td>
+</tr>
+</table>
+</body></html>

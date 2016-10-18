@@ -1,0 +1,1555 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 5.3.0
+  Revisions 4992:5229</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>4993</pre></td>
+<td><pre>2011-09-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Only Windows installation needs the Qt plugins/imageformats directory installed.  Linux/Mac have access to the full Qt installation so this isn't necessary on those platforms.</pre></td>
+</tr>
+<tr>
+<td><pre>4994</pre></td>
+<td><pre>2011-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rc compile fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4995</pre></td>
+<td><pre>2011-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>install desktop entry in linux only if prefix is /usr/local.  plus hopefully one last compile warning fix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4996</pre></td>
+<td><pre>2011-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>netstru.h ) missing</pre></td>
+</tr>
+<tr>
+<td><pre>4997</pre></td>
+<td><pre>2011-09-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last fix</pre></td>
+</tr>
+<tr>
+<td><pre>4998</pre></td>
+<td><pre>2011-09-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixes to quadphase hippo code: assoc_m_cycles instead of recall, EC_in records act_m2, 
+and using full CHL learning in Assoc specs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4999</pre></td>
+<td><pre>2011-09-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Minor change to make environment settings take effect immediately, not just in current shell and registry update.</pre></td>
+</tr>
+<tr>
+<td><pre>5000</pre></td>
+<td><pre>2011-09-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bump for 5.2.1</pre></td>
+</tr>
+<tr>
+<td><pre>5002</pre></td>
+<td><pre>2011-09-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal.UAE was not called in conspec UAE -- bad!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5003</pre></td>
+<td><pre>2011-09-14</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>consolidated copy constructors</pre></td>
+</tr>
+<tr>
+<td><pre>5004</pre></td>
+<td><pre>2011-09-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test check</pre></td>
+</tr>
+<tr>
+<td><pre>5005</pre></td>
+<td><pre>2011-09-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>experimental integration of cpca hebbian with xcal</pre></td>
+</tr>
+<tr>
+<td><pre>5006</pre></td>
+<td><pre>2011-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo CPCA experiment -- fatally flawed anyway
+</pre></td>
+</tr>
+<tr>
+<td><pre>5007</pre></td>
+<td><pre>2011-09-16</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added LoadAnyData_stream() API to DataTable to support plugins</pre></td>
+</tr>
+<tr>
+<td><pre>5008</pre></td>
+<td><pre>2011-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>better fix for UAE looping -- use a BaseFlag -- specific to object in question.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5009</pre></td>
+<td><pre>2011-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quick test with avg_s instead of avg_m for xcal BCM
+</pre></td>
+</tr>
+<tr>
+<td><pre>5010</pre></td>
+<td><pre>2011-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5012</pre></td>
+<td><pre>2011-09-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* much better EpochsToTrain program to std program library -- very useful for any
+sim where you want to get overall stats for how fast it learned across multiple batches
+just run it at end of batch and set log file in startup -- no need to do it outside of 
+project!
+* automatically call UAE on sub-objects in Member setting program elements that have
+UAE flag set and a compound path -- would have avoided thr_l_mix bug ..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5023</pre></td>
+<td><pre>2011-09-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin_location set automatically to location where you load the wiz
+</pre></td>
+</tr>
+<tr>
+<td><pre>5024</pre></td>
+<td><pre>2011-09-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bumped to rev 5.2.2; might be a few more changes re: plugins before making an official build tho</pre></td>
+</tr>
+<tr>
+<td><pre>5026</pre></td>
+<td><pre>2011-09-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed update script to look for 64-bit Windows builds as well as 32-bit Mac builds (for future).</pre></td>
+</tr>
+<tr>
+<td><pre>5028</pre></td>
+<td><pre>2011-09-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>When doing character-based input, failbit will be set along with eofbit at the end of the input, so only check that eofbit is set and badbit is not.</pre></td>
+</tr>
+<tr>
+<td><pre>5036</pre></td>
+<td><pre>2011-09-22</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing codereview</pre></td>
+</tr>
+<tr>
+<td><pre>5042</pre></td>
+<td><pre>2011-09-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>call children render and fix z++ loop index
+</pre></td>
+</tr>
+<tr>
+<td><pre>5043</pre></td>
+<td><pre>2011-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taMisc::FileSize</pre></td>
+</tr>
+<tr>
+<td><pre>5044</pre></td>
+<td><pre>2011-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>--enable_all_plugins and --list_plugins startup args for plugin mgmt on mpi or other batch
+executables
+</pre></td>
+</tr>
+<tr>
+<td><pre>5045</pre></td>
+<td><pre>2011-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin state save after enable</pre></td>
+</tr>
+<tr>
+<td><pre>5046</pre></td>
+<td><pre>2011-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>proper exiting from new plugin args
+</pre></td>
+</tr>
+<tr>
+<td><pre>5047</pre></td>
+<td><pre>2011-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>AllocExact for arrays</pre></td>
+</tr>
+<tr>
+<td><pre>5051</pre></td>
+<td><pre>2011-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* detects lack of write protection on file before saving, gives option to overwrite or cancel
+* also made conspec color a bit darker (LimeGreen) so it shows up better in browser
+* added full complement of taMisc::File functions for permissions
+</pre></td>
+</tr>
+<tr>
+<td><pre>5052</pre></td>
+<td><pre>2011-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clamp max_plus = false by default now</pre></td>
+</tr>
+<tr>
+<td><pre>5053</pre></td>
+<td><pre>2011-09-30</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed buffer overrun bug in setting k "go" units to have noise.</pre></td>
+</tr>
+<tr>
+<td><pre>5054</pre></td>
+<td><pre>2011-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>also set nogo guys noise to 0</pre></td>
+</tr>
+<tr>
+<td><pre>5055</pre></td>
+<td><pre>2011-10-01</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bumped version for 5.2.3 build</pre></td>
+</tr>
+<tr>
+<td><pre>5057</pre></td>
+<td><pre>2011-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* prompt to create new local or global vars for unknown variable names in expressions
+* error for creating a Hard-coded (C++) enum variable as a local variable -- that is not
+supported by css.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5058</pre></td>
+<td><pre>2011-10-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New Global Var and New Local Var choices in program variable choosers -- create
+variables on the fly when you need them, instead of having to create them first.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5059</pre></td>
+<td><pre>2011-10-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* return/enter in a tree will insert default item type obj at position
+* ProgCode ProgEl is new default for programs -- you enter code as text string and it auto-
+converts into appropriate program el type
+</pre></td>
+</tr>
+<tr>
+<td><pre>5060</pre></td>
+<td><pre>2011-10-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* mouseover tooltip for T3 tabs
+* show icon flag for showing iconified layers in netview (much cleaner without)
+* auto tab up to prog els that are inserted
+* completion of ProgCode converters -- all now supported!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5061</pre></td>
+<td><pre>2011-10-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* programs now record progel's associated with each line of code, enabling css errors
+to activate associated program code line in the gui -- no more hunting around for
+where the error was!
+* required major rewrite of code generation for all progel's -- big job..
+* also supports setting and clearing of breakpoints in the program gui -- much 
+easier to use breakpoints now -- still need to use css for examining vars etc
+* fixed css breakpoint display code
+</pre></td>
+</tr>
+<tr>
+<td><pre>5062</pre></td>
+<td><pre>2011-10-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ProgCode support for FunctionCall -- required scope_el arg..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5063</pre></td>
+<td><pre>2011-10-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Fixes to ProgCode for ProgramCall, FunctionCall, color decoration, etc.
+* Program::RunFunction -- can run a program-defined function externally!  this could be
+somewhat dangerous overall but seems to work fine in simple tests.  it is plugged into
+the CallFun interface which is used by URL's, so you can do [[.MyProgram.MyFun()]] in 
+a doc and it will call the function!  Can think about adding this ability to programs
+(ProgFunCall ProgEl).
+</pre></td>
+</tr>
+<tr>
+<td><pre>5064</pre></td>
+<td><pre>2011-10-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>program code fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>5065</pre></td>
+<td><pre>2011-10-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1421:
+* removed tfname.gsub("..", ".");
+* minor code cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>5066</pre></td>
+<td><pre>2011-10-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc fixes for gui dialog and program coding
+</pre></td>
+</tr>
+<tr>
+<td><pre>5067</pre></td>
+<td><pre>2011-10-13</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>save bubble coords in bubblemask
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5068</pre></td>
+<td><pre>2011-10-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1421:
+* Fixed taFiler::defExt() so it *always* returns an extension including a leading dot.
+* Fixed bug in taFiler::FilterText() where the returned string would always be either empty or "All files (*)", never containing the same filters that were put in the "list" out-parameter.
+* Fixed taFiler::FixFileName() so it grabs the dot in the extension, consistent with the call to defExt().
+* Added namespace taFilerUtil for a collection of small utility functions, used mainly by FilterText().
+* Spell out DEF_FLAGS (instead of = 0x007) so a search for FILE_MUST_EXIST doesn't make it look useless.
+* Use QScopedPointer instead of auto_ptr.
+* When calling QFileDialog::setDefaultSuffix(), make sure the suffix *doesn't* include a leading dot -- that was probably what was causing the bug that led to the gsub("..", ".") line, which has been removed.
+* In taFiler::GetFileName(), fixed call to QFileDialog::setFileMode() on foOpen (logic was backwards).
+* Warn if open call is made without FILE_MUST_EXIST being set -- that configuration probably doesn't make sense.</pre></td>
+</tr>
+<tr>
+<td><pre>5069</pre></td>
+<td><pre>2011-10-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* ERROR is a reserved macro on windows; changed to PROG_ERROR so code would compile.
+* minor change to taFiler to make maketa happy(ier).</pre></td>
+</tr>
+<tr>
+<td><pre>5070</pre></td>
+<td><pre>2011-10-13</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>reversed xy for saving bubblemask coords. first dim of matrices in emergent is apparently cols...
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5071</pre></td>
+<td><pre>2011-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>NetStruToDataTable and From data table -- get and set network layer structure from data table
+-- used in new wizard.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5072</pre></td>
+<td><pre>2011-10-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added taMisc::LogEvent -- writes to &lt;projname&gt;.plog
+* use taMisc::DebugInfo for all debug-level messages, which are always logged and displayed
+in console if DEBUG is set
+* integrated ta_gui into main code -- complete for now
+* added TRACE flag for programs -- sets css debug = 1 -- improved to add program name
+* css syntax err uses new program notification method
+</pre></td>
+</tr>
+<tr>
+<td><pre>5073</pre></td>
+<td><pre>2011-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Massive improvement in Verbose logging -- VerboseLine and VerboseOut functions on Program
+manage it all -- should be a ton more useful now.
+* ViewScript in ProgEl -- see highlighted exactly what lines of script correspond to
+given progel (very handy)
+* mta_constr -- was not generating static methods for multi-inherit (i.e. Programs) -- no idea
+what the conflict metioned in code was, but seems to work fine with it in place.
+* New concept for Wizard gui -- just an embedded taDoc with canned wiki/html code that 
+presents all the main-level options in a clear and nice way -- then the individual wizards 
+themselves use the new gui dialog tech -- rough stub in place -- need to finish.
+* View project log button etc in Project window
+</pre></td>
+</tr>
+<tr>
+<td><pre>5074</pre></td>
+<td><pre>2011-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* css Script panel in program edit panel -- always there and color highlighting is matched
+between the two, and you can go back and forth to find the corresponding code either way
+breakpoints etc are also shown -- should dramatically improve ability to debug code
+and follow along with what css is doing.
+* required major rewrite of numberedtextview
+* also fixed program script_lines to be 1 based like css to get rid of all that conversion
+and confusion
+* minor improvements of wizard doc text -- last step.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5075</pre></td>
+<td><pre>2011-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updt fm mtg today</pre></td>
+</tr>
+<tr>
+<td><pre>5076</pre></td>
+<td><pre>2011-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed program trace (was only working in DEBUG mode)
+* fixed css single stepping logic
+* added StepCss to Programs -- can now single step thru css code in gui -- try this while
+watching css Script window -- indicates position in gui..
+* mouse over hover tooltip shows current value of variables in css script -- including local
+css variables!
+* fixed data table refresh in gui
+* migrated network wizard to C++ code, replaced old wizard code -- still needs a few things
+but works if you have an existing network.  none of the button callbacks work.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5077</pre></td>
+<td><pre>2011-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new home for standard wizards prototyped in css</pre></td>
+</tr>
+<tr>
+<td><pre>5078</pre></td>
+<td><pre>2011-10-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>QToolBar include is case sensitive on linux filesystems</pre></td>
+</tr>
+<tr>
+<td><pre>5079</pre></td>
+<td><pre>2011-10-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* ta_type.cpp needs #include &lt;ctime&gt; on windows
+* update BuildEmergent-ubuntu.sh script so it *might* work on 11.10.</pre></td>
+</tr>
+<tr>
+<td><pre>5080</pre></td>
+<td><pre>2011-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quadphase fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>5081</pre></td>
+<td><pre>2011-10-19</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added TA_API declarations to free functions associated with String class, otherwise trim() function isn't visible to netstru.cpp when emergentlib is linked.</pre></td>
+</tr>
+<tr>
+<td><pre>5082</pre></td>
+<td><pre>2011-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* wizards all updated with new doc format, and network wizard fully functional
+* project templates are now standard way to make a new project
+</pre></td>
+</tr>
+<tr>
+<td><pre>5083</pre></td>
+<td><pre>2011-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more templates</pre></td>
+</tr>
+<tr>
+<td><pre>5084</pre></td>
+<td><pre>2011-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no plogs</pre></td>
+</tr>
+<tr>
+<td><pre>5085</pre></td>
+<td><pre>2011-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>std:auto_ptr instead of QScopedPtr</pre></td>
+</tr>
+<tr>
+<td><pre>5086</pre></td>
+<td><pre>2011-10-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>order of linking GSL libraries is significant on Ubuntu 11.10 (Oneiric) -- must be -lgsl -lgslcblas</pre></td>
+</tr>
+<tr>
+<td><pre>5087</pre></td>
+<td><pre>2011-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* jumpy cursor action fixed -- turned out it was selecting the first item in the program editor
+which was the program itself, when it tried to assert the program in the main browser as 
+well -- this was then causing the scrollTo on item to actually have to scroll back down
+* also instituted global saves and restores of scrollbars everywhere I could find -- seems
+to be working
+* changed DataTable ScrollToBottom to *only* occur for AddBlankRow using new interface,
+instead of having it happen all the damn time..
+* FIXED_SIZE for ProgArg_List -- cannot add or delete args in gui!
+* improvements in the clip undo stuff -- finally realized what "this" is for these functions,
+and groups were not even getting stuff saved.
+* no parsing of ProgCode guys -- it will be parsed again in context anyway and many valid
+stmts are not valid according to css parser..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5088</pre></td>
+<td><pre>2011-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NetStruToTable specs output
+* NetPrjnsToTable
+* update sending prjn names when layer name changes
+* fix logic of prjn naming update to accommodate uniquifiers but otherwise be correct
+* EditDialog works every time
+* help browser comes to front
+* fixed DataGroup indentation
+</pre></td>
+</tr>
+<tr>
+<td><pre>5089</pre></td>
+<td><pre>2011-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* QUIET flags on ProgVar and ProgEl, implemented for dataselect and matrix vars
+* copy to clipboard for itexteditdialog
+</pre></td>
+</tr>
+<tr>
+<td><pre>5090</pre></td>
+<td><pre>2011-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Yeah, print is really silly option on dialog -- nuked it..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5091</pre></td>
+<td><pre>2011-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BugID:1426, BugID:1427, BugID:1429
+</pre></td>
+</tr>
+<tr>
+<td><pre>5092</pre></td>
+<td><pre>2011-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BugID:1428 -- that was a big oversight -- needed one more default arg.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5093</pre></td>
+<td><pre>2011-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* layers have special highlight for INPUT vs. OUTPUT/TARGET vs. HIDDEN -- very useful to
+see at a glance what is what.
+* programs now have local variables as first element by default (as was case in functions)
+* specs use GetPathNames for err msgs -- much friendlier
+</pre></td>
+</tr>
+<tr>
+<td><pre>5094</pre></td>
+<td><pre>2011-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for local docs to not care about InternetConnected()
+</pre></td>
+</tr>
+<tr>
+<td><pre>5095</pre></td>
+<td><pre>2011-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow file: too 
+</pre></td>
+</tr>
+<tr>
+<td><pre>5096</pre></td>
+<td><pre>2011-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>*ToTable routines in netstru return DataTable* and also browse it if new.
+* added Layer::PrjnsToTable with send or recv option
+</pre></td>
+</tr>
+<tr>
+<td><pre>5097</pre></td>
+<td><pre>2011-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* drag-and-drop a layer on the projections group of another layer and you get a ConnectFrom
+option -- easy way to connect up layers using just the layer tree browser.  Also works for
+existing prjns to change who they connect to.
+* ECoutLayerSpec uses clamp.max_plus settings -- important for preventing "main effect" 
+hog unit problem
+* new SubiculumLayerSpec -- computes norm err on ECout vs. ECin, translates that (linearly with
+cutoffs) into novelty, and then modulates learning rate.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5098</pre></td>
+<td><pre>2011-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>subiculum now uses lrate_sched.default_val to manipulate lrate so diff specs can have
+diff base lrates and still get the modulation (Ca3-&gt;CA1 should be diff than perf path)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5099</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Bump to rev 5.2.4
+* More debug logging for network interface detection</pre></td>
+</tr>
+<tr>
+<td><pre>5100</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>added oneiric to ubuntu repo update script</pre></td>
+</tr>
+<tr>
+<td><pre>5102</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>updates for mac build script to make 32-bit installers</pre></td>
+</tr>
+<tr>
+<td><pre>5103</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>updates for mac build script to make 32-bit installers</pre></td>
+</tr>
+<tr>
+<td><pre>5104</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>make emergent .deb depend on subversion so users have ALL the things to build</pre></td>
+</tr>
+<tr>
+<td><pre>5105</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing codereview</pre></td>
+</tr>
+<tr>
+<td><pre>5106</pre></td>
+<td><pre>2011-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of warning if use_lay_flags = off
+</pre></td>
+</tr>
+<tr>
+<td><pre>5107</pre></td>
+<td><pre>2011-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* no double-create on Apply button for ProgCode
+* only auto-tab up to ProgCode els, not anything else -- better workflow
+</pre></td>
+</tr>
+<tr>
+<td><pre>5108</pre></td>
+<td><pre>2011-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tweak to auto-tab logic
+</pre></td>
+</tr>
+<tr>
+<td><pre>5109</pre></td>
+<td><pre>2011-10-27</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Separated 32/64-bit plugin directories on Windows.
+* Changed taMisc::LogEvent() to log to console if log stream is bad.
+* Changed taMisc::SetLogFile() to report more of what it's doing -- helpful since logging can go to multiple files.</pre></td>
+</tr>
+<tr>
+<td><pre>5110</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Split up gnarly function: Startup_InitTA_AppFolders()
+* Removed dead function: FileWithContentExists()</pre></td>
+</tr>
+<tr>
+<td><pre>5111</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quiet flag on layer writer
+</pre></td>
+</tr>
+<tr>
+<td><pre>5112</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed regression in last checkin.</pre></td>
+</tr>
+<tr>
+<td><pre>5113</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* layer, prjn own their spec pointers!
+* WhereUsed function/button on spec -- tells you where a given spec is used -- shoulda had 
+that one a long time ago..
+* loops get proper "Ctrl" coloration
+</pre></td>
+</tr>
+<tr>
+<td><pre>5114</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>scp installers to grey automatically</pre></td>
+</tr>
+<tr>
+<td><pre>5115</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bump to rev 5.2.5</pre></td>
+</tr>
+<tr>
+<td><pre>5116</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ak -- silent arg name override of member!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5117</pre></td>
+<td><pre>2011-10-28</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed a few bugs in win build script</pre></td>
+</tr>
+<tr>
+<td><pre>5118</pre></td>
+<td><pre>2011-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* css stepping deals with breaks properly (and other loop constructs) and also optimized
+cssProg::Cont() with a completely no-debug version that should be faster..
+* tried to fix template directory problem for new projects but it looks like the filer
+has some other kind of memory of its own, not based on QDir::currentPath() -- 
+not sure what's going on there.  Dan??
+</pre></td>
+</tr>
+<tr>
+<td><pre>5119</pre></td>
+<td><pre>2011-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* nogui check for console output of log data -- otherwise get duplicates for batch runs
+* doh on NetDataLoop -- used to have a "return" statement that got axed with void rval,
+and so it was generating code 2x.  Basic call was unnec. in first place b/c was just
+about indent in any case.  fixes Tren's project.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5120</pre></td>
+<td><pre>2011-10-31</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bump to 5.2.6</pre></td>
+</tr>
+<tr>
+<td><pre>5122</pre></td>
+<td><pre>2011-11-01</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed bug in mac script; fixed ubuntu update script to chown root.root and chmod 644 dist files.</pre></td>
+</tr>
+<tr>
+<td><pre>5123</pre></td>
+<td><pre>2011-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fall back to non-taBase path search for member prog els.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5124</pre></td>
+<td><pre>2011-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't set breakpoints on comment lines!!  fixes BugID:1436
+</pre></td>
+</tr>
+<tr>
+<td><pre>5125</pre></td>
+<td><pre>2011-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GridLayout for T3 views -- handy for arranging items in views -- under Frame Properties
+</pre></td>
+</tr>
+<tr>
+<td><pre>5126</pre></td>
+<td><pre>2011-11-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed typo: bool used instead of int.</pre></td>
+</tr>
+<tr>
+<td><pre>5127</pre></td>
+<td><pre>2011-11-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Fixed maketa call to Microsoft compiler so it doesn't spew copyright info every time it processes a file.
+* Minor typo in leabra_pvlv comment.
+* Added verbose option to windows build script.</pre></td>
+</tr>
+<tr>
+<td><pre>5128</pre></td>
+<td><pre>2011-11-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Removed unused variables (compiler warnings).
+* Added 0!= in a few places to make MS compiler stop warning about a perfectly good C++ idiom (warning C4800).
+* Changed totally bogus -bool and ~bool code to something more sensible.</pre></td>
+</tr>
+<tr>
+<td><pre>5129</pre></td>
+<td><pre>2011-11-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed random number generator so it generates repeatable sequences -- problem was that the gauss_dev() functions contained state (iset/gset) that wasn't being saved/restored by GetCurrent() and OldSeed().</pre></td>
+</tr>
+<tr>
+<td><pre>5130</pre></td>
+<td><pre>2011-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mac requires cmath.h and also added save_views flag for GridLayout -- doesn't work yet 
+but anyway this would be super convenient.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5131</pre></td>
+<td><pre>2011-11-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ECOut layer uses MAX(acts_m2.max, acts_m.max) for max_plus act value -- needed for pretraining
+mode b/c acts_m is 0 in that case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5132</pre></td>
+<td><pre>2011-11-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Intermediate checkin for network voxel mapper.</pre></td>
+</tr>
+<tr>
+<td><pre>5133</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added .toQString() to fix compilation on the mac.</pre></td>
+</tr>
+<tr>
+<td><pre>5134</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added subdirectory to hold standard brain and atlas files</pre></td>
+</tr>
+<tr>
+<td><pre>5135</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added subdirectory to hold standard brain and atlas files</pre></td>
+</tr>
+<tr>
+<td><pre>5136</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Adding 3rd party public domain sources to read NIfTI files</pre></td>
+</tr>
+<tr>
+<td><pre>5137</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Initial commit of a trivial and limited class for reading NIfTI files</pre></td>
+</tr>
+<tr>
+<td><pre>5138</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added files for NIfTI manipulation</pre></td>
+</tr>
+<tr>
+<td><pre>5139</pre></td>
+<td><pre>2011-11-11</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed code to follow emergent naming conventions: namely, underscore_convention for variables and UpperCamelCase for methods.</pre></td>
+</tr>
+<tr>
+<td><pre>5140</pre></td>
+<td><pre>2011-11-15</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Get collection of voxels from Talairach atlas whose labels match a regular expression.</pre></td>
+</tr>
+<tr>
+<td><pre>5142</pre></td>
+<td><pre>2011-11-17</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Don't use negative voxel_size default -- using 0 is a better default so the voxel doesn't render at all.</pre></td>
+</tr>
+<tr>
+<td><pre>5143</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Renamed files to match current Emergent convention</pre></td>
+</tr>
+<tr>
+<td><pre>5144</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Renamed files to match current Emergent convention</pre></td>
+</tr>
+<tr>
+<td><pre>5145</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>modified includes for new file names</pre></td>
+</tr>
+<tr>
+<td><pre>5146</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added a few functions and some changes to conform to coding conventions.</pre></td>
+</tr>
+<tr>
+<td><pre>5147</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added a few functions and some changes to conform to coding conventions.</pre></td>
+</tr>
+<tr>
+<td><pre>5148</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Updated includes to match new file names</pre></td>
+</tr>
+<tr>
+<td><pre>5149</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Checking in alpha code implementing the brain view</pre></td>
+</tr>
+<tr>
+<td><pre>5150</pre></td>
+<td><pre>2011-11-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Updated for new file names and additions for brain view</pre></td>
+</tr>
+<tr>
+<td><pre>5151</pre></td>
+<td><pre>2011-11-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Got rid of call to QList::reserve() that is only available since Qt 4.7.
+* Misc cleanup in NVM -- fewer runtime warnings.
+* Elim. code duplication in nifti_reader -- 40% slower but still quite fast.</pre></td>
+</tr>
+<tr>
+<td><pre>5152</pre></td>
+<td><pre>2011-11-23</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Minor correction to voxel vertices. Vertices now centered on vox coordinate by shifting by half voxel_size.</pre></td>
+</tr>
+<tr>
+<td><pre>5153</pre></td>
+<td><pre>2011-11-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* minor tweaks to get brain view working more practically:
+** AssignVoxels function on network, called during Build and avail from NetView menu
+** no warnings for empty brain_area's
+** ignore lesioned and iconified layers -- crashes in icarus minds otherwise
+** default to talairach atlas
+** minor layout tweaks to panel: min size on sliders, stretch at end, not between
+</pre></td>
+</tr>
+<tr>
+<td><pre>5154</pre></td>
+<td><pre>2011-11-29</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Fixed weird shiny units (i.e. cruft) left behind when switching view plane</pre></td>
+</tr>
+<tr>
+<td><pre>5155</pre></td>
+<td><pre>2011-11-29</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Removed code that was commented out of BrainView class declaration.</pre></td>
+</tr>
+<tr>
+<td><pre>5156</pre></td>
+<td><pre>2011-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* finally, after much debugging, a potential fix for the dreaded NULL dialog bug!!
+* issue seems to be a spurious Changed call by some widgets when they get built, which 
+then makes the dialog want to rebuild itself inappropriately when not visible 
+and not properly constructed in first place.
+* soln (at least to latest BugID:1444 version of this) was to wrap rebuild with 
+++updating protection, which Changed then uses to ignore self-generated changes.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5157</pre></td>
+<td><pre>2011-12-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Cleaned up list/group iterator macros -- more readable and easier to use.
+* Started implementing STL-style iterators for taList&lt;&gt; and taGroup&lt;&gt; -- this turned into a dead-end due to current list/group design but may be useful down the road.
+* Cleaned up a few compiler warnings (leabra.cpp, ta_string.cpp).
+* Cleaned up a few maketa warnings (brain_view.h, brain_view_panel.h, brain_volume_view.h, qtdefs.h).</pre></td>
+</tr>
+<tr>
+<td><pre>5158</pre></td>
+<td><pre>2011-12-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bugfix</pre></td>
+</tr>
+<tr>
+<td><pre>5159</pre></td>
+<td><pre>2011-12-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Added check for #NO_VIEW directive to prevent items from appearing in the list of Unit Display Values on the NetViewPanel dialog.
+* Mark Unit::voxel and Unit::voxel_size as NO_VIEW so they don't appear.
+* In taiMisc::NewLabel(), commented out a call to QLabel::setFixedHeight(), since it was causing problems on the NetViewPanel: two-line text labels were getting clipped.  So far haven't seen any display regressions, tested on Win and Ubuntu.</pre></td>
+</tr>
+<tr>
+<td><pre>5160</pre></td>
+<td><pre>2011-12-03</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Removed non-functional controls. Fixed two render bugs. Switched from cubes to face sets. Some code cleanup.</pre></td>
+</tr>
+<tr>
+<td><pre>5161</pre></td>
+<td><pre>2011-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>search and replace (ReplaceValStr) for aribtrary selected items in tree view
+</pre></td>
+</tr>
+<tr>
+<td><pre>5162</pre></td>
+<td><pre>2011-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>search and replace fixes</pre></td>
+</tr>
+<tr>
+<td><pre>5163</pre></td>
+<td><pre>2011-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ReplaceStrVal updates: mbr_filt &amp; minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>5164</pre></td>
+<td><pre>2011-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bits support for DynEnum guys in programs
+* BITS support for HardEnum guys in program ctrl panel
+* ReplaceString in Project -- dangerous but powerfull full string replacer..
+* save undo before Replace
+</pre></td>
+</tr>
+<tr>
+<td><pre>5165</pre></td>
+<td><pre>2011-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>save undo for ReplaceString too
+</pre></td>
+</tr>
+<tr>
+<td><pre>5166</pre></td>
+<td><pre>2011-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Fixes for bits DynEnums: proper default numbering for enums, string output appropriate
+for value = actual bits themselves.  still need more testing.
+* todo: regular enum mode is using value as an index into enums instead of the actual enum
+value itself -- presumably to save a lookup, but this is probably done fairly inconsistently
+and definitely inconsistent with the new code just added..  Need to fix!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5167</pre></td>
+<td><pre>2011-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* full testing of enums and bits -- lots of fixups, including making dyn enum value always
+just the value, not an index lookup to the enum
+* IMPORTANT: any projects that don't use standard 0..n-1 numbered enums will NOT have
+proper saved values -- this is very rare, and any code that uses string labels will work
+as normal, so not expecting to see any problems here, but we need to add docs to changelog
+* ProgVars -&gt; LocalVars -- much more sensible name -- IMPORTANT: this breaks backward
+compatibility completely -- old versions of the code will not be able to load files
+saved with current version -- we will need to all switch over to the new version all at
+once. do not use this for any shared projects just yet..  but soon..
+* ta_gui has full enum support
+* added ~ operator to css -- strangely missing all this time!  needed for bit-wise ops
+* partial draft of hippo wizard
+</pre></td>
+</tr>
+<tr>
+<td><pre>5168</pre></td>
+<td><pre>2011-12-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>minor cleanups</pre></td>
+</tr>
+<tr>
+<td><pre>5169</pre></td>
+<td><pre>2011-12-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Minor cleanups related to taiTypeBase class and subclasses:
+* Renamed TAQT_*_INSTANCE macros to better express what the macro does.  Consolidated a few duplicate macros.
+* Added INHERITED(y) invocation to TAI_*_INSTANCE macros and cleaned up their definitions to be more readable.
+* Changed macro definition of TypeInst(), MethInst(), etc. calls to return the "x" type as a covariant return type.  Got rid of unnecessary casts where these methods were being called.
+* Moved TAI_*_INSTANCE macro invocations to top of class definitions so they're more prominent.
+* Removed a few //nn (not needed) comments.</pre></td>
+</tr>
+<tr>
+<td><pre>5170</pre></td>
+<td><pre>2011-12-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed default font settings on Windows.</pre></td>
+</tr>
+<tr>
+<td><pre>5171</pre></td>
+<td><pre>2011-12-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Minor code cleanup as I'm reading through the code.</pre></td>
+</tr>
+<tr>
+<td><pre>5172</pre></td>
+<td><pre>2011-12-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed bug 1147 (or at least a workaround).  Also cleaned out the cruft in iComboBox -- highlight stuff served no purpose.</pre></td>
+</tr>
+<tr>
+<td><pre>5173</pre></td>
+<td><pre>2011-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more on the hippo wizard
+</pre></td>
+</tr>
+<tr>
+<td><pre>5174</pre></td>
+<td><pre>2011-12-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>More minor cleanups.</pre></td>
+</tr>
+<tr>
+<td><pre>5175</pre></td>
+<td><pre>2011-12-08</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed signatures to match base class versions so the derived class functions override instead of hide:
+* Fixed signature of taiMethod::GetImage().
+* Fixed signature of taiTDefaultMember::GetDataRep() -- however, this may not be the correct thing to do.  Because the function previously had a different signature, it was essentially dead code.  This change brings it back to life, but the correct thing may be to delete it instead and let taiMember::GetDataRep() take care of things (as it has been doing).
+
+Other minor changes:
+* Marked GetImage() and GetValue() functions as overrides.
+* Made all taiType predicates be const functions and marked as overrides in derived classes.
+* Clarified comment in taiType::GetImage().
+* Misc cleanup.</pre></td>
+</tr>
+<tr>
+<td><pre>5176</pre></td>
+<td><pre>2011-12-08</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Missed this one on 5175 commit.  Minor changes in function sig to make them match the rest.</pre></td>
+</tr>
+<tr>
+<td><pre>5177</pre></td>
+<td><pre>2011-12-08</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Added HasSubtypes() function for better encapsulation.
+* Added InsertThisIntoBidList() function to eliminate duplicate code.
+* Misc cleanup.</pre></td>
+</tr>
+<tr>
+<td><pre>5178</pre></td>
+<td><pre>2011-12-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hip wizard all done
+</pre></td>
+</tr>
+<tr>
+<td><pre>5179</pre></td>
+<td><pre>2011-12-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Fixed bug in taFiler ctor: it was using &amp;&amp; instead of &amp; to test if the COMPRESS_REQ_DEF flag was set.
+* Renamed taiTypeBase::m_sub_types to next_lower_bidder to better reflect its purpose.  Renamed associated functions.
+* Used HasFlag() method where possible, vs. manually testing the bits.</pre></td>
+</tr>
+<tr>
+<td><pre>5180</pre></td>
+<td><pre>2011-12-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* unit flags with LESIONED bit and lesioned() fun -- need to check this in any 
+virtual unit group code (using UnitAccess) or other iteration over units within
+a layer (still need to find all those) -- hopefully can avoid doing connection
+level checks.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5181</pre></td>
+<td><pre>2011-12-09</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Changed background color and text color.\nCan now only put brain view into new frame.</pre></td>
+</tr>
+<tr>
+<td><pre>5182</pre></td>
+<td><pre>2011-12-09</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Minor tweaks to initial size/position of glass brain</pre></td>
+</tr>
+<tr>
+<td><pre>5183</pre></td>
+<td><pre>2011-12-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Refactored common parts of taiField and taiFileDialogField into taiText, which is now the base class for both classes.
+* Derived taiRegexpField class from taiText and stubbed its functions.
+* Derived taiRegexpDialogMember class from taiMember to handle #REGEXP_DIALOG directive, stubbed its functions.</pre></td>
+</tr>
+<tr>
+<td><pre>5184</pre></td>
+<td><pre>2011-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>unit lesioned() checks -- doesn't crash but also doesn't work right yet..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5185</pre></td>
+<td><pre>2011-12-11</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Minor tweak to material shading. Fix voxel coordinate translation bug.</pre></td>
+</tr>
+<tr>
+<td><pre>5186</pre></td>
+<td><pre>2011-12-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* unit LESION flag fully supported for Leabra, including gui display etc, UnLesionUnits
+ functions, kwta functions, etc.
+* maketa generates {NULL} terminators for various proplists -- avoids errors on xcode
+* BugID:1361 -- always hit a unit for viewing weights, and now supports arrow keys to move
+the selection around!  very very handy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5187</pre></td>
+<td><pre>2011-12-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>unit lesioned checks for other algos -- should be the end of this..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5188</pre></td>
+<td><pre>2011-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* netview autoscaling fixed
+* programs NEW_OBJ flag for local vars 
+* datatable view 1 row 1 col selection bug fix
+* choosers now have separate EXPERT category -- selects that too if filter or cur item are
+from EXPERT -- much better way of having it both ways with good clean defaults for most 
+users.  need to fix gendoc HTML render to also use #EXPERT and put at end
+</pre></td>
+</tr>
+<tr>
+<td><pre>5189</pre></td>
+<td><pre>2011-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>gendoc HTML render segregates EXPERT items, just like in the chooser
+</pre></td>
+</tr>
+<tr>
+<td><pre>5190</pre></td>
+<td><pre>2011-12-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fix null pointer deref -- crashed when creating a new project, etc.</pre></td>
+</tr>
+<tr>
+<td><pre>5191</pre></td>
+<td><pre>2011-12-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Set BrainView to #NO_INSTANCE to eliminate a warning at startup.</pre></td>
+</tr>
+<tr>
+<td><pre>5192</pre></td>
+<td><pre>2011-12-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* BrainView cannot have #NO_INSTANCE -- needs instance to make a clone which is used for
+making new instances of objects -- I don't get any warnings on mac..  problem needs to be
+solved in a different way..
+* root name is now name of program with version info
+* st_row = -1 now fixed in datatable find funs
+* LocalVars Add.. var functions now select new var and expand..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5193</pre></td>
+<td><pre>2011-12-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lots of misc bugfixes I forgot to checkin last night.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5194</pre></td>
+<td><pre>2011-12-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>5195</pre></td>
+<td><pre>2011-12-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rename dist_mat_table back to dist_mat -- otherwise causes errs in existing programs
+</pre></td>
+</tr>
+<tr>
+<td><pre>5196</pre></td>
+<td><pre>2011-12-15</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>PRELIMINARY code for regexp gui editor.  still things to do.</pre></td>
+</tr>
+<tr>
+<td><pre>5197</pre></td>
+<td><pre>2011-12-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* SliceTransparencyXformed() function on BrainViewState, which does a log transform
+of raw transparency values, with offset of 100 - seems pretty good to me..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5198</pre></td>
+<td><pre>2011-12-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* experimental modification to xcal threshold -- avg_l_mult
+</pre></td>
+</tr>
+<tr>
+<td><pre>5199</pre></td>
+<td><pre>2011-12-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>can't include the .h in the QComboBox include on linux..</pre></td>
+</tr>
+<tr>
+<td><pre>5200</pre></td>
+<td><pre>2011-12-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo of experimental xcal thing -- not effective
+</pre></td>
+</tr>
+<tr>
+<td><pre>5201</pre></td>
+<td><pre>2011-12-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt_norm first pass impl -- still requires auto-updating network dwt_norm_enabled
+</pre></td>
+</tr>
+<tr>
+<td><pre>5202</pre></td>
+<td><pre>2011-12-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt_norm flag in wt_sig member on LeabraConSpec -- seems to improve learning
+overall
+</pre></td>
+</tr>
+<tr>
+<td><pre>5203</pre></td>
+<td><pre>2011-12-17</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Quick implementation of unit var display and chooser. Added Net Text back in. Made BrainViewState members public.</pre></td>
+</tr>
+<tr>
+<td><pre>5204</pre></td>
+<td><pre>2011-12-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt norm for xcal_c
+</pre></td>
+</tr>
+<tr>
+<td><pre>5205</pre></td>
+<td><pre>2011-12-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix no rval warnings by returning 0.0 for stubbed functions
+</pre></td>
+</tr>
+<tr>
+<td><pre>5206</pre></td>
+<td><pre>2011-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bias.wt netmon fix -- requires special code
+* for loop get rid of flags preventing detection of bad variables in exprs --
+should work now
+</pre></td>
+</tr>
+<tr>
+<td><pre>5207</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>iRegexpDialog - major features complete.  Comboboxes are filtered based on current selections now, like xfontsel.  There's still a bug with hitting Apply, then OK, plus some other minor issues to be cleaned up.</pre></td>
+</tr>
+<tr>
+<td><pre>5208</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>report (and add to plog) what was actually changed in the replace string function.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5209</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>persistent (static) search/replace vals.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5210</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes to comment directives in dataproc
+* Data*Call now scope for ProgCode correctly
+* new ProtoExempGen prog lib program
+</pre></td>
+</tr>
+<tr>
+<td><pre>5211</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added column headings for regexp dialog.</pre></td>
+</tr>
+<tr>
+<td><pre>5212</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added &lt;custom&gt; choice to regexp dialog combos for when user-supplied text is entered.</pre></td>
+</tr>
+<tr>
+<td><pre>5213</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Don't applyNow() until after the regexp dialog is closed.  It was causing problems doing it inside btnApply_clicked() -- the m_field would get blown away somehow.</pre></td>
+</tr>
+<tr>
+<td><pre>5214</pre></td>
+<td><pre>2011-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Eliminate friendship by passing the populator into iRegexpDialog ctor.</pre></td>
+</tr>
+<tr>
+<td><pre>5215</pre></td>
+<td><pre>2011-12-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Framework for allowing multiple voxels per unit.</pre></td>
+</tr>
+<tr>
+<td><pre>5216</pre></td>
+<td><pre>2011-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix crash -- index is 0, not 1.. :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5217</pre></td>
+<td><pre>2011-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes for graphs -- alt_y were not working properly and removed vestigial hard alt_y guys
+* added taMath::dprime and vec_dprime functions
+</pre></td>
+</tr>
+<tr>
+<td><pre>5218</pre></td>
+<td><pre>2011-12-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Removed BrainView from MOC
+</pre></td>
+</tr>
+<tr>
+<td><pre>5219</pre></td>
+<td><pre>2011-12-22</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Moved brain view state information into BrainView with Qt signals/slots in BrainViewPanel.
+Brain view state is now persistent.
+Remedied the startup warning about failing to set path to brain data.
+Added layer move control to BrainViewPanel. Can now move the brain view.
+Normalized brain view by largest brain dimension.
+Added support for multiple voxels per mapped unit - THIS IS UNTESTED WITH MULTIPLE VOXELS!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5220</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Moved ++i so uvd_bases_map_ stores unit indices instead of voxel indices.  This doesn't cause a problem until you have multiple voxels assigned per unit.</pre></td>
+</tr>
+<tr>
+<td><pre>5221</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* flex progs update -- ChooseNextEvent program does standard iteration
+in flex progs context, including permuted and dmem -- very handy.
+* fixed ambiguity in ProgCode conversion -- ctrl els have priority (for, if, etc)
+* fixed - in VarIncr -- should only be for -= but was being applied to += too!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5222</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GetColMatrix uses Variant instead of int -- needed for latest lvis
+</pre></td>
+</tr>
+<tr>
+<td><pre>5223</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>exclude "proj_templates" files from recents, per dan's suggestion
+</pre></td>
+</tr>
+<tr>
+<td><pre>5224</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Updated network voxel mapper to assign multiple voxels per unit, based on the voxel_fill_pct specified in the layer.</pre></td>
+</tr>
+<tr>
+<td><pre>5225</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* voxel_fill_pct = 1.0 default -- looks better to me!
+* lay mv -&gt; manip + fixed tooltip -- there aren't any layers in brainview!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5226</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* unit_trans = .9 as default -- better for high density
+* view name = BrainView, but still get name conflict at higher leve owner frame
+</pre></td>
+</tr>
+<tr>
+<td><pre>5227</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bump version to 5.3.0 and added acknowledgment of talairach.org to Help-&gt;About dialog.</pre></td>
+</tr>
+<tr>
+<td><pre>5228</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>div zero fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>5229</pre></td>
+<td><pre>2011-12-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn == instead of =
+</pre></td>
+</tr>
+</table>
+</body></html>

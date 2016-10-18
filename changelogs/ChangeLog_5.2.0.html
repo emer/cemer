@@ -1,0 +1,3545 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 5.2.0
+  Revisions 4476:4991</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>4476</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* WtScaleCvt helper fun, minor other fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4477</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cosmetic.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4478</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bias mult renames
+</pre></td>
+</tr>
+<tr>
+<td><pre>4479</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bias_pos_gain
+</pre></td>
+</tr>
+<tr>
+<td><pre>4480</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults on mult bias
+</pre></td>
+</tr>
+<tr>
+<td><pre>4481</pre></td>
+<td><pre>2010-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pvi_scale_min, lvi_scale_min
+</pre></td>
+</tr>
+<tr>
+<td><pre>4482</pre></td>
+<td><pre>2010-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>adaptive mnt_empty_go bias in matrix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4483</pre></td>
+<td><pre>2010-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should fix dmem run for new startup sequencing code -- only quit in Startup_RunStartupScript
+if actually ran a startup script there -- otherwise it is assumed that there was a 
+startup program and it ran, and quitting is then controlled from there.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4484</pre></td>
+<td><pre>2010-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked adapt_bias -- was terrible for all test runs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4485</pre></td>
+<td><pre>2010-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard set n stripes now takes gp geom args
+</pre></td>
+</tr>
+<tr>
+<td><pre>4486</pre></td>
+<td><pre>2010-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>expose existing pat_q for KWTA_PAT_K.  change default to .2
+</pre></td>
+</tr>
+<tr>
+<td><pre>4487</pre></td>
+<td><pre>2010-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow prior .5 default too -- no real need to change if it was working
+</pre></td>
+</tr>
+<tr>
+<td><pre>4488</pre></td>
+<td><pre>2010-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mult bias is now the only form of bias supported -- works better overall and especially
+for partial connectivity -- previous setup was awkward with g_bar.a, .h dependencies
+as well -- also fits better in terms of downstate vs. update dynamics
+</pre></td>
+</tr>
+<tr>
+<td><pre>4489</pre></td>
+<td><pre>2010-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults on gate bias
+</pre></td>
+</tr>
+<tr>
+<td><pre>4490</pre></td>
+<td><pre>2010-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>datatable methods etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4491</pre></td>
+<td><pre>2010-05-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>jet color scale</pre></td>
+</tr>
+<tr>
+<td><pre>4492</pre></td>
+<td><pre>2010-05-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Cleanup for using emergent built in home dir
+</pre></td>
+</tr>
+<tr>
+<td><pre>4493</pre></td>
+<td><pre>2010-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rm emer link</pre></td>
+</tr>
+<tr>
+<td><pre>4494</pre></td>
+<td><pre>2010-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>emer.app shell with COIN_FONT_PATH</pre></td>
+</tr>
+<tr>
+<td><pre>4495</pre></td>
+<td><pre>2010-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>shell script not a good idea</pre></td>
+</tr>
+<tr>
+<td><pre>4496</pre></td>
+<td><pre>2010-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>back to a link</pre></td>
+</tr>
+<tr>
+<td><pre>4497</pre></td>
+<td><pre>2010-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rename to tmp</pre></td>
+</tr>
+<tr>
+<td><pre>4498</pre></td>
+<td><pre>2010-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rename to lowercase</pre></td>
+</tr>
+<tr>
+<td><pre>4499</pre></td>
+<td><pre>2010-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempted windows icon fix -- no luck</pre></td>
+</tr>
+<tr>
+<td><pre>4500</pre></td>
+<td><pre>2010-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add_rnd_wts flag on projection specs -- conspec rnd specifies additive random noise on top
+  of whatever the projection might set.
+* MatrixGradRFPrjnSpec -- defines gradients of weight values instead of partical connectivity
+  to help diff matrix stripes specialize..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4501</pre></td>
+<td><pre>2010-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Added GradientWtsPrjnSpec -- general form of MatrixGradRFPrjnSpec -- adds wrap and now
+works for unit groups or not on recv side -- good general-puprose guy.  Matrix now just
+inherits from it and defines its own defaults.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4502</pre></td>
+<td><pre>2010-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for wrap in new grad prjn</pre></td>
+</tr>
+<tr>
+<td><pre>4503</pre></td>
+<td><pre>2010-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>set snrthal unitspec bias spec to bg bias in wizard
+</pre></td>
+</tr>
+<tr>
+<td><pre>4504</pre></td>
+<td><pre>2010-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added invert flag to gradient rf...
+</pre></td>
+</tr>
+<tr>
+<td><pre>4505</pre></td>
+<td><pre>2010-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* invert_nogo in MatrixGradRFPrjnSpec -- produces an actual go bias by differentially weighting
+the go vs. nogo.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4506</pre></td>
+<td><pre>2010-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>4507</pre></td>
+<td><pre>2010-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixes for uniqueId on plugins and also clarification of the two Compile buttons.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4508</pre></td>
+<td><pre>2010-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added "grouped" flag to NetDataLoop -- allows single guy to be used for either case --
+no need for EpochGpData or whatever that thing is.
+* pbwm fixes for maint-only gating
+* cycle trajectory analysis program -- nice!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4509</pre></td>
+<td><pre>2010-05-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rename</pre></td>
+</tr>
+<tr>
+<td><pre>4510</pre></td>
+<td><pre>2010-06-01</pre></td>
+<td><pre>latimerk</pre></td>
+<td><pre>Mods to V1 Gabor filters - should not affect old stuff, but will allow for more tweeking as needed</pre></td>
+</tr>
+<tr>
+<td><pre>4511</pre></td>
+<td><pre>2010-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal continuous trigger using attractor velocity/accelleration..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4512</pre></td>
+<td><pre>2010-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updt stats for xcalc
+</pre></td>
+</tr>
+<tr>
+<td><pre>4513</pre></td>
+<td><pre>2010-06-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new depress setup -- max_amp can be &gt; 1 and cause an extra reservoir of spk_amp before
+depletion occurs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4514</pre></td>
+<td><pre>2010-06-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcalc lrn trig: refract + dec offsets
+</pre></td>
+</tr>
+<tr>
+<td><pre>4515</pre></td>
+<td><pre>2010-06-06</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>- taMath vec_uniq - uses a variant interface to provide `uniq` and `uniq -s' for any matrix- taMath vec_uniq - uses a variant interface to provide `uniq` and `uniq -s' for any matrix type
+- taMath mat_concat - concatenate two matrices. needs cleanup
+- taMath vec_regress_multi_lin - wrapper for gsl multi parameter regression
+- taMath vec_dot_product - uses gsl to compute a dot product
+- taMath mat_vec_product - uses gsl to multiply a matrix by a vector
+- Most taMath guys need taMath_float support
+- AllDataToOne2DCell - provide a dest column name arg
+- MultiClassClassificationViaLinearRegression - needs rename and standardized output format
+</pre></td>
+</tr>
+<tr>
+<td><pre>4516</pre></td>
+<td><pre>2010-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* i_netin_mod in leabralayerspec -- modulate inhibition as a function of netinput, to capture
+some graded dynamics as a function of raw netin strength, even with kwta..
+* changed a lot of stuff to CONDSHOW instead of CONDEDIT -- cleaner edit dialogs with defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>4517</pre></td>
+<td><pre>2010-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>better functional form for i_netin_mod -- x / (x+1) -- and clamp max_plus to deal with main effect problem</pre></td>
+</tr>
+<tr>
+<td><pre>4518</pre></td>
+<td><pre>2010-06-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>4519</pre></td>
+<td><pre>2010-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new image processing code is working -- also simple test project -- needs a lot more pieces but is enough for highvis test</pre></td>
+</tr>
+<tr>
+<td><pre>4520</pre></td>
+<td><pre>2010-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix startup errs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4521</pre></td>
+<td><pre>2010-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>norm max
+</pre></td>
+</tr>
+<tr>
+<td><pre>4522</pre></td>
+<td><pre>2010-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>end stop max over all angles -- does a nice job of picking up curvature in highvis
+</pre></td>
+</tr>
+<tr>
+<td><pre>4523</pre></td>
+<td><pre>2010-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>range check fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4524</pre></td>
+<td><pre>2010-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>motion + graphing in imgproc
+</pre></td>
+</tr>
+<tr>
+<td><pre>4525</pre></td>
+<td><pre>2010-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>V1 opposite polarity flanking elements..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4526</pre></td>
+<td><pre>2010-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>OLD_REPL mode to replicate old projects.. nice..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4527</pre></td>
+<td><pre>2010-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lots of highvis fixes -- had bug in tri-phasic code, and added gabor -- seeing more 
+now why gabor is good for robustness..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4528</pre></td>
+<td><pre>2010-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1c renorm
+</pre></td>
+</tr>
+<tr>
+<td><pre>4529</pre></td>
+<td><pre>2010-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix gabor bug :(  lin renorm should be default on v1c
+</pre></td>
+</tr>
+<tr>
+<td><pre>4530</pre></td>
+<td><pre>2010-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1b binocular filter, separate output tables for dog, v1s
+</pre></td>
+</tr>
+<tr>
+<td><pre>4531</pre></td>
+<td><pre>2010-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed color filters: actually 3 opponent on/off guys -- 6 dogs instead of 4 -- really 
+rationalizes a lot of stuff
+* color blob -&gt; blob -- works for monochrome too!  this may be key to what v1s_max is 
+providing -- some basic light/dark "color" information -- now in there..
+* nuked flanker now that it is irrelevant. kept gabor just for reference/expt
+</pre></td>
+</tr>
+<tr>
+<td><pre>4532</pre></td>
+<td><pre>2010-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc small fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4533</pre></td>
+<td><pre>2010-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>4534</pre></td>
+<td><pre>2010-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>len sum now includes short lines + long lines
+</pre></td>
+</tr>
+<tr>
+<td><pre>4535</pre></td>
+<td><pre>2010-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>norm each segment of v1c separately
+</pre></td>
+</tr>
+<tr>
+<td><pre>4536</pre></td>
+<td><pre>2010-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>link es and ls-long norm
+</pre></td>
+</tr>
+<tr>
+<td><pre>4537</pre></td>
+<td><pre>2010-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renorm: link all line guys, just separate blob
+</pre></td>
+</tr>
+<tr>
+<td><pre>4538</pre></td>
+<td><pre>2010-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sepnorm all
+</pre></td>
+</tr>
+<tr>
+<td><pre>4539</pre></td>
+<td><pre>2010-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renorm all (no sep)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4540</pre></td>
+<td><pre>2010-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>es + ls + v1smax is default
+</pre></td>
+</tr>
+<tr>
+<td><pre>4541</pre></td>
+<td><pre>2010-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>i_netin_mod works with feat sal now
+</pre></td>
+</tr>
+<tr>
+<td><pre>4542</pre></td>
+<td><pre>2010-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix color dogs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4543</pre></td>
+<td><pre>2010-07-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* color blobs normalize separately -- gives a lot more color representation
+* max_rel_filter for dog
+</pre></td>
+</tr>
+<tr>
+<td><pre>4544</pre></td>
+<td><pre>2010-07-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>binocular geom bugfix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4545</pre></td>
+<td><pre>2010-07-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>center the v1c gaussian + fix v1b, m stencil weights
+</pre></td>
+</tr>
+<tr>
+<td><pre>4546</pre></td>
+<td><pre>2010-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>defaults on v1region + binocular fixes there etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>4547</pre></td>
+<td><pre>2010-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>found and fixed the spurious T-junction problem -- was due to two bright ends along a line
+giving 2/3 activity + any weak off-polarity action = pretty strong overall activity.  restrict
+ends to never contribute more than center, to solve this problem.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4548</pre></td>
+<td><pre>2010-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>uint converters causing problems again in qt 4.7.0 -- just nukem!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4549</pre></td>
+<td><pre>2010-07-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>kwta in v1 all working and debugged -- ready to test
+</pre></td>
+</tr>
+<tr>
+<td><pre>4550</pre></td>
+<td><pre>2010-07-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1kwta raw_pct
+</pre></td>
+</tr>
+<tr>
+<td><pre>4551</pre></td>
+<td><pre>2010-07-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* v1c_kwta on by default.
+* reorder leabraunitspec so all optional stuff is after all main stuff..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4552</pre></td>
+<td><pre>2010-07-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>end stop fix -- works great in vis_test now!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4553</pre></td>
+<td><pre>2010-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* local neighborhood inhib spread -- needed to eliminate "ghosting" from surround tuning dog's
+and thus eliminate spurious end-stop along lines that are not at 90deg angles..
+* fixed bug with end stop + length sum guys: used wrong index variable..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4554</pre></td>
+<td><pre>2010-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>defaults for len, end stop -- seems good</pre></td>
+</tr>
+<tr>
+<td><pre>4555</pre></td>
+<td><pre>2010-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed maddening scrolling bug in qt 4.7.0 beta 1 tree view -- scroll to end after creating new children -- fix is in itreewidget.cpp itemExpanded -- scrollTo last child.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4556</pre></td>
+<td><pre>2010-07-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>binoc disparity grouping working pretty well -- need rfields to be long and skinny instead of
+x,y symmetric, so that constraints spread along horizontal lines moreso than vertical.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4557</pre></td>
+<td><pre>2010-07-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>binocular grouping algorithm working very well now with new default params
+see vis_test 3d for example
+</pre></td>
+</tr>
+<tr>
+<td><pre>4558</pre></td>
+<td><pre>2010-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix disparity bug -- was not clearing the proper rep!
+* v1 kwta optimization for gp_g = 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>4559</pre></td>
+<td><pre>2010-07-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults + start on invert</pre></td>
+</tr>
+<tr>
+<td><pre>4560</pre></td>
+<td><pre>2010-07-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>invertfilters first pass + hiding of img guys on main retina proc
+</pre></td>
+</tr>
+<tr>
+<td><pre>4561</pre></td>
+<td><pre>2010-07-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>blob blur occlude</pre></td>
+</tr>
+<tr>
+<td><pre>4562</pre></td>
+<td><pre>2010-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>2x scaling of pct_noise on blob blur occlude</pre></td>
+</tr>
+<tr>
+<td><pre>4563</pre></td>
+<td><pre>2010-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taMath max_next, min_next</pre></td>
+</tr>
+<tr>
+<td><pre>4564</pre></td>
+<td><pre>2010-07-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>raw_pct default = 1</pre></td>
+</tr>
+<tr>
+<td><pre>4565</pre></td>
+<td><pre>2010-07-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>full_colors flag on virt env objects -- allows more detailed material specifications.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4566</pre></td>
+<td><pre>2010-07-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed very annoying scroll-to-top on deletion of items from treeviews (programs, browser)
+-- autoscroll in the abstractitemview was the problem (qtreeview) -- reverted to first
+item when current selected item was removed -- just bracket the deletion with autoscroll
+off / on.
+* also added a scroll-to-first item for first auto expand (expand default) to counteract
+autoscroll to end -- so only at start with initial expand it stays at the top
+</pre></td>
+</tr>
+<tr>
+<td><pre>4567</pre></td>
+<td><pre>2010-07-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new blob blur code -- fully occludes within the central sigma blob region -- should prevent 
+the miraculous reconstruction from weak edge detector signals.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4568</pre></td>
+<td><pre>2010-07-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed auto-scroll-to-end on qconsole -- wasn't there really before
+* recalibrated the blob blur noise and allow to go to edges -- was exluding edges and 
+leabra was using these very effectively!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4569</pre></td>
+<td><pre>2010-07-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass at new setup -- looking promising despite a few bugs remaining..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4570</pre></td>
+<td><pre>2010-07-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc imgproc
+</pre></td>
+</tr>
+<tr>
+<td><pre>4571</pre></td>
+<td><pre>2010-07-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New v1 filters all working -- see vis_test for latest tests and example settings
+</pre></td>
+</tr>
+<tr>
+<td><pre>4572</pre></td>
+<td><pre>2010-07-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>precompute v1c es and ls features, then do spatial integ -- was wasting lots of time double-
+computing these..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4573</pre></td>
+<td><pre>2010-07-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pre-grouping in v1 filters that effectively re-creates prior situation, but does it
+*after* all the critical low-level matching operations -- also optimized various
+computational steps so that they are done separately and not within an 
+overlapping spatial integration loop, where effectively everything gets done twice.
+this is a nice factor of 2 speedup.  we should be back to good speeds now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4574</pre></td>
+<td><pre>2010-08-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* back to original 4x4 grouping structure prior to v1c computation in filters
+* now includes 2 middle rows as otherwise it was never sampling 1/2 of the input!
+* in the vis_test, line_len = 5 is important for crisp end stop results -- with 4
+get a lot of false end stops, probably due to neigh_d thing -- we'll see what
+the highvis sims have to say about all this..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4575</pre></td>
+<td><pre>2010-08-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>filters update to use gaussian weights on v1s stencils, allows (hopefully) symmetric v1s
+dog lines around ctr point (i.e., odd length) but also shorter effective length than straight
+uniform weighting (length = 4 works better than 5 in highvis sims)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4576</pre></td>
+<td><pre>2010-08-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new filters in place, but still getting two detectors in the 3d case on vis_test -- 
+kenneth please check this out and see what's going on -- look at stencils to see
+the actual filters..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4577</pre></td>
+<td><pre>2010-08-03</pre></td>
+<td><pre>latimerk</pre></td>
+<td><pre>filter bug fix</pre></td>
+</tr>
+<tr>
+<td><pre>4578</pre></td>
+<td><pre>2010-08-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* v1s has both on and off rfields, spaced 2 apart to match typical dog spacing 
+* more elaborate neighborhood integration stuff -- of uncertain value
+* prog_integ flag in v1s_specs causes on * off to be integrated value instead of just
+a raw sum of the two separate values -- makes things MUCH more selective -- good??
+</pre></td>
+</tr>
+<tr>
+<td><pre>4579</pre></td>
+<td><pre>2010-08-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no self inhibition in neigh inhib
+</pre></td>
+</tr>
+<tr>
+<td><pre>4580</pre></td>
+<td><pre>2010-08-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1 filters use gabors -- looking very clean..  should all be functional -- still need to
+think more about end stopping though.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4581</pre></td>
+<td><pre>2010-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new end stopping, other misc fixes for filters, including disparity far fallback.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4582</pre></td>
+<td><pre>2010-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more end stop fixes -- now fully robust against off-angle lines -- def use default params..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4583</pre></td>
+<td><pre>2010-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1b max
+</pre></td>
+</tr>
+<tr>
+<td><pre>4584</pre></td>
+<td><pre>2010-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow len sum without end stop -- index err..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4585</pre></td>
+<td><pre>2010-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* plugin configure is not a link, is executable
+* plugin orig_src_path.txt created, used for finding actual wizard
+* fixed netview ctrl panel layout/scroll issues that prevented history from being accesssed
+* added layer min font size to prevent guys from getting too small
+</pre></td>
+</tr>
+<tr>
+<td><pre>4586</pre></td>
+<td><pre>2010-08-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* select edit fm args program element -- allows setting of select edit value from startup arg
+* also fixes to PSearchConfigData and RecordData -- more options to do what you need
+* test/param_search.proj updated with latest changes
+* taMisc::ShortName and taMisc::RemoveVowels
+</pre></td>
+</tr>
+<tr>
+<td><pre>4587</pre></td>
+<td><pre>2010-08-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* console_options GUI_DOCK -- this is a separable option rather than inverse of TRACKING
+* viewers_tmp for root and project -- all tmp windows go here instead of root.viewers
+* taMisc::FullArgStringName, ShortName, RemoveVowels
+* find window Qt::WindowStaysOnTopHint turned off
+* console sends a signal when new input comes in, triggers QApplication::alert
+</pre></td>
+</tr>
+<tr>
+<td><pre>4588</pre></td>
+<td><pre>2010-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* datatable grid view pgup/dn buttons etc
+* datatable copy/paste undo + undo / redo fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4589</pre></td>
+<td><pre>2010-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new blob occlusion: looks smoother -- gaussian round the outside, not chopped-off gaussian
+* AdEx Brette &amp; Gurstner 2005 spiking activation function in Leabra
+</pre></td>
+</tr>
+<tr>
+<td><pre>4590</pre></td>
+<td><pre>2010-08-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GELIN g_e linear activation function -- seems pretty good..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4591</pre></td>
+<td><pre>2010-08-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>gelin for v1 filters
+</pre></td>
+</tr>
+<tr>
+<td><pre>4592</pre></td>
+<td><pre>2010-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>THIS IS A 5.1 release candidate -- please test extensively!!!
+* grid view now has vcr-style nav guys (much cleaner than prev impl) for row AND col!
+* added guard for autoscroll fix crash
+* added option for separate norm of v1c guys
+</pre></td>
+</tr>
+<tr>
+<td><pre>4593</pre></td>
+<td><pre>2010-08-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>install + new gelin as flag compatible with NXX1
+</pre></td>
+</tr>
+<tr>
+<td><pre>4594</pre></td>
+<td><pre>2010-08-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>minor ubuntu pkg fix</pre></td>
+</tr>
+<tr>
+<td><pre>4595</pre></td>
+<td><pre>2010-08-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>update ChangeLog</pre></td>
+</tr>
+<tr>
+<td><pre>4596</pre></td>
+<td><pre>2010-08-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final commit for version 5.1.0: demo updates and gelin in v1filters
+</pre></td>
+</tr>
+<tr>
+<td><pre>4597</pre></td>
+<td><pre>2010-08-26</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>AdjustContrast function. Seems to work.
+TODO: Watch for RGB images, rescale image to match original background color?
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4598</pre></td>
+<td><pre>2010-08-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Version Change to 5.1.1
+* v1s_specs.gain and v1c_specs.es_gain -- gain params for when not using renorm..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4599</pre></td>
+<td><pre>2010-08-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vm_mod_max -- units never reach max..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4600</pre></td>
+<td><pre>2010-08-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated defaults based on current results</pre></td>
+</tr>
+<tr>
+<td><pre>4601</pre></td>
+<td><pre>2010-08-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>blob blur occlude: occlude with *background* color, not average of local color -- looks like
+it will eliminate all spurious edges!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4603</pre></td>
+<td><pre>2010-08-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* v1filters now exclusively use gelin, and got rid of raw_pct field -- simplification is
+key and these are now working really well -- final final status.. 
+* got rid of i_netin_mod in leabra, which was a failed attempt to do what gelin does
+naturally..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4604</pre></td>
+<td><pre>2010-08-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updating defaults to be more compatible with gelin: gelin is now default for new
+projects (unless a pre-5.1.1 project is being loaded), and also clamp.max_plus in layerspec
+is a new default too (5.1.1 and above).
+</pre></td>
+</tr>
+<tr>
+<td><pre>4605</pre></td>
+<td><pre>2010-09-01</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>updated AdjustContrast to use Randy's bg color getter
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4606</pre></td>
+<td><pre>2010-09-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pbwm updates: mnt_toggle, mnt_wins, updt_gch
+* BioParams now has gelin option that does one-step gelin updating (still need to updt layerspec)
+* updated mac pkg
+* netstru history shows index in more intuitive order
+* tree_indent should be 12 for qt 4.7 -- now set back to that as default
+</pre></td>
+</tr>
+<tr>
+<td><pre>4607</pre></td>
+<td><pre>2010-09-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bias spec now shows up properly in spec explorer
+</pre></td>
+</tr>
+<tr>
+<td><pre>4608</pre></td>
+<td><pre>2010-09-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Guard against making connections if prjn-&gt;from is null.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4611</pre></td>
+<td><pre>2010-09-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* use canonical file_name for adding to recent files (e.g., if spec'd on cmd line)
+* clampspec Defaults_init was not being called -- vals not properly init'd
+</pre></td>
+</tr>
+<tr>
+<td><pre>4612</pre></td>
+<td><pre>2010-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Layer::Lesion()  and ::UnLesion() call Network::UpdtAfterNetMod -- key for making it actually take effect</pre></td>
+</tr>
+<tr>
+<td><pre>4613</pre></td>
+<td><pre>2010-09-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't force save units on save recover file - not really that useful..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4614</pre></td>
+<td><pre>2010-09-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>NetView::HistMovie and Movie button on history -- instant home movies of your favorite network
+dynamics with one push of the button!! :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4615</pre></td>
+<td><pre>2010-09-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* project SelectT3ViewTabNo/Name
+* Translate, Scale, Rotate, CopyColorFrom in VE
+</pre></td>
+</tr>
+<tr>
+<td><pre>4616</pre></td>
+<td><pre>2010-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>setInteractionModeOn function for view guys
+</pre></td>
+</tr>
+<tr>
+<td><pre>4617</pre></td>
+<td><pre>2010-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* no more interaction ghosts on ve world camera renders! 
+* failed again to get multisample antialiasing to work in offscreen rendering :(
+</pre></td>
+</tr>
+<tr>
+<td><pre>4618</pre></td>
+<td><pre>2010-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>good antialiasing finally in the camera renders!  in the end it was pretty easy but it sure
+took a while to figure it out.  T3OffscreenRenderer class encapsulates everything.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4619</pre></td>
+<td><pre>2010-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attachwait debugging arg
+</pre></td>
+</tr>
+<tr>
+<td><pre>4620</pre></td>
+<td><pre>2010-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to fix dmem recv cons issues
+</pre></td>
+</tr>
+<tr>
+<td><pre>4621</pre></td>
+<td><pre>2010-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>had to revert the antialiasing camera -- is causing major problems when rendering different
+scenes.  Tried a lot of stuff to fix it.. not luck yet.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4622</pre></td>
+<td><pre>2010-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4623</pre></td>
+<td><pre>2010-10-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>energy output map for vis filters
+</pre></td>
+</tr>
+<tr>
+<td><pre>4624</pre></td>
+<td><pre>2010-10-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>proj fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4625</pre></td>
+<td><pre>2010-10-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>prevent small_batch_n_eff from being less than 1</pre></td>
+</tr>
+<tr>
+<td><pre>4626</pre></td>
+<td><pre>2010-10-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* precision and recall stats in Network (Layer, unit)
+* license selector in Project + default owner, org in defaults (taMisc)
+* added row/col to gridview vcr nav
+* select edit has auto_edit = true by default
+</pre></td>
+</tr>
+<tr>
+<td><pre>4627</pre></td>
+<td><pre>2010-10-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>SoOffscreenRenderQt -- new QT-based class for offscreen rendering -- finally does the
+full multisample rendering with proper context switching so that Coin remains happy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4628</pre></td>
+<td><pre>2010-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>QTGLFramebufferObject version -- still leaking..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4629</pre></td>
+<td><pre>2010-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed memory leak!  was due to using new unique context id every time -- just get one and
+use it.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4630</pre></td>
+<td><pre>2010-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* license_def now added to prefs -- default type of license to apply
+* NO_LIC = All Rights Reserved
+* note about using same sized cameras for perf reasons when there are multilpe cams.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4631</pre></td>
+<td><pre>2010-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>breakup long string for windows</pre></td>
+</tr>
+<tr>
+<td><pre>4632</pre></td>
+<td><pre>2010-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vastly improved disparity matching algorithm -- does a good job on quite challenging examples
+</pre></td>
+</tr>
+<tr>
+<td><pre>4633</pre></td>
+<td><pre>2010-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed layer_type updating for HIDDEN by wiz
+* fixed initial selection of interaction mode = off in t3view
+</pre></td>
+</tr>
+<tr>
+<td><pre>4634</pre></td>
+<td><pre>2010-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed detection of string items without native headers in LoadAnyData
+</pre></td>
+</tr>
+<tr>
+<td><pre>4635</pre></td>
+<td><pre>2010-11-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed PFCLayerSpec::GetSNrThalLayers -- only look for marker cons!!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4636</pre></td>
+<td><pre>2010-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* acts_top_k and fixes to netin stats -- wasn't averaging properly before
+* Step tooltip much better
+* new improved cycletrajstat
+</pre></td>
+</tr>
+<tr>
+<td><pre>4637</pre></td>
+<td><pre>2010-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taDataProc::TransposeRowsToCols and ColsToRows
+</pre></td>
+</tr>
+<tr>
+<td><pre>4638</pre></td>
+<td><pre>2010-11-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of optional filter code and added v1b_dsp_out output
+</pre></td>
+</tr>
+<tr>
+<td><pre>4639</pre></td>
+<td><pre>2010-11-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* refactoring of v1b_specs and v1b_dsp_specs, and energy is now v1s strictly
+* added V1S_MEAN option but haven't implemented yet -- may be good for textures..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4640</pre></td>
+<td><pre>2010-11-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>disparity stats to monitor quality of disparity computation
+</pre></td>
+</tr>
+<tr>
+<td><pre>4641</pre></td>
+<td><pre>2010-11-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraMultCopyLayerSpec and new better defaults on imgproc v1b_specs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4642</pre></td>
+<td><pre>2010-11-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>support v1c_specs.spat_rf = 1,1 -- no spatial integration in v1c layer..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4643</pre></td>
+<td><pre>2010-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* v1b_specs.disp_spacing is float, allows for non-overlapping disps
+* one_minus option on multcopy layerspec -- inhibitory dynamic allows units to be on until turned off
+</pre></td>
+</tr>
+<tr>
+<td><pre>4644</pre></td>
+<td><pre>2010-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mult_gain
+</pre></td>
+</tr>
+<tr>
+<td><pre>4645</pre></td>
+<td><pre>2010-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1b_dsp_specs.out_nodsp -- no disparity info output
+</pre></td>
+</tr>
+<tr>
+<td><pre>4646</pre></td>
+<td><pre>2010-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed out_nodsp -- else = 0.0!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4647</pre></td>
+<td><pre>2010-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix color button to use std fixed height -- otherwise was overflowing edit dialog lines
+</pre></td>
+</tr>
+<tr>
+<td><pre>4648</pre></td>
+<td><pre>2010-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new unit group rendering code and virt_groups infrastructure -- much faster!!
+* DO NOT USE at this point as it is not backwards compatible and considerable extra
+work needs to be done to support it in Leabra -- just checking in a checkpoint.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4649</pre></td>
+<td><pre>2010-12-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed residual display bugs for non-3D_BLOCKS cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>4650</pre></td>
+<td><pre>2010-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Leabra completely converted to virtual group interface -- man that was a lot of work!
+* NOTHING HAS BEEN TESTED except basic kwta inhib -- lots of testing needed before ready to
+use..  and some stuff definitely still needs to be fixed..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4651</pre></td>
+<td><pre>2010-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes to various group-based projection specs.
+* hv std works with virtual unit groups
+* pbwm works (simple test case)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4652</pre></td>
+<td><pre>2010-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final fixes for prjnspecs and other misc thigns -- everything seems to be working so going live
+on lab machines with this version!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4653</pre></td>
+<td><pre>2010-12-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>created PBWMUnGpData and general mech for custom ungp_data for diff layspecs -- finally
+allows fixing of very lame "misc_state" parameters -- pbwm models will need a bit more 
+updating if they track these state values.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>4654</pre></td>
+<td><pre>2010-12-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated pbwm trial monitor for new ungp_data
+</pre></td>
+</tr>
+<tr>
+<td><pre>4655</pre></td>
+<td><pre>2010-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major revamp of imgproc code to support network computation of disparity values that can
+be fed back into computing V1C in a weighted fashion as a function of disparity..
+* also added VERSION_SKEW option to verbose_load, and QUIET now doesn't show these..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4656</pre></td>
+<td><pre>2010-12-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc emer imgproc etc fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4657</pre></td>
+<td><pre>2010-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>diff thr on v1b_dsp_in
+</pre></td>
+</tr>
+<tr>
+<td><pre>4658</pre></td>
+<td><pre>2010-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes for cleaning up depth parsing
+* dsp filtering weighted by max activation -- no activity until some features get active
+* finally figured out how to get virt env to update always even if not visible!!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4659</pre></td>
+<td><pre>2010-12-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>simple multiplicative effect of fg on v1c -- prev logic was too contorted.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4660</pre></td>
+<td><pre>2010-12-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spread the dsp around from in -- fill in more of the pattern
+</pre></td>
+</tr>
+<tr>
+<td><pre>4661</pre></td>
+<td><pre>2010-12-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed v1b_dsp weighting to max, binary, and only put in edge for left edge.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4662</pre></td>
+<td><pre>2010-12-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* nuke dsp edge filtering entirely -- probably doing more harm than good
+* use wider sampling of dsp for case where dsp_in geom is same as pre (med res)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4663</pre></td>
+<td><pre>2010-12-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>extensive rewrite of disparity matching code -- much more robust, bugs fixed, etc.
+based on a single unified weight value integration for both count and distance factors.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4664</pre></td>
+<td><pre>2010-12-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* virtenv objs need to be visible on use_gui, not gui_active -- then it works with -nowin
+* make LoadData (Native) accesssible in Data menu of datatable -- MUCH faster for massive
+files
+</pre></td>
+</tr>
+<tr>
+<td><pre>4665</pre></td>
+<td><pre>2010-12-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* monitors now automatically call ResetDataTableCols when SetNetwork is called -- makes sense and never is a problem AFAIK
+* v1c border to get further away from edge effects.. and stats fix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4666</pre></td>
+<td><pre>2010-12-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix V1C no gp4 border alignment bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>4667</pre></td>
+<td><pre>2010-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new dsp gain mechanism for disparity filtering of v1c inputs -- previous system was way too
+severe and discrete -- now much more graded..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4668</pre></td>
+<td><pre>2010-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't let dsp wt go &lt; 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>4669</pre></td>
+<td><pre>2010-12-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more v1b stats
+</pre></td>
+</tr>
+<tr>
+<td><pre>4670</pre></td>
+<td><pre>2011-01-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major and hopefully final overhaul of 3d disparity matching algorithm -- looks good in emer tests
+</pre></td>
+</tr>
+<tr>
+<td><pre>4671</pre></td>
+<td><pre>2011-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one logical extreme for disparity processing -- much more localist.  trying to avoid
+undue influences from neighbors, but seems that this is necessary to resolve ambiguity
+as this system is not working very well.  need to think about a smarter kind of grouping
+perhaps..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4672</pre></td>
+<td><pre>2011-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleaned-up window aggregation case -- not actually any better.  reverting to previous..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4673</pre></td>
+<td><pre>2011-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert to 4671</pre></td>
+</tr>
+<tr>
+<td><pre>4674</pre></td>
+<td><pre>2011-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Final minimalist config for now -- give it a try.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4675</pre></td>
+<td><pre>2011-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hint mode for updating v1b fg computations
+</pre></td>
+</tr>
+<tr>
+<td><pre>4676</pre></td>
+<td><pre>2011-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for dynamic alloc of arrays -- use new instead.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4677</pre></td>
+<td><pre>2011-01-17</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added icon resource to windows builds</pre></td>
+</tr>
+<tr>
+<td><pre>4678</pre></td>
+<td><pre>2011-01-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Rendered multi-resolution icons</pre></td>
+</tr>
+<tr>
+<td><pre>4679</pre></td>
+<td><pre>2011-01-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>The 32x32 and 16x16 .ico files should be obsolete, but re-rendered them just in case.  Prefer emergent.ico, which contains icons at 16, 32, 48, and 128 sizes</pre></td>
+</tr>
+<tr>
+<td><pre>4680</pre></td>
+<td><pre>2011-01-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated param search project</pre></td>
+</tr>
+<tr>
+<td><pre>4681</pre></td>
+<td><pre>2011-01-19</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 566: fixed installer icons and desktop shortcut</pre></td>
+</tr>
+<tr>
+<td><pre>4682</pre></td>
+<td><pre>2011-01-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* V1LateralContourPrjnSpec -- lateral v1 connectivity
+* VisDisparityPrjnSpec -- improved disparity prjn
+</pre></td>
+</tr>
+<tr>
+<td><pre>4683</pre></td>
+<td><pre>2011-01-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>massive time saving for deleting LeabraUnits by not tracking tokens for float_CircBuffer</pre></td>
+</tr>
+<tr>
+<td><pre>4684</pre></td>
+<td><pre>2011-01-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>end stop prjn spec.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4685</pre></td>
+<td><pre>2011-01-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1231: Added color scheme presets</pre></td>
+</tr>
+<tr>
+<td><pre>4686</pre></td>
+<td><pre>2011-01-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fixes, including updating from UserData in data tables when table layout changes.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4687</pre></td>
+<td><pre>2011-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>gprf with one to one weights</pre></td>
+</tr>
+<tr>
+<td><pre>4688</pre></td>
+<td><pre>2011-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1s_maxpols -- max over polarities
+</pre></td>
+</tr>
+<tr>
+<td><pre>4689</pre></td>
+<td><pre>2011-01-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v1 feat inhib layerspec</pre></td>
+</tr>
+<tr>
+<td><pre>4690</pre></td>
+<td><pre>2011-01-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix bug in v1layerspec with creeping inhib.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4691</pre></td>
+<td><pre>2011-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VisDisparityLayerSpec -- compute disparity product directly in layerspec -- can keep using
+activation dynamics etc.
+* added off flag to projections -- keep structure but just don't connect..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4692</pre></td>
+<td><pre>2011-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all the pieces to train on objrec -- multiscale disparity in VisDisparityLayerSpec, and DspAng
+versions of stuff in imgproc..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4693</pre></td>
+<td><pre>2011-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>VisDisparityLayerSpec cycles_updt
+</pre></td>
+</tr>
+<tr>
+<td><pre>4694</pre></td>
+<td><pre>2011-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use MIN instead of sqrt(l * r)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4695</pre></td>
+<td><pre>2011-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* struct update for tadatagen
+* show_false_code for if/ifelse -- needs tree update
+</pre></td>
+</tr>
+<tr>
+<td><pre>4696</pre></td>
+<td><pre>2011-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for ProgExprBase parsing exprs even when parent progel is off..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4697</pre></td>
+<td><pre>2011-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* lsq option on leabra xcal
+* spread neigh on dsp application to objrec -- hopefully fixes problem??
+</pre></td>
+</tr>
+<tr>
+<td><pre>4698</pre></td>
+<td><pre>2011-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>apply dsp_ang_in across all angles -- seems like that was the problem?
+</pre></td>
+</tr>
+<tr>
+<td><pre>4699</pre></td>
+<td><pre>2011-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed nasty hard-to-find bug in NetMonitor where changing data table structure would not
+be monitored the first time -- was due to removing orphans *after* updating channel specs
+-- now removes orphans then updates channel specs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4700</pre></td>
+<td><pre>2011-02-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1247: fixed syntax error caused by missing quote in css code when verbose flag turned on for return statement</pre></td>
+</tr>
+<tr>
+<td><pre>4701</pre></td>
+<td><pre>2011-02-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1246: don't pass /MP and /bigobj to rc.exe</pre></td>
+</tr>
+<tr>
+<td><pre>4702</pre></td>
+<td><pre>2011-02-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>win build scripts</pre></td>
+</tr>
+<tr>
+<td><pre>4703</pre></td>
+<td><pre>2011-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* aka_types
+* HAS_CONDTREE
+* if comment update
+DAN: TODO: please update wiki on comment directives with CONDTREE etc. and AKA for typedefs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4704</pre></td>
+<td><pre>2011-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>IMPORTANT fix to netinput rescaling logic: mainly affects situation with both inhib and excite inputs -- now normalized separately -- shouldn't affect many projs except anomolous switch one.  Also however, the renorm of bias weights was not properly taking into account lesioned vs. non-lesioned layers -- this might change some existing models that have lesioned layers/projections</pre></td>
+</tr>
+<tr>
+<td><pre>4705</pre></td>
+<td><pre>2011-02-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use_ang flag for fg filt
+</pre></td>
+</tr>
+<tr>
+<td><pre>4706</pre></td>
+<td><pre>2011-02-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn. checkin yesterday (r4703) is BOGUS -- had incorrect bias weight scaling.
+fixed now.  anything run between say 11pm last night and now must be re-run!!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4707</pre></td>
+<td><pre>2011-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra_flex_progs = generic version of new flexible program structure</pre></td>
+</tr>
+<tr>
+<td><pre>4708</pre></td>
+<td><pre>2011-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Fixed DataColsFmArgs to use data_var name instead of actual data table name
+* new HAS_CONDTREE code needed an ExpandDefault to actually show code
+* final flex progs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4709</pre></td>
+<td><pre>2011-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dsp_ang mode for disparity matching in imgproc -- should speed things up..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4710</pre></td>
+<td><pre>2011-02-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>isYes gone, use askUser instead.  fixed enviro checking.</pre></td>
+</tr>
+<tr>
+<td><pre>4711</pre></td>
+<td><pre>2011-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cross res working
+</pre></td>
+</tr>
+<tr>
+<td><pre>4712</pre></td>
+<td><pre>2011-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cross res: fix for not making larger guys look like smaller res ones..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4713</pre></td>
+<td><pre>2011-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for unwanted scrolling for ifelse show_false_code thing (CONDTREE)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4714</pre></td>
+<td><pre>2011-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor changes to flex
+</pre></td>
+</tr>
+<tr>
+<td><pre>4715</pre></td>
+<td><pre>2011-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>program flags + click vals
+</pre></td>
+</tr>
+<tr>
+<td><pre>4716</pre></td>
+<td><pre>2011-02-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1262: put svn revision number into the About dialog</pre></td>
+</tr>
+<tr>
+<td><pre>4717</pre></td>
+<td><pre>2011-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump revision to 5.1.2 -- needed for detecting SAVE_VAL flag auto-set upon loading in
+prog vars
+* auto-set SAVE_VAL to be true for older &lt;= 5.1.1 projects -- otherwise loading overwrites
+SAVE_VAL default and no program vars are saved!  nothing works after that.
+* misc other minor cleanup of prior flag changes, strings needed "" in init, etc.
+* fix to vec_histogram function to set geom as needed.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4718</pre></td>
+<td><pre>2011-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes to histogram code to have min/max args
+</pre></td>
+</tr>
+<tr>
+<td><pre>4719</pre></td>
+<td><pre>2011-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DO NOT USE THIS CODE!!!!!!   Intermediate checkin of brand new save format using names
+instead of indicies!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4720</pre></td>
+<td><pre>2011-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New name-based path saving/loading all working at least for very complex emer test
+project and several others!
+* only projects are saved with name paths -- everything else is same as before with
+numeric indicies.  thus, only projects are svn mergable.  this is necessary to enable
+loading back over sub-objects -- name based loading does NOT allow proper overwriting
+of existing objects.
+* must NOT create default objects when taMisc::is_loading -- thse will not get properly
+overwritten during project loading!
+* user is prevented from loading a project file over top of existing project object.
+* suggest Dan test merging and fix remainder of merge issues (windows number formats),
+then we should be good to go.. GetValStr and SetValStr routines are key points of entry
+for fixing these issues.
+* also, changing the name of an object automatically ensures that names are unique within
+list scope.
+* never redefine GetName() for an object that actually has a name field, to return
+something other than the actual name!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4721</pre></td>
+<td><pre>2011-02-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>trying to get debian packages built for ubuntu</pre></td>
+</tr>
+<tr>
+<td><pre>4722</pre></td>
+<td><pre>2011-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of GetName stuff for views
+</pre></td>
+</tr>
+<tr>
+<td><pre>4723</pre></td>
+<td><pre>2011-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>turn flag off after saving for safety
+</pre></td>
+</tr>
+<tr>
+<td><pre>4724</pre></td>
+<td><pre>2011-02-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Updates for debian / Ubuntu packaging</pre></td>
+</tr>
+<tr>
+<td><pre>4725</pre></td>
+<td><pre>2011-02-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>script to run on grey for deb package update</pre></td>
+</tr>
+<tr>
+<td><pre>4726</pre></td>
+<td><pre>2011-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed recursive call of MakeElNamesUnique
+* got rid of auto-create of wiz layer els during loading -- no auto create during loading!!
+* added gradedness params to disparity computations
+</pre></td>
+</tr>
+<tr>
+<td><pre>4727</pre></td>
+<td><pre>2011-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed 1268 -- slider double click
+* fixed 1266 -- find urls
+* replaced all extant GetPath_Long calls with GetPathNames
+* tried to fix CONDTREE with ExpandDefautUnder -- not quite.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4728</pre></td>
+<td><pre>2011-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* should hopefully fix BugID:1261 -- added taMisc::in_gui_multi_action -- context for when
+multiple gui actions are being executed (cut/paste on multiple objs, etc) -- should not do
+auto gui updates in this case -- control routines set this flag off for the last item, so
+that will trigger the final update.
+* also discovered that gui Duplicate was not saving undo -- fixed that, while adding
+appropriate multi context.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4729</pre></td>
+<td><pre>2011-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dynamic biases in PBWM
+</pre></td>
+</tr>
+<tr>
+<td><pre>4730</pre></td>
+<td><pre>2011-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>reduced default bias strength.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4731</pre></td>
+<td><pre>2011-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>aka types support</pre></td>
+</tr>
+<tr>
+<td><pre>4732</pre></td>
+<td><pre>2011-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* If replaced with IfElse, AKA type function works
+* fixed loading of multiple of same proj
+</pre></td>
+</tr>
+<tr>
+<td><pre>4733</pre></td>
+<td><pre>2011-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Cleaned up the name uniquifying code a bit, and fixed change type bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>4734</pre></td>
+<td><pre>2011-02-17</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>taMath d_sub_a and roc. intermed checkin, still needs float interface and DataProc interface (to remove ta_datatable.h dependency). Seems to be working.</pre></td>
+</tr>
+<tr>
+<td><pre>4735</pre></td>
+<td><pre>2011-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>* roc computes more statistics such as d_sub_a and d_prime
+* most of the interface in place for computing A' (Area under ROC curve). Use GSL to fit a polynomial to the ROC curve, then compute the area under that function. Not quite working yet..
+* generalized vec_regress_multi_lin_polynomial does a fit using any degree of polynomial.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4736</pre></td>
+<td><pre>2011-02-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 378, bug 1240: format float and doubles consistently across platforms when saving project files -- this improves svn diff/merge-ability</pre></td>
+</tr>
+<tr>
+<td><pre>4740</pre></td>
+<td><pre>2011-02-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major cleanup of imgproc code -- nuke old disparity computation and impl new features of
+min(l,r) version which is now current.  Still need to test and do avgsum
+</pre></td>
+</tr>
+<tr>
+<td><pre>4741</pre></td>
+<td><pre>2011-02-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>4742</pre></td>
+<td><pre>2011-02-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1236: Needed one more change to be able to edit local variables.  Also fixed some code that generated enum value strings.</pre></td>
+</tr>
+<tr>
+<td><pre>4743</pre></td>
+<td><pre>2011-02-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1240: Write the Emergent SVN revision number in the .proj files.</pre></td>
+</tr>
+<tr>
+<td><pre>4744</pre></td>
+<td><pre>2011-02-20</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>- taDataAnal::ReceiverOperatingCharacteristic. Computes A' for provided signal and noise distributions. See http://grey.colorado.edu/emergent/index.php/Receiver_Operating_Characteristic.
+- Another cleanup checking will be needed. In particular, taMath_double methods should be ported to taMath_float.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4745</pre></td>
+<td><pre>2011-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>avgsum fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4746</pre></td>
+<td><pre>2011-02-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1277: provide feedback when project is saved by removing title-bar asterisk</pre></td>
+</tr>
+<tr>
+<td><pre>4747</pre></td>
+<td><pre>2011-02-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1240: fixed vars[] and gp[] to use string indices.</pre></td>
+</tr>
+<tr>
+<td><pre>4748</pre></td>
+<td><pre>2011-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* min is default fg-&gt;v1c filter function -- consistent with entire disparity chain, simpler, performs same
+* fixed separate leabra netin scaling: uses wt_scale.old to revert to previous behavior
+and also new eq's were broken -- was normalizing 2x!!  doh.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4749</pre></td>
+<td><pre>2011-02-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>tried getting scripts to work on Ubuntu 10.10.  Quarter works, Emergent doesn't.</pre></td>
+</tr>
+<tr>
+<td><pre>4750</pre></td>
+<td><pre>2011-02-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>MOTU scripts try to use --build to indicate architecture, so don't use it as a shortcut for --build-dir</pre></td>
+</tr>
+<tr>
+<td><pre>4751</pre></td>
+<td><pre>2011-02-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>adjust script to work on Ubuntu 10.04 too; needs testing...</pre></td>
+</tr>
+<tr>
+<td><pre>4752</pre></td>
+<td><pre>2011-02-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>ok if emergent/quarter not installed; use correct arch</pre></td>
+</tr>
+<tr>
+<td><pre>4753</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Changes so MOTU script will at least try to build Emergent; whether it works remains to be seen</pre></td>
+</tr>
+<tr>
+<td><pre>4754</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Need hg for quarter download; no test target for Emergent</pre></td>
+</tr>
+<tr>
+<td><pre>4755</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>let user pick svn revision of emergent to build; don't depend on specific version of libjpeg; handle 'make distclean' in emergent/Makefile since emergent/build directory may not even have been created yet when debuild tries to make distclean</pre></td>
+</tr>
+<tr>
+<td><pre>4756</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>moving MOTU scripts to the package subdir</pre></td>
+</tr>
+<tr>
+<td><pre>4757</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>updates to ubuntu build scripts to work on all ubuntus</pre></td>
+</tr>
+<tr>
+<td><pre>4758</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>minor change to clear the apt-get cache</pre></td>
+</tr>
+<tr>
+<td><pre>4759</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>final changes to one-click(-ish) packaging script -- don't try to use dpkg before it's installed; formatting stuff</pre></td>
+</tr>
+<tr>
+<td><pre>4760</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>update script for lucid and maverick and to use 'latest' repo vs. 'main'.</pre></td>
+</tr>
+<tr>
+<td><pre>4761</pre></td>
+<td><pre>2011-02-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>safety check for scale = 0 -- doesn't work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4762</pre></td>
+<td><pre>2011-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed major problem for multiple prjns from same layer -- names were forced to be identical
+and this made it lose one on loading
+* endl and flush in css now always call FlushConsole too -- should fix any hangs in Print
+or PrintVar program elements.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4763</pre></td>
+<td><pre>2011-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add single - versions of some args -- I can never remember which and does it really matter!?
+</pre></td>
+</tr>
+<tr>
+<td><pre>4764</pre></td>
+<td><pre>2011-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>IMPORTANT FIX: now that group names are being saved in paths, they need to be valid C names
+otherwise they can screw up the path parsing (happend on er_v1lat proj)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4765</pre></td>
+<td><pre>2011-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taList, group no longer #NO_UPDATE_AFTER, so that..
+* UAE can do MakeElNamesUnique upon loading pre-5.1.2 projects
+* also BaseSpec_Group now properly inherits from taGroup&lt;BaseSpec&gt; instead of taBase_Group
+</pre></td>
+</tr>
+<tr>
+<td><pre>4766</pre></td>
+<td><pre>2011-03-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1240: set #NO_SAVE on many attributes (mostly statistical counters) so they don't show up in merges/diffs.  Also initialized DataSelectEl::cmp so it doesn't show up with a garbage value in a diff when unused.</pre></td>
+</tr>
+<tr>
+<td><pre>4767</pre></td>
+<td><pre>2011-03-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1287: treat ProgVar and taList the same as taNBase for purposes of making unique names; this allows Mike's project to be opened at least, although there are still warnings.</pre></td>
+</tr>
+<tr>
+<td><pre>4768</pre></td>
+<td><pre>2011-03-02</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1287: reverted prior checkin (r4767) and resolved TODO: made ProgVar and taList_impl inherit from taNBase instead of taOBase.  There are still Dump_Load_Path_parent warnings.</pre></td>
+</tr>
+<tr>
+<td><pre>4769</pre></td>
+<td><pre>2011-03-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1287: don't need C-name-ifying logic in taList_impl::UAE since it's already done by taNBase::UAE which is inherited now.</pre></td>
+</tr>
+<tr>
+<td><pre>4770</pre></td>
+<td><pre>2011-03-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1277: change "[*]" in window titles to "*" if file is modified, otherwise remove.</pre></td>
+</tr>
+<tr>
+<td><pre>4771</pre></td>
+<td><pre>2011-03-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1287: removed name attributes from taNBase subclasses; made some taOBase subclasses with name attributes inherit from taNBase instead; made SetName() C-ify the name and made sure SetName was being called in some cases instead of setting name= directly.</pre></td>
+</tr>
+<tr>
+<td><pre>4772</pre></td>
+<td><pre>2011-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* moved ScaleRange* to netstru_qtso, changed to taObase with var_name, FindCheck to find by name
+* added taMisc::find_not_in_quotes to find a character not inside quotes -- use now for 
+safe path parsing during loading -- should avoid all probs with loading! ;)
+* T3SavedView no longer NO_UAE
+</pre></td>
+</tr>
+<tr>
+<td><pre>4773</pre></td>
+<td><pre>2011-03-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>update windows build script to have debug build option</pre></td>
+</tr>
+<tr>
+<td><pre>4774</pre></td>
+<td><pre>2011-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed emergent_ti.cpp -- was lame double-include -- also fixed svn rev guy to work with windows paths under nmake</pre></td>
+</tr>
+<tr>
+<td><pre>4775</pre></td>
+<td><pre>2011-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use plain numeric paths for clip ops -- names were getting confused somehow..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4776</pre></td>
+<td><pre>2011-03-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* win build script: bail on cmake error
+* netdata.h: #undef GROUP_NAME to fix include-order error</pre></td>
+</tr>
+<tr>
+<td><pre>4777</pre></td>
+<td><pre>2011-03-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* now that SetName calls StringCVar, need to make corresponding call when searching for a matching path.
+* bumped version to 5.1.3 for release</pre></td>
+</tr>
+<tr>
+<td><pre>4778</pre></td>
+<td><pre>2011-03-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>updated ubuntu build scripts for 5.1.3</pre></td>
+</tr>
+<tr>
+<td><pre>4779</pre></td>
+<td><pre>2011-03-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>typo fix</pre></td>
+</tr>
+<tr>
+<td><pre>4780</pre></td>
+<td><pre>2011-03-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>script to run on grey to put win/mac installers in ftp directory with correct permissions/owner</pre></td>
+</tr>
+<tr>
+<td><pre>4781</pre></td>
+<td><pre>2011-03-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* ta_base: Use default display names for items in the program editor, rather than their unique names.
+* ta_datatable: Pass col_nm into New call rather than assigning manually after the call.  This at least gets the name normalized to a C-name by SetName, but then MakeNameUnique bails since owner is null.
+* ta_qtviewer: Minor code reduction.</pre></td>
+</tr>
+<tr>
+<td><pre>4782</pre></td>
+<td><pre>2011-03-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bump to version 5.1.4 for release</pre></td>
+</tr>
+<tr>
+<td><pre>4783</pre></td>
+<td><pre>2011-03-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>ubuntu script updates</pre></td>
+</tr>
+<tr>
+<td><pre>4784</pre></td>
+<td><pre>2011-03-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>updated win build script:
+* allow user to choose svn revision to build from
+* offer to rename the package to include the svn revision number at the end of release builds</pre></td>
+</tr>
+<tr>
+<td><pre>4785</pre></td>
+<td><pre>2011-03-15</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1288: prevent null reference read; allows unit.proj to open and run.</pre></td>
+</tr>
+<tr>
+<td><pre>4786</pre></td>
+<td><pre>2011-03-15</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1288: fixed the Size() null-reference access problem in Size() rather than in callers of Size() (reverts r4785)</pre></td>
+</tr>
+<tr>
+<td><pre>4787</pre></td>
+<td><pre>2011-03-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>turn off netmon output for lesioned layers and off projections
+</pre></td>
+</tr>
+<tr>
+<td><pre>4788</pre></td>
+<td><pre>2011-03-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1298: only copy rows (data) when doing in-place Permute(), ReplicateRows(), SelectRows(), SelectCols(), otherwise the data_flags get reset.</pre></td>
+</tr>
+<tr>
+<td><pre>4789</pre></td>
+<td><pre>2011-03-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1288: added some AKAs for act_geom, scaled_act_geom, max_size</pre></td>
+</tr>
+<tr>
+<td><pre>4790</pre></td>
+<td><pre>2011-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes for XCAL learning under PVLV and PBWM -- turns out that PVLV no longer uses
+soft bounding, whereas XCAL does in a different way -- just made those relevant
+conspecs fully CHL for dwt and compute_weights functions -- avoids any issues
+now fully compatible and verified.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4791</pre></td>
+<td><pre>2011-03-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* bug 1298: added Copy_DataOnly function in lieu of src-&gt;data = dest-&gt;data; -- copies 'rows' as well as 'data'.
+* win build script: added rebuild option on compilation failure</pre></td>
+</tr>
+<tr>
+<td><pre>4792</pre></td>
+<td><pre>2011-03-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bumped version to 5.1.5 for release</pre></td>
+</tr>
+<tr>
+<td><pre>4793</pre></td>
+<td><pre>2011-03-22</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>RandomPrjnSpec - randomly connects sender to receiver with probability p_con</pre></td>
+</tr>
+<tr>
+<td><pre>4794</pre></td>
+<td><pre>2011-03-22</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>minor</pre></td>
+</tr>
+<tr>
+<td><pre>4795</pre></td>
+<td><pre>2011-03-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>first draft of Mac build script</pre></td>
+</tr>
+<tr>
+<td><pre>4796</pre></td>
+<td><pre>2011-03-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for BugId:1300 -- cr lf stuff in taMisc::read_tag
+* better docs for CopyWeights
+</pre></td>
+</tr>
+<tr>
+<td><pre>4797</pre></td>
+<td><pre>2011-03-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>motion filtering kinda sorta working
+</pre></td>
+</tr>
+<tr>
+<td><pre>4798</pre></td>
+<td><pre>2011-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* important fix for MultBias in matrix -- gp_sz = nunits / 2 -- biasing not right from
+virtual_groups onward as result of this.
+* major reorg of imgproc motion filtering code -- only partially complete -- do not use.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4799</pre></td>
+<td><pre>2011-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Motion filters working great -- required subtracting out still features first!
+* finally put in fix for end stop stencils -- v1c_specs.es_old flag to be used ONLY for 
+backward compat with old weight files.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4800</pre></td>
+<td><pre>2011-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fully functional motion filters!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4801</pre></td>
+<td><pre>2011-03-29</pre></td>
+<td><pre>michol</pre></td>
+<td><pre>updated text through OutputData</pre></td>
+</tr>
+<tr>
+<td><pre>4802</pre></td>
+<td><pre>2011-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>speed optimization for motion
+</pre></td>
+</tr>
+<tr>
+<td><pre>4803</pre></td>
+<td><pre>2011-03-31</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1311: check for out-of-memory condition &amp; try to recover; this is only a partial fix as there are other places OOM could occur.</pre></td>
+</tr>
+<tr>
+<td><pre>4804</pre></td>
+<td><pre>2011-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Unit::GetLayerAbsPos replaced with LayerLogPos and LayerDispPos based on corresponding
+functions at the layer level, which are unambiguous.  this was planned but never executed
+as part of the virt_groups cleanup, and some residual uses of GetLayerAbsPos were used
+in an ambiguous way.
+* MatrixGradRFPrjnSpec fixed by using LayerLogPos functions, and also getting the proper unit
+index within the unit group for virt_groups case, per Tom's comments.
+* matrix mnt_mnt_nogo_fun bias changed to minus sign per Trent's comments.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4805</pre></td>
+<td><pre>2011-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>snrthal act, act_eq are ALWAYS = act_m2 after a gating event has taken place -- makes it 
+easier to see what is going on, and should help generativity model..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4806</pre></td>
+<td><pre>2011-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add flag snrthal.act_is_gate to control act = act_m2 behavior in snrthal, justin case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4807</pre></td>
+<td><pre>2011-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* do not build or connect lesioned layers -- this was probably assumed to be the case before
+but it wasn't -- now is.. should be more efficient as we use this feature in larger models.
+had to also disable various checks -- could still be some issues if a layer is checked 
+in some other context.
+* fix for no bias in GradRF prjn (per Tom Hazy's comments).
+</pre></td>
+</tr>
+<tr>
+<td><pre>4808</pre></td>
+<td><pre>2011-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for k_pos_noise and random go noise -- wasn't using unit_idxs[i]</pre></td>
+</tr>
+<tr>
+<td><pre>4809</pre></td>
+<td><pre>2011-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>modified behavior of l_sq on LeabraUnitspec::act_avg -- key for xcal -- should be better
+at preventing over-activation of units.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4810</pre></td>
+<td><pre>2011-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* turned off various #NO_SAVE flags -- fixed_range in datatable_qtso for graphs
+* and in netstru.h and leabra.h for things that are actually NOT statistics outputs but
+rather parameters for statistics computations -- this seemd to fix the bug I was having
+in an XCAL project (self_org) not working after saving and reloading.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4811</pre></td>
+<td><pre>2011-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more minor #NO_SAVE undos from thorough audit of those mods -- should have looked more 
+carefully before.. :(
+</pre></td>
+</tr>
+<tr>
+<td><pre>4812</pre></td>
+<td><pre>2011-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>enclose ProgramCallVar in { } so that multiple can co-exist in same program.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4813</pre></td>
+<td><pre>2011-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal act_avg.thr_min plus new defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>4814</pre></td>
+<td><pre>2011-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* weight specs in prjnspecs now have #CONDEDIT_ON_init_wts so you know that needs to be turned
+on to make them work..
+* TiledGpRFOneToOne has gauss_sig weights -- needed to better replicate imgproc code
+* added Init_Weights button to network.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4815</pre></td>
+<td><pre>2011-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* thr_min = .01 by default -- no obvious benefit for higher values, and &gt; .01 can cause dead
+units in v1rf project..
+* init proper defaults on switching learn_rule in unitspecs too
+</pre></td>
+</tr>
+<tr>
+<td><pre>4816</pre></td>
+<td><pre>2011-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sum_rf option for v1c
+</pre></td>
+</tr>
+<tr>
+<td><pre>4817</pre></td>
+<td><pre>2011-04-11</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bump version to 5.1.6 for release</pre></td>
+</tr>
+<tr>
+<td><pre>4818</pre></td>
+<td><pre>2011-04-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Minor fix to Mac build script to produce .dmg files with -mac64 suffix, vs. -mac</pre></td>
+</tr>
+<tr>
+<td><pre>4819</pre></td>
+<td><pre>2011-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MAJOR rewrite of ta_imgproc -- cleaned up tons of cruft and implemented new end stop
+setup.  a few things missing and end stopping needs some fixes to deal with off-angle lines
+</pre></td>
+</tr>
+<tr>
+<td><pre>4820</pre></td>
+<td><pre>2011-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>V2 filters, end stopping largely fixed -- still some issues..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4821</pre></td>
+<td><pre>2011-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix autoscale range on vistest
+</pre></td>
+</tr>
+<tr>
+<td><pre>4823</pre></td>
+<td><pre>2011-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spat integ layer all in place -- allows simple testing of existing feature sets in 
+existing lvis-like framework.  vis_test now has a network for testing layer dynamics
+</pre></td>
+</tr>
+<tr>
+<td><pre>4828</pre></td>
+<td><pre>2011-04-15</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added reminder to create svn tag when releasing new version of Emergent.</pre></td>
+</tr>
+<tr>
+<td><pre>4829</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>SI_V1S_SG -- new equivalent of V1S_MAX
+</pre></td>
+</tr>
+<tr>
+<td><pre>4830</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spat integ kwta -- was in old code, missing from new, seems probably key..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4831</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>combine v1smax and v1c stuff prior to kwta.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4832</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>(skip) testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4833</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>(skip) testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4834</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>(skip) testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4835</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>(skip) testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4836</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>(skip) testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4837</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4838</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing new svnnotify commit feature (skip)</pre></td>
+</tr>
+<tr>
+<td><pre>4839</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing new svnnotify commit feature</pre></td>
+</tr>
+<tr>
+<td><pre>4840</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing new svnnotify commit feature (skip)</pre></td>
+</tr>
+<tr>
+<td><pre>4841</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>testing new svnnotify commit feature (quiet)</pre></td>
+</tr>
+<tr>
+<td><pre>4842</pre></td>
+<td><pre>2011-04-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>(quiet)</pre></td>
+</tr>
+<tr>
+<td><pre>4843</pre></td>
+<td><pre>2011-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed orientation bug in bo units -- vertical was inconsistent with rest
+* first pass impl of the Zhaoping lateral cons -- man was that a hard one.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4844</pre></td>
+<td><pre>2011-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed orientation bug in bo units -- vertical was inconsistent with rest
+* first pass impl of the Zhaoping lateral cons -- man was that a hard one.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4845</pre></td>
+<td><pre>2011-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fully rewritten Zhaoping lateral BO connectivity prjn + minor tweaks to T detector algo
+everything looks good enough to test it out now!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4846</pre></td>
+<td><pre>2011-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor proj updt and init params</pre></td>
+</tr>
+<tr>
+<td><pre>4847</pre></td>
+<td><pre>2011-04-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1288: Call RecomputeGeometry on load so flat_geom gets set properly; otherwise it is always 1/1/1 and projects such as Detector don't work right.</pre></td>
+</tr>
+<tr>
+<td><pre>4848</pre></td>
+<td><pre>2011-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* opposite bo weights for v2bo prjn
+* feedforward bo weights in imgproc -- faster feed-forward coding!  should help?
+</pre></td>
+</tr>
+<tr>
+<td><pre>4849</pre></td>
+<td><pre>2011-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tweaks
+</pre></td>
+</tr>
+<tr>
+<td><pre>4850</pre></td>
+<td><pre>2011-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use stencil for bo lateral prjn -- much faster!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4851</pre></td>
+<td><pre>2011-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>&lt;= con_thr hopefully same on linux and mac
+</pre></td>
+</tr>
+<tr>
+<td><pre>4852</pre></td>
+<td><pre>2011-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>length sum neighbor inhibition -- pretty key for cleaning up lots of redundant lines
+</pre></td>
+</tr>
+<tr>
+<td><pre>4853</pre></td>
+<td><pre>2011-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sravg_delay -- layers can have delayed sravg starting points -- could be key to getting earlier layers to learn on earlier transients that don't otherwise work for later layers
+</pre></td>
+</tr>
+<tr>
+<td><pre>4854</pre></td>
+<td><pre>2011-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>FgBoGroupingPrjnSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>4855</pre></td>
+<td><pre>2011-04-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added a low0 option to kwta inhib params
+* moved Init_Weights button to more appropriate place in network button list
+</pre></td>
+</tr>
+<tr>
+<td><pre>4856</pre></td>
+<td><pre>2011-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ellipses in fg bo grouping prjn</pre></td>
+</tr>
+<tr>
+<td><pre>4857</pre></td>
+<td><pre>2011-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed fg bo prjn sign bug and updated defaults</pre></td>
+</tr>
+<tr>
+<td><pre>4858</pre></td>
+<td><pre>2011-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix to imgproc from Dan
+* added SRAvgCaiSynDepCon* for Ken &amp; Seth
+</pre></td>
+</tr>
+<tr>
+<td><pre>4859</pre></td>
+<td><pre>2011-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraUnitSpec default params are now identical to "BioParams" button -- best defaults for
+gelin activation function.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4860</pre></td>
+<td><pre>2011-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* simple version of veto inhib/activation dynamics for both imgproc and leabraunitspec
+</pre></td>
+</tr>
+<tr>
+<td><pre>4861</pre></td>
+<td><pre>2011-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>removed veto experiment
+</pre></td>
+</tr>
+<tr>
+<td><pre>4862</pre></td>
+<td><pre>2011-05-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1347: 
+* Removed "..." button from taFBase's file_name member; also made this HIDDEN so it doesn't confuse users on DataTable properties tab.
+* Added "..." button to DataTable's auto_load_file member.
+* Clarified tooltip comments for DataTable.
+* Fixed bug with file dialogs: when multiple file types are supported, extensions were missing periods.
+* Fixed bug with tooltip generation: enum values marked NO_SHOW (e.g., DataTable's HAS_CALCS) were being described.
+* Fixed Windows build script to build in different directories.</pre></td>
+</tr>
+<tr>
+<td><pre>4863</pre></td>
+<td><pre>2011-05-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1347: minor: make taFBase::file_name #EXPERT instead of #HIDDEN</pre></td>
+</tr>
+<tr>
+<td><pre>4864</pre></td>
+<td><pre>2011-05-07</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Latest version of Quarter (as of 2011-03-29) is incompatible with the version of Coin installed thru apt-get on Ubuntu (3.1.2-1), so use the last known good version of Quarter instead</pre></td>
+</tr>
+<tr>
+<td><pre>4865</pre></td>
+<td><pre>2011-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>XCalSRAvgConSpec -- con-level sravg computation for xcal
+</pre></td>
+</tr>
+<tr>
+<td><pre>4866</pre></td>
+<td><pre>2011-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes for multiple depths in V2
+</pre></td>
+</tr>
+<tr>
+<td><pre>4867</pre></td>
+<td><pre>2011-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fully depth-ready versions of things, including depthification from fg input
+</pre></td>
+</tr>
+<tr>
+<td><pre>4868</pre></td>
+<td><pre>2011-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4869</pre></td>
+<td><pre>2011-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sig bug fix in depth from fg function: wasn't clearing out old stuff.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4870</pre></td>
+<td><pre>2011-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ImgMask version of fg depth function
+</pre></td>
+</tr>
+<tr>
+<td><pre>4871</pre></td>
+<td><pre>2011-05-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Updated build script to work on Ubuntu Natty</pre></td>
+</tr>
+<tr>
+<td><pre>4872</pre></td>
+<td><pre>2011-05-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Quarter requires pkg-config to build correctly; updated grey-side script to make dist for natty</pre></td>
+</tr>
+<tr>
+<td><pre>4873</pre></td>
+<td><pre>2011-05-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GpAggregatePrjnSpec fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4874</pre></td>
+<td><pre>2011-05-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bug 1261: Don't create an iterator if there is no view, since it causes a crash during drag-n-drop.</pre></td>
+</tr>
+<tr>
+<td><pre>4875</pre></td>
+<td><pre>2011-05-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to GpAggPrjn -- use &lt; instead of &lt;= for su_geo
+</pre></td>
+</tr>
+<tr>
+<td><pre>4876</pre></td>
+<td><pre>2011-05-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* renamed GpAggregatePrjnSpec -&gt; GpMapConvergePrjnSpec
+* debugging of aggvars..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4877</pre></td>
+<td><pre>2011-05-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4878</pre></td>
+<td><pre>2011-05-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rmv debugging -- cnt_err fixed</pre></td>
+</tr>
+<tr>
+<td><pre>4879</pre></td>
+<td><pre>2011-05-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>su_m_thr option in leabra
+</pre></td>
+</tr>
+<tr>
+<td><pre>4880</pre></td>
+<td><pre>2011-05-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use kwta.pct in !su_act_m
+</pre></td>
+</tr>
+<tr>
+<td><pre>4881</pre></td>
+<td><pre>2011-05-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lthr_su_avg_l -- use long term average to modulate lthr in xcal, move lthr_max to xcal
+and use at final stage -- this is where it really matters
+</pre></td>
+</tr>
+<tr>
+<td><pre>4882</pre></td>
+<td><pre>2011-05-15</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Profile Guided Optimization script</pre></td>
+</tr>
+<tr>
+<td><pre>4883</pre></td>
+<td><pre>2011-05-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>V2toV4DepthPrjnSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>4884</pre></td>
+<td><pre>2011-05-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>v2 to v4 is connections, not weights
+</pre></td>
+</tr>
+<tr>
+<td><pre>4885</pre></td>
+<td><pre>2011-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert to l_thr_max at unit level, use secondary multiplier for su_avg_l
+</pre></td>
+</tr>
+<tr>
+<td><pre>4886</pre></td>
+<td><pre>2011-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor condshow fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4887</pre></td>
+<td><pre>2011-05-19</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>added new GpMapDivergePrjnSpec class, modeled on Converge version; also added TestWarning! for unit geom match within unit groups to Converge::Connect_impl()</pre></td>
+</tr>
+<tr>
+<td><pre>4888</pre></td>
+<td><pre>2011-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal param updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>4889</pre></td>
+<td><pre>2011-05-19</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bumped version to 5.1.7 for seedling release; next icarus release will be 5.1.8.</pre></td>
+</tr>
+<tr>
+<td><pre>4890</pre></td>
+<td><pre>2011-05-19</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>First pass of BrainView code; mostly just getting new files hooked into build system and some minor changes from void* to T3DataView*.  Definitely nowhere near complete but probably shouldn't break anything.</pre></td>
+</tr>
+<tr>
+<td><pre>4891</pre></td>
+<td><pre>2011-05-19</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added NewNetViewHelper class to remove some redundant code; general cleanup.</pre></td>
+</tr>
+<tr>
+<td><pre>4892</pre></td>
+<td><pre>2011-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of brain view</pre></td>
+</tr>
+<tr>
+<td><pre>4893</pre></td>
+<td><pre>2011-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New XCal defaults -- got rid of all the various options and standardizing on new setup
+</pre></td>
+</tr>
+<tr>
+<td><pre>4894</pre></td>
+<td><pre>2011-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compiling again.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4895</pre></td>
+<td><pre>2011-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert xcal changes -- turns out there was a bug in test case and it is not working..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4896</pre></td>
+<td><pre>2011-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually impl su_m
+</pre></td>
+</tr>
+<tr>
+<td><pre>4897</pre></td>
+<td><pre>2011-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sigmoid based long time-average threshold function -- perhaps more sane?
+</pre></td>
+</tr>
+<tr>
+<td><pre>4898</pre></td>
+<td><pre>2011-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lthr_sig_fx_off
+</pre></td>
+</tr>
+<tr>
+<td><pre>4899</pre></td>
+<td><pre>2011-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>doh forgot lmix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4900</pre></td>
+<td><pre>2011-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of non-fixed version of lthr_sig -- not useful
+</pre></td>
+</tr>
+<tr>
+<td><pre>4901</pre></td>
+<td><pre>2011-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lookup table for xcal lthr sigmoid function
+</pre></td>
+</tr>
+<tr>
+<td><pre>4902</pre></td>
+<td><pre>2011-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>avoid infinite loop..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4903</pre></td>
+<td><pre>2011-05-25</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Latest ROC code.</pre></td>
+</tr>
+<tr>
+<td><pre>4904</pre></td>
+<td><pre>2011-05-25</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>Gosselin &amp; Schyns style Bubbles
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4905</pre></td>
+<td><pre>2011-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>FgBoWedgeGpPrjnspec
+</pre></td>
+</tr>
+<tr>
+<td><pre>4906</pre></td>
+<td><pre>2011-05-31</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Latest plugin code for LIBLINEAR</pre></td>
+</tr>
+<tr>
+<td><pre>4907</pre></td>
+<td><pre>2011-05-31</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Add liblinear 1.8</pre></td>
+</tr>
+<tr>
+<td><pre>4908</pre></td>
+<td><pre>2011-05-31</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Listed linear.o and tron.o and sources and cmake automagically does the right thing with them. Model now trains\!</pre></td>
+</tr>
+<tr>
+<td><pre>4909</pre></td>
+<td><pre>2011-05-31</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>make liblinear quieter</pre></td>
+</tr>
+<tr>
+<td><pre>4910</pre></td>
+<td><pre>2011-05-31</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Basic train / predict working!
+
+* PrintProblem - debug printout of a problem
+* PrintParam - debug printout of a param
+* ModelToDataTable - converts a model struct to a DataTable
+* DataTableToModel - converts a DataTable rep of a model back to a model
+* Cleanup - configurable free guy
+* Predict - prints each vector of data in a table using model
+</pre></td>
+</tr>
+<tr>
+<td><pre>4911</pre></td>
+<td><pre>2011-05-31</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>* Support LIBLINEAR's built-in cross validation.
+* Return probability estimates for each class by default (sweet!)
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4912</pre></td>
+<td><pre>2011-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* relnet computations in leabra obey prjn off flag
+* gemult option for gelin activations: a very simple way to get more gradedness (leabra and imgproc)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4913</pre></td>
+<td><pre>2011-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rebuild scripts finally</pre></td>
+</tr>
+<tr>
+<td><pre>4914</pre></td>
+<td><pre>2011-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rebuild -t ssh args and grey dbg</pre></td>
+</tr>
+<tr>
+<td><pre>4915</pre></td>
+<td><pre>2011-06-02</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>* Major refactoring. New paradigm allows all available system memory to be used:
+1) Stream data to file in LIBSVM format
+2) Save the DataTable to file
+3) Reset the DataTable
+3) Read the LIBSVM format data from file into a problem
+4) Train/Predict/CrossValidate etc.
+5) Destroy LIBSVM data
+6) Read back in the DataTable. 
+
+If above process has already been done in the past including ".libsvm"
+in the fname will skip to loading the LIBSVM format data.
+
+* Implemented precision, recall, fmeasure statistics based on probability mass
+
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4916</pre></td>
+<td><pre>2011-06-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Use the project filename as a base URL for local docs, so it's possible to load external stylesheets, images, javascript, etc. using a relative path.</pre></td>
+</tr>
+<tr>
+<td><pre>4918</pre></td>
+<td><pre>2011-06-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>One more fix to allow relative paths to work.</pre></td>
+</tr>
+<tr>
+<td><pre>4921</pre></td>
+<td><pre>2011-06-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>support for building from existing tag</pre></td>
+</tr>
+<tr>
+<td><pre>4923</pre></td>
+<td><pre>2011-06-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>at least partial fix for BugId::1389 -- CheckConnect was checking from-&gt;lesioned before checking
+from != NULL.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4924</pre></td>
+<td><pre>2011-06-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually show the prjn-level netin stuff..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4925</pre></td>
+<td><pre>2011-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updn thr
+</pre></td>
+</tr>
+<tr>
+<td><pre>4926</pre></td>
+<td><pre>2011-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bcm multiplicative integration of err and bcm</pre></td>
+</tr>
+<tr>
+<td><pre>4927</pre></td>
+<td><pre>2011-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of xcal experiments -- convergence in progress here..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4928</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added basic file mgmt funs to taMisc -- MakeDir, Rename etc. -- easiest place to access
+this for programs
+* fully revamped V2 BO coding -- operates on polarity sensitive inputs -- does curves
+first and then does iterations of line extension -- keeps everything at v1pi max value
+-- looks a LOT better, tho still potentially too variable.. we'll see.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4929</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>alloc more max cnt
+</pre></td>
+</tr>
+<tr>
+<td><pre>4930</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>some header cleanup -- could this be it?
+</pre></td>
+</tr>
+<tr>
+<td><pre>4931</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't register the TA version of Variant
+</pre></td>
+</tr>
+<tr>
+<td><pre>4932</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Scrapped hand-coded heapsort in css_machine.cpp; added code to check cssSpace lists for duplicates and log warning; general cleanup in other files.</pre></td>
+</tr>
+<tr>
+<td><pre>4933</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>GetTempPath is a reserved word on Windows (appears to be a macro, argh!), changed name of new function to GetTemporaryPath.</pre></td>
+</tr>
+<tr>
+<td><pre>4934</pre></td>
+<td><pre>2011-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>exclude taBase on css type import too -- already there -- thanks Dan!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4937</pre></td>
+<td><pre>2011-06-17</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Changes to support 64-bit windows builds using VS 2010.  Doesn't work yet, but the 2008 stuff still seems to work, so making an interim commit.</pre></td>
+</tr>
+<tr>
+<td><pre>4938</pre></td>
+<td><pre>2011-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>long time-average activation is computed by asymmetric up/down time constants by default now
+-- removed hackier older mechanism.  this new one has been validated on all current hard
+models and performs as well or better. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>4939</pre></td>
+<td><pre>2011-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final ambig cleanup pass in ff v2 bo
+</pre></td>
+</tr>
+<tr>
+<td><pre>4940</pre></td>
+<td><pre>2011-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>important fix for g_bar_e != 1.0 and gelin (e.g., unit.proj) -- u-&gt;net already includes
+g_bar.e so don't divide by it in Compute_EThresh
+</pre></td>
+</tr>
+<tr>
+<td><pre>4941</pre></td>
+<td><pre>2011-06-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleaned up LeabraUnitSpec.act options and comments, removed gemult
+</pre></td>
+</tr>
+<tr>
+<td><pre>4942</pre></td>
+<td><pre>2011-06-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added taMisc::doc_text_scale -- additional prefs-level scaling for doc/help/web 
+pages -- 10pt is just a bit too small on my laptop..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4943</pre></td>
+<td><pre>2011-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes for running networks that are saved with project and have NO_BUILD -- BugID:1288
+</pre></td>
+</tr>
+<tr>
+<td><pre>4944</pre></td>
+<td><pre>2011-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for CONDTREE on gp_output_names and SHOW_TREE of unit_names
+</pre></td>
+</tr>
+<tr>
+<td><pre>4947</pre></td>
+<td><pre>2011-06-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Changes for 64-bit Win builds.  Still doesn't work yet, just an interim commit.</pre></td>
+</tr>
+<tr>
+<td><pre>4948</pre></td>
+<td><pre>2011-06-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Moved all 3rd party tools out of the emergent source directory, and into a directory that is specific to the Visual Studio version and architecture, so eventually one source directory will support compiling for 32-bit and 64-bit as well as debug vs. release.</pre></td>
+</tr>
+<tr>
+<td><pre>4950</pre></td>
+<td><pre>2011-07-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Mark old libquarter package for removal since it conflicts with the new libquarter0 package</pre></td>
+</tr>
+<tr>
+<td><pre>4951</pre></td>
+<td><pre>2011-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Added TiledGpMapConverge prjn spec -- for V4-&gt;IT prjns -- also moved GpMapConverge &amp; Diverge
+to netstru_extra from leabra_extra given that there is nothing leabra about them.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4954</pre></td>
+<td><pre>2011-07-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>AVG_NET_ACT inhibition as a new form of kwta inhib that seems to work pretty well for spiking nets</pre></td>
+</tr>
+<tr>
+<td><pre>4955</pre></td>
+<td><pre>2011-07-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update comments for ext_flag and hard_clamped</pre></td>
+</tr>
+<tr>
+<td><pre>4956</pre></td>
+<td><pre>2011-07-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra layer ungp_data was not setting all elements to be of the proper data type
+effect was that PBWM models were not having PBWM specific data for first stripe!
+yikes!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4957</pre></td>
+<td><pre>2011-07-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>init sravg_vals in net sravg init</pre></td>
+</tr>
+<tr>
+<td><pre>4958</pre></td>
+<td><pre>2011-07-15</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>more direct implementation of Gabriel Kreiman's bubbles code
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4959</pre></td>
+<td><pre>2011-07-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't factor in g_bar.i into ithr (assume = 1), so that actual g_bar.i can modulate
+overall level of inhibition in kwta computations..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4960</pre></td>
+<td><pre>2011-07-19</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>Minor changes to doc comments BubbleMask args
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4961</pre></td>
+<td><pre>2011-07-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>misc changes for 64-bit build</pre></td>
+</tr>
+<tr>
+<td><pre>4968</pre></td>
+<td><pre>2011-07-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>merged r4967 from emergent/tags/5.1.7-win64 to trunk: tweaks to allow win32 and win64 builds to both be installed without conflict</pre></td>
+</tr>
+<tr>
+<td><pre>4969</pre></td>
+<td><pre>2011-07-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ecout stub commented out</pre></td>
+</tr>
+<tr>
+<td><pre>4970</pre></td>
+<td><pre>2011-07-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>give do_cmake.bat unique name so win32/win64 builds can be concurrent and not interfere</pre></td>
+</tr>
+<tr>
+<td><pre>4973</pre></td>
+<td><pre>2011-07-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>feedforward balance restoring mechanism in LeabraUnitSpec.ff_bal
+</pre></td>
+</tr>
+<tr>
+<td><pre>4974</pre></td>
+<td><pre>2011-08-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>t_r refractory time period for spiking -- seems to be key for getting spiking to work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4975</pre></td>
+<td><pre>2011-08-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* spiking params updated to latest defaults
+* first draft of Hippo QuadPhase impl
+</pre></td>
+</tr>
+<tr>
+<td><pre>4976</pre></td>
+<td><pre>2011-08-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Install Qt imageformats plugins, specifically so the jpeg library is available -- needed for seedling project to work on win64.</pre></td>
+</tr>
+<tr>
+<td><pre>4977</pre></td>
+<td><pre>2011-08-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>delta rule learning for hip quadphase</pre></td>
+</tr>
+<tr>
+<td><pre>4978</pre></td>
+<td><pre>2011-08-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixes for hippo quadphase single trial
+</pre></td>
+</tr>
+<tr>
+<td><pre>4979</pre></td>
+<td><pre>2011-08-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quadphase: CA3 -&gt; CA1 off again in plus phase
+</pre></td>
+</tr>
+<tr>
+<td><pre>4980</pre></td>
+<td><pre>2011-08-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quadphase: ECin -&gt; CA1 modulation, plus recall_decay
+</pre></td>
+</tr>
+<tr>
+<td><pre>4981</pre></td>
+<td><pre>2011-08-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quadphase hip: got rid of superflous act_p2 phase, improved stats
+</pre></td>
+</tr>
+<tr>
+<td><pre>4982</pre></td>
+<td><pre>2011-08-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use_test_mode flag</pre></td>
+</tr>
+<tr>
+<td><pre>4983</pre></td>
+<td><pre>2011-08-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>XCalCHLConSpec -- can do std LeabraCHL when otherwise running XCAL -- very useful for hippo..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4984</pre></td>
+<td><pre>2011-08-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix dump loading for converting old files
+</pre></td>
+</tr>
+<tr>
+<td><pre>4985</pre></td>
+<td><pre>2011-08-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>scalar value testing project</pre></td>
+</tr>
+<tr>
+<td><pre>4986</pre></td>
+<td><pre>2011-08-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new (= old) pv_units params in PBWM defaults, plus a few other things
+</pre></td>
+</tr>
+<tr>
+<td><pre>4987</pre></td>
+<td><pre>2011-09-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final pbwm wizard fixes..  ready to release!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4988</pre></td>
+<td><pre>2011-09-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bump revision to 5.2.0 in prep for release</pre></td>
+</tr>
+<tr>
+<td><pre>4989</pre></td>
+<td><pre>2011-09-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one last param change in pbwm wizard..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4990</pre></td>
+<td><pre>2011-09-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ak!  one more pbwm param tweak.  now done..
+</pre></td>
+</tr>
+</table>
+</body></html>

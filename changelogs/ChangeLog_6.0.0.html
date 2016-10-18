@@ -1,0 +1,1715 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 6.0.0
+  Revisions 5230:5574</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>5230</pre></td>
+<td><pre>2012-01-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update version to 5.3.1 to commence new additions
+* added DynEnumType::EnumsFromDataTable function -- populate enums from a data table column, so you can then choose rows of the table via an enum chooser instead of having to type in a string.  very handy for flex progs config_id choosing.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5231</pre></td>
+<td><pre>2012-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new variant of gelin, which takes MIN of previous vm-based activation function and gelin,
+instead of using the vm trajectory proportion thing -- seems to work well and captures idea that vm-based represents first spiking behavior (initial activation wave), while gelin represents sustained max firing
+</pre></td>
+</tr>
+<tr>
+<td><pre>5232</pre></td>
+<td><pre>2012-01-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new version of gelin with dt.vm time constant on act and use vm-thr for vm &lt;= thr
+</pre></td>
+</tr>
+<tr>
+<td><pre>5255</pre></td>
+<td><pre>2012-02-03</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>fix_contrast option in BubbleMask
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5259</pre></td>
+<td><pre>2012-02-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>defaults to old_gelin = false, gain = 100
+</pre></td>
+</tr>
+<tr>
+<td><pre>5261</pre></td>
+<td><pre>2012-02-16</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fix iRegexpDialog alignment problem on Mac.</pre></td>
+</tr>
+<tr>
+<td><pre>5263</pre></td>
+<td><pre>2012-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no_plus_test must be off for pbwm!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5274</pre></td>
+<td><pre>2012-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>NETIN_PER_PRJN minimally functional -- enables lots of other intersting things..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5275</pre></td>
+<td><pre>2012-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NETIN_PER_PRJN all working
+* inhibition now switched over to using NETIN_PER_PRJN
+* added spike_i_buf for integration of inhibitory conductances from spiking
+</pre></td>
+</tr>
+<tr>
+<td><pre>5276</pre></td>
+<td><pre>2012-02-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* variant taBase pointers now do proper setting from strings in various contexts,
+including saving and loading datatables (fixes Michol's bug)
+* taMath::hits_fa -- computes hits, false alarms, and pct correct from d' (dprime)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5277</pre></td>
+<td><pre>2012-02-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spike and act buffs are dynamically allocated -- saves a lot of space if not used
+</pre></td>
+</tr>
+<tr>
+<td><pre>5278</pre></td>
+<td><pre>2012-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added network-&gt;pvlv_tonic_da value that can be manipulated for tonic dopamine levels
+* code in MatrixLayerSpec to manipulate tonic_da as function of err and global nogo to
+  encourage more go firing after errors, and especially when everything is firing nogo
+* old rnd_go lives in new tonic_da, activated with a flag, is slated for removal soon..
+* network-&gt;pvlv_nv value updated from nv layer cycle-by-cycle
+* nv_gain in MatrixLayerSpec -- uses pvlv NV value as a bias -- the nv.da_gain value on 
+  NVLayerSpec controls how much nv contributes to learning da -- can now use it either
+  which way.
+* PVLVTonicDaLayerSpec -- display readout layer for network-&gt;pvlv_tonic_da value
+* above fixes enable model-free rl model to learn quite well!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5279</pre></td>
+<td><pre>2012-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>EXTRA_SUFFIX cmake arg and update to configure script with --suffix arg to set it to add an optional executable &amp; library suffix.  configure also saves config.log</pre></td>
+</tr>
+<tr>
+<td><pre>5280</pre></td>
+<td><pre>2012-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tonic da expt</pre></td>
+</tr>
+<tr>
+<td><pre>5281</pre></td>
+<td><pre>2012-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new tonic da -- always update every trial -- faster decay</pre></td>
+</tr>
+<tr>
+<td><pre>5282</pre></td>
+<td><pre>2012-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tonic da diff between out and mnt stripes</pre></td>
+</tr>
+<tr>
+<td><pre>5283</pre></td>
+<td><pre>2012-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>per layer tonic da</pre></td>
+</tr>
+<tr>
+<td><pre>5284</pre></td>
+<td><pre>2012-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>per stripe nogo thr</pre></td>
+</tr>
+<tr>
+<td><pre>5285</pre></td>
+<td><pre>2012-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* reinstate rnd_go as separate params to be used in conjunction with tonic_da -- too good
+* tonic_da only applies at the right time for maint vs. output
+</pre></td>
+</tr>
+<tr>
+<td><pre>5286</pre></td>
+<td><pre>2012-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>define EMERGENT_DLL under non-windows too</pre></td>
+</tr>
+<tr>
+<td><pre>5287</pre></td>
+<td><pre>2012-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>learn flag in conspec -- if turned off, no learning will occur!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5288</pre></td>
+<td><pre>2012-03-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed doc source edit to update RO status dynamically instead of only at constr -- can 
+now edit things that used to be web pages..
+* added cssTA_Matrix object and support for + operator in both css and matrix classes --
+allows you to do  mata + matb and get a matrix-wise addition, also mat + scalar, etc.  additional operators is just copy/paste now.  then will take on function calling and
+finding and other such things..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5289</pre></td>
+<td><pre>2012-03-12</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Fix for brain view crash on Centos?</pre></td>
+</tr>
+<tr>
+<td><pre>5290</pre></td>
+<td><pre>2012-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* css parsing of [..] now always generates a Matrix object -- supports Matlab-style initializer syntax:
+** a = [1,2,3; 4,5,6]; = matrix with 2 rows x 3 columns 
+** a = [1:5:1]; = 2d matrix with inner dim = 3, used for slicing operations
+** a = [:]; = above with 0:-1:1 defaults
+** a = [::-1] = reverse order, etc etc
+* python-style slicing and indexing for List, String, and soon Matrix, Array objects
+** new Variant taBase::Elem(Variant idx) function that parses idx as a matrix and 
+   does the right thing in different taBase subclasses (only List impl now)
+** in case where Elem returns multiple items, a new List object (clone token) is made,
+   filled with Link pointers to original objects, and a "el_view" matrix is installed
+   with active indices or a byte mask -- iterator and display routines use this view
+   to only expose selected items from original list -- same semantics as python.
+** added new generic TA iterator that uses view filtering -- may require further tweaking
+   for Matrix class
+** had to add cssTA_Base ref of ptr when ptr_cnt = 0 and we don't own -- this happens
+   and wasn't supported before -- oversight.  hopefully doesn't cause new issues.. :)
+** new cssTA_Matrix obj to support matrix-specific operators etc
+** coming: datatable and taGroup will support multidimensional indexing semantics -- first
+   level is cols for datatable, subgroups for taGroup, next levels are items within, etc.
+** fixed css auto-type to unspecified objects -- a = 1; a = "foo"; a = matrix per above all
+   give var appropriate type automatically -- had extra 'term' in yacc syntax -- weird.
+** matrix index model will automatically support matlab-style "find" etc..
+** css will auto-detect matrix args to functions that take an element, and unroll using
+   iterator across all elements -- not in place yet -- will work with user-defined funs too
+* Version bumped to 5.3.3 to indicate newness
+* work in progress -- compiles and works and should work with existing code at this point,
+but not very thoroughly tested and more to be done -- not recommmended to use..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5291</pre></td>
+<td><pre>2012-03-14</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed to build on Windows.</pre></td>
+</tr>
+<tr>
+<td><pre>5292</pre></td>
+<td><pre>2012-03-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Major increment in matrix list comprehension slicing whatever stuff -- code in place 
+for list, group, array, and matrix containers, and mostly working.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5293</pre></td>
+<td><pre>2012-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* matrix indexing/slicing much more solid now
+* first instance of automatic iteration over matrix els -- basic math funs like cos, exp
+etc automatically iterate over the matrix
+* much better printout functions for n-dimensional matricies -- still need a better overall
+system for controlling different ways of outputting things like this that can have
+diff reps based on context (css, etc).
+* fixed mem crash from use of marker guys in parsing matricies
+* todo: integrate css with taMath library and apply matrix iterators there, and in the
+operators for matricies, which also need to be all fleshed out, esp binary/logic guys
+</pre></td>
+</tr>
+<tr>
+<td><pre>5294</pre></td>
+<td><pre>2012-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix testing code for css</pre></td>
+</tr>
+<tr>
+<td><pre>5295</pre></td>
+<td><pre>2012-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed pernicious Matrix bug where the destructor was happening at a the template
+level where the SLOW vs. FAST alloc was not properly distinguished so String and 
+Variant matrix objects were not freeing memory in proper way.  can't believe this
+wasn't an issue before and don't see how anything I did could have changed this
+situation.  bizarre.  also using const Variant&amp; where possible -- should be faster
+(wasn't the fix to the bug).  Also fixed some issues where members were not being
+properly owned, revealed by css ref and unref operations..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5296</pre></td>
+<td><pre>2012-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>replaced all the rest of the Variant args with const Variant&amp; guys..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5297</pre></td>
+<td><pre>2012-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix operators mostly in place -- needs a bit more work..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5298</pre></td>
+<td><pre>2012-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* some fixes but still issues with MASK views.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5299</pre></td>
+<td><pre>2012-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mask now working -- needed el_view to be taBasePtr so it refs the temp.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5300</pre></td>
+<td><pre>2012-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>figured out copy operators/constructors, provided docs at top of ta_base.h 
+and using -&gt;Copy function for matrix copying instead of = operator
+</pre></td>
+</tr>
+<tr>
+<td><pre>5301</pre></td>
+<td><pre>2012-03-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>old pdp++ css test scripts</pre></td>
+</tr>
+<tr>
+<td><pre>5302</pre></td>
+<td><pre>2012-03-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* copying, initializing, assigning, slicing etc all fixed up 
+* div 0 safety for matrix ops
+</pre></td>
+</tr>
+<tr>
+<td><pre>5303</pre></td>
+<td><pre>2012-03-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Auto-import of taMath_double functions into css Functions space, with auto + manual
+directive detection of what can be done over a matrix iteration thing
+* required a lot of work to get a MbrCFun for a static method to be callable as if it 
+it was a regular ElCFun standalone function
+* amazing DataTableCols operator [] expansion so you can get back a whole data table
+as a variant matrix!  gives you a way using matirx syntax to extract a row or multiple
+rows across all cols..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5304</pre></td>
+<td><pre>2012-03-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Fixed assignment statement in PVLVTonicDaLayerSpec::Initialize().
+* Fixed compiler errors and warnings on Windows related to USING(taMatrix::operator=) statements.</pre></td>
+</tr>
+<tr>
+<td><pre>5308</pre></td>
+<td><pre>2012-03-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Updated mac build script to create SVN tag automatically, since I keep forgetting to do it manually.
+* Fixed null pointer crash.</pre></td>
+</tr>
+<tr>
+<td><pre>5309</pre></td>
+<td><pre>2012-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed bug with matrix objs in projects -- was calling CutLinks in InitLinks -- yikes!
+* mat_mult that does actual matrix multiplication, using gsl/blas
+* Shape/SetShape funs based on matrix args instead of geom
+* list iteration function calling in css
+* taBase::CallObjFun, SetMemberStr/Var -- list expansion marked static funs for 
+  calling a function on objects(s) or setting member value for object(s)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5310</pre></td>
+<td><pre>2012-03-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* conversion ops in cssEl for matrix types -- allows cssTA_Matrix to auto-convert between
+matrix types easily.
+* fixed list calling over functions
+* almost all done..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5311</pre></td>
+<td><pre>2012-03-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* call() global css function that calls a method on object(s), passing appropriate args
+* set() global css function that sets a member on object(s)..
+* above two work on lists or individual objects equally well..
+* program css generation now uses call and set, works great on power slicing ops [:] etc
+* TypeDef::GetClassType() -- get the unadorned class type -- best way to find out what
+underlying type is -- use this in mta_constr for casting args -- may affect some subtle
+things in css and programs -- but overall much much safer casting behavior.
+* program support for new matrix ops is NOT looking very good.. ProgVar uses cssSmartRef
+which doesn't properly represent new features of matrix objs :(  How to efficiently provide this transparency??
+</pre></td>
+</tr>
+<tr>
+<td><pre>5312</pre></td>
+<td><pre>2012-03-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for no args functions</pre></td>
+</tr>
+<tr>
+<td><pre>5313</pre></td>
+<td><pre>2012-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix stuff now 99% done:
+* cssSmartRef has cssref obj that it delegates everythign to -- is a matrix or a tabase
+so everythign goes through -- allows program access of matrix functionality
+* maketa return type processing recognizes matrix vs. ta base
+* cssMath subtype of taMatrix_double that has all the special math routines for matrix
+** zeros, diag, ones, eye, etc etc.
+** use cssMath to provide better interfaces to other math functions too (mat_mult)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5314</pre></td>
+<td><pre>2012-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ^ operator
+* flatten
+* min, max
+* test script has full coverage of doc table
+</pre></td>
+</tr>
+<tr>
+<td><pre>5315</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* various fixes to restore prior ptr_cnt = 1 functionality for cssTA_Base --
+turns out only cssTA_Matrix should have value semantics..
+* set() and call() should only be used in Programs when member expressions
+actually contain [ ] variablization -- otherwise it is unnec. overhead and 
+call can actually end up calling wrong thing
+* new GetVoidPtrOfType in maketa stubs requires int NULL to be universal NULL..
+* now all works as before with lvis!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5316</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bit mask support for print functions, and nogui flag too
+</pre></td>
+</tr>
+<tr>
+<td><pre>5317</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>further print debug mask fixes: auto find debug_level var, print debug mask in display
+</pre></td>
+</tr>
+<tr>
+<td><pre>5318</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>backward compatible regexp for qt 4.5</pre></td>
+</tr>
+<tr>
+<td><pre>5319</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt_norm on by default
+</pre></td>
+</tr>
+<tr>
+<td><pre>5320</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>super recursive flatten for Variant matrix type to get all the sub-matrix guys too.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5321</pre></td>
+<td><pre>2012-03-28</pre></td>
+<td><pre>dwyatte</pre></td>
+<td><pre>support for occluding through a foreground
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5323</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Important fix for synchronizing cssSmartRef object_val pointer changes with the cssref
+object -- need to trigger on cases where it is updated outside of css!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5324</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bumped to 5.3.4</pre></td>
+</tr>
+<tr>
+<td><pre>5326</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>changes to allow incremental builds of ubuntu packages</pre></td>
+</tr>
+<tr>
+<td><pre>5327</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>fix mv command that errors on files not found</pre></td>
+</tr>
+<tr>
+<td><pre>5328</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>redirect stderr to /dev/null</pre></td>
+</tr>
+<tr>
+<td><pre>5329</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>~ doesn't expand inside quotes, use /home/dpfurlani instead</pre></td>
+</tr>
+<tr>
+<td><pre>5330</pre></td>
+<td><pre>2012-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed a number of pernicious bugs:
+* progvar enum flags had redundant values!  added checker on that for DEBUG to 
+find any issues in the future..
+* was using cssEl::Done instead of ::unRefDone for cssref smartpointer -- doh -- left
+a dangling pointer there.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5331</pre></td>
+<td><pre>2012-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix to enum duplicate detection code -- rest of enums are clean
+* forgot to mention last time: you can now drag an object on a program and add to
+either vars or args -- often a lot easier than drilling down inside prog
+</pre></td>
+</tr>
+<tr>
+<td><pre>5332</pre></td>
+<td><pre>2012-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* revamp cancel err dialog code -- uses interval between errors and amount of time
+in the waitproc to timeout the cancel -- seems to work well.  also called by css
+* blue select highlight always in effect, even if not active
+* program init now has a timestamp to prevent redundant re-reinits when the same
+sub-programs are called by multiple other programs -- was getting quite long in some
+flexprogs cases with a lot of programs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5335</pre></td>
+<td><pre>2012-03-30</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>auto-sudo for convenience</pre></td>
+</tr>
+<tr>
+<td><pre>5336</pre></td>
+<td><pre>2012-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added foreach loop in css and program code -- "foreach(x in list) { .. }"
+iterates over items in a container -- can use all manner of list comprehension 
+filtering in the list expression.
+* minimum size for layer transformer handles -- sometimes get too small..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5337</pre></td>
+<td><pre>2012-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* complex_Matrix class -- supports complex numbers in all their glory..
+* fft and ffti confirmed working, in sense of being correctly inverses
+* fft2 written but untested
+</pre></td>
+</tr>
+<tr>
+<td><pre>5338</pre></td>
+<td><pre>2012-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fft all tested and functional, including demo project
+</pre></td>
+</tr>
+<tr>
+<td><pre>5339</pre></td>
+<td><pre>2012-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DO NOT COMPILE -- TEMP CHECKIN -- new printing mechanism based on strings -- was 
+getting too many streaming crashes and this allows for use in tooltips etc.
+a few more pieces need to be finished at school.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5340</pre></td>
+<td><pre>2012-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new printing stuff all working, except paging, which doesn't get the right cin
+</pre></td>
+</tr>
+<tr>
+<td><pre>5341</pre></td>
+<td><pre>2012-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>I realized that by converting over to using strings instead of streams for output, 
+I could go all the way and eliminate ALL stream-based output and in so doing, avoid
+the crazy "interceptor" console mechanism that prevents us from using a gui
+console on windows.  So now ALL printing is just a direct addition of the lines
+to the gui console (or to cout / cerr if not using gui).
+
+DO NOT USE cerr &lt;&lt; or cout &lt;&lt; lines in the code anymore!!!  instead use
+taMisc::Info or taMisc::Warning or whatever..
+
+Dan, you'll have to see how this goes on windows -- I enabled the gui console
+option so you can select that in windows and see if it works.  I don't see
+why it should not!  but I might have missed a few things.  I can pull up
+in my old XP 32bit compile.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5342</pre></td>
+<td><pre>2012-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>properly erase query prompt in console
+</pre></td>
+</tr>
+<tr>
+<td><pre>5343</pre></td>
+<td><pre>2012-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix printing improvements, and cancel error output
+</pre></td>
+</tr>
+<tr>
+<td><pre>5344</pre></td>
+<td><pre>2012-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows build fixes for string and qconsole</pre></td>
+</tr>
+<tr>
+<td><pre>5345</pre></td>
+<td><pre>2012-04-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fix null pointer access reported in bug 335, comment #57</pre></td>
+</tr>
+<tr>
+<td><pre>5346</pre></td>
+<td><pre>2012-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows console fixes -- all seems to be working!!</pre></td>
+</tr>
+<tr>
+<td><pre>5347</pre></td>
+<td><pre>2012-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* time stamp recording for exe_cmd file (visible in prefs -- useful info)
+* comparison checking for time stamp on plugins triggers auto remake of all plugins!
+* plugins should now all use the app_suffix which is from exe_cmd and includes
+  manual suffixes -- should be able to keep everything separate
+* each suffix has its own prefs options and root -- loads the basic one if suffix-
+  specific is not found -- this prevents all manner of clashing between diff
+  versions that might be assoicated with diff suffixes
+* Added new CssExpr ProgEl -- automatically used if your ProgCode ends with ; --
+  easy way to do lots of the new css matrix stuff without jumping through
+  unnec hoops.
+* Just a few things before I'm done: 
+** program button updating (stop button -- been a prob for a long time)
+** running css_matrix_test 2x causes crash on windows and err trap on mac
+** make a better vardefin type guesser for css to auto-create vars of the
+   right type, even for functions etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5348</pre></td>
+<td><pre>2012-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>improved plugin remake logic -- not getting date properly on mac tho</pre></td>
+</tr>
+<tr>
+<td><pre>5349</pre></td>
+<td><pre>2012-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully fixed exe_cmd and exe_path issues, so new plugin stuff works..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5350</pre></td>
+<td><pre>2012-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>non-mac compile fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>5351</pre></td>
+<td><pre>2012-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>math now uses iterators on all appropriate vec_* operations
+</pre></td>
+</tr>
+<tr>
+<td><pre>5352</pre></td>
+<td><pre>2012-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed css matrix init code, was causing crash in css_matrix_test running 2x
+* added transpose and det functions in various places
+* fixed auto-init of undef vars to get matrix type from functions -- most should now work
+* progress on tracking down program button updating -- needs call from showEvent but the
+special program editor guys are not behaving well -- seems to all be linked to property
+dialog but can't seem to connect to that one..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5353</pre></td>
+<td><pre>2012-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>stop button fixed finally and initial css prompt fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>5354</pre></td>
+<td><pre>2012-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* prompt really fixed
+* windows pathing fixes -- should fix exe_cmd bug
+* went through css_lib/tests and fixed several things: 0x hex parsing, css edit dialog,
+  css CallVoidFun
+* new string-based cout and cerr still use hex, dec, oct formatting flags
+* should be all done now!!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5355</pre></td>
+<td><pre>2012-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>improved mouse-over printing in css listing and limits on how big matrix print goes..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5356</pre></td>
+<td><pre>2012-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should get rid of double paste on windows..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5357</pre></td>
+<td><pre>2012-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert css_matrix_test</pre></td>
+</tr>
+<tr>
+<td><pre>5358</pre></td>
+<td><pre>2012-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed css crash when script function name collides with builtin name
+* add more relevant css reserved names to forbidden_names in Programs
+* init forbidden names after css has been initialized (at first use)
+* add auto_name to projects -- auto update name based on file name
+</pre></td>
+</tr>
+<tr>
+<td><pre>5359</pre></td>
+<td><pre>2012-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor forbidden name fixes -- need to fix better -- not updating some variables 
+based on new "My" names, requiring manual fixes (yuk).
+</pre></td>
+</tr>
+<tr>
+<td><pre>5360</pre></td>
+<td><pre>2012-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for Random:: inside of [ ] in NetDataLoop code, plus lighter red and orange colors
+for error flagging, so things are more legible.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5361</pre></td>
+<td><pre>2012-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vastly improved diff compare display -- shows entire context of diff, so you can see
+where everything is.  also made it non-blocking so you can go ahead and check stuff out
+in the rest of the gui.  really needed this for trying to figure out the v2 vs. v1 thing.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5362</pre></td>
+<td><pre>2012-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* colors in diff compare -- much easier to read
+* nuke list members from diff -- massive reduction in clutter
+* this should be it -- time to start making packages!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5363</pre></td>
+<td><pre>2012-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops -- fixed crash bug in diff
+</pre></td>
+</tr>
+<tr>
+<td><pre>5364</pre></td>
+<td><pre>2012-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>GetTypeDecoKey for all the leabra guys
+</pre></td>
+</tr>
+<tr>
+<td><pre>5365</pre></td>
+<td><pre>2012-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final touches on the diff browser -- lighter colors and View buttons to see in main
+project view
+</pre></td>
+</tr>
+<tr>
+<td><pre>5366</pre></td>
+<td><pre>2012-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Actually one last change: mac with qt 4.8.[0,1] sometimes gets in this no-focus
+state where it won't accept keyboard input on a line edit -- wondering if perhaps
+it is due to useless signal occuring on focus events,  so I nuked that --
+seems to work but situation is ideosyncratic so will need to monitor..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5367</pre></td>
+<td><pre>2012-04-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bumped version to 5.3.5</pre></td>
+</tr>
+<tr>
+<td><pre>5369</pre></td>
+<td><pre>2012-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>print var fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>5370</pre></td>
+<td><pre>2012-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix exe_cmd .exe suffix issues on windows -- Dan please include this one too..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5373</pre></td>
+<td><pre>2012-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rebuild scripts rebuild plugins</pre></td>
+</tr>
+<tr>
+<td><pre>5374</pre></td>
+<td><pre>2012-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow hebb on hippoencoderconspec</pre></td>
+</tr>
+<tr>
+<td><pre>5375</pre></td>
+<td><pre>2012-04-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix to ScalarValLayerSpec bias_scale inconsistencies between TRAIN and TEST
+* Init_InputData now re-inits hard_clamp as one might have expected it to do
+* and the bias_scale code in SVL is only if using bias weights, and no longer
+conditional on hard_clamp, which was nonsensical anyway and could only 
+lead to inconsistent behavior..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5376</pre></td>
+<td><pre>2012-04-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bump for 5.3.6</pre></td>
+</tr>
+<tr>
+<td><pre>5378</pre></td>
+<td><pre>2012-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added stop and continue buttons to main toolbar -- stop any running program and
+continue from where it last left off
+* fixed breakpoints in subprogs -- just one line to add them back in after init
+called by super-prog
+* incremented version to 5.3.7 -- planning to do a few PBWM things over the weekend
+in prep for HRL visit next week..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5379</pre></td>
+<td><pre>2012-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>may have helped with mac focus bug -- still happens but seemingly not so frequently.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5380</pre></td>
+<td><pre>2012-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't do forbidden name "my" replacement during checkconfig -- just flag as error -- only
+do for UAE where it will actually trigger updating of other code to reflect name change
+</pre></td>
+</tr>
+<tr>
+<td><pre>5381</pre></td>
+<td><pre>2012-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add cssMisc::Parse to forbidden names, cleanup enums that we don't actually want
+in full public space -- fewer name conflicts.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5382</pre></td>
+<td><pre>2012-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tonic da -&gt; neg da learning rate modulation
+</pre></td>
+</tr>
+<tr>
+<td><pre>5383</pre></td>
+<td><pre>2012-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed matrix issues that came up in debug session today:
+* (int) cast operator -- requries a Void argstop because internally it uses a
+  MakeTempToken which consumes any other existing Void -- should have been an
+  issue before but perhaps appropriate syntax never came up..
+* recognize many other int-like types as ints for make_matrix
+* use SafeElIndexN which supports -1 etc indexing for iterator view -- slices had
+  -1 logic but regular IDX_COORDS was using Fast which did not process the - guys.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5384</pre></td>
+<td><pre>2012-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* -1 indexing for list and groups fixed
+* slice_matrix.Expand()
+* not yet working foreach [0:20:2] slice guy
+</pre></td>
+</tr>
+<tr>
+<td><pre>5385</pre></td>
+<td><pre>2012-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>foreach slice auto-expand now works -- need to do each time b/c slice is being built
+afresh each time given the way the logic works! yikes!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5386</pre></td>
+<td><pre>2012-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* DiffCompare does not filter up front on CONDSHOW -- causes erroneous Add/Del diffs
+ instead uses CONDSHOW and CONDEDIT in diff display -- if both off then not shown,
+ but if on in one and not the other, then it will be shown with grey-out
+* reset cmd_prog for syntax or other errors in css -- prevents being stuck in limbo
+  with unresponsive cmd shell..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5387</pre></td>
+<td><pre>2012-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* plugged memory leak in taList_impl::Elem
+* taMatrix indexing with String (NAME/S) returns index(es) where name was found (Find)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5388</pre></td>
+<td><pre>2012-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LogLrateSched for bpconspec
+</pre></td>
+</tr>
+<tr>
+<td><pre>5389</pre></td>
+<td><pre>2012-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* damn -- Jim was right -- breakpoints were not being set if set in View Script
+window.. gotta test all cases!
+* also, nuked annoying pager stuff during breakpoint display, and stepcss
+</pre></td>
+</tr>
+<tr>
+<td><pre>5390</pre></td>
+<td><pre>2012-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor improvement in UpdateCallerArgs function -- only find Call or FunCall
+</pre></td>
+</tr>
+<tr>
+<td><pre>5391</pre></td>
+<td><pre>2012-04-23</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>change some "add_definitions" lines that should be setting cxx flags instead</pre></td>
+</tr>
+<tr>
+<td><pre>5392</pre></td>
+<td><pre>2012-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump version to 5.3.8 after 5.3.7 released
+* fix css logical operators on matrix objs -- if only one item in matrix, treat as a 
+  scalar -- fixes Jim's latest bug report
+* in flight entertainment: find gadget at bottom of browsers -- not clear why it is so
+  slow, but has basic functionality
+</pre></td>
+</tr>
+<tr>
+<td><pre>5393</pre></td>
+<td><pre>2012-04-26</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>better automation</pre></td>
+</tr>
+<tr>
+<td><pre>5395</pre></td>
+<td><pre>2012-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>complex matrix * scalar matrix now works..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5396</pre></td>
+<td><pre>2012-04-27</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Python scripts to build emergent for Ubuntu using Amazon Web Services.</pre></td>
+</tr>
+<tr>
+<td><pre>5397</pre></td>
+<td><pre>2012-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* layer calls Init_Acts when lesioned -- mostly for display purposes -- many people get confused about those frozen acts..
+* Clean option for out-of-date plugins.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5398</pre></td>
+<td><pre>2012-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for string matrix assign</pre></td>
+</tr>
+<tr>
+<td><pre>5399</pre></td>
+<td><pre>2012-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* top_stack -- maintain a stack of top cssProgramSpace
+* Program::GlobalTrace and LocalTrace -- new buttons to view back trace at global and local
+level
+* taBase::SetMemberStr -- memb_name can now be a full path to any substructure -- good for generically setting values
+</pre></td>
+</tr>
+<tr>
+<td><pre>5400</pre></td>
+<td><pre>2012-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>handle smartef args for list iters</pre></td>
+</tr>
+<tr>
+<td><pre>5401</pre></td>
+<td><pre>2012-05-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>need to chmod the script after it's scp'd to AWS since svn chmod 000'd it somehow.</pre></td>
+</tr>
+<tr>
+<td><pre>5403</pre></td>
+<td><pre>2012-05-03</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>updated ubuntu repo update script to take an optional list of repos to update, otherwise defaults to the 'latest' repo</pre></td>
+</tr>
+<tr>
+<td><pre>5404</pre></td>
+<td><pre>2012-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* important fix for crash in Init_Acts that can happen with new Lesion code if
+layers were not built yet
+</pre></td>
+</tr>
+<tr>
+<td><pre>5406</pre></td>
+<td><pre>2012-05-04</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bumped version for next build; fixed minor bug in line-wrapping logic; added code to allow the RegexpPopulator to adjust the dialog title based on the field's enclosing Layer/Network info.</pre></td>
+</tr>
+<tr>
+<td><pre>5417</pre></td>
+<td><pre>2012-05-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for --server and WtInitPrompt -- was not closing bracket properly
+* something else that I forget in ta_program_els..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5419</pre></td>
+<td><pre>2012-05-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo the ill-conceived "nogui" flag on print statements -- just handle this case with
+the debug_level masking flags.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5423</pre></td>
+<td><pre>2012-06-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Two critical fixes flagged by Jim, will require a new beta release:
+* MIN, MAX and ABS functions were not working due to change in rval of &lt; &gt; etc operators -- used to return bool directly, now return cssBool* -- need to put a *() around whole expr to extract the bool, instead of doing the bool on the pointer which is what it was doing.  ouch.  did check for any other similar such cases in css_builtin.cpp, where
+most runtime cssEl ops would take place, so hopefully it is clean now.
+* cssTA_Matrix::GetStr() -- if one element return string rep of that element, instead of always returning print string.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5424</pre></td>
+<td><pre>2012-06-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>bump version to 5.3.10.</pre></td>
+</tr>
+<tr>
+<td><pre>5428</pre></td>
+<td><pre>2012-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* call lrate upate on conspec and sub-conspecs for hippo subiculum
+* save undo before moving layers and layer groups in network -- can get into trouble!
+* taProject::SaveUndo DOES need to updateUi to activate the new undo state.  not sure
+why this was commented out..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5429</pre></td>
+<td><pre>2012-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of cast err msg?
+</pre></td>
+</tr>
+<tr>
+<td><pre>5430</pre></td>
+<td><pre>2012-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trying again on matrix</pre></td>
+</tr>
+<tr>
+<td><pre>5431</pre></td>
+<td><pre>2012-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>subiculum ACTUALLY working and tested!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5432</pre></td>
+<td><pre>2012-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DeepContextLayerSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>5435</pre></td>
+<td><pre>2012-06-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Leabra Compute_M2SSE and M2SSE_Recon functions for reconstruction error monitor stats
+</pre></td>
+</tr>
+<tr>
+<td><pre>5443</pre></td>
+<td><pre>2012-06-23</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>SmallWorldPrjnSpec</pre></td>
+</tr>
+<tr>
+<td><pre>5444</pre></td>
+<td><pre>2012-06-30</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>add drag-n-drop to tabs</pre></td>
+</tr>
+<tr>
+<td><pre>5445</pre></td>
+<td><pre>2012-07-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed BugID:1486 -- GetNonPtrType (and GetNonRefType) should always return something, never
+null. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>5446</pre></td>
+<td><pre>2012-07-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tab moving only for 3D tabs, plugged into the viewer frames so it changes the underlying data order, so its permanent and accurate for the rest of the assumptions of the system.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5451</pre></td>
+<td><pre>2012-07-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CosErr and CosDiff measures -- normalized dot product (cosine) values -- more natural way to deal with graded values and robust normalization.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5460</pre></td>
+<td><pre>2012-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally fixed focus bug on mac with 2.8.x!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5472</pre></td>
+<td><pre>2012-07-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lots of cleanup to enable successful compilation with clang on latest mac os.  some
+potential bugs fixed in process due to bad logic.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5473</pre></td>
+<td><pre>2012-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes to delay rendering of opengl guys until after gl context is properly initialized -- avoids a whack of new errors with coin3d 4.x latest.
+* update .app specs to allow new highres support on mac retina display
+</pre></td>
+</tr>
+<tr>
+<td><pre>5474</pre></td>
+<td><pre>2012-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>keep maketa happy
+</pre></td>
+</tr>
+<tr>
+<td><pre>5475</pre></td>
+<td><pre>2012-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cmake revert</pre></td>
+</tr>
+<tr>
+<td><pre>5478</pre></td>
+<td><pre>2012-07-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test ci</pre></td>
+</tr>
+<tr>
+<td><pre>5479</pre></td>
+<td><pre>2012-07-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo package update</pre></td>
+</tr>
+<tr>
+<td><pre>5481</pre></td>
+<td><pre>2012-07-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>always enable cut, copy, duplicate -- easier than fixing the selection weirdness</pre></td>
+</tr>
+<tr>
+<td><pre>5482</pre></td>
+<td><pre>2012-07-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuke debug info
+</pre></td>
+</tr>
+<tr>
+<td><pre>5483</pre></td>
+<td><pre>2012-07-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pvlv cons always set dwt_norm = false
+</pre></td>
+</tr>
+<tr>
+<td><pre>5488</pre></td>
+<td><pre>2012-07-24</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bug 1489: consistent capitalization of "PluginState" class name, so a plugin named "fooBar" gets a state class named FooBarPluginState instead of FoobarPluginState.</pre></td>
+</tr>
+<tr>
+<td><pre>5492</pre></td>
+<td><pre>2012-07-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>package maker for quarter installed in libraries frameworks</pre></td>
+</tr>
+<tr>
+<td><pre>5493</pre></td>
+<td><pre>2012-07-26</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Adding new, customized, FSL-based Talairch atlas files. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>5494</pre></td>
+<td><pre>2012-07-26</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Initial commit</pre></td>
+</tr>
+<tr>
+<td><pre>5495</pre></td>
+<td><pre>2012-07-26</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added brainstru files</pre></td>
+</tr>
+<tr>
+<td><pre>5496</pre></td>
+<td><pre>2012-07-26</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>network/netstru:
+- Added BrainAtlasProxy and list to track brain atlases available and user selected
+- Renamed TalairachRegexpPopulator
+
+network/brain*:
+- many modifications to handle FSL-based custom XML brain atlases
+- modifications in preparation for rendering brain atlas labels
+- modifications for coloring structural brain based on user supplied brain labels regexp
+
+ta/ta_qtdata:
+- added method to set source for regexp populator
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5497</pre></td>
+<td><pre>2012-07-26</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>fix small bugs in SmallWorld</pre></td>
+</tr>
+<tr>
+<td><pre>5498</pre></td>
+<td><pre>2012-07-27</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>corrected labels that were missing colors</pre></td>
+</tr>
+<tr>
+<td><pre>5499</pre></td>
+<td><pre>2012-07-27</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added comment about 4D probabilistic atlases</pre></td>
+</tr>
+<tr>
+<td><pre>5500</pre></td>
+<td><pre>2012-07-27</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Added helper method useful for later handling 4D probabilistic atlases</pre></td>
+</tr>
+<tr>
+<td><pre>5501</pre></td>
+<td><pre>2012-07-30</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>Initial checkin of Juelich atlas</pre></td>
+</tr>
+<tr>
+<td><pre>5504</pre></td>
+<td><pre>2012-07-31</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>minor fix</pre></td>
+</tr>
+<tr>
+<td><pre>5505</pre></td>
+<td><pre>2012-07-31</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>BrainAtlasProxy now inherits from taNBase</pre></td>
+</tr>
+<tr>
+<td><pre>5506</pre></td>
+<td><pre>2012-08-01</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>- Added simple Qt widget and code for rendering atlas labels.
+- Need to replace color brain and view atlas widgets with taiRegexpFields.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5507</pre></td>
+<td><pre>2012-08-02</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>- Converted brain colorization and brain atlas viewing widgets from QLineEdits to taiRegexpFields.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5508</pre></td>
+<td><pre>2012-08-02</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>fixed signal/slot connection bug</pre></td>
+</tr>
+<tr>
+<td><pre>5509</pre></td>
+<td><pre>2012-08-02</pre></td>
+<td><pre>amacon</pre></td>
+<td><pre>initial commit</pre></td>
+</tr>
+<tr>
+<td><pre>5517</pre></td>
+<td><pre>2012-08-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Build emergent using custom-built Qt packages that have been uploaded to the FTP site:
+* ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.8.2-vs2010-32.exe
+* ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.8.2-vs2010-64.exe
+
+Still need to build and upload 3rd party packages (Coin3d, GSL, Quarter, etc.) including debug versions.</pre></td>
+</tr>
+<tr>
+<td><pre>5518</pre></td>
+<td><pre>2012-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix QDom maketa errors
+</pre></td>
+</tr>
+<tr>
+<td><pre>5519</pre></td>
+<td><pre>2012-08-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>minor refactoring/commenting</pre></td>
+</tr>
+<tr>
+<td><pre>5521</pre></td>
+<td><pre>2012-08-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Bumped Slik SVN version.
+Use CMake 2.8.8 for all builds.
+Added prompt to build specific tag or branch.
+Built ODE debug libs and packaged with 3rdparty files.
+Uploaded 3rdparty zip files for VS2010 (32 and 64 bit).
+Uploaded Coin3d zip files (including Quarter) for VS2010 (32 and 64 bit).
+Only download Quarter source if Quarter libs not found in Coin directory.
+Uploaded zip file with Quarter source.</pre></td>
+</tr>
+<tr>
+<td><pre>5522</pre></td>
+<td><pre>2012-08-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>fixed typos</pre></td>
+</tr>
+<tr>
+<td><pre>5524</pre></td>
+<td><pre>2012-08-06</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>nuke this_rz/sz vars</pre></td>
+</tr>
+<tr>
+<td><pre>5525</pre></td>
+<td><pre>2012-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed TypeDef::Get_C_Name recursion -- caused crash in Help browser for taImage
+* fixed foreach code gen crash with unset var
+* program variables start out with new UnDef type -- need to actively select a type instead of defaulting to Int which is often not correct and causes harder-to-diagnose bugs
+* improved matrix indexing error checking -- gives much better errors for incorrect number of indicies.
+* added taBase::MemberUpdateAfterEdit -- should have been in there a long time ago -- used now only for Specs to turn on Unique flag when a member is set -- e.g., in diff compare.  TODO: need to activate for various program contexts.
+* improved DiffCompare console messages when applying diffs -- shows full paths
+* Leabra dwt_norm uses version to decide backward-compatible default -- old projs will work as before, but user will see that it is a non-default setting.
+* added AddNetMax and AddNetRel monitor buttons to NetMonitor -- very often needed
+* Stop / Step goes in Ctrl menu section
+* can't hit Init on program when another is running
+* don't lookup css stuff for taMisc::Error and Warning when loading -- stuff can be undefined.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5526</pre></td>
+<td><pre>2012-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>do not call UAE upon insertion of items in the tree -- can't see where it is necc and it
+caues an immediate and superflous err msg for new progvar undef thing.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5527</pre></td>
+<td><pre>2012-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>create trial for netdataloop
+</pre></td>
+</tr>
+<tr>
+<td><pre>5529</pre></td>
+<td><pre>2012-08-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes to BrainView to enable save/load, moved atlases to Netstru_Group, fixed signals
+from control panel, and hooked those into network brain atlas choice, added save
+BUTTON wrappers.
+Nearly done but something screwy is going on with the editatlascolors function.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5530</pre></td>
+<td><pre>2012-08-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fully functional brain view -- can edit colors (and labels) and has a good ta-based api
+for any kind of programmatic setting of colors or accessing the data.
+just need a better overall atlas and we're set..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5531</pre></td>
+<td><pre>2012-08-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully last bit of updates for the brainview -- main thing is replaced separator with / instead of . -- much cleaner regexps.  also added load &amp; revert, random colors, return does not close dialog, better help, etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5533</pre></td>
+<td><pre>2012-08-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>improved bootstrapping for first time making packages</pre></td>
+</tr>
+<tr>
+<td><pre>5536</pre></td>
+<td><pre>2012-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>merge of pbwmv3 back into trunk
+</pre></td>
+</tr>
+<tr>
+<td><pre>5537</pre></td>
+<td><pre>2012-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard fixes and moved layer no act guy
+</pre></td>
+</tr>
+<tr>
+<td><pre>5538</pre></td>
+<td><pre>2012-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix install of atlases
+* data/standard appears to be obsolete -- not installing anymore
+* LayerActUnitSpec fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>5539</pre></td>
+<td><pre>2012-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated version to 6.0.0 in prep for release
+* updated all the project templates to latest version
+* added stop_on_err to LeabraEpoch
+</pre></td>
+</tr>
+<tr>
+<td><pre>5540</pre></td>
+<td><pre>2012-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pbwm param updates
+* compile conversion fixes per janus
+</pre></td>
+</tr>
+<tr>
+<td><pre>5541</pre></td>
+<td><pre>2012-08-14</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>added support to switch branch/tag/trunk of existing working copy</pre></td>
+</tr>
+<tr>
+<td><pre>5542</pre></td>
+<td><pre>2012-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update pbwm monitors and minor fix on gp projection robustness checking.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5543</pre></td>
+<td><pre>2012-08-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* RevertToCode in ProgEl
+* some more setFocus() calls to try to reduce mac focus bug
+* got rid of updt_cycles in PBWM -- nonsensical really from an SRN and biology standpoint, and works fine without it.  also it was decaying states right away for ones that just got updated -- fixed that..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5544</pre></td>
+<td><pre>2012-08-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pre-PBWM 2nd-plus fix checkin with minor fixes.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5545</pre></td>
+<td><pre>2012-08-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* automatic post-plus phase MNT gating in PBWM -- LVe and Da updated in code without 2nd plus and all that!
+* requires PFC layers to be in front of matrix layers for post settle call..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5546</pre></td>
+<td><pre>2012-08-22</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>fixed PVr to matrix allocation problem; apparently merged with randy's changes -r5544, 5545 okay; still need to fix topo prjn geom params (tomorrow)</pre></td>
+</tr>
+<tr>
+<td><pre>5547</pre></td>
+<td><pre>2012-08-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>copy order fix</pre></td>
+</tr>
+<tr>
+<td><pre>5548</pre></td>
+<td><pre>2012-08-22</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>topo prjns to matrix now robust to PFC INPUT layers and any y-coords; more tire kicking needed, but seems okay</pre></td>
+</tr>
+<tr>
+<td><pre>5550</pre></td>
+<td><pre>2012-08-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added PostSettle_Pre that comes before PostSettle and eliminates PBWM layer order constraints.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5551</pre></td>
+<td><pre>2012-08-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* PostSettle_Pre was updating act_p -- not good -- fixed to only do act for LV..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5552</pre></td>
+<td><pre>2012-08-23</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>wizard much better; most seg faults fixed, only INPUT+OUTPUT seg'ing now; and, it's AFTER projections built, apparently during PFC_out layer build</pre></td>
+</tr>
+<tr>
+<td><pre>5553</pre></td>
+<td><pre>2012-08-23</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>No more wizard seg faults; indeed there was a noncontingent pfc_d_mnt invocation; also fixed typo that was making PVrToMatrix prjn to out guys dependent on there being maint guys; nuisance: why have to (re)build net after wizard to get the correct weights?? </pre></td>
+</tr>
+<tr>
+<td><pre>5555</pre></td>
+<td><pre>2012-08-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hip wizard fixes -- creates standard now -- just need final test..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5558</pre></td>
+<td><pre>2012-08-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* final fixes to get hippo wizard to produce a learning model
+</pre></td>
+</tr>
+<tr>
+<td><pre>5559</pre></td>
+<td><pre>2012-08-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops forgot one
+</pre></td>
+</tr>
+<tr>
+<td><pre>5560</pre></td>
+<td><pre>2012-08-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually this file is required</pre></td>
+</tr>
+<tr>
+<td><pre>5561</pre></td>
+<td><pre>2012-08-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fsl-based atlas merging script per Jeremy, plus merged atlas</pre></td>
+</tr>
+<tr>
+<td><pre>5563</pre></td>
+<td><pre>2012-08-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>5564</pre></td>
+<td><pre>2012-08-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>notes for prior commit:
+* Many brain view updates: atlases merged with pvlv atlas, edit atlas button in panel,
+crashing bugs fixed, Juelich atlas filled out with higher-order info
+* Also fixed embarrasing &amp;&amp; vs &amp; error on ctrl_pressed logic for control keys..
+and for this:
+* default brain_area mappings for pvlv and pbwm
+</pre></td>
+</tr>
+<tr>
+<td><pre>5565</pre></td>
+<td><pre>2012-08-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* cleaned up undo save logic for datatables, and added taMisc::undo_debug flag -- seems 
+to have fixed latency issues in big hip project
+</pre></td>
+</tr>
+<tr>
+<td><pre>5566</pre></td>
+<td><pre>2012-08-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>original atlases in dev -- pre-merge with pvlv</pre></td>
+</tr>
+<tr>
+<td><pre>5567</pre></td>
+<td><pre>2012-08-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>extracted hippo and main visual aeas from Juelich and merged into talaraich</pre></td>
+</tr>
+<tr>
+<td><pre>5568</pre></td>
+<td><pre>2012-08-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated nifti code to latest fsl, defined HAVE_ZLIB, but still no luck on reading .gz files -- finds them but has an error in reading
+* hippo wiz now defaults to brain area names for hippo areas
+</pre></td>
+</tr>
+<tr>
+<td><pre>5569</pre></td>
+<td><pre>2012-08-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Brodmann area -&gt; BA in Talairach
+* fixed hippo names
+</pre></td>
+</tr>
+<tr>
+<td><pre>5570</pre></td>
+<td><pre>2012-08-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>improved color rendering in several ways -- colors more intense than white, also modulated
+by T1 density.  
+</pre></td>
+</tr>
+<tr>
+<td><pre>5571</pre></td>
+<td><pre>2012-08-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>transparency modulation</pre></td>
+</tr>
+<tr>
+<td><pre>5572</pre></td>
+<td><pre>2012-08-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated wiz to latest atlas names
+* revert to prior rendering format
+</pre></td>
+</tr>
+<tr>
+<td><pre>5573</pre></td>
+<td><pre>2012-08-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>best of both worlds colorization tech -- this is now final final</pre></td>
+</tr>
+</table>
+</body></html>

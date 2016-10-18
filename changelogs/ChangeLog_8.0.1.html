@@ -1,0 +1,328 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 8.0.1
+  Revisions 9984:10018</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>9984</pre></td>
+<td><pre>2016-09-07</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Update ubuntu packaging scripts
+
+- Change maintainer from Brian Mingus to emergentdev
+- Enable parallel builds
+- Include SVN revision number in debian package number
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>9985</pre></td>
+<td><pre>2016-09-08</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>ax_tutorial_cptax.proj; finished version of the AX tutorial project that users can use to compare their evolving version of the project to a correct version after the CPTAX segment of the tutorial -- to tell how one is doing, make corrections, etc.</pre></td>
+</tr>
+<tr>
+<td><pre>9986</pre></td>
+<td><pre>2016-09-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* set text to always be black for HiLight buttons which are what show up on our dialogs
+* do NOT call our custom window resizing / repositioning code -- it is not well behaved
+and causes significant problems on mac..
+* resize cluster dialog based on font -- we should do this universally -- most dialogs
+are manually sized based on a 12 point font, so just rescale in proportion to font relative to 12 -- should put this in taiMisc
+* fixed MAJOR bug in MSN learning (i.e., PBWM matrix) -- standardly using ach signal
+to clear trace (instead of dopamine! da is discounted but ach is not, so it is much more
+reliable signal), but ach was clearing trace during at the 2nd quarter learning part of
+the trial -- before the dopamine arrived in the 4th quarter!  Not really sure how this
+worked before, but it works a LOT better now..  could make this an option but
+basically da ALWAYS shows up in 4th quarter only at this point, so hard coded for now.
+* added new params for exploring learning opts in msn cons: don't allow "otr" to increase weights, and have a max act that saturates the increases..
+</pre></td>
+</tr>
+<tr>
+<td><pre>9987</pre></td>
+<td><pre>2016-09-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MAJOR fix to undo and general datatable saving code: the row_indexes data for
+DataTable was not being subject to the same optimized saving logic as the
+DataCol elements -- so e.g., even if you had SAVE_ROWS OFF, it would save the
+row_indexes -- discovered this with the lvis backprop model, which was just hanging
+for no apparent reason -- turns out it was computing a massive diff
+* also major fix for diff: if the size of the two strings is bigger than (.5) of the diff
+limit, then just fork off a new source right away -- the hanging diff was caused
+by a major difference in size between two strings..
+* added better undo debug stuff, including saving of undo source so you can see
+what is taking up all the space..
+* added taMisc::is_auto_saving -- data table had code for optimizing the auto save
+but it was actually being called all the time!  now only for auto saves..
+* added taiMisc::resizeByMainFont method and associated other ones, that resize
+gui elements as function of difference in font size compared to default -- now applied
+to all dialogs with manual sizing, AND to the basic taiMisc sizing code
+-- which used to just have some fairly random sizing logic there --
+this now FIXES various alignment issues I was having with the edit dialog stripes,
+with a larger font..
+* the iTableView now uses font size information to try to set row height -- not clear
+if it is actually different.. needs more work probably.
+</pre></td>
+</tr>
+<tr>
+<td><pre>9988</pre></td>
+<td><pre>2016-09-11</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>add step to increase Hidden layer to 5X5 at the end - ax_tutorial_cptax.proj</pre></td>
+</tr>
+<tr>
+<td><pre>9989</pre></td>
+<td><pre>2016-09-12</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>ax_tutorial_cptax_pfcbg.proj; after adding PBWM</pre></td>
+</tr>
+<tr>
+<td><pre>9990</pre></td>
+<td><pre>2016-09-12</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>changed unit names to be stored on layer's unit name object</pre></td>
+</tr>
+<tr>
+<td><pre>9991</pre></td>
+<td><pre>2016-09-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Increment version to 8.0.1 in prep for new relase.
+* add row_height member to DataTable for setting manual row height -- 0 = use default --
+I was in this code and thought it would be easy but then quickly got lost so this is
+as far as I got -- John you can take it from here!
+* prevent an annoying double-resize of css console window when computer goes to sleep --
+console now keeps it size..
+* console also now has a special show event timer that does a clear, so it always
+starts up with the command prompt showing (finally!)
+* added SAVE_UNIT_NAMES flag to Layer, and got rid of SAVE_UNITS and NO_SAVE_UNITS which
+were obsolete.  this is the easy way to activate the unit_names field, and keep the
+geom updating with the layer geom.
+</pre></td>
+</tr>
+<tr>
+<td><pre>9992</pre></td>
+<td><pre>2016-09-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* GpiInvUnitSpec::trl_refract -- prevent repeated gating within same trial -- gpi known
+to have refractgory dynamics, and this prevents strange gating behavior
+* separate factors for each cell in gated / not-gated, go / nogo, pos / neg da combinations -- logic can be made for different considerations for each case:
+https://grey.colorado.edu/ccnlab/index.php/PBWM_V5.0#Bidirectional_Dopamine_Effects_Interacting_with_Gating
+* got rid of da reset of trace -- fundamentally unreliable -- always using ach reset of trace.
+</pre></td>
+</tr>
+<tr>
+<td><pre>9993</pre></td>
+<td><pre>2016-09-12</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>ran ax_tutorial_cptax_pfcbg.proj through Emergent 8.0.1 (-r9992); SAVE_UNIT_NAMES flag on, names rendering for Input, Output</pre></td>
+</tr>
+<tr>
+<td><pre>9994</pre></td>
+<td><pre>2016-09-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2788 - Extra spaces between "for" and '(' not parsed correctly.
+</pre></td>
+</tr>
+<tr>
+<td><pre>9995</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Clean up font preferences
+* put all font sizes into class so they appear together in one row in preference dialog
+* same for font names but there are only two - general and console
+</pre></td>
+</tr>
+<tr>
+<td><pre>9996</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>param updates and comments, and new simpler form of go_nogo_inhib instead of veto
+</pre></td>
+</tr>
+<tr>
+<td><pre>9997</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>oops! caught by an #ifdef
+</pre></td>
+</tr>
+<tr>
+<td><pre>9999</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>- Reduce polling delays in the testing framework library
+- Add ability to test for values with a margin
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10000</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add initial tests for the basic leabra algorithms.
+
+This runs an equivalent project to the neuorn project to test basic behaviour of a single unit and its specs.
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10001</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>With the shorter timeouts in the testing framework, we are getting blank strings in the output. So strip the result of whitespace before processing
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10002</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rework the global font size increment/decrement code
+-- move from taRootBase to taMisc
+-- move all the calculation into a method in taMisc -- components just ask for current value
+-- removed temporary incr/decr control from table and treeview
+</pre></td>
+</tr>
+<tr>
+<td><pre>10003</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MSNConSpec param updates -- working pretty well on sir52 now
+* for control panel add individually -- allow blank prefix
+* minor null guard
+</pre></td>
+</tr>
+<tr>
+<td><pre>10004</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Programming toolbar was being wrongly hidden for the Editor/Visualizer view state.
+- Toolbar should be visible whenever the Navigator or Editor is visible unless hidden by user
+</pre></td>
+</tr>
+<tr>
+<td><pre>10005</pre></td>
+<td><pre>2016-09-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Commit the SetMember code again. As it is used in some tests.
+
+Still need to figure out some of the finer details of the syntax
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10006</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Increment/Decrement font now use standard zoom_in/zoom_out Ctrl + '+' and Ctrl + '-' (command key on mac)
+-- w/ or w/o shift
+</pre></td>
+</tr>
+<tr>
+<td><pre>10007</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Get the current font size when constructing the widget
+</pre></td>
+</tr>
+<tr>
+<td><pre>10008</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>msn learning fixes: always multiply by msn * (1-msn) and make the "1" a variable (max_msn_act).
+</pre></td>
+</tr>
+<tr>
+<td><pre>10009</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Accidentally committed a change to the error message string in the server API
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10010</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Build ubuntu packages with --not-native flag
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10011</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>msn_deriv option to turn off msn(1-msn) multiplier and just use msn</pre></td>
+</tr>
+<tr>
+<td><pre>10012</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of gpi trl_refract -- very bad for sir52 -- and move go_nogo_inhib to apply to both gated, not-gated cases</pre></td>
+</tr>
+<tr>
+<td><pre>10013</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update pbwm wizard to key 1.8 gpi inhib value
+* get rid of go_nogo_inhib param -- not useful
+* update comments about some params, particularly gate_nogo_pos which is key one
+</pre></td>
+</tr>
+<tr>
+<td><pre>10014</pre></td>
+<td><pre>2016-09-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update to current font when initializing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10015</pre></td>
+<td><pre>2016-09-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- These changes - calling update() in Refresh() - makes sure that the datatable and the matrixeditor redraw when the font changes
+- Still to do size the rows based on the font size
+</pre></td>
+</tr>
+<tr>
+<td><pre>10016</pre></td>
+<td><pre>2016-09-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Don't add the "cancel" button to the startup wizard chooser panels
+-- iDialogItemChooser now has flags passed in the constructor but the only one so far is the flgNoCancel
+</pre></td>
+</tr>
+<tr>
+<td><pre>10017</pre></td>
+<td><pre>2016-09-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated MSNConSpec with (default) option to set only 2 params, vs. full set of 2x2x2 params
+:* also include updated logic for each paramter and why it seems to work best the way it does..
+* PBWM wizard updated to new defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>10018</pre></td>
+<td><pre>2016-09-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* get rid of lots of not-useful and 1 *harmful* params on MSN matrix specs -- no
+out_deep_mod, and no mnt* mods -- don't need a deep mod projection from pfc deep to
+matrix anymore -- wizard updated
+</pre></td>
+</tr>
+</table>
+</body></html>

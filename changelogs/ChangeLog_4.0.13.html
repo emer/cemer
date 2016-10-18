@@ -1,0 +1,455 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 4.0.13
+  Revisions 2688:2744</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>2688</pre></td>
+<td><pre>2008-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>version -&gt; 4.0.12 -- everyone must make uninstall and make clean!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2689</pre></td>
+<td><pre>2008-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed select for edit compare (BugId: 253)
+* all bools, enums, and token choosers are auto-apply by default (BugId: 212),
+  got rid of ! stuff -- now very predictable default behavior doesn't need confusing
+  marker.  also fixed view control panels.  added NO_APPLY_IMMED to override if needed.
+  Text fields are always apply..
+* reset columns button on netmonitor
+* ctleabra: dwt_norm function
+</pre></td>
+</tr>
+<tr>
+<td><pre>2690</pre></td>
+<td><pre>2008-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ctleabra sign was backwards
+</pre></td>
+</tr>
+<tr>
+<td><pre>2691</pre></td>
+<td><pre>2008-01-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bypassed use of simage in VeTexture</pre></td>
+</tr>
+<tr>
+<td><pre>2692</pre></td>
+<td><pre>2008-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra: new act_reg functionality
+</pre></td>
+</tr>
+<tr>
+<td><pre>2693</pre></td>
+<td><pre>2008-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct was not using bias_only act reg check
+</pre></td>
+</tr>
+<tr>
+<td><pre>2694</pre></td>
+<td><pre>2008-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct learning rates for diff phases
+</pre></td>
+</tr>
+<tr>
+<td><pre>2695</pre></td>
+<td><pre>2008-01-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Network::FindMakeView -- finds existing or makes new view
+* Wizard::StdNetwork uses FindMakeView
+* CtLeabra: checks for inactive layers / unit groups and ignores learning if so.
+* Leabra: revert act_reg to multiplicative
+</pre></td>
+</tr>
+<tr>
+<td><pre>2696</pre></td>
+<td><pre>2008-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ctleabra: misc optimizations in advance of new version
+* minor progel fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>2697</pre></td>
+<td><pre>2008-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* first pass at new CtLeabra learning algorithm
+* fixed linear weight thing in leabra: now just gets a temp variable
+  instead of changing actual weight val back and forth: not only more 
+  computationally efficient, but also much cleaner!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2698</pre></td>
+<td><pre>2008-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct updates incl inhib and da-based sampling/weighting
+</pre></td>
+</tr>
+<tr>
+<td><pre>2699</pre></td>
+<td><pre>2008-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed member fm arg css gen bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>2700</pre></td>
+<td><pre>2008-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct: new min and max thresholds for da for sravg
+</pre></td>
+</tr>
+<tr>
+<td><pre>2701</pre></td>
+<td><pre>2008-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct: use layer-level maxda vals for scoping sravg computation -- much more reliable..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2702</pre></td>
+<td><pre>2008-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct: new defaults and uae for timing -- key!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2703</pre></td>
+<td><pre>2008-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ak! compile err fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>2704</pre></td>
+<td><pre>2008-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added back sravg_start -- turns out thresh is not that reliable to discriminate
+in other networks
+* added LeabraCycleMonitor program
+</pre></td>
+</tr>
+<tr>
+<td><pre>2705</pre></td>
+<td><pre>2008-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new logic for maxda_sum and sravg -- always incrementing so first sravg is always
+computed at start
+</pre></td>
+</tr>
+<tr>
+<td><pre>2706</pre></td>
+<td><pre>2008-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* all graphs now use FindMakeGraphView etc
+* total revamp of ct inhibition w/ sinusoidal etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>2707</pre></td>
+<td><pre>2008-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added Init_SdEffWt Function
+</pre></td>
+</tr>
+<tr>
+<td><pre>2708</pre></td>
+<td><pre>2008-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Program Run &amp; Step now auto-call Init if not pressed yet.. extremely easy and saves
+a lot of button pressing.  Also don't put up err msg if pressed when still running.
+* renamed SimpleMathSpec ops GTEQ LTEQ GTLTEQ to MIN, MAX, MINMAX
+* major new feature: snapshot function on network, plus Snap Border display around
+units in the netview -- very convenient for comparing things.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2709</pre></td>
+<td><pre>2008-02-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small fix</pre></td>
+</tr>
+<tr>
+<td><pre>2710</pre></td>
+<td><pre>2008-02-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor update to plugin config</pre></td>
+</tr>
+<tr>
+<td><pre>2711</pre></td>
+<td><pre>2008-02-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>taFiler ctrl was not being used</pre></td>
+</tr>
+<tr>
+<td><pre>2712</pre></td>
+<td><pre>2008-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed selection bug with snap bord display (and wt lines too -- doesn't select those
+anymore)
+</pre></td>
+</tr>
+<tr>
+<td><pre>2713</pre></td>
+<td><pre>2008-02-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>ScriptPrjn fixes</pre></td>
+</tr>
+<tr>
+<td><pre>2714</pre></td>
+<td><pre>2008-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added quantile with arbitrary parameter to Aggregator
+* added matrix frame based aggregation functions and general agg funcdtion
+* added net monitor data agg functionality
+* if source data is a matrix column, now produce matrix aggregated data for
+  group operation, and for netmonitor computed agg of data
+* added select rows to netmonitor data agg
+* boolean logic now supported for multiple member dependencies in CONDEDIT/SHOW/GHOST etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2715</pre></td>
+<td><pre>2008-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* err msg if select rows = 0 rows on netmon
+* fixed TestError in taMatrix::SafeElIndexN -- was backwards!  failed for dims &gt; 1
+</pre></td>
+</tr>
+<tr>
+<td><pre>2716</pre></td>
+<td><pre>2008-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wt_sig and act both call UAE on owner spec to regenerate lookup tables
+</pre></td>
+</tr>
+<tr>
+<td><pre>2717</pre></td>
+<td><pre>2008-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* progel copy now looks up any variables by name, not just path, and copies
+over from source any missing variables.  also does proper update of pointers
+across projects.  new PROGEL_SIMPLE_BASEFUNS to be used in any
+progel object instead of TA basefuns -- has auto copy/move guys
+* added UpdateAfterMove[_impl] infrastructure to taBase, called in
+a List/Group Transfer -- use for updating pointers such as this stuff.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2718</pre></td>
+<td><pre>2008-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* living hell conquered!  UpdatePointers code now supports extensions for more
+flexible updating of pointers after copying, moving.  also, a bunch of 
+"internal" pointers that should NOT have been copied, and which did not properly have
+NO_SET_POINTER set, were fixed.  this may have been a significant source of latent
+crashing in previous versions.  In fact, I can now duplicate a project!  the viewers
+are still screwed up a bit, but it works!
+* any spec pointers now copy spec from source into new guy, so any copying of 
+layers or projections will result in a functional network!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2719</pre></td>
+<td><pre>2008-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added Layer and Projection UpdateAfterMove to call UpdatePointers when moved.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2720</pre></td>
+<td><pre>2008-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>select edit now does UAE on all bases on apply -- fixes problem with 
+specs not updating children etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2721</pre></td>
+<td><pre>2008-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added Dump_Load_pre which is called at start of Load_strm -- use it for 
+clearing out anything prior to loading (only when loading that specific object)
+* added Dump_Load_pre for DataTable, Program, and Network: resets existing
+</pre></td>
+</tr>
+<tr>
+<td><pre>2722</pre></td>
+<td><pre>2008-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed VELight crash, tested fully - light stuff seems to work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2723</pre></td>
+<td><pre>2008-02-15</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Check for simage but don't include LIBS, CXXFLAGS OR LDFLAGS</pre></td>
+</tr>
+<tr>
+<td><pre>2724</pre></td>
+<td><pre>2008-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added Init button for VEWorld (alias for SetValsToODE, which is less than clear)
+* added midpoint version of vm update computation as suggested by Michael Frank
+-- seems to work very well in minimizing oscillations -- was able to crank up
+dt in family trees to .4 and it was still stable (didn't try higher yet).
+ could be very useful as higher dt dynamics are much better in general for network
+learning. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>2725</pre></td>
+<td><pre>2008-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>midpoint = true is new default
+</pre></td>
+</tr>
+<tr>
+<td><pre>2726</pre></td>
+<td><pre>2008-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>2 bugs fixed:
+* condedit/show logic fix for multiple membs (||, &amp;&amp;) -- was ignoring first cond,
+  affected netmonitor agg field for !computed
+* changelog dialog was not being deleted!!  this was the source of at least one
+  fairly reliable project crash (the most frequent one for me)
+</pre></td>
+</tr>
+<tr>
+<td><pre>2727</pre></td>
+<td><pre>2008-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct: layer-specific inhib parameters
+</pre></td>
+</tr>
+<tr>
+<td><pre>2728</pre></td>
+<td><pre>2008-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>midpoint off by default: seems to be worse for ft and objrec under ct.  better to
+have it as an option than the default.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2729</pre></td>
+<td><pre>2008-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ct: fixed layer fin inhib mod code
+</pre></td>
+</tr>
+<tr>
+<td><pre>2730</pre></td>
+<td><pre>2008-02-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>4.0.13</pre></td>
+</tr>
+<tr>
+<td><pre>2731</pre></td>
+<td><pre>2008-02-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bug bugID:254</pre></td>
+</tr>
+<tr>
+<td><pre>2732</pre></td>
+<td><pre>2008-02-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bug bugID:268</pre></td>
+</tr>
+<tr>
+<td><pre>2733</pre></td>
+<td><pre>2008-02-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bug bugID:278</pre></td>
+</tr>
+<tr>
+<td><pre>2734</pre></td>
+<td><pre>2008-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for taData::SetMatrixCellDataByName -- copy/paste err had matrix instead of 
+variant arg for data.  resulted in DataVarProgMatrix not working for setting data.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2735</pre></td>
+<td><pre>2008-02-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bug bugID:261</pre></td>
+</tr>
+<tr>
+<td><pre>2736</pre></td>
+<td><pre>2008-02-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>some missing things in NetView CutLinks</pre></td>
+</tr>
+<tr>
+<td><pre>2737</pre></td>
+<td><pre>2008-02-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win proj changes for release 13</pre></td>
+</tr>
+<tr>
+<td><pre>2738</pre></td>
+<td><pre>2008-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use access to check for valid filenames for VE world objs -- SoInput not good.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2739</pre></td>
+<td><pre>2008-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>also need access fix for netview objs!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2740</pre></td>
+<td><pre>2008-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>0.001 minimum length for capsules -- prevents ode crash for length = 2*radius
+</pre></td>
+</tr>
+<tr>
+<td><pre>2741</pre></td>
+<td><pre>2008-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated programs for leabra with compute weights moved to trial program so 
+stepping by trial will show weight changes for that time.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2742</pre></td>
+<td><pre>2008-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated comments in LeabraTrial program
+</pre></td>
+</tr>
+<tr>
+<td><pre>2743</pre></td>
+<td><pre>2008-02-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>demo/test models updated
+</pre></td>
+</tr>
+</table>
+</body></html>

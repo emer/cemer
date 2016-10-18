@@ -1,0 +1,3520 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 5.0.0
+  Revisions 3509:4037</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>3509</pre></td>
+<td><pre>2009-01-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>line numbers in program script view, BugId:560</pre></td>
+</tr>
+<tr>
+<td><pre>3510</pre></td>
+<td><pre>2009-01-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>version 4.0.20 -- http://grey.colorado.edu/emergent/index.php/CMake#Remaking_when_Version_Number_Changes</pre></td>
+</tr>
+<tr>
+<td><pre>3511</pre></td>
+<td><pre>2009-01-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new noise_adapt in LeabraUnitSpec, and initial test for GL</pre></td>
+</tr>
+<tr>
+<td><pre>3512</pre></td>
+<td><pre>2009-01-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another gl test</pre></td>
+</tr>
+<tr>
+<td><pre>3513</pre></td>
+<td><pre>2009-01-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>better gl tests</pre></td>
+</tr>
+<tr>
+<td><pre>3514</pre></td>
+<td><pre>2009-01-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>can't figure out opengl issue.. seems to be GL_TEXTURE_3D but OTOH that seems like it isn't the problem..</pre></td>
+</tr>
+<tr>
+<td><pre>3515</pre></td>
+<td><pre>2009-01-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rew pred modulated noise -- seems much better than other stuff..</pre></td>
+</tr>
+<tr>
+<td><pre>3516</pre></td>
+<td><pre>2009-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated pvlv noise to include lve contribution</pre></td>
+</tr>
+<tr>
+<td><pre>3517</pre></td>
+<td><pre>2009-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass rough-in of the new threading code -- nonfunctional but outline is in place</pre></td>
+</tr>
+<tr>
+<td><pre>3518</pre></td>
+<td><pre>2009-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Threading of Leabra Compute_Act as test case -- works great for all in main thread
+so all the unit list infrastructure and new config of funs is correct, but 
+it doesn't produce same results with threading turned on.. but at least it 
+doesn't crash!
+NOTE that this svn version will NOT work for any pbwm or other models that
+use the ScalarVal layer spec -- need a bit more cleanup for that. 
+so DON'T use this svn version until further notice!!!  Sorry -- too tired
+to finish it now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3519</pre></td>
+<td><pre>2009-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed thread chunking -- now gets same results as zero guy -- all seems to work!</pre></td>
+</tr>
+<tr>
+<td><pre>3520</pre></td>
+<td><pre>2009-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor</pre></td>
+</tr>
+<tr>
+<td><pre>3521</pre></td>
+<td><pre>2009-01-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>netstru fully thread-ified, added thread_no to std arg, sender-based netin in place -- NOTE: does not compile spec algos -- will take a while to get them all updated..</pre></td>
+</tr>
+<tr>
+<td><pre>3522</pre></td>
+<td><pre>2009-01-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bp compiling, but requires layer_sync and backwards args to be properly implemented</pre></td>
+</tr>
+<tr>
+<td><pre>3523</pre></td>
+<td><pre>2009-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>layer_sync and backwards opts now in place</pre></td>
+</tr>
+<tr>
+<td><pre>3524</pre></td>
+<td><pre>2009-01-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added UserData auto_open option for viewers so you can have multiple without them auto_opening</pre></td>
+</tr>
+<tr>
+<td><pre>3525</pre></td>
+<td><pre>2009-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>start of major reorg of leabra code: send_delta only, nuke clamp net, cleanup all the clutter and clarify functions</pre></td>
+</tr>
+<tr>
+<td><pre>3526</pre></td>
+<td><pre>2009-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more reorg progress</pre></td>
+</tr>
+<tr>
+<td><pre>3527</pre></td>
+<td><pre>2009-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more reorg progress</pre></td>
+</tr>
+<tr>
+<td><pre>3528</pre></td>
+<td><pre>2009-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more reorg: trial, settle init in place + main cycle computations</pre></td>
+</tr>
+<tr>
+<td><pre>3529</pre></td>
+<td><pre>2009-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass on leabra done -- working through compile errs</pre></td>
+</tr>
+<tr>
+<td><pre>3530</pre></td>
+<td><pre>2009-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>base leabra code all compiling</pre></td>
+</tr>
+<tr>
+<td><pre>3531</pre></td>
+<td><pre>2009-02-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>removed ro perms causing issues</pre></td>
+</tr>
+<tr>
+<td><pre>3532</pre></td>
+<td><pre>2009-02-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed missplaced and commented out sndfile lib linking line</pre></td>
+</tr>
+<tr>
+<td><pre>3533</pre></td>
+<td><pre>2009-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra up to pbwm compiling -- need a layerspec Compute_Act replacement</pre></td>
+</tr>
+<tr>
+<td><pre>3534</pre></td>
+<td><pre>2009-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra fully compiling!!</pre></td>
+</tr>
+<tr>
+<td><pre>3535</pre></td>
+<td><pre>2009-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>code all compiles; leabra seems to work in basic first pass test!!</pre></td>
+</tr>
+<tr>
+<td><pre>3536</pre></td>
+<td><pre>2009-02-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed compile errors that manifested in Windows</pre></td>
+</tr>
+<tr>
+<td><pre>3537</pre></td>
+<td><pre>2009-02-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>thread params now on taMisc user defaults, nuked old CtSettle guys</pre></td>
+</tr>
+<tr>
+<td><pre>3538</pre></td>
+<td><pre>2009-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed a number of threading bugs -- now replicates old PBWM models (modulo one important point with output gating)</pre></td>
+</tr>
+<tr>
+<td><pre>3539</pre></td>
+<td><pre>2009-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra bench updated</pre></td>
+</tr>
+<tr>
+<td><pre>3540</pre></td>
+<td><pre>2009-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compute load values updated for leabra and put on wiki too</pre></td>
+</tr>
+<tr>
+<td><pre>3541</pre></td>
+<td><pre>2009-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>threading for leabra fully debugged and working</pre></td>
+</tr>
+<tr>
+<td><pre>3542</pre></td>
+<td><pre>2009-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>send_net thread param and delta back on unit for no thread case netin</pre></td>
+</tr>
+<tr>
+<td><pre>3543</pre></td>
+<td><pre>2009-02-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>hopefully fixed bugID:590 and other similar crashes by properly adding a virtual to 2nd class of taBase_RefList</pre></td>
+</tr>
+<tr>
+<td><pre>3544</pre></td>
+<td><pre>2009-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>header docs cleanup -- leabra fully tested and ready to go!</pre></td>
+</tr>
+<tr>
+<td><pre>3545</pre></td>
+<td><pre>2009-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bp compute thr vals, added Compute_NetinInteg as sep thread step in leabra, added std Compute_Netin to fix RelNet bug</pre></td>
+</tr>
+<tr>
+<td><pre>3546</pre></td>
+<td><pre>2009-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bp_bench</pre></td>
+</tr>
+<tr>
+<td><pre>3547</pre></td>
+<td><pre>2009-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compute_thr default to .3</pre></td>
+</tr>
+<tr>
+<td><pre>3548</pre></td>
+<td><pre>2009-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>split pvlv noise factors -- pvi alone seems better for output gating</pre></td>
+</tr>
+<tr>
+<td><pre>3549</pre></td>
+<td><pre>2009-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully found pbwm bug: pvlv guys were carrying over training ext vals as soft clamp on subsequent trials</pre></td>
+</tr>
+<tr>
+<td><pre>3550</pre></td>
+<td><pre>2009-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully last pbwm bug: pfc out was excluding all units from compute, thereby exluding any pfc output at all.  doh.</pre></td>
+</tr>
+<tr>
+<td><pre>3551</pre></td>
+<td><pre>2009-02-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>trigger updt for LesionUnits plus ChangeLog taMisc option</pre></td>
+</tr>
+<tr>
+<td><pre>3552</pre></td>
+<td><pre>2009-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>avgda noise mod</pre></td>
+</tr>
+<tr>
+<td><pre>3553</pre></td>
+<td><pre>2009-02-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bugID:592 small DataCol enhance</pre></td>
+</tr>
+<tr>
+<td><pre>3554</pre></td>
+<td><pre>2009-02-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>compiler detected fixes and a TODO marker</pre></td>
+</tr>
+<tr>
+<td><pre>3555</pre></td>
+<td><pre>2009-02-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Leabra learn_rule switch auto-updates relevant params correctly; fixed ScalarVal Target clamp bug</pre></td>
+</tr>
+<tr>
+<td><pre>3556</pre></td>
+<td><pre>2009-02-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>twod fix for clamp</pre></td>
+</tr>
+<tr>
+<td><pre>3557</pre></td>
+<td><pre>2009-02-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bugID:593</pre></td>
+</tr>
+<tr>
+<td><pre>3558</pre></td>
+<td><pre>2009-02-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>important fix</pre></td>
+</tr>
+<tr>
+<td><pre>3559</pre></td>
+<td><pre>2009-02-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>important fix</pre></td>
+</tr>
+<tr>
+<td><pre>3560</pre></td>
+<td><pre>2009-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleaner scalarval fix</pre></td>
+</tr>
+<tr>
+<td><pre>3561</pre></td>
+<td><pre>2009-02-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fix flat_geom to be right for nongp</pre></td>
+</tr>
+<tr>
+<td><pre>3562</pre></td>
+<td><pre>2009-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new patch and snc idea</pre></td>
+</tr>
+<tr>
+<td><pre>3563</pre></td>
+<td><pre>2009-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major cleanup of pvlv and pbwm code, removed xxx_rnd_go mechs, put ext_rew stuff on network, etc</pre></td>
+</tr>
+<tr>
+<td><pre>3564</pre></td>
+<td><pre>2009-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>it doesn't work if you dont *CALL* the function..</pre></td>
+</tr>
+<tr>
+<td><pre>3565</pre></td>
+<td><pre>2009-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nogo matrix noise</pre></td>
+</tr>
+<tr>
+<td><pre>3566</pre></td>
+<td><pre>2009-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops: bug in pv compute_da -- was calling on lvi instead of pvi</pre></td>
+</tr>
+<tr>
+<td><pre>3567</pre></td>
+<td><pre>2009-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added NOGO_RND_GO back in -- seems to be essential, at least for now</pre></td>
+</tr>
+<tr>
+<td><pre>3568</pre></td>
+<td><pre>2009-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pvlv fixes: was saving prior-diffed version instead of raw pvlv val, and was not properly using act_m on pvi</pre></td>
+</tr>
+<tr>
+<td><pre>3569</pre></td>
+<td><pre>2009-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>delta prior on lv to replicate old model -- weird.</pre></td>
+</tr>
+<tr>
+<td><pre>3570</pre></td>
+<td><pre>2009-02-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>min_in_prior flag working.</pre></td>
+</tr>
+<tr>
+<td><pre>3571</pre></td>
+<td><pre>2009-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nogo rnd go fixes -- should be just like orig now</pre></td>
+</tr>
+<tr>
+<td><pre>3572</pre></td>
+<td><pre>2009-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all bugs fixed! working amazingly well on loop.  misc cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>3573</pre></td>
+<td><pre>2009-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hmmm. one more debug test</pre></td>
+</tr>
+<tr>
+<td><pre>3574</pre></td>
+<td><pre>2009-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn.  pv prior DOES do something useful.  ok, enough cleaning.</pre></td>
+</tr>
+<tr>
+<td><pre>3575</pre></td>
+<td><pre>2009-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>old noise back out.</pre></td>
+</tr>
+<tr>
+<td><pre>3576</pre></td>
+<td><pre>2009-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>er_prior_decay for all pvlv layers</pre></td>
+</tr>
+<tr>
+<td><pre>3577</pre></td>
+<td><pre>2009-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard updated to create new pbwm models</pre></td>
+</tr>
+<tr>
+<td><pre>3578</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>min_in_prior option</pre></td>
+</tr>
+<tr>
+<td><pre>3579</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>ignore</pre></td>
+</tr>
+<tr>
+<td><pre>3580</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3581</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3582</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3583</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3584</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3585</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3586</pre></td>
+<td><pre>2009-02-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3587</pre></td>
+<td><pre>2009-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix using xcal for act reg: experimental</pre></td>
+</tr>
+<tr>
+<td><pre>3588</pre></td>
+<td><pre>2009-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#NO_SCOPE fix for Monitor Add Layer, etc  and fixed xyngeom UAE logic for n_not_xy</pre></td>
+</tr>
+<tr>
+<td><pre>3589</pre></td>
+<td><pre>2009-02-23</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3590</pre></td>
+<td><pre>2009-02-23</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre></pre></td>
+</tr>
+<tr>
+<td><pre>3591</pre></td>
+<td><pre>2009-02-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taMisc::FullArgString/ToFile -- for saving startup args</pre></td>
+</tr>
+<tr>
+<td><pre>3592</pre></td>
+<td><pre>2009-02-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pvlv updts</pre></td>
+</tr>
+<tr>
+<td><pre>3593</pre></td>
+<td><pre>2009-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard updates</pre></td>
+</tr>
+<tr>
+<td><pre>3594</pre></td>
+<td><pre>2009-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>expertize expert params</pre></td>
+</tr>
+<tr>
+<td><pre>3595</pre></td>
+<td><pre>2009-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pct_err and pct_cor: average of cnt_err over epoch -- should have been there all along</pre></td>
+</tr>
+<tr>
+<td><pre>3596</pre></td>
+<td><pre>2009-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed TdLayerSpec so td sim actually works now, and also removed gc.i == 0.0f exclusion from ApplyInhib -- was causing a ratchet effect if guys didn't get any netin (rare)</pre></td>
+</tr>
+<tr>
+<td><pre>3597</pre></td>
+<td><pre>2009-02-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added AutoSave to the AutoLoad</pre></td>
+</tr>
+<tr>
+<td><pre>3598</pre></td>
+<td><pre>2009-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed crazy auto_scale bug in netview: code was in net text routine for some reason, so if net text was off, no auto scale</pre></td>
+</tr>
+<tr>
+<td><pre>3599</pre></td>
+<td><pre>2009-02-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed minor bug in net UpdateMax when using laygp pos</pre></td>
+</tr>
+<tr>
+<td><pre>3600</pre></td>
+<td><pre>2009-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>global threads list on taThreadMgr and TerminateAllThreads static fun; check for null ths for cssMbrCFun call</pre></td>
+</tr>
+<tr>
+<td><pre>3601</pre></td>
+<td><pre>2009-03-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fpe guy in raRoot</pre></td>
+</tr>
+<tr>
+<td><pre>3602</pre></td>
+<td><pre>2009-03-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fpe guy in raRoot</pre></td>
+</tr>
+<tr>
+<td><pre>3603</pre></td>
+<td><pre>2009-03-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed fpe debug if for linux only</pre></td>
+</tr>
+<tr>
+<td><pre>3604</pre></td>
+<td><pre>2009-03-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>guarded div0 guy, didn't see anything else in pbwm model running for INVALID or DIV0</pre></td>
+</tr>
+<tr>
+<td><pre>3605</pre></td>
+<td><pre>2009-03-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>for coin &gt;= 3.0, now totally free of simage for *everything* including VRML files, thanks to new callback function for reading images</pre></td>
+</tr>
+<tr>
+<td><pre>3606</pre></td>
+<td><pre>2009-03-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>removed some stale debugging code and a nasty nested bool rval hiding the proper local var</pre></td>
+</tr>
+<tr>
+<td><pre>3607</pre></td>
+<td><pre>2009-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc leabra default updates, ColStats on data table menu is back.</pre></td>
+</tr>
+<tr>
+<td><pre>3608</pre></td>
+<td><pre>2009-03-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tweak to gamma and flesh in harmonic sieve</pre></td>
+</tr>
+<tr>
+<td><pre>3609</pre></td>
+<td><pre>2009-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new mutli-sample V1 for super high res</pre></td>
+</tr>
+<tr>
+<td><pre>3610</pre></td>
+<td><pre>2009-03-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>inter checkin</pre></td>
+</tr>
+<tr>
+<td><pre>3611</pre></td>
+<td><pre>2009-03-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha of harmonic sieve guy</pre></td>
+</tr>
+<tr>
+<td><pre>3612</pre></td>
+<td><pre>2009-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>threading of filtering img proc ops -- still could do img resizing etc but that is harder</pre></td>
+</tr>
+<tr>
+<td><pre>3613</pre></td>
+<td><pre>2009-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rvals fix</pre></td>
+</tr>
+<tr>
+<td><pre>3614</pre></td>
+<td><pre>2009-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MPI_Finalize to cleanup mpi threads??</pre></td>
+</tr>
+<tr>
+<td><pre>3615</pre></td>
+<td><pre>2009-03-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added AGC block still under devel</pre></td>
+</tr>
+<tr>
+<td><pre>3616</pre></td>
+<td><pre>2009-03-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>some minor changes to make nets more robust to nans</pre></td>
+</tr>
+<tr>
+<td><pre>3617</pre></td>
+<td><pre>2009-03-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>int checkin</pre></td>
+</tr>
+<tr>
+<td><pre>3618</pre></td>
+<td><pre>2009-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major fixes for thread safety of FindName functions, incl FindMembeR etc.</pre></td>
+</tr>
+<tr>
+<td><pre>3619</pre></td>
+<td><pre>2009-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>non-debug compile fix</pre></td>
+</tr>
+<tr>
+<td><pre>3620</pre></td>
+<td><pre>2009-03-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mpi compile fix</pre></td>
+</tr>
+<tr>
+<td><pre>3621</pre></td>
+<td><pre>2009-03-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>treadsafe upgrades and tidying up of the taAtomic stuff</pre></td>
+</tr>
+<tr>
+<td><pre>3622</pre></td>
+<td><pre>2009-03-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>treadsafe upgrades and tidying up of the taAtomic stuff</pre></td>
+</tr>
+<tr>
+<td><pre>3623</pre></td>
+<td><pre>2009-03-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dog retina thread cleanups</pre></td>
+</tr>
+<tr>
+<td><pre>3624</pre></td>
+<td><pre>2009-03-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>atomic ref guy in typea and debug guard for unsafe Notify</pre></td>
+</tr>
+<tr>
+<td><pre>3625</pre></td>
+<td><pre>2009-03-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest exp code in audioproc</pre></td>
+</tr>
+<tr>
+<td><pre>3626</pre></td>
+<td><pre>2009-03-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest exp code in audioproc</pre></td>
+</tr>
+<tr>
+<td><pre>3627</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>changes to token registration</pre></td>
+</tr>
+<tr>
+<td><pre>3628</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:621</pre></td>
+</tr>
+<tr>
+<td><pre>3629</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added wav files for demo</pre></td>
+</tr>
+<tr>
+<td><pre>3630</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added streaming and gui support for QAtomicInt to make them near plug replaceable for ints</pre></td>
+</tr>
+<tr>
+<td><pre>3631</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>nuked LogLinear block added Linear to the AN block vals</pre></td>
+</tr>
+<tr>
+<td><pre>3632</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no reg constr for local objs in ta_imgproc -- hard to find these guys in general</pre></td>
+</tr>
+<tr>
+<td><pre>3633</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no reg constr for all _Matrix tmp guys</pre></td>
+</tr>
+<tr>
+<td><pre>3634</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no reg constr for all _Matrix tmp guys -- fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3635</pre></td>
+<td><pre>2009-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no reg constr for DataTable, Data*spec</pre></td>
+</tr>
+<tr>
+<td><pre>3636</pre></td>
+<td><pre>2009-03-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for FIRST and LAST agg ops in Group -- sort on row_id value to preserve current order, instead of sorting on item itself</pre></td>
+</tr>
+<tr>
+<td><pre>3637</pre></td>
+<td><pre>2009-03-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bugID:626 plus misc win fixups plus nuked engines</pre></td>
+</tr>
+<tr>
+<td><pre>3638</pre></td>
+<td><pre>2009-03-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:619</pre></td>
+</tr>
+<tr>
+<td><pre>3639</pre></td>
+<td><pre>2009-03-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:202</pre></td>
+</tr>
+<tr>
+<td><pre>3640</pre></td>
+<td><pre>2009-03-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>partial fixes but also remaining issues in bugID:576</pre></td>
+</tr>
+<tr>
+<td><pre>3641</pre></td>
+<td><pre>2009-03-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tent fix to the strrep ref issue</pre></td>
+</tr>
+<tr>
+<td><pre>3642</pre></td>
+<td><pre>2009-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>for loop fixes plus item chooser tab flow fixes and auto-select on one item</pre></td>
+</tr>
+<tr>
+<td><pre>3643</pre></td>
+<td><pre>2009-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>access cons by name</pre></td>
+</tr>
+<tr>
+<td><pre>3644</pre></td>
+<td><pre>2009-03-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest on harmonic block</pre></td>
+</tr>
+<tr>
+<td><pre>3645</pre></td>
+<td><pre>2009-03-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed UNIT_INHIB and added def_force to ve joint stops for springiness</pre></td>
+</tr>
+<tr>
+<td><pre>3646</pre></td>
+<td><pre>2009-03-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>rejigged StrRep fix to reinstate previous yummy efficieny plus kick PA RISC out of the clique</pre></td>
+</tr>
+<tr>
+<td><pre>3647</pre></td>
+<td><pre>2009-03-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>recvcon_list and sendcon_list find functions updated to the new idx standard</pre></td>
+</tr>
+<tr>
+<td><pre>3648</pre></td>
+<td><pre>2009-03-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added slice sharing which is in accord w original design specs</pre></td>
+</tr>
+<tr>
+<td><pre>3649</pre></td>
+<td><pre>2009-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal cont updates</pre></td>
+</tr>
+<tr>
+<td><pre>3650</pre></td>
+<td><pre>2009-03-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest</pre></td>
+</tr>
+<tr>
+<td><pre>3651</pre></td>
+<td><pre>2009-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>guard on layer spec access in BuildUnits_Threads -- can be called prior to check config</pre></td>
+</tr>
+<tr>
+<td><pre>3652</pre></td>
+<td><pre>2009-03-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bad AN input guard</pre></td>
+</tr>
+<tr>
+<td><pre>3653</pre></td>
+<td><pre>2009-03-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mat/table notify and model updates and clip fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3654</pre></td>
+<td><pre>2009-03-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:165</pre></td>
+</tr>
+<tr>
+<td><pre>3655</pre></td>
+<td><pre>2009-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CTLEABRA_XCAL_C learn_rule (was avg_updt = CONT_CASC)</pre></td>
+</tr>
+<tr>
+<td><pre>3656</pre></td>
+<td><pre>2009-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed leabra unit sse -- wasn't being called due to old param sig</pre></td>
+</tr>
+<tr>
+<td><pre>3657</pre></td>
+<td><pre>2009-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal_c sravg cond</pre></td>
+</tr>
+<tr>
+<td><pre>3658</pre></td>
+<td><pre>2009-03-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor unfunctional changes</pre></td>
+</tr>
+<tr>
+<td><pre>3659</pre></td>
+<td><pre>2009-03-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added off flag to NetMonItems</pre></td>
+</tr>
+<tr>
+<td><pre>3660</pre></td>
+<td><pre>2009-03-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>revision to mat table stuff</pre></td>
+</tr>
+<tr>
+<td><pre>3661</pre></td>
+<td><pre>2009-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>interval param in syndep</pre></td>
+</tr>
+<tr>
+<td><pre>3662</pre></td>
+<td><pre>2009-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Toolbox for loop fixed BugId:576 -- toolbox has key string that triggers update on UAE</pre></td>
+</tr>
+<tr>
+<td><pre>3663</pre></td>
+<td><pre>2009-03-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>most recent fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3664</pre></td>
+<td><pre>2009-03-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>several fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3665</pre></td>
+<td><pre>2009-03-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 install fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3666</pre></td>
+<td><pre>2009-03-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 install fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3667</pre></td>
+<td><pre>2009-03-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed order of recent paths in filer so most recent is on top, xcal updt</pre></td>
+</tr>
+<tr>
+<td><pre>3668</pre></td>
+<td><pre>2009-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added #DYN1 to various useful ops on Layers and Prjns, but it doesn't pop up a dialog for the arg</pre></td>
+</tr>
+<tr>
+<td><pre>3669</pre></td>
+<td><pre>2009-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard update input data from net now uses layerspec stuff: BugID:640</pre></td>
+</tr>
+<tr>
+<td><pre>3670</pre></td>
+<td><pre>2009-03-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>compiles, does something. this plugin links with the Python C api, allowing you to call arbitrary python module functions</pre></td>
+</tr>
+<tr>
+<td><pre>3671</pre></td>
+<td><pre>2009-03-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>see wiki page: http://grey.colorado.edu/emergent/index.php/PyEmergent</pre></td>
+</tr>
+<tr>
+<td><pre>3672</pre></td>
+<td><pre>2009-03-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>works on mac\!</pre></td>
+</tr>
+<tr>
+<td><pre>3673</pre></td>
+<td><pre>2009-03-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updates to 4.0.21</pre></td>
+</tr>
+<tr>
+<td><pre>3674</pre></td>
+<td><pre>2009-03-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>supposedly fixed bugID:643</pre></td>
+</tr>
+<tr>
+<td><pre>3675</pre></td>
+<td><pre>2009-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass at lambda arm muscle model: needs to use both forces at once: now just oscillates..</pre></td>
+</tr>
+<tr>
+<td><pre>3676</pre></td>
+<td><pre>2009-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>12ax proj updated to latest</pre></td>
+</tr>
+<tr>
+<td><pre>3677</pre></td>
+<td><pre>2009-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>virtenv api fixes, compiling now..</pre></td>
+</tr>
+<tr>
+<td><pre>3678</pre></td>
+<td><pre>2009-03-31</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added the param prompt support to DYN guys that need params</pre></td>
+</tr>
+<tr>
+<td><pre>3679</pre></td>
+<td><pre>2009-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally motor lambda is working, and made VE a bit more robust too, incl Reset button for fixing numerical errs</pre></td>
+</tr>
+<tr>
+<td><pre>3680</pre></td>
+<td><pre>2009-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more nuking on reset</pre></td>
+</tr>
+<tr>
+<td><pre>3681</pre></td>
+<td><pre>2009-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vars</pre></td>
+</tr>
+<tr>
+<td><pre>3682</pre></td>
+<td><pre>2009-04-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>DYN bug fix</pre></td>
+</tr>
+<tr>
+<td><pre>3683</pre></td>
+<td><pre>2009-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed VE reset, more robustness in muscle</pre></td>
+</tr>
+<tr>
+<td><pre>3684</pre></td>
+<td><pre>2009-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>init muscle len</pre></td>
+</tr>
+<tr>
+<td><pre>3685</pre></td>
+<td><pre>2009-04-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>found bug in the recent DYN code</pre></td>
+</tr>
+<tr>
+<td><pre>3686</pre></td>
+<td><pre>2009-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>holy crap: long_axis was being ignored for cylinder &amp; capsule, causing collision probs</pre></td>
+</tr>
+<tr>
+<td><pre>3687</pre></td>
+<td><pre>2009-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rvals fixed</pre></td>
+</tr>
+<tr>
+<td><pre>3688</pre></td>
+<td><pre>2009-04-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added UserData monitoring plus minor cleanup and safety of ContextSpec api</pre></td>
+</tr>
+<tr>
+<td><pre>3689</pre></td>
+<td><pre>2009-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dyn enum valid c-name-ification fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3690</pre></td>
+<td><pre>2009-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ve arm updated to latest LambdaArm project</pre></td>
+</tr>
+<tr>
+<td><pre>3691</pre></td>
+<td><pre>2009-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Save Note Changes, detect _recover file save, and --nowin (taMisc::gui_no_win) startup arg</pre></td>
+</tr>
+<tr>
+<td><pre>3692</pre></td>
+<td><pre>2009-04-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>add loaded to plugin enabled for gui</pre></td>
+</tr>
+<tr>
+<td><pre>3693</pre></td>
+<td><pre>2009-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ve arm is cleaned up emer robot arm guy, with docs</pre></td>
+</tr>
+<tr>
+<td><pre>3694</pre></td>
+<td><pre>2009-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major cleanup of VE code, and offscreen render in --nowin works with ve camera -- existing VE projs need to redo stops, motors -- should be auto for arm projs -- VELambdaArmJoint -&gt; VEMuscleArmJoint -- now supports 2 DOF joints too</pre></td>
+</tr>
+<tr>
+<td><pre>3695</pre></td>
+<td><pre>2009-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ve_arm updated too</pre></td>
+</tr>
+<tr>
+<td><pre>3696</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>manual view update in offscreen render mode -- fully functional!</pre></td>
+</tr>
+<tr>
+<td><pre>3697</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added FixedWidthSpec and ability to import from fixed width text files</pre></td>
+</tr>
+<tr>
+<td><pre>3698</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>normalized position vals/funs in base joint</pre></td>
+</tr>
+<tr>
+<td><pre>3699</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>install our own ode error handlers -- tells you likely source of err based on cached obj ptrs</pre></td>
+</tr>
+<tr>
+<td><pre>3700</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>3dview now has headlight_on and stereo_view options that are persistent -- in Frame Properties menu</pre></td>
+</tr>
+<tr>
+<td><pre>3701</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor ctrl panel fix and ve_arm updated</pre></td>
+</tr>
+<tr>
+<td><pre>3702</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually use display_on flag, and added fullscreen_on state for view too</pre></td>
+</tr>
+<tr>
+<td><pre>3703</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>important fix to FixedWidthSpec</pre></td>
+</tr>
+<tr>
+<td><pre>3704</pre></td>
+<td><pre>2009-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed ve camera field_of_view, added taMath rad_per_deg, gauss_den_nonorm</pre></td>
+</tr>
+<tr>
+<td><pre>3705</pre></td>
+<td><pre>2009-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>joint warning fix</pre></td>
+</tr>
+<tr>
+<td><pre>3706</pre></td>
+<td><pre>2009-04-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:651</pre></td>
+</tr>
+<tr>
+<td><pre>3707</pre></td>
+<td><pre>2009-04-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added FileExists to taMisc</pre></td>
+</tr>
+<tr>
+<td><pre>3708</pre></td>
+<td><pre>2009-04-13</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>Termcap patch from Florian Lengyel. Verified to still build on Ubuntu only.</pre></td>
+</tr>
+<tr>
+<td><pre>3709</pre></td>
+<td><pre>2009-04-13</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>PyMethodCall (tested a couple weeks ago - committing now)</pre></td>
+</tr>
+<tr>
+<td><pre>3710</pre></td>
+<td><pre>2009-04-13</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>exclude osx on termcap check</pre></td>
+</tr>
+<tr>
+<td><pre>3711</pre></td>
+<td><pre>2009-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xy_square netview option was not hooked in, and fixed termcap cmake stuff: NOT APPLE, and needed find_package call..</pre></td>
+</tr>
+<tr>
+<td><pre>3712</pre></td>
+<td><pre>2009-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TwoDValLayerSpec: no longer uses first row for vals -- has separate vals storage on layer -- much better for topographic prjns -- use ChangeMyType to cvt LeabraLayer -&gt; TwoDValLeabraLayer</pre></td>
+</tr>
+<tr>
+<td><pre>3713</pre></td>
+<td><pre>2009-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>change my type prompts for remove units</pre></td>
+</tr>
+<tr>
+<td><pre>3714</pre></td>
+<td><pre>2009-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>better? set of toolbar project save/ change log options -- prev was too combinatorial explosion</pre></td>
+</tr>
+<tr>
+<td><pre>3715</pre></td>
+<td><pre>2009-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Matrix go_nogo_gain param for DA gene/drug manips</pre></td>
+</tr>
+<tr>
+<td><pre>3716</pre></td>
+<td><pre>2009-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard observe clamp_pat on init data from scalar val, twod; vec_norm_sum div 0 fix</pre></td>
+</tr>
+<tr>
+<td><pre>3717</pre></td>
+<td><pre>2009-04-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Context updates</pre></td>
+</tr>
+<tr>
+<td><pre>3718</pre></td>
+<td><pre>2009-04-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>critical server fix</pre></td>
+</tr>
+<tr>
+<td><pre>3719</pre></td>
+<td><pre>2009-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vec_replace and simple math spec REPLACE operation -- replace specific values</pre></td>
+</tr>
+<tr>
+<td><pre>3720</pre></td>
+<td><pre>2009-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taDataAnal::CrossDistMatrix code now accepts blank col names and will then compute summed dist across all relevant matching columns</pre></td>
+</tr>
+<tr>
+<td><pre>3721</pre></td>
+<td><pre>2009-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rval fix</pre></td>
+</tr>
+<tr>
+<td><pre>3722</pre></td>
+<td><pre>2009-04-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>interim Server fixes to enable normal sync prog running</pre></td>
+</tr>
+<tr>
+<td><pre>3723</pre></td>
+<td><pre>2009-04-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Windows 4.0.21a changes</pre></td>
+</tr>
+<tr>
+<td><pre>3724</pre></td>
+<td><pre>2009-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added Program::stop_reason, stop_msg -- if program run_state = STOP, then consult this
+for the reason why -- needs to be plugged into the server now by Brad.
+* added taMisc::last_err_msg and last_warn_msg -- contain last messages gen'd by Error and
+Warning, resp.
+* added Save_String and Load_String -- dump to/from strings -- just wrap around _strm versions
+with stringstream class.
+* support &lt;no_arg&gt; for program call arg expr value -- will not set this arg val when 
+calling a program, allowing the current var value to be preserved -- still prompts
+if the value is empty.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3725</pre></td>
+<td><pre>2009-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>include &lt;no_arg&gt; info for blank arg err check..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3726</pre></td>
+<td><pre>2009-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Undo in place and modulo some issues, seems like it will work. Not suggested for production use yet of course. Also tmp file issue on SaveAs not resolved but some progress</pre></td>
+</tr>
+<tr>
+<td><pre>3727</pre></td>
+<td><pre>2009-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Undo/Redo now beta functional -- seems to work in most cases tested. debug mode provides 
+stats to track what is happening, for debugging as we move forward on this.
+
+* added Dump_Load_Path_ptr and _parent to taBase -- called by TypeDef::Dump_Load_Path_impl --
+these are the guys that actually make new items, and they have now been fixed (in taList_impl
+subclass in particular) to *preserve the original dump file objects exactly* -- including
+ensuring that the total number of objs in the list is as saved, and they load into their
+designated position, etc... this was necessary for Undo/Redo, which are based on reloading
+proj files saved to Strings..
+
+* added some more DYN1 flag setting stuff for programs (OFF, CTRL_PANEL, etc)
+
+* fixed qconsole updating
+
+* added FindSndFile.cmake -- find libsndfile using proper paths etc, plus configure
+script to audioproc plugin, plus have it using new FindSndFile.cmake guy..
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>3728</pre></td>
+<td><pre>2009-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked now superflous Dump_Load_pre guys that reset everything -- this 
+will all now happen automatically with new load mechs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3729</pre></td>
+<td><pre>2009-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added tmp save file support to taFiler -- on by default -- saves to a tmp file and then 
+renames that to the target file when the file is closed, so if crashing occurs during 
+save, original file is not lost.  replaces previous stringstream version.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3730</pre></td>
+<td><pre>2009-04-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>menu and button changes for real this time</pre></td>
+</tr>
+<tr>
+<td><pre>3731</pre></td>
+<td><pre>2009-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added taStringDiff and use of it in Undo -- nothing very well tested and it seems that
+there is some minor err in the diff thing -- need to do a lot more testing and
+debugging.  so, just don't use Undo, but otherwise should be fine!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3732</pre></td>
+<td><pre>2009-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>linux compile fix</pre></td>
+</tr>
+<tr>
+<td><pre>3733</pre></td>
+<td><pre>2009-04-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>audiproc cmake update</pre></td>
+</tr>
+<tr>
+<td><pre>3734</pre></td>
+<td><pre>2009-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* diff fully working, and undo integration all good too!
+* auto-re-init after error in programs
+</pre></td>
+</tr>
+<tr>
+<td><pre>3735</pre></td>
+<td><pre>2009-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* further polishing of undo/redo, including pref option for delete_prompts, which defaults to
+  OFF, given that you can always just undo things!  However, I should probably change that
+  in next checkin b/c there were a few cases of crashing with undos due to issues with
+  loading over existing objs.
+* added DiffCompare under SelectEdit to all objs -- like SelectEditCompare but uses
+  the new diff engine..
+* there is also a taMisc::DiffFiles or something like that which will run a diff on
+  any two files 
+</pre></td>
+</tr>
+<tr>
+<td><pre>3736</pre></td>
+<td><pre>2009-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>3737</pre></td>
+<td><pre>2009-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Undo fully functional and robust to much more testing now.  Problem before was that
+hash table was not saving orig strings and thus could not detect non-unique hash
+keys, which in fact happens!  This messed up the diffs.. now everything is robust
+and that gives peace-of-mind for name table lookup too!
+* also got a perhaps hacky version of UpdataUi updating to work, so icon enable state
+is always perfectly predictive of undo/redo avail.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3738</pre></td>
+<td><pre>2009-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>just use network save units flag setting -- no need to specifically override for
+undo saving.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3739</pre></td>
+<td><pre>2009-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes to DistMatrix computations: allow the blank data_col_nm in regular dist matrix
+too -- compares all float/double columns, and don't require that the "name" column
+actually be a string -- can be anything -- who cares!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3740</pre></td>
+<td><pre>2009-04-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win changes QConsole now compiles but still not working</pre></td>
+</tr>
+<tr>
+<td><pre>3741</pre></td>
+<td><pre>2009-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dump path_token list optimized lookup for speeding up saving
+* datatables now have focused undo just for table, otherwise not saved with global given that rows don't have any linkage outside table
+* diff computation happens in a separate thread, so system should be more responsive.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3742</pre></td>
+<td><pre>2009-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mods to CMakeLists to use results from FindSndFile.cmake -- now works on mac finally</pre></td>
+</tr>
+<tr>
+<td><pre>3743</pre></td>
+<td><pre>2009-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>now looks at the obj being operated on (mod_obj) to determine if it should save the 
+datatable rows -- fixes undo for things like RemoveAllRows and load/save data etc..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3744</pre></td>
+<td><pre>2009-04-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>ready to compile :bjam include=/usr/local/include/Emergent include=/usr/include/qt4 include=/usr/include/qt4/Qt include=/usr/include/qt4/QtCore --verbose-test test --toolset=gcc</pre></td>
+</tr>
+<tr>
+<td><pre>3745</pre></td>
+<td><pre>2009-04-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>now just type bjam on ubuntu!</pre></td>
+</tr>
+<tr>
+<td><pre>3746</pre></td>
+<td><pre>2009-04-28</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor edits</pre></td>
+</tr>
+<tr>
+<td><pre>3747</pre></td>
+<td><pre>2009-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added web_doc flag and url to taDoc -- made a lot more sense to modalize than subtype,
+because basic doc stuff can be used for offline viewing, and also allows copying of existing
+content up to web, etc.
+* taDoc with web_doc=true = a web browser!!! works!!  probably want to take the
+code in iDocDataPanel and enacpulate it into a little browser guy..
+* Help on all objs now pulls up wiki page with that object type name, as a HelpDoc
+in docs.  Tell me this isn't sufficient..  you can just pull it out as an edit dialog
+and drag it wherever..
+* added taWikiURL class and stuck it on taProject for now -- doesn't do anything
+but provides basic interface for wiki syncing.
+* various wiki url's are now in taMisc per the design wiki page.
+* added COPY mode to V1GaborSpec -- used for periphery -- just copy of retinal data..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3748</pre></td>
+<td><pre>2009-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added Help button to all edit dialogs/panels, in the same region as Apply, etc --
+just runs help on given "base" obj for that dialog -- convenient location..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3749</pre></td>
+<td><pre>2009-04-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:690</pre></td>
+</tr>
+<tr>
+<td><pre>3750</pre></td>
+<td><pre>2009-04-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:675</pre></td>
+</tr>
+<tr>
+<td><pre>3751</pre></td>
+<td><pre>2009-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more docs improvements -- I'll keep working on this later too
+</pre></td>
+</tr>
+<tr>
+<td><pre>3752</pre></td>
+<td><pre>2009-04-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:607</pre></td>
+</tr>
+<tr>
+<td><pre>3753</pre></td>
+<td><pre>2009-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major upgrades to taDoc for web enabled stuff -- added multiple wiki server names/urls
+to prefs -- detects offline browsing, does cookies and authorization courtesy of code
+stolen from arora browser which is light wrapper on QWebView..
+* find now in toolbar, save note changes removed
+</pre></td>
+</tr>
+<tr>
+<td><pre>3754</pre></td>
+<td><pre>2009-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>forgot file</pre></td>
+</tr>
+<tr>
+<td><pre>3755</pre></td>
+<td><pre>2009-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>reconfig of help -- uses new wiki name -- makes it easy to look for other items -- now users
+have to manually specify /Projects/ as first part of url..  also uae updating back in.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3756</pre></td>
+<td><pre>2009-05-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taMediaWiki obj first draft, only has search implemented.  ignore taiqtso/imediawiki -- 
+first pass and kept for reference for a while but we need data table in general to 
+return the main results.
+* remove Help button from dialogs -- does something weird with Ok highlighting etc..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3757</pre></td>
+<td><pre>2009-05-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn rval checking on mac..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3758</pre></td>
+<td><pre>2009-05-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* cleaned up stuff and now does blocking for results.  All ready to hand off to Brian now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3759</pre></td>
+<td><pre>2009-05-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn rval again!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3760</pre></td>
+<td><pre>2009-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc bugfixes:
+* emacs nav keys for doc webkit guy -- can't live w/out them!
+* Ctrl+Return = Apply for doc edit panel
+* New project fix: BugID:675
+* local url fix for doc link following
+</pre></td>
+</tr>
+<tr>
+<td><pre>3761</pre></td>
+<td><pre>2009-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rmv path debug</pre></td>
+</tr>
+<tr>
+<td><pre>3762</pre></td>
+<td><pre>2009-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add renorm_thr to RetinaSpec</pre></td>
+</tr>
+<tr>
+<td><pre>3763</pre></td>
+<td><pre>2009-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add renorm_thr to RetinaSpec: def fix</pre></td>
+</tr>
+<tr>
+<td><pre>3764</pre></td>
+<td><pre>2009-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Build is first network button again, and tweak to undo for more robustness</pre></td>
+</tr>
+<tr>
+<td><pre>3765</pre></td>
+<td><pre>2009-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BpStartup program, in prog_lib</pre></td>
+</tr>
+<tr>
+<td><pre>3766</pre></td>
+<td><pre>2009-05-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc fixes to get it to compile and link under the qt mac cocoa version (64bit!), which
+does not support Qt3Support -- so it looks like we're fully Qt3 free, but SoQt remains
+Qt3Support dependent as I just emailed the coin support list.. hmm...
+
+anyway, the regular (carbon) 4.5.1 version looks super spiffy (everything is much
+trimmer and there are more 3d-like effects somehow) and hopefully has fixed
+the problem I was having in editing wiki pages -- it just wouldn't ever return from 
+a save of an edit under 4.4.3.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3767</pre></td>
+<td><pre>2009-05-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>vastly revamped data file handling</pre></td>
+</tr>
+<tr>
+<td><pre>3768</pre></td>
+<td><pre>2009-05-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>changed order of headers param in Import</pre></td>
+</tr>
+<tr>
+<td><pre>3769</pre></td>
+<td><pre>2009-05-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added module path</pre></td>
+</tr>
+<tr>
+<td><pre>3770</pre></td>
+<td><pre>2009-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* simplified Object menu on taBase
+* ability to store wiki login authorization info permanently -- can't be typing that in
+all the damn time!
+* LeabraDeltaConSpec -- pure delta rule, for cerebellar-style learning
+</pre></td>
+</tr>
+<tr>
+<td><pre>3771</pre></td>
+<td><pre>2009-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* TwoDValLayerSpec fixes for plus phase updating (TARG fm EXT)
+* imgproc fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>3772</pre></td>
+<td><pre>2009-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>seriously need to fix that mac rval warning..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3773</pre></td>
+<td><pre>2009-05-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added NormBlock for autonormalizing yummy goodness</pre></td>
+</tr>
+<tr>
+<td><pre>3774</pre></td>
+<td><pre>2009-05-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cerebellar 2nd order prjn spec.. need more systematicity to those prjns than random..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3775</pre></td>
+<td><pre>2009-05-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>nasty obscure bug in string readline methods</pre></td>
+</tr>
+<tr>
+<td><pre>3776</pre></td>
+<td><pre>2009-05-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* receptive field prjn specs for cerebellum and simple gauss layer shrinking rf guy
+* fix to geom config of V1Gabor guy when wrap = false
+</pre></td>
+</tr>
+<tr>
+<td><pre>3777</pre></td>
+<td><pre>2009-05-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bench updt</pre></td>
+</tr>
+<tr>
+<td><pre>3780</pre></td>
+<td><pre>2009-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* docs in root -- defaults to taMisc::web_home URL displayed in root
+* mac blank t3 panel fix: select tab 1, then tab 0..
+* added taBase::WindowShowHook and WindowHideHook -- show hook good for root
+and project when viewers show, to trigger update actions then..
+* fixed #MENU_BUTTON's on netview ctrl panel -- now there
+* Ctrl+Return = Ok on String edit dialogs (e.g. update changelog)
+* member lookups show all members -- good for programming
+</pre></td>
+</tr>
+<tr>
+<td><pre>3781</pre></td>
+<td><pre>2009-05-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't save network at all in undo autosave unless it is the target of action
+* no network auto-building after undo load
+* VisDisparityPrjnSpec -- visual disparity projection spec -- seems to work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3782</pre></td>
+<td><pre>2009-05-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug in Temporal and added Uniform filter option</pre></td>
+</tr>
+<tr>
+<td><pre>3783</pre></td>
+<td><pre>2009-05-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added disp_scale parameter to layers -- allows you to scale down (or up) a layer's display
+relative to other layers -- very useful for vision models where layers just get too 
+damn big.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3784</pre></td>
+<td><pre>2009-05-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>3d render studio bug fixed: was trying to update shape geometry
+and not looking at FM_FILE flag
+</pre></td>
+</tr>
+<tr>
+<td><pre>3785</pre></td>
+<td><pre>2009-05-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>important fix to undo saving -- it is NOT ok for main thread to do diff if the diff thread
+is busy!  it uses the same obj!  yikes!  now just waits till not busy.. should be good.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3786</pre></td>
+<td><pre>2009-05-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* removed #MENU_CONTEXT from #DYN1 methods
+* fixed unit picking with disp_scale != 1
+* added NO_COLLIDE flag to VEBodies -- for things that should not enter in to collisions
+(e.g., emer's new eye-beams..)
+</pre></td>
+</tr>
+<tr>
+<td><pre>3787</pre></td>
+<td><pre>2009-05-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully finally fixed the tricky axis rotation stuff for capsules -- need to rotate
+the X or Y rotation axis itself!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3788</pre></td>
+<td><pre>2009-05-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed normalization in V1rf COPY operation
+* DataTable::WriteItem now properly deals with -1 index
+</pre></td>
+</tr>
+<tr>
+<td><pre>3789</pre></td>
+<td><pre>2009-05-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MPI extension of EMERGENT_LIBRARIES was not correct -- fixed</pre></td>
+</tr>
+<tr>
+<td><pre>3791</pre></td>
+<td><pre>2009-05-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:705</pre></td>
+</tr>
+<tr>
+<td><pre>3792</pre></td>
+<td><pre>2009-05-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added log10 to norm</pre></td>
+</tr>
+<tr>
+<td><pre>3794</pre></td>
+<td><pre>2009-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added full_url to taDoc -- use as backup in case wiki is not known
+* fixed snap_bord display to use layer disp_scale
+</pre></td>
+</tr>
+<tr>
+<td><pre>3795</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added taManagedThread which is used by taThreadMgr instead of original one -- this one
+has highly optimized logic for collective operation instead of putting all the sync logic
+inside each thread itself -- only one waitcondition and an atomic int used for sync.
+we'll see how it does..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3796</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>some fixes to threading
+</pre></td>
+</tr>
+<tr>
+<td><pre>3797</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally all working -- now for the benchmarks..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3799</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more thread updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>3800</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc minor updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>3801</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mutex must be global!! also fix for total time
+</pre></td>
+</tr>
+<tr>
+<td><pre>3802</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ugh.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3803</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* startup compute_thr arg fix, stats fix
+* still hanging on n_threads=3 on dream..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3804</pre></td>
+<td><pre>2009-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>try ordered instead of relaxed
+</pre></td>
+</tr>
+<tr>
+<td><pre>3805</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mutexes around all wakeAll
+</pre></td>
+</tr>
+<tr>
+<td><pre>3806</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cannot wake in sync -- will also wake the other guys who already finished!!! bad!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3807</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added support for bugID:243</pre></td>
+</tr>
+<tr>
+<td><pre>3808</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get thread timing for 1 thread case in net
+</pre></td>
+</tr>
+<tr>
+<td><pre>3809</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>reverted non-essential change that broke Mac</pre></td>
+</tr>
+<tr>
+<td><pre>3810</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully finally solve all hanging issues: use mutex to cover all state updates,
+instead of relying on atomic int which doesn't cover transition into wait cond.
+was trying to be too clever but this stuff probably doesn't matter and robustness
+is critical.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3811</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>only include thread0 if n_threads == 1
+</pre></td>
+</tr>
+<tr>
+<td><pre>3812</pre></td>
+<td><pre>2009-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>only record timing on threads=1 for comparable computations as performed when threads &gt; 1
+</pre></td>
+</tr>
+<tr>
+<td><pre>3813</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>pauli</pre></td>
+<td><pre>just added comment there
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>3814</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>how about just one dir?</pre></td>
+</tr>
+<tr>
+<td><pre>3815</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another</pre></td>
+</tr>
+<tr>
+<td><pre>3816</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>now for leabra</pre></td>
+</tr>
+<tr>
+<td><pre>3817</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ok, how about now</pre></td>
+</tr>
+<tr>
+<td><pre>3818</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test checkin</pre></td>
+</tr>
+<tr>
+<td><pre>3819</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test commit</pre></td>
+</tr>
+<tr>
+<td><pre>3820</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>working again</pre></td>
+</tr>
+<tr>
+<td><pre>3821</pre></td>
+<td><pre>2009-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>connection code all updated -- some bugs definitely lurking.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3822</pre></td>
+<td><pre>2009-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>connections actually functional now, but I/O is still broken.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3823</pre></td>
+<td><pre>2009-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test of leabra in send-owns cons mode, w/out other optimizations
+</pre></td>
+</tr>
+<tr>
+<td><pre>3824</pre></td>
+<td><pre>2009-05-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally found bug: con_size was not always being set properly.  now grab it in Alloc
+to be sure -- back to stability, and initial benchmark results (just on my mac laptop)
+look pretty impressive; 25% speedup even on 1 proc in LARGE net, and 1.77 factor for
+2 procs!  gonna be really nice when everything goes sender-based.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3825</pre></td>
+<td><pre>2009-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rval</pre></td>
+</tr>
+<tr>
+<td><pre>3826</pre></td>
+<td><pre>2009-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Leabra now fully sender-based!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3827</pre></td>
+<td><pre>2009-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bench updt
+</pre></td>
+</tr>
+<tr>
+<td><pre>3828</pre></td>
+<td><pre>2009-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mpi uses owned cons now
+</pre></td>
+</tr>
+<tr>
+<td><pre>3829</pre></td>
+<td><pre>2009-05-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Loading Weights and Dump files for new BaseCons guy now working.
+looks like bias weights from old format still not getting loaded though.
+everything else seems to work.  needs lots more testing though.  man
+that was a pita.  also added the loading_version thing but didn't
+need it.  it is there now in any case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3830</pre></td>
+<td><pre>2009-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* loading, copying etc all now fully functional for new basecons -- basically done!
+* also, fixed bug where it wasn't doing Compute_NetinScale at right time (affected bias wts)
+</pre></td>
+</tr>
+<tr>
+<td><pre>3831</pre></td>
+<td><pre>2009-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* all common projections tested and validated with new cons setup
+* added demo/network_misc/projection_sampler.proj -- demos various projection types
+</pre></td>
+</tr>
+<tr>
+<td><pre>3832</pre></td>
+<td><pre>2009-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for pbwm etc -- was not properly calling tests for when to compute dwt's on 
+recv layer, instead of send layer.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3833</pre></td>
+<td><pre>2009-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sravg test
+</pre></td>
+</tr>
+<tr>
+<td><pre>3834</pre></td>
+<td><pre>2009-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bug seemingly found: wasn't getting sender netinscale at right point -- the scalar val
+guys fake it due to 1st unit not being on compute list, and do it in the *layer* computation
+so moving the sender sync *after* the layer computation seems to do the trick.  whew &amp; grr.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3835</pre></td>
+<td><pre>2009-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>connect alloc fix for V1Disparity prjn
+</pre></td>
+</tr>
+<tr>
+<td><pre>3836</pre></td>
+<td><pre>2009-05-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest in progress</pre></td>
+</tr>
+<tr>
+<td><pre>3837</pre></td>
+<td><pre>2009-05-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>stub code for wizards</pre></td>
+</tr>
+<tr>
+<td><pre>3838</pre></td>
+<td><pre>2009-05-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix for BugID:710 -- el_typ now must inherit from el_base -- checked in UAE and
+New_gui.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3839</pre></td>
+<td><pre>2009-05-28</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>in progress</pre></td>
+</tr>
+<tr>
+<td><pre>3840</pre></td>
+<td><pre>2009-05-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mel almost done</pre></td>
+</tr>
+<tr>
+<td><pre>3841</pre></td>
+<td><pre>2009-05-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>img proc does 100% nibbling instead of pre-alloc..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3845</pre></td>
+<td><pre>2009-05-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>almost almost done</pre></td>
+</tr>
+<tr>
+<td><pre>3847</pre></td>
+<td><pre>2009-05-31</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>all done except deltas</pre></td>
+</tr>
+<tr>
+<td><pre>3848</pre></td>
+<td><pre>2009-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>css at least 25% faster due to optimized AddFrame and switching entire css codebase over to 
+const String&amp; instead of const char* -- used to be a lot of time in string copying -- now
+not much at all, but still has mem alloc overhead.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3849</pre></td>
+<td><pre>2009-06-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest tweaks to norm and mel</pre></td>
+</tr>
+<tr>
+<td><pre>3852</pre></td>
+<td><pre>2009-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* IMPORTANT: you MUST run make force_ta on any existing installs AFTER the maketa target
+is made -- maketa has changed its output in an important way to optimize css
+</pre></td>
+</tr>
+<tr>
+<td><pre>3853</pre></td>
+<td><pre>2009-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* IMPORTANT: this one also requires the force_ta thing -- hopefully nobody compiled 
+the last one and can just do it now.
+* more speed improvements, including InheritsFrom much faster using all parents
+cached in par_cache, and a ptr-based hash table.  also css GetElFromTA optimized
+with some binary tree tests to find appropriate type -- this was a major bottleneck
+that is no longer so..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3854</pre></td>
+<td><pre>2009-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* nuked DataCol KEY flags and assoc code
+* added new css bench stuff
+</pre></td>
+</tr>
+<tr>
+<td><pre>3855</pre></td>
+<td><pre>2009-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>best attempt to optimize AddFrame code achieved nothing.  anyway, here it is, in case
+it is useful in the future.  also has non-functional attempt to share stack with master
+program..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3856</pre></td>
+<td><pre>2009-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rval
+</pre></td>
+</tr>
+<tr>
+<td><pre>3857</pre></td>
+<td><pre>2009-06-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest</pre></td>
+</tr>
+<tr>
+<td><pre>3858</pre></td>
+<td><pre>2009-06-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mel working now supposedly</pre></td>
+</tr>
+<tr>
+<td><pre>3859</pre></td>
+<td><pre>2009-06-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>more wizard stuff</pre></td>
+</tr>
+<tr>
+<td><pre>3860</pre></td>
+<td><pre>2009-06-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>intel compiler overloaded virtual etc warning fixes and new gcc options</pre></td>
+</tr>
+<tr>
+<td><pre>3861</pre></td>
+<td><pre>2009-06-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more using stuff, verbose off</pre></td>
+</tr>
+<tr>
+<td><pre>3862</pre></td>
+<td><pre>2009-06-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>turn off -ftree-vectorize-verbose=1 -- not THAT interesting..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3863</pre></td>
+<td><pre>2009-06-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>overload fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3865</pre></td>
+<td><pre>2009-06-04</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>very vanilla outer loop bench</pre></td>
+</tr>
+<tr>
+<td><pre>3866</pre></td>
+<td><pre>2009-06-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>obj carousel compiling, not working yet tho
+</pre></td>
+</tr>
+<tr>
+<td><pre>3867</pre></td>
+<td><pre>2009-06-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed many small warnings</pre></td>
+</tr>
+<tr>
+<td><pre>3868</pre></td>
+<td><pre>2009-06-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>AGC working</pre></td>
+</tr>
+<tr>
+<td><pre>3869</pre></td>
+<td><pre>2009-06-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>object carousel fully working -- nice
+</pre></td>
+</tr>
+<tr>
+<td><pre>3870</pre></td>
+<td><pre>2009-06-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>scoping bug fixed -- was missing an inherited:: in the GetImageScoped, such that it was
+calling the *overloaded* GetImage which then reset the very params to NULL..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3871</pre></td>
+<td><pre>2009-06-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>test proj</pre></td>
+</tr>
+<tr>
+<td><pre>3872</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>not needed</pre></td>
+</tr>
+<tr>
+<td><pre>3873</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>not sure how this include directory got here</pre></td>
+</tr>
+<tr>
+<td><pre>3874</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>old script</pre></td>
+</tr>
+<tr>
+<td><pre>3875</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>python emergent availalable in revision 3871</pre></td>
+</tr>
+<tr>
+<td><pre>3876</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>no longer used</pre></td>
+</tr>
+<tr>
+<td><pre>3877</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>bring back winstubs</pre></td>
+</tr>
+<tr>
+<td><pre>3878</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Norm and AGC both working now</pre></td>
+</tr>
+<tr>
+<td><pre>3879</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>old checkinstall files</pre></td>
+</tr>
+<tr>
+<td><pre>3880</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>vestiges of autohell</pre></td>
+</tr>
+<tr>
+<td><pre>3881</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* layer groups are now first class citizens in the net view -- have draggers, and a visual
+representation (a box that surrounds the layers that they comprise), which you can click
+etc.  all seems to work except last step of moving position be the lower left corner of
+set of contained layers, automatically.
+* these guys are really important as the net scales up.. emer really needs them.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3882</pre></td>
+<td><pre>2009-06-08</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>halfway thereish</pre></td>
+</tr>
+<tr>
+<td><pre>3883</pre></td>
+<td><pre>2009-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Layer_Group netview stuff fully functional -- very cool!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3884</pre></td>
+<td><pre>2009-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>PVLV, PBWM updated to use layer groups
+</pre></td>
+</tr>
+<tr>
+<td><pre>3885</pre></td>
+<td><pre>2009-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>README required for cpack -- barfs on cmake config stuff.  removed INSTALL and NEWS from 
+CMakeLists.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3886</pre></td>
+<td><pre>2009-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>got rid of commented-out layer order checking code -- definitely not necc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3887</pre></td>
+<td><pre>2009-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor robustness fix for seledit if things don't load properly..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3888</pre></td>
+<td><pre>2009-06-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest but still needs tweaks</pre></td>
+</tr>
+<tr>
+<td><pre>3889</pre></td>
+<td><pre>2009-06-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>energy now in AGC</pre></td>
+</tr>
+<tr>
+<td><pre>3890</pre></td>
+<td><pre>2009-06-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cosmetics</pre></td>
+</tr>
+<tr>
+<td><pre>3891</pre></td>
+<td><pre>2009-06-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bugID:720</pre></td>
+</tr>
+<tr>
+<td><pre>3892</pre></td>
+<td><pre>2009-06-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor work on wizard</pre></td>
+</tr>
+<tr>
+<td><pre>3893</pre></td>
+<td><pre>2009-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vrml stuff again.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3894</pre></td>
+<td><pre>2009-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually exit on SIGTERM -- should help mpi jobs die..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3895</pre></td>
+<td><pre>2009-06-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>simplified and rationalized the project viewing stuff</pre></td>
+</tr>
+<tr>
+<td><pre>3896</pre></td>
+<td><pre>2009-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc Brian tickets fixed, plus RotateBody method added to VEBody
+</pre></td>
+</tr>
+<tr>
+<td><pre>3897</pre></td>
+<td><pre>2009-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>I can't get the saverecoverfile thing to work -- the access check seems to always
+return true and the thing just pops up a dialog for another location to save..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3898</pre></td>
+<td><pre>2009-06-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc fixes plus VEBody::SpeakText -- only works on mac -- for demo -- coolio.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3899</pre></td>
+<td><pre>2009-06-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>restored selection of root Doc wo reintroducting replication issue</pre></td>
+</tr>
+<tr>
+<td><pre>3900</pre></td>
+<td><pre>2009-06-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:743</pre></td>
+</tr>
+<tr>
+<td><pre>3901</pre></td>
+<td><pre>2009-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taAudioProc is new home of SpeakText static function, which should now work using festival
+on linux..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3902</pre></td>
+<td><pre>2009-06-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added ta_audioproc</pre></td>
+</tr>
+<tr>
+<td><pre>3903</pre></td>
+<td><pre>2009-06-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mel formula</pre></td>
+</tr>
+<tr>
+<td><pre>3904</pre></td>
+<td><pre>2009-06-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>rounding mel cfs to fft bins to avoid warp distortion</pre></td>
+</tr>
+<tr>
+<td><pre>3905</pre></td>
+<td><pre>2009-06-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Got rid of all #APPLY_IMMED -- otherwise viral and now totally unnec. and confusing.
+* added variablized select rows criterion enabler
+</pre></td>
+</tr>
+<tr>
+<td><pre>3906</pre></td>
+<td><pre>2009-06-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Load Data renames until fixed and Data SelectRows works on matrix data
+</pre></td>
+</tr>
+<tr>
+<td><pre>3907</pre></td>
+<td><pre>2009-06-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>load data gz fix</pre></td>
+</tr>
+<tr>
+<td><pre>3908</pre></td>
+<td><pre>2009-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* GetHTML in ta_type classes -- almost done -- basically just using Qt's doxygen html
+* Ctrl+L lookup in memb= and memb() guys now fully dynamic and just like exprs (uses same code)
+* Fixed copying of functions as separable elements both within and between programs -- local
+var refs now correct.
+* DistMatrix fixes -- will now compute on scalar vars if enabled.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3909</pre></td>
+<td><pre>2009-06-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>DEBUG was not being defined, at least on Mac Xcode</pre></td>
+</tr>
+<tr>
+<td><pre>3910</pre></td>
+<td><pre>2009-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new gendoc complete, is nice.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3911</pre></td>
+<td><pre>2009-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>gendoc fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>3912</pre></td>
+<td><pre>2009-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>3913</pre></td>
+<td><pre>2009-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>static members and methods marked in gendoc.  also fun_ptr
+</pre></td>
+</tr>
+<tr>
+<td><pre>3914</pre></td>
+<td><pre>2009-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>netview suggestion from mtg today: netview network = box, got rid of frame below,
+lots of other optimizations incl better use of vertical space in display, etc.  lots cleaner!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3915</pre></td>
+<td><pre>2009-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wt lines iconify fix + wt lines .5 z offset fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>3916</pre></td>
+<td><pre>2009-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>quarter example code -- deceptively simple.  no thumb wheels w/out copying from soqt..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3917</pre></td>
+<td><pre>2009-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added qtthumbwheel</pre></td>
+</tr>
+<tr>
+<td><pre>3918</pre></td>
+<td><pre>2009-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fully functional quarter examiner viewer</pre></td>
+</tr>
+<tr>
+<td><pre>3919</pre></td>
+<td><pre>2009-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>change to grabFrameBuffer instead of renderPixmap</pre></td>
+</tr>
+<tr>
+<td><pre>3920</pre></td>
+<td><pre>2009-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>moved quarter_examiner_viewer to just under emergent -- t3view will be built in place in main code as it has a lot of hooks</pre></td>
+</tr>
+<tr>
+<td><pre>3921</pre></td>
+<td><pre>2009-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked quarter_t3view</pre></td>
+</tr>
+<tr>
+<td><pre>3922</pre></td>
+<td><pre>2009-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked quarter_t3view</pre></td>
+</tr>
+<tr>
+<td><pre>3923</pre></td>
+<td><pre>2009-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>keyboard stuff, seek working -- fully 100% all done</pre></td>
+</tr>
+<tr>
+<td><pre>3924</pre></td>
+<td><pre>2009-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* first pass integration of new Quarter based examiner viewer
+* NOTE: you now must have Quarter installed to compile the software
+* stuff is definitely broken a bit but more work to do..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3925</pre></td>
+<td><pre>2009-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>view menus working thanks to taiAction -- SoBoxHighlightRenderAction stuff is
+last missing piece.  snapshot definitely works on 4.5.1 cocoa in full app.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3926</pre></td>
+<td><pre>2009-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>saved views all working. not working: selecting units, object context menus
+</pre></td>
+</tr>
+<tr>
+<td><pre>3927</pre></td>
+<td><pre>2009-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new viewer fully functional, including "hot" netview buttons.
+* only remaining issue is that the interact mode seems to get out of sync
+  in quarter widget sometimes -- it is reporting being in one mode, but the 
+  cursor and the behavior reflect a different mode..
+* squashed the Ctrl+Enter bug with 4.5.1!!! made it Async_Apply and guarded the
+  ReShow_Async call in iProgramCtrlDataHost::DataChanged_Ref to only do if not
+  apply_req -- that did it for reasons I only very vaguely understand..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3928</pre></td>
+<td><pre>2009-06-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fix for non-debug versions of Coin lib</pre></td>
+</tr>
+<tr>
+<td><pre>3929</pre></td>
+<td><pre>2009-06-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest Mel guy w explicit mel warpping filter</pre></td>
+</tr>
+<tr>
+<td><pre>3930</pre></td>
+<td><pre>2009-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>FindQuarter fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3931</pre></td>
+<td><pre>2009-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tried adding setSizePolicy Expanding to fix resize issue.  Brad, help!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3932</pre></td>
+<td><pre>2009-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>turned off selection when not in interact mode.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3933</pre></td>
+<td><pre>2009-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>view save and name now avail also as a context menu (instant) (right mouse button) --
+added iContextMenuButton to ibuttons.h for this.
+also var buttons now show what is displayed.  need a better hook tho.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3934</pre></td>
+<td><pre>2009-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>better hook.  still can't get the regular panel guy click to update buttons. damn.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3935</pre></td>
+<td><pre>2009-06-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:766</pre></td>
+</tr>
+<tr>
+<td><pre>3936</pre></td>
+<td><pre>2009-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all disp var working as wanted.  some very weird thing on the netview panal
+var qtree selector: it doesn't reliably select with left mouse button.  if you
+use middle button to select, it works every time.  if you use left button and jiggle
+the mouse a bit, it works.  if you just click, it works maybe 20% of the time.  is
+someone else stealing these events???  how do you debug that!?  I though it was due
+to the various auto-updates triggered in selection callback, but that doesn't seem
+to be the case.  weird.  Brad??
+</pre></td>
+</tr>
+<tr>
+<td><pre>3937</pre></td>
+<td><pre>2009-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* click-to-edit in grid table view!  set flag in grid view ctrl panel.
+* will also show you the value of the cell you click on if not in click vals mode
+* also, finally figured out the recover file save thing when trying to save to a
+ non-writable directory -- correctly saves in user dir now!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3938</pre></td>
+<td><pre>2009-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>HOT view items for other algos.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3939</pre></td>
+<td><pre>2009-06-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>keep quarter viewer mode in sync better -- tends to get out of sync. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>3940</pre></td>
+<td><pre>2009-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added Pan wheels to 3d view -- pan anytime you want!  very nice.
+* fixed pvlv pbwm wizards for putting into layer groups to not get pos.z all wacko.
+* added snr_err_da -- err-driven learning for matrix output layers!
+* added warning about layer ordering for matrix and da -- this one matters
+* layergroup.pos is a PosTDCoord, not just TDCoord.  but allow neg dragging of layers --
+  works better for moving around.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3941</pre></td>
+<td><pre>2009-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sync issues with interact mode should be finally fixed for good..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3942</pre></td>
+<td><pre>2009-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more syncViewerMode
+</pre></td>
+</tr>
+<tr>
+<td><pre>3943</pre></td>
+<td><pre>2009-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added Qt::WindowCloseButtonHint
+</pre></td>
+</tr>
+<tr>
+<td><pre>3944</pre></td>
+<td><pre>2009-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>selecting in the t3 view also selects in the left browser tree.  very easy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3945</pre></td>
+<td><pre>2009-07-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>festival --tts
+</pre></td>
+</tr>
+<tr>
+<td><pre>3946</pre></td>
+<td><pre>2009-07-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bp softmax demo</pre></td>
+</tr>
+<tr>
+<td><pre>3947</pre></td>
+<td><pre>2009-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new tooltips for programs show toolbar name and type name
+* listing width restricted to taMisc::program_editor_width (expert param) -- makes
+  listing fit nicely so you can actually see comments..
+* cleaned up options/preferences -- made many more #EXPERT, nuked old help guys
+</pre></td>
+</tr>
+<tr>
+<td><pre>3948</pre></td>
+<td><pre>2009-07-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>prefs dialog edit dialog size bigger..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3949</pre></td>
+<td><pre>2009-07-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* got rid of crazy big dialogs -- added args to editdialog call so spec cases can spec size.
+* also proably fixed that __null bug in tabase =
+</pre></td>
+</tr>
+<tr>
+<td><pre>3950</pre></td>
+<td><pre>2009-07-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>modalized WindowCloseButtonHint for version</pre></td>
+</tr>
+<tr>
+<td><pre>3951</pre></td>
+<td><pre>2009-07-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sub matrix ops initial rough-in</pre></td>
+</tr>
+<tr>
+<td><pre>3952</pre></td>
+<td><pre>2009-07-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more submatrix code</pre></td>
+</tr>
+<tr>
+<td><pre>3953</pre></td>
+<td><pre>2009-07-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>submatrix and featpats all working -- easy to generate hippocampal-style patterns now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3954</pre></td>
+<td><pre>2009-07-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>SubMatrix fix -- need to rethink the spec plan to be more comprehensive support for
+integrating across multiple sources.  Probably just do everything in text and render
+at the last minute.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3955</pre></td>
+<td><pre>2009-07-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first draft of PBWM V2 -- compiles, runs.. needs debugged.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3956</pre></td>
+<td><pre>2009-07-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>compat for plugin</pre></td>
+</tr>
+<tr>
+<td><pre>3957</pre></td>
+<td><pre>2009-07-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>compat for plugin</pre></td>
+</tr>
+<tr>
+<td><pre>3958</pre></td>
+<td><pre>2009-07-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* auto APPLY_IMMED on FROM_GROUP etc token ptrs
+* pbwm v2 updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>3959</pre></td>
+<td><pre>2009-07-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cleaned out some tab crud but still working on 724</pre></td>
+</tr>
+<tr>
+<td><pre>3960</pre></td>
+<td><pre>2009-07-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pbwm v2 updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>3961</pre></td>
+<td><pre>2009-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pbwm v2 updates: nogo perf bias for mnt, etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>3962</pre></td>
+<td><pre>2009-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pbwm v2 fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>3963</pre></td>
+<td><pre>2009-07-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Set/Get camera view functions, needed for 3d render studio.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3964</pre></td>
+<td><pre>2009-07-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>simple test of bugID:724 extra lines</pre></td>
+</tr>
+<tr>
+<td><pre>3965</pre></td>
+<td><pre>2009-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rnd go as perf mod
+</pre></td>
+</tr>
+<tr>
+<td><pre>3966</pre></td>
+<td><pre>2009-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>perf/learn nogo rnd go da
+</pre></td>
+</tr>
+<tr>
+<td><pre>3967</pre></td>
+<td><pre>2009-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ooops fix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3968</pre></td>
+<td><pre>2009-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>orig nogo_rnd_go mechs now back.. seems to actually be best way to do it..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3969</pre></td>
+<td><pre>2009-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert rnd go.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3970</pre></td>
+<td><pre>2009-07-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Added Help button to mini program editor
+* Wizard for PBWM V2 + new default params
+</pre></td>
+</tr>
+<tr>
+<td><pre>3971</pre></td>
+<td><pre>2009-07-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Leabra PBWM remove and V2 wizard funs now working without crashing.
+* changed all CheckConfig calls that were quiet to non-quiet -- get rid of blank check
+config screens that are worse than useless.
+* MAJOR change needed for above: CheckSpecs routines in Network, Layer, Prjn that 
+do the work previously done by the spec ptr UAE -- called in Build and CheckConfig --
+this gets rid of the crazy update dynamics that have caused headaches from the start!
+now the user has the opportunity to configure everything, and then Build makes
+sure everything is groovy and does all the auto stuff, under complete control and
+with proper notification, instead of randomly doing this at the wrong times..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3972</pre></td>
+<td><pre>2009-07-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pbwm versions of std monitor progs</pre></td>
+</tr>
+<tr>
+<td><pre>3973</pre></td>
+<td><pre>2009-07-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pbwm v2 wiz fix: min_cycles
+* setimagesize in t3viewer is now direct on quarter window -- guaranteed to be right!
+* datavars CUR_ROW resets row_var = NULL
+</pre></td>
+</tr>
+<tr>
+<td><pre>3974</pre></td>
+<td><pre>2009-07-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>float col type for stats</pre></td>
+</tr>
+<tr>
+<td><pre>3975</pre></td>
+<td><pre>2009-07-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>math check matrix arg types
+</pre></td>
+</tr>
+<tr>
+<td><pre>3976</pre></td>
+<td><pre>2009-07-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Network::FindLayer now uses FindLeafName -- fixes SetNStripes for subgroups
+* one_bias_da param to rule them all
+</pre></td>
+</tr>
+<tr>
+<td><pre>3977</pre></td>
+<td><pre>2009-07-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>expert for baseflags enums, uae for matrix guy, no borders for output name
+</pre></td>
+</tr>
+<tr>
+<td><pre>3978</pre></td>
+<td><pre>2009-07-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pref value for program_editor_lines -- init to editLines in program editor
+* UAEProgramDefault for specs to set update_after by default in MemberAssign
+</pre></td>
+</tr>
+<tr>
+<td><pre>3979</pre></td>
+<td><pre>2009-07-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermediate checkin of tab issue</pre></td>
+</tr>
+<tr>
+<td><pre>3980</pre></td>
+<td><pre>2009-07-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cross fingers for bugID:780</pre></td>
+</tr>
+<tr>
+<td><pre>3981</pre></td>
+<td><pre>2009-07-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* clear_decay in xpfclayerspec -- decay on toggle off
+* Help on some ProgEl's goes through to object insted of ProgEl -- need to augment
+with class browser when done
+* Button for set view size in t3view
+</pre></td>
+</tr>
+<tr>
+<td><pre>3982</pre></td>
+<td><pre>2009-07-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>avoid trigraph!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3983</pre></td>
+<td><pre>2009-07-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>do gating in cycle stats, after act updating, for clearing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3984</pre></td>
+<td><pre>2009-07-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops, doesn't work at CycleStats -- back to ApplyInhib..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3985</pre></td>
+<td><pre>2009-07-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clear decay back to 0 default
+</pre></td>
+</tr>
+<tr>
+<td><pre>3986</pre></td>
+<td><pre>2009-07-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>avgrelnetin fix for no activation at all
+</pre></td>
+</tr>
+<tr>
+<td><pre>3987</pre></td>
+<td><pre>2009-07-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor tweaks to edit lines and fix bugID:605</pre></td>
+</tr>
+<tr>
+<td><pre>3988</pre></td>
+<td><pre>2009-07-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tent fix for bugID:793</pre></td>
+</tr>
+<tr>
+<td><pre>3989</pre></td>
+<td><pre>2009-07-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>beginnings of type browser</pre></td>
+</tr>
+<tr>
+<td><pre>3990</pre></td>
+<td><pre>2009-07-28</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>more on type browser</pre></td>
+</tr>
+<tr>
+<td><pre>3991</pre></td>
+<td><pre>2009-08-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>TypeBrowser almost ready</pre></td>
+</tr>
+<tr>
+<td><pre>3992</pre></td>
+<td><pre>2009-08-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>TypeBrowser much more functional and integrated</pre></td>
+</tr>
+<tr>
+<td><pre>3993</pre></td>
+<td><pre>2009-08-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>TypeBrowser should be functional re links and integration. gui still needs couple features. note you can right click members for help</pre></td>
+</tr>
+<tr>
+<td><pre>3994</pre></td>
+<td><pre>2009-08-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>XPFC units send act_eq to PVLV and Matrix layers, act to others
+</pre></td>
+</tr>
+<tr>
+<td><pre>3995</pre></td>
+<td><pre>2009-08-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops missed one act_sent
+</pre></td>
+</tr>
+<tr>
+<td><pre>3996</pre></td>
+<td><pre>2009-08-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* parameterize pfc mnt_to_bg
+* fix bug with patch_noise -- this could be big deal..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3997</pre></td>
+<td><pre>2009-08-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added search, removed .html</pre></td>
+</tr>
+<tr>
+<td><pre>3998</pre></td>
+<td><pre>2009-08-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed mysterious bug in mnt_to_bg -- should work now... ugh.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3999</pre></td>
+<td><pre>2009-08-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed checkin with tabs but not semantics yet</pre></td>
+</tr>
+<tr>
+<td><pre>4000</pre></td>
+<td><pre>2009-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>XMatrixLayerSpec:: added out_noise_amp -- more noise for output gating units
+</pre></td>
+</tr>
+<tr>
+<td><pre>4001</pre></td>
+<td><pre>2009-08-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>patch_out_mod
+</pre></td>
+</tr>
+<tr>
+<td><pre>4002</pre></td>
+<td><pre>2009-08-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix for patch layer spec inhib_group in wiz
+</pre></td>
+</tr>
+<tr>
+<td><pre>4003</pre></td>
+<td><pre>2009-08-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed</pre></td>
+</tr>
+<tr>
+<td><pre>4004</pre></td>
+<td><pre>2009-08-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed</pre></td>
+</tr>
+<tr>
+<td><pre>4005</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed</pre></td>
+</tr>
+<tr>
+<td><pre>4006</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>closer but dont pass out cigars yet</pre></td>
+</tr>
+<tr>
+<td><pre>4007</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sb now possible on pvlv -- may be useful
+</pre></td>
+</tr>
+<tr>
+<td><pre>4008</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops, uae preventing sb
+</pre></td>
+</tr>
+<tr>
+<td><pre>4009</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Important fix: use cssEl::unRefDone on rval from css stubp call, not straight delete
+this will likely fix all the recent random crashes!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4010</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ref rval before unref'ing it.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4011</pre></td>
+<td><pre>2009-08-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>much more polished but not 100% yet</pre></td>
+</tr>
+<tr>
+<td><pre>4012</pre></td>
+<td><pre>2009-08-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>separate perf, learn contrast params &amp; pvlv add pv_lv option
+</pre></td>
+</tr>
+<tr>
+<td><pre>4013</pre></td>
+<td><pre>2009-08-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>4014</pre></td>
+<td><pre>2009-08-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>moreless finished</pre></td>
+</tr>
+<tr>
+<td><pre>4015</pre></td>
+<td><pre>2009-08-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* 3dview bg color fix
+* add backspace for delete action
+* item chooser: add ^ default option which searches only in first col for item that startswith
+</pre></td>
+</tr>
+<tr>
+<td><pre>4016</pre></td>
+<td><pre>2009-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* improved obj chooser filter with ^
+* lookup of prog vars in funs fixed
+* enum #EXPERT filtering
+* pbwm fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4017</pre></td>
+<td><pre>2009-08-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* progress bar on taDoc webview
+* enabled cookie messages in DEBUG mode -- hoping to catch the time out -- if someone can
+  replicate and send console messages that would be great -- I couldn't replicate 4 some
+  reason
+</pre></td>
+</tr>
+<tr>
+<td><pre>4018</pre></td>
+<td><pre>2009-08-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>msvc win32 fixups plus couple small bug fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4019</pre></td>
+<td><pre>2009-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final touches on help browser and gendoc integration
+</pre></td>
+</tr>
+<tr>
+<td><pre>4020</pre></td>
+<td><pre>2009-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* token edit button is direct edit with icon (hopefully)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4021</pre></td>
+<td><pre>2009-08-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>edit panel fix: figured out icon compiling resource thing.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4022</pre></td>
+<td><pre>2009-08-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>sync tree to type in helpbrowser</pre></td>
+</tr>
+<tr>
+<td><pre>4023</pre></td>
+<td><pre>2009-08-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win64 fixups</pre></td>
+</tr>
+<tr>
+<td><pre>4024</pre></td>
+<td><pre>2009-08-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixups for win32</pre></td>
+</tr>
+<tr>
+<td><pre>4025</pre></td>
+<td><pre>2009-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* verbose flag fully supported for all main progels, and now highlighted as such as well
+* added quote_esc() to taString -- escape quotes and \ ctrl chars
+* confirmed NoArg -2 in css el in fun guy -- my bad!! can't believe it didn't crash.  fixed.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4026</pre></td>
+<td><pre>2009-08-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dyn guy for setting verbose
+</pre></td>
+</tr>
+<tr>
+<td><pre>4027</pre></td>
+<td><pre>2009-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed BugID:836 -- was failing for .gz files b/c zip stream guys didn't have proper good()
+semantics.  just added an access check prior to opening.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4028</pre></td>
+<td><pre>2009-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed BugID:829 -- double click slider!!  stuck the new islider in iscrollarea.h/cpp.. lazy..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4029</pre></td>
+<td><pre>2009-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>replaced all QSplitter with iSplitter -- help browser etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4030</pre></td>
+<td><pre>2009-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed BugID:839 and BugID:826 -- key for 826 was to hit snap bord button while running..
+just needed a simple guard.  snap of r.wt etc just needed code lifted from qtso code..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4031</pre></td>
+<td><pre>2009-08-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed slot missing</pre></td>
+</tr>
+<tr>
+<td><pre>4032</pre></td>
+<td><pre>2009-08-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>eol fix and trepiditious filer changes</pre></td>
+</tr>
+<tr>
+<td><pre>4033</pre></td>
+<td><pre>2009-08-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>doc refresh fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4034</pre></td>
+<td><pre>2009-08-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed helpbrow anchor bug</pre></td>
+</tr>
+<tr>
+<td><pre>4035</pre></td>
+<td><pre>2009-08-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* XSNrThalLayer &amp; Spec updated to allow competition within mnt, out in addition to other 
+competition.
+* revised gating logic and mnt_clear_veto case for XPFCLayerSpec
+* NOTE: requires PBWM V2 projects to do ChangeMyType on SNrThal layer -&gt; XSNrThalLayer
+</pre></td>
+</tr>
+<tr>
+<td><pre>4036</pre></td>
+<td><pre>2009-08-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix output kwta used to compute ouput k!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4037</pre></td>
+<td><pre>2009-08-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bumped version to 5.0.0 in prep for release.
+</pre></td>
+</tr>
+</table>
+</body></html>

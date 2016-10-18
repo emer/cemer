@@ -262,14 +262,9 @@ add_dependencies(emergentlib temt)
 add_dependencies(emergent emergentlib)
 
 
-add_custom_target(ChangeLog 
-  COMMAND /usr/local/svn2cl/svn2cl-0.14/svn2cl.sh -i -a -o ../ChangeLog ../ 
-  COMMAND /usr/local/svn2cl/svn2cl-0.14/svn2cl.sh -i -a --html -o ../ChangeLog.html ../
-)
-
 ########### install files ###############
 
-install(FILES AUTHORS ChangeLog COPYING COPYING.LIB
+install(FILES AUTHORS COPYING COPYING.LIB
   cmake_uninstall.cmake.in
   DESTINATION ${EMERGENT_SHARE_DEST}
 )

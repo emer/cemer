@@ -1,0 +1,1661 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 4.0.15
+  Revisions 2745:2989</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>2745</pre></td>
+<td><pre>2008-02-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revision changed to 4.0.14 - make uninstall, clean, etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2746</pre></td>
+<td><pre>2008-02-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>synaptic delay in leabra; also made std send netin functions take act arg
+and got rid of act_delta unit var -- just compute as needed.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2747</pre></td>
+<td><pre>2008-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct: act_thr param</pre></td>
+</tr>
+<tr>
+<td><pre>2748</pre></td>
+<td><pre>2008-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct: n_pi for inhib wiggle (cur default is 2.0) &amp; n_over_thr, n_under_thr for act_thr params
+</pre></td>
+</tr>
+<tr>
+<td><pre>2749</pre></td>
+<td><pre>2008-03-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>remove some dependencies in spec</pre></td>
+</tr>
+<tr>
+<td><pre>2750</pre></td>
+<td><pre>2008-03-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed mat error that was preventing copying of empty mats</pre></td>
+</tr>
+<tr>
+<td><pre>2751</pre></td>
+<td><pre>2008-03-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added a VIEW_ROWS table userdata check to tableviews</pre></td>
+</tr>
+<tr>
+<td><pre>2752</pre></td>
+<td><pre>2008-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to css Step bug: don't push return values on stack if external_stop is true!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2753</pre></td>
+<td><pre>2008-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BugID: 300 -- option in group spec to not append agg name
+</pre></td>
+</tr>
+<tr>
+<td><pre>2754</pre></td>
+<td><pre>2008-03-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:310</pre></td>
+</tr>
+<tr>
+<td><pre>2755</pre></td>
+<td><pre>2008-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added FindClosestEvent program: does ClosestEventStat functionality
+</pre></td>
+</tr>
+<tr>
+<td><pre>2756</pre></td>
+<td><pre>2008-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to closest event
+</pre></td>
+</tr>
+<tr>
+<td><pre>2757</pre></td>
+<td><pre>2008-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated ApplyInputs to always update the data and network pointers -- 
+minimal computational cost well worth avoiding the bugs that this causes.
+also updated FindClosestEvent
+</pre></td>
+</tr>
+<tr>
+<td><pre>2758</pre></td>
+<td><pre>2008-03-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win .14 release changes</pre></td>
+</tr>
+<tr>
+<td><pre>2759</pre></td>
+<td><pre>2008-03-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed BugID: 304 (PolarRndPrjnSpec); BugID: 305 max text font in grid view
+BugID: 307: SetColWidth (SetTextWidth)
+</pre></td>
+</tr>
+<tr>
+<td><pre>2760</pre></td>
+<td><pre>2008-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changed global shortcuts to Alt instead of Ctrl -- this is settable in the code
+with cmd_str in the relevant functions so it is easy to change later.  We could
+also promote it to a global parameter if need be.  It also looks like there is
+some way to intercept the global shortcuts through the overall event() handler 
+but this is likely to be a bit messy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2761</pre></td>
+<td><pre>2008-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked conflicting shortcuts/accelerators for std emacs nav keys.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2762</pre></td>
+<td><pre>2008-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>menu actions for grid and graph view configuration actions.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2763</pre></td>
+<td><pre>2008-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed auto output_name computation to use actual unit group (fixes bug in dyslex.proj
+  where only 1st unit group names were being used)
+* added Init_Sequence() called by NetGroupedDataLoop at start of seq -- in Leabra
+  this makes the sequence_init setting work
+* added FindClosestEventFmNet program -- gets activations directly from network
+  instead of requiring a monitor to get values from.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2764</pre></td>
+<td><pre>2008-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed bug in Program where changing name of objs obj did not propagate to expressions
+containing associated progvar.  Changed DataChanged to UAE when name changes in
+GetVarsForObjs, which updates schema data for subsequent schemaChanged check in 
+DataChanged for ProgVarRef.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2765</pre></td>
+<td><pre>2008-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>prog() calls within functions were not being PreGen'd so their Init was not being called
+meaning a segfault for a prog() called only within an init function.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2766</pre></td>
+<td><pre>2008-03-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>canonicalized HelloWorld file setups</pre></td>
+</tr>
+<tr>
+<td><pre>2767</pre></td>
+<td><pre>2008-03-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed BugID:324 -- was using generic FROM_GROUP for datatable arg --
+changed those to be specific to each arg number -- which in turn revealed
+a bug with multiple opts of same type with diff arg number.. fixed that.
+* got rid of RemoveMonitors call from various places in network building
+this is no longer needed with the smart refs, and causes problems.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2768</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed BugID:319 -- no reset home view for item added to view (only for 1st item)
+</pre></td>
+</tr>
+<tr>
+<td><pre>2769</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added taDataGen::SampleByFrequency -- does RANDOM sampling of data by frequency
+</pre></td>
+</tr>
+<tr>
+<td><pre>2770</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>convert pdp++ special environment data (frequency, time, duration) to new cols
+in data table.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2771</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added MENU to coupla Mat funcs</pre></td>
+</tr>
+<tr>
+<td><pre>2772</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added NegDrawZ for graphs</pre></td>
+</tr>
+<tr>
+<td><pre>2773</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added NegDrawZ for graphs</pre></td>
+</tr>
+<tr>
+<td><pre>2774</pre></td>
+<td><pre>2008-03-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>changed default of neg_draw_z to true for legacy compat</pre></td>
+</tr>
+<tr>
+<td><pre>2775</pre></td>
+<td><pre>2008-03-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed BugID:330 -- Quit() on dmem error, and the NetDataLoop was calling Random
+to select index at random when wrapping around if number of events was not even
+divisor of number of procs -- this random call then caused seeds to be out of
+sync across procs, which is a disaster.. so, now it just wraps around modulo style.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2776</pre></td>
+<td><pre>2008-03-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small treewidget change</pre></td>
+</tr>
+<tr>
+<td><pre>2777</pre></td>
+<td><pre>2008-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults
+</pre></td>
+</tr>
+<tr>
+<td><pre>2778</pre></td>
+<td><pre>2008-03-31</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>dircat update</pre></td>
+</tr>
+<tr>
+<td><pre>2779</pre></td>
+<td><pre>2008-03-31</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>DirectoryCatalog fixes/updates</pre></td>
+</tr>
+<tr>
+<td><pre>2780</pre></td>
+<td><pre>2008-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* datatable: don't repeat messages for each row!
+* css_parse: allow progvars (CSS_PTR) for switch case items
+</pre></td>
+</tr>
+<tr>
+<td><pre>2781</pre></td>
+<td><pre>2008-04-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>BugID:328</pre></td>
+</tr>
+<tr>
+<td><pre>2782</pre></td>
+<td><pre>2008-04-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added audioproc 0.8 to Emergent</pre></td>
+</tr>
+<tr>
+<td><pre>2783</pre></td>
+<td><pre>2008-04-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added ColName accessors for GetValMatrix</pre></td>
+</tr>
+<tr>
+<td><pre>2784</pre></td>
+<td><pre>2008-04-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added ColName accessors for GetValMatrix</pre></td>
+</tr>
+<tr>
+<td><pre>2785</pre></td>
+<td><pre>2008-04-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug in SignalMonBlock dim iterating</pre></td>
+</tr>
+<tr>
+<td><pre>2786</pre></td>
+<td><pre>2008-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* max_unit_chars in InitUnitNames
+* taDataGen:: ProbSelectRow, ProbSelectColNo, ProbSelectColVal -- good for random
+generation of events from specs in data tables (used in SG model -- script versions).
+</pre></td>
+</tr>
+<tr>
+<td><pre>2787</pre></td>
+<td><pre>2008-04-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added group_timer and small fixup to CutLinks</pre></td>
+</tr>
+<tr>
+<td><pre>2788</pre></td>
+<td><pre>2008-04-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>couple bug fixes and beta of screen resize detection</pre></td>
+</tr>
+<tr>
+<td><pre>2789</pre></td>
+<td><pre>2008-04-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>major upgrade to Temporal guy added DoG</pre></td>
+</tr>
+<tr>
+<td><pre>2790</pre></td>
+<td><pre>2008-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed css parsing of scoped types for css classes -- wasn't allowing ctors and
+scoped default args.  resulted from earlier fix for ignoring everything after 
+a scoper (::) -- turns out you can't quite ignore *everything*.. :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>2791</pre></td>
+<td><pre>2008-04-17</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>nuke READ_ONLY flag in VEJoint</pre></td>
+</tr>
+<tr>
+<td><pre>2792</pre></td>
+<td><pre>2008-04-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>some win changes to support plugins and audioproc</pre></td>
+</tr>
+<tr>
+<td><pre>2793</pre></td>
+<td><pre>2008-04-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>some win changes to support plugins and audioproc</pre></td>
+</tr>
+<tr>
+<td><pre>2794</pre></td>
+<td><pre>2008-04-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>more tweaks for plugs on win</pre></td>
+</tr>
+<tr>
+<td><pre>2795</pre></td>
+<td><pre>2008-04-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>compiler food fix</pre></td>
+</tr>
+<tr>
+<td><pre>2796</pre></td>
+<td><pre>2008-04-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed ta_math.h plus uncommited prev fix</pre></td>
+</tr>
+<tr>
+<td><pre>2797</pre></td>
+<td><pre>2008-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>restored recording of image name in image proc funs
+</pre></td>
+</tr>
+<tr>
+<td><pre>2798</pre></td>
+<td><pre>2008-04-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added stub audioproc project</pre></td>
+</tr>
+<tr>
+<td><pre>2799</pre></td>
+<td><pre>2008-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major optimization of spike mode in leabra: before it used exponential decay of
+activation to simulate synaptic currents, requiring redundant sends of activations
+(very expensive), now it just sends the activation once when it spikes and then
+stores results in a moving time window buffer from which synaptic current is computed.
+also now has a full alpha function for synatic current, including separate rise and 
+decay time constants.  system is now fully integrate-and-fire compliant and 
+we should get major speedup from using spikes.. if it will work with learning..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2800</pre></td>
+<td><pre>2008-04-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed checkin</pre></td>
+</tr>
+<tr>
+<td><pre>2801</pre></td>
+<td><pre>2008-04-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed BugID:382 CRITICAL FIX</pre></td>
+</tr>
+<tr>
+<td><pre>2802</pre></td>
+<td><pre>2008-04-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest hacking of audioproc</pre></td>
+</tr>
+<tr>
+<td><pre>2803</pre></td>
+<td><pre>2008-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major update to Leabra, integrating CtLeabra into base code so that all the various
+standard Leabra subtypes can be easily used, including PBWM (though this will 
+require additional work).  previous CtLeabra code is no longer supported --
+use the bin/ct_to_leabra_cvt script to convert existing ct leabra projects back
+to standard leabra, then select learn_rule = CtLeabra_CHL in network.
+in addition to this integration, many other crazy things were rationalized
+and cleaned up (e.g., _NStdLay functions and all the logic associated with
+different phase_order choices).  tested on basic test cases but more testing
+would be good.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2804</pre></td>
+<td><pre>2008-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct leabra intrusion bugs should be fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>2805</pre></td>
+<td><pre>2008-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed weight bounding in CtLeabra
+</pre></td>
+</tr>
+<tr>
+<td><pre>2806</pre></td>
+<td><pre>2008-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix reset of sravg in compute_dwt w/ hebb
+</pre></td>
+</tr>
+<tr>
+<td><pre>2807</pre></td>
+<td><pre>2008-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Ct/Leabra: added back in min_da_thr for ct and also err_sb is now functional too
+* added CaiSynDep and overall network support (in net_misc on network) for actually
+running cycle-level synaptic depression, so that is now available with appropriate
+changing of the conspecs
+* added LeabraLimPrecConSpec -- limited precision weights!  ra learns with only 16
+levels if you crank up the lrate to .3!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2808</pre></td>
+<td><pre>2008-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added max_da_thr -- only remaining diff from better learning objrec model..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2809</pre></td>
+<td><pre>2008-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked max_da_thr -- red herring.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2810</pre></td>
+<td><pre>2008-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>forgot to compute cai in caisyndep
+</pre></td>
+</tr>
+<tr>
+<td><pre>2811</pre></td>
+<td><pre>2008-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>silenced plugin messages if not DEBUG, and get learn_rule for new ConSpecs
+</pre></td>
+</tr>
+<tr>
+<td><pre>2812</pre></td>
+<td><pre>2008-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated default parameters and lambda/trace added to LeabraTdUnit/spec
+</pre></td>
+</tr>
+<tr>
+<td><pre>2813</pre></td>
+<td><pre>2008-04-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>sharpened sharpen</pre></td>
+</tr>
+<tr>
+<td><pre>2814</pre></td>
+<td><pre>2008-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra updt plus fix to BugID:380
+</pre></td>
+</tr>
+<tr>
+<td><pre>2815</pre></td>
+<td><pre>2008-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more ct pbwm fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>2816</pre></td>
+<td><pre>2008-04-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more ct pbwm fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>2817</pre></td>
+<td><pre>2008-04-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed BugID:317</pre></td>
+</tr>
+<tr>
+<td><pre>2818</pre></td>
+<td><pre>2008-04-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>show all membs/meths in classbrowse</pre></td>
+</tr>
+<tr>
+<td><pre>2819</pre></td>
+<td><pre>2008-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct pbwm: only fix phase_order for MINUS_PLUS
+</pre></td>
+</tr>
+<tr>
+<td><pre>2820</pre></td>
+<td><pre>2008-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all index members for GetIndex/SetIndex MUST be either #NO_COPY or protected
+if you duplicate an item and its index gets copied, the new guy gets the wrong index
+was happening with textures in virtenv.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2821</pre></td>
+<td><pre>2008-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>flip texture images to match so format
+</pre></td>
+</tr>
+<tr>
+<td><pre>2822</pre></td>
+<td><pre>2008-04-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added delta_env to gamma</pre></td>
+</tr>
+<tr>
+<td><pre>2823</pre></td>
+<td><pre>2008-04-27</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>updated</pre></td>
+</tr>
+<tr>
+<td><pre>2824</pre></td>
+<td><pre>2008-04-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updts 4 3d studio
+</pre></td>
+</tr>
+<tr>
+<td><pre>2825</pre></td>
+<td><pre>2008-04-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>changelog goodness</pre></td>
+</tr>
+<tr>
+<td><pre>2826</pre></td>
+<td><pre>2008-04-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mods for render studio: SetImageSize for T3DataViewFrame, optimized texture updating
+</pre></td>
+</tr>
+<tr>
+<td><pre>2827</pre></td>
+<td><pre>2008-04-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>picky about spaces vs. tab in makefile</pre></td>
+</tr>
+<tr>
+<td><pre>2828</pre></td>
+<td><pre>2008-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually fix ProgVar scoping (Project -&gt; taProject!) and fix BugID:367
+</pre></td>
+</tr>
+<tr>
+<td><pre>2829</pre></td>
+<td><pre>2008-04-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>scalar val self prjn spec allocate connections
+</pre></td>
+</tr>
+<tr>
+<td><pre>2830</pre></td>
+<td><pre>2008-04-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>int change to files in prep of write support</pre></td>
+</tr>
+<tr>
+<td><pre>2831</pre></td>
+<td><pre>2008-04-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>int change to files in prep of write support</pre></td>
+</tr>
+<tr>
+<td><pre>2832</pre></td>
+<td><pre>2008-04-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added FileWrite block for cached preprocessed data - not fully tested yet</pre></td>
+</tr>
+<tr>
+<td><pre>2833</pre></td>
+<td><pre>2008-04-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nan fix for ode
+</pre></td>
+</tr>
+<tr>
+<td><pre>2834</pre></td>
+<td><pre>2008-04-30</pre></td>
+<td><pre>jreynolds</pre></td>
+<td><pre>updated ta_math with more vec_ operations and added a couple of other statistical routines</pre></td>
+</tr>
+<tr>
+<td><pre>2835</pre></td>
+<td><pre>2008-05-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>refcounting for css taBase* guys to fix Matrix el problem..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2836</pre></td>
+<td><pre>2008-05-01</pre></td>
+<td><pre>jreynolds</pre></td>
+<td><pre>added another vec_ss and data_ss op. (computes SS around the mean rather than as SS length)</pre></td>
+</tr>
+<tr>
+<td><pre>2837</pre></td>
+<td><pre>2008-05-02</pre></td>
+<td><pre>jreynolds</pre></td>
+<td><pre>reverting the link of the binary back to what it was -- sorry about that...</pre></td>
+</tr>
+<tr>
+<td><pre>2838</pre></td>
+<td><pre>2008-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed crash from arg dialogs directly setting cssTA_Base pointer without refing.
+test/test.proj demonstrates correct usage of matrix local variable -- please
+consult for any further usage.  we could add some messages about any use
+of a Matrix type obj that is not within a LocVars guy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2839</pre></td>
+<td><pre>2008-05-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix warnings for non-loc progvar
+</pre></td>
+</tr>
+<tr>
+<td><pre>2840</pre></td>
+<td><pre>2008-05-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed BugID:351 -- local vars created by default in new function and lookup of 
+program variables is now sensitive to function scope.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2841</pre></td>
+<td><pre>2008-05-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lots of little bug fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>2842</pre></td>
+<td><pre>2008-05-05</pre></td>
+<td><pre>jreynolds</pre></td>
+<td><pre>updated vector and frame _var and _stdev methods to include an argument to compute the unbiased estimate of the respective population value rather than the population value itself (divide by N-1 rather than N). Also updated the _sem methods to use the unbiased estimator method by default, because for most uses, that's the more appropriate measure.</pre></td>
+</tr>
+<tr>
+<td><pre>2843</pre></td>
+<td><pre>2008-05-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed BugID:402 -- no need for manual delete of tmp obj -- cssTA_Base does it now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2844</pre></td>
+<td><pre>2008-05-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CtLeabra_DCAL -- delta-CAL learning rule + experimental ct learning rule sandbox
+</pre></td>
+</tr>
+<tr>
+<td><pre>2845</pre></td>
+<td><pre>2008-05-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor rationalize of root and base on taiDataHost to aid fixing Edits</pre></td>
+</tr>
+<tr>
+<td><pre>2846</pre></td>
+<td><pre>2008-05-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed check warning for local matrix* progvars</pre></td>
+</tr>
+<tr>
+<td><pre>2847</pre></td>
+<td><pre>2008-05-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermediate checkin on seledit fixes</pre></td>
+</tr>
+<tr>
+<td><pre>2848</pre></td>
+<td><pre>2008-05-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>seledit now possible on subtypes</pre></td>
+</tr>
+<tr>
+<td><pre>2849</pre></td>
+<td><pre>2008-05-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>seledits no work in progedit panel</pre></td>
+</tr>
+<tr>
+<td><pre>2850</pre></td>
+<td><pre>2008-05-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bugID:405 fixed sorry</pre></td>
+</tr>
+<tr>
+<td><pre>2851</pre></td>
+<td><pre>2008-05-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed many issues in using scriptprjnspec, incl making Compile a force and ordering of FindUnitFmCoord and cssTA_Base getting ptr from ptr-ptr</pre></td>
+</tr>
+<tr>
+<td><pre>2852</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>seledit bug fixes</pre></td>
+</tr>
+<tr>
+<td><pre>2853</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>seledit bug fixes</pre></td>
+</tr>
+<tr>
+<td><pre>2854</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:309</pre></td>
+</tr>
+<tr>
+<td><pre>2855</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updated non-memory intense Net inlines to taOBase</pre></td>
+</tr>
+<tr>
+<td><pre>2856</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updated non-memory intense Net inlines to taOBase</pre></td>
+</tr>
+<tr>
+<td><pre>2857</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updated non-memory intense Net inlines to taOBase</pre></td>
+</tr>
+<tr>
+<td><pre>2858</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:391</pre></td>
+</tr>
+<tr>
+<td><pre>2859</pre></td>
+<td><pre>2008-05-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bug changes and tent disable of ChildUpdateAfterEdit</pre></td>
+</tr>
+<tr>
+<td><pre>2860</pre></td>
+<td><pre>2008-05-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>all remaining QT3_SUPPORT deps removed</pre></td>
+</tr>
+<tr>
+<td><pre>2861</pre></td>
+<td><pre>2008-05-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:6</pre></td>
+</tr>
+<tr>
+<td><pre>2862</pre></td>
+<td><pre>2008-05-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>reverted fix bug bugID:6</pre></td>
+</tr>
+<tr>
+<td><pre>2863</pre></td>
+<td><pre>2008-05-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for BugId:408 -- do 'make force_ta' after maketa is remade to ensure
+TA files are all fixed!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2864</pre></td>
+<td><pre>2008-05-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script prjn spec now persists and seems happy enough..  this is the only
+instance of a ScriptBase object so no wonder it wasn't well tested.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2865</pre></td>
+<td><pre>2008-05-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>early alpha of new t3 context menus</pre></td>
+</tr>
+<tr>
+<td><pre>2866</pre></td>
+<td><pre>2008-05-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added concrete View/Obj menu labels (can be customized further)</pre></td>
+</tr>
+<tr>
+<td><pre>2867</pre></td>
+<td><pre>2008-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor comment about includes: math.h, limits.h, float.h -- needed?  also test
+of checkin
+</pre></td>
+</tr>
+<tr>
+<td><pre>2868</pre></td>
+<td><pre>2008-05-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>ProgVars use progname varname + var desc -- mechanism avail for other special cases</pre></td>
+</tr>
+<tr>
+<td><pre>2869</pre></td>
+<td><pre>2008-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>OFF flags for VEBody and VEStatic -- convenient for having elements that you just
+turn off if not needed for a specific situation..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2870</pre></td>
+<td><pre>2008-05-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small refactor of atomic guys for Qt 4.4 compat</pre></td>
+</tr>
+<tr>
+<td><pre>2871</pre></td>
+<td><pre>2008-05-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Mac fixups</pre></td>
+</tr>
+<tr>
+<td><pre>2872</pre></td>
+<td><pre>2008-05-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added UpdateLight to VELight to dynamically update view when light params change
+* changed thread FetchAdd test to __GNUC__ instead of Q_CC_GNU which was not defined
+on my mac..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2873</pre></td>
+<td><pre>2008-05-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>teensy change for 4.4 bug</pre></td>
+</tr>
+<tr>
+<td><pre>2874</pre></td>
+<td><pre>2008-05-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor Win fixups</pre></td>
+</tr>
+<tr>
+<td><pre>2875</pre></td>
+<td><pre>2008-05-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>view clip stuff updated to restrict illegal slave view clip ops</pre></td>
+</tr>
+<tr>
+<td><pre>2876</pre></td>
+<td><pre>2008-05-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>turn off delayed texture loading for VRML: was source of major crashing in 3dstudio.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2877</pre></td>
+<td><pre>2008-05-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>put dyn methods inside view submenus</pre></td>
+</tr>
+<tr>
+<td><pre>2878</pre></td>
+<td><pre>2008-05-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>partial formlayout stuff</pre></td>
+</tr>
+<tr>
+<td><pre>2879</pre></td>
+<td><pre>2008-05-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>buggy alpha for QFormLayout edit panels -- bug seems to be Trolltech not us</pre></td>
+</tr>
+<tr>
+<td><pre>2880</pre></td>
+<td><pre>2008-05-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* turn back on ChildUAE
+* minor fix on memb fm arg
+</pre></td>
+</tr>
+<tr>
+<td><pre>2881</pre></td>
+<td><pre>2008-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sort on datatable now goes up to 6 cols, and added visible SortInPlace on dataproc
+</pre></td>
+</tr>
+<tr>
+<td><pre>2882</pre></td>
+<td><pre>2008-05-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added reference vars for program functions (and FUN_ARG flag to ctrl state)
+* fixed up output_name logic to work with hard-clamped layers, and added
+  minus_output_name to record output name from minus phase for stats
+* other misc stuff.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2883</pre></td>
+<td><pre>2008-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first attempt to fix use of 'this' in programs
+</pre></td>
+</tr>
+<tr>
+<td><pre>2884</pre></td>
+<td><pre>2008-05-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>working 'this' fix -- needed tmp css var..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2885</pre></td>
+<td><pre>2008-05-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* support strings for N agg computation
+* turn off CTRL_PANEL flag for function, local vars (need to have flag-on-flag vis stuff)
+</pre></td>
+</tr>
+<tr>
+<td><pre>2886</pre></td>
+<td><pre>2008-05-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* DataColsFmArgs
+* N agg = N column, works on any col incl string
+* log normalization of feature activations in img
+* multiple column find in data table
+</pre></td>
+</tr>
+<tr>
+<td><pre>2887</pre></td>
+<td><pre>2008-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>2888</pre></td>
+<td><pre>2008-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc
+</pre></td>
+</tr>
+<tr>
+<td><pre>2889</pre></td>
+<td><pre>2008-05-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renorm is now a multiplier on log if &gt; 2 for log renorming
+</pre></td>
+</tr>
+<tr>
+<td><pre>2890</pre></td>
+<td><pre>2008-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>configure datacalcloop matrix var params
+</pre></td>
+</tr>
+<tr>
+<td><pre>2891</pre></td>
+<td><pre>2008-06-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new improved progvar flag setting based on owners.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2892</pre></td>
+<td><pre>2008-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fixes + new options for saving weights and rel net monitor and adapt in leabra progs
+</pre></td>
+</tr>
+<tr>
+<td><pre>2893</pre></td>
+<td><pre>2008-06-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more fixes of std leabra progs
+</pre></td>
+</tr>
+<tr>
+<td><pre>2894</pre></td>
+<td><pre>2008-06-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug BugID:410</pre></td>
+</tr>
+<tr>
+<td><pre>2895</pre></td>
+<td><pre>2008-06-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* GetTA_Element now takes Variant as index arg, uses string name lookup for lists
+* [] via above for DEF_CHILD guys (manually added to relevant classes)
+* fixed find from here to look at type names, GetDisplayName() and values for 
+ MemberDef* MethodDef* etc.  now seems to always find the right stuff
+</pre></td>
+</tr>
+<tr>
+<td><pre>2896</pre></td>
+<td><pre>2008-06-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* CAT_XpertXXX now auto-labeled as #EXPERT and filtering of expert guys in method
+  chooser is now fully functional (wasn't working before) -- only see them if you 
+  have Expert view mode turned on..
+* negative indexes now supported for all list and array types (not matrix yet -- more
+  complex because of dimensionality) -- just accesses from the end
+* main datatable access and modify functions much cleaner: SetVal, GetVal, SetMatrixVal,
+  etc -- names can be used for the column "index" because it is a variant, so
+  alternative ColName versions are not needed.  also added lots of missing #IGNORE stuff
+  to taBase so (none) category is empty in DataTable at least.  more of this needs
+  to be done at some point.
+* added USED flag to ProgVar -- it is auto updated based on DataLink references and 
+  progvars that are not USED anywhere in the code show up as grey.  Be sure to hit
+  Init first to ensure that the USED flag is accurate, before nuking any unused vars.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2897</pre></td>
+<td><pre>2008-06-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>4d option for grouped layer editing</pre></td>
+</tr>
+<tr>
+<td><pre>2898</pre></td>
+<td><pre>2008-06-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bugID:419 fixed</pre></td>
+</tr>
+<tr>
+<td><pre>2899</pre></td>
+<td><pre>2008-06-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* emacs keys in the std ilineedit, and infrastructure for tab completion, but
+  tab itself doesn't work -- trapped too high up
+* added #EDIT_WIDTH_xxx for strings -- can control width as desired -- made it 
+  bigger (perhaps too big??) for progexprs
+* added #FILE_DIALOG infrastructure and flags etc so just need to actually
+  impl it in same way that EDIT_DIALOG is done
+</pre></td>
+</tr>
+<tr>
+<td><pre>2900</pre></td>
+<td><pre>2008-06-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:186</pre></td>
+</tr>
+<tr>
+<td><pre>2901</pre></td>
+<td><pre>2008-06-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:163</pre></td>
+</tr>
+<tr>
+<td><pre>2903</pre></td>
+<td><pre>2008-06-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:247</pre></td>
+</tr>
+<tr>
+<td><pre>2904</pre></td>
+<td><pre>2008-06-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>prelim bench changes</pre></td>
+</tr>
+<tr>
+<td><pre>2905</pre></td>
+<td><pre>2008-06-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass at progexpr lookup (Ctrl-L) in place -- try it!! anywhere you are working
+on an expression you can just do Ctrl-L and it will try to show a relevant selector
+dialog -- if no path, then just picks variables, if part of a path, picks members
+or methods based on path, and if part of a :: scoper does enums and statics.
+chooser allows you to pick only one type of thing, in addition to categs,
+and it also restricts list to those compatible with what you've already typed..
+
+Just need to add a chooser for dynamic enums, picking items from a list/group
+if that is where you are at in the path, and also it would be great to have
+the default selection be for items in the list so you can just go through those
+directly.
+
+I predict this will get a lot of use..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2906</pre></td>
+<td><pre>2008-06-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>list item lookup and dyn enum lookup now working - just need the select thing
+which I can't figure out -- Brad -- help!! and to lookup up raw enum vals
+directly in the no-path variable lookup case.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2907</pre></td>
+<td><pre>2008-06-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>reverted default select of first item -- could cause probs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2908</pre></td>
+<td><pre>2008-06-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added resizeColumnToContents for net unit values and specs -- was taking huge amount
+of space for var name.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2909</pre></td>
+<td><pre>2008-06-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lookup finalized -- works for popup edit dialog and also lists both vars and enums
+via tha MultiType version of the token dialog.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2910</pre></td>
+<td><pre>2008-06-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>2911</pre></td>
+<td><pre>2008-06-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha of new bench</pre></td>
+</tr>
+<tr>
+<td><pre>2912</pre></td>
+<td><pre>2008-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new img proc routines -- separate Transform from Filtering and added occlusion..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2913</pre></td>
+<td><pre>2008-06-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>int checkin</pre></td>
+</tr>
+<tr>
+<td><pre>2915</pre></td>
+<td><pre>2008-06-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha of leabralike geom</pre></td>
+</tr>
+<tr>
+<td><pre>2917</pre></td>
+<td><pre>2008-06-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lookup works for string methods (which desperately need appropriate CAT &amp; IGNORE 
+directives and comment cleanup!!) and also finds function variables.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2918</pre></td>
+<td><pre>2008-06-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:422 note this is NOT the cause of bugID:426</pre></td>
+</tr>
+<tr>
+<td><pre>2919</pre></td>
+<td><pre>2008-06-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>DIE Q3 DIE EXCLAMATION MARKS</pre></td>
+</tr>
+<tr>
+<td><pre>2920</pre></td>
+<td><pre>2008-06-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha with full recv and sendclobber support</pre></td>
+</tr>
+<tr>
+<td><pre>2921</pre></td>
+<td><pre>2008-06-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha with full recv and sendclobber support</pre></td>
+</tr>
+<tr>
+<td><pre>2922</pre></td>
+<td><pre>2008-06-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>String comments etc all cleaned up and tidy!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2927</pre></td>
+<td><pre>2008-06-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha of send_array</pre></td>
+</tr>
+<tr>
+<td><pre>2928</pre></td>
+<td><pre>2008-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pfcmaintlayerspec out_gate_learn_mod -- learning modulation of maint cons based on
+output gating signal.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2929</pre></td>
+<td><pre>2008-06-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* margin in netview ctrl = 0 (saves space)
+* set object_type in InitUnitNames
+* dyn_enum_val can't be CONDEDIT_OFF for LOCAL_VAR because you need to be able to
+set the type always!  ideally we could have an "always on" override but that may
+be more complex than necessary..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2930</pre></td>
+<td><pre>2008-06-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest</pre></td>
+</tr>
+<tr>
+<td><pre>2934</pre></td>
+<td><pre>2008-06-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* INIT_ARGVAL_ON_xxx
+* see BugId:423 for more details on all the changes.. too lazy/tired to retype.
+* New function does NOT remember previous arg vals (nonsensical usually)
+* Set/GetStrVal_inline on taBase
+* css arg dialog now uses ptr_cnt = 0 for ref non-ptr args
+* could be some residual issues with dump files and arg vals from these changes -- tested but not as thoroughly as possible..
+</pre></td>
+</tr>
+<tr>
+<td><pre>2935</pre></td>
+<td><pre>2008-06-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>some fixes for gcc 4.2.3</pre></td>
+</tr>
+<tr>
+<td><pre>2936</pre></td>
+<td><pre>2008-06-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>some fixes for gcc 4.2.3</pre></td>
+</tr>
+<tr>
+<td><pre>2937</pre></td>
+<td><pre>2008-06-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>revert 2936 changes</pre></td>
+</tr>
+<tr>
+<td><pre>2938</pre></td>
+<td><pre>2008-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup and rationalization of GetValStr and SetValStr code: 
+* TypeDef now has sub-functions for lengthy complex types like enum and class_inline
+* it calls taBase functions if any sort of taBase, and overrides on those deal
+  with subclasses
+* added support for inline Get/Set val str of arrays and matrix
+* use FindMemberPathStatic for all _ON_xxx directives, so that xxx can be a sub
+  member in a class (fixes spec NewChild type setting as children.el_base)
+* verified that no saving/loading diffs exist relative to prior code!!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2939</pre></td>
+<td><pre>2008-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#FILE_DIALOG in place and working -- setup for datatable save/load data and network
+save/load weights
+</pre></td>
+</tr>
+<tr>
+<td><pre>2940</pre></td>
+<td><pre>2008-06-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>two col prog listings</pre></td>
+</tr>
+<tr>
+<td><pre>2941</pre></td>
+<td><pre>2008-06-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>undo idemedit</pre></td>
+</tr>
+<tr>
+<td><pre>2942</pre></td>
+<td><pre>2008-06-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>preview of table edits in seledit</pre></td>
+</tr>
+<tr>
+<td><pre>2943</pre></td>
+<td><pre>2008-06-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>major improve to sele table</pre></td>
+</tr>
+<tr>
+<td><pre>2944</pre></td>
+<td><pre>2008-06-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed Strange bug</pre></td>
+</tr>
+<tr>
+<td><pre>2945</pre></td>
+<td><pre>2008-06-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest ugh</pre></td>
+</tr>
+<tr>
+<td><pre>2946</pre></td>
+<td><pre>2008-06-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest ugh</pre></td>
+</tr>
+<tr>
+<td><pre>2947</pre></td>
+<td><pre>2008-06-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>graph view update: no constraints on plot 1 and 2: anything can be on or off and 
+anything can be alt y or not.. much nicer!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2948</pre></td>
+<td><pre>2008-06-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed checkin breaks sele tables</pre></td>
+</tr>
+<tr>
+<td><pre>2949</pre></td>
+<td><pre>2008-06-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>inter checking sele tables</pre></td>
+</tr>
+<tr>
+<td><pre>2950</pre></td>
+<td><pre>2008-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* x_labels and z_labels in GraphTableView -- provides a way to display different labels
+for x axis relative to the data being plotted.  Having now worked this out in detail
+it is completely nonsensical and I'm just checking it in to preserve the code
+in the svn history in case any of it later becomes relevant.
+* also added single contrast value instead of 4 separate ones for MatrixLayerSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>2951</pre></td>
+<td><pre>2008-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>got rid of x_labels and z_labels in graph.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2952</pre></td>
+<td><pre>2008-06-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>sele table now fairly shiny</pre></td>
+</tr>
+<tr>
+<td><pre>2953</pre></td>
+<td><pre>2008-06-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:429</pre></td>
+</tr>
+<tr>
+<td><pre>2954</pre></td>
+<td><pre>2008-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Layer::SetNUnits -- preferred method for startup programs!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2955</pre></td>
+<td><pre>2008-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed defaults bug introduced in 2952 and also compile err/bug
+ in checking for taiField in sele.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2956</pre></td>
+<td><pre>2008-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>arg GetDisplayName includes type info so it isn't blank in new progeditor
+</pre></td>
+</tr>
+<tr>
+<td><pre>2957</pre></td>
+<td><pre>2008-06-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>const char fixups</pre></td>
+</tr>
+<tr>
+<td><pre>2958</pre></td>
+<td><pre>2008-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more const char fixes -- ran make make_mta_parse and make make_css_parse
+</pre></td>
+</tr>
+<tr>
+<td><pre>2959</pre></td>
+<td><pre>2008-06-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixes in taList for the -ve list accessing</pre></td>
+</tr>
+<tr>
+<td><pre>2960</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest bench goodness</pre></td>
+</tr>
+<tr>
+<td><pre>2961</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest bench goodness</pre></td>
+</tr>
+<tr>
+<td><pre>2962</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>SafeEl fixes and guards</pre></td>
+</tr>
+<tr>
+<td><pre>2963</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>factoring for cuda</pre></td>
+</tr>
+<tr>
+<td><pre>2964</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>factoring for cuda</pre></td>
+</tr>
+<tr>
+<td><pre>2965</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cuda compiling</pre></td>
+</tr>
+<tr>
+<td><pre>2966</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added PosSafeEl accessor to taList template</pre></td>
+</tr>
+<tr>
+<td><pre>2967</pre></td>
+<td><pre>2008-06-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added bench scripts</pre></td>
+</tr>
+<tr>
+<td><pre>2968</pre></td>
+<td><pre>2008-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>SafeEl -&gt; PosSafeEl for all suspicious-looking cases I could find.
+method: make etags; emacs tags-search -&gt;SafeEl( \.SafeEl( and _
+versions.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2969</pre></td>
+<td><pre>2008-06-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest but cuda not compiling</pre></td>
+</tr>
+<tr>
+<td><pre>2970</pre></td>
+<td><pre>2008-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed long names of lists in prog editor (objs, vars, etc): list returns GetName and 
+also cache the "given name" to item used in default in iTreeItem GetColText to be
+used when other name is null -- all works well.
+* updated version to 4.0.15 -- this is now well tested and ready to go!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2971</pre></td>
+<td><pre>2008-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Further #CAT_ cleanup and some last Variant col fixes for sort, colstats, copycell
+in datatables.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2972</pre></td>
+<td><pre>2008-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for Sort function -- default arg -1 is a bit tricky with Variants and SafeEl! ak!
+also minor compile warning fix on imgproc
+</pre></td>
+</tr>
+<tr>
+<td><pre>2973</pre></td>
+<td><pre>2008-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix BugID:438 -- tooltypes for prog els: just needed key_type_desc instead of key_desc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>2974</pre></td>
+<td><pre>2008-06-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed "program vars" in program control panel and added ct test proj
+</pre></td>
+</tr>
+<tr>
+<td><pre>2975</pre></td>
+<td><pre>2008-06-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>leabra_ct.* files no longer in build, so removed to avoid confusion</pre></td>
+</tr>
+<tr>
+<td><pre>2976</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fixed BugID:439 -- added DynEnumType::CopytoAllProgs
+</pre></td>
+</tr>
+<tr>
+<td><pre>2977</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added SRAvg and Weights to net to disastrous results</pre></td>
+</tr>
+<tr>
+<td><pre>2978</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>doh removed the rand call from inner wt loop</pre></td>
+</tr>
+<tr>
+<td><pre>2979</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>start of new datatable tutorial!
+</pre></td>
+</tr>
+<tr>
+<td><pre>2980</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 changes for 4.0.15 release</pre></td>
+</tr>
+<tr>
+<td><pre>2981</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 changes for 4.0.15 release</pre></td>
+</tr>
+<tr>
+<td><pre>2982</pre></td>
+<td><pre>2008-06-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>notes</pre></td>
+</tr>
+<tr>
+<td><pre>2983</pre></td>
+<td><pre>2008-07-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest but bugs</pre></td>
+</tr>
+<tr>
+<td><pre>2984</pre></td>
+<td><pre>2008-07-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest</pre></td>
+</tr>
+<tr>
+<td><pre>2985</pre></td>
+<td><pre>2008-07-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>reorg with bugs fixed</pre></td>
+</tr>
+<tr>
+<td><pre>2986</pre></td>
+<td><pre>2008-07-02</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>4.0.15</pre></td>
+</tr>
+<tr>
+<td><pre>2988</pre></td>
+<td><pre>2008-07-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cleaned up version with dWt calc added</pre></td>
+</tr>
+</table>
+</body></html>

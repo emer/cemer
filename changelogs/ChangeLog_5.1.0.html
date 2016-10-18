@@ -1,0 +1,1187 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 5.1.0
+  Revisions 4322:4475</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>4322</pre></td>
+<td><pre>2010-02-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* load of old projects now fixed -- prog_step back in but just for loading compatibility.
+* super fast in gui -- need more of a failsafe -- add a timer.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4323</pre></td>
+<td><pre>2010-02-12</pre></td>
+<td><pre>latimerk</pre></td>
+<td><pre>Hopeful bugfix</pre></td>
+</tr>
+<tr>
+<td><pre>4324</pre></td>
+<td><pre>2010-02-12</pre></td>
+<td><pre>latimerk</pre></td>
+<td><pre>Changed indents to match Randy's</pre></td>
+</tr>
+<tr>
+<td><pre>4325</pre></td>
+<td><pre>2010-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Major upgrade to dump file format (object save/load) -- now saves type and name of object
+at the end of a path pointer, and these are used during loading to find the right guy (in
+addition to the path) -- prevents all these crazy problems when loading into a 
+project with slightly different orders or whatever of programs.
+* Also fixed the path token stuff -- it now saves full paths as tokens and uses hash
+table lookup for speed, making files much more robust for merging with svn etc.
+* Updated all the std programs -- now have new save format.
+* NOTE: this save format is INCOMPATIBLE with prior versions -- once you save in
+this new format, file will NOT load in earlier versions.  there is a flag
+in preferences to save in old format but it should only be used if absolutely
+necessary.  embrace the future!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4326</pre></td>
+<td><pre>2010-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>final fix for dump load -- out of order paths..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4327</pre></td>
+<td><pre>2010-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>datatable keyboard updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>4328</pre></td>
+<td><pre>2010-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VarToVarCopy -- at various levels from Unit_Group on up -- copy one variable to 
+another in units
+* leabra spike clamp = CLAMPED -- needed for when you're specifying spikes per cycle
+</pre></td>
+</tr>
+<tr>
+<td><pre>4329</pre></td>
+<td><pre>2010-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* win build fixes
+* leabra netin can never go below 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>4330</pre></td>
+<td><pre>2010-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>data table load fixes -- proper detecting for native data files -- use data line, not header
+doh.  note to self: must retest final version after changes!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4331</pre></td>
+<td><pre>2010-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>isDestroying now checks all owners -- this may prevent some crash-on-close bugs..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4332</pre></td>
+<td><pre>2010-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>protect CloseLater with new recursive isDestroying
+</pre></td>
+</tr>
+<tr>
+<td><pre>4333</pre></td>
+<td><pre>2010-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>matrix code audit in search of mysterious startup crashes with SetGeom stuff in ta_imgproc
+in Initialize routines -- only seems to happen on Windows -- some index stuff was missing some
+break statements, and various range checking routines should have been &gt;= and not &gt; but 
+seems unlikely to be source of problem.  Anyway, let's see..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4334</pre></td>
+<td><pre>2010-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>disparity_width and various other params were NOT being initialized in MotionDispGaborV1Spec
+Initialize function -- this was causing mysterious windows bug!  maybe this is also
+Kenneth's mysterious segfault source -- is causing weird initial allocations of filters
+also actually did formatting to fit current standard in code (2 spaces) -- Ctrl+x Ctrl+i
+in emacs..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4335</pre></td>
+<td><pre>2010-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* emacs-style selection stuff fixed
+* copy/cut now clears selection
+* added Ctrl+Y Alt+W Ctrl+W emacs aliases for cut/paste
+* fixed param search UAE
+* updated param search test project -- fully working now
+* removed conflicting Ctrl+V emacs-style "pg down" alias from non-mac b/c conflits with paste
+</pre></td>
+</tr>
+<tr>
+<td><pre>4336</pre></td>
+<td><pre>2010-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* prev checkin included CleanFiles function on project to remove _autosave and _recover files
+* CleanFiles is now called automatically after saving a non-autosave, non-recover file --
+you can now reliably trust that if an _autosave file exists, it is *newer* than your regular
+project file, and should be used (unless you know you were just messing around).
+* this checkin includes removal of _console* files too in CleanFiles.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4337</pre></td>
+<td><pre>2010-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* extensions for SaveImageAs
+* misc other fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4338</pre></td>
+<td><pre>2010-02-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fixes to get emer robot fully working
+</pre></td>
+</tr>
+<tr>
+<td><pre>4339</pre></td>
+<td><pre>2010-02-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for voidptr_Matrix index errs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4340</pre></td>
+<td><pre>2010-02-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed step logic so that all step guys are avail even through progcallvar guys
+* skip undo save of rnd seeds..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4341</pre></td>
+<td><pre>2010-02-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get dir files demo</pre></td>
+</tr>
+<tr>
+<td><pre>4342</pre></td>
+<td><pre>2010-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of timeout on SyncThreads -- whose idea was that!?  this can get everyone desync'd
+and is likely behind the zombies on dream..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4343</pre></td>
+<td><pre>2010-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more syncthreads attempted fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4344</pre></td>
+<td><pre>2010-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>thread startup fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>4345</pre></td>
+<td><pre>2010-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated bench projs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4346</pre></td>
+<td><pre>2010-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no mutex in syncthreads
+</pre></td>
+</tr>
+<tr>
+<td><pre>4347</pre></td>
+<td><pre>2010-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no mutex + comment + 1 usec wait in both cases..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4348</pre></td>
+<td><pre>2010-02-22</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>emacs cut/copy/paste</pre></td>
+</tr>
+<tr>
+<td><pre>4349</pre></td>
+<td><pre>2010-02-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new data calc loop flag: use_col_numbers -- now uses col names to look things up, and only
+numbers if this flag is on (off by default) -- names are MUCH more robust and though slower
+the risk of hard-to-debug errors is definitely not worth it in most cases..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4350</pre></td>
+<td><pre>2010-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* std progs ApplyInputs call AutoConfig now by default in init
+* UpdateLayerWriters in Wizard calls auto config, called in relevant places in std routines
+* GetUndoBarrier and #UNDO_BARRIER in Program, DataTable, Unit_Group, allows changes 
+confined to within a given object to be scoped there -- much faster esp for Program editing.
+* tabMisc::cur_undo_save_owner -- scoper for checking undo saving for destructive events
+</pre></td>
+</tr>
+<tr>
+<td><pre>4351</pre></td>
+<td><pre>2010-02-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for undo saving items under network
+</pre></td>
+</tr>
+<tr>
+<td><pre>4352</pre></td>
+<td><pre>2010-02-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pbwm wizard self con fix = sc = .05
+* rewtartg layer spec also created
+* fix autosave to use QFileInfo instead of access -- now works properly..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4353</pre></td>
+<td><pre>2010-02-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* NO_SCOPE = Project scope
+* GpRndTesselPrjnSpec  now works
+* fixed PolarRndPrjnSpec to have more allocated cons -- seems good
+* fixed autosave isWritable to check dir path, not file
+</pre></td>
+</tr>
+<tr>
+<td><pre>4354</pre></td>
+<td><pre>2010-02-26</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>add section for console/text area keyboard shortcuts</pre></td>
+</tr>
+<tr>
+<td><pre>4355</pre></td>
+<td><pre>2010-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* tail data table view for updates (scrollToBottom)
+* undo logic for data table: save when working on the table itself!
+* attempted fixes for window deactivated but no luck yet
+</pre></td>
+</tr>
+<tr>
+<td><pre>4356</pre></td>
+<td><pre>2010-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ctrl+S to focus on find/search in help browser (toggles between)
+* F1 for help browser
+* click on window to raise = move css console to that window (no need to move)
+* splitter double-click ignores adjustments after collapsing when restoring -- restores
+  to state prior to collapse as expected
+* line edits have emacs select mode (ctrl+space) + copy = Alt+W
+* Alt+J = move focus left in main window; Alt+L = move focus right in main window
+* allow 1d input data to apply to layer -- just goes in unit order
+* don't allow multiple programs to run at same time (global_run_state)
+* check for doc in same project on set doc link
+</pre></td>
+</tr>
+<tr>
+<td><pre>4357</pre></td>
+<td><pre>2010-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Ctrl+J &amp; Ctrl+L now work just like Alt+ versions (ctrl is so much more convenient to use)
+* fixed program editor browser select stuff: now clears prior selection too
+* nuked Esc as way of clearing selection on ilineedit and itreewidget -- was interfering
+with the esc for cancelling edit dialogs
+</pre></td>
+</tr>
+<tr>
+<td><pre>4358</pre></td>
+<td><pre>2010-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor guard
+</pre></td>
+</tr>
+<tr>
+<td><pre>4359</pre></td>
+<td><pre>2010-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>data table emacs keys working as well as can be expected... it is tough.
+* Ctrl+S = start selecting (instead of Ctrl+Space which is start editing)
+*  " works now for all selecting contexts too.
+* the default lineedit delegate does NOT use the translated keys properly
+so Ctrl+F and Ctrl+B do NOT work within each cell -- need a new delegate
+for that -- too much.  A,E,D all work tho so that is something..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4360</pre></td>
+<td><pre>2010-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>*lots of keyboard shortcut fixes, including fix of ctrl+m and ctrl+i bug putting it out in space
+*ctrl+t = toggle between datatable and matrix sub guy
+</pre></td>
+</tr>
+<tr>
+<td><pre>4361</pre></td>
+<td><pre>2010-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>uae after lrs</pre></td>
+</tr>
+<tr>
+<td><pre>4362</pre></td>
+<td><pre>2010-03-02</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>update</pre></td>
+</tr>
+<tr>
+<td><pre>4363</pre></td>
+<td><pre>2010-03-02</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>update</pre></td>
+</tr>
+<tr>
+<td><pre>4364</pre></td>
+<td><pre>2010-03-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Ctrl+S / Find menu in text edit (e.g., taDoc) -- also any other major text editor situation
+* Ctrl+Space emacs select mode stuff in text edit
+* Clear All menu in console
+* Ctrl+M, I, D in data table -- duplicate, insert, delete rows!
+* attempt to fix crashes Brian has been getting lately -- don't nuke SelectionModel -- seems
+like this was a bad idea..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4365</pre></td>
+<td><pre>2010-03-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* specs UpdateChildren now calls UAE instead of just UpdateSpec -- so it actually updates
+other stuff too -- this is a critical fix for updating child specs from changes in parents!
+* fixed bug in CopyCommonCols (used in DataCalcLoop)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4366</pre></td>
+<td><pre>2010-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* emacs_mode preferences setting -- you can have ctrl+v be page down always if you want..
+* page up/down now = 5 tabs in edit dialogs.. for faster nav..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4367</pre></td>
+<td><pre>2010-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>10 -&gt; 5
+</pre></td>
+</tr>
+<tr>
+<td><pre>4368</pre></td>
+<td><pre>2010-03-03</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>update</pre></td>
+</tr>
+<tr>
+<td><pre>4369</pre></td>
+<td><pre>2010-03-03</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>"update"</pre></td>
+</tr>
+<tr>
+<td><pre>4370</pre></td>
+<td><pre>2010-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin fixups
+</pre></td>
+</tr>
+<tr>
+<td><pre>4371</pre></td>
+<td><pre>2010-03-04</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>update</pre></td>
+</tr>
+<tr>
+<td><pre>4372</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>docs section</pre></td>
+</tr>
+<tr>
+<td><pre>4373</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>oops</pre></td>
+</tr>
+<tr>
+<td><pre>4374</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added F8-12 function keys for init, run, step, stop, abort -- works for actual program 
+panel but only step seems to work on a ctrl panel for inexplicable reasons...
+* FROM_GROUP_ now works for SmartRef pointers
+* iProgramEditor now has Apply_Async() back and also regular edits -- required for the
+old-school menu choosers like FROM_GROUP_  such a pain..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4375</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* snap border uses history values in netview
+* 3d viewer context menus working again (uses eventfilter)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4376</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>drag-n-drop fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>4377</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>startup programs can't have batch-&gt;Init() -- doesn't do anything
+</pre></td>
+</tr>
+<tr>
+<td><pre>4378</pre></td>
+<td><pre>2010-03-05</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>F keys</pre></td>
+</tr>
+<tr>
+<td><pre>4379</pre></td>
+<td><pre>2010-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* large datatable no undo save
+* finally found magic sauce for quarter seek mode and weirdness with interact stuff!
+  need to manipulate SoEventManger navigation state .. freaky.
+* crash prevent on undo thread while project deleting
+* pbwm params
+</pre></td>
+</tr>
+<tr>
+<td><pre>4380</pre></td>
+<td><pre>2010-03-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new pbwm defaults per "tom's magic" and updated wizard.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4381</pre></td>
+<td><pre>2010-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>inexplicable windows bug parsing TypeDef::SC_DEFAULT</pre></td>
+</tr>
+<tr>
+<td><pre>4382</pre></td>
+<td><pre>2010-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taDataProc::AllDataToOne2DCell -- collapse all data into one 2d matrix cell -- useful for 
+analyses etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4383</pre></td>
+<td><pre>2010-03-09</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>control panels</pre></td>
+</tr>
+<tr>
+<td><pre>4384</pre></td>
+<td><pre>2010-03-09</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>convert -trim images</pre></td>
+</tr>
+<tr>
+<td><pre>4385</pre></td>
+<td><pre>2010-03-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vec_kwta fun in math
+</pre></td>
+</tr>
+<tr>
+<td><pre>4386</pre></td>
+<td><pre>2010-03-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* find bugs fixed
+* Lay gp toggle in netview
+* fixed snap border in netview -- wasn't restoring idx
+* can now drop a ProgVar onto an Arg (method, program) and it will set that as the arg val
+* Gui versions of Run/Step in program -- regular versions don't check for alreadyrunning
+* Ctrl+i = current position, not next (in group/list goes at end still)
+* common DataCol funs now Buttons
+* attempted select fix for linux -- need to test
+* load data now works with scientific notation with - exponents
+* OBJS_UPDT_GUI flag on Program -- default is now struct update protection of objs -- faster
+* restored css gui event processing -- was commented out for testing -- forgot to restore!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4387</pre></td>
+<td><pre>2010-03-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for SelectCtrlFuns..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4388</pre></td>
+<td><pre>2010-03-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>select edit now auto-updates to new _Gui buttons.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4389</pre></td>
+<td><pre>2010-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major plugin overhaul: emergent can now compile plugins, and make targets are in place
+to make this easy (make plugins) -- still needs a bit more testing etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>4390</pre></td>
+<td><pre>2010-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Next round of plugin fixes -- doesn't load when run from dev version, and all existing
+Compile/etc buttons now working..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4391</pre></td>
+<td><pre>2010-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass at super-quick plugin editor -- works!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4392</pre></td>
+<td><pre>2010-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>More plugin tweaks.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4393</pre></td>
+<td><pre>2010-03-14</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>taDataProc::Slice2D</pre></td>
+</tr>
+<tr>
+<td><pre>4394</pre></td>
+<td><pre>2010-03-14</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>many improvements to taDataProc::Slice2D</pre></td>
+</tr>
+<tr>
+<td><pre>4395</pre></td>
+<td><pre>2010-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows fixes for plugins</pre></td>
+</tr>
+<tr>
+<td><pre>4396</pre></td>
+<td><pre>2010-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added manip_ctrl_on flag to graph/grid ctrl panels.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4397</pre></td>
+<td><pre>2010-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* DiffCompare actually needs NO_SCOPE to be *no* scope (across projects) -- now there is
+a PROJ_SCOPE that other cases use
+* CopyFrom in views now copies the saved view frame stuff, so positioning can be exactly the same between two views
+* Plugin Editor has word wrap and better tab indent
+</pre></td>
+</tr>
+<tr>
+<td><pre>4398</pre></td>
+<td><pre>2010-03-17</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>taMath_float/double::mat_transpose/mat_trim/mat_slice/vec_threshold_low/high</pre></td>
+</tr>
+<tr>
+<td><pre>4399</pre></td>
+<td><pre>2010-03-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix 3d studio crash
+</pre></td>
+</tr>
+<tr>
+<td><pre>4400</pre></td>
+<td><pre>2010-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new loser_gain on inhib -- nonlinear inhibition effects to enforce stronger kwta
+* also k_pos_noise -- with loser_gain, implements a form of softmax
+* GetSpecialState on taBase -- highlighting for all manner of "special" state things
+where it is useful to see at a glance (e.g., not saving rows in data tables, 
+init_from in progvars -- other suggestions welcome)
+</pre></td>
+</tr>
+<tr>
+<td><pre>4401</pre></td>
+<td><pre>2010-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added some basic dependency libraries that were apparently being linked in for free 
+previously but for some crazy reason on my machine after the upgrade to snow leopard,
+stopped getting this free ride: OpenGL, ZLIB, and Carbon on mac.  I don't know why
+this ever worked before and why it broke, but fix seems reasonable..
+* now supporting Ctrl+O in addition to Ctrl+I in trees -- adds *after* current point 
+(like it used to work before) -- I find that I basically want both of these things.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4402</pre></td>
+<td><pre>2010-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cmake syntax fix</pre></td>
+</tr>
+<tr>
+<td><pre>4403</pre></td>
+<td><pre>2010-03-21</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>rewrote mat_trim. now has intol_within/intol_between params which control greediness of trimming (intolerance) based on how many guys within row/col don't satisfy thresh (intol_within) and how many consecutive rows/cols don't satisfy thresh (intol_between). tested on TI46 - allowed for very fine tuning.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>4404</pre></td>
+<td><pre>2010-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of actual mac app guys in bin because they are confusing my finder..</pre></td>
+</tr>
+<tr>
+<td><pre>4405</pre></td>
+<td><pre>2010-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* IMPORTANT: NETIN noise in leabra is now added in *prior* to computing inhib threshold
+i_thr -- previously it was added *after* this, meaning it couldn't affect kwta competition
+-- just "edits" it after the fact.  probably not a great idea in gneral, and definitely not
+for k_pos guy
+</pre></td>
+</tr>
+<tr>
+<td><pre>4406</pre></td>
+<td><pre>2010-03-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fix for imagefromdatacell
+</pre></td>
+</tr>
+<tr>
+<td><pre>4407</pre></td>
+<td><pre>2010-03-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>got rid of AlreadyRunning check in Init -- shouldn't be there..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4408</pre></td>
+<td><pre>2010-03-23</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>taDataProc::ConcatCols2 - alternate impl using CopyFrom</pre></td>
+</tr>
+<tr>
+<td><pre>4409</pre></td>
+<td><pre>2010-03-23</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>DataTable::NewColFmMatrix - creates a new column from the matrix and puts the matrix in the first cell of that column</pre></td>
+</tr>
+<tr>
+<td><pre>4410</pre></td>
+<td><pre>2010-03-26</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>motu fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4411</pre></td>
+<td><pre>2010-03-26</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>more motu fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4412</pre></td>
+<td><pre>2010-03-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MatrixRndPrjnSpec -- does linked random prjns across maint and output gating -- should get those to be more coordinated.  
+</pre></td>
+</tr>
+<tr>
+<td><pre>4413</pre></td>
+<td><pre>2010-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* data table autoscroll disabled for "show event" trigger -- when flipping back to table
+from other views.
+* prevent ProgramCall in init_code
+* fix NewFloatMatrix in ProgVars
+</pre></td>
+</tr>
+<tr>
+<td><pre>4414</pre></td>
+<td><pre>2010-03-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed loser gain -- now integrated with tie_brk mechanism -- makes sure that top-k guys
+are actually active to some reasonable extent, even with low netin diffs.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4415</pre></td>
+<td><pre>2010-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>got rid of zero rotation axis again
+</pre></td>
+</tr>
+<tr>
+<td><pre>4416</pre></td>
+<td><pre>2010-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>default expand for left browser -- open up the most frequently used things by default
+</pre></td>
+</tr>
+<tr>
+<td><pre>4417</pre></td>
+<td><pre>2010-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updating of tree for StructUpdate should now be very reliable..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4418</pre></td>
+<td><pre>2010-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new tie brk mechanism</pre></td>
+</tr>
+<tr>
+<td><pre>4419</pre></td>
+<td><pre>2010-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* enums now recorded as String values in netmon monitor
+* can assign custom names to cell dimensions for matrix cells -- edit dim_names in data table col
+</pre></td>
+</tr>
+<tr>
+<td><pre>4420</pre></td>
+<td><pre>2010-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rnd_go.nogo noise</pre></td>
+</tr>
+<tr>
+<td><pre>4421</pre></td>
+<td><pre>2010-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major rnd_go overhaul: nogo_rng for specifying random element of threshold, computed
+  in the bias da section at appropriate time for firing.  bias is in addition to existing.
+* fixed possibly significant bug where maintenance gate bias was not being applied in 
+  pvr detected case
+</pre></td>
+</tr>
+<tr>
+<td><pre>4422</pre></td>
+<td><pre>2010-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taDataProc::ConcatCols now allows dest = src_a -- in place version -- replaces ConcatCols2
+* fixed ChangeColTypeGeom -- was bailing if geom was same, without checking for type diff!!
+* plugins are now compiled in a separate thread in gui mode, which restores responsiveness of 
+  interface and also prevents console hang with large amounts of output -- now seems
+  fully functional at least on a mac..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4423</pre></td>
+<td><pre>2010-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new pbwm params
+</pre></td>
+</tr>
+<tr>
+<td><pre>4424</pre></td>
+<td><pre>2010-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempted windows build fix</pre></td>
+</tr>
+<tr>
+<td><pre>4425</pre></td>
+<td><pre>2010-04-07</pre></td>
+<td><pre>latimerk</pre></td>
+<td><pre>File extension mods for inputs of image series</pre></td>
+</tr>
+<tr>
+<td><pre>4426</pre></td>
+<td><pre>2010-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* for functions taking a single taBase* arg, now just directly opens obj chooser, saving intermed step.
+* revert full re-render of tree view on StructUpdate end -- now only with special DATA_STRUCT_UPDATE_ALL guy called at end of load for this reason.
+* T3VEBodyView guys update view params even if not visible -- makes eye beams go away!
+* plugin rebuild all nukes full directory and re-makes it -- that should always work..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4427</pre></td>
+<td><pre>2010-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed windows cmake infrastructure to be more standard and work for plugin making</pre></td>
+</tr>
+<tr>
+<td><pre>4428</pre></td>
+<td><pre>2010-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* virtenv loading is robust to missing FM_FILE object file (can't have ProcessEvents!)
+* fixed double-dupe on DynEnum -- caused by double-dupe of DataChanged signal -- restricted
+to update case now
+</pre></td>
+</tr>
+<tr>
+<td><pre>4429</pre></td>
+<td><pre>2010-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>2 more</pre></td>
+</tr>
+<tr>
+<td><pre>4430</pre></td>
+<td><pre>2010-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix 3rdparty install</pre></td>
+</tr>
+<tr>
+<td><pre>4431</pre></td>
+<td><pre>2010-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin building now sets environment automatically from options setting so you can build a plugin without running from cmd line</pre></td>
+</tr>
+<tr>
+<td><pre>4432</pre></td>
+<td><pre>2010-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Simplification of MarkerSet logic in graph line, but still no glory in fixing very perplexing
+error message, which it turns out you can just avoid by doing configure --disable-debug in 
+Coin.  that was a ginormous waste of time :(
+</pre></td>
+</tr>
+<tr>
+<td><pre>4433</pre></td>
+<td><pre>2010-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dim names for 1 &amp; 2 dims.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4434</pre></td>
+<td><pre>2010-04-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>full set of dim names now covered for all dim cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>4435</pre></td>
+<td><pre>2010-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated package -- such a pain</pre></td>
+</tr>
+<tr>
+<td><pre>4436</pre></td>
+<td><pre>2010-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* program button state updating now 100% guaranteed to work..  had a misplaced isVisible check
+up in the EditDataPanel guy that was preventing buttons from getting update signals even
+when the rest of the edit was not vis...
+</pre></td>
+</tr>
+<tr>
+<td><pre>4437</pre></td>
+<td><pre>2010-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new pbwm defaults for now, nuke rnd_go.go_bias
+</pre></td>
+</tr>
+<tr>
+<td><pre>4438</pre></td>
+<td><pre>2010-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>make new pkg separate so old can still be used for 32bit pkg</pre></td>
+</tr>
+<tr>
+<td><pre>4439</pre></td>
+<td><pre>2010-04-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>did svn merge -r 4438:4434 . to reverse merge to prior version</pre></td>
+</tr>
+<tr>
+<td><pre>4440</pre></td>
+<td><pre>2010-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updates</pre></td>
+</tr>
+<tr>
+<td><pre>4441</pre></td>
+<td><pre>2010-04-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mac 32bit package updated</pre></td>
+</tr>
+<tr>
+<td><pre>4442</pre></td>
+<td><pre>2010-04-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new pbwm gating biases and rules
+</pre></td>
+</tr>
+<tr>
+<td><pre>4443</pre></td>
+<td><pre>2010-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>a few more gate params</pre></td>
+</tr>
+<tr>
+<td><pre>4444</pre></td>
+<td><pre>2010-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>a few more gate params</pre></td>
+</tr>
+<tr>
+<td><pre>4445</pre></td>
+<td><pre>2010-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults for pfcgate2
+</pre></td>
+</tr>
+<tr>
+<td><pre>4446</pre></td>
+<td><pre>2010-04-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>out_gate_act_m2 param and priority for pfc_out gating
+</pre></td>
+</tr>
+<tr>
+<td><pre>4447</pre></td>
+<td><pre>2010-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn. bug in out_gate_act_m2
+</pre></td>
+</tr>
+<tr>
+<td><pre>4448</pre></td>
+<td><pre>2010-04-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* unitspec.maxda NO_MAX_DA -- turn off contribution to max da from given units
+* set NO_MAX_DA for all PVLV and Matrix, SNrThal layers -- shouldn't be holding up settling
+and yet they were..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4449</pre></td>
+<td><pre>2010-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mutex version of pbwm
+</pre></td>
+</tr>
+<tr>
+<td><pre>4450</pre></td>
+<td><pre>2010-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of mutex code (now simpler) and new defaults for very strong biases..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4451</pre></td>
+<td><pre>2010-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>further house cleaning: no_empty_out and base_gain params removed -- be sure to update
+gate_bias params for out_empty_nogo to 10!
+</pre></td>
+</tr>
+<tr>
+<td><pre>4452</pre></td>
+<td><pre>2010-04-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn forgot no_empty_out in header.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4453</pre></td>
+<td><pre>2010-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>consistent application of out_empty_nogo</pre></td>
+</tr>
+<tr>
+<td><pre>4454</pre></td>
+<td><pre>2010-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn.  major bug in gate bias code due to not sending gate state info at start of trial as was assumed to be in place..</pre></td>
+</tr>
+<tr>
+<td><pre>4455</pre></td>
+<td><pre>2010-04-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cutting unnec old mechs: go_netin_gain patch lrn_mnt_only</pre></td>
+</tr>
+<tr>
+<td><pre>4456</pre></td>
+<td><pre>2010-04-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new Defaults infrastructure for specs -- much more robust -- see comments in spec.h for impl
+* new PBWM_Defaults that sets all the latest defaults for pbwm projects
+</pre></td>
+</tr>
+<tr>
+<td><pre>4457</pre></td>
+<td><pre>2010-04-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updates but waiting on pbwm results to compile and set new defaults</pre></td>
+</tr>
+<tr>
+<td><pre>4458</pre></td>
+<td><pre>2010-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nogo_thr/rng = 20 by default
+</pre></td>
+</tr>
+<tr>
+<td><pre>4459</pre></td>
+<td><pre>2010-04-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>kwta-based weight projections -- still not very useful in full objrec model but perhaps better
+in the simple chapter 8 one -- definitely very responsive to controls and seems like the right
+parameters to tweak..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4460</pre></td>
+<td><pre>2010-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* pbwm default k = 2 for both
+* minor cleanup and docs of new wt prjn code
+* fix of default expansion for spec viewer
+</pre></td>
+</tr>
+<tr>
+<td><pre>4461</pre></td>
+<td><pre>2010-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked PFCLearnSpec -- only 1 guy in it -- moved to gate..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4462</pre></td>
+<td><pre>2010-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pbwm defaults fixes</pre></td>
+</tr>
+<tr>
+<td><pre>4463</pre></td>
+<td><pre>2010-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* doh.  taProject was using a function called PostLoadAutos and emergent ProjectBase was
+using Dump_Load_post -- latter is correct -- this explains sometimes freeze on build
+nets prompt -- fixed now!!!
+* Added FixOldProgs to Wizard -- sets the NO_STOP_STEP flags for various common guys
+* Project Dump_Load_post now checks if project is &lt; 5.0.2 and auto calls FixOldProgs --
+this being a major timesaver for me right now...
+</pre></td>
+</tr>
+<tr>
+<td><pre>4464</pre></td>
+<td><pre>2010-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>demo projects all updated and tested
+</pre></td>
+</tr>
+<tr>
+<td><pre>4465</pre></td>
+<td><pre>2010-04-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* param search demo project
+* finally figured out how to get startup program to run *after* auto build nets -- now fully
+rationalized and good!  startup programs only run if -ni passed on command line.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4466</pre></td>
+<td><pre>2010-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mac 32bit pkg updts</pre></td>
+</tr>
+<tr>
+<td><pre>4467</pre></td>
+<td><pre>2010-04-21</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>depends fix</pre></td>
+</tr>
+<tr>
+<td><pre>4468</pre></td>
+<td><pre>2010-04-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of mac 32bit package</pre></td>
+</tr>
+<tr>
+<td><pre>4469</pre></td>
+<td><pre>2010-04-21</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>update ChangeLog</pre></td>
+</tr>
+<tr>
+<td><pre>4470</pre></td>
+<td><pre>2010-04-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wider root window: brian, you can adjust to fit on lower res mons with line 2888 in ta_project.cpp -- was .6, increased to .7</pre></td>
+</tr>
+<tr>
+<td><pre>4471</pre></td>
+<td><pre>2010-04-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix crash in PBWM_Remove 
+* update epoch monitor to have vars for what to select for each trial type..
+</pre></td>
+</tr>
+<tr>
+<td><pre>4472</pre></td>
+<td><pre>2010-04-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix data table view matrix cell view logic: only if a current cell is selected.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4474</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* new leabra wt scaling code
+* multiplicative biases in pbwm -- optional.
+</pre></td>
+</tr>
+<tr>
+<td><pre>4475</pre></td>
+<td><pre>2010-04-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>version bump to 5.1.0 -- next version to be released</pre></td>
+</tr>
+</table>
+</body></html>

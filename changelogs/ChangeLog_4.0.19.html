@@ -1,0 +1,2385 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 4.0.19
+  Revisions 3124:3508</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>3124</pre></td>
+<td><pre>2008-09-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:490</pre></td>
+</tr>
+<tr>
+<td><pre>3125</pre></td>
+<td><pre>2008-09-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added full support for taMatrix vars to ProgVars</pre></td>
+</tr>
+<tr>
+<td><pre>3126</pre></td>
+<td><pre>2008-09-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:488 automatically compresses pngs to the max</pre></td>
+</tr>
+<tr>
+<td><pre>3127</pre></td>
+<td><pre>2008-09-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:491</pre></td>
+</tr>
+<tr>
+<td><pre>3128</pre></td>
+<td><pre>2008-09-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug bugID:492 added GSL error handling routine</pre></td>
+</tr>
+<tr>
+<td><pre>3129</pre></td>
+<td><pre>2008-09-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bump rev to 4.0.18 (make uninstall, clean first!) and fix datatable menus/buttons
+</pre></td>
+</tr>
+<tr>
+<td><pre>3130</pre></td>
+<td><pre>2008-09-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed all items in BugID:486
+</pre></td>
+</tr>
+<tr>
+<td><pre>3131</pre></td>
+<td><pre>2008-09-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added taDataAnal::RegressLinear -- does linear regression, adding a regression line to data 
+table.  handy for simple analyses.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3132</pre></td>
+<td><pre>2008-09-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>progvar name has type at the end, so lookup is by name!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3133</pre></td>
+<td><pre>2008-09-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added READ_ONLY support for bits but doesnt seem to work yet</pre></td>
+</tr>
+<tr>
+<td><pre>3134</pre></td>
+<td><pre>2008-09-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small hooks in build to enable dynamic create of layers and prjns</pre></td>
+</tr>
+<tr>
+<td><pre>3135</pre></td>
+<td><pre>2008-09-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct leabra experimental CT_DELTA_BCM learning</pre></td>
+</tr>
+<tr>
+<td><pre>3136</pre></td>
+<td><pre>2008-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ct leabra experimental CT_DELTA_SAVG_BCM learning</pre></td>
+</tr>
+<tr>
+<td><pre>3137</pre></td>
+<td><pre>2008-10-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug in gamma filter display</pre></td>
+</tr>
+<tr>
+<td><pre>3138</pre></td>
+<td><pre>2008-10-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>just changed a comment</pre></td>
+</tr>
+<tr>
+<td><pre>3139</pre></td>
+<td><pre>2008-10-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added LogLinearBlock for if to ScalarVal guys</pre></td>
+</tr>
+<tr>
+<td><pre>3140</pre></td>
+<td><pre>2008-10-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest</pre></td>
+</tr>
+<tr>
+<td><pre>3141</pre></td>
+<td><pre>2008-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taDataAnal::Matrix3DGraph -- make a datatable display an X,Z graph.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3142</pre></td>
+<td><pre>2008-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to Matrix3DGraph
+</pre></td>
+</tr>
+<tr>
+<td><pre>3143</pre></td>
+<td><pre>2008-10-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>XCal learning rule based on urakubo data
+</pre></td>
+</tr>
+<tr>
+<td><pre>3144</pre></td>
+<td><pre>2008-10-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updated group and non-group dims for table mat view and fixed some bugs with this</pre></td>
+</tr>
+<tr>
+<td><pre>3145</pre></td>
+<td><pre>2008-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal with sravg multiplicative, not additive -- seems likely to work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3146</pre></td>
+<td><pre>2008-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal dgain
+</pre></td>
+</tr>
+<tr>
+<td><pre>3147</pre></td>
+<td><pre>2008-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal in man leabra specs</pre></td>
+</tr>
+<tr>
+<td><pre>3148</pre></td>
+<td><pre>2008-10-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor change to dynamic layer build api</pre></td>
+</tr>
+<tr>
+<td><pre>3149</pre></td>
+<td><pre>2008-10-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added SmartRef for some net objs</pre></td>
+</tr>
+<tr>
+<td><pre>3150</pre></td>
+<td><pre>2008-10-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>UserData gui changes</pre></td>
+</tr>
+<tr>
+<td><pre>3151</pre></td>
+<td><pre>2008-10-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>UserData gui changes</pre></td>
+</tr>
+<tr>
+<td><pre>3152</pre></td>
+<td><pre>2008-10-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small fixes to doc links and directives</pre></td>
+</tr>
+<tr>
+<td><pre>3153</pre></td>
+<td><pre>2008-10-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added name as option to New and NewGroup</pre></td>
+</tr>
+<tr>
+<td><pre>3154</pre></td>
+<td><pre>2008-10-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small rationalization of userdata</pre></td>
+</tr>
+<tr>
+<td><pre>3155</pre></td>
+<td><pre>2008-10-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small change to Projection to prevent err msgs during New in some net configurations</pre></td>
+</tr>
+<tr>
+<td><pre>3156</pre></td>
+<td><pre>2008-10-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>slightly relaxed Group clip paste rule</pre></td>
+</tr>
+<tr>
+<td><pre>3157</pre></td>
+<td><pre>2008-10-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed synaptic depression on a per-unit (not per-synapse) basis: now is an option for all
+activation function types, including spiking, and gives flexibility about max amp.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3158</pre></td>
+<td><pre>2008-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>act_eq is non-depressed activation!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3159</pre></td>
+<td><pre>2008-10-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added NAME_READONLY flag to base flags</pre></td>
+</tr>
+<tr>
+<td><pre>3160</pre></td>
+<td><pre>2008-10-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>just added a few TA_SMART_REFS</pre></td>
+</tr>
+<tr>
+<td><pre>3161</pre></td>
+<td><pre>2008-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rnd dwts for xcal not learning
+</pre></td>
+</tr>
+<tr>
+<td><pre>3162</pre></td>
+<td><pre>2008-10-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed formlayout bug for viewing spec groups</pre></td>
+</tr>
+<tr>
+<td><pre>3163</pre></td>
+<td><pre>2008-10-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Group sorting wasn't updating the gui</pre></td>
+</tr>
+<tr>
+<td><pre>3164</pre></td>
+<td><pre>2008-10-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>more smartrefs</pre></td>
+</tr>
+<tr>
+<td><pre>3165</pre></td>
+<td><pre>2008-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spike eq_gain on trl_avg
+</pre></td>
+</tr>
+<tr>
+<td><pre>3166</pre></td>
+<td><pre>2008-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cal opt_thresh.learn operates on trl_avg now -- not final _m, _p vals -- could have missed a lot of transients before</pre></td>
+</tr>
+<tr>
+<td><pre>3167</pre></td>
+<td><pre>2008-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clean up init_sravg: just do it at end of trial once instead of having complex logic in compute_dwt</pre></td>
+</tr>
+<tr>
+<td><pre>3168</pre></td>
+<td><pre>2008-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>opt_thresh.lrn_trl_avg option</pre></td>
+</tr>
+<tr>
+<td><pre>3169</pre></td>
+<td><pre>2008-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>opt_thresh.lrn_trl_avg option fix</pre></td>
+</tr>
+<tr>
+<td><pre>3170</pre></td>
+<td><pre>2008-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new defaults</pre></td>
+</tr>
+<tr>
+<td><pre>3171</pre></td>
+<td><pre>2008-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>moved init_sravg to trial_init -- better to start fresh than erase at end</pre></td>
+</tr>
+<tr>
+<td><pre>3172</pre></td>
+<td><pre>2008-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more</pre></td>
+</tr>
+<tr>
+<td><pre>3173</pre></td>
+<td><pre>2008-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* norm_err and avg_norm_err -- normalized 0-1 err relative to max possible err, avail on 
+each layer, the network, and integrated over epochs -- very useful for algorithmic use 
+of error value -- currently using this to replace similar computation in ExtRewLayerSpec
+** important!! that replacement has not yet been tested!!  could potentially not work
+due to timing issues, but this is not likely..
+* added noerr_lrate to xcal: effective lrate is modulated by error level -- if no
+err then smaller learning --helps focus on where the errs are in a global neuromod
+sense of things.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3174</pre></td>
+<td><pre>2008-10-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>relaxed err to warn in debug for CloseLater</pre></td>
+</tr>
+<tr>
+<td><pre>3175</pre></td>
+<td><pre>2008-10-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>TA_SMART_PTRS</pre></td>
+</tr>
+<tr>
+<td><pre>3176</pre></td>
+<td><pre>2008-10-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>rationalize New and sane-ify EXPAND on new</pre></td>
+</tr>
+<tr>
+<td><pre>3177</pre></td>
+<td><pre>2008-10-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Layer_Group pos now effective</pre></td>
+</tr>
+<tr>
+<td><pre>3178</pre></td>
+<td><pre>2008-10-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Layer_Group pos now effective</pre></td>
+</tr>
+<tr>
+<td><pre>3179</pre></td>
+<td><pre>2008-10-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>chg MANUAL_POS switch automatically</pre></td>
+</tr>
+<tr>
+<td><pre>3180</pre></td>
+<td><pre>2008-10-23</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed nasty bug in TDCoord.isPos</pre></td>
+</tr>
+<tr>
+<td><pre>3181</pre></td>
+<td><pre>2008-10-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>&lt;ahem&gt; some net pos fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3182</pre></td>
+<td><pre>2008-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>support for Mac Saturn profiler: --enable-saturn</pre></td>
+</tr>
+<tr>
+<td><pre>3183</pre></td>
+<td><pre>2008-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fast exp function in tamath</pre></td>
+</tr>
+<tr>
+<td><pre>3184</pre></td>
+<td><pre>2008-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spike optimization to use empirical recursive mult exp decay: does not use dt.net!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3185</pre></td>
+<td><pre>2008-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>spike time window for optimized mode</pre></td>
+</tr>
+<tr>
+<td><pre>3186</pre></td>
+<td><pre>2008-10-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tiny hook in spec when assigned</pre></td>
+</tr>
+<tr>
+<td><pre>3187</pre></td>
+<td><pre>2008-10-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updates to support better seledit and spec editing</pre></td>
+</tr>
+<tr>
+<td><pre>3188</pre></td>
+<td><pre>2008-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more optimizations</pre></td>
+</tr>
+<tr>
+<td><pre>3189</pre></td>
+<td><pre>2008-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>own e_rev_sub_thr</pre></td>
+</tr>
+<tr>
+<td><pre>3190</pre></td>
+<td><pre>2008-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed spike defaults, crazy objrec syntax err, added new opt flags to configure for opt..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3191</pre></td>
+<td><pre>2008-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal: moved p_boost into unitspec: multiplicative factor directly on trl_avg, not after
+the fact guy in conspec.. this means it also affects p_thr_gain which now hopefully
+is going to be more accurate!
+</pre></td>
+</tr>
+<tr>
+<td><pre>3192</pre></td>
+<td><pre>2008-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new xcal params</pre></td>
+</tr>
+<tr>
+<td><pre>3193</pre></td>
+<td><pre>2008-10-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>thr_cur_avg param</pre></td>
+</tr>
+<tr>
+<td><pre>3194</pre></td>
+<td><pre>2008-10-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>just changed an api to use base TwoDCoord for consistency</pre></td>
+</tr>
+<tr>
+<td><pre>3195</pre></td>
+<td><pre>2008-10-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added NO_SAVE_DEF</pre></td>
+</tr>
+<tr>
+<td><pre>3196</pre></td>
+<td><pre>2008-10-28</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added validation logic for Reals</pre></td>
+</tr>
+<tr>
+<td><pre>3197</pre></td>
+<td><pre>2008-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal param renames</pre></td>
+</tr>
+<tr>
+<td><pre>3198</pre></td>
+<td><pre>2008-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal param simplifications, defaults</pre></td>
+</tr>
+<tr>
+<td><pre>3199</pre></td>
+<td><pre>2008-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal minor fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3200</pre></td>
+<td><pre>2008-10-29</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added new_itm to GetUserData</pre></td>
+</tr>
+<tr>
+<td><pre>3201</pre></td>
+<td><pre>2008-10-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal_sravg</pre></td>
+</tr>
+<tr>
+<td><pre>3202</pre></td>
+<td><pre>2008-10-31</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>unsuccessful attempt to fix bugID:500</pre></td>
+</tr>
+<tr>
+<td><pre>3203</pre></td>
+<td><pre>2008-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new xcal with 3 time scales, replacing cal which is now a full subset thereof</pre></td>
+</tr>
+<tr>
+<td><pre>3204</pre></td>
+<td><pre>2008-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sbound opt</pre></td>
+</tr>
+<tr>
+<td><pre>3205</pre></td>
+<td><pre>2008-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sravg_l on unit now</pre></td>
+</tr>
+<tr>
+<td><pre>3206</pre></td>
+<td><pre>2008-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CAL back, hard.clamp seems to work</pre></td>
+</tr>
+<tr>
+<td><pre>3207</pre></td>
+<td><pre>2008-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal kwta pct option, optimizations of dwt</pre></td>
+</tr>
+<tr>
+<td><pre>3208</pre></td>
+<td><pre>2008-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sravg on act, not act_eq -- depr vals</pre></td>
+</tr>
+<tr>
+<td><pre>3209</pre></td>
+<td><pre>2008-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal mix params and key lrn_s_mix (replaces p_boost)</pre></td>
+</tr>
+<tr>
+<td><pre>3210</pre></td>
+<td><pre>2008-11-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal AVG_PROD options</pre></td>
+</tr>
+<tr>
+<td><pre>3211</pre></td>
+<td><pre>2008-11-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added op to PosTwoDCoord</pre></td>
+</tr>
+<tr>
+<td><pre>3212</pre></td>
+<td><pre>2008-11-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added a Clean to lay gps</pre></td>
+</tr>
+<tr>
+<td><pre>3213</pre></td>
+<td><pre>2008-11-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal cleanup and fixes, added LeabraDwtNormConSpec for Seth ;)</pre></td>
+</tr>
+<tr>
+<td><pre>3214</pre></td>
+<td><pre>2008-11-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt norm init</pre></td>
+</tr>
+<tr>
+<td><pre>3215</pre></td>
+<td><pre>2008-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new xcal defaults, opts</pre></td>
+</tr>
+<tr>
+<td><pre>3216</pre></td>
+<td><pre>2008-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>act_nd non-depressed activation</pre></td>
+</tr>
+<tr>
+<td><pre>3217</pre></td>
+<td><pre>2008-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuked sravg opt to properly support act_nd = false</pre></td>
+</tr>
+<tr>
+<td><pre>3218</pre></td>
+<td><pre>2008-11-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>int checkin</pre></td>
+</tr>
+<tr>
+<td><pre>3219</pre></td>
+<td><pre>2008-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed bias dwt, added opt_thresh.learn warning &amp; fix</pre></td>
+</tr>
+<tr>
+<td><pre>3220</pre></td>
+<td><pre>2008-11-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win up to date and generalized build for msvc9 port</pre></td>
+</tr>
+<tr>
+<td><pre>3221</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>initial checkin of msvc9</pre></td>
+</tr>
+<tr>
+<td><pre>3222</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CAL back as learn var option in XCAL -- for output layers</pre></td>
+</tr>
+<tr>
+<td><pre>3223</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added dInitODE call</pre></td>
+</tr>
+<tr>
+<td><pre>3224</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>src fixes for win msvc9</pre></td>
+</tr>
+<tr>
+<td><pre>3225</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>msvc9 seems fully working in Vista32</pre></td>
+</tr>
+<tr>
+<td><pre>3226</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>thr_max option in xcal</pre></td>
+</tr>
+<tr>
+<td><pre>3227</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>thr_max in bias dwt</pre></td>
+</tr>
+<tr>
+<td><pre>3228</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>msvc9_64 fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3229</pre></td>
+<td><pre>2008-11-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3230</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed class browser</pre></td>
+</tr>
+<tr>
+<td><pre>3231</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>yet more working now</pre></td>
+</tr>
+<tr>
+<td><pre>3232</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trimming options</pre></td>
+</tr>
+<tr>
+<td><pre>3233</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>3234</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc</pre></td>
+</tr>
+<tr>
+<td><pre>3235</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win64 updates</pre></td>
+</tr>
+<tr>
+<td><pre>3236</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plus_s_st with interval &gt; 1 now has safety fallback</pre></td>
+</tr>
+<tr>
+<td><pre>3237</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plus_s_st = 19 def</pre></td>
+</tr>
+<tr>
+<td><pre>3238</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>x64 installer changes</pre></td>
+</tr>
+<tr>
+<td><pre>3239</pre></td>
+<td><pre>2008-11-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>setup32 updates</pre></td>
+</tr>
+<tr>
+<td><pre>3240</pre></td>
+<td><pre>2008-11-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 install updates</pre></td>
+</tr>
+<tr>
+<td><pre>3241</pre></td>
+<td><pre>2008-11-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to fix proj close crash by reversing order of auto cutlinks</pre></td>
+</tr>
+<tr>
+<td><pre>3242</pre></td>
+<td><pre>2008-11-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added layer/subgroup plus-phase inactivity checks back in: essential for objrec -- need a better system</pre></td>
+</tr>
+<tr>
+<td><pre>3243</pre></td>
+<td><pre>2008-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added layer/subgroup plus-phase inactivity checks to *bias* dwt (oops) and also to _l updating -- no updating if nobody active</pre></td>
+</tr>
+<tr>
+<td><pre>3244</pre></td>
+<td><pre>2008-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>m_gain factor: even with max can still modulate gain of m contrib to thr -- just slightly lower than 1 might be interesting..</pre></td>
+</tr>
+<tr>
+<td><pre>3245</pre></td>
+<td><pre>2008-11-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>setup changes</pre></td>
+</tr>
+<tr>
+<td><pre>3246</pre></td>
+<td><pre>2008-11-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>m_gain factor tst nuke -- tmp</pre></td>
+</tr>
+<tr>
+<td><pre>3247</pre></td>
+<td><pre>2008-11-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>m_gain factor restore</pre></td>
+</tr>
+<tr>
+<td><pre>3248</pre></td>
+<td><pre>2008-11-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>nuked content of 3rd</pre></td>
+</tr>
+<tr>
+<td><pre>3249</pre></td>
+<td><pre>2008-11-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>more nukes</pre></td>
+</tr>
+<tr>
+<td><pre>3250</pre></td>
+<td><pre>2008-11-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win build and setup changes</pre></td>
+</tr>
+<tr>
+<td><pre>3251</pre></td>
+<td><pre>2008-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added ml time scale for capturing between event relationships.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3252</pre></td>
+<td><pre>2008-11-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win setup beta complete</pre></td>
+</tr>
+<tr>
+<td><pre>3253</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 setup working</pre></td>
+</tr>
+<tr>
+<td><pre>3254</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>svm + mvl version of xcal</pre></td>
+</tr>
+<tr>
+<td><pre>3255</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sravg cond</pre></td>
+</tr>
+<tr>
+<td><pre>3256</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sravg init cond</pre></td>
+</tr>
+<tr>
+<td><pre>3257</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>nuked x64 platforms</pre></td>
+</tr>
+<tr>
+<td><pre>3258</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mvl_s_mix</pre></td>
+</tr>
+<tr>
+<td><pre>3259</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>minor win32 Debug fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3260</pre></td>
+<td><pre>2008-11-14</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>minor updates for ibex</pre></td>
+</tr>
+<tr>
+<td><pre>3261</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>missing file</pre></td>
+</tr>
+<tr>
+<td><pre>3262</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>int win64 and misc setup changes</pre></td>
+</tr>
+<tr>
+<td><pre>3263</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>ping32pong64</pre></td>
+</tr>
+<tr>
+<td><pre>3264</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>ping64pong32</pre></td>
+</tr>
+<tr>
+<td><pre>3265</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>trivial</pre></td>
+</tr>
+<tr>
+<td><pre>3266</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>s_mix on both terms (doh!) and nuked l_norm, SRM_CAL</pre></td>
+</tr>
+<tr>
+<td><pre>3267</pre></td>
+<td><pre>2008-11-15</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3268</pre></td>
+<td><pre>2008-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>reverted configure and cfg files to version 3259, which works on mac and all linux platforms (hardy, ibex), at least for Randy</pre></td>
+</tr>
+<tr>
+<td><pre>3269</pre></td>
+<td><pre>2008-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops forgot to nuke svmcal fun</pre></td>
+</tr>
+<tr>
+<td><pre>3270</pre></td>
+<td><pre>2008-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mvl_mix is adjustable param: smaller so makes sense to do this one</pre></td>
+</tr>
+<tr>
+<td><pre>3271</pre></td>
+<td><pre>2008-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>defaults</pre></td>
+</tr>
+<tr>
+<td><pre>3272</pre></td>
+<td><pre>2008-11-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bad line</pre></td>
+</tr>
+<tr>
+<td><pre>3273</pre></td>
+<td><pre>2008-11-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added res to system for gcc shutup</pre></td>
+</tr>
+<tr>
+<td><pre>3274</pre></td>
+<td><pre>2008-11-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc fixes to sele n user</pre></td>
+</tr>
+<tr>
+<td><pre>3275</pre></td>
+<td><pre>2008-11-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc fixes to sele n user</pre></td>
+</tr>
+<tr>
+<td><pre>3276</pre></td>
+<td><pre>2008-11-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fix arrows on windows</pre></td>
+</tr>
+<tr>
+<td><pre>3277</pre></td>
+<td><pre>2008-11-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>changed leabra_ra back</pre></td>
+</tr>
+<tr>
+<td><pre>3278</pre></td>
+<td><pre>2008-11-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>small changes</pre></td>
+</tr>
+<tr>
+<td><pre>3279</pre></td>
+<td><pre>2008-11-19</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>big win cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>3280</pre></td>
+<td><pre>2008-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Camera TaImage</pre></td>
+</tr>
+<tr>
+<td><pre>3281</pre></td>
+<td><pre>2008-11-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>4.0.18 win64 release changes</pre></td>
+</tr>
+<tr>
+<td><pre>3282</pre></td>
+<td><pre>2008-11-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new xcal params: ml contribution to ru thr</pre></td>
+</tr>
+<tr>
+<td><pre>3283</pre></td>
+<td><pre>2008-11-20</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 install fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3284</pre></td>
+<td><pre>2008-11-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tent spec macro fix for windows</pre></td>
+</tr>
+<tr>
+<td><pre>3285</pre></td>
+<td><pre>2008-11-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>oops reverted some test code</pre></td>
+</tr>
+<tr>
+<td><pre>3286</pre></td>
+<td><pre>2008-11-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win64 pong</pre></td>
+</tr>
+<tr>
+<td><pre>3287</pre></td>
+<td><pre>2008-11-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ml decay w/immediate rise</pre></td>
+</tr>
+<tr>
+<td><pre>3288</pre></td>
+<td><pre>2008-11-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bug in imgproc not unrefing taMatrix</pre></td>
+</tr>
+<tr>
+<td><pre>3289</pre></td>
+<td><pre>2008-11-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ml decay flag</pre></td>
+</tr>
+<tr>
+<td><pre>3290</pre></td>
+<td><pre>2008-11-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>oops... fixed bug in ta_imgproc</pre></td>
+</tr>
+<tr>
+<td><pre>3291</pre></td>
+<td><pre>2008-11-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ml_decay nuked: no advantage and somewhat awk</pre></td>
+</tr>
+<tr>
+<td><pre>3292</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin build related changes</pre></td>
+</tr>
+<tr>
+<td><pre>3293</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mac fix</pre></td>
+</tr>
+<tr>
+<td><pre>3294</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>new file</pre></td>
+</tr>
+<tr>
+<td><pre>3295</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin build related changes</pre></td>
+</tr>
+<tr>
+<td><pre>3296</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wrap modes for image processing: could be important fix for objrec models</pre></td>
+</tr>
+<tr>
+<td><pre>3297</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cond eval wrap clip fix</pre></td>
+</tr>
+<tr>
+<td><pre>3298</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>reverting to revision 3268 ltmain.sh</pre></td>
+</tr>
+<tr>
+<td><pre>3299</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermediate update</pre></td>
+</tr>
+<tr>
+<td><pre>3300</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermediate update</pre></td>
+</tr>
+<tr>
+<td><pre>3301</pre></td>
+<td><pre>2008-11-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>removed config.pri.in</pre></td>
+</tr>
+<tr>
+<td><pre>3302</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed src code error</pre></td>
+</tr>
+<tr>
+<td><pre>3303</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc fixes mostly semantic-neutral suggested by gcc</pre></td>
+</tr>
+<tr>
+<td><pre>3304</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixes related to plugin build and install on Linux</pre></td>
+</tr>
+<tr>
+<td><pre>3305</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mac fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3306</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>windows fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3307</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vastly improved imgproc transform function: does all transforms at once (much faster), with wrapping working properly</pre></td>
+</tr>
+<tr>
+<td><pre>3308</pre></td>
+<td><pre>2008-11-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to border case</pre></td>
+</tr>
+<tr>
+<td><pre>3309</pre></td>
+<td><pre>2008-11-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added a Variant for testing</pre></td>
+</tr>
+<tr>
+<td><pre>3310</pre></td>
+<td><pre>2008-11-27</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>famous TypeItem Variant change with zero bugs</pre></td>
+</tr>
+<tr>
+<td><pre>3311</pre></td>
+<td><pre>2008-11-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to v1rfprjn</pre></td>
+</tr>
+<tr>
+<td><pre>3312</pre></td>
+<td><pre>2008-11-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass on cmake: makes maketa</pre></td>
+</tr>
+<tr>
+<td><pre>3313</pre></td>
+<td><pre>2008-11-28</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>re-revert revision 3260. contains meta files for automake 1.10.2, autoconf 2.61 and libtool 2.2.4</pre></td>
+</tr>
+<tr>
+<td><pre>3314</pre></td>
+<td><pre>2008-11-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cmake almost correctly doing maketa on ta dir, figured out convenience libs soln -- see note on line 157 of ta_plugin_p.cpp -- not working for some reason</pre></td>
+</tr>
+<tr>
+<td><pre>3315</pre></td>
+<td><pre>2008-11-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ok cmake and maketa all fixed and working gr8 now -- rest should be easy</pre></td>
+</tr>
+<tr>
+<td><pre>3316</pre></td>
+<td><pre>2008-11-28</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>guard for setNotation</pre></td>
+</tr>
+<tr>
+<td><pre>3317</pre></td>
+<td><pre>2008-11-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>full cmake build of temt lib</pre></td>
+</tr>
+<tr>
+<td><pre>3318</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>suffixes and cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>3319</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>full build all done -- everything works including install</pre></td>
+</tr>
+<tr>
+<td><pre>3320</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mpi and default build type fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3321</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3322</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another attempt to set default build type</pre></td>
+</tr>
+<tr>
+<td><pre>3323</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>verbose default</pre></td>
+</tr>
+<tr>
+<td><pre>3324</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fck bug fixed</pre></td>
+</tr>
+<tr>
+<td><pre>3325</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes for cblas and 2.4 compat find package messaes</pre></td>
+</tr>
+<tr>
+<td><pre>3326</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more cblas fix</pre></td>
+</tr>
+<tr>
+<td><pre>3327</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cripes: one more cblas fix</pre></td>
+</tr>
+<tr>
+<td><pre>3328</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>need to explicitly pass key defines to moc -- seems like 2.6.2 does this automatically but 2.6.0 does not</pre></td>
+</tr>
+<tr>
+<td><pre>3329</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to fix 2.4 generated .cpp bug</pre></td>
+</tr>
+<tr>
+<td><pre>3330</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt 2 to fix 2.4 generated .cpp bug</pre></td>
+</tr>
+<tr>
+<td><pre>3331</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert gen .cpp fix</pre></td>
+</tr>
+<tr>
+<td><pre>3332</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cmake working for 2.4!</pre></td>
+</tr>
+<tr>
+<td><pre>3333</pre></td>
+<td><pre>2008-11-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mv build -&gt; win_build, turn off verbose make, cleanup status thing</pre></td>
+</tr>
+<tr>
+<td><pre>3334</pre></td>
+<td><pre>2008-11-30</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>enable CTest+CDash</pre></td>
+</tr>
+<tr>
+<td><pre>3335</pre></td>
+<td><pre>2008-11-30</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>CDash Dart config</pre></td>
+</tr>
+<tr>
+<td><pre>3336</pre></td>
+<td><pre>2008-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>complete cmake plugin build system, with build_plugin.sh script that does full build and install -- finds installed version and works off of that</pre></td>
+</tr>
+<tr>
+<td><pre>3337</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for mpi suffix on libs</pre></td>
+</tr>
+<tr>
+<td><pre>3338</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>missing _def etc files from HEADS lists</pre></td>
+</tr>
+<tr>
+<td><pre>3339</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ok, all missing files that are included anywhere outside of maketa</pre></td>
+</tr>
+<tr>
+<td><pre>3340</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should be final fix for missing include files, and changed ios-stuff to maketa_xxx to avoid confusion and mistaken includes</pre></td>
+</tr>
+<tr>
+<td><pre>3341</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to get +x on sh file by default</pre></td>
+</tr>
+<tr>
+<td><pre>3342</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to get +x on sh file by default</pre></td>
+</tr>
+<tr>
+<td><pre>3343</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>build scripts for main code too</pre></td>
+</tr>
+<tr>
+<td><pre>3344</pre></td>
+<td><pre>2008-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allows Coin 3.0 to compile but I'm still getting friggin 'B' not found error despite many attempts to fix</pre></td>
+</tr>
+<tr>
+<td><pre>3345</pre></td>
+<td><pre>2008-12-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3346</pre></td>
+<td><pre>2008-12-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3347</pre></td>
+<td><pre>2008-12-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3348</pre></td>
+<td><pre>2008-12-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3349</pre></td>
+<td><pre>2008-12-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3350</pre></td>
+<td><pre>2008-12-02</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3351</pre></td>
+<td><pre>2008-12-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tweaked the auto_gain in TWB</pre></td>
+</tr>
+<tr>
+<td><pre>3352</pre></td>
+<td><pre>2008-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix TiledRfPrjnSpec reciprocal</pre></td>
+</tr>
+<tr>
+<td><pre>3353</pre></td>
+<td><pre>2008-12-04</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added DeltaBlock</pre></td>
+</tr>
+<tr>
+<td><pre>3354</pre></td>
+<td><pre>2008-12-05</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>nuke autofail and PSG plugin</pre></td>
+</tr>
+<tr>
+<td><pre>3355</pre></td>
+<td><pre>2008-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for TesselPrj wrap condition: WrapClip logic fix</pre></td>
+</tr>
+<tr>
+<td><pre>3356</pre></td>
+<td><pre>2008-12-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>intermed changes for plugins</pre></td>
+</tr>
+<tr>
+<td><pre>3357</pre></td>
+<td><pre>2008-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Randy's preferred plugin cmake file reconfigure</pre></td>
+</tr>
+<tr>
+<td><pre>3358</pre></td>
+<td><pre>2008-12-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cmake</pre></td>
+</tr>
+<tr>
+<td><pre>3359</pre></td>
+<td><pre>2008-12-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>tweaks to plugin cmake files</pre></td>
+</tr>
+<tr>
+<td><pre>3360</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cmake plugin updates</pre></td>
+</tr>
+<tr>
+<td><pre>3361</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mac cmake updates</pre></td>
+</tr>
+<tr>
+<td><pre>3362</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix gross return type interface for Function in programs, and add cmake configure wrapper script</pre></td>
+</tr>
+<tr>
+<td><pre>3363</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new super duper configure script, also for plugins</pre></td>
+</tr>
+<tr>
+<td><pre>3364</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>error messages for row-val based data table access guys: got bitten by that silent err</pre></td>
+</tr>
+<tr>
+<td><pre>3365</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>nuke files.mta b/c not used and thus confusing</pre></td>
+</tr>
+<tr>
+<td><pre>3366</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updated for win but still many issues</pre></td>
+</tr>
+<tr>
+<td><pre>3367</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix bug where ct_sravg.plus_s_st &gt; ct_time.plus</pre></td>
+</tr>
+<tr>
+<td><pre>3368</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixup</pre></td>
+</tr>
+<tr>
+<td><pre>3369</pre></td>
+<td><pre>2008-12-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>symmetric softbound</pre></td>
+</tr>
+<tr>
+<td><pre>3370</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win alleged fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3371</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal sr one more try</pre></td>
+</tr>
+<tr>
+<td><pre>3372</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed file(TO_CMAKE_PATH errs with quotes in case of empty vars (COINDIR etc),
+added _TA target to NOT WIN32 maketa section for compliance with depends 
+tried once more with all manner of depends and targets to do away with dummy, but couldn't -- you probably
+just need to suck it up and add that back to windows.  also, _TA target depend should be .cpp because that
+is what is used as dependency for dummy lib so that would at least keep it consistent -- did this in non-win32</pre></td>
+</tr>
+<tr>
+<td><pre>3373</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rename emergent_TA -&gt; network_TA.. whew that was a pain.</pre></td>
+</tr>
+<tr>
+<td><pre>3374</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added generator and build dir options to configure</pre></td>
+</tr>
+<tr>
+<td><pre>3375</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>configure needs bash on linux</pre></td>
+</tr>
+<tr>
+<td><pre>3376</pre></td>
+<td><pre>2008-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix linux compile warnings</pre></td>
+</tr>
+<tr>
+<td><pre>3377</pre></td>
+<td><pre>2008-12-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3378</pre></td>
+<td><pre>2008-12-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed server bugs</pre></td>
+</tr>
+<tr>
+<td><pre>3379</pre></td>
+<td><pre>2008-12-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>server data handling fix</pre></td>
+</tr>
+<tr>
+<td><pre>3380</pre></td>
+<td><pre>2008-12-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>xcal options to figure out what key issues are relative to pure err driven cal or chl</pre></td>
+</tr>
+<tr>
+<td><pre>3381</pre></td>
+<td><pre>2008-12-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to allow xcal learning in minus_plus</pre></td>
+</tr>
+<tr>
+<td><pre>3382</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>package target now creating .deb</pre></td>
+</tr>
+<tr>
+<td><pre>3383</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>collapsed Maketa for all</pre></td>
+</tr>
+<tr>
+<td><pre>3384</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sb_pow</pre></td>
+</tr>
+<tr>
+<td><pre>3385</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>svn commands in cmake makefile because otherwise you live in build dir -- saves a cd..
+</pre></td>
+</tr>
+<tr>
+<td><pre>3386</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>apply limits</pre></td>
+</tr>
+<tr>
+<td><pre>3387</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo sb_pow -- seems to not work very well</pre></td>
+</tr>
+<tr>
+<td><pre>3388</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win build updates</pre></td>
+</tr>
+<tr>
+<td><pre>3389</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win and general build enhancements</pre></td>
+</tr>
+<tr>
+<td><pre>3390</pre></td>
+<td><pre>2008-12-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3391</pre></td>
+<td><pre>2008-12-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 cmake fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3392</pre></td>
+<td><pre>2008-12-11</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win64 fix</pre></td>
+</tr>
+<tr>
+<td><pre>3393</pre></td>
+<td><pre>2008-12-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added plug template</pre></td>
+</tr>
+<tr>
+<td><pre>3394</pre></td>
+<td><pre>2008-12-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest not tested yet</pre></td>
+</tr>
+<tr>
+<td><pre>3395</pre></td>
+<td><pre>2008-12-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest not tested yet</pre></td>
+</tr>
+<tr>
+<td><pre>3396</pre></td>
+<td><pre>2008-12-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>rmvd copy replaced with output dest</pre></td>
+</tr>
+<tr>
+<td><pre>3397</pre></td>
+<td><pre>2008-12-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>missing file</pre></td>
+</tr>
+<tr>
+<td><pre>3398</pre></td>
+<td><pre>2008-12-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>absent checkin</pre></td>
+</tr>
+<tr>
+<td><pre>3399</pre></td>
+<td><pre>2008-12-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin and user folder changes</pre></td>
+</tr>
+<tr>
+<td><pre>3400</pre></td>
+<td><pre>2008-12-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sym sb for std lba</pre></td>
+</tr>
+<tr>
+<td><pre>3401</pre></td>
+<td><pre>2008-12-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sym sb for std lba: fix</pre></td>
+</tr>
+<tr>
+<td><pre>3402</pre></td>
+<td><pre>2008-12-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>pre-alpha of PluginWizard</pre></td>
+</tr>
+<tr>
+<td><pre>3403</pre></td>
+<td><pre>2008-12-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sb pow for xcal back again: must be &gt; 1</pre></td>
+</tr>
+<tr>
+<td><pre>3404</pre></td>
+<td><pre>2008-12-17</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>post-(pre-)alpha of plugin wizard ;)</pre></td>
+</tr>
+<tr>
+<td><pre>3405</pre></td>
+<td><pre>2008-12-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>pathing updates in progress</pre></td>
+</tr>
+<tr>
+<td><pre>3406</pre></td>
+<td><pre>2008-12-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>alpha version of new lib paths only tested on Linux</pre></td>
+</tr>
+<tr>
+<td><pre>3407</pre></td>
+<td><pre>2008-12-18</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fix to make user plugin folder</pre></td>
+</tr>
+<tr>
+<td><pre>3408</pre></td>
+<td><pre>2008-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Leabra and Ct wt_sig updates: added wt_lin to con obj b/c conversion back and forth is too err prone\nAlso wt_sig seems quite valuable even for Ct so added it back there</pre></td>
+</tr>
+<tr>
+<td><pre>3409</pre></td>
+<td><pre>2008-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert to lookup fun for wt_sig, change to BINARY dir for bin/lib</pre></td>
+</tr>
+<tr>
+<td><pre>3410</pre></td>
+<td><pre>2008-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>exe suffix fix for mac/linux</pre></td>
+</tr>
+<tr>
+<td><pre>3411</pre></td>
+<td><pre>2008-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually, only the non-debug guys require exec suffix</pre></td>
+</tr>
+<tr>
+<td><pre>3412</pre></td>
+<td><pre>2008-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fck the mpi suffix seems crazy -- now getting two mpi's -- revert</pre></td>
+</tr>
+<tr>
+<td><pre>3413</pre></td>
+<td><pre>2008-12-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mostly plugin-related changes on Win -- not fixed up tested for MacLin yet</pre></td>
+</tr>
+<tr>
+<td><pre>3414</pre></td>
+<td><pre>2008-12-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mostly plugin-related changes on Win -- not fixed up tested for MacLin yet</pre></td>
+</tr>
+<tr>
+<td><pre>3415</pre></td>
+<td><pre>2008-12-21</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>linux fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3416</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>freshened to latest</pre></td>
+</tr>
+<tr>
+<td><pre>3417</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>return-type fix not working on Mac for some reason</pre></td>
+</tr>
+<tr>
+<td><pre>3418</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mini tweaks for plugins</pre></td>
+</tr>
+<tr>
+<td><pre>3419</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>mini tweaks for plugins</pre></td>
+</tr>
+<tr>
+<td><pre>3420</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>nanoscopic change</pre></td>
+</tr>
+<tr>
+<td><pre>3421</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>uninspired hack for wizard</pre></td>
+</tr>
+<tr>
+<td><pre>3422</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Init_Weights_post after load weights</pre></td>
+</tr>
+<tr>
+<td><pre>3423</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>switched back to only using one wt val w/ convert from lin to sig and back.. no diff in perf..</pre></td>
+</tr>
+<tr>
+<td><pre>3424</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>chl bias wts</pre></td>
+</tr>
+<tr>
+<td><pre>3425</pre></td>
+<td><pre>2008-12-22</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>update to latest startup folders</pre></td>
+</tr>
+<tr>
+<td><pre>3427</pre></td>
+<td><pre>2008-12-23</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>ignore</pre></td>
+</tr>
+<tr>
+<td><pre>3428</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>latest startup and plug stuff for Linux needs test on Mac</pre></td>
+</tr>
+<tr>
+<td><pre>3429</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>moved and updated mac local .app guys</pre></td>
+</tr>
+<tr>
+<td><pre>3430</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>moved and updated mac local .app guys</pre></td>
+</tr>
+<tr>
+<td><pre>3431</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>moved and updated mac local .app guys</pre></td>
+</tr>
+<tr>
+<td><pre>3432</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>link change</pre></td>
+</tr>
+<tr>
+<td><pre>3433</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>link change</pre></td>
+</tr>
+<tr>
+<td><pre>3434</pre></td>
+<td><pre>2008-12-24</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bundle update</pre></td>
+</tr>
+<tr>
+<td><pre>3435</pre></td>
+<td><pre>2008-12-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>link change</pre></td>
+</tr>
+<tr>
+<td><pre>3436</pre></td>
+<td><pre>2008-12-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>bundle changes</pre></td>
+</tr>
+<tr>
+<td><pre>3437</pre></td>
+<td><pre>2008-12-25</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin state finished</pre></td>
+</tr>
+<tr>
+<td><pre>3438</pre></td>
+<td><pre>2008-12-26</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win32 plugin fixes and setup fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3439</pre></td>
+<td><pre>2008-12-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>na_by_range option in layer writer to exclude writing vals outside of unitspec act_range</pre></td>
+</tr>
+<tr>
+<td><pre>3440</pre></td>
+<td><pre>2008-12-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>#DEF_ can now have ranges or enumerated lists of vals -- moved fun to MemberDef too to support RTF version of GetValStr for ctrl pnl</pre></td>
+</tr>
+<tr>
+<td><pre>3441</pre></td>
+<td><pre>2008-12-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BugID:512 fixed: data table view now instant again, set verticalHeader()-&gt;setResizeMode(QHeaderView::Interactive);</pre></td>
+</tr>
+<tr>
+<td><pre>3442</pre></td>
+<td><pre>2008-12-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>just using SC_DISPLAY context for triggering html formatting for selectedit: added a rich text painter to taiDataDelegate too, so all is working</pre></td>
+</tr>
+<tr>
+<td><pre>3443</pre></td>
+<td><pre>2008-12-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>figured out how to use css tag to get yellow background</pre></td>
+</tr>
+<tr>
+<td><pre>3444</pre></td>
+<td><pre>2008-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>prefs fix: 3pane should be default.  Note: my prefs weren't copied over to new loc.</pre></td>
+</tr>
+<tr>
+<td><pre>3445</pre></td>
+<td><pre>2008-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra xcal cleanup: decided to keep cal: so minor, easier to keep than nuke..</pre></td>
+</tr>
+<tr>
+<td><pre>3446</pre></td>
+<td><pre>2008-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>NOUNINSTALL install..</pre></td>
+</tr>
+<tr>
+<td><pre>3447</pre></td>
+<td><pre>2008-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>significant speedups and minor sizing fix to sele -- still not sure why it gets updates so frequently</pre></td>
+</tr>
+<tr>
+<td><pre>3448</pre></td>
+<td><pre>2008-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new def d_rev</pre></td>
+</tr>
+<tr>
+<td><pre>3449</pre></td>
+<td><pre>2008-12-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>good enough keyboard nav for select edit: Tab goes within a line of ctrls, and Ctrl-P/N (or arrows) go up/down lines</pre></td>
+</tr>
+<tr>
+<td><pre>3450</pre></td>
+<td><pre>2008-12-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added a current tree view (browser) field to iMainWindowViewer that is updated when
+  a browser gets focus: auto-select and expand etc actions then get routed to that guy
+  this fixes the problem e.g., when creating a new data table in a program, where it 
+  would take you back to the main browser for the new table, instead of staying within
+  program editor.
+* fixed Ctrl+Enter and Esc in edit dialog to return to current tree view
+* fixed choice of first tab item in main edit panels
+* added update_after flag to NetCounterInit/Incr guys: this allows select edit
+  to be a very usable control panel, replacing the "foot" on the network
+* Network::UpdateAfterEdit no longer calls UpdtAfterNetMod -- only after struct changes
+  should that one be called -- need to add after lesions etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>3451</pre></td>
+<td><pre>2008-12-30</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>misc updates</pre></td>
+</tr>
+<tr>
+<td><pre>3452</pre></td>
+<td><pre>2008-12-31</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin tweaks</pre></td>
+</tr>
+<tr>
+<td><pre>3453</pre></td>
+<td><pre>2008-12-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added sub_gp_nm to all SelectEdit adding functions: puts item in subgp of given name
+
+* NetView counter text info is now user-movable to anywhere, and can be turned off entirely
+  using toggle on view panel -- activate dragger by lay mv button
+
+* Also new PlaceNetText function for auto-placing the net text in various standard useful
+  locations, in the view submenu on network view
+
+* added NetControlPanel function on Network select edit menu, adds all the info in the net
+  text of net view into a select edit: alternative to using net view text
+
+* added Copy From button on bottom of View control panels: copy view config from another
+  view -- very useful if you've made a nice graph of a particular type of data, and then
+  you want to graph a new data table with the same format, in the same way..
+
+* View control panels now obey the Ctrl+Enter and Esc keyboard shortcuts for Apply &amp; Revert
+
+* GraphView can now plot up to 8 lines instead of 5.
+
+* edit style options in taMisc/prefs renamed to be clearer, and separated for select edit
+  versus normal edits (even though normal edits don't yet support the ACTIVE_CONTROL 
+  option) -- Brad -- how hard would that be to do??
+</pre></td>
+</tr>
+<tr>
+<td><pre>3454</pre></td>
+<td><pre>2009-01-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for loading net with saved wts: Init_Weights_post needs conspec set</pre></td>
+</tr>
+<tr>
+<td><pre>3455</pre></td>
+<td><pre>2009-01-01</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:546</pre></td>
+</tr>
+<tr>
+<td><pre>3456</pre></td>
+<td><pre>2009-01-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for unit names 2d applied to layer with subgroups, and new xcal leabra defaults</pre></td>
+</tr>
+<tr>
+<td><pre>3457</pre></td>
+<td><pre>2009-01-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more default fixes</pre></td>
+</tr>
+<tr>
+<td><pre>3458</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:547 plus tent fix for the Win-based forward-back issue</pre></td>
+</tr>
+<tr>
+<td><pre>3459</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>added Vista style and also set the std edit to readonly until impltd</pre></td>
+</tr>
+<tr>
+<td><pre>3460</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>win64 fixup</pre></td>
+</tr>
+<tr>
+<td><pre>3461</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rev bumped to 4.0.19 in anticpation of relase; desc field on sched so you can see it in list view</pre></td>
+</tr>
+<tr>
+<td><pre>3462</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>std progs have update after at trial level for net mon updt</pre></td>
+</tr>
+<tr>
+<td><pre>3463</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>std progs have update after at trial level for net mon updt: test all</pre></td>
+</tr>
+<tr>
+<td><pre>3464</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:493</pre></td>
+</tr>
+<tr>
+<td><pre>3465</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>progs mixup</pre></td>
+</tr>
+<tr>
+<td><pre>3466</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:395</pre></td>
+</tr>
+<tr>
+<td><pre>3467</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:548</pre></td>
+</tr>
+<tr>
+<td><pre>3468</pre></td>
+<td><pre>2009-01-03</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:548</pre></td>
+</tr>
+<tr>
+<td><pre>3469</pre></td>
+<td><pre>2009-01-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update_after opts on Net data loops</pre></td>
+</tr>
+<tr>
+<td><pre>3470</pre></td>
+<td><pre>2009-01-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for dynenum display in selectedit: now disp enum name</pre></td>
+</tr>
+<tr>
+<td><pre>3471</pre></td>
+<td><pre>2009-01-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>enhanced select edit formatting: bg colors for vals etc</pre></td>
+</tr>
+<tr>
+<td><pre>3472</pre></td>
+<td><pre>2009-01-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:551</pre></td>
+</tr>
+<tr>
+<td><pre>3473</pre></td>
+<td><pre>2009-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last piece of net text puzzle: net user data auto-conf w/ viewable items: check on/off to control viewing</pre></td>
+</tr>
+<tr>
+<td><pre>3474</pre></td>
+<td><pre>2009-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New_gui #INIT_ARGVAL_ON_1_el_typ and el_typ for user data</pre></td>
+</tr>
+<tr>
+<td><pre>3475</pre></td>
+<td><pre>2009-01-05</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:552 and bugID:553</pre></td>
+</tr>
+<tr>
+<td><pre>3476</pre></td>
+<td><pre>2009-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>setting projects.el_typ to default_proj_type, used by New_gui, allowing nukage of gpiListNew etc which I did!</pre></td>
+</tr>
+<tr>
+<td><pre>3477</pre></td>
+<td><pre>2009-01-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>updated plugin build instructions for user</pre></td>
+</tr>
+<tr>
+<td><pre>3478</pre></td>
+<td><pre>2009-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraTdUnitSpec was not calling inherited::Init_Weights! -- no wts initialized..</pre></td>
+</tr>
+<tr>
+<td><pre>3479</pre></td>
+<td><pre>2009-01-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:552 dejavu all over again</pre></td>
+</tr>
+<tr>
+<td><pre>3480</pre></td>
+<td><pre>2009-01-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>rm deprecated plugin files</pre></td>
+</tr>
+<tr>
+<td><pre>3481</pre></td>
+<td><pre>2009-01-06</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin make</pre></td>
+</tr>
+<tr>
+<td><pre>3482</pre></td>
+<td><pre>2009-01-07</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>plugin make</pre></td>
+</tr>
+<tr>
+<td><pre>3483</pre></td>
+<td><pre>2009-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>unit names fctns back in main network menu</pre></td>
+</tr>
+<tr>
+<td><pre>3484</pre></td>
+<td><pre>2009-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new std progs</pre></td>
+</tr>
+<tr>
+<td><pre>3485</pre></td>
+<td><pre>2009-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Net control panel uses new net text filters</pre></td>
+</tr>
+<tr>
+<td><pre>3486</pre></td>
+<td><pre>2009-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>init trial_name, group_name, output_name in relevant init fun</pre></td>
+</tr>
+<tr>
+<td><pre>3487</pre></td>
+<td><pre>2009-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>net text robust to non-Init changes in # of items</pre></td>
+</tr>
+<tr>
+<td><pre>3488</pre></td>
+<td><pre>2009-01-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fix for 554 but need to debug on Linux</pre></td>
+</tr>
+<tr>
+<td><pre>3489</pre></td>
+<td><pre>2009-01-08</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:544</pre></td>
+</tr>
+<tr>
+<td><pre>3490</pre></td>
+<td><pre>2009-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor leabra config mods</pre></td>
+</tr>
+<tr>
+<td><pre>3491</pre></td>
+<td><pre>2009-01-09</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed bugID:558</pre></td>
+</tr>
+<tr>
+<td><pre>3492</pre></td>
+<td><pre>2009-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>guards for BugId:557, and finally fixed viewer buttons on mac</pre></td>
+</tr>
+<tr>
+<td><pre>3493</pre></td>
+<td><pre>2009-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated leabra wizard and defaults</pre></td>
+</tr>
+<tr>
+<td><pre>3494</pre></td>
+<td><pre>2009-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor tweaks</pre></td>
+</tr>
+<tr>
+<td><pre>3495</pre></td>
+<td><pre>2009-01-10</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>fixed the user data streaming issue for INLINE</pre></td>
+</tr>
+<tr>
+<td><pre>3496</pre></td>
+<td><pre>2009-01-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new pbwm defaults</pre></td>
+</tr>
+<tr>
+<td><pre>3497</pre></td>
+<td><pre>2009-01-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix sele and new leabra noise</pre></td>
+</tr>
+<tr>
+<td><pre>3498</pre></td>
+<td><pre>2009-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>own da_noise</pre></td>
+</tr>
+<tr>
+<td><pre>3499</pre></td>
+<td><pre>2009-01-12</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>one from deep in the vaults: bugID:66</pre></td>
+</tr>
+<tr>
+<td><pre>3500</pre></td>
+<td><pre>2009-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of noise, remove da_noise from matrix</pre></td>
+</tr>
+<tr>
+<td><pre>3501</pre></td>
+<td><pre>2009-01-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>install a plugin folder to please emergent</pre></td>
+</tr>
+<tr>
+<td><pre>3502</pre></td>
+<td><pre>2009-01-13</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>install a plugin folder to please emergent (Unix only)</pre></td>
+</tr>
+<tr>
+<td><pre>3503</pre></td>
+<td><pre>2009-01-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>simpler code might fix</pre></td>
+</tr>
+<tr>
+<td><pre>3504</pre></td>
+<td><pre>2009-01-14</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>cleaned up src for sele fix</pre></td>
+</tr>
+<tr>
+<td><pre>3505</pre></td>
+<td><pre>2009-01-16</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>debian dependencies</pre></td>
+</tr>
+<tr>
+<td><pre>3506</pre></td>
+<td><pre>2009-01-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>Win64 fixups</pre></td>
+</tr>
+<tr>
+<td><pre>3507</pre></td>
+<td><pre>2009-01-16</pre></td>
+<td><pre>baisa</pre></td>
+<td><pre>normal win32 release changes</pre></td>
+</tr>
+</table>
+</body></html>

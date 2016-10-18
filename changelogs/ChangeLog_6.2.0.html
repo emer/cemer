@@ -1,0 +1,2447 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 6.2.0
+  Revisions 5753:6227</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>5753</pre></td>
+<td><pre>2012-11-09</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>better exception handling</pre></td>
+</tr>
+<tr>
+<td><pre>5754</pre></td>
+<td><pre>2012-11-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>use attempt_cmd() for wget so it throws on error</pre></td>
+</tr>
+<tr>
+<td><pre>5755</pre></td>
+<td><pre>2012-11-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>new repository for Quarter code</pre></td>
+</tr>
+<tr>
+<td><pre>5757</pre></td>
+<td><pre>2012-11-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>quantal repo</pre></td>
+</tr>
+<tr>
+<td><pre>5759</pre></td>
+<td><pre>2012-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added taQuaternion class to provide 3D rotation
+* added virt env support for quaternion, removing prior use of Coin3D classes for this
+* renamed everything in ta_geometry to be much more sensible -- see typedefs at start
+of ta_geometry.h for conversions -- e.g., taVector3i = TDGeom -- should be much 
+more intuitive and obvious what each is..
+* there still may be some issues about creating objs with old names -- may have to 
+make subclasses for old ones instead of just typedefs to get it to work in css
+</pre></td>
+</tr>
+<tr>
+<td><pre>5760</pre></td>
+<td><pre>2012-11-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix taQuaternion::ToEuler -- x and z were flipped.  confirmed euler all working with EULER_ROT flag in VEBody
+* #INSTANCE in typdef's for old versions of ta_geometry guys -- confirmed all working.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5761</pre></td>
+<td><pre>2012-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* cleaned up the CYLINDER and CAPSULE long_axis logic -- it now just applies the
+extra rotation once in translation between specified rotations and actual ones used
+and doesn't constantly convert back and forth.  So, underlyingly, there is always a
+guy oriented with the long axis in the Z plane, and VEBody::cur_quat and VEStatic::rot_quat
+always reflect the full physical rotation of that Z-plane guy.  The init_rot and init_euler guys specify the rotation to take on top of the long_axis rotation..
+* dragging etc all now confirmed to work properly as well.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5762</pre></td>
+<td><pre>2012-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* renamed the main VE functions:
+** SetValsToODE -&gt; Init
+** GetValsFmODE -&gt; CurFromODE
+** New: CurToODE -- set ode from cur_* guys
+Hopefully more sensible and use in gui is a lot more interactive -- always calls CurToODE in UAE so things update as expected.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5763</pre></td>
+<td><pre>2012-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed PLANE display for plane_height
+</pre></td>
+</tr>
+<tr>
+<td><pre>5764</pre></td>
+<td><pre>2012-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* set VEWorld::updt_display flag -- was not being init
+* track long_axis changes and apply correctly dynamically as changed..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5765</pre></td>
+<td><pre>2012-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>drag_size sizable draggers
+</pre></td>
+</tr>
+<tr>
+<td><pre>5771</pre></td>
+<td><pre>2012-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* basic infrastructure for VEArm as a VEObject, based on Sergio's code
+* added ToMatrix, FromMatrix functions to the taVector* classes
+* added float_Matrix::InitFromFloats  (etc for double, int)
+* added a few missing float versions of matrix mult etc in taMath
+* added vec_norm = sqrt(vec_ss_len) in taMath
+</pre></td>
+</tr>
+<tr>
+<td><pre>5773</pre></td>
+<td><pre>2012-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>armip fixes.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5775</pre></td>
+<td><pre>2012-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Matrix copy uses ElView when set, to allow sub-matrix copying and replication
+</pre></td>
+</tr>
+<tr>
+<td><pre>5776</pre></td>
+<td><pre>2012-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* 2D Netview mostly working
+</pre></td>
+</tr>
+<tr>
+<td><pre>5777</pre></td>
+<td><pre>2012-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>guards on treeview access in datachanged</pre></td>
+</tr>
+<tr>
+<td><pre>5778</pre></td>
+<td><pre>2012-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>closer on 2d view..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5779</pre></td>
+<td><pre>2012-11-16</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>don't build in temp dir.</pre></td>
+</tr>
+<tr>
+<td><pre>5786</pre></td>
+<td><pre>2012-11-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>2D netview all working
+</pre></td>
+</tr>
+<tr>
+<td><pre>5803</pre></td>
+<td><pre>2012-11-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Disable warnings on 3rd party nifti1_io.c and znzlib.c C files.</pre></td>
+</tr>
+<tr>
+<td><pre>5806</pre></td>
+<td><pre>2012-11-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>must set SetUnique for gp_inhib params when updating from obsolete gp_i -- explains why
+lvis didn't update properly either!  aha!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5824</pre></td>
+<td><pre>2012-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Major rewrite of Compute_SRAvg code:
+:* separates computing the state of what should be computed, vs. actually computing values,
+   to allow manual override (manual flag added at both network and layer level) -- this
+   will greatly simplify the sleep learning code so it doesn't have to jimmy the cycle
+   counts in weird ways -- just set the flags as needed..
+:* everything aggregated at the layer level, to enable different layers to aggregate
+   differently (essential for new LeabraTI code)
+* also added Compute_dWt_FirstMinus and associated functions -- also needed for new TI
+</pre></td>
+</tr>
+<tr>
+<td><pre>5825</pre></td>
+<td><pre>2012-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>also update network sravg_vals just for kicks.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5863</pre></td>
+<td><pre>2012-12-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ti ctxt s reverse learning
+</pre></td>
+</tr>
+<tr>
+<td><pre>5870</pre></td>
+<td><pre>2012-12-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TI progress: works more sensibly but less biologically realistic..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5873</pre></td>
+<td><pre>2012-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pure SRN version of LeabraTI, wizard updated
+</pre></td>
+</tr>
+<tr>
+<td><pre>5883</pre></td>
+<td><pre>2012-12-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plus_s_only option for xcal sravg integration -- for plus phase, only increment short time
+(default is to increment short and always medium -- just dilutes signal)
+</pre></td>
+</tr>
+<tr>
+<td><pre>5890</pre></td>
+<td><pre>2012-12-05</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>UpdateIPs implemented. MoveToTarget and ConfigArm revised</pre></td>
+</tr>
+<tr>
+<td><pre>5891</pre></td>
+<td><pre>2012-12-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>allow LEABRA_CHL to use ct_time parameters too
+</pre></td>
+</tr>
+<tr>
+<td><pre>5896</pre></td>
+<td><pre>2012-12-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>reintegrate merge of r5658 through r5895 from /branches/houman to /trunk</pre></td>
+</tr>
+<tr>
+<td><pre>5900</pre></td>
+<td><pre>2012-12-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added code to parse job submission files.
+Better fault toleranace for malformed job submission files.
+Allow user to run script in the background using nohup.</pre></td>
+</tr>
+<tr>
+<td><pre>5902</pre></td>
+<td><pre>2012-12-05</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>more params for job submission file; notify user of checkin revision.</pre></td>
+</tr>
+<tr>
+<td><pre>5906</pre></td>
+<td><pre>2012-12-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Renamed Subversion.h/cpp file to SubversionClient.h/cpp to reflect the name of the class.
+Created Subversion.h/cpp to act as a shell around SubversionClient that can be used from emergent program code.
+Modified ClusterManager so it can be called programmatically (without prompting user for URL and description).
+Swapped order of defaulted "recurse" and "rev" params on Checkout(), probably more likely to want to choose revision than the recurse setting.
+Eliminated logging on SubversionClient construction/destruction.
+Made taMediaWiki inherit from taNBase so it can be instantiated in an emergent program's "objs" section.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5907</pre></td>
+<td><pre>2012-12-06</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added MPI option.</pre></td>
+</tr>
+<tr>
+<td><pre>5908</pre></td>
+<td><pre>2012-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* findsvn looks in /opt/subversion which is where some reasonable svn install goes on a mac (i.e., the one I happen to have).
+* just updated param search with no changes
+* confirmed that svn stuff worked for me out of the box (with these fixes)!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5911</pre></td>
+<td><pre>2012-12-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added cluster name into the repository URL.</pre></td>
+</tr>
+<tr>
+<td><pre>5912</pre></td>
+<td><pre>2012-12-10</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>avoid null pointer deref</pre></td>
+</tr>
+<tr>
+<td><pre>5913</pre></td>
+<td><pre>2012-12-10</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>last virtenvs</pre></td>
+</tr>
+<tr>
+<td><pre>5914</pre></td>
+<td><pre>2012-12-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new ClusterRun subclass of SelectEdit -- has core gui functionality -- hit Kill to 
+see the selected rows etc.  note that ClusterManager should be moved over to this guy.
+didn't get to the search algo class yet but that should be straightforward -- will do
+tonight.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5915</pre></td>
+<td><pre>2012-12-12</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>full undebugged arm</pre></td>
+</tr>
+<tr>
+<td><pre>5916</pre></td>
+<td><pre>2012-12-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taMath::vec_prob_choose -- probabilistic choice 
+</pre></td>
+</tr>
+<tr>
+<td><pre>5917</pre></td>
+<td><pre>2012-12-12</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Fixed compiler errors and warnings seen on Windows compilation.
+
+ta_base.cpp (SC_DEFAULT is a macro, #undef'd)
+
+ta_virtenv.h (non-standard near/far macros):
+c:\src\emergent\src\temt\ta\ta_virtenv.h(435) : error C2208: 'float' : no members defined using this type
+c:\src\emergent\src\temt\ta\ta_virtenv.h(437) : error C2208: 'float' : no members defined using this type
+
+ta_virtenv.h (GetObject is a macro that expands to GetObjectA)
+ta_seledit_qt.cpp.obj : error LNK2001: unresolved external symbol "public: virtual class VEObject * __cdecl VEBody::GetObjectA(void)" (?GetObjectA@VEBody@@UEAAPEAVVEObject@@XZ)
+ta_userdata_qt.cpp.obj : error LNK2001: unresolved external symbol "public: virtual class VEObject * __cdecl VEBody::GetObjectA(void)" (?GetObjectA@VEBody@@UEAAPEAVVEObject@@XZ)
+
+ta_virtenv.cpp (many of these):
+C:\src\emergent\src\temt\ta\ta_virtenv.cpp(1769) : warning C4305: '=' : truncation from 'double' to 'float'
+C:\src\emergent\src\temt\ta\ta_virtenv.cpp(1770) : warning C4305: '=' : truncation from 'double' to 'float'
+C:\src\emergent\src\temt\ta\ta_virtenv.cpp(1779) : warning C4305: 'initializing' : truncation from 'double' to 'float'
+C:\src\emergent\src\temt\ta\ta_virtenv.cpp(1779) : warning C4305: 'initializing' : truncation from 'double' to 'float'
+</pre></td>
+</tr>
+<tr>
+<td><pre>5919</pre></td>
+<td><pre>2012-12-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Updated cluster-side script to (optionally) only allow jobs submitted by the given user, as a security measure.
+* Integrated ClusterManager, ClusterRun classes.</pre></td>
+</tr>
+<tr>
+<td><pre>5921</pre></td>
+<td><pre>2012-12-13</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* call search algo to populate datatable then save it to the working copy and commit.
+* fixed macro snafu in ta_base.h.
+* nixed compiler warnings in leabra_pvlv.cpp and  brain_view.cpp.</pre></td>
+</tr>
+<tr>
+<td><pre>5922</pre></td>
+<td><pre>2012-12-14</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>marked private methods private and sifted to bottom of class; sketched out _start_jobs() method.</pre></td>
+</tr>
+<tr>
+<td><pre>5923</pre></td>
+<td><pre>2012-12-15</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>shoulder anchor fixed</pre></td>
+</tr>
+<tr>
+<td><pre>5924</pre></td>
+<td><pre>2012-12-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VEJoint initial flags = FEEDBACK -- usu want this!
+* also re-indented new VEArm code for standard 2 spaces and fixed a few ifs to be the
+fully bracketed kind per emergent coding standards..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5925</pre></td>
+<td><pre>2012-12-17</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>lv.pos_y_dot_only - if true, LVe uses pos derivative only; pv.no_y_dot - if true, PVi does NOT use y-dot</pre></td>
+</tr>
+<tr>
+<td><pre>5926</pre></td>
+<td><pre>2012-12-17</pre></td>
+<td><pre>hfarokhzad</pre></td>
+<td><pre>DataTable class added to read/write .dat files</pre></td>
+</tr>
+<tr>
+<td><pre>5927</pre></td>
+<td><pre>2012-12-17</pre></td>
+<td><pre>hfarokhzad</pre></td>
+<td><pre>scape tabs in value fields of the DataTable</pre></td>
+</tr>
+<tr>
+<td><pre>5928</pre></td>
+<td><pre>2012-12-17</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Save .dat and .proj filenames in working copy so they can be queried for revision number later using Subversion::GetLastChangedRevision().
+* Added comments to ClusterRun re: fields.
+* Changed possible status values of "SUBMITTED, WAITING, RUNNING, DONE, KILLED" to "REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED" (this way we don't need a separate cancel.txt file)
+* Windows editor command should start with 'start' (ta_type.cpp).</pre></td>
+</tr>
+<tr>
+<td><pre>5929</pre></td>
+<td><pre>2012-12-18</pre></td>
+<td><pre>mingus</pre></td>
+<td><pre>output of static analysis tools. see wiki [[Static Analysis]]</pre></td>
+</tr>
+<tr>
+<td><pre>5930</pre></td>
+<td><pre>2012-12-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>closedir for Dir -- flagged by static analysis
+</pre></td>
+</tr>
+<tr>
+<td><pre>5931</pre></td>
+<td><pre>2012-12-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Argh!  Accidentally committed code yesterday that I hadn't compile-checked.  Fixed compile errors.</pre></td>
+</tr>
+<tr>
+<td><pre>5932</pre></td>
+<td><pre>2012-12-18</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>fixed one more compile error (hopefully the last!)</pre></td>
+</tr>
+<tr>
+<td><pre>5933</pre></td>
+<td><pre>2012-12-19</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>first debugged arm</pre></td>
+</tr>
+<tr>
+<td><pre>5934</pre></td>
+<td><pre>2012-12-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LookupVal in DataTable -- lookup val in one col to get value from same row in another col
+* also added optional err msg to FindVal -- easier.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5935</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>hfarokhzad</pre></td>
+<td><pre>added more functionality; improved the api</pre></td>
+</tr>
+<tr>
+<td><pre>5936</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>hfarokhzad</pre></td>
+<td><pre>added more functionality; improved the api</pre></td>
+</tr>
+<tr>
+<td><pre>5937</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* undo for individual datatable edits, including in sub-matrix
+* do not go into matrix view mode for datatables with last col that is matrix -- was getting a -1 index on setting current col after various operations -- now just ignore
+* NO_UNDO_SELECT -- don't select this type of object (e.g., DataCol) when undo loading
+</pre></td>
+</tr>
+<tr>
+<td><pre>5938</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* no_y_dot option for lv -- works for sir.proj whereas no_pos_y_dot does NOT work for that
+* also very important fix for no_pos_y_dot code that Tom checked in -- it was always
+returning 0.0 in default case!  prevents learning entrely!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5939</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Attempt to get Qt5 working -- lots of api changes apparently -- cookiejar has some
+incompatible diffs that need ifdefs.  atomic ints don't have sensible == ops.
+much worse than I thought but basic cmake stuff is at least in place.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5940</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added dependency on libsvn-dev, so installing the official emergent package on Ubuntu will pull this in.</pre></td>
+</tr>
+<tr>
+<td><pre>5941</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Don't update jobs_submit if cm.Run() cancelled or failed.  Added cluster_names PArray to taMisc.</pre></td>
+</tr>
+<tr>
+<td><pre>5942</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>move 130MB of static analysis files out of the source directory</pre></td>
+</tr>
+<tr>
+<td><pre>5943</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>forgot to declare instance</pre></td>
+</tr>
+<tr>
+<td><pre>5945</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Update EC2 build notes.</pre></td>
+</tr>
+<tr>
+<td><pre>5946</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>fix typo from prev. checkin</pre></td>
+</tr>
+<tr>
+<td><pre>5947</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Qt5 all compiling now!
+* fixed Initialize in VEArm -- NEVER put structure creation in Initialize
+</pre></td>
+</tr>
+<tr>
+<td><pre>5948</pre></td>
+<td><pre>2012-12-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>qt5 arg for configure
+</pre></td>
+</tr>
+<tr>
+<td><pre>5949</pre></td>
+<td><pre>2012-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Reworked ClusterManager so functions can be reused for Kill/Update operations.  Minor other changes.</pre></td>
+</tr>
+<tr>
+<td><pre>5950</pre></td>
+<td><pre>2012-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>examiner viewer updated for qt5</pre></td>
+</tr>
+<tr>
+<td><pre>5951</pre></td>
+<td><pre>2012-12-21</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>implemented ClusterRun::Update()</pre></td>
+</tr>
+<tr>
+<td><pre>5952</pre></td>
+<td><pre>2012-12-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Started to implement GridSearch... haven't tested yet.  GridSearch::CreateJobs() should be complete.  GridSearch::ProcessResults() is TODO.</pre></td>
+</tr>
+<tr>
+<td><pre>5953</pre></td>
+<td><pre>2012-12-22</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Tested and fixed a few bugs from prev. checkin
+* Added "Cont" button and code to continue the param search if all jobs couldn't be created on the first iteration.
+* Have not tested these changes.</pre></td>
+</tr>
+<tr>
+<td><pre>5954</pre></td>
+<td><pre>2012-12-24</pre></td>
+<td><pre>hfarokhzad</pre></td>
+<td><pre>cleaned and commented code</pre></td>
+</tr>
+<tr>
+<td><pre>5955</pre></td>
+<td><pre>2012-12-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Fixed character escape issue.
+* Added logic to poll() to query running jobs and commit datatable files (lots of TODOs here).
+* Added some detailed TODO comments.</pre></td>
+</tr>
+<tr>
+<td><pre>5956</pre></td>
+<td><pre>2012-12-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>* Added remaining fields to Run-on-cluster dialog.
+* Removed old param-file logic.
+* Added '&lt;PROJ_FILENAME&gt;' and '&lt;TAG&gt;' to the command line for the cluster script to search for and replace.
+* Reworked some of the search algo / ClusterRun interactions.
+* Write more columns to jobs_submit.dat table.</pre></td>
+</tr>
+<tr>
+<td><pre>5957</pre></td>
+<td><pre>2012-12-25</pre></td>
+<td><pre>hfarokhzad</pre></td>
+<td><pre>improved error handling and merged ColumnType with DataTable classes</pre></td>
+</tr>
+<tr>
+<td><pre>5960</pre></td>
+<td><pre>2012-12-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>Added m_cluster_run = GET_MY_OWNER(ClusterRun); to GridSearch::Reset() since it's not working in Initialize() for some reason.  Temporary fix... should be a better way.</pre></td>
+</tr>
+<tr>
+<td><pre>5962</pre></td>
+<td><pre>2012-12-25</pre></td>
+<td><pre>dpfurlani</pre></td>
+<td><pre>fixed InitLinks issue</pre></td>
+</tr>
+<tr>
+<td><pre>5963</pre></td>
+<td><pre>2013-01-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed -nowin VE background running -- isMapped changes had trampled on that
+* prep for new file organization with per-class files, to be created automatically
+* maketa now records source_file and line numbers for class and other type defns
+</pre></td>
+</tr>
+<tr>
+<td><pre>5964</pre></td>
+<td><pre>2013-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* configure auto-appends _mpi to build dir for -mpi config
+* select edit labels are auto safe C variable names now -- needed for startup arg sanity
+* fixed two old gui bugs: auto expand for dbg mode never worked -- now triggered in load post, and auto_edit for select edit etc wasn't working -- was not using proper main window view..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5965</pre></td>
+<td><pre>2013-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>svn_error_raise_on_malfunction is only avail in svn version 1.6 or higher
+</pre></td>
+</tr>
+<tr>
+<td><pre>5966</pre></td>
+<td><pre>2013-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* automatic new source format in place -- last checkin before code reorg!
+* add template source_file info
+* add templ_pars init in _TA.cpp files -- was missing!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5967</pre></td>
+<td><pre>2013-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>omit new auto-gens from include files for this case -- really last before auto gen
+</pre></td>
+</tr>
+<tr>
+<td><pre>5968</pre></td>
+<td><pre>2013-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>First pass on new per-class files -- a long slog -- NOTHING WILL COMPILE FOR A COUPLE MORE DAYS!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5969</pre></td>
+<td><pre>2013-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* eliminated redundant ta_platform (use taMisc) and ta_global (in ta_stdef)
+* split out ta_type, ta_list..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5970</pre></td>
+<td><pre>2013-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa almost compiling!
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5971</pre></td>
+<td><pre>2013-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more inclusive includes and file lists, getting going on ta
+</pre></td>
+</tr>
+<tr>
+<td><pre>5972</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>checkpoint</pre></td>
+</tr>
+<tr>
+<td><pre>5973</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixing colorscale case
+</pre></td>
+</tr>
+<tr>
+<td><pre>5974</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove ifont and old geom typedefs
+</pre></td>
+</tr>
+<tr>
+<td><pre>5975</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>prepare to convert minmax
+</pre></td>
+</tr>
+<tr>
+<td><pre>5976</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove old minmax
+</pre></td>
+</tr>
+<tr>
+<td><pre>5977</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* maketa completes (lots of errs still), and is super slow -- need to speedup
+* making way through compile errors..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5978</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>checkpoint
+</pre></td>
+</tr>
+<tr>
+<td><pre>5979</pre></td>
+<td><pre>2013-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa output getting cleaner..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5980</pre></td>
+<td><pre>2013-01-10</pre></td>
+<td><pre>thazy</pre></td>
+<td><pre>inconsequential; texting subclipse in eclipse</pre></td>
+</tr>
+<tr>
+<td><pre>5981</pre></td>
+<td><pre>2013-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major milestone: 100% clean maketa run!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5982</pre></td>
+<td><pre>2013-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>move inline containers to major classes
+</pre></td>
+</tr>
+<tr>
+<td><pre>5983</pre></td>
+<td><pre>2013-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ta_qtdata unpacked, moc'ing progress..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5984</pre></td>
+<td><pre>2013-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>most stuff unpacked, got rid of global using namespace std.. that was a pain
+</pre></td>
+</tr>
+<tr>
+<td><pre>5985</pre></td>
+<td><pre>2013-01-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* all the major maketa etc fireworks over, just an incremental slog through each class to get all the dependencies. 
+* tried to optimize maketa (previous few checkins, forgot to mention) -- but rate limit is due to cpp -- need to find a faster cpp!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5986</pre></td>
+<td><pre>2013-01-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cruising..
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>5987</pre></td>
+<td><pre>2013-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renaming taiqtso</pre></td>
+</tr>
+<tr>
+<td><pre>5988</pre></td>
+<td><pre>2013-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>need to clean include too</pre></td>
+</tr>
+<tr>
+<td><pre>5989</pre></td>
+<td><pre>2013-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more clean</pre></td>
+</tr>
+<tr>
+<td><pre>5990</pre></td>
+<td><pre>2013-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>incr</pre></td>
+</tr>
+<tr>
+<td><pre>5991</pre></td>
+<td><pre>2013-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taiqtso all converted, more progress..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5992</pre></td>
+<td><pre>2013-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Can't take it any more.. :(
+</pre></td>
+</tr>
+<tr>
+<td><pre>5993</pre></td>
+<td><pre>2013-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>safeptr_so -&gt; SoPtr</pre></td>
+</tr>
+<tr>
+<td><pre>5994</pre></td>
+<td><pre>2013-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>out of the shadow of maketa finally!
+</pre></td>
+</tr>
+<tr>
+<td><pre>5995</pre></td>
+<td><pre>2013-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>this code is mind-numbingly huge..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5996</pre></td>
+<td><pre>2013-01-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ta finally all compiling -- except some issues with maketa gen files..
+</pre></td>
+</tr>
+<tr>
+<td><pre>5997</pre></td>
+<td><pre>2013-01-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>removing old ta_ files</pre></td>
+</tr>
+<tr>
+<td><pre>5998</pre></td>
+<td><pre>2013-01-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>good news: everything compiles!!!!
+bad news: some missing stuff
+* also restored several files that shouldn't have been nuked in ta_* purge
+very close.. but will have to wait till tomorrow night.
+</pre></td>
+</tr>
+<tr>
+<td><pre>5999</pre></td>
+<td><pre>2013-01-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>everything in ta/css now compiles and links without errors!  next step: the rest of the code...
+</pre></td>
+</tr>
+<tr>
+<td><pre>6000</pre></td>
+<td><pre>2013-01-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>making good progress through emergent/network
+</pre></td>
+</tr>
+<tr>
+<td><pre>6001</pre></td>
+<td><pre>2013-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* re-impl the tmp_include in maketa -- key for making later dirs work (e.g., network).
+* rest of code all working with maketa
+</pre></td>
+</tr>
+<tr>
+<td><pre>6002</pre></td>
+<td><pre>2013-01-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>only brainview remaining in network..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6003</pre></td>
+<td><pre>2013-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally.. everything compiles and links!!  didn't do conversion of algo-specific files
+not sure it makes sense outside of leabra, and even there..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6004</pre></td>
+<td><pre>2013-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* removed old network files
+* need all inventor files to be maketa, to get initClass class init function run!
+* something still wrong with loading of project with NetView or BrainView -- graph/grid are working fine..  Hmm.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6005</pre></td>
+<td><pre>2013-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ok, just needed an #INSTANCE on the NetView and BrainView, and now it's all seeming to
+be working!!! yay!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6007</pre></td>
+<td><pre>2013-01-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lvis and other stuff working
+</pre></td>
+</tr>
+<tr>
+<td><pre>6008</pre></td>
+<td><pre>2013-01-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>full compile success on grey -- some different fixes than what Brian did in subbranch, based on prior includes etc</pre></td>
+</tr>
+<tr>
+<td><pre>6009</pre></td>
+<td><pre>2013-01-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor
+</pre></td>
+</tr>
+<tr>
+<td><pre>6010</pre></td>
+<td><pre>2013-01-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rm a few missing headers
+</pre></td>
+</tr>
+<tr>
+<td><pre>6011</pre></td>
+<td><pre>2013-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TypeDef_Of added in src/temt/ta in prep for maketa revamp
+</pre></td>
+</tr>
+<tr>
+<td><pre>6012</pre></td>
+<td><pre>2013-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TypeDef_Of now fully complete -- no more TA_type.h dependency!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6013</pre></td>
+<td><pre>2013-01-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa makeover progressing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6014</pre></td>
+<td><pre>2013-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>does not compile: mostly through improvement in TypeDef explicitness by using enum to 
+capture entire state
+</pre></td>
+</tr>
+<tr>
+<td><pre>6015</pre></td>
+<td><pre>2013-01-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>checkpoint
+</pre></td>
+</tr>
+<tr>
+<td><pre>6016</pre></td>
+<td><pre>2013-01-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa makeover almost complete..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6017</pre></td>
+<td><pre>2013-01-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa compiling -- now the fun begins
+</pre></td>
+</tr>
+<tr>
+<td><pre>6018</pre></td>
+<td><pre>2013-01-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>everything in place but having problems with Get_C_Name
+</pre></td>
+</tr>
+<tr>
+<td><pre>6019</pre></td>
+<td><pre>2013-01-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>going further..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6020</pre></td>
+<td><pre>2013-01-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>templates working, but now problems with stub refs to undef types -- need to 
+create TypeDef_Of for everything!  this will allow everything to work with types instead
+of name lookups
+</pre></td>
+</tr>
+<tr>
+<td><pre>6021</pre></td>
+<td><pre>2013-01-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ta compiles and links -- just a few problems remain.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>6022</pre></td>
+<td><pre>2013-01-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>may actually be working!  need to get network etc all compiling to see.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6023</pre></td>
+<td><pre>2013-01-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>so close, but out of gas..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6024</pre></td>
+<td><pre>2013-01-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oh so close!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6025</pre></td>
+<td><pre>2013-01-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compiling and linking!  has problems with templates..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6026</pre></td>
+<td><pre>2013-01-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major type data inheritance issues resolved -- now fighting InheritsFrom(TA_taBase issues
+</pre></td>
+</tr>
+<tr>
+<td><pre>6027</pre></td>
+<td><pre>2013-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>expunged qtdefs, was occluding iColor..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6028</pre></td>
+<td><pre>2013-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finished qtdefs expunge
+</pre></td>
+</tr>
+<tr>
+<td><pre>6029</pre></td>
+<td><pre>2013-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>removed taiqtso -- not necessary and just confusing</pre></td>
+</tr>
+<tr>
+<td><pre>6030</pre></td>
+<td><pre>2013-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rmdir</pre></td>
+</tr>
+<tr>
+<td><pre>6031</pre></td>
+<td><pre>2013-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>much is working -- just not smartrefs -- gui and dump loading are not working..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6032</pre></td>
+<td><pre>2013-01-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>smart pointers fixed -- can now load projects no problem!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6033</pre></td>
+<td><pre>2013-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraStd project runs correctly -- fixed mult-inherit member offset issue</pre></td>
+</tr>
+<tr>
+<td><pre>6034</pre></td>
+<td><pre>2013-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally, LVis works and likely everything else!  had to propagate type info into template
+param subtypes.  gruesome stuff.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6035</pre></td>
+<td><pre>2013-01-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor fixes -- compiles optimized, svn revision in place
+</pre></td>
+</tr>
+<tr>
+<td><pre>6036</pre></td>
+<td><pre>2013-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* RegFun redone in new cleaner way, tested and debugged with bp
+* subtypes now created in TypeInit, allows others to refer to safely
+* methods and members with non-ta types all marked #IGNORE to get rid of warnings
+* taCodeUtils now has all the code utilities, with new ones like rename type -- very handy
+</pre></td>
+</tr>
+<tr>
+<td><pre>6037</pre></td>
+<td><pre>2013-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renamed taiMember subclasses in easily recognizable manner
+</pre></td>
+</tr>
+<tr>
+<td><pre>6038</pre></td>
+<td><pre>2013-01-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renaming of taitype deriatives continued..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6039</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>arg types converted
+</pre></td>
+</tr>
+<tr>
+<td><pre>6040</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>view type renames -- all done with taitype subsystem</pre></td>
+</tr>
+<tr>
+<td><pre>6041</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DataLink -&gt; SigLink, step 1</pre></td>
+</tr>
+<tr>
+<td><pre>6042</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DataLink -&gt; SigLink and DataChanged -&gt; SigLinkSignal etc all done
+</pre></td>
+</tr>
+<tr>
+<td><pre>6043</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>amazingly, dcr -&gt; sls worked -- the transformation is complete..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6044</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rationalizing the datahostbase line of objects -- pass1
+</pre></td>
+</tr>
+<tr>
+<td><pre>6045</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taiEditor next checkpoint
+</pre></td>
+</tr>
+<tr>
+<td><pre>6046</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taiEditor all done
+</pre></td>
+</tr>
+<tr>
+<td><pre>6047</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taiData -&gt; taiWidget started
+</pre></td>
+</tr>
+<tr>
+<td><pre>6048</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>checkpoint ahead of redo</pre></td>
+</tr>
+<tr>
+<td><pre>6049</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all taiWidgets -- just need a few more mods</pre></td>
+</tr>
+<tr>
+<td><pre>6050</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taiWidget conversion complete!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6051</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>almost done with renames -- lots of bits and pieces
+</pre></td>
+</tr>
+<tr>
+<td><pre>6052</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>checkpoint</pre></td>
+</tr>
+<tr>
+<td><pre>6053</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>now all done except the panel/data views</pre></td>
+</tr>
+<tr>
+<td><pre>6054</pre></td>
+<td><pre>2013-02-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>now it compiles
+</pre></td>
+</tr>
+<tr>
+<td><pre>6055</pre></td>
+<td><pre>2013-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tmp checkin</pre></td>
+</tr>
+<tr>
+<td><pre>6056</pre></td>
+<td><pre>2013-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tmp checkin</pre></td>
+</tr>
+<tr>
+<td><pre>6057</pre></td>
+<td><pre>2013-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>tmp checkin</pre></td>
+</tr>
+<tr>
+<td><pre>6058</pre></td>
+<td><pre>2013-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>iPanel renames plus others -- nearly almost completely done!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6059</pre></td>
+<td><pre>2013-02-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all done with renaming!!  all seems to work.
+IMPORTANT: 3d view state is no longer backward compatible -- files saved in this version
+cannot be loaded in an earlier version.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6060</pre></td>
+<td><pre>2013-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Leabra converted over -- still some linking issues.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6061</pre></td>
+<td><pre>2013-02-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leabra now fully compiling!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6062</pre></td>
+<td><pre>2013-02-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugin fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>6063</pre></td>
+<td><pre>2013-02-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lots of fixes for plugins -- just need dynamic type register function calling..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6064</pre></td>
+<td><pre>2013-02-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugins should be good now -- reentrant InitTypes
+</pre></td>
+</tr>
+<tr>
+<td><pre>6065</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>plugins and optimized link errors should all be working..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6066</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to deal with biass spec link errs
+</pre></td>
+</tr>
+<tr>
+<td><pre>6067</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>attempt to deal with bias link issues
+</pre></td>
+</tr>
+<tr>
+<td><pre>6068</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more bias</pre></td>
+</tr>
+<tr>
+<td><pre>6069</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove bias inlines</pre></td>
+</tr>
+<tr>
+<td><pre>6070</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>include fix</pre></td>
+</tr>
+<tr>
+<td><pre>6071</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for grey
+</pre></td>
+</tr>
+<tr>
+<td><pre>6072</pre></td>
+<td><pre>2013-02-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new muscles</pre></td>
+</tr>
+<tr>
+<td><pre>6073</pre></td>
+<td><pre>2013-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>latest ve arm, muscle ported</pre></td>
+</tr>
+<tr>
+<td><pre>6074</pre></td>
+<td><pre>2013-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem fixes so far</pre></td>
+</tr>
+<tr>
+<td><pre>6075</pre></td>
+<td><pre>2013-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem fixes so far -- almost done</pre></td>
+</tr>
+<tr>
+<td><pre>6076</pre></td>
+<td><pre>2013-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dmem fully compiling</pre></td>
+</tr>
+<tr>
+<td><pre>6077</pre></td>
+<td><pre>2013-02-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for objrec_ti crash</pre></td>
+</tr>
+<tr>
+<td><pre>6078</pre></td>
+<td><pre>2013-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>qt5 support -- still doesn't work tho.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6079</pre></td>
+<td><pre>2013-02-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cleanup of T3 viewer code -- removed unused, renamed Frame -&gt; Panel, etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6081</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>does not compile -- temp checkin</pre></td>
+</tr>
+<tr>
+<td><pre>6082</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* TypeDef init flags -- should make initClass reliable across all random init sequences
+* moved gui init to taMisc::Init_Types_Gui
+</pre></td>
+</tr>
+<tr>
+<td><pre>6083</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use char instead of int for member type -- maybe fixes issue on dream?
+</pre></td>
+</tr>
+<tr>
+<td><pre>6084</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>source file is stored in unix path format to prevent escaped character fiasco
+</pre></td>
+</tr>
+<tr>
+<td><pre>6085</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows fixes</pre></td>
+</tr>
+<tr>
+<td><pre>6086</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more windows fixes</pre></td>
+</tr>
+<tr>
+<td><pre>6087</pre></td>
+<td><pre>2013-02-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>coverity clean</pre></td>
+</tr>
+<tr>
+<td><pre>6088</pre></td>
+<td><pre>2013-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more windows fix</pre></td>
+</tr>
+<tr>
+<td><pre>6089</pre></td>
+<td><pre>2013-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* TypeDef_Of specialized for ta vs. e, needed to deal with annoying windows dllexport crap
+* also simplified API guys -- just TA_API and E_API
+</pre></td>
+</tr>
+<tr>
+<td><pre>6090</pre></td>
+<td><pre>2013-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops nodebug on maketa!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6091</pre></td>
+<td><pre>2013-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa parse fixes, cmakefile cleanups, and attempt to fix windows problem with
+needing the correct xTypeDef_Of in the generated TA_ files
+</pre></td>
+</tr>
+<tr>
+<td><pre>6092</pre></td>
+<td><pre>2013-02-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix TA_ refs on windows for absurd dllexport situation
+</pre></td>
+</tr>
+<tr>
+<td><pre>6093</pre></td>
+<td><pre>2013-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>etypedef for css -- fixes windows linker probs?
+</pre></td>
+</tr>
+<tr>
+<td><pre>6094</pre></td>
+<td><pre>2013-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops fixed</pre></td>
+</tr>
+<tr>
+<td><pre>6095</pre></td>
+<td><pre>2013-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ta_lib optimization and fix for errant TypeDef_Of</pre></td>
+</tr>
+<tr>
+<td><pre>6096</pre></td>
+<td><pre>2013-02-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>windows paths..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6097</pre></td>
+<td><pre>2013-02-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>massive maketa parser improvements -- can now handle Qt stuff without completely dying
+and almost all __MAKETA__ stuff has been removed from ta code -- just a few items left..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6098</pre></td>
+<td><pre>2013-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one compile fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>6099</pre></td>
+<td><pre>2013-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>maketa fully functional without any special treatment on full codebase!  also supports 
+subclasses etc no problem.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6100</pre></td>
+<td><pre>2013-02-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>c_name fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>6101</pre></td>
+<td><pre>2013-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>better debug control and full reset of parse state
+</pre></td>
+</tr>
+<tr>
+<td><pre>6102</pre></td>
+<td><pre>2013-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compiling on linux working, but looks like could have some weird runtime issues -- fixed a lot of important parser bugs an vunerabilities in any case</pre></td>
+</tr>
+<tr>
+<td><pre>6103</pre></td>
+<td><pre>2013-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add unique optimization is not good for reasons that are unclear.. AddUniqNameNew and Old
+seem to be ok..  this is DEFINITELY the prime suspect for any new bugs we might find!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6104</pre></td>
+<td><pre>2013-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>backing off further on AddUniqNameOld
+</pre></td>
+</tr>
+<tr>
+<td><pre>6105</pre></td>
+<td><pre>2013-02-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>templ fun can be null..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6106</pre></td>
+<td><pre>2013-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops, key file for windows, hopefully this is it</pre></td>
+</tr>
+<tr>
+<td><pre>6107</pre></td>
+<td><pre>2013-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for chooser that wasn't applying correctly (seen in meeting today)
+* fix for root selecting web_home tab correctly at startup
+* hopeful fix for dream issue
+</pre></td>
+</tr>
+<tr>
+<td><pre>6108</pre></td>
+<td><pre>2013-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* clean_ta_emergent make target 
+* always report syntax errors in target files
+</pre></td>
+</tr>
+<tr>
+<td><pre>6109</pre></td>
+<td><pre>2013-02-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VEBody and VEStatic can now be relative to another body / static -- very convenient!
+* CONDSHOW etc logic can now include ! in front of any item
+* updated proj templates to latest
+</pre></td>
+</tr>
+<tr>
+<td><pre>6110</pre></td>
+<td><pre>2013-02-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Step_pre pathway added to VEWorld::Step function
+* VEArm uses Step_pre and CurFromODE to fully encapsulate within standard Step call
+* stores farget lengths and forces as matrix memgers of VEArm
+* auto-init geom -- fast and more robust
+* updated FindSubversionLibrary.cmake to look in /opt/local -- fixes Andrew's bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>6111</pre></td>
+<td><pre>2013-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mac installer fixes</pre></td>
+</tr>
+<tr>
+<td><pre>6112</pre></td>
+<td><pre>2013-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>put in folder for easy dmg construction</pre></td>
+</tr>
+<tr>
+<td><pre>6113</pre></td>
+<td><pre>2013-02-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new mac installer seems to work..</pre></td>
+</tr>
+<tr>
+<td><pre>6114</pre></td>
+<td><pre>2013-02-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for at least some of parsing type name errors</pre></td>
+</tr>
+<tr>
+<td><pre>6115</pre></td>
+<td><pre>2013-02-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove old _ti files
+* more fixes for unnec FindTypeName warning message
+* start on new LeabraTI code
+</pre></td>
+</tr>
+<tr>
+<td><pre>6116</pre></td>
+<td><pre>2013-02-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed crash in VEJointView and also the positioning errors that were affecting elbow 
+and wrist..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6117</pre></td>
+<td><pre>2013-02-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* absolutely essential fix -- member-&gt;idx was not correct and this threw off spec
+uniqe flags -- yikes!!!  plus first pass on new TI
+</pre></td>
+</tr>
+<tr>
+<td><pre>6118</pre></td>
+<td><pre>2013-02-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc TI
+</pre></td>
+</tr>
+<tr>
+<td><pre>6119</pre></td>
+<td><pre>2013-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new leabra ti wizard and misc fixes to test the act prediction idea..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6120</pre></td>
+<td><pre>2013-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>TI_SRN just uses regular wt balancing..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6121</pre></td>
+<td><pre>2013-02-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pay attention to joint off flagmake -j4!</pre></td>
+</tr>
+<tr>
+<td><pre>6122</pre></td>
+<td><pre>2013-02-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should fix ProgCode self-destruction events, when coding in the left browser
+</pre></td>
+</tr>
+<tr>
+<td><pre>6123</pre></td>
+<td><pre>2013-02-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* TypeDef* args now parse default value of &amp;TA_
+* select edit prompts for label to use
+</pre></td>
+</tr>
+<tr>
+<td><pre>6124</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>various bug fixes: 
+* data table string columns escape quotes etc
+* taMisc::ReportUnusedArgs
+* don't auto-apply for modal dialogs -- how has this not been a problem before??
+* don't segfault on void* data table columns, and notify user that these are not supported
+</pre></td>
+</tr>
+<tr>
+<td><pre>6125</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>monitor cluster script actually launches a job succesfully!</pre></td>
+</tr>
+<tr>
+<td><pre>6126</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc cluster sub fixes -- basics are working
+</pre></td>
+</tr>
+<tr>
+<td><pre>6127</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cmt ahead of mv</pre></td>
+</tr>
+<tr>
+<td><pre>6128</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* time stamp for job submit
+* automatically put files in results directory if we live in models directory -- 
+  in taBase::GetFileNameFmProject -- very convenient hook there!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6129</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clust misc
+</pre></td>
+</tr>
+<tr>
+<td><pre>6130</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script submit cleanup</pre></td>
+</tr>
+<tr>
+<td><pre>6131</pre></td>
+<td><pre>2013-02-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script updt</pre></td>
+</tr>
+<tr>
+<td><pre>6132</pre></td>
+<td><pre>2013-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>find bug and cluster fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>6133</pre></td>
+<td><pre>2013-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>times in data tables
+</pre></td>
+</tr>
+<tr>
+<td><pre>6134</pre></td>
+<td><pre>2013-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script should mostly be working but just a few bugs..</pre></td>
+</tr>
+<tr>
+<td><pre>6135</pre></td>
+<td><pre>2013-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't crash if data table editor not present
+* cluster run status info in table
+</pre></td>
+</tr>
+<tr>
+<td><pre>6136</pre></td>
+<td><pre>2013-02-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script almost htere</pre></td>
+</tr>
+<tr>
+<td><pre>6137</pre></td>
+<td><pre>2013-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>clust side updates</pre></td>
+</tr>
+<tr>
+<td><pre>6138</pre></td>
+<td><pre>2013-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ClusterRun full functionality!!  works great.  
+</pre></td>
+</tr>
+<tr>
+<td><pre>6139</pre></td>
+<td><pre>2013-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fully functional script</pre></td>
+</tr>
+<tr>
+<td><pre>6140</pre></td>
+<td><pre>2013-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't save data in imported cluster tables by default
+</pre></td>
+</tr>
+<tr>
+<td><pre>6141</pre></td>
+<td><pre>2013-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* much more detailed information on clusters and validation of jobs according to params
+* emergent-side support for parallel batch -- requires script updates..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6142</pre></td>
+<td><pre>2013-03-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more checks
+</pre></td>
+</tr>
+<tr>
+<td><pre>6143</pre></td>
+<td><pre>2013-03-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more cluster config params -- local parallel batch etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>6144</pre></td>
+<td><pre>2013-03-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script updt</pre></td>
+</tr>
+<tr>
+<td><pre>6145</pre></td>
+<td><pre>2013-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Full file management in place.. just need more robust svn delete and this is done..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6146</pre></td>
+<td><pre>2013-03-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script update</pre></td>
+</tr>
+<tr>
+<td><pre>6147</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script all good for dream</pre></td>
+</tr>
+<tr>
+<td><pre>6148</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cluster run should be all done -- just need to extend to janus..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6149</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>conditionalize parser</pre></td>
+</tr>
+<tr>
+<td><pre>6150</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>save dream and sge versions</pre></td>
+</tr>
+<tr>
+<td><pre>6151</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>scripts</pre></td>
+</tr>
+<tr>
+<td><pre>6152</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>various attempts to get working with python 2.4</pre></td>
+</tr>
+<tr>
+<td><pre>6153</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>janus retrograde transport fixed</pre></td>
+</tr>
+<tr>
+<td><pre>6154</pre></td>
+<td><pre>2013-03-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>always update paths and make new repos if new
+</pre></td>
+</tr>
+<tr>
+<td><pre>6155</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>moab script working</pre></td>
+</tr>
+<tr>
+<td><pre>6156</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hopefully the right balance on SHOW_TREE issues
+</pre></td>
+</tr>
+<tr>
+<td><pre>6157</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script rename</pre></td>
+</tr>
+<tr>
+<td><pre>6158</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lib split of script</pre></td>
+</tr>
+<tr>
+<td><pre>6159</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>damn +x permissions issue with svn</pre></td>
+</tr>
+<tr>
+<td><pre>6160</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>try now</pre></td>
+</tr>
+<tr>
+<td><pre>6161</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>need params in _lib file</pre></td>
+</tr>
+<tr>
+<td><pre>6162</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>Now VEArm has a variable for normalized lengths</pre></td>
+</tr>
+<tr>
+<td><pre>6163</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>args set now?</pre></td>
+</tr>
+<tr>
+<td><pre>6164</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>intermodule communication fixes</pre></td>
+</tr>
+<tr>
+<td><pre>6165</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>intermodule communication fixes</pre></td>
+</tr>
+<tr>
+<td><pre>6166</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>intermodule communication fixes</pre></td>
+</tr>
+<tr>
+<td><pre>6167</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't trample job out</pre></td>
+</tr>
+<tr>
+<td><pre>6168</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get updates on done jobs within window</pre></td>
+</tr>
+<tr>
+<td><pre>6169</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get updates on done jobs within window</pre></td>
+</tr>
+<tr>
+<td><pre>6170</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>last few odds and ends</pre></td>
+</tr>
+<tr>
+<td><pre>6171</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pb_qsub.bynode script</pre></td>
+</tr>
+<tr>
+<td><pre>6172</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ok really truly done.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>6173</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pb fix</pre></td>
+</tr>
+<tr>
+<td><pre>6174</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pb fix</pre></td>
+</tr>
+<tr>
+<td><pre>6175</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pb fix</pre></td>
+</tr>
+<tr>
+<td><pre>6176</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pb fix</pre></td>
+</tr>
+<tr>
+<td><pre>6177</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>getfiles split fix</pre></td>
+</tr>
+<tr>
+<td><pre>6178</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>proj
+</pre></td>
+</tr>
+<tr>
+<td><pre>6179</pre></td>
+<td><pre>2013-03-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updated startup</pre></td>
+</tr>
+<tr>
+<td><pre>6180</pre></td>
+<td><pre>2013-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix bug for new projects</pre></td>
+</tr>
+<tr>
+<td><pre>6181</pre></td>
+<td><pre>2013-03-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dynenums save values as string
+* prompt to confirm for large jobs
+</pre></td>
+</tr>
+<tr>
+<td><pre>6182</pre></td>
+<td><pre>2013-03-07</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>stub of VEArm::NormLengthsToTable method</pre></td>
+</tr>
+<tr>
+<td><pre>6183</pre></td>
+<td><pre>2013-03-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VEArm::Norm Lens to table function fixed
+* extra_files in cluster manager
+* taMisc::MakeSymLink function
+</pre></td>
+</tr>
+<tr>
+<td><pre>6184</pre></td>
+<td><pre>2013-03-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>added PenStyle for drawing other than solid lines</pre></td>
+</tr>
+<tr>
+<td><pre>6185</pre></td>
+<td><pre>2013-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Matrix learn_trace flag in layerspec and conspec -- implements new trace-based learning
+* don't show Apply and Revert for modal edit dialogs -- required exposing modal arg
+* taiWidget calls Changed instead of Apply_Async for modal dialogs -- fixes prior
+change in 6124 where it didn't call Changed so changes in only enums wouldn't get
+noticed.
+* ClusterRun was double-counting pb batches in total job count
+</pre></td>
+</tr>
+<tr>
+<td><pre>6186</pre></td>
+<td><pre>2013-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix weird case where jobs files are not svn added</pre></td>
+</tr>
+<tr>
+<td><pre>6187</pre></td>
+<td><pre>2013-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>gui dialogs properly set modal flag to not have Apply &amp; Revert buttons
+</pre></td>
+</tr>
+<tr>
+<td><pre>6188</pre></td>
+<td><pre>2013-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>script robustification and REMOVEJOB submit -- writing a new jobs_done is not good</pre></td>
+</tr>
+<tr>
+<td><pre>6189</pre></td>
+<td><pre>2013-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* FROM_GROUP and general token ptrs use NULL default args properly (e.g., sort fun in datatable)
+* cluster run: REMOVEJOB instead of sending updated job_done, which causes conflicts
+* add tag, tag_svn, tag_job and params as a string to results data tables 
+</pre></td>
+</tr>
+<tr>
+<td><pre>6190</pre></td>
+<td><pre>2013-03-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>epochs to train for cluster runs</pre></td>
+</tr>
+<tr>
+<td><pre>6191</pre></td>
+<td><pre>2013-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes to init_rot in VEBody -- don't regenerate initial rotation param
+* taQuaternion::ToAxisAngle more robust for singularity -- use existing angle
+* restore selcted rows in ClusterRun when loading
+* ArchiveJobs and jobs_archive in both cluster run and script
+* script also consolidates parallel batches in done -- nice compaction
+</pre></td>
+</tr>
+<tr>
+<td><pre>6192</pre></td>
+<td><pre>2013-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>python syntax fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>6193</pre></td>
+<td><pre>2013-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more syntax
+</pre></td>
+</tr>
+<tr>
+<td><pre>6194</pre></td>
+<td><pre>2013-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>consolidate batch jobs working</pre></td>
+</tr>
+<tr>
+<td><pre>6195</pre></td>
+<td><pre>2013-03-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>save and restore selected rows, other bug fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>6196</pre></td>
+<td><pre>2013-03-14</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>Functions NormSpeedsToTable and SetTargetLengths of class VEArm. SetTargetLengths can crash Emergent</pre></td>
+</tr>
+<tr>
+<td><pre>6197</pre></td>
+<td><pre>2013-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>arm updated to render norm lengths etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>6198</pre></td>
+<td><pre>2013-03-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* misc arm fixes, including function to generate a random target position
+</pre></td>
+</tr>
+<tr>
+<td><pre>6199</pre></td>
+<td><pre>2013-03-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* full args to VEArm::GetRandomTarget 
+* damping params as members in arm
+* partial solution to cluster run aborts
+</pre></td>
+</tr>
+<tr>
+<td><pre>6201</pre></td>
+<td><pre>2013-03-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first draft of PBWM V4, based on TI -- not necessarily working but seems to be doing what it should at a mechanistic level.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6202</pre></td>
+<td><pre>2013-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix multi-PV problem with matrix learning -- init at dwt, not at compute weight
+</pre></td>
+</tr>
+<tr>
+<td><pre>6203</pre></td>
+<td><pre>2013-03-17</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>Shoulder offset in ConfigArm is now with respect to default position</pre></td>
+</tr>
+<tr>
+<td><pre>6204</pre></td>
+<td><pre>2013-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* GetProjAtRev in ClusterRun -- very handy for grabbing projects from the past, e.g., to 
+easily revert a recent change..
+* fixes to update to always sort even if no updates.  
+* Subversion guy that exposes SubversionClient to Projects etc needs some serious work -- added some todos.
+* updated some PBWM wizard settings
+</pre></td>
+</tr>
+<tr>
+<td><pre>6205</pre></td>
+<td><pre>2013-03-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>oops -- need to use gating to update p_act_p in PFCUnitSpec -- created major disconnect
+between learning and act -- should be a lot better now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6206</pre></td>
+<td><pre>2013-03-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* misc wizard and other PBWM fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>6207</pre></td>
+<td><pre>2013-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed p_act_p logic -- is 1 trial offset from act_ctxt update relative to gating.. ugh.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6208</pre></td>
+<td><pre>2013-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove old JOB.* files
+</pre></td>
+</tr>
+<tr>
+<td><pre>6209</pre></td>
+<td><pre>2013-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc_1 flag for matrix gating -- allows resetting of 0 wts</pre></td>
+</tr>
+<tr>
+<td><pre>6210</pre></td>
+<td><pre>2013-03-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>confirm remove jobs
+</pre></td>
+</tr>
+<tr>
+<td><pre>6211</pre></td>
+<td><pre>2013-03-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* act_lrn -- diff params for activations that drive learning vs. processing
+* PFCConSpec with lrn_gate_only -- doesn't seem to work very well tho.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6212</pre></td>
+<td><pre>2013-03-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>ignore_unlearnable flags for selective application of this logic
+</pre></td>
+</tr>
+<tr>
+<td><pre>6213</pre></td>
+<td><pre>2013-03-27</pre></td>
+<td><pre>sverduzco</pre></td>
+<td><pre>Added NormHandCoordsTotable() in VEArm. Normalized shoulder-based hand coordinates into a given DataTable</pre></td>
+</tr>
+<tr>
+<td><pre>6214</pre></td>
+<td><pre>2013-03-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new output gating -- seems to work well</pre></td>
+</tr>
+<tr>
+<td><pre>6215</pre></td>
+<td><pre>2013-04-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed TI_Clear to flow through layer to gpg init state
+* no lay gp inhib by default in matrix
+</pre></td>
+</tr>
+<tr>
+<td><pre>6216</pre></td>
+<td><pre>2013-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraUnitSpec::act_lrn_on flag
+* PFCLayerSpec::ctxt_decay 
+* output gating support in wizard
+</pre></td>
+</tr>
+<tr>
+<td><pre>6217</pre></td>
+<td><pre>2013-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>acts_ctxt AvgMinMax stats for ctxt
+</pre></td>
+</tr>
+<tr>
+<td><pre>6218</pre></td>
+<td><pre>2013-04-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>special chooser and item filters were marked #IGNORE and thus not avail!  not sure 
+how that happened.. anyway, fixed now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6219</pre></td>
+<td><pre>2013-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>PBWM wizard fixes, and param updates etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6220</pre></td>
+<td><pre>2013-04-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wizard fixes
+</pre></td>
+</tr>
+<tr>
+<td><pre>6221</pre></td>
+<td><pre>2013-04-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>param updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>6222</pre></td>
+<td><pre>2013-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>misc bug fixes: 
+* don't use header line for commas in data tables -- fixes loading native dats with ,'s in _H
+* use_var works for Agg::QUINTILE
+* css don't barf on method err msg
+* show type info for taString and taVariant
+</pre></td>
+</tr>
+<tr>
+<td><pre>6223</pre></td>
+<td><pre>2013-04-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Important fix for installing temt header files!
+* cluster run remove files includes for selected jobs
+* params updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>6224</pre></td>
+<td><pre>2013-04-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* start of fix to Find to include window id, and taBase::GetMyBrowser
+* is selecting cssScript only it seems -- should select item..
+* docs fixes on misc leabra code
+</pre></td>
+</tr>
+<tr>
+<td><pre>6225</pre></td>
+<td><pre>2013-04-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed all the fragment issues in ta: url's -- should always find right window.
+* css breakpoints now call program CssBreakpoint prog -- updates global trace, provides
+  gui notification, selects line where breakpoint occurred.
+* global trace now selects source lines 
+</pre></td>
+</tr>
+<tr>
+<td><pre>6226</pre></td>
+<td><pre>2013-04-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hdiutil create dmg script</pre></td>
+</tr>
+</table>
+</body></html>

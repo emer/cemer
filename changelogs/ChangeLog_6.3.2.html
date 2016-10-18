@@ -1,0 +1,825 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 6.3.2
+  Revisions 6301:6416</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>6301</pre></td>
+<td><pre>2013-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>install /Applications/emergent.app in package -- requires CPACK_SET_DESTDIR "ON"
+due to use of absolute path..  tested and it all seems to work.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6302</pre></td>
+<td><pre>2013-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't call root::Save if !interactive
+</pre></td>
+</tr>
+<tr>
+<td><pre>6303</pre></td>
+<td><pre>2013-05-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>SNrThalLayerSpec max_cycles instead of mid_minus_cycles
+</pre></td>
+</tr>
+<tr>
+<td><pre>6304</pre></td>
+<td><pre>2013-05-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>change (sizeof(order)/sizeof(int)) back to n_rows</pre></td>
+</tr>
+<tr>
+<td><pre>6305</pre></td>
+<td><pre>2013-05-18</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>Ubuntu 13.04 (raring) added. Also any user on grey can now scp the built files to their account.</pre></td>
+</tr>
+<tr>
+<td><pre>6306</pre></td>
+<td><pre>2013-05-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trigger error on initial failure to read fmt tag in loadweights
+</pre></td>
+</tr>
+<tr>
+<td><pre>6307</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix Dump_Load_Value to set array size</pre></td>
+</tr>
+<tr>
+<td><pre>6308</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Flatten code, undo, duplicate rows, ...</pre></td>
+</tr>
+<tr>
+<td><pre>6310</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump version to 6.3.1
+* fix it so version bumps don't require a full recompile (after this one at least!)
+:* just needed to put version in a separate file from config.h -- now in temt_version.h
+* taMisc::dmem_output_all -- determine whether all dmem nodes generate output or not
+* VEBody::VERBOSE flag -- oops need to impl that for VEObjCarousel
+</pre></td>
+</tr>
+<tr>
+<td><pre>6311</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>obj carousel verbose
+</pre></td>
+</tr>
+<tr>
+<td><pre>6312</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor dmem fix</pre></td>
+</tr>
+<tr>
+<td><pre>6313</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DMemComm::Barrier and Network::DMemTrialBarrier functions -- sync dmem procs</pre></td>
+</tr>
+<tr>
+<td><pre>6314</pre></td>
+<td><pre>2013-05-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor dmem fix</pre></td>
+</tr>
+<tr>
+<td><pre>6315</pre></td>
+<td><pre>2013-05-21</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>Temporarily changed checkout to update; only repo revision number works for now! Will add tag support in next commit.</pre></td>
+</tr>
+<tr>
+<td><pre>6316</pre></td>
+<td><pre>2013-05-23</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>Now allows either checkout or update depending on whether emergent source directory already exists, making incremental builds easier.</pre></td>
+</tr>
+<tr>
+<td><pre>6317</pre></td>
+<td><pre>2013-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Added CerebPfPcConSpec for learning rule
+</pre></td>
+</tr>
+<tr>
+<td><pre>6318</pre></td>
+<td><pre>2013-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Make the CtLeabraXCAL code the default for everything that doesn't have a hebbian component
+* softbound computed during Compute_Weights instead of Compute_dWt
+* saves extra lin_wt computation, and is generally cleaner.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6319</pre></td>
+<td><pre>2013-05-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cerebellum learning rule and params updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>6320</pre></td>
+<td><pre>2013-05-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix sort compare to work for multiple keys</pre></td>
+</tr>
+<tr>
+<td><pre>6321</pre></td>
+<td><pre>2013-05-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Turning on the new data table code</pre></td>
+</tr>
+<tr>
+<td><pre>6322</pre></td>
+<td><pre>2013-05-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>bug fix for Join()</pre></td>
+</tr>
+<tr>
+<td><pre>6323</pre></td>
+<td><pre>2013-05-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Don't sort tables with rows &lt;= 1</pre></td>
+</tr>
+<tr>
+<td><pre>6324</pre></td>
+<td><pre>2013-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix to prevent crash in sal demo project -- the idx function needs to test validity of
+row_num before using it to deref row_indexes!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6325</pre></td>
+<td><pre>2013-06-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>extra check on joint display -- not necc (bug was elsewhere) but not a bad idea anyway.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6326</pre></td>
+<td><pre>2013-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>detect new texture and update accordingly.  todo: needs more testing for newly assigning texture -- So getclassid doesn't seem to be very discriminating..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6327</pre></td>
+<td><pre>2013-06-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>reverting to earlier version that was accidently overwritten</pre></td>
+</tr>
+<tr>
+<td><pre>6328</pre></td>
+<td><pre>2013-06-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Second attempt at reverting Makefile</pre></td>
+</tr>
+<tr>
+<td><pre>6329</pre></td>
+<td><pre>2013-06-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>safety fix for texture replace
+</pre></td>
+</tr>
+<tr>
+<td><pre>6330</pre></td>
+<td><pre>2013-06-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first pass on loading native actr files, using yacc parser
+</pre></td>
+</tr>
+<tr>
+<td><pre>6331</pre></td>
+<td><pre>2013-06-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Starting on data table UI changes for sort, filter, ... -- Added sort ascending and sort descending to column context menu</pre></td>
+</tr>
+<tr>
+<td><pre>6332</pre></td>
+<td><pre>2013-06-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Data table ui work</pre></td>
+</tr>
+<tr>
+<td><pre>6333</pre></td>
+<td><pre>2013-06-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Removed the #ifdef OLD_DT_IDX_MODE code</pre></td>
+</tr>
+<tr>
+<td><pre>6334</pre></td>
+<td><pre>2013-06-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Filtering GUI for single column filtering</pre></td>
+</tr>
+<tr>
+<td><pre>6335</pre></td>
+<td><pre>2013-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should fix actr parse collision with css parser
+</pre></td>
+</tr>
+<tr>
+<td><pre>6336</pre></td>
+<td><pre>2013-06-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>building out the actr parser..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6337</pre></td>
+<td><pre>2013-06-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>New DataTable fixes resolves major issues with row_indexes impl -- moves ultimate
+index indirection down to the matrix level within each column, so any level of access
+will be properly filtered.
+* new el_view_mode: IDX_FRAMES -- for row_indexes on DataTable
+* Matrix uses IDX_FRAMES for all frame-level access, including SafeIndex from dims
+* renamed lowercase frame* functions to Frame* to be more standards compliant (important due to proliferation of such functions)
+* needs more work on applying a view to a matrix that is already being viewed
+* potential memory leak fix in VEArm -- was calling DataCol level function for adding rows instead of the full DataTable level version.  col-level is now protected
+* ColStats works properly
+* Grid view works properly
+* applying to network works properly
+* not sure what would happen for a project saved with previous version of row_indexes when they were an int_Array instead of now int_Matrix -- need to test that case
+* needs more work on taMath_float/double using TA_FOREACH_INDEX wherever possible instead of simple for loop over size and flat elements -- last element and next element kinds of functions are tricky.  not sure how far the issues go, but at least ColStats is good..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6338</pre></td>
+<td><pre>2013-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* range checking on frames -- fixes css [:] slicing printouts
+* fixed the index sort to work on pre-filtered/sorted data
+</pre></td>
+</tr>
+<tr>
+<td><pre>6339</pre></td>
+<td><pre>2013-06-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* copy of matrix does not copy view, and is effectively a flatten; therefore datatable copy is also implicitly a flatten -- needed to adjust everything for that
+* getting some weird stuff with undo diff compute taking forever in lp3_40 proj with
+import, data anal pathway.  gets stuck in SMS computation.  does eventually finish.  not good though -- would be good to figure out what is going on and how to prevent..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6340</pre></td>
+<td><pre>2013-06-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>DataTable level calls all look good - just removing out of date comment on idx()</pre></td>
+</tr>
+<tr>
+<td><pre>6341</pre></td>
+<td><pre>2013-06-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* native taMatrix::Sort function -- required El_Compare
+* reverse TA_FOREACH_*REV iterators and associated IterLast and IterPrev functions -- need to be able to go both ways in some cases..
+* taMatrix math operators now use views on both sizes, using TA_FOREACH_INDEX_TWO iterator to progress through two matrixes in tandem
+* significant bugfixes to Variant-based operators -- copy-paste errors remained with + operator used instead of -,*,/, etc.  yikes!
+* major pass through taMath* functions converting all major ones incl distance functions etc to use views -- everything commonly used on datatable with views should now work properly.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6342</pre></td>
+<td><pre>2013-06-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* copy uses new _TWO iterator macro
+* wrap-around 2nd matrix in ops -- requires a specific additional line..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6343</pre></td>
+<td><pre>2013-06-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wrap in math too.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6344</pre></td>
+<td><pre>2013-06-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>SelectRows modified to be consistent with new data table model. When src and dest are the same table hide non-matching rows, don't permanently delete.</pre></td>
+</tr>
+<tr>
+<td><pre>6345</pre></td>
+<td><pre>2013-06-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Delete PermuteThruIndex() and old Sort_impl(); Permute() changed to handle src==dest without copying</pre></td>
+</tr>
+<tr>
+<td><pre>6346</pre></td>
+<td><pre>2013-06-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* actr parser can read many real actr files and run some successfully.  still needs a few
+more things
+* auto call Init on any programs called by ActrAction
+</pre></td>
+</tr>
+<tr>
+<td><pre>6347</pre></td>
+<td><pre>2013-06-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use CallInit for doing Init from a running program..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6348</pre></td>
+<td><pre>2013-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>important matrix / datatable indexing fixes -- everyone should update asap.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6349</pre></td>
+<td><pre>2013-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rebuild script updates</pre></td>
+</tr>
+<tr>
+<td><pre>6350</pre></td>
+<td><pre>2013-06-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>two more key fixes: for addrows and insert rows after previous removals
+</pre></td>
+</tr>
+<tr>
+<td><pre>6351</pre></td>
+<td><pre>2013-06-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>prjn display fix for 2d views with layer groups -- needed extra margin
+</pre></td>
+</tr>
+<tr>
+<td><pre>6352</pre></td>
+<td><pre>2013-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* DataSelectEl - Delete enum Relations (better to only have the one in the Relation class)
+* DataSelectSpec - Delete enum CombOp (move to Relation class)
+* Relation - Delete enum Conjunction and replace with more complete enum CombOp
+* Relation - Add "contains" and "not_contains" to enum Relations
+* DataCol - Replace filtering using CSS script with method that creates a DataSelectSpec used by DataProc::SelectRows</pre></td>
+</tr>
+<tr>
+<td><pre>6353</pre></td>
+<td><pre>2013-06-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add a dialog at DataTable level (Data Proc menu item) for filtering rows.</pre></td>
+</tr>
+<tr>
+<td><pre>6354</pre></td>
+<td><pre>2013-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test project for grid view update bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>6355</pre></td>
+<td><pre>2013-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Actr Imaginal module, action params, and relationships (&lt; &gt; etc) for conditionals.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6356</pre></td>
+<td><pre>2013-06-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug #1615 (DataTable duplicate row(s) does not update grid view) Render_impl() was not getting called for this case.</pre></td>
+</tr>
+<tr>
+<td><pre>6357</pre></td>
+<td><pre>2013-06-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>DataTable column context menu now has item "Resize Width to Contents" which works on all selected columns. Really helpful with tables like config in LVIS. Not undoable yet."</pre></td>
+</tr>
+<tr>
+<td><pre>6358</pre></td>
+<td><pre>2013-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Full impl of actr procedural module, including sub-symbolic
+* much more complete impl of declarative module, including main sub-symbolic -- still no
+  associative and partial match activations
+</pre></td>
+</tr>
+<tr>
+<td><pre>6359</pre></td>
+<td><pre>2013-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>semantic project</pre></td>
+</tr>
+<tr>
+<td><pre>6360</pre></td>
+<td><pre>2013-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix for GetFrameRangeSlice -- fixes Trent's bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>6361</pre></td>
+<td><pre>2013-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>range checking on multi-slice GetSlice_ with frame view
+</pre></td>
+</tr>
+<tr>
+<td><pre>6362</pre></td>
+<td><pre>2013-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>check start frame too, and also allow - from end indexing.. done now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6363</pre></td>
+<td><pre>2013-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for NO SAVE_ROWS datatables which have row_indexes set -- nukem.
+* also more security in Frames() against physical number of frames
+</pre></td>
+</tr>
+<tr>
+<td><pre>6364</pre></td>
+<td><pre>2013-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>undo Frames() check -- not correct for duplicated rows.  other fix was correct one.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6365</pre></td>
+<td><pre>2013-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Major progress on ACT-R: parsing robustness, vision module, hierarchical types
+etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6366</pre></td>
+<td><pre>2013-07-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* vision module find location more fully implemented, along with other requests
+* CommonChunkType -- used in comparisons
+</pre></td>
+</tr>
+<tr>
+<td><pre>6367</pre></td>
+<td><pre>2013-07-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Implementation of movable data table columns. Grasping hand cursor will be replaced by column name drag icon.</pre></td>
+</tr>
+<tr>
+<td><pre>6368</pre></td>
+<td><pre>2013-07-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>need this for new file</pre></td>
+</tr>
+<tr>
+<td><pre>6369</pre></td>
+<td><pre>2013-07-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>need this for new file</pre></td>
+</tr>
+<tr>
+<td><pre>6370</pre></td>
+<td><pre>2013-07-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Commenting out the move code temporarily - will see if I can get it to work with higher level Qt calls. This gets manual column resize working again.</pre></td>
+</tr>
+<tr>
+<td><pre>6371</pre></td>
+<td><pre>2013-07-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another take on moving columns using high level Qt calls and a bit of a hack</pre></td>
+</tr>
+<tr>
+<td><pre>6372</pre></td>
+<td><pre>2013-07-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Removed the mouse event code</pre></td>
+</tr>
+<tr>
+<td><pre>6373</pre></td>
+<td><pre>2013-07-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Implementation of drag and drop data table rows. Added Move to taMatrix.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6374</pre></td>
+<td><pre>2013-07-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>new files</pre></td>
+</tr>
+<tr>
+<td><pre>6375</pre></td>
+<td><pre>2013-07-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Column and row moves now undoable. Randy sure made that easy.</pre></td>
+</tr>
+<tr>
+<td><pre>6376</pre></td>
+<td><pre>2013-07-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>correct string typo</pre></td>
+</tr>
+<tr>
+<td><pre>6377</pre></td>
+<td><pre>2013-07-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Added splitter to Edit Program panel
+</pre></td>
+</tr>
+<tr>
+<td><pre>6378</pre></td>
+<td><pre>2013-07-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Tweaking layout to gain a line of code</pre></td>
+</tr>
+<tr>
+<td><pre>6379</pre></td>
+<td><pre>2013-07-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Look and feel work on middle panels
+
+- Tightened up the vertical layout of widgets in the middle panel.
+- Help/Apply/Revert and arrow icon now size based on font and reduced in height.
+- Minor changes to tool tip text</pre></td>
+</tr>
+<tr>
+<td><pre>6380</pre></td>
+<td><pre>2013-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>should fix dmem issue</pre></td>
+</tr>
+<tr>
+<td><pre>6381</pre></td>
+<td><pre>2013-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>trim margins and spacing.. seemed to get rid of a bit of it  -- rest is probably splitter
+</pre></td>
+</tr>
+<tr>
+<td><pre>6382</pre></td>
+<td><pre>2013-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more dmem fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>6383</pre></td>
+<td><pre>2013-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>can't set stable_pct to .8 by default b/c it breaks badly if Compute_StableWeights is not in place, and it is very hard to check for that.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6384</pre></td>
+<td><pre>2013-07-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>un_geom and gp_geom cannot be 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>6385</pre></td>
+<td><pre>2013-07-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>This is the signal and slot code to save column width (and row height changes) but the GetWinState code needs a look as only the first column width is saved.</pre></td>
+</tr>
+<tr>
+<td><pre>6386</pre></td>
+<td><pre>2013-07-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added SplitStringToCols -- auto-split a single string column into multiple columns using a delimiter -- great for subsequent group operations on trial_name columns that have a bunch of condition info packed into a single string.
+* added PermuteRows direct on DataTable (not sure if already checked that in or not)
+* added much more extensive docs per previous email to John about ShowAllRows, Flatten, etc to explain these concepts to the user..
+</pre></td>
+</tr>
+<tr>
+<td><pre>6387</pre></td>
+<td><pre>2013-07-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DataTable::Copy was not resetting geom to fit source -- issue with matrix copy when both source and target have views in place, as they do in datatable.  now just reset data prior to copy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6388</pre></td>
+<td><pre>2013-07-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>finally fixed the item chooser dialog auto-selection stuff -- problem was that
+the basic select code simply doesn't work properly when items are hidden (filtered)
+ended up stuffing event queue with keyboard up/down arrow events -- super ugly
+but it works!
+</pre></td>
+</tr>
+<tr>
+<td><pre>6389</pre></td>
+<td><pre>2013-07-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* squashed a new memory leak from the taMatrix code recently implemented to deal with
+the row_indexes stuff -- complicated project with advanced matrix script code now runs
+clean.  turns out mac memory leak checker was not so good for actually finding leaks,
+but the memory allocation tracking is good under instruments, so you just have to 
+look for stuff that is continuing to be allocated and not deallocated (living increases).
+</pre></td>
+</tr>
+<tr>
+<td><pre>6390</pre></td>
+<td><pre>2013-07-17</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>Added context menu item to programs and program elements (not including variables) to allow user to go directly to the program editor window from the tree view. Unfortunately this feature is subject to the same bug as View Script, which is that the program editor must already have been accessed once for it to work on subsequent tries.</pre></td>
+</tr>
+<tr>
+<td><pre>6391</pre></td>
+<td><pre>2013-07-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>"Save View" is no longer a user action. View saving is done as part of the Save File operation if the user has toggled the "Save View on Save" menu item to true. The value is saved on a per project basis. The menu item is disabled if a project window is not active. Backing out some code in HeaderViews that is not needed. </pre></td>
+</tr>
+<tr>
+<td><pre>6392</pre></td>
+<td><pre>2013-07-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Set default value (true) for saveViewOnSave</pre></td>
+</tr>
+<tr>
+<td><pre>6393</pre></td>
+<td><pre>2013-07-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rename member saveViewOnSave to save_view and change directives to allow member to be visible and editable</pre></td>
+</tr>
+<tr>
+<td><pre>6394</pre></td>
+<td><pre>2013-07-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Added a user settable flag "save_as_only" on project that disables "save" action but keeps "save as" action available. When "save as" is executed the file name has "_copy" appended to the file name, for example, LeabraStd.proj becomes LeabraStd_copy.proj. This should keep users from accidently overwriting files that are demos or tutorials not meant to be overwritten. This isn't truely "read-only" because the user can change the name in the save dialog but then the flag on the project is user settable anyway. The "save_as_only" flag is set to false on the copy so the copy can be "saved".</pre></td>
+</tr>
+<tr>
+<td><pre>6395</pre></td>
+<td><pre>2013-07-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add method SetStepSize(float size)</pre></td>
+</tr>
+<tr>
+<td><pre>6396</pre></td>
+<td><pre>2013-07-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Maintaining consistency - removing unnecessary accessor method</pre></td>
+</tr>
+<tr>
+<td><pre>6397</pre></td>
+<td><pre>2013-07-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed mat_frame* code to use FrameStartIdx
+* fixed FIRST and LAST for string fields to use iterators
+* fixed N aggregator to use IterCount
+* all of above fix key bugs with Group function
+</pre></td>
+</tr>
+<tr>
+<td><pre>6398</pre></td>
+<td><pre>2013-07-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Added LeabraTICtxtLayerSpec -- for Tom -- provides mechanism for sending gated deep maint acts to any other layer using std learned connections etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6399</pre></td>
+<td><pre>2013-07-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>SetGeom always does ClearElView first -- this is definitional if you're setting geom
+</pre></td>
+</tr>
+<tr>
+<td><pre>6400</pre></td>
+<td><pre>2013-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Making data analysis (Cluster and PCA) available throught the GUI. The data table column menu has two new items "Run Cluster Analysis" and "Run PCA2d Analysis". Additional analyses will be added.</pre></td>
+</tr>
+<tr>
+<td><pre>6401</pre></td>
+<td><pre>2013-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New files to support GUI for data analysis</pre></td>
+</tr>
+<tr>
+<td><pre>6402</pre></td>
+<td><pre>2013-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix the performance problem in sort</pre></td>
+</tr>
+<tr>
+<td><pre>6403</pre></td>
+<td><pre>2013-07-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Conditional compile for windows for isnan call</pre></td>
+</tr>
+<tr>
+<td><pre>6404</pre></td>
+<td><pre>2013-08-01</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>#undefs from taMath.h are reissued in _float.h and _double.h - somehow the Windows min and max macros were still being defined in those classes, causing build error on Windows.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6405</pre></td>
+<td><pre>2013-08-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A bit of code to enable  GHOST directive (enable/disable) to work for context menu items; Added directive to several methods of DataCol</pre></td>
+</tr>
+<tr>
+<td><pre>6406</pre></td>
+<td><pre>2013-08-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix the ghosting on menus logic; add GHOST directive to a couple of items</pre></td>
+</tr>
+<tr>
+<td><pre>6407</pre></td>
+<td><pre>2013-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>norm_con_n obsolete</pre></td>
+</tr>
+<tr>
+<td><pre>6408</pre></td>
+<td><pre>2013-08-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixes for FIND_FIRST and FIND_LAST operators -- need to use iterator-&gt;count instead of raw
+index.
+</pre></td>
+</tr>
+<tr>
+<td><pre>6409</pre></td>
+<td><pre>2013-08-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changed Filter to use the standard gui / program api diffs for specifying columns
+* Filter -&gt; FilterCol with #LABEL_Filter
+* Filter takes Variant for col specs -- this is the best way for programs
+* added col3 
+* changed cmp to be a double for all numeric cols
+</pre></td>
+</tr>
+<tr>
+<td><pre>6410</pre></td>
+<td><pre>2013-08-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New DataTables set default column widths to size of content. Convenience function to set all columns widths to content.</pre></td>
+</tr>
+<tr>
+<td><pre>6411</pre></td>
+<td><pre>2013-08-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added PERCENT agg operator -- same as COUNT but computes percent instead
+</pre></td>
+</tr>
+<tr>
+<td><pre>6412</pre></td>
+<td><pre>2013-08-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Going back to the old default column width</pre></td>
+</tr>
+<tr>
+<td><pre>6413</pre></td>
+<td><pre>2013-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't emit inscruitable err when doing Group on empty table
+</pre></td>
+</tr>
+<tr>
+<td><pre>6414</pre></td>
+<td><pre>2013-08-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>DataTable column widths are across views so that a data table viewed in the center panel will have the same widths as the same table viewed in a separate dialog. Resolution of bug 1628 - See that for the thinking behind the fix.</pre></td>
+</tr>
+<tr>
+<td><pre>6415</pre></td>
+<td><pre>2013-08-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>GUI for PCAEigen data analysis and for DistanceMatrix analysis plus some enhancements to existing analysis GUI.</pre></td>
+</tr>
+<tr>
+<td><pre>6416</pre></td>
+<td><pre>2013-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>need to release 6.3.2 shortly for people using software for class -- will update projects to this version</pre></td>
+</tr>
+</table>
+</body></html>

@@ -1,0 +1,657 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 7.0.1
+  Revisions 7375:7463</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>7375</pre></td>
+<td><pre>2014-06-21</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix server api test suite to reflect desired changes to emergent
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>7376</pre></td>
+<td><pre>2014-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* TrialCosDiff -- how much is the network state changing from one trial to the next -- 
+useful point of comparison against CosDiff (phase-wise), and test for stuck units
+* automatically compensate for different rel_net scaling in minus and plus phases for 
+context inputs (which otherwise would be constant).
+</pre></td>
+</tr>
+<tr>
+<td><pre>7378</pre></td>
+<td><pre>2014-06-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>unfortunately we shipped a broken demo of cereb arm..</pre></td>
+</tr>
+<tr>
+<td><pre>7379</pre></td>
+<td><pre>2014-06-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Save panel "pin" state.
+* Fix LeabraWizard to pin PVLV and PBDM panels
+* Issue - ClusterRun panel always getting pinned on open - don't see who is setting auto_edit
+* Issue - Specs that are children of other specs are not auto displaying on open when pinned
+</pre></td>
+</tr>
+<tr>
+<td><pre>7380</pre></td>
+<td><pre>2014-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update version to 7.0.1
+* update windows default font size to 10 instead of 8 -- 8 is pretty tiny..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7381</pre></td>
+<td><pre>2014-06-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Getting a single data table value should return '"status":"OK", "result":&lt;value&gt;' but was returning "status":"OK", "values":&lt;value&gt;
+due to my over zealous string replacement last week fixing a bug
+* Fixed server tests to match correct data table get data behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>7382</pre></td>
+<td><pre>2014-06-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>LeabraUnitSpec::depress.delay -- delay onset of depression..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7383</pre></td>
+<td><pre>2014-06-24</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Comment out two of the tests in server.txt, as it emergent doesn't behave as intended.
+
+The necessary changes to emergent are tracked in the bug https://grey.colorado.edu/bugzilla/show_bug.cgi?id=2000
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>7384</pre></td>
+<td><pre>2014-06-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 1999. Child spec panels that were pinned were not be restored on open. Add iterator for children.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7385</pre></td>
+<td><pre>2014-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* avg_act_diff and avg_act_diff_sm stats for layer and network -- for tracking "main effect" issues in phase differences.
+* also NetMonItem auto-updates name for computed-from agg guys
+</pre></td>
+</tr>
+<tr>
+<td><pre>7386</pre></td>
+<td><pre>2014-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>forgotten housekeeping
+</pre></td>
+</tr>
+<tr>
+<td><pre>7387</pre></td>
+<td><pre>2014-06-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>got rid of avg_act_diff_sm -- redundant with avg_act_diff..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7388</pre></td>
+<td><pre>2014-06-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* First of cut/copy/paste fixes. For ctrl-D (emacs cut) copy text to clipboard first.
+* Also some minor code cleanup.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7389</pre></td>
+<td><pre>2014-06-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rolling back copy to clipboard for ctrl-D to be consistent with emacs behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>7390</pre></td>
+<td><pre>2014-06-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for wizard panel pin/unpin
+</pre></td>
+</tr>
+<tr>
+<td><pre>7391</pre></td>
+<td><pre>2014-06-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changelog updates -- forgot to do this for 7.0</pre></td>
+</tr>
+<tr>
+<td><pre>7392</pre></td>
+<td><pre>2014-06-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>You can now unpin ClusterRun. That should be the last issue with panel pinning.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7393</pre></td>
+<td><pre>2014-06-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* act_nd is VIEW_HOT now instead of act_lrn
+* a few cleanups of John's checkin: don't forget to call inherted on *Links calls, and we always need an initializer for all members, right?  
+</pre></td>
+</tr>
+<tr>
+<td><pre>7394</pre></td>
+<td><pre>2014-06-27</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>Added export of env vars needed to build and package quarter (CPPFLAGS for Qt5 installation). Streamlined query to prompt user to use Qt5.</pre></td>
+</tr>
+<tr>
+<td><pre>7395</pre></td>
+<td><pre>2014-06-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Missing 'then' in both scripts
+</pre></td>
+</tr>
+<tr>
+<td><pre>7396</pre></td>
+<td><pre>2014-06-27</pre></td>
+<td><pre>tmankad</pre></td>
+<td><pre>Can answer 'Use QT5?' question with Y or y or nothing. (Not tested.)</pre></td>
+</tr>
+<tr>
+<td><pre>7397</pre></td>
+<td><pre>2014-06-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>cluster run python script update -- only check stuff in when got something from client, or there was a status change -- MUCH more efficient</pre></td>
+</tr>
+<tr>
+<td><pre>7398</pre></td>
+<td><pre>2014-07-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add simple conditional printing example
+</pre></td>
+</tr>
+<tr>
+<td><pre>7399</pre></td>
+<td><pre>2014-07-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix menu shortcut for "clear" menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>7400</pre></td>
+<td><pre>2014-07-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New implementation of object naming when duplicating
+</pre></td>
+</tr>
+<tr>
+<td><pre>7401</pre></td>
+<td><pre>2014-07-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Move SetCopyName() to taBase; Don't set name if object to be copies has no name.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7402</pre></td>
+<td><pre>2014-07-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove data for re-import of same table</pre></td>
+</tr>
+<tr>
+<td><pre>7403</pre></td>
+<td><pre>2014-07-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>parse the keyword in only with spaces around it -- prevents various misparses, e.g., with String</pre></td>
+</tr>
+<tr>
+<td><pre>7404</pre></td>
+<td><pre>2014-07-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed error bars on bar plot -- needed special second pass trick..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7405</pre></td>
+<td><pre>2014-07-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Conditionalize libcoin version
+</pre></td>
+</tr>
+<tr>
+<td><pre>7406</pre></td>
+<td><pre>2014-07-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Delete duplicate dependency
+</pre></td>
+</tr>
+<tr>
+<td><pre>7407</pre></td>
+<td><pre>2014-07-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2007, continuing after stopping at breakpoint causes reinit.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7408</pre></td>
+<td><pre>2014-07-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Add 'Diff Compare' menu item to Tools menu, disabled till I do the implementation.
+* Added ellipsis to a few menu items that should have them
+</pre></td>
+</tr>
+<tr>
+<td><pre>7409</pre></td>
+<td><pre>2014-07-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>DiffCompare functionality now prominently accessible from the Tools menu. Very functional, a bit more to do. Definitely give it a try.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7410</pre></td>
+<td><pre>2014-07-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Add means to set the chooser title
+* Use to set title for diff compare choosers
+</pre></td>
+</tr>
+<tr>
+<td><pre>7411</pre></td>
+<td><pre>2014-07-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New Step icon/tool added to application toolbar.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7412</pre></td>
+<td><pre>2014-07-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rename CopyToAllProgs() to UpdateOtherProgs(). Rename should be safe as this is strictly a GUI method.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7413</pre></td>
+<td><pre>2014-07-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed pt_size in EpochGraph in LeabraStd -- was a very large number..
+* graph now plots * for points that are out of range, instead of just not plotting them at all silently..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7414</pre></td>
+<td><pre>2014-07-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Replace the step_icon.png
+</pre></td>
+</tr>
+<tr>
+<td><pre>7415</pre></td>
+<td><pre>2014-07-23</pre></td>
+<td><pre>tkelly</pre></td>
+<td><pre>Added 2 methods: IsoMaxVel &amp; IsoError -- Added 4 member vars: avg_time, total_dist, max_vel, &amp; iso_err -- DTT = distance-to-target -- IsoMaxVel takes the average reach completion time (avg_time) &amp; total DTT (total_dist), calculates the maximum hand velocity expected by isochronous movement, and stores the result in max_vel. -- IsoError takes the current DTT (hand_pos_err_mag), the current hand velocity (hand_vel_mag), the total DTT (total_dist), &amp; the expected maximum hand velocity (max_vel), and calculates 2 percentages: current DTT over total DTT, and current velocity over max velocity. It then calculates the expected current velocity percentage based on a Gaussian curve representing isochronous movement, where Y is the current velocity percentage and X is the current DTT percentage. Finally, it stores the difference between the actual &amp; expected velocity percentages in iso_err. A positive iso_err value indicates a higher-than-expected velocity, and vice-versa for a negative value.</pre></td>
+</tr>
+<tr>
+<td><pre>7416</pre></td>
+<td><pre>2014-07-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Some missing whitespace causing errors
+</pre></td>
+</tr>
+<tr>
+<td><pre>7417</pre></td>
+<td><pre>2014-07-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Broken when the tool window name was changed/shortened
+</pre></td>
+</tr>
+<tr>
+<td><pre>7418</pre></td>
+<td><pre>2014-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>First of several packaging script commits
+</pre></td>
+</tr>
+<tr>
+<td><pre>7419</pre></td>
+<td><pre>2014-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>More script updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>7420</pre></td>
+<td><pre>2014-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Adding a README file but will also include this information on the wiki
+</pre></td>
+</tr>
+<tr>
+<td><pre>7421</pre></td>
+<td><pre>2014-07-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>update
+</pre></td>
+</tr>
+<tr>
+<td><pre>7422</pre></td>
+<td><pre>2014-07-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>fix dependencies
+</pre></td>
+</tr>
+<tr>
+<td><pre>7423</pre></td>
+<td><pre>2014-07-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Minor update
+</pre></td>
+</tr>
+<tr>
+<td><pre>7424</pre></td>
+<td><pre>2014-07-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix 2018 - Flatten DataTable adding _copy to name - save the name and reset after flatten.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7425</pre></td>
+<td><pre>2014-07-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Dropping an object with CamelCased name onto 'vars' adds a variable with a snake_cased name.
+* New string method CamelToSnake()
+</pre></td>
+</tr>
+<tr>
+<td><pre>7426</pre></td>
+<td><pre>2014-07-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>robustification of vs patch to vta input
+</pre></td>
+</tr>
+<tr>
+<td><pre>7427</pre></td>
+<td><pre>2014-07-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix for rate-code version of adaptation -- now fits behavior of spiking much more closely, and works about the same as depression in ra25 test.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7428</pre></td>
+<td><pre>2014-07-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Replace some of the text strings in application toolbar with icons. I tried to find ones consistent with the look of the existing icons.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7429</pre></td>
+<td><pre>2014-08-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Revamping of application toolbar
+* All actions have an icon
+* Preferences all you to choose icon only, text only or icon with text below (default)
+* Added tooltips to more of the actions
+* Added Preferences to toolbar
+</pre></td>
+</tr>
+<tr>
+<td><pre>7430</pre></td>
+<td><pre>2014-08-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2007 - "Adding brkpt can cause program to be marked as stale"
+</pre></td>
+</tr>
+<tr>
+<td><pre>7431</pre></td>
+<td><pre>2014-08-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Initial checkin of CIFER code -- completely untested except to show that it
+doesn't screw up existing stuff, as long as you leave it off..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7432</pre></td>
+<td><pre>2014-08-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New icons for application toolbar
+</pre></td>
+</tr>
+<tr>
+<td><pre>7433</pre></td>
+<td><pre>2014-08-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove debug statement
+</pre></td>
+</tr>
+<tr>
+<td><pre>7434</pre></td>
+<td><pre>2014-08-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Hitting enter on an open empty line of code converts the line into a BlankLineEl. I like this because it makes it easy to add whitespace but if you don't line the change I will revert it.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7435</pre></td>
+<td><pre>2014-08-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New context menu item 'Jump To Code' available when selecting a breakpoint object.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7436</pre></td>
+<td><pre>2014-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>temp checkin prior to rename -- do not attempt to compile</pre></td>
+</tr>
+<tr>
+<td><pre>7437</pre></td>
+<td><pre>2014-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>this should build correctly -- untested function tho</pre></td>
+</tr>
+<tr>
+<td><pre>7438</pre></td>
+<td><pre>2014-08-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CIFER code working, at least on basic test..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7439</pre></td>
+<td><pre>2014-08-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bench updates</pre></td>
+</tr>
+<tr>
+<td><pre>7440</pre></td>
+<td><pre>2014-08-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* netin computation: use += dp[i] instead of doing the += in vector -- does the store 
+and plus together -- definitely faster in the benchmark code (for sse4)
+* also switching main code to sse4 version instead of sse8 (still activated by USE_SSE8..) -- sse4 is more reliably faster
+* can't get gcc to benefit from sse4 or 8, despite a lot of attempts to give it hints..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7441</pre></td>
+<td><pre>2014-08-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2026 - InitVals causing crash when changing from String to another type.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7442</pre></td>
+<td><pre>2014-08-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>potential fix for emer arm rotor -- call AttachJoint</pre></td>
+</tr>
+<tr>
+<td><pre>7443</pre></td>
+<td><pre>2014-08-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>revert to double negative to preserve backward compatibility</pre></td>
+</tr>
+<tr>
+<td><pre>7444</pre></td>
+<td><pre>2014-08-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for crashing bug 2025. Don't call taBase::UnRef(cell_mat) at end of RenderLine.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>7445</pre></td>
+<td><pre>2014-08-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Edit the project_open_icon for better visibility
+</pre></td>
+</tr>
+<tr>
+<td><pre>7446</pre></td>
+<td><pre>2014-08-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Fix for bug 1978 - dropping var into vars shouldn't offer "Add To" option
+* Uses new method directive EXCLUDE_METHOD_FOR_xxx where xxx is a type name
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>7447</pre></td>
+<td><pre>2014-08-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix for grid view: not sure how it even worked at all before -- was using a tmp slice
+of a matrix -- now uses the full matrix and accesses the slice on demand during render.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7448</pre></td>
+<td><pre>2014-08-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* More constrained conversion rules - was accepting 'do', now requires 'do(', 'do (' or 'do while'
+* Toolbar name changed from 'do' to 'do while'
+</pre></td>
+</tr>
+<tr>
+<td><pre>7449</pre></td>
+<td><pre>2014-08-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Token chooser hides members marked #HIDDEN_CHOOSER 
+* The 7 cluster run data tables are now filtered out of chooser
+</pre></td>
+</tr>
+<tr>
+<td><pre>7450</pre></td>
+<td><pre>2014-08-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>* Fix for 2027 #READ_ONLY on #BITS enum: no visual cue that it is read only
+* This is not the general fix we might want but if we are only representing bits with checkboxes this is a good solution
+* Call setStyleSheet on the checkbox
+</pre></td>
+</tr>
+<tr>
+<td><pre>7451</pre></td>
+<td><pre>2014-08-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vec bench intermediate</pre></td>
+</tr>
+<tr>
+<td><pre>7452</pre></td>
+<td><pre>2014-08-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>vec bench with sequential recv's</pre></td>
+</tr>
+<tr>
+<td><pre>7453</pre></td>
+<td><pre>2014-08-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove extra 'g' typo
+</pre></td>
+</tr>
+<tr>
+<td><pre>7454</pre></td>
+<td><pre>2014-08-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Set Color Scheme and Set Color Scheme -- All Views menu options added to T3 panels
+* clarified how g_bar.e is used in netin computation
+</pre></td>
+</tr>
+<tr>
+<td><pre>7455</pre></td>
+<td><pre>2014-08-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update color scheme enum to match defaults</pre></td>
+</tr>
+<tr>
+<td><pre>7456</pre></td>
+<td><pre>2014-08-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>potential NULL crash fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>7457</pre></td>
+<td><pre>2014-08-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Unit value now displayed in caption when a unit is selected. See bug 1996.
+</pre></td>
+</tr>
+<tr>
+<td><pre>7458</pre></td>
+<td><pre>2014-08-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2031 - 'Assign To' shouldn't change the name of the object being reassigned
+</pre></td>
+</tr>
+<tr>
+<td><pre>7459</pre></td>
+<td><pre>2014-08-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Not sure this is a complete fix but I think it at least provides a workaround.  You should be able to set ChangeLog (any doc) to unpinned, save the file and it should not be pinned when you reopen. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>7460</pre></td>
+<td><pre>2014-08-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>auto_open was not being initialized to false!
+</pre></td>
+</tr>
+<tr>
+<td><pre>7461</pre></td>
+<td><pre>2014-08-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>also auto_edit was not being initialized in ControlPanel either..
+</pre></td>
+</tr>
+<tr>
+<td><pre>7462</pre></td>
+<td><pre>2014-08-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix CopyFrom so that it resets the original name after the copy
+</pre></td>
+</tr>
+<tr>
+<td><pre>7463</pre></td>
+<td><pre>2014-08-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add clear button to console toolbar
+</pre></td>
+</tr>
+</table>
+</body></html>
