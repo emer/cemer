@@ -1869,10 +1869,12 @@ taBase* taBase::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ)
   MemberDef* el_md = NULL;
   taBase* nw_el = (taBase*)FindMembeR(el_path, el_md);
   if(nw_el) return nw_el;
-  taMisc::Warning("*** Dump_Load_Path_parent: Object at path:",GetPathNames(),
-                  "is not capable of creating a new element with the path:",el_path,
-                  "of type:",ld_el_typ->name,
-                  "something is askew in the loading paths");
+  if(taMisc::verbose_load != taMisc::QUIET) {
+    taMisc::Warning("*** Dump_Load_Path_parent: Object at path:",GetPathNames(),
+                    "is not capable of creating a new element with the path:",el_path,
+                    "of type:",ld_el_typ->name,
+                    "something is askew in the loading paths");
+  }
   return NULL;
 }
 
