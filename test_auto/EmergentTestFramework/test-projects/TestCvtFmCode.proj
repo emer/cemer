@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.3.0 rev10154
+// ta_Dump File v3.0 -- code v8.0.3.0 rev10182
 LeabraProject .projects["TestCvtFmCode"] { 
  Doc_Group @.docs = [0] {
  };
@@ -437,7 +437,7 @@ LeabraProject .projects["TestCvtFmCode"] {
      };
     };
     Else @[7] { 
-     ProgEl_List @.else_code = [1] {
+     ProgEl_List @.true_code = [1] {
       PrintVar @[0] { };
      };
     };
@@ -491,7 +491,7 @@ LeabraProject .projects["TestCvtFmCode"] {
      };
     };
     Else @[5] { 
-     ProgEl_List @.else_code = [1] {
+     ProgEl_List @.true_code = [1] {
       PrintExpr @[0] { };
      };
     };
@@ -511,12 +511,13 @@ LeabraProject .projects["TestCvtFmCode"] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [5] {
+   ProgVar_List @.vars = [6] {
     ProgVar @["MyProgCode"] { };
     ProgVar @["test_code_str"] { };
     ProgVar @["MyProgEl_list"] { };
     ProgVar @["my_prog_code"] { };
     ProgVar @["i"] { };
+    ProgVar @["str"] { };
    };
 
    Function_List @.functions = [0] {
@@ -531,12 +532,8 @@ LeabraProject .projects["TestCvtFmCode"] {
      };
     };
     If @[1] { 
-     ProgEl_List @.true_code = [2] {
+     ProgEl_List @.true_code = [1] {
       Comment @[0] { };
-      Switch @[1] { 
-       ProgEl_List @.cases = [0] {
-       };
-      };
      };
     };
     AssignExpr @[2] { };
@@ -608,7 +605,7 @@ LeabraProject .projects["TestCvtFmCode"] {
      };
     };
     Else @[4] { 
-     ProgEl_List @.else_code = [1] {
+     ProgEl_List @.true_code = [1] {
       PrintExpr @[0] { };
      };
     };
@@ -696,13 +693,13 @@ LeabraProject .projects["TestCvtFmCode"] {
   minor=0;
   step=0;
  };
- author=;
- email=;
+ author="Kai Krueger";
+ email="kai.krueger@colorado.edu";
  license {
-  license=NO_LIC;
+  license=GPLv2;
   owner_name=;
-  org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  org=;
+  year="2016";
   custom=;
  };
  pub_cite=;
@@ -3815,7 +3812,10 @@ LeabraProject .projects["TestCvtFmCode"] {
      flags=CAN_REVERT_TO_CODE;
      code_string="else";
      pre_compile_code_string="else";
-     else_code {
+     cond {
+      expr=;
+     };
+     true_code {
       name="else_code";
       el_typ=ProgCode;
       el_def=0;
@@ -4060,7 +4060,10 @@ LeabraProject .projects["TestCvtFmCode"] {
      flags=CAN_REVERT_TO_CODE;
      code_string="else";
      pre_compile_code_string="else";
-     else_code {
+     cond {
+      expr=;
+     };
+     true_code {
       name="else_code";
       el_typ=ProgCode;
       el_def=0;
@@ -4110,8 +4113,8 @@ LeabraProject .projects["TestCvtFmCode"] {
     minor=0;
     step=0;
    };
-   author=;
-   email=;
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
    flags=NO_STOP_STEP;
    stop_step_cond {
     expr=;
@@ -4176,9 +4179,17 @@ LeabraProject .projects["TestCvtFmCode"] {
     ProgVar @["i"] {
      name="i";
      var_type=T_Int;
-     flags=NULL_CHECK|USED|EDIT_VAL;
+     flags=NULL_CHECK|EDIT_VAL;
      reference=0;
      desc="This is a dummy variable that can be used in code strings to make sure the variable already exists";
+     init_from=NULL;
+    };
+    ProgVar @["str"] {
+     name="str";
+     var_type=T_String;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc="//This is a string dummy variable that can be used in code strings to make sure the variable already exists";
      init_from=NULL;
     };
    };
@@ -4224,18 +4235,6 @@ LeabraProject .projects["TestCvtFmCode"] {
        flags=CAN_REVERT_TO_CODE;
        code_string="// Hello World";
        pre_compile_code_string="// Hello World";
-      };
-      Switch @[1] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="switch(i)";
-       pre_compile_code_string="switch(i)";
-       switch_var=.projects["TestCvtFmCode"].programs["TestConvertProgCodeStringToProgElCode"].vars["i"]$$;
-       cases {
-	name="cases";
-	el_typ=CaseBlock;
-	el_def=0;
-       };
       };
      };
     };
@@ -4552,7 +4551,10 @@ LeabraProject .projects["TestCvtFmCode"] {
      flags=CAN_REVERT_TO_CODE;
      code_string="else";
      pre_compile_code_string="else";
-     else_code {
+     cond {
+      expr=;
+     };
+     true_code {
       name="else_code";
       el_typ=ProgCode;
       el_def=0;
@@ -4626,7 +4628,7 @@ LeabraProject .projects["TestCvtFmCode"] {
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993159;
+     value 8 0=0.7993158;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -4636,7 +4638,7 @@ LeabraProject .projects["TestCvtFmCode"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABKgAABBEAAAAAAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABbQAAA84AAAAAAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -4835,7 +4837,7 @@ LeabraProject .projects["TestCvtFmCode"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.03078677;
+       value 8 0=0.002280502;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -4845,7 +4847,7 @@ LeabraProject .projects["TestCvtFmCode"] {
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6944128;
+       value 8 0=0.722919;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -4874,7 +4876,7 @@ LeabraProject .projects["TestCvtFmCode"] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.programs;.programs.break_points;.programs[2].prog_code;.programs[2].prog_code[1];.networks; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.programs;.programs.break_points;.programs[2];.programs[2].vars;.programs[2].prog_code;.programs[2].prog_code[1];.programs[3];.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
