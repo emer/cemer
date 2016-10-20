@@ -37,7 +37,7 @@ public:
   };
     
   BaLearnRule   learn_rule;     // #DEF_DELTA learning rule -- delta is most general and deals with second-order conditioning and contrastive learning of CS-US associations -- US_DELTA is now obsolete but avail for backwards compatibility -- DA_SU_RU not really tested or used here
-  bool          delta_da;       // #CONDSHOW_ON_us_delta multiply us_delta by absolute value of dopamine 
+  bool          delta_da;       // #CONDSHOW_ON_learn_rule:US_DELTA multiply us_delta by absolute value of dopamine 
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
   
