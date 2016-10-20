@@ -357,6 +357,8 @@ String BaseSpec::WhereUsed(bool child) {
         rval += "[" + sptr->GetSpec()->GetName() + "]  ";
       }
       rval += ownown->GetPathNames() + " \n\n";
+      taMisc::Info(ownown->GetPathNames());
+
     }
   }
   
