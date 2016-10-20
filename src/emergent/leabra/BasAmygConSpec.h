@@ -36,7 +36,10 @@ public:
     US_DELTA,                   // earlier form of delta rule based on difference between US (PV) and current activation -- only used when a PV signal is present  -- keeps BA units tracking actual US magnitude -- receives US as deep_raw_net from SendDeepRawConSpec from corresponding US unit
   };
     
-  BaLearnRule   learn_rule;     // #DEF_DELTA learning rule -- delta is most general and deals with second-order conditioning and contrastive learning of CS-US associations -- US_DELTA is now obsolete but avail for backwards compatibility -- DA_SU_RU not really tested or used here
+  BaLearnRule   learn_rule;     // #DEF_DELTA learning rule -- delta is most general and deals with second-order conditioning and contrastive learning of CS-US associations -- US_DELTA is now obsolete but avail for backwards compatibility
+  float         delta_neg_lrate; // #CONDSHOW_ON_learn_rule:DELTA learning rate factor for negative delta 
+  float         delta_da_gain;   // #CONDSHOW_ON_learn_rule:DELTA how much does absolute value of dopamine contribute to learning
+  float         delta_da_base;  // #CONDSHOW_ON_learn_rule:DELTA constant baseline learning rate -- da_gain adds to this
   bool          delta_da;       // #CONDSHOW_ON_learn_rule:US_DELTA multiply us_delta by absolute value of dopamine 
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
@@ -69,9 +72,13 @@ public:
 
   inline void C_Compute_dWt_BasAmyg_Delta
     (float& dwt, const float su_act, const float ru_act, const float ru_act_prv,
-     const float lrate_eff) {
+     const float da_p, const bool d2r, const float lrate_eff) {
+    const float da = GetDa(da_p, d2r);
     float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
-    dwt += delta;
+    if(delta < 0.0f)
+      delta *= ba_learn.delta_neg_lrate;
+    float da_lrate = ba_learn.delta_da_base + ba_learn.delta_da_gain * fabsf(da);
+    dwt += da_lrate * delta;
   }
   // #IGNORE basic delta
   
@@ -80,7 +87,6 @@ public:
      const float da_p, const bool d2r, const float lrate_eff) {
     const float da = GetDa(da_p, d2r);
     if(us > 0.01f) {
-      // proposal: lrate_eff * su_act * (act_p - act_q0) -- requires PV drive on act_p and inhibition of others
       float delta = lrate_eff * su_act * (us - ru_act);
       if(ba_learn.delta_da) {
         delta *= fabsf(da);
@@ -150,7 +156,7 @@ public:
         // todo: what to do about the following, and will it mess with delta computation?
         // this is the key for learning: up-state or actual ru activation
         // const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
-        C_Compute_dWt_BasAmyg_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, clrate);
+        C_Compute_dWt_BasAmyg_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, d2r, clrate);
       }
     }
     else {

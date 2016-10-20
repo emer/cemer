@@ -26,7 +26,10 @@ void BasAmygLearnSpec::Initialize() {
 void BasAmygLearnSpec::Defaults_init() {
   burst_da_gain = 1.0f;
   learn_rule = US_DELTA;
-  delta_da = false;
+  delta_neg_lrate = 0.1f;
+  delta_da_gain = 0.5f;
+  delta_da_base = 0.5f;
+  delta_da = true;              // NOTE: TRUE in bvPVLV
 }
 
 
