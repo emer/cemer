@@ -40,9 +40,7 @@ public:
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 
-  bool                  BrowserEditSet(const String& code, int move_after = 0) override;
-  virtual  String       CodeGetDesc(const String& code);
-  // #IGNORE get description (comment) from the code string -- returns code without the comment
+  bool         BrowserEditSet(const String& code, int move_after = 0) override;
 
   inline void   Initialize()                    { value = 0; }
   inline void   Destroy()                       { };

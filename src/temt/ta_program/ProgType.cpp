@@ -65,22 +65,8 @@ const String ProgType::GenListing(int indent_level) {
 }
 
 bool ProgType::BrowserEditSet(const String& code, int move_after) {
-  String cd = CodeGetDesc(code);
+  String cd = ProgEl::CodeGetDesc(code, desc);
   return inherited::BrowserEditSet(cd, move_after);
-}
-
-String ProgType::CodeGetDesc(const String& code) {
-  if(code.contains("//")) {
-    desc = trim(code.after("//"));
-    return trim(code.before("//"));
-  }
-  if(code.contains("/*")) {
-    desc = trim(code.after("/*"));
-    if(desc.contains("*/"))
-      desc = trim(desc.before("*/",-1));
-    return trim(code.before("/*"));
-  }
-  return code;
 }
 
 bool ProgType::BrowserSelectMe() {

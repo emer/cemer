@@ -1132,6 +1132,9 @@ public:
   virtual bool          MatrixColToScalars(const Variant& mtx_col,
                                            const String& scalar_col_name_stub="");
   // #CAT_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  virtual bool          MatrixColToScalarRows
+    (DataTable* dest_data, const Variant& mtx_col, const String& dest_label_col_nm="");
+  // #CAT_Columns convert data in a matrix column to a single scalar column with each row containing the value of each cell in the matrix, repeated for the number of existing rows in this table -- if dest_label_col_nm is non-empty, then create (use existing) String column of that name to store a label indicating the original row and flat cell index of the source matrix data
 
   virtual bool          MatrixColFmScalarsCol(DataCol* mtx_col,
                                               const String& scalar_col_name_stub="");

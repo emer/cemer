@@ -59,7 +59,7 @@ String DynEnumBase::GetDisplayName() const {
 }
 
 bool DynEnumBase::BrowserEditSet(const String& code, int move_after) {
-  String cd = CodeGetDesc(code);
+  String cd = ProgEl::CodeGetDesc(code, desc);
   if(cd.contains("(enum:"))
     cd = trim(cd.before("(enum:"));
   return taNBase::BrowserEditSet(cd, move_after);

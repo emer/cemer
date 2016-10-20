@@ -152,6 +152,10 @@ public:
   static bool  ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together -- if dest == src_a then the results go into the src_a table directly, and no additional table is created -- if the number of rows is unequal, then result has the maximum of the two sources, with blank padding for the shorter of the two.
 
+  static bool  MatrixColToScalarRows
+    (DataTable* dest, DataTable* src, const Variant& src_mtx_col, const String& dest_label_col_nm="");
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON convert data in a matrix column to a single scalar column with each row containing the value of each cell in the matrix, repeated for the number of existing rows in source table -- if dest_label_col_nm is non-empty, then create (use existing) String column of that name to store a label indicating the original row and flat cell index of the source matrix data
+
   String   GetTypeDecoKey() const override { return "DataTable"; }
   TA_BASEFUNS(taDataProc);
 private:

@@ -960,20 +960,6 @@ cssEl* ProgVar::NewCssEl() {
   return &cssMisc::Void;
 }
 
-String ProgVar::CodeGetDesc(const String& code) {
-  if(code.contains("//")) {
-    desc = trim(code.after("//"));
-    return trim(code.before("//"));
-  }
-  if(code.contains("/*")) {
-    desc = trim(code.after("/*"));
-    if(desc.contains("*/"))
-      desc = trim(desc.before("*/",-1));
-    return trim(code.before("/*"));
-  }
-  return code;
-}
-
 ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
   if(td == NULL) return T_UnDef;
   if(td->IsBool()) return T_Bool;
@@ -1053,7 +1039,7 @@ bool ProgVar::SetTypeAndName(const String& ty_nm) {
 }
 
 bool ProgVar::BrowserEditSet(const String& code, int move_after) {
-  String cd = CodeGetDesc(code);
+  String cd = ProgEl::CodeGetDesc(code, desc);
   if(cd.empty()) return false;
   if(cd.contains("undefined")) return false;
   if(cd.contains('(') && cd.contains(')')) {

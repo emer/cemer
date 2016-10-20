@@ -163,8 +163,8 @@ public:
   // #IGNORE check the toolbar name and the type def name returning true if match and make sure it isn't just the start of some variable name
   bool                  BrowserEditEnable() override { return true; }
   bool                  BrowserEditSet(const String& code, int move_after = 0) override;
-  virtual  String       CodeGetDesc(const String& code);
-  // #IGNORE get description (comment) from the code string -- returns code without the comment
+  static  String        CodeGetDesc(const String& code, String& desc);
+  // #IGNORE get description (comment) from the code string -- returns code without the comment -- processes // and /* types of comments
   virtual bool          BrowserEditTest();
   // #EXPERT test the parsing functions of this program element -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
   virtual bool          BrowserEditTest_impl();

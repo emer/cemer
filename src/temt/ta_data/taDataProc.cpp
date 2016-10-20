@@ -1737,3 +1737,41 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
   }
   return true;
 }
+
+bool taDataProc::MatrixColToScalarRows
+(DataTable* dest, DataTable* src, const Variant& src_mtx_col,
+ const String& dest_label_col_nm) {
+  bool in_place_req = false;
+  GetDest(dest, src, "MatrixColToScalarRows", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::MatrixColToScalarRows -- src cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
+  DataCol* st_data = src->GetColData(src_mtx_col, false); // quiet
+  if(!st_data) return false;
+  dest->StructUpdate(true);
+  dest->RemoveAllCols();
+  DataCol* dcol = dest->FindMakeCol(st_data->name, st_data->valType());
+  DataCol* labels = NULL;
+  if(dest_label_col_nm.nonempty()) {
+    labels = dest->FindMakeCol(dest_label_col_nm, VT_STRING);
+  }
+  int cells = st_data->cell_geom.Product();
+  int rows = src->rows;
+  dest->EnforceRows(cells * rows);
+  int cidx = 0;
+  for(int i=0; i<src->rows; i++) {
+    for(int j=0; j<cells; j++, cidx++) {
+      Variant val = st_data->GetMatrixFlatVal(i, j);
+      dcol->SetVal(val, cidx);
+      if(labels) {
+        String lbl = String(i) + ":" + String(j);
+        labels->SetVal(lbl, cidx);
+      }
+    }
+  }
+  dest->StructUpdate(false);
+  return true;
+}
+

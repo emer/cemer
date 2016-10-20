@@ -4826,6 +4826,11 @@ bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name
   return true;
 }
 
+bool DataTable::MatrixColToScalarRows
+(DataTable* dest_data, const Variant& mtx_col, const String& dest_label_col_nm) {
+  return taDataProc::MatrixColToScalarRows(dest_data, this, mtx_col, dest_label_col_nm);
+}
+
 bool DataTable::SplitStringToCols(const Variant& string_col,
     const String& delim,
     const String& col_name_stub) {

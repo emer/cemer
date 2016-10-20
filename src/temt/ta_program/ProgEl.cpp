@@ -626,7 +626,7 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
     }
   }
   edit_move_after = 0;
-  String cd = CodeGetDesc(code);
+  String cd = CodeGetDesc(code, desc);
   if(CanCvtFmCode(cd, this)) {
     bool rval;
     rval = CvtCodeToVar(cd);
@@ -662,8 +662,29 @@ bool ProgEl::BrowserEditTest_impl() {
   return true;
 }
 
-String ProgEl::CodeGetDesc(const String& code) {
+String ProgEl::CodeGetDesc(const String& code, String& desc) {
   if(code.contains("//")) {
+    if(code.contains('"')) {
+      bool in_q = false;
+      int len = code.length();
+      for(int i=0; i<len; i++) {
+        if(code[i] == '"' && (i == 0 || code[i-1] != '\\')) {
+          in_q = !in_q;
+        }
+        else if(!in_q && code[i] == '/' && i<len-1 && (code[i+1] == '/' || code[i+1] == '*')) {
+          String rval = code.before(i);
+          if(i < len-2) {
+            desc = trim(code.after(i+1));
+            if(desc.contains("*/")) {
+              rval += desc.after("*/");
+              desc = trim(desc.before("*/"));
+            }
+          }
+          return rval;
+        }
+      }
+      return code;              // no comments outside of quotes
+    }
     desc = trim(code.after("//"));
     return trim(code.before("//"));
   }

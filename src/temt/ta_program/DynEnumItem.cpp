@@ -52,7 +52,7 @@ String DynEnumItem::GetDisplayName() const {
 }
 
 bool DynEnumItem::BrowserEditSet(const String& code, int move_after) {
-  String cd = CodeGetDesc(code);
+  String cd = ProgEl::CodeGetDesc(code, desc);
   String nm = cd;
   String vl;
   if(cd.contains("=")) {
@@ -65,20 +65,6 @@ bool DynEnumItem::BrowserEditSet(const String& code, int move_after) {
     value = (int)vl;
   UpdateAfterEdit();
   return true;
-}
-
-String DynEnumItem::CodeGetDesc(const String& code) {
-  if(code.contains("//")) {
-    desc = trim(code.after("//"));
-    return trim(code.before("//"));
-  }
-  if(code.contains("/*")) {
-    desc = trim(code.after("/*"));
-    if(desc.contains("*/"))
-      desc = trim(desc.before("*/",-1));
-    return trim(code.before("/*"));
-  }
-  return code;
 }
 
 bool DynEnumItem::BrowserSelectMe() {

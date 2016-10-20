@@ -264,7 +264,7 @@ bool Function::BrowserEditSet(const String& code, int move_after) {
   }
   // always convert -- don't check and don't revert to ProgCode
   edit_move_after = 0;
-  String cd = CodeGetDesc(code);
+  String cd = CodeGetDesc(code, desc);
   bool rval = CvtFmCode(cd);
   UpdateAfterEdit();
   return rval;
