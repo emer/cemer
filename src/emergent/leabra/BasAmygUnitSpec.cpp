@@ -73,3 +73,16 @@ void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
   }
 }
 
+float BasAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
+                                          int thr_no, float& net_syn) {
+  float da_val = u->da_p * net_syn;
+  if(dar == D2R)
+    da_val = -da_val;           // flip the sign
+  if(net->phase == LeabraNetwork::PLUS_PHASE) {
+    return da_mod.plus * da_val;
+  }
+  else {                      // MINUS_PHASE
+    return da_mod.minus * da_val;
+  }
+}
+

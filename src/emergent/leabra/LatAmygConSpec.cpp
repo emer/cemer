@@ -20,6 +20,7 @@ TA_BASEFUNS_CTORS_DEFN(LatAmygConSpec);
 
 void LatAmygGains::Initialize() {
   Defaults_init();
+  dar = D1D2R;                  // neutral..
 }
 
 void LatAmygGains::Defaults_init() {
@@ -27,6 +28,7 @@ void LatAmygGains::Defaults_init() {
   dip_da_gain= 1.0f;
   wt_decay_rate = 0.001f;
   wt_decay_floor = 0.5f;
+  neg_lrate = 0.001f;
 }
 
 void LatAmygConSpec::Initialize() {

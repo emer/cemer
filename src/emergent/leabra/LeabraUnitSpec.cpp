@@ -1355,6 +1355,16 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   // TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
 }
 
+float LeabraUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
+                                         int thr_no, float& net_syn) {
+  if(net->phase == LeabraNetwork::PLUS_PHASE) {
+    return da_mod.plus * u->da_p * net_syn;
+  }
+  else {                      // MINUS_PHASE
+    return da_mod.minus * u->da_p * net_syn;
+  }
+}
+
 float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
@@ -1374,12 +1384,7 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
     net_ex += u->deep_ctxt;
   }
   if(da_mod.on) {
-    if(net->phase == LeabraNetwork::PLUS_PHASE) {
-      net_ex += da_mod.plus * u->da_p * net_syn;
-    }
-    else {                      // MINUS_PHASE
-      net_ex += da_mod.minus * u->da_p * net_syn;
-    }
+    net_ex += Compute_DaModNetin(u, net, thr_no, net_syn);
   }
   return net_ex;
 }

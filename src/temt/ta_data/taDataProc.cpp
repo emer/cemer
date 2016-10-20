@@ -1751,7 +1751,7 @@ bool taDataProc::MatrixColToScalarRows
   DataCol* st_data = src->GetColData(src_mtx_col, false); // quiet
   if(!st_data) return false;
   dest->StructUpdate(true);
-  dest->RemoveAllCols();
+  // dest->RemoveAllCols();
   DataCol* dcol = dest->FindMakeCol(st_data->name, st_data->valType());
   DataCol* labels = NULL;
   if(dest_label_col_nm.nonempty()) {

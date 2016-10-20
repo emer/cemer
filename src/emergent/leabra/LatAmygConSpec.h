@@ -30,6 +30,14 @@ class E_API LatAmygGains : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for lateral amygdala learning
 INHERITED(SpecMemberBase)
 public:
+  enum DAReceptor {             // type of dopamine receptor expressed
+    D1R,                        // Primarily expresses Dopamine D1 Receptors -- dopamine is excitatory and bursts of dopamine lead to increases in synaptic weight, while dips lead to decreases -- direct pathway in dorsal striatum
+    D2R,                        // Primarily expresses Dopamine D2 Receptors -- dopamine is inhibitory and bursts of dopamine lead to decreases in synaptic weight, while dips lead to increases -- indirect pathway in dorsal striatum
+    D1D2R,                      // Expresses both D1 and D2 -- learning is based on absolute-value of dopamine (magnitude)
+  };
+
+  DAReceptor    dar;            // dopamine receptor type for learning on these connections -- if specific case is selected (D1R, D2R) then negative learning rate factor enters into the equation (neg_lrate) for when effective da learning direction is negative (i.e., dips for D1R and bursts for D2R)
+  float         neg_lrate;      // #CONDSHOW_OFF_dar:D1D2R how much to learn from the negative direction in dopamine-driven learning (i.e., dips for D1R and bursts for D2R) -- in principle this should be small so that CS's are not extinguished quickly -- see also wt_decay_rate and floor
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         wt_decay_rate; // decay rate (each AlphaTrial) as percentage of the pos-rectified difference between the existing weight less the wt_decay_floor
@@ -57,11 +65,15 @@ public:
 
   inline float  GetDa(float da)
   { da = (da < 0.0f) ? lat_amyg.dip_da_gain * da : lat_amyg.burst_da_gain * da;
-    da = fabsf(da);
+    if(lat_amyg.dar == LatAmygGains::D2R)
+      da = -da;
+    else if(lat_amyg.dar == LatAmygGains::D1D2R)
+      da = fabsf(da);
+    if(da < 0.0f) da *= lat_amyg.neg_lrate;
     return da;
     //if(fwt > lat_amyg.wt_decay_floor) da -= lat_amyg.wt_decay_rate * fwt;
   }
-  // get overall dopamine value
+  // get overall dopamine value -- depends on da receptor type etc
   
   inline void C_Compute_dWt_LatAmyg(float& dwt, const float su_act, const float da_p, 
                                     const float fwt)

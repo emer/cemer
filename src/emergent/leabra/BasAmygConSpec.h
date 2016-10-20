@@ -31,7 +31,12 @@ class E_API BasAmygLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra basal amygdala learning specs
 INHERITED(SpecMemberBase)
 public:
-  bool          us_delta;       // engage delta rule learning equation when an unconditioned-stimulus (primary value) is present dW = s * (us - act) -- keeps BA units tracking actual US magnitude -- receives US as deep_raw_net from SendDeepRawConSpec from corresponding US unit
+  enum BaLearnRule {
+    DELTA,                      // fully general delta rule learning: su * (ru->act_eq - ru->act_q0) -- delta relative to activation on prior trial -- use da mod of activation to also account for dopamine effects
+    US_DELTA,                   // earlier form of delta rule based on difference between US (PV) and current activation -- only used when a PV signal is present  -- keeps BA units tracking actual US magnitude -- receives US as deep_raw_net from SendDeepRawConSpec from corresponding US unit
+  };
+    
+  BaLearnRule   learn_rule;     // #DEF_DELTA learning rule -- delta is most general and deals with second-order conditioning and contrastive learning of CS-US associations -- US_DELTA is now obsolete but avail for backwards compatibility -- DA_SU_RU not really tested or used here
   bool          delta_da;       // #CONDSHOW_ON_us_delta multiply us_delta by absolute value of dopamine 
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
@@ -62,51 +67,63 @@ public:
   }
   // get effective dopamine signal taking into account gains and reversal by D2R
 
-  inline void C_Compute_dWt_BasAmyg_Acq
+  inline void C_Compute_dWt_BasAmyg_Delta
+    (float& dwt, const float su_act, const float ru_act, const float ru_act_prv,
+     const float lrate_eff) {
+    float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
+    dwt += delta;
+  }
+  // #IGNORE basic delta
+  
+  inline void C_Compute_dWt_BasAmyg_Acq_UsDelta
     (float& dwt, const float su_act, const float ru_act, const float us,
      const float da_p, const bool d2r, const float lrate_eff) {
     const float da = GetDa(da_p, d2r);
-    if(ba_learn.us_delta) {
-      if(us > 0.01f) {
-        // proposal: lrate_eff * su_act * (act_p - act_q0) -- requires PV drive on act_p and inhibition of others
-        float delta = lrate_eff * su_act * (us - ru_act);
-        if(ba_learn.delta_da) {
-          delta *= fabsf(da);
-        }
-        dwt += delta;
+    if(us > 0.01f) {
+      // proposal: lrate_eff * su_act * (act_p - act_q0) -- requires PV drive on act_p and inhibition of others
+      float delta = lrate_eff * su_act * (us - ru_act);
+      if(ba_learn.delta_da) {
+        delta *= fabsf(da);
       }
-      else { // using us_delta, but no US present this timestep
-        dwt += lrate_eff * su_act * ru_act * da;
-      }
+      dwt += delta;
     }
-    else { // not using us_delta
-      dwt += lrate_eff * su_act * fmaxf(us, ru_act) * da;
+    else { // using us_delta, but no US present this timestep
+      dwt += lrate_eff * su_act * ru_act * da;
     }
   }
-  // #IGNORE acquisition
-  inline void C_Compute_dWt_BasAmyg_Ext
+  // #IGNORE: acq us delta
+
+  inline void C_Compute_dWt_BasAmyg_Acq_DaSuRu
     (float& dwt, const float su_act, const float ru_act, const float us,
      const float da_p, const bool d2r, const float lrate_eff) {
     const float da = GetDa(da_p, d2r);
-    if(ba_learn.us_delta) {
-      // todo: have pv inhibit corresponding BAe, and use delta-based learning
-      // previous trial delta.  
-      if(us > 0.01f) {
-        float delta = lrate_eff * su_act * ((1.0f-us) - ru_act); // inverse us..
-        if(ba_learn.delta_da) {
-          delta *= fabsf(da);
-        }
-        dwt += delta;
+    dwt += lrate_eff * su_act * fmaxf(us, ru_act) * da;
+  }
+  // #IGNORE: not used -- here for reference
+
+  inline void C_Compute_dWt_BasAmyg_Ext_UsDelta
+    (float& dwt, const float su_act, const float ru_act, const float us,
+     const float da_p, const bool d2r, const float lrate_eff) {
+    const float da = GetDa(da_p, d2r);
+    if(us > 0.01f) {
+      float delta = lrate_eff * su_act * ((1.0f-us) - ru_act); // inverse us..
+      if(ba_learn.delta_da) {
+        delta *= fabsf(da);
       }
-      else {
-        dwt += lrate_eff * su_act * ru_act * da;
-      }
+      dwt += delta;
     }
     else {
       dwt += lrate_eff * su_act * ru_act * da;
     }
   }
-  // #IGNORE extinction
+  // #IGNORE ext us delta
+  inline void C_Compute_dWt_BasAmyg_Ext_DaSuRu
+    (float& dwt, const float su_act, const float ru_act, const float us,
+     const float da_p, const bool d2r, const float lrate_eff) {
+    const float da = GetDa(da_p, d2r);
+    dwt += lrate_eff * su_act * ru_act * da;
+  }
+  // #IGNORE not used -- here for reference
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
@@ -126,17 +143,29 @@ public:
     GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
 
     const int sz = cg->size;
-    for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      if(acq) {
-        C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->deep_raw_net,
-                                  ru->da_p, d2r, clrate);
-      }
-      else {
+    
+    if(ba_learn.learn_rule == BasAmygLearnSpec::DELTA) {
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        // todo: what to do about the following, and will it mess with delta computation?
         // this is the key for learning: up-state or actual ru activation
-        const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
-        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru_act_eff, ru->deep_raw_net,
-                                  ru->da_p, d2r, clrate);
+        // const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
+        C_Compute_dWt_BasAmyg_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, clrate);
+      }
+    }
+    else {
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        if(acq) {
+          C_Compute_dWt_BasAmyg_Acq_UsDelta(dwts[i], su_act, ru->act_eq, ru->deep_raw_net,
+                                            ru->da_p, d2r, clrate);
+        }
+        else {
+          // this is the key for learning: up-state or actual ru activation
+          const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
+          C_Compute_dWt_BasAmyg_Ext_UsDelta(dwts[i], su_act, ru_act_eff, ru->deep_raw_net,
+                                            ru->da_p, d2r, clrate);
+        }
       }
     }
   }

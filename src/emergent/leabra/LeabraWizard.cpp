@@ -1348,7 +1348,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baep_cons->SetUnique("ba_learn", true);
   baep_cons->ba_learn.burst_da_gain = 1.0f;
   baep_cons->ba_learn.dip_da_gain = 1.0f;
-  baep_cons->ba_learn.us_delta = false;
+  // baep_cons->ba_learn.us_delta = false;
 
   baen_cons->SetUnique("wt_sig", false);
   baen_cons->SetUnique("rnd", true);
@@ -1365,7 +1365,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baen_cons->SetUnique("ba_learn", true);
   baen_cons->ba_learn.burst_da_gain = 1.0f;
   baen_cons->ba_learn.dip_da_gain = 1.0f;
-  baen_cons->ba_learn.us_delta = false;
+  // baen_cons->ba_learn.us_delta = false;
   
   vspatch_cons_pd1->SetUnique("rnd", true);
   vspatch_cons_pd1->rnd.mean = 0.01f;

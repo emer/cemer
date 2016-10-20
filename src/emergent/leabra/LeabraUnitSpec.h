@@ -740,6 +740,9 @@ public:
     virtual float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                                       int thr_no, float& net_syn);
     // #IGNORE called by Compute_NetinInteg -- get extra excitatory net input factors to add on top of regular synapticaly-generated net inputs, passed as net_syn -- standard items include: bias weights, external soft-clamp input, TI extras (ti_ctxt, d5b_net), CIFER extras: thal (which multiplies net_syn), and da_mod (which multiplies net_syn) -- specialized algorithms can even overwrite net_syn if they need too..
+    virtual float Compute_DaModNetin(LeabraUnitVars* uv, LeabraNetwork* net,
+                                     int thr_no, float& net_syn);
+    // #IGNORE compute the da_mod netinput extra contribution -- only called if da_mod.on is true so this doesn't need to check that flag -- subtypes can do things to change the function (e.g., D1 vs D2 effects)
     virtual void Compute_NetinInteg_Spike_e(LeabraUnitVars* uv, LeabraNetwork* net,
                                             int thr_no);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual excitatory netin conductance value for spiking units by integrating over spike
