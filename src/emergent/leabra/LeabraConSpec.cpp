@@ -27,6 +27,7 @@ TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
+TA_BASEFUNS_CTORS_DEFN(SepDWtSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
@@ -170,6 +171,25 @@ void SlowWtsSpec::UpdateAfterEdit_impl() {
   fwt_pct = 1.0f - swt_pct;
   slow_dt = 1.0f /(float)slow_tau;
   wt_dt = 1.0f / wt_tau;
+}
+
+void SepDWtSpec::Initialize() {
+  on = false;
+
+  Defaults_init();
+}
+
+void SepDWtSpec::Defaults_init() {
+  dw_tau = 20.0f;
+  loser_gain = 0.5f;
+  sep_bound = true;
+  
+  dw_dt = 1.0f / dw_tau;
+}
+
+void SepDWtSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dw_dt = 1.0f / dw_tau;
 }
 
 void DeepLrateSpec::Initialize() {

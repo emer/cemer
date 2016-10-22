@@ -112,6 +112,12 @@ public:
   }
   // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
 
+  inline float  LongLrate(const float ru_avg_l_lrn) {
+    if(set_l_lrn) return l_lrn;
+    return ru_avg_l_lrn;
+  }
+  // get the learning rate for long-term floating average component (BCM)
+  
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   SIMPLE_COPY(XCalLearnSpec);
@@ -298,6 +304,31 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(SepDWtSpec);
+
+class E_API SepDWtSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate delta-weight aggregation -- accumulate increases and decreases in separate running averages, then do a soft-winner-take-all for whether a synapse either goes up or down
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable separate dwt integration learning
+  float         dw_tau;         // #CONDSHOW_ON_on time constant for running average integration of separate delta weight components
+  float         loser_gain;     // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of the opposite sign delta-weight to include in the net dwt factor, relative to the one with the largest magnitude (the winner) -- 0 = completely winner-takes-all, 1 = no differentiation -- both contribute equally
+  bool          sep_bound;     // #CONDSHOW_ON_on apply soft weight bounding separately on the weight increase and decrease components
+
+  float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
+
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(SepDWtSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(DeepLrateSpec);
 
 class E_API DeepLrateSpec : public SpecMemberBase {
@@ -329,6 +360,8 @@ INHERITED(ConSpec)
 public:
   enum LeabraConVars {
     SCALE = N_CON_VARS,      // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
+    DWI,                     // delta-weight increases
+    DWD,                     // delta-weight decreases
     FWT,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
     N_LEABRA_CON_VARS,  // #IGNORE number of leabra con vars
@@ -360,6 +393,7 @@ public:
   WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- plugs into soft bounding function
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
+  SepDWtSpec    sep_dwt;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
@@ -381,6 +415,8 @@ public:
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
+    float* dwi = cg->OwnCnVar(DWI);
+    float* dwd = cg->OwnCnVar(DWD);
     float* scales = cg->OwnCnVar(SCALE);
 
     int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
@@ -389,14 +425,13 @@ public:
       scales[i] = 1.0f;         // default -- must be set in prjn spec if different
     }
     
-    if(rnd.type != Random::NONE) {
-      for(int i=0; i<cg->size; i++) {
+    for(int i=0; i<cg->size; i++) {
+      if(rnd.type != Random::NONE) {
         C_Init_Weight_Rnd(wts[i], eff_thr_no);
-        C_Init_dWt(dwts[i]);
       }
-    }
-    else {
-      Init_dWt(cg, net, eff_thr_no);
+      C_Init_dWt(dwts[i]);
+      dwi[i] = 0.0f;
+      dwd[i] = 0.0f;
     }
   }
 
@@ -493,6 +528,25 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
+  inline void 	C_Compute_dWt_CtLeabraXCAL_SepDwt
+    (float& dwi, float& dwd, const float clrate, const float ru_avg_s, const float ru_avg_m,
+     const float su_avg_s, const float su_avg_m, const float ru_avg_l,
+     const float ru_avg_l_lrn) 
+  { float srs = ru_avg_s * su_avg_s;
+    float srm = ru_avg_m * su_avg_m;
+    float dw = clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
+                         xcal.m_lrn * xcal.dWtFun(srs, srm));
+    if(dw > 0.0f) {
+      dwi += sep_dwt.dw_dt * (dw - dwi); // running average increment
+      dwd -= sep_dwt.dw_dt * dwd; // also need to decrement to keep running avg
+    }
+    else {
+      dwd += sep_dwt.dw_dt * (dw - dwd);
+      dwi -= sep_dwt.dw_dt * dwi; // also need to decrement to keep running avg
+    }
+  }
+  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate dwt integration version
+
 #ifdef TA_VEC_USE
   inline void Compute_dWt_CtLeabraXCAL_vec
     (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
@@ -523,6 +577,37 @@ public:
     }
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no slow wts
+
+  inline void	C_Compute_Weights_CtLeabraXCAL_SepDwt
+    (float& wt, float& dwt, float& dwi, float& dwd, float& fwt, float& swt, float& scale,
+     const float wb_inc, const float wb_dec)
+  {
+    if(sep_dwt.sep_bound) {
+      if(dwi > -dwd) {            // soft-winner-take-all on weight increase vs. decrease
+        dwt = wb_inc * (1.0f - fwt) * dwi + sep_dwt.loser_gain * wb_dec * fwt * dwd;
+      }
+      else {
+        dwt = wb_dec * fwt * dwd + sep_dwt.loser_gain * wb_inc * (1.0f - fwt) * dwi;
+      }
+    }
+    else {
+      if(dwi > -dwd) {            // soft-winner-take-all on weight increase vs. decrease
+        dwt = dwi + sep_dwt.loser_gain * dwd;
+      }
+      else {
+        dwt = dwd + sep_dwt.loser_gain * dwi;
+      }
+      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+      else		dwt *= wb_dec * fwt;
+    }
+    fwt += dwt;                 // learn..
+    // C_ApplyLimits(fwt);         // don't need this..
+    wt = scale * SigFmLinWt(fwt);
+    if(adapt_scale.on) {
+      adapt_scale.AdaptWtScale(scale, wt);
+    }
+  }
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- separate delta weights
 
   inline void	C_Compute_Weights_CtLeabraXCAL_slow
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
