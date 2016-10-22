@@ -108,6 +108,7 @@ void DataTable::Initialize() {
   change_col = NULL;
   change_col_type = -1;
   row_with_hilite = -1; // no row highlighted
+  data.el_typ = &TA_String_Data;
 }
 
 void DataTable::Destroy() {
