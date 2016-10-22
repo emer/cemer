@@ -311,6 +311,7 @@ class E_API SepDWtSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable separate dwt integration learning
+  bool          add;            // #CONDSHOW_ON_on additive increment of dwi and dwd -- stronger momentum factor
   float         dw_tau;         // #CONDSHOW_ON_on time constant for running average integration of separate delta weight components
   float         loser_gain;     // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of the opposite sign delta-weight to include in the net dwt factor, relative to the one with the largest magnitude (the winner) -- 0 = completely winner-takes-all, 1 = no differentiation -- both contribute equally
   bool          sep_bound;     // #CONDSHOW_ON_on apply soft weight bounding separately on the weight increase and decrease components
@@ -537,12 +538,24 @@ public:
     float dw = clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                          xcal.m_lrn * xcal.dWtFun(srs, srm));
     if(dw > 0.0f) {
-      dwi += sep_dwt.dw_dt * (dw - dwi); // running average increment
-      dwd -= sep_dwt.dw_dt * dwd; // also need to decrement to keep running avg
+      if(sep_dwt.add) {
+        dwi += dw - sep_dwt.dw_dt * dwi; // running average increment
+        dwd -= sep_dwt.dw_dt * dwd; // also need to decrement to keep running avg
+      }
+      else {
+        dwi += sep_dwt.dw_dt * (dw - dwi); // running average increment
+        dwd -= sep_dwt.dw_dt * dwd; // also need to decrement to keep running avg
+      }
     }
     else {
-      dwd += sep_dwt.dw_dt * (dw - dwd);
-      dwi -= sep_dwt.dw_dt * dwi; // also need to decrement to keep running avg
+      if(sep_dwt.add) {
+        dwd += dw - sep_dwt.dw_dt * dwd;
+        dwi -= sep_dwt.dw_dt * dwi; // also need to decrement to keep running avg
+      }
+      else {
+        dwd += sep_dwt.dw_dt * (dw - dwd);
+        dwi -= sep_dwt.dw_dt * dwi; // also need to decrement to keep running avg
+      }
     }
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate dwt integration version

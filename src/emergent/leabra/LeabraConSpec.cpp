@@ -175,6 +175,7 @@ void SlowWtsSpec::UpdateAfterEdit_impl() {
 
 void SepDWtSpec::Initialize() {
   on = false;
+  add = false;
 
   Defaults_init();
 }
