@@ -661,11 +661,8 @@ int DataCol::IndexOfEl_Flat(int row, int cell) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
   int nRows = ar->Frames();
   if(row < 0) row = nRows + row; // abs row, if request was from end
-//  if(TestError((row < 0 || row >= nRows), "IndexOfEl_Flat", "row out of range"))
-//    return -1;
-  if(row < 0 || row >= nRows) {
+  if(TestError((row < 0 || row >= nRows), "IndexOfEl_Flat", "row out of range"))
     return -1;
-  }
   return ar->FrameStartIdx(row) + cell;
 }
 
