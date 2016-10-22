@@ -42,21 +42,21 @@ Connection
 # ParserTest
 #
 
-#General RunState
-#    ${output} =                Run Command Wait      {"command": "GetRunState"}
-#    Status OK Match Result     ${output}             4
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
 
 ConvertStringWithSlashesFunCall
-#    Ensure Emergent Free
+    Ensure Emergent Free
     Code Should Convert To	"taMisc::OpenURL(\\"file:///dev/null\\")"	MiscCall	"taMisc::OpenURL(\\"file:///dev/null\\")"	
 
 ConvertStringWithSlashesAssignment
-#    Ensure Emergent Free
+    Ensure Emergent Free
     Code Should Convert To	"str = \\"Hello//World\\""	AssignExpr	"str = \\"Hello//World\\""	
 
 ConvertSwitchWithBlank
     Ensure Emergent Free
-    Code Should Convert To	"switch (i)"	Switch    "switch(i)"
+    Code Should Convert To	"switch (i)"	Switch    "switch (i)"
 
 ConvertSwitchWithoutBlank
     Ensure Emergent Free
