@@ -169,7 +169,8 @@ bool taiWidgetMethod::CallFun_impl() {
     if (ok) arg_dlg->setBgColor(bgclr);
   }
   arg_dlg->Constr("", "");
-  int ok_can = arg_dlg->Edit(true);     // true = wait for a response
+  String width = meth->OptionAfter("MIN_DLG_WIDTH_");  // remove if we can get dialogs to resize when conditional widgets get added
+  int ok_can = arg_dlg->Edit(true, width.toInt());     // true = wait for a response - see min width
   if (ok_can && !arg_dlg->err_flag) {
     GenerateScript();
 #ifdef DMEM_COMPILE
