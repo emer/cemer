@@ -307,7 +307,7 @@ private:
 eTypeDef_Of(SepDWtSpec);
 
 class E_API SepDWtSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate delta-weight aggregation -- accumulate increases and decreases in separate leaky accumulators, then do a soft-winner-take-all for whether a synapse either goes up or down
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate delta-weight aggregation -- accumulate increases and decreases over time in separate leaky accumulators, with learning based on a winner-take-all of these two factors -- either go up or down, but not both
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable separate dwt integration learning
@@ -391,7 +391,7 @@ public:
   WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- plugs into soft bounding function
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
-  SepDWtSpec    sep_dwt;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
+  SepDWtSpec    sep_dwt;       // #CAT_Learning #CONDSHOW_ON_learn separate delta-weight aggregation -- accumulate increases and decreases over time in separate leaky accumulators, with learning based on a winner-take-all of these two factors -- either go up or down, but not both
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
