@@ -72,6 +72,12 @@ bool BlankLineEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool BlankLineEl::CvtFmCode(const String& code) {
+  code_string = " ";  // if code_string is empty RevertToCode doesn't work
   return true;
 }
 
+bool BlankLineEl::ChooseMe() {
+  code_string = " ";  // if code_string is empty RevertToCode doesn't work
+  SetProgFlag(CAN_REVERT_TO_CODE);
+  return true;
+}

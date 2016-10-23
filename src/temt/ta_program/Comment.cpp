@@ -33,7 +33,7 @@ void Comment::GenCssBody_impl(Program* prog) {
 }
 
 String Comment::GetDisplayName() const {
-  return "// " + desc;
+  return " // " + desc;
 }
 
 String Comment::GetColText(const KeyString& key, int itm_idx) const {
@@ -77,6 +77,14 @@ bool Comment::CvtFmCode(const String& code) {
   if(code.startsWith("//")) desc = trim(code.after("//"));
   else if(code.startsWith("/*")) trim(desc = code.after("/*"));
   if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
+  
+  code_string = " ";  // if code_string is empty RevertToCode doesn't work
+  return true;
+}
+
+bool Comment::ChooseMe() {
+  code_string = " ";  // if code_string is empty RevertToCode doesn't work
+  SetProgFlag(CAN_REVERT_TO_CODE);
   return true;
 }
 
