@@ -175,16 +175,11 @@ void SlowWtsSpec::UpdateAfterEdit_impl() {
 
 void SepDWtSpec::Initialize() {
   on = false;
-  add = false;
-
   Defaults_init();
 }
 
 void SepDWtSpec::Defaults_init() {
-  dw_tau = 20.0f;
-  loser_gain = 0.5f;
-  sep_bound = true;
-  
+  dw_tau = 10.0f;
   dw_dt = 1.0f / dw_tau;
 }
 

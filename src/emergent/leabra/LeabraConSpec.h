@@ -307,14 +307,11 @@ private:
 eTypeDef_Of(SepDWtSpec);
 
 class E_API SepDWtSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate delta-weight aggregation -- accumulate increases and decreases in separate running averages, then do a soft-winner-take-all for whether a synapse either goes up or down
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate delta-weight aggregation -- accumulate increases and decreases in separate leaky accumulators, then do a soft-winner-take-all for whether a synapse either goes up or down
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable separate dwt integration learning
-  bool          add;            // #CONDSHOW_ON_on additive increment of dwi and dwd -- stronger momentum factor
-  float         dw_tau;         // #CONDSHOW_ON_on time constant for running average integration of separate delta weight components
-  float         loser_gain;     // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of the opposite sign delta-weight to include in the net dwt factor, relative to the one with the largest magnitude (the winner) -- 0 = completely winner-takes-all, 1 = no differentiation -- both contribute equally
-  bool          sep_bound;     // #CONDSHOW_ON_on apply soft weight bounding separately on the weight increase and decrease components
+  float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- they decay over this time scale according to 1/dw_tau * dwt per trial
 
   float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
 
@@ -538,24 +535,12 @@ public:
     float dw = clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                          xcal.m_lrn * xcal.dWtFun(srs, srm));
     if(dw > 0.0f) {
-      if(sep_dwt.add) {
-        dwi += dw - sep_dwt.dw_dt * dwi; // running average increment
-        dwd -= sep_dwt.dw_dt * dwd; // also need to decrement to keep running avg
-      }
-      else {
-        dwi += sep_dwt.dw_dt * (dw - dwi); // running average increment
-        dwd -= sep_dwt.dw_dt * dwd; // also need to decrement to keep running avg
-      }
+      dwi += dw - sep_dwt.dw_dt * dwi;  // additive with constant decay
+      dwd -= sep_dwt.dw_dt * dwd; // decay
     }
     else {
-      if(sep_dwt.add) {
-        dwd += dw - sep_dwt.dw_dt * dwd;
-        dwi -= sep_dwt.dw_dt * dwi; // also need to decrement to keep running avg
-      }
-      else {
-        dwd += sep_dwt.dw_dt * (dw - dwd);
-        dwi -= sep_dwt.dw_dt * dwi; // also need to decrement to keep running avg
-      }
+      dwd += dw - sep_dwt.dw_dt * dwd;
+      dwi -= sep_dwt.dw_dt * dwi;
     }
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate dwt integration version
@@ -595,26 +580,14 @@ public:
     (float& wt, float& dwt, float& dwi, float& dwd, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   {
-    if(sep_dwt.sep_bound) {
-      if(dwi > -dwd) {            // soft-winner-take-all on weight increase vs. decrease
-        dwt = wb_inc * (1.0f - fwt) * dwi + sep_dwt.loser_gain * wb_dec * fwt * dwd;
-      }
-      else {
-        dwt = wb_dec * fwt * dwd + sep_dwt.loser_gain * wb_inc * (1.0f - fwt) * dwi;
-      }
+    if(dwi > -dwd) {            // soft-winner-take-all on weight increase vs. decrease
+      dwt = wb_inc * (1.0f - fwt) * dwi;
     }
     else {
-      if(dwi > -dwd) {            // soft-winner-take-all on weight increase vs. decrease
-        dwt = dwi + sep_dwt.loser_gain * dwd;
-      }
-      else {
-        dwt = dwd + sep_dwt.loser_gain * dwi;
-      }
-      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-      else		dwt *= wb_dec * fwt;
+      dwt = wb_dec * fwt * dwd;
     }
-    fwt += dwt;                 // learn..
-    // C_ApplyLimits(fwt);         // don't need this..
+    fwt += sep_dwt.dw_dt * dwt; // implicit factor of dw_tau in typical dwt size, compensate
+    C_ApplyLimits(fwt);         // might need this..
     wt = scale * SigFmLinWt(fwt);
     if(adapt_scale.on) {
       adapt_scale.AdaptWtScale(scale, wt);
