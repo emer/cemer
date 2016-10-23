@@ -586,7 +586,7 @@ public:
     else {
       dwt = wb_dec * fwt * dwd;
     }
-    fwt += sep_dwt.dw_dt * dwt; // implicit factor of dw_tau in typical dwt size, compensate
+    fwt += dwt; // implicit factor of dw_tau in typical dwt size, compensate
     C_ApplyLimits(fwt);         // might need this..
     wt = scale * SigFmLinWt(fwt);
     if(adapt_scale.on) {
