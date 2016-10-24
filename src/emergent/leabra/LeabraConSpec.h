@@ -527,19 +527,19 @@ public:
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_SepDwt
-    (float& dwi, float& dwd, const float clrate, const float ru_avg_s, const float ru_avg_m,
+    (float& dwi, float& dwd, float& dwt, const float clrate,
+     const float ru_avg_s, const float ru_avg_m,
      const float su_avg_s, const float su_avg_m, const float ru_avg_l,
      const float ru_avg_l_lrn) 
-  { float srs = ru_avg_s * su_avg_s;
-    float srm = ru_avg_m * su_avg_m;
-    float dw = clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
-                         xcal.m_lrn * xcal.dWtFun(srs, srm));
-    if(dw > 0.0f) {
-      dwi += dw - sep_dwt.dw_dt * dwi;  // additive with constant decay
+  {
+    C_Compute_dWt_CtLeabraXCAL(dwt, clrate, ru_avg_s, ru_avg_m,
+                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
+    if(dwt > 0.0f) {
+      dwi += dwt - sep_dwt.dw_dt * dwi;  // additive with constant decay
       dwd -= sep_dwt.dw_dt * dwd; // decay
     }
     else {
-      dwd += dw - sep_dwt.dw_dt * dwd;
+      dwd += dwt - sep_dwt.dw_dt * dwd;
       dwi -= sep_dwt.dw_dt * dwi;
     }
   }
@@ -580,15 +580,20 @@ public:
     (float& wt, float& dwt, float& dwi, float& dwd, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   {
-    if(dwi > -dwd) {            // soft-winner-take-all on weight increase vs. decrease
-      dwt = wb_inc * (1.0f - fwt) * dwi;
+    if(dwi > -dwd) {            // long-term is more pos than neg
+      if(dwt > 0.0f) {
+        fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
+        wt = scale * SigFmLinWt(fwt);
+      }
     }
-    else {
-      dwt = wb_dec * fwt * dwd;
+    else {                      // long-term is more neg than pos
+      if(dwt < 0.0f) {
+        fwt += wb_dec * fwt * dwt;
+        wt = scale * SigFmLinWt(fwt);
+      }
     }
-    fwt += dwt; 
-    C_ApplyLimits(fwt);         // might need this..
-    wt = scale * SigFmLinWt(fwt);
+    dwt = 0.0f;
+    //    C_ApplyLimits(fwt);         // don't need this..
     if(adapt_scale.on) {
       adapt_scale.AdaptWtScale(scale, wt);
     }

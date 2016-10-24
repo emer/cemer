@@ -205,6 +205,8 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 //      su_avg_s, su_avg_m);
 // #else
 
+  float* dwts = cg->OwnCnVar(DWT);
+  
   if(sep_dwt.on) {
     float* dwis = cg->OwnCnVar(DWI);
     float* dwds = cg->OwnCnVar(DWD);
@@ -216,12 +218,11 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
       C_Compute_dWt_CtLeabraXCAL_SepDwt
-        (dwis[i], dwds[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-         ru->avg_l, l_lrn_eff);
+        (dwis[i], dwds[i], dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m,
+         su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff);
     }
   }
   else {
-    float* dwts = cg->OwnCnVar(DWT);
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       float lrate_eff = clrate;
