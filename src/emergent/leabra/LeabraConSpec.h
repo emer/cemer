@@ -538,10 +538,11 @@ public:
       dwi += dwt - sep_dwt.dw_dt * dwi;  // additive with constant decay
       dwd -= sep_dwt.dw_dt * dwd; // decay
     }
-    else {
+    else if(dwt < 0.0f) {
       dwd += dwt - sep_dwt.dw_dt * dwd;
       dwi -= sep_dwt.dw_dt * dwi;
     }
+    // nothing if 0
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate dwt integration version
 
@@ -580,22 +581,24 @@ public:
     (float& wt, float& dwt, float& dwi, float& dwd, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   {
-    if(dwi > -dwd) {            // long-term is more pos than neg
-      if(dwt > 0.0f) {
-        fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
-        wt = scale * SigFmLinWt(fwt);
+    if(dwt != 0.0f) {
+      if(dwi > -dwd) {            // long-term is more pos than neg
+        if(dwt > 0.0f) {
+          fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
+          wt = scale * SigFmLinWt(fwt);
+        }
       }
-    }
-    else {                      // long-term is more neg than pos
-      if(dwt < 0.0f) {
-        fwt += wb_dec * fwt * dwt;
-        wt = scale * SigFmLinWt(fwt);
+      else {                      // long-term is more neg than pos
+        if(dwt < 0.0f) {
+          fwt += wb_dec * fwt * dwt;
+          wt = scale * SigFmLinWt(fwt);
+        }
       }
-    }
-    dwt = 0.0f;
-    //    C_ApplyLimits(fwt);         // don't need this..
-    if(adapt_scale.on) {
-      adapt_scale.AdaptWtScale(scale, wt);
+      dwt = 0.0f;
+      //    C_ApplyLimits(fwt);         // don't need this..
+      if(adapt_scale.on) {
+        adapt_scale.AdaptWtScale(scale, wt);
+      }
     }
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- separate delta weights

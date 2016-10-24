@@ -180,7 +180,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   LeabraConGroup* cg = (LeabraConGroup*)scg;
   LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
-  if(!sep_dwt.on && su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
+  if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
 
   float clrate, bg_lrate, fg_lrate;
