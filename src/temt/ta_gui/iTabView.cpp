@@ -279,7 +279,7 @@ void iTabView::panelSelected(int idx) {
     if (tbPanels->TabWasSelected()) {  // only do this selection if the user clicked on the tab
       tbPanels->ClearTabWasSelected();
       taiSigLink* sig_link = panel->link();
-      if (sig_link) {
+      if (sig_link && viewerWindow()) {
         iTreeView* tree_view = viewerWindow()->GetMainTreeView();
         if (tree_view) {
           iTreeViewItem* item = tree_view->AssertItem(sig_link);
