@@ -31,12 +31,43 @@ Test Foreach
     Should Contain             ${output}    "0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n9\\n8\\n7\\n6\\n5\\n4\\n3\\n2\\n1\\n-1\\n-2\\n-3\\n-4\\n-5\\n-6\\n-7\\n-8\\n-9\\n"
 
 Test Switch
-    ${output} =                Run Command           {"command": "RunProgram", "program": "Switch"}   5 sec
-    Status OK No Result        ${output}
+    Set Emergent Var		Switch		sw_int_var	0
+    ${output} =			Run Emergent Program	Switch
+    Should Contain		${output}    sw_int_var = 0\\ngot case 0\\n
+    Set Emergent Var		Switch		sw_int_var	1
+    ${output} =			Run Emergent Program	Switch
+    Should Contain		${output}    sw_int_var = 1\\ngot case 1\\n
+    Set Emergent Var		Switch		sw_int_var	2
+    ${output} =			Run Emergent Program	Switch
+    Should Contain		${output}    sw_int_var = 2\\ngot case 2\\n
+    Set Emergent Var		Switch		sw_int_var	3
+    ${output} =			Run Emergent Program	Switch
+    Should Contain		${output}    sw_int_var = 3\\ngot case 3\\n
+    Set Emergent Var		Switch		sw_int_var	4
+    ${output} =			Run Emergent Program	Switch
+    Should Contain		${output}    sw_int_var = 4\\ngot default case\\n
+    Set Emergent Var		Switch		sw_int_var	-2
+    ${output} =			Run Emergent Program	Switch
+    Should Contain		${output}    sw_int_var = -2\\ngot default case\\n
+
+
+    
 
 Test If_Else
-    ${output} =                Run Command           {"command": "RunProgram", "program": "If_Else"}   5 sec
-    Status OK No Result        ${output}
+    Set Emergent Var		If_Else		value	4
+    ${output} =			Run Emergent Program	If_Else
+    Should Contain		${output}    value is less than 5\\n
+    Set Emergent Var		If_Else		value	-6
+    ${output} =			Run Emergent Program	If_Else
+    Should Contain		${output}    value is less than 5\\n
+    Set Emergent Var		If_Else		value	6
+    ${output} =			Run Emergent Program	If_Else
+    Should Contain		${output}    value is greater than 5\\n
+    Set Emergent Var		If_Else		value	5
+    ${output} =			Run Emergent Program	If_Else
+    Should Contain		${output}    value is exactly 5\\n
+
+
 
 Test Conditional_Printing
     ${output} =                Run Command           {"command": "RunProgram", "program": "Conditional_Printing"}   5 sec
@@ -123,27 +154,35 @@ Test MiscMath
     Status OK No Result        ${output}
 
 Test CallFunctionReturnValue
-    ${output} =                Run Command           {"command": "RunProgram", "program": "CallFunctionReturnValue"}   5 sec
-    Status OK No Result        ${output}
+    ${output} =			Run Emergent Program	CallFunctionReturnValue
+    Should Contain		${output}    result = 650.25
+
 
 Test CallFunctionNoReturn
     ${output} =                Run Command           {"command": "RunProgram", "program": "CallFunctionNoReturn"}   5 sec
     Status OK No Result        ${output}
 
 Test CallingProgram
-    ${output} =                Run Command           {"command": "RunProgram", "program": "CallingProgram"}   5 sec
-    Status OK No Result        ${output}
-
-Test ProgramSeekingValue
-    ${output} =                Run Command           {"command": "RunProgram", "program": "ProgramSeekingValue"}   5 sec
-    Status OK No Result        ${output}
-
-Test ProgramWithValue
-    ${output} =                Run Command           {"command": "RunProgram", "program": "ProgramWithValue"}   5 sec
-    Status OK No Result        ${output}
+    ${output} =			Run Emergent Program	CallingProgram
+    Should Contain		${output}    Program_B - I've been called
 
 Test CallingProgramFunction
-     ${console}=		Run Emergent Program       CallingProgramFunction
+    ${output} =			Run Emergent Program	CallingProgramFunction
+    Should Contain		${output}    Program_B:TestFunction - I've been called
+    Should Not Contain		${output}    Program_B - I've been called
+
+
+Test ProgramSeekingValue
+    ${output} =			Run Emergent Program	ProgramSeekingValue
+    Should Contain		${output}    user_name = mike\ \ location = boulder\\n
+    Set Emergent Var		ProgramWithValue		user_name	"peter"
+    Set Emergent Var		ProgramWithValue		location	"denver"
+    ${output} =			Run Emergent Program	ProgramSeekingValue
+    Should Contain		${output}    user_name = peter\ \ location = denver\\n
+
+
+
+
 
 
 
