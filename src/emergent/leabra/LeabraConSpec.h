@@ -199,6 +199,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable dwt increase vs. decrease winner-take-all competition
   float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- decays over this time scale according to 1/dw_tau * dwt per trial
+  bool          wt_mod;         // #CONDSHOW_ON_on modulate strength of the WTA effect as a function of how far away the weight is from .5 -- as weight moves toward the extremes, include a more balanced set of changes
+  float         wt_mod_gain;    // #CONDSHOW_ON_on how strong is the wt_mod factor -- multiplies fabsf(wt - .5) for how much of the other weight direction to include -- 2.0 means that at the extremes weight changes will be balanced
 
   float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
 
@@ -548,19 +550,19 @@ public:
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
-  { if(dwt != 0.0f) {
-      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-      else		dwt *= wb_dec * fwt;
-      fwt += dwt;
-      // C_ApplyLimits(fwt);       // don't need this..
-      // swt = fwt;  // leave swt as pristine original weight value -- saves time
-      // and is useful for visualization!
-      wt = scale * SigFmLinWt(fwt);
-      dwt = 0.0f;
+  {
+    if(dwt == 0.0f) return;
+    if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+    else		dwt *= wb_dec * fwt;
+    fwt += dwt;
+    // C_ApplyLimits(fwt);       // don't need this..
+    // swt = fwt;  // leave swt as pristine original weight value -- saves time
+    // and is useful for visualization!
+    wt = scale * SigFmLinWt(fwt);
+    dwt = 0.0f;
 
-      if(adapt_scale.on) {
-        adapt_scale.AdaptWtScale(scale, wt);
-      }
+    if(adapt_scale.on) {
+      adapt_scale.AdaptWtScale(scale, wt);
     }
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no slow wts
@@ -569,7 +571,32 @@ public:
     (float& wt, float& dwt, float& dwavg, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   {
-    if(dwt != 0.0f) {
+    if(dwt == 0.0f) return;
+    if(dwt_wta.wt_mod) {
+      // how much of other sign to include, as function of how extreme weight is
+      // todo: could have this be relative to direction too (wt for dec, 1-wt for inc)
+      // this would imply a factor of .5 always for equivocal weights -- not as good..
+      float wt_mod = dwt_wta.wt_mod_gain * fabsf(wt - 0.5f);
+      if(dwavg > 0.0f) {            // long-term is more pos than neg
+        if(dwt > 0.0f) {
+          fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
+        }
+        else {
+          fwt += wt_mod * wb_dec * fwt * dwt;
+        }
+        wt = scale * SigFmLinWt(fwt);
+      }
+      else {                      // long-term is more neg than pos
+        if(dwt < 0.0f) {
+          fwt += wb_dec * fwt * dwt;
+        }
+        else {
+          fwt += wt_mod * wb_inc * (1.0f - fwt) * dwt;
+        }
+        wt = scale * SigFmLinWt(fwt);
+      }
+    }
+    else {
       if(dwavg > 0.0f) {            // long-term is more pos than neg
         if(dwt > 0.0f) {
           fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
@@ -582,11 +609,11 @@ public:
           wt = scale * SigFmLinWt(fwt);
         }
       }
-      dwt = 0.0f;
-      //    C_ApplyLimits(fwt);         // don't need this..
-      if(adapt_scale.on) {
-        adapt_scale.AdaptWtScale(scale, wt);
-      }
+    }
+    dwt = 0.0f;
+    //    C_ApplyLimits(fwt);         // don't need this..
+    if(adapt_scale.on) {
+      adapt_scale.AdaptWtScale(scale, wt);
     }
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- separate delta weights

@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iViewPanelOfGraphTable.h"
+#include <DataTable>
 #include <GraphTableView>
 #include <GraphColView>
 #include <iHColorScaleBar>
@@ -558,6 +559,12 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   GraphTableView* glv = this->glv(); //cache
   if (!glv) return; // probably destructing
   
+  DataTable* dt = glv->dataTable();
+  if(!dt) return;
+
+  int dt_cells = dt->Cells();
+  dt_cells_last_updt = dt_cells; // used in get values to determine if it is current
+  
   BuildPlots();
   
   chkDisplay->setChecked(glv->display_on);
@@ -637,20 +644,28 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   pdtRAxis->SetFlag(taiWidget::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
 }
 
-static void GetFixedMinMaxVal(taiWidgetPoly* widg, FixedMinMax& fmm) {
+static void GetFixedMinMaxVal(taiWidgetPoly* widg, FixedMinMax& fmm, bool panel_current) {
   // implements the auto-check function for fixed min max
   FixedMinMax fmm_orig; fmm_orig = fmm;
   widg->GetValue_(&fmm);
-  if((String)fmm.min != (String)fmm_orig.min)
-    fmm.fix_min = true;
-  if((String)fmm.max != (String)fmm_orig.max)
-    fmm.fix_max = true;
+  if(panel_current) {
+    if((String)fmm.min != (String)fmm_orig.min)
+      fmm.fix_min = true;
+    if((String)fmm.max != (String)fmm_orig.max)
+      fmm.fix_max = true;
+  }
 }
 
 
 void iViewPanelOfGraphTable::GetValue_impl() {
   GraphTableView* glv = this->glv(); //cache
   if (!glv) return;
+
+  DataTable* dt = glv->dataTable();
+  if(!dt) return;
+
+  int dt_cells = dt->Cells();
+  bool panel_current = (dt_cells == dt_cells_last_updt);
   
   glv->display_on = chkDisplay->isChecked();
   glv->manip_ctrl_on = chkManip->isChecked();
@@ -671,7 +686,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->setScaleData(false, cbar->min(), cbar->max());
 
   glv->x_axis.row_num = rncXAxis->isChecked();
-  GetFixedMinMaxVal(pdtXAxis, glv->x_axis.fixed_range);
+  GetFixedMinMaxVal(pdtXAxis, glv->x_axis.fixed_range, panel_current);
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
   glv->x_axis.matrix_cell = (int)cellXAxis->GetValue();
   glv->x_axis.show_axis_label = chkXAxisLabel->isChecked();
@@ -681,7 +696,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   if (tcol && !glv->z_axis.GetColPtr())
     oncZAxis->setChecked(true);
   glv->z_axis.on = oncZAxis->isChecked();
-  GetFixedMinMaxVal(pdtZAxis, glv->z_axis.fixed_range);
+  GetFixedMinMaxVal(pdtZAxis, glv->z_axis.fixed_range, panel_current);
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
@@ -695,7 +710,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
     if (tcol && !glv->plots[i]->GetColPtr())
       oncYAxis[i]->setChecked(true);
     glv->plots[i]->on = oncYAxis[i]->isChecked();
-    GetFixedMinMaxVal(pdtYAxis[i], glv->plots[i]->fixed_range);
+    GetFixedMinMaxVal(pdtYAxis[i], glv->plots[i]->fixed_range, panel_current);
     glv->plots[i]->alt_y = chkYAltY[i]->isChecked();
     glv->plots[i]->SetColPtr(tcol);
     glv->plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();

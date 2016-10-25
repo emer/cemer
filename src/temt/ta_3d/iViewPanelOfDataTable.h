@@ -37,6 +37,8 @@ public:
   QVBoxLayout*          layWidg;
   QWidget*              widCmdButtons;
   iMethodButtonMgr*     meth_but_mgr;
+  int                   dt_cells_last_updt; // number of cells in data table at last panel update -- used for determining if data has been updated since then.. impl in each subtype
+  
   DataTableView*        lv() {return (DataTableView*)m_dv;}
 
   String       TabText() const override;
