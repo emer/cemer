@@ -2,7 +2,7 @@
 Resource           Emergent.txt
 Resource           Server_lib.txt
 
-Suite Setup      Initialize Emergent    ../../demo/programs/program_examples.proj
+Suite Setup      Initialize Emergent    ./test-projects/TestProgramingPrimatives.proj
 Suite Teardown   Shutdown Emergent
 
 
