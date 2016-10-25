@@ -111,6 +111,7 @@ void DwtIncDecWTA::Defaults_init() {
   dw_tau = 20.0f;
   wt_mod = false;
   wt_mod_gain = 2.0f;
+  wt_mod_sgn = false;
   dw_dt = 1.0f / dw_tau;
 }
 

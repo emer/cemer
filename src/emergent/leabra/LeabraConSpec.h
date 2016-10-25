@@ -200,7 +200,8 @@ public:
   bool          on;             // enable dwt increase vs. decrease winner-take-all competition
   float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- decays over this time scale according to 1/dw_tau * dwt per trial
   bool          wt_mod;         // #CONDSHOW_ON_on modulate strength of the WTA effect as a function of how far away the weight is from .5 -- as weight moves toward the extremes, include a more balanced set of changes
-  float         wt_mod_gain;    // #CONDSHOW_ON_on how strong is the wt_mod factor -- multiplies fabsf(wt - .5) for how much of the other weight direction to include -- 2.0 means that at the extremes weight changes will be balanced
+  float         wt_mod_gain;    // #CONDSHOW_ON_on&&wt_mod how strong is the wt_mod factor -- multiplies fabsf(wt - .5) for how much of the other weight direction to include -- 2.0 means that at the extremes weight changes will be balanced
+  bool          wt_mod_sgn;    // #CONDSHOW_ON_on&&wt_mod use signed weight mod -- if weights are going up, then wt_mod is wt_mod_gain * wt for down, etc
 
   float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
 
@@ -582,7 +583,12 @@ public:
           fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
         }
         else {
-          fwt += wt_mod * wb_dec * fwt * dwt;
+          if(dwt_wta.wt_mod_sgn) {
+            fwt += dwt_wta.wt_mod_gain * wt * wb_dec * fwt * dwt;
+          }
+          else {
+            fwt += wt_mod * wb_dec * fwt * dwt;
+          }
         }
         wt = scale * SigFmLinWt(fwt);
       }
@@ -591,7 +597,12 @@ public:
           fwt += wb_dec * fwt * dwt;
         }
         else {
-          fwt += wt_mod * wb_inc * (1.0f - fwt) * dwt;
+          if(dwt_wta.wt_mod_sgn) {
+            fwt += dwt_wta.wt_mod_gain * (1.0f - wt) * wb_inc * (1.0f - fwt) * dwt;
+          }
+          else {
+            fwt += wt_mod * wb_inc * (1.0f - fwt) * dwt;
+          }
         }
         wt = scale * SigFmLinWt(fwt);
       }
