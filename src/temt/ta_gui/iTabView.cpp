@@ -20,6 +20,7 @@
 #include <iTreeView>
 #include <iTreeViewItem>
 #include <taiMisc>
+#include <taMisc>
 
 #include <QVBoxLayout>
 #include <QStackedWidget>
@@ -340,8 +341,11 @@ void iTabView::RemoveDataPanel(iPanelBase* panel) {
           int fi = i;
           if (fi >= tbPanels->count())
             --fi;
-          SetCurrentTab(fi);
-        } else {
+          if (!taMisc::quitting) {
+            SetCurrentTab(fi);
+          }
+        }
+        else {
           tbPanels->SetPanel(0, NULL); // no panel
         }
       }
