@@ -1787,10 +1787,13 @@ void LeabraNetwork::Compute_Weights() {
     NET_THREAD_CALL(LeabraNetwork::Compute_WtNormBal_Thr);
   }
 
-  if(net_misc.wt_norm) {
+  if(net_misc.wt_norm || net_misc.wt_bal) {
     Compute_WtNormPrjnAvg(); // separate aggregation of averages across projection
     // then use averages to actually do the normalization subtraction:
-    NET_THREAD_CALL(LeabraNetwork::Compute_WtNormSub_Thr);
+
+    if(net_misc.wt_norm) {
+      NET_THREAD_CALL(LeabraNetwork::Compute_WtNormSub_Thr);
+    }
   }
   
   SaveWeights_ClusterRunTerm();
@@ -1846,7 +1849,9 @@ void LeabraNetwork::Compute_WtNormPrjnAvg() {
       FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
         LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        p->fwt_avg += cg->fwt_avg;
+        if(net_misc.wt_norm) {
+          p->fwt_avg += cg->fwt_avg;
+        }
         if(net_misc.wt_bal) {
           p->bal_sum_max = fmaxf(p->bal_sum_max, cg->bal_sum);
           p->bal_sum_avg += cg->bal_sum;
