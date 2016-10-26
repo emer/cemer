@@ -424,7 +424,7 @@ void taiEditorOfClass::DoAddToControlPanel(QAction* act){
     se->RemoveField(idx);
   }
   else {
-    se->SelectMemberPrompt(rbase, md);
+    se->SelectMemberPrompt(rbase, md, rbase->GetDesc());
   }
 }
 

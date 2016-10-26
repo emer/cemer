@@ -319,14 +319,13 @@ bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr, const String& xtra
   return rval;
 }
 
-bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
+bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr, const String& desc) {
   if (!base) return false;
   
   // for "inline" objects with multiple parameters offer option to add as individual control panel items
   bool show_individual_option = mbr->type->members.size > 0; // if no members we don't show "add members individually"
   bool add_individually = false;  // default is to add inline
 
-  String eff_desc; // = desc -- this is our desc -- not relevant
   String full_lbl;
   base->GetControlPanelLabel(mbr, full_lbl);
   String full_lbl_copy = full_lbl;
@@ -389,11 +388,11 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
       else {                    // sometimes you just want the members, if they have distinctive names..
         complete_lbl = mbr_td->members.SafeEl(i)->name;
       }
-      rval = SelectMember_impl(mbr_base, mbr_md, complete_lbl, eff_desc, sub_grp_name, custom_label);
+      rval = SelectMember_impl(mbr_base, mbr_md, complete_lbl, desc, sub_grp_name, custom_label);
     }
   }
   else {
-    rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label);
+    rval = SelectMember_impl(base, mbr, full_lbl, desc, sub_grp_name, custom_label);
   }
   ReShowEdit(true); //forced
   return rval;
