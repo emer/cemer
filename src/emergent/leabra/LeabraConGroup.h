@@ -36,11 +36,13 @@ public:
   float	        wt_avg;	        // #NO_SAVE #CAT_Learning average weight values across this con group
   float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
+  float	        fwt_avg;	// #SAVE #CAT_Learning average weight values across this con group
 
   inline LeabraConSpec*    GetConSpec() const { return (LeabraConSpec*)con_spec; }
 
   void  LeabraInit()
-  { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f; wb_inc = 1.0f; wb_dec = 1.0f;
+  { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f;
+    wb_inc = 1.0f; wb_dec = 1.0f; fwt_avg = 0.0f;
   }
   // leabra initialize
 };

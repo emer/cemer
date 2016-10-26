@@ -89,6 +89,7 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 }
 
 void WtSigSpec::Initialize() {
+  avg_off = false;
   Defaults_init();
 }
 
@@ -533,7 +534,7 @@ void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   for(int trl = 0; trl < trials; trl++) {
     dwt = Random::UniformMinMax(-lrate, lrate);
     float dwt_save = dwt;
-    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f);
+    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f, 0.5f);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);

@@ -139,6 +139,7 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
+  bool          avg_off;        // dynamically adjust offset based on recv fwt_avg
 
   static inline float	SigFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
@@ -169,14 +170,10 @@ public:
   }
   // static version of function for implementing inverse of weight sigmoid -- for default gain = 6, offset = 1 params
 
-  inline float	SigFmLinWt(const float lw) {
-    return SigFun(lw, gain, off);
-  }
+  inline float	SigFmLinWt(float lw) { return SigFun(lw, gain, off); }
   // get sigmoidal contrast-enhanced weight from linear weight
   
-  inline float	LinFmSigWt(const float sw) {
-    return InvFun(sw, gain, off);
-  }
+  inline float	LinFmSigWt(const float sw) { return InvFun(sw, gain, off); }
   // get linear weight from sigmoidal contrast-enhanced weight
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
@@ -401,7 +398,12 @@ public:
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
 
-  inline float	SigFmLinWt(float lin_wt) { return wt_sig_fun.Eval(lin_wt);  }
+  inline float	SigFmLinWt(float lw, const float fwt_avg) {
+    if(wt_sig.avg_off) {
+      lw = (lw - fwt_avg) + 0.5f; // renormalize to .5
+    }
+    return wt_sig_fun.Eval(lw);
+  }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
   inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
@@ -550,7 +552,7 @@ public:
 
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
-     const float wb_inc, const float wb_dec)
+     const float wb_inc, const float wb_dec, const float fwt_avg)
   {
     if(dwt == 0.0f) return;
     if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
@@ -559,7 +561,7 @@ public:
     // C_ApplyLimits(fwt);       // don't need this..
     // swt = fwt;  // leave swt as pristine original weight value -- saves time
     // and is useful for visualization!
-    wt = scale * SigFmLinWt(fwt);
+    wt = scale * SigFmLinWt(fwt, fwt_avg);
     dwt = 0.0f;
 
     if(adapt_scale.on) {
@@ -570,7 +572,7 @@ public:
 
   inline void	C_Compute_Weights_CtLeabraXCAL_DwtWta
     (float& wt, float& dwt, float& dwavg, float& fwt, float& swt, float& scale,
-     const float wb_inc, const float wb_dec)
+     const float wb_inc, const float wb_dec, const float fwt_avg)
   {
     if(dwt == 0.0f) return;
     if(dwt_wta.wt_mod) {
@@ -590,7 +592,7 @@ public:
             fwt += wt_mod * wb_dec * fwt * dwt;
           }
         }
-        wt = scale * SigFmLinWt(fwt);
+        wt = scale * SigFmLinWt(fwt, fwt_avg);
       }
       else {                      // long-term is more neg than pos
         if(dwt < 0.0f) {
@@ -604,20 +606,20 @@ public:
             fwt += wt_mod * wb_inc * (1.0f - fwt) * dwt;
           }
         }
-        wt = scale * SigFmLinWt(fwt);
+        wt = scale * SigFmLinWt(fwt, fwt_avg);
       }
     }
     else {
       if(dwavg > 0.0f) {            // long-term is more pos than neg
         if(dwt > 0.0f) {
           fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
-          wt = scale * SigFmLinWt(fwt);
+          wt = scale * SigFmLinWt(fwt, fwt_avg);
         }
       }
       else {                      // long-term is more neg than pos
         if(dwt < 0.0f) {
           fwt += wb_dec * fwt * dwt;
-          wt = scale * SigFmLinWt(fwt);
+          wt = scale * SigFmLinWt(fwt, fwt_avg);
         }
       }
     }
@@ -631,13 +633,13 @@ public:
 
   inline void	C_Compute_Weights_CtLeabraXCAL_slow
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
-     const float wb_inc, const float wb_dec)
+     const float wb_inc, const float wb_dec, const float fwt_avg)
   { 
     if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
     else		dwt *= wb_dec * fwt;
     fwt += dwt;
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
-    float nwt = scale * SigFmLinWt(eff_wt);
+    float nwt = scale * SigFmLinWt(eff_wt, fwt_avg);
     wt += slow_wts.wt_dt * (nwt - wt);
     swt += slow_wts.slow_dt * (fwt - swt);
     dwt = 0.0f;

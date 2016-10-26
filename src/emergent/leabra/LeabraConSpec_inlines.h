@@ -28,6 +28,7 @@ inline void LeabraConSpec::Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* 
   cg->wt_avg = wt_bal.trg;
   cg->wb_inc = 1.0f;
   cg->wb_dec = 1.0f;
+  cg->fwt_avg = 0.5f;
 }
 
 #ifdef TA_VEC_USE
@@ -351,12 +352,20 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
         LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                 cg->other_idx);
         C_Compute_Weights_CtLeabraXCAL_DwtWta
-          (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+          (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i],
+           rcg->wb_inc, rcg->wb_dec, rcg->fwt_avg);
       }
     }
     else {
-      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_DwtWta
-                     (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f));
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        int ru_thr_no = ru->ThrNo(net);
+        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
+                                                                cg->other_idx);
+        C_Compute_Weights_CtLeabraXCAL_DwtWta
+          (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i],
+           1.0f, 1.0f, rcg->fwt_avg);
+      }
     }
   }
   else {
@@ -368,7 +377,8 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
           LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                   cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i],
+             rcg->wb_inc, rcg->wb_dec, rcg->fwt_avg);
         }
       }
       else {
@@ -378,18 +388,31 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
           LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                   cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i],
+             rcg->wb_inc, rcg->wb_dec, rcg->fwt_avg);
         }
       }
     }
     else {
       if(slow_wts.on) {
-        CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
-                       (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f));
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+          int ru_thr_no = ru->ThrNo(net);
+          LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
+                                                                  cg->other_idx);
+          C_Compute_Weights_CtLeabraXCAL_slow
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, rcg->fwt_avg);
+        }
       }
       else {
-        CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
-                       (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f));
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+          int ru_thr_no = ru->ThrNo(net);
+          LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
+                                                                  cg->other_idx);
+          C_Compute_Weights_CtLeabraXCAL
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, rcg->fwt_avg);
+        }
       }
     }
   }
@@ -422,10 +445,13 @@ inline void LeabraConSpec::Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
   if(!learn || !wt_bal.on || cg->size < 1) return;
   if(net->total_trials % wt_bal.avg_updt != 0) return;
   float sum_wt = 0.0f;
+  float sum_fwt = 0.0f;
   for(int i=0; i<cg->size; i++) {
     sum_wt += cg->PtrCn(i,WT,net);
+    sum_fwt += cg->PtrCn(i,FWT,net);
   }
   cg->wt_avg = sum_wt / (float)cg->size;
+  cg->fwt_avg = sum_fwt / (float)cg->size;
   wt_bal.WtBal(cg->wt_avg, cg->wb_inc, cg->wb_dec);
 }
 
