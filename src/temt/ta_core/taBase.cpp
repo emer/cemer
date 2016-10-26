@@ -59,6 +59,7 @@
 #include <taiMisc>
 #include <iDialogObjDiffBrowser>
 #include <iHelpBrowser>
+#include <MatrixGeom>
 
 #include <QVariant>
 #include <QDir>
@@ -3229,6 +3230,10 @@ void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& v
 }
 
 Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
+  if (fun_name == "NewColMatrixN_gui" && arg_idx == 2) {
+    MatrixGeom* mg = new MatrixGeom(2, 2, 2);
+    return mg;
+  }
   if(fun_name != "ChangeMyType") return _nilVariant;
   return Variant(GetStemBase()->name); // taiTypeOfTypePtrArgType will convert from String
 }
