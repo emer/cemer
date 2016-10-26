@@ -116,7 +116,7 @@ public:
   { if(dwt != 0.0f) {
       fwt += dwt;
       swt = fwt;                // keep sync'd -- not tech necc..
-      wt = scale * SigFmLinWt(fwt, 0.5f);
+      wt = scale * SigFmLinWt(fwt);
       dwt = 0.0f;
     }
   }
@@ -127,7 +127,7 @@ public:
   { 
     fwt += dwt;
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
-    float nwt = scale * SigFmLinWt(eff_wt, 0.5f);
+    float nwt = scale * SigFmLinWt(eff_wt);
     wt += slow_wts.wt_dt * (nwt - wt);
     swt += slow_wts.slow_dt * (fwt - swt);
     dwt = 0.0f;

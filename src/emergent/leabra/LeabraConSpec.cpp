@@ -24,7 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
-TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
+TA_BASEFUNS_CTORS_DEFN(WtNormBalSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(DwtIncDecWTA);
@@ -89,7 +89,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 }
 
 void WtSigSpec::Initialize() {
-  avg_off = false;
   Defaults_init();
 }
 
@@ -111,8 +110,7 @@ void DwtIncDecWTA::Initialize() {
 void DwtIncDecWTA::Defaults_init() {
   dw_tau = 20.0f;
   wt_mod = false;
-  wt_mod_gain = 2.0f;
-  wt_mod_sgn = false;
+  wt_mod_gain = 1.0f;
   dw_dt = 1.0f / dw_tau;
 }
 
@@ -121,32 +119,27 @@ void DwtIncDecWTA::UpdateAfterEdit_impl() {
   dw_dt = 1.0f / dw_tau;
 }
 
-void WtBalanceSpec::Initialize() {
+void WtNormBalSpec::Initialize() {
   Defaults_init();
 }
 
-void WtBalanceSpec::Defaults_init() {
-  taVersion v787(7, 8, 7);
-  if(taMisc::is_loading && taMisc::loading_version < v787) {
-    on = false;
-  }
-  else {
-    on = true;                  // new default
-  }
-  trg = 0.3f;
-  thr = 0.1f;
-  gain = 2.0f;
-  avg_updt = 10;
-
-  hi_thr = trg + thr;
-  lo_thr = trg - thr;
+void WtNormBalSpec::Defaults_init() {
+  // taVersion v787(7, 8, 7);
+  // if(taMisc::is_loading && taMisc::loading_version < v787) {
+  //   bal_on = false;
+  // }
+  // else {
+  // }
+  bal_on = false;
+  norm_on = false;
+  norm_trg = 0.5f;
+  hi_thr = 0.75f;
+  gain = 5.0f;
 }
 
-void WtBalanceSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  hi_thr = trg + thr;
-  lo_thr = trg - thr;
-}
+// void WtNormBalSpec::UpdateAfterEdit_impl() {
+//   inherited::UpdateAfterEdit_impl();
+// }
 
 
 void AdaptWtScaleSpec::Initialize() {
@@ -328,7 +321,10 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   cur_lrate = lrate;            // as a backup..
   lrs_mult = 1.0f;
   if(!InheritsFrom(&TA_LeabraBiasSpec)) { // bias spec doesn't count
-    if(wt_bal.on) {
+    if(wt_norm_bal.norm_on) {
+      net->net_misc.wt_norm = true;
+    }
+    if(wt_norm_bal.bal_on) {
       net->net_misc.wt_bal = true;
     }
   }
@@ -534,7 +530,7 @@ void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   for(int trl = 0; trl < trials; trl++) {
     dwt = Random::UniformMinMax(-lrate, lrate);
     float dwt_save = dwt;
-    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f, 0.5f);
+    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);

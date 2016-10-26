@@ -60,6 +60,7 @@ public:
   int           gate_cyc;       // #DEF_18 cycle within quarter to apply BG / PFC gating -- see PFCUnitSpec for more information about how gating works and its effects, etc.
   int           deep_cyc;       // #DEF_5 how often (in cycles) to perform deep layer updating -- typically not necessary to update as frequently as superficial activations -- and biologically driven by layer 5 ib neurons that emit just a few bursts
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants -- also affects rate-code computed spiking intervals in unit spec
+  int           norm_bal_int;   // #DEF_10 weight norm-balance update interval: if weight normalization or balance is being used, this is how frequently to update these in terms of trials (1 = every trial, 2 = every other trial, etc) -- these are relatively computationally intensive and don't typically need to be done too frequently
 
   int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
   int		plus;	        // #READ_ONLY computed total number of cycles per plus phase = quarter
@@ -107,7 +108,8 @@ public:
   bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
   bool          diff_scale_q1;  // #READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
-  bool		wt_bal;       // #READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_bal.on flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool		wt_norm;       // #READ_ONLY #SHOW wt_norm_bal.norm_on weight normalization is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.norm_on flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool		wt_bal;       // #READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.bal_on flag is on, and off if not -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;   // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool          lrate_updtd;
@@ -551,8 +553,12 @@ public:
 
   void	Compute_dWt() override;
     void Compute_dWt_Thr(int thr_no) override;
-  virtual void	Compute_WtBal_Thr(int thr_no);
-  // #IGNORE compute weight balance factors
+    virtual void	Compute_WtNormBal_Thr(int thr_no);
+    // #IGNORE compute weight normalization / balance factors
+    virtual void	Compute_WtNormPrjnAvg();
+    // #IGNORE compute weight normalization projection average weights
+    virtual void	Compute_WtNormSub_Thr(int thr_no);
+    // #IGNORE compute weight normalization subtraction of mean per projection
 
   void Compute_Weights() override;
   void Compute_Weights_Thr(int thr_no) override;

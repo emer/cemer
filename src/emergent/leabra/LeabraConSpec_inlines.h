@@ -25,10 +25,10 @@
 
 inline void LeabraConSpec::Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* net,
                                              int thr_no) {
-  cg->wt_avg = wt_bal.trg;
+  cg->fwt_avg = wt_norm_bal.norm_trg;
+  cg->bal_sum = 0.0f;
   cg->wb_inc = 1.0f;
   cg->wb_dec = 1.0f;
-  cg->fwt_avg = 0.5f;
 }
 
 #ifdef TA_VEC_USE
@@ -345,7 +345,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 
   if(dwt_wta.on) {
     float* dwavgs = cg->OwnCnVar(DWAVG);
-    if(wt_bal.on) {
+    if(wt_norm_bal.bal_on) {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
         int ru_thr_no = ru->ThrNo(net);
@@ -353,23 +353,18 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
                                                                 cg->other_idx);
         C_Compute_Weights_CtLeabraXCAL_DwtWta
           (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i],
-           rcg->wb_inc, rcg->wb_dec, rcg->fwt_avg);
+           rcg->wb_inc, rcg->wb_dec);
       }
     }
     else {
       for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-        int ru_thr_no = ru->ThrNo(net);
-        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
-                                                                cg->other_idx);
         C_Compute_Weights_CtLeabraXCAL_DwtWta
-          (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i],
-           1.0f, 1.0f, rcg->fwt_avg);
+          (wts[i], dwts[i], dwavgs[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
       }
     }
   }
   else {
-    if(wt_bal.on) {
+    if(wt_norm_bal.bal_on) {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
           LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
@@ -377,8 +372,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
           LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                   cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i],
-             rcg->wb_inc, rcg->wb_dec, rcg->fwt_avg);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i],rcg->wb_inc, rcg->wb_dec);
         }
       }
       else {
@@ -388,30 +382,21 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
           LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                   cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i],
-             rcg->wb_inc, rcg->wb_dec, rcg->fwt_avg);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
         }
       }
     }
     else {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-          int ru_thr_no = ru->ThrNo(net);
-          LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
-                                                                  cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL_slow
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, rcg->fwt_avg);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-          int ru_thr_no = ru->ThrNo(net);
-          LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
-                                                                  cg->other_idx);
           C_Compute_Weights_CtLeabraXCAL
-            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f, rcg->fwt_avg);
+            (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
         }
       }
     }
@@ -440,19 +425,39 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 //////////////////////////////////////////////////////////////////////////////////
 //     Compute Wt Bal: receiver based 
 
-inline void LeabraConSpec::Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
-                                         int thr_no) {
-  if(!learn || !wt_bal.on || cg->size < 1) return;
-  if(net->total_trials % wt_bal.avg_updt != 0) return;
-  float sum_wt = 0.0f;
-  float sum_fwt = 0.0f;
-  for(int i=0; i<cg->size; i++) {
-    sum_wt += cg->PtrCn(i,WT,net);
-    sum_fwt += cg->PtrCn(i,FWT,net);
+inline void LeabraConSpec::Compute_WtNormBal(LeabraConGroup* cg, LeabraNetwork* net,
+                                             int thr_no) {
+  if(!learn || cg->size < 1) return;
+  if(wt_norm_bal.norm_on) {
+    float sum_fwt = 0.0f;
+    for(int i=0; i<cg->size; i++) {
+      sum_fwt += cg->PtrCn(i,FWT,net);
+    }
+    cg->fwt_avg = sum_fwt / (float)cg->size;
+    // these are later aggregated across projections in LeabraNetwork::Compute_WtNormPrjnAvg
+    // and then resulting global average subtracted in Compute_WtNormSub
   }
-  cg->wt_avg = sum_wt / (float)cg->size;
-  cg->fwt_avg = sum_fwt / (float)cg->size;
-  wt_bal.WtBal(cg->wt_avg, cg->wb_inc, cg->wb_dec);
+  if(wt_norm_bal.bal_on) {
+    float bal_sum = 0.0f;
+    const float thr = wt_norm_bal.hi_thr;
+    for(int i=0; i<cg->size; i++) {
+      float wt = cg->PtrCn(i,WT,net);
+      if(wt > thr)
+        bal_sum += wt - thr;
+    }
+    cg->bal_sum = bal_sum;
+    wt_norm_bal.WtBal(bal_sum, cg->wb_inc, cg->wb_dec);
+  }
+}
+
+inline void LeabraConSpec::Compute_WtNormSub(LeabraConGroup* cg, LeabraNetwork* net,
+                                             int thr_no) {
+  if(!learn || cg->size < 1) return;
+  if(!wt_norm_bal.norm_on) return;
+  float diff = wt_norm_bal.norm_trg - ((LeabraPrjn*)cg->prjn)->fwt_avg;
+  for(int i=0; i<cg->size; i++) {
+    cg->PtrCn(i,FWT,net) += diff;
+  }
 }
 
 inline void LeabraConSpec::Compute_CopyWeights(ConGroup* cg, ConGroup* src_cg,

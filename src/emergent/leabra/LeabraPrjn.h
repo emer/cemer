@@ -33,6 +33,7 @@ class E_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:
+  float         fwt_avg;                // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average fast weight (linear weight) values for the recv projections into this layer
   float		netin_avg;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average netinput values for the recv projections into this layer
   float		netin_rel;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic relative netinput values for the recv projections into this layer
 
@@ -41,6 +42,8 @@ public:
   float		avg_netin_rel;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_rel_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
   int		avg_netin_n;		// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
+  float         bal_sum_max;            // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic maximum weight balance sum factor (sum of extent weights are over high threshold) across connections in this projection -- only computed if weight normalization is on, as part of that process
+  float         bal_sum_avg;            // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average weight balance sum factor (sum of extent weights are over high threshold) across connections in this projection -- only computed if weight normalization is on, as part of that process
 
   virtual void	Trial_Init_Specs(LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on epoch

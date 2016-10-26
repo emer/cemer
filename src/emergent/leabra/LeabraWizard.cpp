@@ -1306,7 +1306,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvlv_cons->rnd.mean = 0.01f;
   pvlv_cons->rnd.var = 0.0f;
   pvlv_cons->wt_limits.sym = false;
-  pvlv_cons->wt_bal.on = false;
+  pvlv_cons->wt_norm_bal.bal_on = false;
 
   la_cons->SetUnique("lrate", true);
   la_cons->lrate = 10.0f * base_lrate;
@@ -2516,8 +2516,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   bg_lrn_cons->learn_qtr = LeabraConSpec::Q2_Q4; // beta by default
   bg_lrn_cons->SetUnique("wt_limits", true);
   bg_lrn_cons->wt_limits.sym = false;
-  bg_lrn_cons->SetUnique("wt_bal", true);
-  bg_lrn_cons->wt_bal.on = false;
+  bg_lrn_cons->SetUnique("wt_norm_bal", true);
+  bg_lrn_cons->wt_norm_bal.bal_on = false;
 
   mtx_cons_go->SetUnique("rnd", true);
   mtx_cons_go->rnd.mean = 0.5f;
