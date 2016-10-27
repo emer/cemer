@@ -27,7 +27,7 @@ TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(WtNormBalSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
-TA_BASEFUNS_CTORS_DEFN(DwtIncDecWTA);
+TA_BASEFUNS_CTORS_DEFN(DwtWtaSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
@@ -103,19 +103,17 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
-void DwtIncDecWTA::Initialize() {
+void DwtWtaSpec::Initialize() {
   on = false;
   Defaults_init();
 }
 
-void DwtIncDecWTA::Defaults_init() {
+void DwtWtaSpec::Defaults_init() {
   dw_tau = 20.0f;
-  wt_mod = false;
-  wt_mod_gain = 1.0f;
   dw_dt = 1.0f / dw_tau;
 }
 
-void DwtIncDecWTA::UpdateAfterEdit_impl() {
+void DwtWtaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   dw_dt = 1.0f / dw_tau;
 }
@@ -131,8 +129,9 @@ void WtNormBalSpec::Defaults_init() {
   // }
   // else {
   // }
-  bal_on = false;
   norm_on = false;
+  bal_on = false;
+  bal_on_dwavg = true;
   norm_trg = 0.5f;
   hi_thr = 0.75f;
   gain = 5.0f;
