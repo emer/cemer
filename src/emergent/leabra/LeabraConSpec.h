@@ -201,6 +201,9 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable dwt increase vs. decrease winner-take-all competition -- wt_norm_bal.bal_on and bal_on_dwavg are also strongly recommended to counteract the tendency to drive extreme weight values that this mechanism produces
   float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- decays over this time scale according to 1/dw_tau * dwt per trial
+  bool          wt_mod;         // #CONDSHOW_ON_on #DEF_true modulate strength of the WTA effect as a function of the contrast-enhanced weight value -- as weight moves toward the extremes, include a more balanced set of changes
+  float         wt_mod_gain;    // #CONDSHOW_ON_on&&wt_mod how strong is the wt_mod factor -- applies to the opposite direction change relative to running-average, also as a function of the current weight strength (e.g., if weights are going up on average, then this is how much to count weight decreases, also multplied by wt (i.e., only go down if weight is already high)
+
 
   float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
 
@@ -575,14 +578,20 @@ public:
     if(dwavg > 0.0f) {            // long-term is more pos than neg
       if(dwt > 0.0f) {
         fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
-        wt = scale * SigFmLinWt(fwt);
       }
+      else if(dwt_wta.wt_mod) {
+        fwt += dwt_wta.wt_mod_gain * wt * wb_dec * fwt * dwt;
+      }
+      wt = scale * SigFmLinWt(fwt);
     }
     else {                      // long-term is more neg than pos
       if(dwt < 0.0f) {
         fwt += wb_dec * fwt * dwt;
-        wt = scale * SigFmLinWt(fwt);
       }
+      else if(dwt_wta.wt_mod) {
+        fwt += dwt_wta.wt_mod_gain * (1.0f - wt) * wb_inc * (1.0f - fwt) * dwt;
+      }
+      wt = scale * SigFmLinWt(fwt);
     }
     dwt = 0.0f;
     //    C_ApplyLimits(fwt);         // don't need this..

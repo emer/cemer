@@ -109,7 +109,9 @@ void DwtWtaSpec::Initialize() {
 }
 
 void DwtWtaSpec::Defaults_init() {
-  dw_tau = 20.0f;
+  dw_tau = 10.0f;
+  wt_mod = true;
+  wt_mod_gain = 1.0f;
   dw_dt = 1.0f / dw_tau;
 }
 
