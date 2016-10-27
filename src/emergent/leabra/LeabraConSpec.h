@@ -77,6 +77,7 @@ public:
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
+  float         avg_l_gain;     // #DEF_1 extra per-projection multiplicative factor on unit-level avg_l long-term average value that is the long-term floating threshold for the BCM Hebbian component of learning -- this is useful if different projections have different levels of correlation and thus need higher or lower thresholds on average -- if the weights are systematically going down or up in a projection on average (but only for specific projections and not the whole recv unit), then adjust this in the corresponding direction (i.e., gain < 1 reduces threshold and generally makes weights stronger, and vice-versa for gain > 1)
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
   float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
@@ -117,6 +118,11 @@ public:
     return ru_avg_l_lrn;
   }
   // get the learning rate for long-term floating average component (BCM)
+
+  inline float  AvgL(const float ru_avg_l) {
+    return ru_avg_l * avg_l_gain;
+  }
+  // multiply times gain factor
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -215,11 +221,11 @@ private:
 eTypeDef_Of(WtNormBalSpec);
 
 class E_API WtNormBalSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance and renormalization spec: option to renorm weights based on average weights across projection to correct for overall main effects on weight values, and to maintain overall weight balance by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- plugs into soft bounding function -- see network times.norm_bal_int for interval in trials of updating
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance and renormalization spec: option to renorm weights based on average recv unit weights to correct for overall main effects on weight values, and to maintain overall weight balance by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- plugs into soft bounding function -- see network times.norm_bal_int for interval in trials of updating
 INHERITED(SpecMemberBase)
 public:
-  bool          norm_on;        // renormalize the underlying linear weights by subtracting the difference between the entire projection's mean linear weight value and the renorm target weight value (typically .5) -- corrects for overall main-effect drift in weight values
-  float         norm_trg;       // #CONDSHOW_ON_norm_on #DEF_0.5 target mean value for linear underlying weights across the recv projection -- should generally be same as rnd.mean but for topographic projections it may be different
+  bool          norm_on;        // renormalize the underlying linear weights by subtracting the difference between recv units mean linear weight value and the renorm target weight value (typically .5) -- corrects for overall main-effect drift in weight values and differences among units
+  float         norm_trg;       // #CONDSHOW_ON_norm_on #DEF_0.5 target mean value for linear underlying weights -- should generally be same as rnd.mean but for topographic projections it may be different
   bool          bal_on;         // perform weight balance maintenance?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
   float         hi_thr;         // #CONDSHOW_ON_bal_on #DEF_0.75 high threshold -- sum up extent to which weights are above this threshold, multiply by gain and that determines imbalance in weight increases vs. decreases, via a 1/(1+gain*sum) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases
   float         gain;           // #CONDSHOW_ON_bal_on gain multiplier applied to above-threshold weight sum -- higher values turn weight increases down more rapidly as the weights become more imbalanced
@@ -516,14 +522,14 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
 
-#ifdef TA_VEC_USE
-  inline void Compute_dWt_CtLeabraXCAL_vec
-    (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
-     float* ru_avg_l_lrn, float* ru_thal,
-     const bool deep_on, const float clrate, const float bg_lrate, const float fg_lrate,
-     const float su_avg_s, const float su_avg_m);
-  // #IGNORE vectorized version
-#endif
+// #ifdef TA_VEC_USE
+//   inline void Compute_dWt_CtLeabraXCAL_vec
+//     (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
+//      float* ru_avg_l_lrn, float* ru_thal,
+//      const bool deep_on, const float clrate, const float bg_lrate, const float fg_lrate,
+//      const float su_avg_s, const float su_avg_m);
+//   // #IGNORE vectorized version
+// #endif
 
   inline void	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override;
 
@@ -613,14 +619,14 @@ public:
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- slow wts
 
-#ifdef TA_VEC_USE
-  inline void	Compute_Weights_CtLeabraXCAL_vec
-    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
-  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
-  inline void	Compute_Weights_CtLeabraXCAL_slow_vec
-    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
-  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
-#endif
+// #ifdef TA_VEC_USE
+//   inline void	Compute_Weights_CtLeabraXCAL_vec
+//     (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
+//   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
+//   inline void	Compute_Weights_CtLeabraXCAL_slow_vec
+//     (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
+//   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
+// #endif
 
   inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
 

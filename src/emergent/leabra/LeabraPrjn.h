@@ -33,7 +33,6 @@ class E_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:
-  float         fwt_avg;                // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average fast weight (linear weight) values for the recv projections into this layer
   float		netin_avg;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average netinput values for the recv projections into this layer
   float		netin_rel;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic relative netinput values for the recv projections into this layer
 

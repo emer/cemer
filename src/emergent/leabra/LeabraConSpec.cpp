@@ -74,6 +74,7 @@ void XCalLearnSpec::Defaults_init() {
   m_lrn = 1.0f;
   set_l_lrn = false;
   l_lrn = 1.0f;
+  avg_l_gain = 1.0f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
   d_rev_ratio = -(1.0f - d_rev) / d_rev;

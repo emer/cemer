@@ -555,10 +555,8 @@ public:
     void Compute_dWt_Thr(int thr_no) override;
     virtual void	Compute_WtNormBal_Thr(int thr_no);
     // #IGNORE compute weight normalization / balance factors
-    virtual void	Compute_WtNormPrjnAvg();
-    // #IGNORE compute weight normalization projection average weights
-    virtual void	Compute_WtNormSub_Thr(int thr_no);
-    // #IGNORE compute weight normalization subtraction of mean per projection
+    virtual void	Compute_WtBalStats();
+    // #IGNORE compute weight balance statistics
 
   void Compute_Weights() override;
   void Compute_Weights_Thr(int thr_no) override;

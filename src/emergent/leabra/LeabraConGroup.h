@@ -33,7 +33,7 @@ public:
   float	        scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied from recv congroup where it is computed
   float	        net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
   float	        net_raw;	// #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
-  float	        fwt_avg;	// #NO_SAVE #CAT_Learning average fast (linear) weight values across this con group
+  float	        fwt_avg;	// #NO_SAVE #CAT_Learning average fast (linear) weight values across this con group -- used for weight normalization
   float	        bal_sum;	// #NO_SAVE #CAT_Learning for weight balance -- sum of weights above wt_norm_bal.hi_thr threshold -- used in altering soft bounding weighting factors, wb_inc, wb_dec
   float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance

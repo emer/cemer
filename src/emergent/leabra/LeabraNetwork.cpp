@@ -1787,13 +1787,8 @@ void LeabraNetwork::Compute_Weights() {
     NET_THREAD_CALL(LeabraNetwork::Compute_WtNormBal_Thr);
   }
 
-  if(net_misc.wt_norm || net_misc.wt_bal) {
-    Compute_WtNormPrjnAvg(); // separate aggregation of averages across projection
-    // then use averages to actually do the normalization subtraction:
-
-    if(net_misc.wt_norm) {
-      NET_THREAD_CALL(LeabraNetwork::Compute_WtNormSub_Thr);
-    }
+  if(net_misc.wt_bal) {         // todo: make this optional
+    Compute_WtBalStats();
   }
   
   SaveWeights_ClusterRunTerm();
@@ -1833,12 +1828,11 @@ void LeabraNetwork::Compute_WtNormBal_Thr(int thr_no) {
   }
 }
 
-void LeabraNetwork::Compute_WtNormPrjnAvg() {
+void LeabraNetwork::Compute_WtBalStats() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
       if(p->NotActive()) continue;
-      p->fwt_avg = 0.0f;
       p->bal_sum_max = 0.0f;
       p->bal_sum_avg = 0.0f;
     }
@@ -1849,35 +1843,19 @@ void LeabraNetwork::Compute_WtNormPrjnAvg() {
       FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
         LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        if(net_misc.wt_norm) {
-          p->fwt_avg += cg->fwt_avg;
-        }
-        if(net_misc.wt_bal) {
-          p->bal_sum_max = fmaxf(p->bal_sum_max, cg->bal_sum);
-          p->bal_sum_avg += cg->bal_sum;
-        }
+        p->bal_sum_max = fmaxf(p->bal_sum_max, cg->bal_sum);
+        p->bal_sum_avg += cg->bal_sum;
       }
     }
     if(denom > 0) {
       float norm = 1.0f / denom;
       FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
-        p->fwt_avg *= norm;
         p->bal_sum_avg *= norm;
       }
     }
   }
 }
-
-void LeabraNetwork::Compute_WtNormSub_Thr(int thr_no) {
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
-    if(rcg->NotActive()) continue;
-    ((LeabraConSpec*)rcg->con_spec)->Compute_WtNormSub(rcg, this, thr_no);
-  }
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      Stats

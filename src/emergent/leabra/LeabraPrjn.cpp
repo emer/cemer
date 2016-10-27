@@ -19,7 +19,6 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraPrjn);
 
 void LeabraPrjn::Initialize() {
-  fwt_avg = 0.0f;
   netin_avg = 0.0f;
   netin_rel = 0.0f;
 
@@ -42,7 +41,6 @@ void LeabraPrjn::Destroy() {
 }
 
 void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
-  fwt_avg = cp.fwt_avg;
   netin_avg = cp.netin_avg;
   netin_rel = cp.netin_rel;
 
@@ -71,7 +69,6 @@ void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
 }
 
 void LeabraPrjn::Init_Stats() {
-  fwt_avg = 0.0f;
   netin_avg = 0.0f;
   netin_rel = 0.0f;
 
