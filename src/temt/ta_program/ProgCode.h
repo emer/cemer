@@ -33,7 +33,7 @@ class TA_API ProgCode: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr     code;   // #BROWSER_EDIT_LOOKUP program code statement that will be converted into an appropriate program element if possible
-  taList_impl  sub_code; // #HIDDEN a place to hold subcode when converting between ProgEl types
+  ProgEl_List  sub_code; // #HIDDEN a place to hold subcode when converting between ProgEl types
 
   void         SetProgExprFlags() override;
   String       GetDisplayName() const override;
