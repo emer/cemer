@@ -579,6 +579,9 @@ void ProgVar::SetVar(const Variant& value) {
     }
     if(var_type != T_UnDef) {
       SetVar(value);            // reset
+      if(var_type == T_Object && object_val) { // init type..
+        object_type = object_val->GetTypeDef();
+      }
     }
     CheckUndefType("SetVar");
     break;

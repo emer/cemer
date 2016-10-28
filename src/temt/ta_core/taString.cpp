@@ -989,39 +989,39 @@ void taString::init(const char* s, int slen) {
 
 bool taString::isInt() const {
   bool rval = false;
-  for (int i = 0; i < (int)mrep->cnt; ++i) {
+  for (int i = 0; i < (int)mrep->len; ++i) {
     char c = mrep->s[i];
     if (i == 0) {
       if ((c == '+') || (c == '-')) continue;
     }
     if(!isdigit(c)) break;
-    if(i == ((int)mrep->cnt - 1)) rval = true;
+    if(i == ((int)mrep->len - 1)) rval = true;
   }
   return rval;
 }
 
 bool taString::isHex() const {
   bool rval = false;
-  for (int i = 0; i < (int)mrep->cnt; ++i) {
+  for (int i = 0; i < (int)mrep->len; ++i) {
     char c = mrep->s[i];
     if (i == 0) {
       if ((c == '+') || (c == '-')) continue;
     }
     if((i == 1 || i == 2) && (c == 'x' || c == 'X')) continue; // ok, but can't end..
     if(!isxdigit(c)) break;
-    if(i == ((int)mrep->cnt - 1)) rval = true;
+    if(i == ((int)mrep->len - 1)) rval = true;
   }
   return rval;
 }
 
 bool taString::isFloat() const {
   bool rval = false;
-  for (int i = 0; i < (int)mrep->cnt; ++i) {
+  for (int i = 0; i < (int)mrep->len; ++i) {
     char c = mrep->s[i];
     if((c == '+') || (c == '-')) continue; // could happen inside exp too -- just be flex
     if((c == 'e') || (c == 'E')) continue; // ok, but can't end..
     if(!(isdigit(c) || c == '.')) break;   // allowed to end
-    if(i == ((int)mrep->cnt - 1)) rval = true;
+    if(i == ((int)mrep->len - 1)) rval = true;
   }
   return rval;
 }

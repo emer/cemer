@@ -2626,7 +2626,7 @@ bool Variant::setFromStringGuessType(const String& val) {
     return true;
   }
   if(tval.isHex()) {
-    setInt(tval.toInt());
+    setInt(tval.HexToInt());
     return true;
   }
 #ifndef NO_TA_BASE
