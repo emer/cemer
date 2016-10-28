@@ -134,6 +134,7 @@ void WtNormBalSpec::Defaults_init() {
   norm_on = false;
   bal_on = false;
   norm_trg = 0.5f;
+  norm_rate = 0.01f;
   hi_thr = 0.95f;
   gain = 1.0f;
 }

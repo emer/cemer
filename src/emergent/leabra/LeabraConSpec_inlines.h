@@ -261,7 +261,7 @@ inline void LeabraConSpec::Compute_WtNormBal(LeabraConGroup* cg, LeabraNetwork* 
       sum_fwt += cg->PtrCn(i,FWT,net);
     }
     cg->fwt_avg = sum_fwt / (float)cg->size;
-    float diff = wt_norm_bal.norm_trg - cg->fwt_avg;
+    float diff = wt_norm_bal.norm_rate * (wt_norm_bal.norm_trg - cg->fwt_avg);
     for(int i=0; i<cg->size; i++) {
       cg->PtrCn(i,FWT,net) += diff;
     }
