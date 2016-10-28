@@ -59,7 +59,7 @@ public:
     T_UInt64 = 5,       // #LABEL_UInt64
     T_Double = 6,       // #LABEL_Real
     T_Char = 7,         // #LABEL_Char
-    T_Float = 8,        // #LABEL_Float  -- added 7/29/2015
+    T_Float = 8,        // #LABEL_Float
     T_String = 9,       // #LABEL_String
     
     T_Ptr = 10,         // #LABEL_Ptr void*
@@ -116,7 +116,7 @@ public:
   void            save(std::ostream& s) const; // streams out using << for the type
   void            load(std::istream& s); // streams in as a string, use toXxx if it is of another type
   
-// following are ops to set to a specific type of value  
+  // following are ops to set to a specific type of value  
   void            setInvalid(); // invalid/null
   void            setVariant(const Variant& cp); // basically a copy
   void            setVariantData(const Variant& cp); // preserve target type, only copy data
@@ -142,6 +142,8 @@ public:
   void            setTypeItem(TypeItem* cp); // handles setting of a TypeItem
 
   void            updateFromString(const String& val); // set value from string, but keep current type
+  bool            setFromStringGuessType(const String& val);
+  // set value from string, and attempt to guess the type based on the string -- e.g., if it is numeric with a decimal then convert to double type, true / false = bool, starting with . looks for a path to an object -- returns true if was able to guess a type other than String, otherwise sets to a string and assigns to value
   
   // the "<type> toXxx()" return a result of requested type, leaving current value as is
   bool            toBool() const;

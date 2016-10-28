@@ -133,10 +133,9 @@ void WtNormBalSpec::Defaults_init() {
   // }
   norm_on = false;
   bal_on = false;
-  bal_on_dwavg = true;
   norm_trg = 0.5f;
-  hi_thr = 0.75f;
-  gain = 5.0f;
+  hi_thr = 0.95f;
+  gain = 1.0f;
 }
 
 // void WtNormBalSpec::UpdateAfterEdit_impl() {

@@ -149,19 +149,9 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
       float avg_l_eff = xcal.AvgL(ru->avg_l);
-      if(wt_norm_bal.bal_on && wt_norm_bal.bal_on_dwavg) { // todo: will be default prob
-        int ru_thr_no = ru->ThrNo(net);
-        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
-                                                                cg->other_idx);
-        C_Compute_dWt_CtLeabraXCAL_DwtWta_WtBal
-          (dwavgs[i], dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m,
-           su_avg_s, su_avg_m, avg_l_eff, l_lrn_eff, rcg->wb_inc, rcg->wb_dec);
-      }
-      else {
-        C_Compute_dWt_CtLeabraXCAL_DwtWta
-          (dwavgs[i], dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m,
-           su_avg_s, su_avg_m, avg_l_eff, l_lrn_eff);
-      }
+      C_Compute_dWt_CtLeabraXCAL_DwtWta
+        (dwavgs[i], dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m,
+         su_avg_s, su_avg_m, avg_l_eff, l_lrn_eff);
     }
   }
   else {

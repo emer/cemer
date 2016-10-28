@@ -199,7 +199,7 @@ class E_API DwtWtaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delta weight increase vs. decrease winner-take-all competition -- based on sign of time-averaged delta-weight, either increases or decreases are applied correspondingly -- reflects the biological separation between CAMKII and PKA pathways in determining LTP vs. LTD -- computationally prevents equivocation of increases and decreases, so weights move more toward extremes and retain critical variance in the responses of neurons across the layer
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable dwt increase vs. decrease winner-take-all competition -- wt_norm_bal.bal_on and bal_on_dwavg are also strongly recommended to counteract the tendency to drive extreme weight values that this mechanism produces
+  bool          on;             // enable dwt increase vs. decrease winner-take-all competition
   float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- decays over this time scale according to 1/dw_tau * dwt per trial
   bool          wt_mod;         // #CONDSHOW_ON_on #DEF_true modulate strength of the WTA effect as a function of the contrast-enhanced weight value -- as weight moves toward the extremes, include a more balanced set of changes
   float         wt_mod_gain;    // #CONDSHOW_ON_on&&wt_mod how strong is the wt_mod factor -- applies to the opposite direction change relative to running-average, also as a function of the current weight strength (e.g., if weights are going up on average, then this is how much to count weight decreases, also multplied by wt (i.e., only go down if weight is already high)
@@ -228,7 +228,6 @@ public:
   bool          norm_on;        // renormalize the underlying linear weights by subtracting the difference between recv units mean linear weight value and the renorm target weight value (typically .5) -- corrects for overall main-effect drift in weight values and differences among units
   float         norm_trg;       // #CONDSHOW_ON_norm_on #DEF_0.5 target mean value for linear underlying weights -- should generally be same as rnd.mean but for topographic projections it may be different
   bool          bal_on;         // perform weight balance maintenance?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
-  bool          bal_on_dwavg;   // #CONDSHOW_ON_bal_on the balance mechanism affects the integration of delta-weight averages used in dwt_wta mechanism -- as the weights increasingly exceed the hi_thr, positive dwts increment dwavg less and negative dwts increment more, thereby shifting the balance of learning back downward
   float         hi_thr;         // #CONDSHOW_ON_bal_on #DEF_0.75 high threshold -- sum up extent to which weights are above this threshold, multiply by gain and that determines imbalance in weight increases vs. decreases, via a 1/(1+gain*sum) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases
   float         gain;           // #CONDSHOW_ON_bal_on gain multiplier applied to above-threshold weight sum -- higher values turn weight increases down more rapidly as the weights become more imbalanced
   
@@ -524,21 +523,6 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_DwtWta_WtBal
-    (float& dwavg, float& dwt, const float clrate, const float ru_avg_s,
-     const float ru_avg_m, const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float ru_avg_l_lrn, const float wb_inc,
-     const float wb_dec) 
-  {
-    C_Compute_dWt_CtLeabraXCAL(dwt, clrate, ru_avg_s, ru_avg_m,
-                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
-    if(dwt > 0.0f)
-      dwavg += wb_inc * dwt - dwt_wta.dw_dt * dwavg;  // additive with constant decay
-    else
-      dwavg += wb_dec * dwt - dwt_wta.dw_dt * dwavg;
-  }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism with weight balance effect
-  
 // #ifdef TA_VEC_USE
 //   inline void Compute_dWt_CtLeabraXCAL_vec
 //     (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,

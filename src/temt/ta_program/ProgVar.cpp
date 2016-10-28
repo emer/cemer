@@ -549,9 +549,40 @@ void ProgVar::SetVar(const Variant& value) {
     else
       dyn_enum_val.SetNumVal(value.toInt());
     break;
-  case T_UnDef:
+  case T_UnDef: {
+    switch(value.type()) {
+    case Variant::T_Bool:
+      var_type = T_Bool;
+      break;
+    case Variant::T_Int:
+    case Variant::T_UInt:
+    case Variant::T_Int64:
+    case Variant::T_UInt64:
+      var_type = T_Int;
+      break;
+    case Variant::T_Double:
+    case Variant::T_Float:
+      var_type = T_Real;
+      break;
+    case Variant::T_Char:
+      var_type = T_String;
+      break;
+    case Variant::T_String:
+      var_type = T_String;
+      break;
+    case Variant::T_Base:
+    case Variant::T_Matrix:
+      var_type = T_Object;
+      break;
+    default: // compiler food
+      break;
+    }
+    if(var_type != T_UnDef) {
+      SetVar(value);            // reset
+    }
     CheckUndefType("SetVar");
     break;
+  }
   }
 }
 
@@ -1074,8 +1105,11 @@ bool ProgVar::BrowserEditSet(const String& code, int move_after) {
           SetName(nm);
         }
       }
-      if(val.nonempty())
-        SetVar(val);
+      if(val.nonempty()) {
+        Variant var;
+        var.setFromStringGuessType(val); // this allows unknown types to be set from variant type!
+        SetVar(var);
+      }
     }
     else if(cd.contains(' ')) {
       SetTypeAndName(cd);

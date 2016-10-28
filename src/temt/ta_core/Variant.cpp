@@ -74,31 +74,31 @@ istream& operator>>(istream& s, Variant& x) {
 }
 
 const String Variant::formatNumber_impl(const Variant& val,
-     short prec, bool hex) const
+                                        short prec, bool hex) const
 {
   switch (m_type) {
-    case T_Invalid: return _nilString;
-      //case T_Bool:
-    case T_Int: return String(d.i, (hex) ? "%X" : "%d");
-    case T_UInt: return String(d.u, (hex) ? "%X" : "%u");
-    case T_Int64: return String(d.i64); //TODO: formats
-    case T_UInt64: return String(d.u64); // TODO: formats
-    case T_Float: {
-      if ((prec < 1) || ( prec > 7)) prec = 4;
-      String p = String("%.").cat(String(prec)).cat("G");
-      return String(d.f, p); // hex ignored
-    }
-    case T_Double: {
-      if ((prec < 1) || ( prec > 16)) prec = 5; // prob an error
-      String p = String("%.").cat(String(prec)).cat("G");
-      return String(d.d, p); // hex ignored
-    }
-      //case T_Char:
-      //case T_String:
-      //case T_Ptr:
-      //case T_Base:
-      //case T_Matrix:
-    default: return toString();
+  case T_Invalid: return _nilString;
+    //case T_Bool:
+  case T_Int: return String(d.i, (hex) ? "%X" : "%d");
+  case T_UInt: return String(d.u, (hex) ? "%X" : "%u");
+  case T_Int64: return String(d.i64); //TODO: formats
+  case T_UInt64: return String(d.u64); // TODO: formats
+  case T_Float: {
+    if ((prec < 1) || ( prec > 7)) prec = 4;
+    String p = String("%.").cat(String(prec)).cat("G");
+    return String(d.f, p); // hex ignored
+  }
+  case T_Double: {
+    if ((prec < 1) || ( prec > 16)) prec = 5; // prob an error
+    String p = String("%.").cat(String(prec)).cat("G");
+    return String(d.d, p); // hex ignored
+  }
+    //case T_Char:
+    //case T_String:
+    //case T_Ptr:
+    //case T_Base:
+    //case T_Matrix:
+  default: return toString();
   }
 }
 
@@ -185,7 +185,7 @@ int Variant::cmpVariant(const Variant& b) const {
     case T_Char: return cmpChar(b.toChar());
     case T_String:  return cmpString(b.toString());
     default: return -2; //compiler food, never happens
-  }
+    }
 }
 
 int Variant::cmpBool(bool val) const {
@@ -197,7 +197,7 @@ int Variant::cmpBool(bool val) const {
   case T_Int64:
   case T_UInt64:
   case T_Char:
-     return cmp(toBool(), val);
+    return cmp(toBool(), val);
   default: return -2;
   }
 }
@@ -205,15 +205,15 @@ int Variant::cmpBool(bool val) const {
 int  Variant::cmpInt(int val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((int)d.b, val);
-    case T_Int: return cmp(d.i, val);
-    case T_UInt: return cmp(d.u, (uint)val);
-    case T_Int64:  return cmp(d.i64, val);
-    case T_UInt64: return cmp(d.u64, (uint)val);
-    case T_Float: return cmp((int)d.f, val);
-    case T_Double: return cmp((int)d.d, val);
-    case T_Char: return cmp(d.c, val);
-    default: return -2;
+  case T_Bool: return cmp((int)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint)val);
+  case T_Float: return cmp((int)d.f, val);
+  case T_Double: return cmp((int)d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
   }
 }
 
@@ -221,94 +221,94 @@ int  Variant::cmpInt(int val) const {
 int  Variant::cmpUInt(uint val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((uint)d.b, val);
-    case T_Int: return cmp((uint)d.i, val);
-    case T_UInt: return cmp(d.u, val);
-    case T_Int64:  return cmp((ta_uint64_t)d.i64, val);
-    case T_UInt64: return cmp(d.u64, val);
-    case T_Float: return cmp(d.f, val);
-    case T_Double: return cmp(d.d, val);
-    case T_Char: return cmp((uint)d.c, val);
-    default: return -2;
+  case T_Bool: return cmp((uint)d.b, val);
+  case T_Int: return cmp((uint)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp((ta_uint64_t)d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Float: return cmp(d.f, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp((uint)d.c, val);
+  default: return -2;
   }
 }
 
 int  Variant::cmpInt64(ta_int64_t val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((int)d.b, val);
-    case T_Int: return cmp(d.i, val);
-    case T_UInt: return cmp(d.u, (ta_uint64_t)val);
-    case T_Int64:  return cmp(d.i64, val);
-    case T_UInt64: return cmp(d.u64, (ta_uint64_t)val);
-    case T_Float: return cmp(d.f, val);
-    case T_Double: return cmp(d.d, val);
-    case T_Char: return cmp(d.c, val);
-    default: return -2;
+  case T_Bool: return cmp((int)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (ta_uint64_t)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (ta_uint64_t)val);
+  case T_Float: return cmp(d.f, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
   }
 }
 
 int  Variant::cmpUInt64(ta_uint64_t val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((uint)d.b, val);
-    case T_Int: return cmp((uint)d.i, val);
-    case T_UInt: return cmp(d.u, val);
-    case T_Int64:  return cmp((ta_uint64_t)d.i64, val);
-    case T_UInt64: return cmp(d.u64, val);
-    case T_Float: return cmp(d.f, val);
-    case T_Double: return cmp(d.d, val);
-    case T_Char: return cmp((uint)d.c, val);
-    default: return -2;
+  case T_Bool: return cmp((uint)d.b, val);
+  case T_Int: return cmp((uint)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp((ta_uint64_t)d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Float: return cmp(d.f, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp((uint)d.c, val);
+  default: return -2;
   }
 }
 
 int  Variant::cmpFloat(float val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((double)d.b, val);
-    case T_Int: return cmp((double)d.i, val);
-    case T_UInt: return cmp(d.u, val);
-    case T_Int64:  return cmp(d.i64, val);
-    case T_UInt64: return cmp(d.u64, val);
-    case T_Float: return cmp(d.f, val);
-    case T_Double: return cmp(d.d, val);
-    case T_Char: return cmp(d.c, val);
-    default: return -2;
+  case T_Bool: return cmp((double)d.b, val);
+  case T_Int: return cmp((double)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Float: return cmp(d.f, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
   }
 }
 
 int  Variant::cmpDouble(double val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((double)d.b, val);
-    case T_Int: return cmp((double)d.i, val);
-    case T_UInt: return cmp(d.u, val);
-    case T_Int64:  return cmp(d.i64, val);
-    case T_UInt64: return cmp(d.u64, val);
-    case T_Float: return cmp(d.f, val);
-    case T_Double: return cmp(d.d, val);
-    case T_Char: return cmp(d.c, val);
-    default: return -2;
+  case T_Bool: return cmp((double)d.b, val);
+  case T_Int: return cmp((double)d.i, val);
+  case T_UInt: return cmp(d.u, val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, val);
+  case T_Float: return cmp(d.f, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  default: return -2;
   }
 }
 
 int  Variant::cmpChar(char val) const {
   if (isNull()) return -2;
   switch (m_type) {
-    case T_Bool: return cmp((char)d.b, val);
-    case T_Int: return cmp(d.i, val);
-    case T_UInt: return cmp(d.u, (uint)val);
-    case T_Int64:  return cmp(d.i64, val);
-    case T_UInt64: return cmp(d.u64, (uint)val);
-    case T_Float: return cmp(d.f, val);
-    case T_Double: return cmp(d.d, val);
-    case T_Char: return cmp(d.c, val);
-    case T_String: {
-      const String& str = getString();
-      return cmp(str, val);
-    }
-    default: return -2;
+  case T_Bool: return cmp((char)d.b, val);
+  case T_Int: return cmp(d.i, val);
+  case T_UInt: return cmp(d.u, (uint)val);
+  case T_Int64:  return cmp(d.i64, val);
+  case T_UInt64: return cmp(d.u64, (uint)val);
+  case T_Float: return cmp(d.f, val);
+  case T_Double: return cmp(d.d, val);
+  case T_Char: return cmp(d.c, val);
+  case T_String: {
+    const String& str = getString();
+    return cmp(str, val);
+  }
+  default: return -2;
   }
 }
 
@@ -361,7 +361,7 @@ bool Variant::eqVariant(const Variant& b) const {
     case T_Char: return eqChar(b.toChar());
     case T_String:  return eqString(b.toString());
     default: return false; //compiler food, never happens
-  }
+    }
 }
 
 bool Variant::eqBool(bool val) const {
@@ -375,118 +375,118 @@ bool Variant::eqInt(int val) const {
     return ((!d.ptr) && (val == 0));
   if (isNull()) return false;
   switch (m_type) {
-    case T_Bool: return ((int)d.b == val);
-    case T_Int: return (d.i == val);
-    case T_UInt:
-      return ((val > 0) && (d.u <= (unsigned)INT_MAX) && (d.u == (unsigned)val));
-    case T_Int64:  return (d.i64 == val);
-    case T_UInt64:
-      return ((val > 0) && (d.u64 <= (unsigned)INT_MAX) && (d.u64 == (unsigned)val));
-    case T_Float:
-      return qFuzzyCompare(d.f, (float)val);
-    case T_Double:
-      return qFuzzyCompare(d.d, (double)val);
-    case T_Char: return (d.c == val);
-    case T_String: return (getString() == String(val));
-    default: return false;
+  case T_Bool: return ((int)d.b == val);
+  case T_Int: return (d.i == val);
+  case T_UInt:
+    return ((val > 0) && (d.u <= (unsigned)INT_MAX) && (d.u == (unsigned)val));
+  case T_Int64:  return (d.i64 == val);
+  case T_UInt64:
+    return ((val > 0) && (d.u64 <= (unsigned)INT_MAX) && (d.u64 == (unsigned)val));
+  case T_Float:
+    return qFuzzyCompare(d.f, (float)val);
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
+  case T_Char: return (d.c == val);
+  case T_String: return (getString() == String(val));
+  default: return false;
   }
 }
 
 bool  Variant::eqUInt(uint val) const {
   if (isNull()) return false;
   switch (m_type) {
-    case T_Bool: return ((uint)d.b == val);
-    case T_Int: return ((d.i > 0) && (d.i == (int)val));
-    case T_UInt:  return (d.u == val);
-    case T_Int64:  return ((d.i64 > 0) && (d.i64 == (ta_int64_t)val));
-    case T_UInt64: return (d.u64 == val);
-    case T_Float:
-      return qFuzzyCompare(d.f, (float)val);
-    case T_Double:
-      return qFuzzyCompare(d.d, (double)val);
-      // sleaze a bit, but usually what we want:
-    case T_Char: return ((unsigned char)d.c == val);
-    case T_String: return (getString() == String(val));
-    default: return false;
+  case T_Bool: return ((uint)d.b == val);
+  case T_Int: return ((d.i > 0) && (d.i == (int)val));
+  case T_UInt:  return (d.u == val);
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == (ta_int64_t)val));
+  case T_UInt64: return (d.u64 == val);
+  case T_Float:
+    return qFuzzyCompare(d.f, (float)val);
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
+    // sleaze a bit, but usually what we want:
+  case T_Char: return ((unsigned char)d.c == val);
+  case T_String: return (getString() == String(val));
+  default: return false;
   }
 }
 
 bool  Variant::eqInt64(ta_int64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
-    case T_Bool: return ((ta_int64_t)d.b == val);
-    case T_Int: return (d.i == val);
-    case T_UInt:
-      return ((val > 0) && (d.u == val));
-    case T_Int64:  return (d.i64 == val);
-    case T_UInt64:
-      return ((val > 0) && (d.u64 < (unsigned)LLONG_MAX) && (d.u64 == (unsigned)val));
-    case T_Float:
-      return qFuzzyCompare(d.f, (float)val);
-    case T_Double: // note: the conversion could overflow...
-      return qFuzzyCompare(d.d, (double)val);
-    case T_Char: return (d.c == val);
-    case T_String: return (getString() == String(val));
-    default: return false;
+  case T_Bool: return ((ta_int64_t)d.b == val);
+  case T_Int: return (d.i == val);
+  case T_UInt:
+    return ((val > 0) && (d.u == val));
+  case T_Int64:  return (d.i64 == val);
+  case T_UInt64:
+    return ((val > 0) && (d.u64 < (unsigned)LLONG_MAX) && (d.u64 == (unsigned)val));
+  case T_Float:
+    return qFuzzyCompare(d.f, (float)val);
+  case T_Double: // note: the conversion could overflow...
+    return qFuzzyCompare(d.d, (double)val);
+  case T_Char: return (d.c == val);
+  case T_String: return (getString() == String(val));
+  default: return false;
   }
 }
 
 bool  Variant::eqUInt64(ta_uint64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
-    case T_Bool: return ((ta_uint64_t)d.b == val);
-    case T_Int: return ((d.i > 0) && (d.i == (int)val));
-    case T_UInt:  return (d.u == val);
-    case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int)val));
-    case T_UInt64: return (d.u64 == val);
-    case T_Float:
-      return qFuzzyCompare(d.f, (float)val);
-    case T_Double: // the conversion could overflow
-      return qFuzzyCompare(d.d, (double)val);
-      // sleaze a bit, but usually what we want:
-    case T_Char: return ((unsigned char)d.c == val);
-    case T_String: return (getString() == String(val));
-    default: return false;
+  case T_Bool: return ((ta_uint64_t)d.b == val);
+  case T_Int: return ((d.i > 0) && (d.i == (int)val));
+  case T_UInt:  return (d.u == val);
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int)val));
+  case T_UInt64: return (d.u64 == val);
+  case T_Float:
+    return qFuzzyCompare(d.f, (float)val);
+  case T_Double: // the conversion could overflow
+    return qFuzzyCompare(d.d, (double)val);
+    // sleaze a bit, but usually what we want:
+  case T_Char: return ((unsigned char)d.c == val);
+  case T_String: return (getString() == String(val));
+  default: return false;
   }
 }
 
 bool  Variant::eqFloat(float val) const {
   if (isNull()) return false;
   switch (m_type) {
-    case T_Bool: return false; // note: never really makes sense
-    case T_Int:
-    case T_UInt:
-    case T_Int64:
-    case T_UInt64:
-      return (toDouble() == val);
-    case T_Float:
-      return qFuzzyCompare(d.f, val);
-    case T_Double:
-      return qFuzzyCompare(d.d, (double)val);
-    case T_Char: return (d.c == val);
-      //note: this is mostly for cases where the val will already be ex an int
-    case T_String: return (getString() == String(val));
-    default: return false;
+  case T_Bool: return false; // note: never really makes sense
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
+  case T_UInt64:
+    return (toDouble() == val);
+  case T_Float:
+    return qFuzzyCompare(d.f, val);
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
+  case T_Char: return (d.c == val);
+    //note: this is mostly for cases where the val will already be ex an int
+  case T_String: return (getString() == String(val));
+  default: return false;
   }
 }
 
 bool  Variant::eqDouble(double val) const {
   if (isNull()) return false;
   switch (m_type) {
-    case T_Bool: return false; // note: never really makes sense
-    case T_Int:
-    case T_UInt:
-    case T_Int64:
-    case T_UInt64:
-      return (toDouble() == val);
-    case T_Float:
-      return qFuzzyCompare(d.f, (float)val);
-    case T_Double:
-      return qFuzzyCompare(d.d, val);
-    case T_Char: return (d.c == val);
-      //note: this is mostly for cases where the val will already be ex an int
-    case T_String: return (getString() == String(val));
-    default: return false;
+  case T_Bool: return false; // note: never really makes sense
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
+  case T_UInt64:
+    return (toDouble() == val);
+  case T_Float:
+    return qFuzzyCompare(d.f, (float)val);
+  case T_Double:
+    return qFuzzyCompare(d.d, val);
+  case T_Char: return (d.c == val);
+    //note: this is mostly for cases where the val will already be ex an int
+  case T_String: return (getString() == String(val));
+  default: return false;
   }
 }
 
@@ -494,21 +494,21 @@ bool  Variant::eqChar(char val) const {
   // note: unsigned conversions below a bit sleazy, but usually what we want
   if (isNull()) return false;
   switch (m_type)  {
-    case T_Bool: return (d.b == (0 != (val)));
-    case T_Int: return (d.i == val);
-    case T_UInt:  return (d.u == (unsigned char)val);
-    case T_Int64:  return (d.i64 == val);
-    case T_UInt64: return (d.u64 == (unsigned char)val);
-    case T_Float:
-      return qFuzzyCompare(d.f, (float)val);
-    case T_Double:
-      return qFuzzyCompare(d.d, (double)val);
-    case T_Char: return (d.c == val);
-    case T_String: {
-      const String& str = getString();
-      return ((str.length() == 1) && (str[0] == val));
-    }
-    default: return false;
+  case T_Bool: return (d.b == (0 != (val)));
+  case T_Int: return (d.i == val);
+  case T_UInt:  return (d.u == (unsigned char)val);
+  case T_Int64:  return (d.i64 == val);
+  case T_UInt64: return (d.u64 == (unsigned char)val);
+  case T_Float:
+    return qFuzzyCompare(d.f, (float)val);
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
+  case T_Char: return (d.c == val);
+  case T_String: {
+    const String& str = getString();
+    return ((str.length() == 1) && (str[0] == val));
+  }
+  default: return false;
   }
 }
 
@@ -529,9 +529,9 @@ void Variant::ForceType(VarType vt, bool null) {
     if (vt == T_String)
       setString(_nilString);
     else {
-     releaseType();
-     d.i64 = 0; // fine for all others
-     m_type = vt;
+      releaseType();
+      d.i64 = 0; // fine for all others
+      m_type = vt;
     }
     // we need to ignore null for the ptr types, and force it true
     if ((vt >= T_Ptr) && (vt <= T_Matrix))
@@ -543,63 +543,63 @@ void Variant::ForceType(VarType vt, bool null) {
 void Variant::GetRepInfo(TypeDef*& typ, void*& data) const {
   data = const_cast<Data*>(&d);
   switch (m_type) {
-    case T_Invalid: typ = &TA_void; break;
-    case T_Bool: typ = &TA_bool; break;
-    case T_Int: typ = &TA_int; break;
-    case T_UInt: typ = &TA_unsigned_int; break;
-    case T_Int64: typ = &TA_int64_t; break;
-    case T_UInt64: typ = &TA_uint64_t; break;
-    case T_Float: typ = &TA_float; break;
-    case T_Double: typ = &TA_double; break;
-    case T_Char: typ = &TA_char; break;
-    case T_String:  typ = &TA_taString; break;
-      //note: in pdp, a member variable of type "void*" return md->type = "void_ptr"
-    case T_Ptr: typ = &TA_void_ptr; break;
+  case T_Invalid: typ = &TA_void; break;
+  case T_Bool: typ = &TA_bool; break;
+  case T_Int: typ = &TA_int; break;
+  case T_UInt: typ = &TA_unsigned_int; break;
+  case T_Int64: typ = &TA_int64_t; break;
+  case T_UInt64: typ = &TA_uint64_t; break;
+  case T_Float: typ = &TA_float; break;
+  case T_Double: typ = &TA_double; break;
+  case T_Char: typ = &TA_char; break;
+  case T_String:  typ = &TA_taString; break;
+    //note: in pdp, a member variable of type "void*" return md->type = "void_ptr"
+  case T_Ptr: typ = &TA_void_ptr; break;
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix: {
-      // if null, get the base type, else the actual type
-      TypeDef* temp_typ;
-      if (d.tab == NULL) {
-        if (m_type == T_Base) temp_typ = &TA_taBase;
-        else temp_typ = &TA_taMatrix;
-      } else
-        temp_typ = d.tab->GetTypeDef();
-      // now, get a ptr to that type
-      typ = temp_typ->GetPtrType();
-    } break;
+  case T_Base:
+  case T_Matrix: {
+    // if null, get the base type, else the actual type
+    TypeDef* temp_typ;
+    if (d.tab == NULL) {
+      if (m_type == T_Base) temp_typ = &TA_taBase;
+      else temp_typ = &TA_taMatrix;
+    } else
+      temp_typ = d.tab->GetTypeDef();
+    // now, get a ptr to that type
+    typ = temp_typ->GetPtrType();
+  } break;
 #endif
-    case T_TypeItem: {
-      // if null, get the base type, else the actual type
-      TypeDef* temp_typ;
-      if (d.ti == NULL) {
-        temp_typ = &TA_TypeItem;
-      } else
-        temp_typ = d.ti->GetTypeDef();
-      // now, get a ptr to that type
-      typ = temp_typ->GetPtrType();
-    } break;
+  case T_TypeItem: {
+    // if null, get the base type, else the actual type
+    TypeDef* temp_typ;
+    if (d.ti == NULL) {
+      temp_typ = &TA_TypeItem;
+    } else
+      temp_typ = d.ti->GetTypeDef();
+    // now, get a ptr to that type
+    typ = temp_typ->GetPtrType();
+  } break;
   }
 }
 
 bool Variant::isDefault() const {
   switch (m_type) {
-    case T_Invalid: return true;
-    case T_Bool: return (!d.b);
-    case T_Int: return (d.i == 0);
-    case T_UInt: return (d.u == 0U);
-    case T_Int64: return (d.i64 == 0LL);
-    case T_UInt64: return (d.u64 == 0ULL);
-    case T_Float: return (d.f == 0.0);
-    case T_Double: return (d.d == 0.0);
-    case T_Char: return (d.c == '\0');
-    case T_String: return (getString().empty());
-    case T_Ptr:
-    case T_Base:
-    case T_Matrix:
-    case T_TypeItem:
-      return (d.ptr == 0) ;
-      //  default: return ;
+  case T_Invalid: return true;
+  case T_Bool: return (!d.b);
+  case T_Int: return (d.i == 0);
+  case T_UInt: return (d.u == 0U);
+  case T_Int64: return (d.i64 == 0LL);
+  case T_UInt64: return (d.u64 == 0ULL);
+  case T_Float: return (d.f == 0.0);
+  case T_Double: return (d.d == 0.0);
+  case T_Char: return (d.c == '\0');
+  case T_String: return (getString().empty());
+  case T_Ptr:
+  case T_Base:
+  case T_Matrix:
+  case T_TypeItem:
+    return (d.ptr == 0) ;
+    //  default: return ;
   }
   return false;
 }
@@ -636,7 +636,7 @@ bool Variant::isNumeric() const {
 
 bool Variant::isNumericStrict() const {
   return (((m_type >= T_Int) && (m_type <= T_Double))
-    || (m_type == T_Char) || (m_type == T_Float));
+          || (m_type == T_Char) || (m_type == T_Float));
 }
 
 void Variant::load(istream& s) {
@@ -652,386 +652,386 @@ Variant& Variant::operator+=(const String& rhs) {
 
 Variant& Variant::operator+=(char rhs) {
   switch (m_type) {
-    case T_Int: d.i += rhs; break;
-    case T_UInt: d.u += rhs; break;
-    case T_Int64: d.i64 += rhs; break;
-    case T_UInt64: d.u64 += rhs; break;
-    case T_Float: d.f += rhs; break;
-    case T_Double: d.d += rhs; break;
-    case T_Char: d.c += rhs; break;
-    case T_String: setString(getString() + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: d.i += rhs; break;
+  case T_UInt: d.u += rhs; break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Float: d.f += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: d.c += rhs; break;
+  case T_String: setString(getString() + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(int rhs) {
   switch (m_type) {
-    case T_Int: d.i += rhs; break;
-    case T_UInt: d.u += rhs; break;
-    case T_Int64: d.i64 += rhs; break;
-    case T_UInt64: d.u64 += rhs; break;
-    case T_Float: d.f += rhs; break;
-    case T_Double: d.d += rhs; break;
-    case T_Char: setInt(d.c + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: d.i += rhs; break;
+  case T_UInt: d.u += rhs; break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Float: d.f += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setInt(d.c + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(uint rhs) {
   switch (m_type) {
-    case T_Int: setUInt(d.i + rhs); break;
-    case T_UInt: d.u += rhs; break;
-    case T_Int64: d.i64 += rhs; break;
-    case T_UInt64: d.u64 += rhs; break;
-    case T_Float: d.f += rhs; break;
-    case T_Double: d.d += rhs; break;
-    case T_Char: setUInt(d.c + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: setUInt(d.i + rhs); break;
+  case T_UInt: d.u += rhs; break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Float: d.f += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setUInt(d.c + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(ta_int64_t rhs) {
   switch (m_type) {
-    case T_Int: setInt64(d.i + rhs); break;
-    case T_UInt: setInt64(d.u + rhs); break;
-    case T_Int64: d.i64 += rhs; break;
-    case T_UInt64: d.u64 += rhs; break;
-    case T_Float: d.f += rhs; break;
-    case T_Double: d.d += rhs; break;
-    case T_Char: setInt64(d.c + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: setInt64(d.i + rhs); break;
+  case T_UInt: setInt64(d.u + rhs); break;
+  case T_Int64: d.i64 += rhs; break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Float: d.f += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setInt64(d.c + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(ta_uint64_t rhs) {
   switch (m_type) {
-    case T_Int: setUInt64(d.i + rhs); break;
-    case T_UInt: setUInt64(d.u + rhs); break;
-    case T_Int64: setUInt64(d.i64 + rhs); break;
-    case T_UInt64: d.u64 += rhs; break;
-    case T_Float: d.f += rhs; break;
-    case T_Double: d.d += rhs; break;
-    case T_Char: setUInt64(d.c + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: setUInt64(d.i + rhs); break;
+  case T_UInt: setUInt64(d.u + rhs); break;
+  case T_Int64: setUInt64(d.i64 + rhs); break;
+  case T_UInt64: d.u64 += rhs; break;
+  case T_Float: d.f += rhs; break;
+  case T_Double: d.d += rhs; break;
+  case T_Char: setUInt64(d.c + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(float rhs) {
   switch (m_type) {
-    case T_Int: setFloat(d.i + rhs); break;
-    case T_UInt: setFloat(d.u + rhs); break;
-    case T_Int64: setFloat(d.i64 + rhs); break;
-    case T_UInt64: setFloat(d.u64 + rhs); break;
-    case T_Float: setFloat(d.f + rhs); break;
-    case T_Double: setFloat(d.d + rhs); break;
-    case T_Char: setFloat(d.c + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: setFloat(d.i + rhs); break;
+  case T_UInt: setFloat(d.u + rhs); break;
+  case T_Int64: setFloat(d.i64 + rhs); break;
+  case T_UInt64: setFloat(d.u64 + rhs); break;
+  case T_Float: setFloat(d.f + rhs); break;
+  case T_Double: setFloat(d.d + rhs); break;
+  case T_Char: setFloat(d.c + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(double rhs) {
   switch (m_type) {
-    case T_Int: setDouble(d.i + rhs); break;
-    case T_UInt: setDouble(d.u + rhs); break;
-    case T_Int64: setDouble(d.i64 + rhs); break;
-    case T_UInt64: setDouble(d.u64 + rhs); break;
-    case T_Float: setDouble(d.f + rhs); break;
-    case T_Double: setDouble(d.d + rhs); break;
-    case T_Char: setDouble(d.c + rhs); break;
-    default:
-      error("operator += not defined");
-      break;
+  case T_Int: setDouble(d.i + rhs); break;
+  case T_UInt: setDouble(d.u + rhs); break;
+  case T_Int64: setDouble(d.i64 + rhs); break;
+  case T_UInt64: setDouble(d.u64 + rhs); break;
+  case T_Float: setDouble(d.f + rhs); break;
+  case T_Double: setDouble(d.d + rhs); break;
+  case T_Char: setDouble(d.c + rhs); break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator+=(const Variant& rhs) {
   switch (rhs.type()) {
-    case T_Int: return operator+=(rhs.d.i);
-    case T_UInt: return operator+=(rhs.d.u);
-    case T_Int64: return operator+=(rhs.d.i64);
-    case T_UInt64: return operator+=(rhs.d.u64);
-    case T_Float: return operator+=(rhs.d.f);
-    case T_Double: return operator+=(rhs.d.d);
-    case T_Char: return operator+=(rhs.d.c);
-    case T_String: return operator+=(rhs.getString());
-    default:
-      rhs.error("operator += not defined");
-      break;
+  case T_Int: return operator+=(rhs.d.i);
+  case T_UInt: return operator+=(rhs.d.u);
+  case T_Int64: return operator+=(rhs.d.i64);
+  case T_UInt64: return operator+=(rhs.d.u64);
+  case T_Float: return operator+=(rhs.d.f);
+  case T_Double: return operator+=(rhs.d.d);
+  case T_Char: return operator+=(rhs.d.c);
+  case T_String: return operator+=(rhs.getString());
+  default:
+    rhs.error("operator += not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(char rhs) {
   switch (m_type) {
-    case T_Int: d.i -= rhs; break;
-    case T_UInt: d.u -= rhs; break;
-    case T_Int64: d.i64 -= rhs; break;
-    case T_UInt64: d.u64 -= rhs; break;
-    case T_Float: d.f -= rhs; break;
-    case T_Double: d.d -= rhs; break;
-    case T_Char: d.c -= rhs; break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: d.i -= rhs; break;
+  case T_UInt: d.u -= rhs; break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Float: d.f -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: d.c -= rhs; break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(int rhs) {
   switch (m_type) {
-    case T_Int: d.i -= rhs; break;
-    case T_UInt: d.u -= rhs; break;
-    case T_Int64: d.i64 -= rhs; break;
-    case T_UInt64: d.u64 -= rhs; break;
-    case T_Float: d.f -= rhs; break;
-    case T_Double: d.d -= rhs; break;
-    case T_Char: setInt(d.c - rhs); break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: d.i -= rhs; break;
+  case T_UInt: d.u -= rhs; break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Float: d.f -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setInt(d.c - rhs); break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(uint rhs) {
   switch (m_type) {
-    case T_Int: setUInt(d.i - rhs); break;
-    case T_UInt: d.u -= rhs; break;
-    case T_Int64: d.i64 -= rhs; break;
-    case T_UInt64: d.u64 -= rhs; break;
-    case T_Float: d.f -= rhs; break;
-    case T_Double: d.d -= rhs; break;
-    case T_Char: setUInt(d.c - rhs); break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: setUInt(d.i - rhs); break;
+  case T_UInt: d.u -= rhs; break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Float: d.f -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setUInt(d.c - rhs); break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(ta_int64_t rhs) {
   switch (m_type) {
-    case T_Int: setInt64(d.i - rhs); break;
-    case T_UInt: setInt64(d.u - rhs); break;
-    case T_Int64: d.i64 -= rhs; break;
-    case T_UInt64: d.u64 -= rhs; break;
-    case T_Float: d.f -= rhs; break;
-    case T_Double: d.d -= rhs; break;
-    case T_Char: setInt64(d.c - rhs); break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: setInt64(d.i - rhs); break;
+  case T_UInt: setInt64(d.u - rhs); break;
+  case T_Int64: d.i64 -= rhs; break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Float: d.f -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setInt64(d.c - rhs); break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(ta_uint64_t rhs) {
   switch (m_type) {
-    case T_Int: setUInt64(d.i - rhs); break;
-    case T_UInt: setUInt64(d.u - rhs); break;
-    case T_Int64: setUInt64(d.i64 - rhs); break;
-    case T_UInt64: d.u64 -= rhs; break;
-    case T_Float: d.f -= rhs; break;
-    case T_Double: d.d -= rhs; break;
-    case T_Char: setUInt64(d.c - rhs); break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: setUInt64(d.i - rhs); break;
+  case T_UInt: setUInt64(d.u - rhs); break;
+  case T_Int64: setUInt64(d.i64 - rhs); break;
+  case T_UInt64: d.u64 -= rhs; break;
+  case T_Float: d.f -= rhs; break;
+  case T_Double: d.d -= rhs; break;
+  case T_Char: setUInt64(d.c - rhs); break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(float rhs) {
   switch (m_type) {
-    case T_Int: setFloat(d.i - rhs); break;
-    case T_UInt: setFloat(d.u - rhs); break;
-    case T_Int64: setFloat(d.i64 - rhs); break;
-    case T_UInt64: setFloat(d.u64 - rhs); break;
-    case T_Float: setFloat(d.f - rhs); break;
-    case T_Double: setFloat(d.d - rhs); break;
-    case T_Char: setFloat(d.c - rhs); break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: setFloat(d.i - rhs); break;
+  case T_UInt: setFloat(d.u - rhs); break;
+  case T_Int64: setFloat(d.i64 - rhs); break;
+  case T_UInt64: setFloat(d.u64 - rhs); break;
+  case T_Float: setFloat(d.f - rhs); break;
+  case T_Double: setFloat(d.d - rhs); break;
+  case T_Char: setFloat(d.c - rhs); break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(double rhs) {
   switch (m_type) {
-    case T_Int: setDouble(d.i - rhs); break;
-    case T_UInt: setDouble(d.u - rhs); break;
-    case T_Int64: setDouble(d.i64 - rhs); break;
-    case T_UInt64: setDouble(d.u64 - rhs); break;
-    case T_Float: setDouble(d.f - rhs); break;
-    case T_Double: setDouble(d.d - rhs); break;
-    case T_Char: setDouble(d.c - rhs); break;
-    default:
-      error("operator -= not defined");
-      break;
+  case T_Int: setDouble(d.i - rhs); break;
+  case T_UInt: setDouble(d.u - rhs); break;
+  case T_Int64: setDouble(d.i64 - rhs); break;
+  case T_UInt64: setDouble(d.u64 - rhs); break;
+  case T_Float: setDouble(d.f - rhs); break;
+  case T_Double: setDouble(d.d - rhs); break;
+  case T_Char: setDouble(d.c - rhs); break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator-=(const Variant& rhs) {
   switch (rhs.type()) {
-    case T_Int: return operator-=(rhs.d.i);
-    case T_UInt: return operator-=(rhs.d.u);
-    case T_Int64: return operator-=(rhs.d.i64);
-    case T_UInt64: return operator-=(rhs.d.u64);
-    case T_Float: return operator-=(rhs.d.f);
-    case T_Double: return operator-=(rhs.d.d);
-    case T_Char: return operator-=(rhs.d.c);
-    default:
-      rhs.error("operator -= not defined");
-      break;
+  case T_Int: return operator-=(rhs.d.i);
+  case T_UInt: return operator-=(rhs.d.u);
+  case T_Int64: return operator-=(rhs.d.i64);
+  case T_UInt64: return operator-=(rhs.d.u64);
+  case T_Float: return operator-=(rhs.d.f);
+  case T_Double: return operator-=(rhs.d.d);
+  case T_Char: return operator-=(rhs.d.c);
+  default:
+    rhs.error("operator -= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(char rhs) {
   switch (m_type) {
-    case T_Int: d.i *= rhs; break;
-    case T_UInt: d.u *= rhs; break;
-    case T_Int64: d.i64 *= rhs; break;
-    case T_UInt64: d.u64 *= rhs; break;
-    case T_Float: d.f *= rhs; break;
-    case T_Double: d.d *= rhs; break;
-    case T_Char: d.c *= rhs; break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: d.i *= rhs; break;
+  case T_UInt: d.u *= rhs; break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Float: d.f *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: d.c *= rhs; break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(int rhs) {
   switch (m_type) {
-    case T_Int: d.i *= rhs; break;
-    case T_UInt: d.u *= rhs; break;
-    case T_Int64: d.i64 *= rhs; break;
-    case T_UInt64: d.u64 *= rhs; break;
-    case T_Float: d.f *= rhs; break;
-    case T_Double: d.d *= rhs; break;
-    case T_Char: setInt(d.c * rhs); break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: d.i *= rhs; break;
+  case T_UInt: d.u *= rhs; break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Float: d.f *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setInt(d.c * rhs); break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(uint rhs) {
   switch (m_type) {
-    case T_Int: setUInt(d.i * rhs); break;
-    case T_UInt: d.u *= rhs; break;
-    case T_Int64: d.i64 *= rhs; break;
-    case T_UInt64: d.u64 *= rhs; break;
-    case T_Float: d.f *= rhs; break;
-    case T_Double: d.d *= rhs; break;
-    case T_Char: setUInt(d.c * rhs); break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: setUInt(d.i * rhs); break;
+  case T_UInt: d.u *= rhs; break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Float: d.f *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setUInt(d.c * rhs); break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(ta_int64_t rhs) {
   switch (m_type) {
-    case T_Int: setInt64(d.i * rhs); break;
-    case T_UInt: setInt64(d.u * rhs); break;
-    case T_Int64: d.i64 *= rhs; break;
-    case T_UInt64: d.u64 *= rhs; break;
-    case T_Float: d.f *= rhs; break;
-    case T_Double: d.d *= rhs; break;
-    case T_Char: setInt64(d.c * rhs); break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: setInt64(d.i * rhs); break;
+  case T_UInt: setInt64(d.u * rhs); break;
+  case T_Int64: d.i64 *= rhs; break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Float: d.f *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setInt64(d.c * rhs); break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(ta_uint64_t rhs) {
   switch (m_type) {
-    case T_Int: setUInt64(d.i * rhs); break;
-    case T_UInt: setUInt64(d.u * rhs); break;
-    case T_Int64: setUInt64(d.i64 * rhs); break;
-    case T_UInt64: d.u64 *= rhs; break;
-    case T_Float: d.f *= rhs; break;
-    case T_Double: d.d *= rhs; break;
-    case T_Char: setUInt64(d.c * rhs); break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: setUInt64(d.i * rhs); break;
+  case T_UInt: setUInt64(d.u * rhs); break;
+  case T_Int64: setUInt64(d.i64 * rhs); break;
+  case T_UInt64: d.u64 *= rhs; break;
+  case T_Float: d.f *= rhs; break;
+  case T_Double: d.d *= rhs; break;
+  case T_Char: setUInt64(d.c * rhs); break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(float rhs) {
   switch (m_type) {
-    case T_Int: setFloat(d.i * rhs); break;
-    case T_UInt: setFloat(d.u * rhs); break;
-    case T_Int64: setFloat(d.i64 * rhs); break;
-    case T_UInt64: setFloat(d.u64 * rhs); break;
-    case T_Float: setFloat(d.f * rhs); break;
-    case T_Double: setFloat(d.d * rhs); break;
-    case T_Char: setFloat(d.c * rhs); break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: setFloat(d.i * rhs); break;
+  case T_UInt: setFloat(d.u * rhs); break;
+  case T_Int64: setFloat(d.i64 * rhs); break;
+  case T_UInt64: setFloat(d.u64 * rhs); break;
+  case T_Float: setFloat(d.f * rhs); break;
+  case T_Double: setFloat(d.d * rhs); break;
+  case T_Char: setFloat(d.c * rhs); break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(double rhs) {
   switch (m_type) {
-    case T_Int: setDouble(d.i * rhs); break;
-    case T_UInt: setDouble(d.u * rhs); break;
-    case T_Int64: setDouble(d.i64 * rhs); break;
-    case T_UInt64: setDouble(d.u64 * rhs); break;
-    case T_Float: setDouble(d.f * rhs); break;
-    case T_Double: setDouble(d.d * rhs); break;
-    case T_Char: setDouble(d.c * rhs); break;
-    default:
-      error("operator *= not defined");
-      break;
+  case T_Int: setDouble(d.i * rhs); break;
+  case T_UInt: setDouble(d.u * rhs); break;
+  case T_Int64: setDouble(d.i64 * rhs); break;
+  case T_UInt64: setDouble(d.u64 * rhs); break;
+  case T_Float: setDouble(d.f * rhs); break;
+  case T_Double: setDouble(d.d * rhs); break;
+  case T_Char: setDouble(d.c * rhs); break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator*=(const Variant& rhs) {
   switch (rhs.type()) {
-    case T_Int: return operator*=(rhs.d.i);
-    case T_UInt: return operator*=(rhs.d.u);
-    case T_Int64: return operator*=(rhs.d.i64);
-    case T_UInt64: return operator*=(rhs.d.u64);
-    case T_Float: return operator*=(rhs.d.f);
-    case T_Double: return operator*=(rhs.d.d);
-    case T_Char: return operator*=(rhs.d.c);
-    default:
-      rhs.error("operator *= not defined");
-      break;
+  case T_Int: return operator*=(rhs.d.i);
+  case T_UInt: return operator*=(rhs.d.u);
+  case T_Int64: return operator*=(rhs.d.i64);
+  case T_UInt64: return operator*=(rhs.d.u64);
+  case T_Float: return operator*=(rhs.d.f);
+  case T_Double: return operator*=(rhs.d.d);
+  case T_Char: return operator*=(rhs.d.c);
+  default:
+    rhs.error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -1041,16 +1041,16 @@ Variant& Variant::operator/=(char rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: d.i /= rhs; break;
-    case T_UInt: d.u /= rhs; break;
-    case T_Int64: d.i64 /= rhs; break;
-    case T_UInt64: d.u64 /= rhs; break;
-    case T_Float: d.f /= rhs; break;
-    case T_Double: d.d /= rhs; break;
-    case T_Char: d.c /= rhs; break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: d.i /= rhs; break;
+  case T_UInt: d.u /= rhs; break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Float: d.f /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: d.c /= rhs; break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -1060,16 +1060,16 @@ Variant& Variant::operator/=(int rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: d.i /= rhs; break;
-    case T_UInt: d.u /= rhs; break;
-    case T_Int64: d.i64 /= rhs; break;
-    case T_UInt64: d.u64 /= rhs; break;
-    case T_Float: d.f /= rhs; break;
-    case T_Double: d.d /= rhs; break;
-    case T_Char: setInt(d.c / rhs); break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: d.i /= rhs; break;
+  case T_UInt: d.u /= rhs; break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Float: d.f /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setInt(d.c / rhs); break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -1079,16 +1079,16 @@ Variant& Variant::operator/=(uint rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: setUInt(d.i / rhs); break;
-    case T_UInt: d.u /= rhs; break;
-    case T_Int64: d.i64 /= rhs; break;
-    case T_UInt64: d.u64 /= rhs; break;
-    case T_Float: d.f /= rhs; break;
-    case T_Double: d.d /= rhs; break;
-    case T_Char: setUInt(d.c / rhs); break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: setUInt(d.i / rhs); break;
+  case T_UInt: d.u /= rhs; break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Float: d.f /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setUInt(d.c / rhs); break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -1098,16 +1098,16 @@ Variant& Variant::operator/=(ta_int64_t rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: setInt64(d.i / rhs); break;
-    case T_UInt: setInt64(d.u / rhs); break;
-    case T_Int64: d.i64 /= rhs; break;
-    case T_UInt64: d.u64 /= rhs; break;
-    case T_Float: d.f /= rhs; break;
-    case T_Double: d.d /= rhs; break;
-    case T_Char: setInt64(d.c / rhs); break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: setInt64(d.i / rhs); break;
+  case T_UInt: setInt64(d.u / rhs); break;
+  case T_Int64: d.i64 /= rhs; break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Float: d.f /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setInt64(d.c / rhs); break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -1117,16 +1117,16 @@ Variant& Variant::operator/=(ta_uint64_t rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: setUInt64(d.i / rhs); break;
-    case T_UInt: setUInt64(d.u / rhs); break;
-    case T_Int64: setUInt64(d.i64 / rhs); break;
-    case T_UInt64: d.u64 /= rhs; break;
-    case T_Float: d.f /= rhs; break;
-    case T_Double: d.d /= rhs; break;
-    case T_Char: setUInt64(d.c / rhs); break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: setUInt64(d.i / rhs); break;
+  case T_UInt: setUInt64(d.u / rhs); break;
+  case T_Int64: setUInt64(d.i64 / rhs); break;
+  case T_UInt64: d.u64 /= rhs; break;
+  case T_Float: d.f /= rhs; break;
+  case T_Double: d.d /= rhs; break;
+  case T_Char: setUInt64(d.c / rhs); break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -1136,16 +1136,16 @@ Variant& Variant::operator/=(float rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: setFloat(d.i / rhs); break;
-    case T_UInt: setFloat(d.u / rhs); break;
-    case T_Int64: setFloat(d.i64 / rhs); break;
-    case T_UInt64: setFloat(d.u64 / rhs); break;
-    case T_Float: setFloat(d.f / rhs); break;
-    case T_Double: setFloat(d.d / rhs); break;
-    case T_Char: setFloat(d.c / rhs); break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: setFloat(d.i / rhs); break;
+  case T_UInt: setFloat(d.u / rhs); break;
+  case T_Int64: setFloat(d.i64 / rhs); break;
+  case T_UInt64: setFloat(d.u64 / rhs); break;
+  case T_Float: setFloat(d.f / rhs); break;
+  case T_Double: setFloat(d.d / rhs); break;
+  case T_Char: setFloat(d.c / rhs); break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -1155,32 +1155,32 @@ Variant& Variant::operator/=(double rhs) {
     error("operator /= Floating Point Exception: Division by Zero");
     return *this; }
   switch (m_type) {
-    case T_Int: setDouble(d.i / rhs); break;
-    case T_UInt: setDouble(d.u / rhs); break;
-    case T_Int64: setDouble(d.i64 / rhs); break;
-    case T_UInt64: setDouble(d.u64 / rhs); break;
-    case T_Float: setDouble(d.f / rhs); break;
-    case T_Double: setDouble(d.d / rhs); break;
-    case T_Char: setDouble(d.c / rhs); break;
-    default:
-      error("operator /= / not defined");
-      break;
+  case T_Int: setDouble(d.i / rhs); break;
+  case T_UInt: setDouble(d.u / rhs); break;
+  case T_Int64: setDouble(d.i64 / rhs); break;
+  case T_UInt64: setDouble(d.u64 / rhs); break;
+  case T_Float: setDouble(d.f / rhs); break;
+  case T_Double: setDouble(d.d / rhs); break;
+  case T_Char: setDouble(d.c / rhs); break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(const Variant& rhs) {
   switch (rhs.type()) {
-    case T_Int: return operator/=(rhs.d.i);
-    case T_UInt: return operator/=(rhs.d.u);
-    case T_Int64: return operator/=(rhs.d.i64);
-    case T_UInt64: return operator/=(rhs.d.u64);
-    case T_Float: return operator/=(rhs.d.f);
-    case T_Double: return operator/=(rhs.d.d);
-    case T_Char: return operator/=(rhs.d.c);
-    default:
-      rhs.error("operator /= not defined");
-      break;
+  case T_Int: return operator/=(rhs.d.i);
+  case T_UInt: return operator/=(rhs.d.u);
+  case T_Int64: return operator/=(rhs.d.i64);
+  case T_UInt64: return operator/=(rhs.d.u64);
+  case T_Float: return operator/=(rhs.d.f);
+  case T_Double: return operator/=(rhs.d.d);
+  case T_Char: return operator/=(rhs.d.c);
+  default:
+    rhs.error("operator /= not defined");
+    break;
   }
   return *this;
 }
@@ -1705,16 +1705,16 @@ Variant& Variant::operator^=(const Variant& rhs) {
 
 Variant& Variant::operator++() {
   switch (m_type) {
-    case T_Int: ++(d.i); break;
-    case T_UInt: ++(d.u); break;
-    case T_Int64: ++(d.i64); break;
-    case T_UInt64: ++(d.u64); break;
-    case T_Float: d.f += 1.0; break;
-    case T_Double: d.d += 1.0; break;
-    case T_Char: ++(d.c); break;
-    default:
-      error("operator ++ not defined");
-      break;
+  case T_Int: ++(d.i); break;
+  case T_UInt: ++(d.u); break;
+  case T_Int64: ++(d.i64); break;
+  case T_UInt64: ++(d.u64); break;
+  case T_Float: d.f += 1.0; break;
+  case T_Double: d.d += 1.0; break;
+  case T_Char: ++(d.c); break;
+  default:
+    error("operator ++ not defined");
+    break;
   }
   return *this;
 }
@@ -1727,16 +1727,16 @@ Variant Variant::operator++(int) {
 
 Variant& Variant::operator--() {
   switch (m_type) {
-    case T_Int: --(d.i); break;
-    case T_UInt: --(d.u); break;
-    case T_Int64: --(d.i64); break;
-    case T_UInt64: --(d.u64); break;
-    case T_Float: d.f -= 1.0; break;
-    case T_Double: d.d -= 1.0; break;
-    case T_Char: --(d.c); break;
-    default:
-      error("operator -- not defined");
-      break;
+  case T_Int: --(d.i); break;
+  case T_UInt: --(d.u); break;
+  case T_Int64: --(d.i64); break;
+  case T_UInt64: --(d.u64); break;
+  case T_Float: d.f -= 1.0; break;
+  case T_Double: d.d -= 1.0; break;
+  case T_Char: --(d.c); break;
+  default:
+    error("operator -- not defined");
+    break;
   }
   return *this;
 }
@@ -1749,18 +1749,18 @@ Variant Variant::operator--(int) {
 
 Variant& Variant::operator-() {
   switch (m_type) {
-    case T_Invalid: break;
-    case T_Bool: d.b = !d.b; break; // makes more sense than -d.b
-    case T_Int: d.i = -d.i; break;
-    case T_UInt: d.u = (uint)-((int)d.u); break; // forces unsigned
-    case T_Int64: d.i64 = -d.i64; break;
-    case T_UInt64: d.u64 = (ta_uint64_t)-((ta_int64_t)d.u64); break; // forces unsigned
-    case T_Float: d.f = -d.f; break;
-    case T_Double: d.d = -d.d; break;
-    case T_Char: d.c = -d.c; break;
-    default:
-      error("unary operator - not defined");
-      break;
+  case T_Invalid: break;
+  case T_Bool: d.b = !d.b; break; // makes more sense than -d.b
+  case T_Int: d.i = -d.i; break;
+  case T_UInt: d.u = (uint)-((int)d.u); break; // forces unsigned
+  case T_Int64: d.i64 = -d.i64; break;
+  case T_UInt64: d.u64 = (ta_uint64_t)-((ta_int64_t)d.u64); break; // forces unsigned
+  case T_Float: d.f = -d.f; break;
+  case T_Double: d.d = -d.d; break;
+  case T_Char: d.c = -d.c; break;
+  default:
+    error("unary operator - not defined");
+    break;
   }
   return *this;
 }
@@ -1797,53 +1797,53 @@ void Variant::save(ostream& s) const {
   s << (int)type();
   
   switch (m_type) {
-    case T_Invalid:
-      break;
-    case T_Bool:
-      s << d.b;
-      break;
-    case T_Int:
-      s << d.i;
-      break;
-    case T_UInt:
-      s << d.u;
-      break;
-    case T_Int64:
-      s << d.i64;
-      break;
-    case T_UInt64:
-      s << d.u64;
-      break;
-    case T_Float:
-      s << d.f;
-      break;
-    case T_Double:
-      s << d.d;
-      break;
-    case T_Char:
-      s << d.c;
-      break;
-    case T_String:
-      s << getString();
-      break;
-    case T_Ptr:
-      s << toString(); //NOTE: cannot be streamed back in!!!
-      break;
+  case T_Invalid:
+    break;
+  case T_Bool:
+    s << d.b;
+    break;
+  case T_Int:
+    s << d.i;
+    break;
+  case T_UInt:
+    s << d.u;
+    break;
+  case T_Int64:
+    s << d.i64;
+    break;
+  case T_UInt64:
+    s << d.u64;
+    break;
+  case T_Float:
+    s << d.f;
+    break;
+  case T_Double:
+    s << d.d;
+    break;
+  case T_Char:
+    s << d.c;
+    break;
+  case T_String:
+    s << getString();
+    break;
+  case T_Ptr:
+    s << toString(); //NOTE: cannot be streamed back in!!!
+    break;
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix:
-      if (d.tab == NULL) {
-        s << "TA_void"; // indicates NULL
-      } else {
-        s << d.tab->GetTypeDef()->name;
-        d.tab->Save_strm(s);
-      }
-      break;
+  case T_Base:
+  case T_Matrix:
+    if (d.tab == NULL) {
+      s << "TA_void"; // indicates NULL
+    } else {
+      s << d.tab->GetTypeDef()->name;
+      d.tab->Save_strm(s);
+    }
+    break;
 #endif
-    case T_TypeItem:
-      s << toString();
-      break;
-    default: break ;
+  case T_TypeItem:
+    s << toString();
+    break;
+  default: break ;
   }
 }
 
@@ -1873,50 +1873,50 @@ void Variant::setVariant(const Variant &cp) {
 
 void Variant::setVariantData(const Variant& cp) {
   switch (m_type) {
-    case T_Invalid:
-      break;
-    case T_Bool:
-      setBool(cp.toBool());
-      break;
-    case T_Int:
-      setInt(cp.toInt());
-      break;
-    case T_UInt:
-      setUInt(cp.toUInt());
-      break;
-    case T_Int64:
-      setInt64(cp.toInt64());
-      break;
-    case T_UInt64:
-      setUInt64(cp.toUInt64());
-      break;
-    case T_Float:
-      setFloat(cp.toFloat());
-      break;
-    case T_Double:
-      setDouble(cp.toDouble());
-      break;
-    case T_Char:
-      setChar(cp.toChar());
-      break;
-    case T_String:
-      setString(cp.toString());
-      break;
-    case T_Ptr:
-      setPtr(cp.toPtr());
-      break;
+  case T_Invalid:
+    break;
+  case T_Bool:
+    setBool(cp.toBool());
+    break;
+  case T_Int:
+    setInt(cp.toInt());
+    break;
+  case T_UInt:
+    setUInt(cp.toUInt());
+    break;
+  case T_Int64:
+    setInt64(cp.toInt64());
+    break;
+  case T_UInt64:
+    setUInt64(cp.toUInt64());
+    break;
+  case T_Float:
+    setFloat(cp.toFloat());
+    break;
+  case T_Double:
+    setDouble(cp.toDouble());
+    break;
+  case T_Char:
+    setChar(cp.toChar());
+    break;
+  case T_String:
+    setString(cp.toString());
+    break;
+  case T_Ptr:
+    setPtr(cp.toPtr());
+    break;
 #ifndef NO_TA_BASE
-    case T_Base:
-      setBase(cp.toBase());
-      break;
-    case T_Matrix:
-      setMatrix(cp.toMatrix());
-      break;
+  case T_Base:
+    setBase(cp.toBase());
+    break;
+  case T_Matrix:
+    setMatrix(cp.toMatrix());
+    break;
 #endif
-    case T_TypeItem:
-      setTypeItem(cp.toTypeItem());
-      break;
-    default: break ;
+  case T_TypeItem:
+    setTypeItem(cp.toTypeItem());
+    break;
+  default: break ;
   }
 }
 
@@ -2059,23 +2059,23 @@ void Variant::setString(const String& val, bool null) {
 void Variant::setType(VarType value) {
   if (m_type == value) return;
   switch (value) {
-    case T_Invalid: setInvalid(); break;
-    case T_Bool: setBool(false); break;
-    case T_Int: setInt(0); break;
-    case T_UInt:  setUInt(0U); break;
-    case T_Int64:  setInt64(0LL); break;
-    case T_UInt64: setUInt64(0ULL); break;
-    case T_Float: setFloat(0.0); break;
-    case T_Double: setDouble(0.0); break;
-    case T_Char: setChar('\0'); break;
-    case T_String:  setString(""); break;
-    case T_Ptr:  setPtr(NULL); break;
+  case T_Invalid: setInvalid(); break;
+  case T_Bool: setBool(false); break;
+  case T_Int: setInt(0); break;
+  case T_UInt:  setUInt(0U); break;
+  case T_Int64:  setInt64(0LL); break;
+  case T_UInt64: setUInt64(0ULL); break;
+  case T_Float: setFloat(0.0); break;
+  case T_Double: setDouble(0.0); break;
+  case T_Char: setChar('\0'); break;
+  case T_String:  setString(""); break;
+  case T_Ptr:  setPtr(NULL); break;
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix: setBase(NULL); break;
+  case T_Base:
+  case T_Matrix: setBase(NULL); break;
 #endif
-    case T_TypeItem:  setTypeItem(NULL); break;
-    default: return ;
+  case T_TypeItem:  setTypeItem(NULL); break;
+  default: return ;
   }
 }
 
@@ -2089,41 +2089,41 @@ String Variant::getTypeAsString() const {
 
 bool Variant::toBool() const {
   switch (m_type) {
-    case T_Invalid:
-      return false;
-    case T_Bool:
-      return d.b;
-    case T_Int:
-      return (d.i != 0);
-    case T_UInt:
-      return (d.u != 0);
-    case T_Int64:
-      return (d.i64 != 0);
-    case T_UInt64:
-      return (d.u64 != 0);
-    case T_Float:
-      return (d.f != 0.0);
-    case T_Double:
-      return (d.d != 0.0);
-    case T_Char:
-      return (d.c != 0);
-    case T_String: {
-      const String& str = getString();
-      if (str.empty()) return false;
-      else {
-        char c = str[0];
-        return ((c == 't') || (c == 'T') || ((c >= '1') && (c <= '9')));
-      }
-    } break;
-    case T_Ptr:
-    case T_TypeItem:
-      return (d.ptr != NULL);
+  case T_Invalid:
+    return false;
+  case T_Bool:
+    return d.b;
+  case T_Int:
+    return (d.i != 0);
+  case T_UInt:
+    return (d.u != 0);
+  case T_Int64:
+    return (d.i64 != 0);
+  case T_UInt64:
+    return (d.u64 != 0);
+  case T_Float:
+    return (d.f != 0.0);
+  case T_Double:
+    return (d.d != 0.0);
+  case T_Char:
+    return (d.c != 0);
+  case T_String: {
+    const String& str = getString();
+    if (str.empty()) return false;
+    else {
+      char c = str[0];
+      return ((c == 't') || (c == 'T') || ((c >= '1') && (c <= '9')));
+    }
+  } break;
+  case T_Ptr:
+  case T_TypeItem:
+    return (d.ptr != NULL);
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix:
-      return (d.tab != NULL);
+  case T_Base:
+  case T_Matrix:
+    return (d.tab != NULL);
 #endif
-    default: break;
+  default: break;
   }
   return false;
 }
@@ -2131,249 +2131,249 @@ bool Variant::toBool() const {
 const String Variant::toCssLiteral() const {
   String rval;
   switch (type()) {
-    case T_Invalid: rval = "_nilVariant"; break;
-    case T_Bool: rval = toString(); break;
-    case T_Int: rval = toString(); break;
-    case T_UInt:
-      rval = toString();
-      rval += "U";
-      break;
-    case T_Int64:
-      rval = toString();
-      rval += "LL";
-      break;
-    case T_UInt64:
-      rval = toString();
-      rval += "ULL";
-      break;
-    case T_Float:
-    case T_Double:
-      rval = toString();
-      break;
-    case T_Char:
-      rval = String::CharToCppLiteral(d.c);
-      break;
-    case T_String:
-      rval = String::StringToCppLiteral(getString());
-      break;
-    case T_Ptr:
-      if (isNull()) {
-        rval += "NULL";
-      } else {
-        error("toCssLiteral() on a non-null raw pointer");
-        // todo, maybe should emit code breaking literal
-      }  break;
+  case T_Invalid: rval = "_nilVariant"; break;
+  case T_Bool: rval = toString(); break;
+  case T_Int: rval = toString(); break;
+  case T_UInt:
+    rval = toString();
+    rval += "U";
+    break;
+  case T_Int64:
+    rval = toString();
+    rval += "LL";
+    break;
+  case T_UInt64:
+    rval = toString();
+    rval += "ULL";
+    break;
+  case T_Float:
+  case T_Double:
+    rval = toString();
+    break;
+  case T_Char:
+    rval = String::CharToCppLiteral(d.c);
+    break;
+  case T_String:
+    rval = String::StringToCppLiteral(getString());
+    break;
+  case T_Ptr:
+    if (isNull()) {
+      rval += "NULL";
+    } else {
+      error("toCssLiteral() on a non-null raw pointer");
+      // todo, maybe should emit code breaking literal
+    }  break;
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix:
-      if (isNull()) {
-        rval += "NULL";
-      } else {
-        rval += d.tab->GetPathNames();
-      }
+  case T_Base:
+  case T_Matrix:
+    if (isNull()) {
+      rval += "NULL";
+    } else {
+      rval += d.tab->GetPathNames();
+    }
 #endif
-    case T_TypeItem:
-      if (isNull()) {
-        rval += "NULL";
-      } else {
-        rval += "&";
-        rval += toString();
-      }  break;
-    default: break ;
+  case T_TypeItem:
+    if (isNull()) {
+      rval += "NULL";
+    } else {
+      rval += "&";
+      rval += toString();
+    }  break;
+  default: break ;
   }
   return rval;
 }
 
 int Variant::toInt() const {
   switch (m_type) {
-    case T_Invalid:
-      break ;
-    case T_Bool:
-      return (d.b) ? 1 : 0;
-    case T_Int:
-      return d.i;
-    case T_UInt:
-      return (int)d.u;
-    case T_Int64:
-      return (int)d.i64;
-    case T_UInt64:
-      return (int)d.u64;
-    case T_Float:
-      return (int)d.f;
-    case T_Double:
-      return (int)d.d;
-    case T_Char:
-      return d.c;
-    case T_String:
-      return getString().toInt();
-    case T_Ptr: // note: not a word-size-safe conversion
-      break;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return d.i;
+  case T_UInt:
+    return (int)d.u;
+  case T_Int64:
+    return (int)d.i64;
+  case T_UInt64:
+    return (int)d.u64;
+  case T_Float:
+    return (int)d.f;
+  case T_Double:
+    return (int)d.d;
+  case T_Char:
+    return d.c;
+  case T_String:
+    return getString().toInt();
+  case T_Ptr: // note: not a word-size-safe conversion
+    break;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return 0;
 }
 
 uint Variant::toUInt() const {
   switch (m_type) {
-    case T_Invalid:
-      break ;
-    case T_Bool:
-      return (d.b) ? 1 : 0;
-    case T_Int:
-      return (uint)d.i;
-    case T_UInt:
-      return d.u;
-    case T_Int64:
-      return (uint)d.i64;
-    case T_UInt64:
-      return (uint)d.u64;
-    case T_Float:
-      return (uint)d.f;
-    case T_Double:
-      return (uint)d.d;
-    case T_Char:
-      return d.c;
-    case T_String:
-      return getString().toUInt();
-    case T_Ptr: // note: not a word-size-safe conversion
-      break;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return (uint)d.i;
+  case T_UInt:
+    return d.u;
+  case T_Int64:
+    return (uint)d.i64;
+  case T_UInt64:
+    return (uint)d.u64;
+  case T_Float:
+    return (uint)d.f;
+  case T_Double:
+    return (uint)d.d;
+  case T_Char:
+    return d.c;
+  case T_String:
+    return getString().toUInt();
+  case T_Ptr: // note: not a word-size-safe conversion
+    break;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return 0;
 }
 
 ta_int64_t Variant::toInt64() const {
   switch (m_type) {
-    case T_Invalid:
-      break ;
-    case T_Bool:
-      return (d.b) ? 1 : 0;
-    case T_Int:
-      return d.i;
-    case T_UInt:
-      return d.u;
-    case T_Int64:
-      return d.i64;
-    case T_UInt64:
-      return (ta_int64_t)d.u64;
-    case T_Float:
-      return (ta_int64_t)d.f;
-    case T_Double:
-      return (ta_int64_t)d.d;
-    case T_Char:
-      return d.c;
-    case T_String:
-      return getString().toInt64();
-    case T_Ptr:
-    case T_TypeItem:
-      return (ta_int64_t)d.ptr;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return d.i;
+  case T_UInt:
+    return d.u;
+  case T_Int64:
+    return d.i64;
+  case T_UInt64:
+    return (ta_int64_t)d.u64;
+  case T_Float:
+    return (ta_int64_t)d.f;
+  case T_Double:
+    return (ta_int64_t)d.d;
+  case T_Char:
+    return d.c;
+  case T_String:
+    return getString().toInt64();
+  case T_Ptr:
+  case T_TypeItem:
+    return (ta_int64_t)d.ptr;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return 0;
 }
 
 ta_uint64_t Variant::toUInt64() const {
   switch (m_type) {
-    case T_Invalid:
-      break ;
-    case T_Bool:
-      return (d.b) ? 1 : 0;
-    case T_Int:
-      return d.i;
-    case T_UInt:
-      return d.u;
-    case T_Int64:
-      return d.i64;
-    case T_UInt64:
-      return d.u64;
-    case T_Float:
-      return (ta_uint64_t)d.f;
-    case T_Double:
-      return (ta_uint64_t)d.d;
-    case T_Char:
-      return d.c;
-    case T_String:
-      return getString().toUInt64();
-    case T_Ptr:
-    case T_TypeItem:
-      return (ta_uint64_t)d.ptr;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break ;
+  case T_Bool:
+    return (d.b) ? 1 : 0;
+  case T_Int:
+    return d.i;
+  case T_UInt:
+    return d.u;
+  case T_Int64:
+    return d.i64;
+  case T_UInt64:
+    return d.u64;
+  case T_Float:
+    return (ta_uint64_t)d.f;
+  case T_Double:
+    return (ta_uint64_t)d.d;
+  case T_Char:
+    return d.c;
+  case T_String:
+    return getString().toUInt64();
+  case T_Ptr:
+  case T_TypeItem:
+    return (ta_uint64_t)d.ptr;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return 0;
 }
 
 float Variant::toFloat() const {
   switch (m_type) {
-    case T_Invalid:
-      break ;
-    case T_Bool:
-      return (d.b) ? 1.0 : 0.0;
-    case T_Int:
-      return (float)d.i;
-    case T_UInt:
-      return (float)d.u;
-    case T_Int64:
-      return (float)d.i64;
-    case T_UInt64:
-      return (float)d.u64;
-    case T_Float:
-      return d.f;
-    case T_Double:
-      return (float)d.d;
-    case T_Char:
-      return (float)d.c;
-    case T_String: //note: may fail, if so, 0.0
-      return getString().toFloat();
-    case T_Ptr:
-      return (float)(intptr_t)d.ptr;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break ;
+  case T_Bool:
+    return (d.b) ? 1.0 : 0.0;
+  case T_Int:
+    return (float)d.i;
+  case T_UInt:
+    return (float)d.u;
+  case T_Int64:
+    return (float)d.i64;
+  case T_UInt64:
+    return (float)d.u64;
+  case T_Float:
+    return d.f;
+  case T_Double:
+    return (float)d.d;
+  case T_Char:
+    return (float)d.c;
+  case T_String: //note: may fail, if so, 0.0
+    return getString().toFloat();
+  case T_Ptr:
+    return (float)(intptr_t)d.ptr;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return 0.0;
 }
 
 double Variant::toDouble() const {
   switch (m_type) {
-    case T_Invalid:
-      break ;
-    case T_Bool:
-      return (d.b) ? 1.0 : 0.0;
-    case T_Int:
-      return (double)d.i;
-    case T_UInt:
-      return (double)d.u;
-    case T_Int64:
-      return (double)d.i64;
-    case T_UInt64:
-      return (double)d.u64;
-    case T_Float:
-      return (double)d.f;
-    case T_Double:
-      return d.d;
-    case T_Char:
-      return (double)d.c;
-    case T_String: //note: may fail, if so, 0.0
-      return getString().toDouble();
-    case T_Ptr:
-      return (double)(intptr_t)d.ptr;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break ;
+  case T_Bool:
+    return (d.b) ? 1.0 : 0.0;
+  case T_Int:
+    return (double)d.i;
+  case T_UInt:
+    return (double)d.u;
+  case T_Int64:
+    return (double)d.i64;
+  case T_UInt64:
+    return (double)d.u64;
+  case T_Float:
+    return (double)d.f;
+  case T_Double:
+    return d.d;
+  case T_Char:
+    return (double)d.c;
+  case T_String: //note: may fail, if so, 0.0
+    return getString().toDouble();
+  case T_Ptr:
+    return (double)(intptr_t)d.ptr;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return 0.0;
 }
@@ -2381,70 +2381,70 @@ double Variant::toDouble() const {
 char Variant::toChar() const {
   //note: we sort of follow Qt here
   switch (m_type) {
-    case T_Invalid:
-      break;
-    case T_Bool:
-      if (d.b) return '1'; else return '0';
-    case T_Int:
-      return (char)d.i;
-    case T_UInt:
-      return (char)d.u;
-    case T_Int64:
-      break ;
-    case T_UInt64:
-      break ;
-    case T_Float:
-    case T_Double:
-      break ;
-    case T_Char:
-      return d.c;
-    case T_String: {
-      const String& str = getString();
-      if (str.length() >= 1)
-        return str.elem(0);
-    } break;
-    case T_Ptr:
-      break ;
-    case T_Base:
-    case T_Matrix:
-      break ;
-    default: break ;
+  case T_Invalid:
+    break;
+  case T_Bool:
+    if (d.b) return '1'; else return '0';
+  case T_Int:
+    return (char)d.i;
+  case T_UInt:
+    return (char)d.u;
+  case T_Int64:
+    break ;
+  case T_UInt64:
+    break ;
+  case T_Float:
+  case T_Double:
+    break ;
+  case T_Char:
+    return d.c;
+  case T_String: {
+    const String& str = getString();
+    if (str.length() >= 1)
+      return str.elem(0);
+  } break;
+  case T_Ptr:
+    break ;
+  case T_Base:
+  case T_Matrix:
+    break ;
+  default: break ;
   }
   return '\0';
 }
 
 void* Variant::toPtr() const {
   switch (m_type) {
-    case T_Invalid:
-      return NULL;
-    case T_Bool:
-      return NULL;
-    case T_Int:
-      return NULL;
-    case T_UInt:
-      return NULL;
-    case T_Int64:
-      return NULL;
-    case T_UInt64:
-      return NULL;
-    case T_Float:
-      return NULL;
-    case T_Double:
-      return NULL;
-    case T_Char:
-      return NULL;
-    case T_String:
-      return NULL;
-    case T_Ptr:
-      return d.ptr;
+  case T_Invalid:
+    return NULL;
+  case T_Bool:
+    return NULL;
+  case T_Int:
+    return NULL;
+  case T_UInt:
+    return NULL;
+  case T_Int64:
+    return NULL;
+  case T_UInt64:
+    return NULL;
+  case T_Float:
+    return NULL;
+  case T_Double:
+    return NULL;
+  case T_Char:
+    return NULL;
+  case T_String:
+    return NULL;
+  case T_Ptr:
+    return d.ptr;
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix:
-      return d.tab;
+  case T_Base:
+  case T_Matrix:
+    return d.tab;
 #endif
-    case T_TypeItem:
-      return d.ti;
-    default: break ;
+  case T_TypeItem:
+    return d.ti;
+  default: break ;
   }
   return NULL;
 }
@@ -2501,45 +2501,45 @@ MethodDef* Variant::toMethodDef() const {
 
 String Variant::toString() const {
   switch (m_type) {
-    case T_Invalid:
-      return _nilString;
-    case T_Bool:
-      if (d.b) return String("true");
-      else     return String("false");
-    case T_Int:
-      return String(d.i);
-    case T_UInt:
-      return String(d.u);
-    case T_Int64:
-      return String(d.i64);
-    case T_UInt64:
-      return String(d.u64);
-    case T_Float:
-      return String(d.f);
-    case T_Double:
-      return String(d.d);
-    case T_Char:
-      return String(d.c);
-    case T_String:
-      return getString();
-    case T_Ptr:
-      return String(d.ptr); // renders as hex
+  case T_Invalid:
+    return _nilString;
+  case T_Bool:
+    if (d.b) return String("true");
+    else     return String("false");
+  case T_Int:
+    return String(d.i);
+  case T_UInt:
+    return String(d.u);
+  case T_Int64:
+    return String(d.i64);
+  case T_UInt64:
+    return String(d.u64);
+  case T_Float:
+    return String(d.f);
+  case T_Double:
+    return String(d.d);
+  case T_Char:
+    return String(d.c);
+  case T_String:
+    return getString();
+  case T_Ptr:
+    return String(d.ptr); // renders as hex
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix: {
-      String rval;
-      if(d.tab)
-        return d.tab->Print(rval);
-      return "NULL";
-    }
+  case T_Base:
+  case T_Matrix: {
+    String rval;
+    if(d.tab)
+      return d.tab->Print(rval);
+    return "NULL";
+  }
 #endif
-    default: break ;
-    case T_TypeItem: {// streamable type Str
-      TypeDef* typ;
-      void* data;
-      GetRepInfo(typ, data);
-      return typ->GetValStr(data);
-    }
+  default: break ;
+  case T_TypeItem: {// streamable type Str
+    TypeDef* typ;
+    void* data;
+    GetRepInfo(typ, data);
+    return typ->GetValStr(data);
+  }
   }
   return _nilString;
 }
@@ -2557,48 +2557,49 @@ void Variant::UpdateAfterLoad() {
 
 void Variant::updateFromString(const String& val) {
   switch (m_type) {
-    case T_Invalid: break; // ignored
-    case T_Bool: d.b = val.toBool(); break;
-    case T_Int: d.i = val.toInt(); break;
-    case T_UInt: d.u = val.toUInt(); break;
-    case T_Int64: d.i64 = val.toInt64(); break;
-    case T_UInt64: d.u64 = val.toUInt64(); break;
-    case T_Float: d.f = val.toDouble(); break;
-    case T_Double: d.d = val.toDouble(); break;
-    case T_Char: d.c = val.toChar(); break;
-    case T_String: getString() = val; break;
-    case T_Ptr:
-      if ((val == "NULL") || (val == "(NULL)")) d.ptr = NULL;
-      else error("updateFromString() setting ptr to other than NULL");
-      break;
+  case T_Invalid: break; // ignored
+  case T_Bool: d.b = val.toBool(); break;
+  case T_Int: d.i = val.toInt(); break;
+  case T_UInt: d.u = val.toUInt(); break;
+  case T_Int64: d.i64 = val.toInt64(); break;
+  case T_UInt64: d.u64 = val.toUInt64(); break;
+  case T_Float: d.f = val.toDouble(); break;
+  case T_Double: d.d = val.toDouble(); break;
+  case T_Char: d.c = val.toChar(); break;
+  case T_String: getString() = val; break;
+  case T_Ptr:
+    if ((val == "NULL") || (val == "(NULL)")) d.ptr = NULL;
+    else error("updateFromString() setting ptr to other than NULL");
+    break;
 #ifndef NO_TA_BASE
-      // TODO: should look up from path
-    case T_Base:
-    case T_Matrix: {
-      if(val.contains(":.")) {
-        String path = val.after(":");
-        MemberDef* md = NULL;
-        taBase* bs = tabMisc::root->FindFromPath(path, md);
-        if(!bs) {
-          taMisc::Warning("*** Invalid Path in Variant::updateFromString:",path);
-        }
-        else {
-          if(bs->InheritsFrom(TA_taMatrix))
-            setMatrix((taMatrix*)bs);
-          else
-            setBase(bs);
-        }
+    // TODO: should look up from path
+  case T_Base:
+  case T_Matrix: {
+    if(val.contains(":.")) {
+      String path = val.after(":");
+      MemberDef* md = NULL;
+      taBase* bs = tabMisc::root->FindFromPath(path, md);
+      if(!bs) {
+        taMisc::Warning("*** Invalid Path in Variant::updateFromString:",path);
+      }
+      else {
+        if(bs->InheritsFrom(TA_taMatrix))
+          setMatrix((taMatrix*)bs);
+        else
+          setBase(bs);
       }
     }
-      break;
+    break;
+  }
 #endif
-    case T_TypeItem: {
-      TypeDef* typ;
-      void* data;
-      GetRepInfo(typ, data);
-      typ->SetValStr(val, data);
-    } break;
-    default: break ;
+  case T_TypeItem: {
+    TypeDef* typ;
+    void* data;
+    GetRepInfo(typ, data);
+    typ->SetValStr(val, data);
+    break;
+  }
+  default: break;
   }
 }
 
@@ -2610,81 +2611,118 @@ void Variant::error(const char* msg) const {
   taMisc::Error("Variant type", getTypeAsString(), ":", msg);
 }
 
+bool Variant::setFromStringGuessType(const String& val) {
+  String tval = trim(val);
+  if(tval.isBool()) {            // most specific
+    setBool(tval.toBool());
+    return true;
+  }
+  if(tval.isFloat() && !tval.isInt()) { // specifically a float
+    setDouble(tval.toDouble());
+    return true;
+  }
+  if(tval.isInt()) {
+    setInt(tval.toInt());
+    return true;
+  }
+  if(tval.isHex()) {
+    setInt(tval.toInt());
+    return true;
+  }
+#ifndef NO_TA_BASE
+  if(tval.startsWith('.')) {
+    MemberDef* md = NULL;
+    taBase* bs = tabMisc::root->FindFromPath(tval, md);
+    if(bs) {
+      if(bs->InheritsFrom(TA_taMatrix))
+        setMatrix((taMatrix*)bs);
+      else
+        setBase(bs);
+      return true;
+    }
+  }
+#endif
+  setString(val);
+  return false;
+}
+
+
+
 #ifndef NO_TA_BASE
 taBase* Variant::toBase() const {
   switch (m_type) {
-    case T_Invalid:
-      return NULL;
-    case T_Bool:
-      return NULL;
-    case T_Int:
-      return NULL;
-    case T_UInt:
-      return NULL;
-    case T_Int64:
-      return NULL;
-    case T_UInt64:
-      return NULL;
-    case T_Float:
-      return NULL;
-    case T_Double:
-      return NULL;
-    case T_Char:
-      return NULL;
-    case T_String: {
-      MemberDef* md = NULL;
-      return tabMisc::root->FindFromPath(getString(), md);
-    }
-    case T_Ptr:
-    case T_TypeItem:
-      return NULL;
+  case T_Invalid:
+    return NULL;
+  case T_Bool:
+    return NULL;
+  case T_Int:
+    return NULL;
+  case T_UInt:
+    return NULL;
+  case T_Int64:
+    return NULL;
+  case T_UInt64:
+    return NULL;
+  case T_Float:
+    return NULL;
+  case T_Double:
+    return NULL;
+  case T_Char:
+    return NULL;
+  case T_String: {
+    MemberDef* md = NULL;
+    return tabMisc::root->FindFromPath(getString(), md);
+  }
+  case T_Ptr:
+  case T_TypeItem:
+    return NULL;
 #ifndef NO_TA_BASE
-    case T_Base:
-    case T_Matrix:
-      return d.tab;
+  case T_Base:
+  case T_Matrix:
+    return d.tab;
 #endif
-    default: break ;
+  default: break ;
   }
   return NULL;
 }
 
 taMatrix* Variant::toMatrix() const {
   switch (m_type) {
-    case T_Invalid:
-      return NULL;
-    case T_Bool:
-      return NULL;
-    case T_Int:
-      return NULL;
-    case T_UInt:
-      return NULL;
-    case T_Int64:
-      return NULL;
-    case T_UInt64:
-      return NULL;
-    case T_Float:
-      return NULL;
-    case T_Double:
-      return NULL;
-    case T_Char:
-      return NULL;
-    case T_String: {
-      MemberDef* md = NULL;
-      taBase* tb = tabMisc::root->FindFromPath(getString(), md);
-      if(tb && tb->InheritsFrom(TA_taMatrix))
-        return (taMatrix*)tb;
-      return NULL;
-    }
-    case T_Ptr:
-    case T_TypeItem:
-      return NULL;
-    case T_Base:
-      if ((d.tab != NULL) && (d.tab->GetTypeDef()->InheritsFrom(TA_taMatrix)))
-        return getMatrix();
-      else return NULL;
-    case T_Matrix:
+  case T_Invalid:
+    return NULL;
+  case T_Bool:
+    return NULL;
+  case T_Int:
+    return NULL;
+  case T_UInt:
+    return NULL;
+  case T_Int64:
+    return NULL;
+  case T_UInt64:
+    return NULL;
+  case T_Float:
+    return NULL;
+  case T_Double:
+    return NULL;
+  case T_Char:
+    return NULL;
+  case T_String: {
+    MemberDef* md = NULL;
+    taBase* tb = tabMisc::root->FindFromPath(getString(), md);
+    if(tb && tb->InheritsFrom(TA_taMatrix))
+      return (taMatrix*)tb;
+    return NULL;
+  }
+  case T_Ptr:
+  case T_TypeItem:
+    return NULL;
+  case T_Base:
+    if ((d.tab != NULL) && (d.tab->GetTypeDef()->InheritsFrom(TA_taMatrix)))
       return getMatrix();
-    default: break ;
+    else return NULL;
+  case T_Matrix:
+    return getMatrix();
+  default: break ;
   }
   return NULL;
 }
@@ -2728,8 +2766,8 @@ void Variant::setQVariant(const QVariant& cp) {
     setString(cp.toString(), cp.isNull()); break;
   default:
 #ifdef DEBUG                    // expensive
-  taMisc::DebugInfo("Attempt to set Variant from QVariant failed, can't handle QVariant::Type: ",
-                    String(cp.userType()) );
+    taMisc::DebugInfo("Attempt to set Variant from QVariant failed, can't handle QVariant::Type: ",
+                      String(cp.userType()) );
 #endif
     setInvalid(); break;
   }
@@ -2738,27 +2776,27 @@ void Variant::setQVariant(const QVariant& cp) {
 
 QVariant Variant::toQVariant() const {
   switch (m_type) {
-    case T_Invalid:
-      return QVariant();
-    case T_Bool:
-      return QVariant(d.b);
-    case T_Int:
-      return QVariant(d.i);
-    case T_UInt:
-      return QVariant(d.u);
-    case T_Int64:
-      return QVariant(d.i64);
-    case T_UInt64:
-      return QVariant(d.u64);
-    case T_Float:
-      return QVariant(d.f);
-    case T_Double:
-      return QVariant(d.d);
-    case T_Char:
-      return QVariant(d.c);
-    case T_String:
-      return QVariant(getString().chars());
-      /* others are invalid
+  case T_Invalid:
+    return QVariant();
+  case T_Bool:
+    return QVariant(d.b);
+  case T_Int:
+    return QVariant(d.i);
+  case T_UInt:
+    return QVariant(d.u);
+  case T_Int64:
+    return QVariant(d.i64);
+  case T_UInt64:
+    return QVariant(d.u64);
+  case T_Float:
+    return QVariant(d.f);
+  case T_Double:
+    return QVariant(d.d);
+  case T_Char:
+    return QVariant(d.c);
+  case T_String:
+    return QVariant(getString().chars());
+    /* others are invalid
        case T_Ptr:
        return QVariant(d.ptr); // renders as hex
        #ifndef NO_TA_BASE
@@ -2768,13 +2806,13 @@ QVariant Variant::toQVariant() const {
        return taBase::GetStringRep(d.tab);
        
        #endif
-       */
-    default:
+    */
+  default:
 #ifdef DEBUG
-      taMisc::DebugInfo("Attempt to set QVariant from Variant failed, can't handle Variant::Type: ",
-                        String(m_type) );
+    taMisc::DebugInfo("Attempt to set QVariant from Variant failed, can't handle Variant::Type: ",
+                      String(m_type) );
 #endif
-      break ;
+    break ;
   }
   return QVariant();
 }

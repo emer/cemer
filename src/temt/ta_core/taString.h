@@ -325,7 +325,13 @@ public:
   // actual C++ use of string bool is typically about whether it is empty or not -- not converting from a bool string rep -- use explict toBool to get that
 
   bool                  isInt() const;
-  // #CAT_Convert true if the string contains a value that can be interpreted as an integer [+-]dd*
+  // #CAT_Convert true if the string contains a value that can be interpreted as an integer [+-]dd* -- does NOT accept hexidecimal numbers (see isHex) -- does not accept decimal points, so check this first before isFloat -- call trim first to remove spaces, as this does not accept spaces
+  bool                  isHex() const;
+  // #CAT_Convert true if the string contains a value that can be interpreted as a hexidecimal integer number [+-]0xd*  -- call trim first to remove spaces, as this does not accept spaces
+  bool                  isFloat() const;
+  // #CAT_Convert true if the string contains a value that can be interpreted as a floating-point number [+-]d*[.d*|[+-]ed*] -- also accepts ints so check isInt first to discriminate -- does not distinguish between float and double -- just any kind of floating point number -- call trim first to remove spaces, as this does not accept spaces
+  bool                  isBool() const;
+  // #CAT_Convert true if the string contains a value that can be interpreted as a bool -- accepts ONLY true, false, to distinguish from ints -- call trim first to remove spaces, as this does not accept spaces
 
   bool                  toBool() const;
   // #CAT_Convert accepts true as starting with t/T, or else 1
