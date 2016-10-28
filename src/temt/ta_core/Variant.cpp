@@ -329,10 +329,16 @@ bool Variant::Dump_Load_Type(istream& strm, int& c) {
   c = taMisc::read_word(strm, true); //note: use peek mode, so we don't read the terminator
   // if we read a proper type code, it should be an int, otherwise we encountered
   // a special streaming char like = { ; in which case it won't convert -- ditto for null
-  if (!taMisc::LexBuf.isInt()) return false;
+  if (!taMisc::LexBuf.isInt()) {
+    taMisc::Error("Variant type load fail -- should be int:", taMisc::LexBuf);
+    return false;
+  }
   Variant::VarType vt = (Variant::VarType)taMisc::LexBuf.toInt();
   c = taMisc::read_word(strm, true); // s/b '1' or '0'
-  if (!taMisc::LexBuf.isInt()) return false;
+  if (!taMisc::LexBuf.isInt()) {
+    taMisc::Error("Variant type load fail -- should be int:", taMisc::LexBuf);
+    return false;
+  }
   bool null = taMisc::LexBuf.toBool();
   ForceType(vt, null);
   return true;
