@@ -574,6 +574,9 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     else if((sda->valType() == VT_STRING) && (ds->agg.MinReturnType() == VT_INT)) {// N
       nda = new int_Data;
     }
+    else if((sda->valType() == VT_STRING) && (ds->agg.MinReturnType() == VT_FLOAT)) {// N
+      nda = new float_Data;
+    }
     else {
       nda = (DataCol*)sda->MakeToken();
     }
@@ -682,6 +685,15 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
         else if(ds->agg.op == Aggregate::COUNT) {
           bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
           dda->SetValAsInt(sda->AR()->CountValAsString(ds->agg.rel.val_string, contains), 0);
+        }
+        else if(ds->agg.op == Aggregate::PERCENT) {
+          if (sda->AR()->size > 0) {
+            bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
+            int count = sda->AR()->CountValAsString(ds->agg.rel.val_string, contains);
+            dda->SetValAsFloat(((double)count/(double)sda->AR()->size), 0);
+          } else {
+            dda->SetValAsFloat(0, 0);
+          }
         }
         else if(ds->agg.op == Aggregate::FIND_FIRST) {
           dda->SetValAsString(sda->AR()->FindValAsString_Flat(ds->agg.rel.val_string, 0), 0);
@@ -883,7 +895,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                 }
                 dda->SetValAsString(val, ri);
               }
-              else if(ds->agg.op == Aggregate::COUNT) {
+              else if((ds->agg.op == Aggregate::COUNT) || (ds->agg.op == Aggregate::PERCENT)) {
                 int count = 0;
                 String val;
                 String compare_val = ds->agg.rel.val_string;
@@ -903,7 +915,15 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                   bool contains = (ds->agg.rel.rel == Relation::CONTAINS); // false - NOT_CONTAINS
                   count = mat->CountValAsString(ds->agg.rel.val_string, contains);
                 }
-                dda->SetValAsInt(count, ri);
+                if (ds->agg.op == Aggregate::COUNT) {
+                  dda->SetValAsInt(count, ri);
+                } else {
+                  if (mat->IterCount() > 0) {
+                    dda->SetValAsFloat(((double)count/(double)mat->IterCount()), ri);
+                  } else {
+                    dda->SetValAsFloat(0.0, ri);
+                  }
+                }
               }
               else if(ds->agg.op == Aggregate::FIND_FIRST) {
                 String val;

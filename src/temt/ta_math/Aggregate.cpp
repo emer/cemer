@@ -33,14 +33,14 @@ Aggregate::ValType Aggregate::MinValType() const {
   if(op == GROUP || op == FIRST || op == LAST || op == N) {
     return VT_STRING;
   }
-  else if ((op == COUNT || op == FIND_FIRST || op == FIND_LAST) && (rel.rel == Relation::CONTAINS || rel.rel == Relation::NOT_CONTAINS) ) {
+  else if ((op == COUNT || op == PERCENT || op == FIND_FIRST || op == FIND_LAST) && (rel.rel == Relation::CONTAINS || rel.rel == Relation::NOT_CONTAINS) ) {
     return VT_STRING;
   }
   return VT_INT;
 }
 
 Aggregate::ValType Aggregate::MinReturnType() const {
-  if(op == MEAN || op == VAR || op == SS || op == STDEV || op == SEM) return VT_FLOAT;
+  if(op == MEAN || op == VAR || op == SS || op == STDEV || op == SEM || op == PERCENT) return VT_FLOAT;
   if(op == GROUP || op == FIRST || op == LAST || op == FIND_FIRST || op == FIND_LAST) return VT_STRING;
   return VT_INT;
 }
