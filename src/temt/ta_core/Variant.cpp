@@ -2589,16 +2589,14 @@ void Variant::updateFromString(const String& val) {
           setBase(bs);
       }
     }
-    break;
-  }
+  } break;
 #endif
   case T_TypeItem: {
     TypeDef* typ;
     void* data;
     GetRepInfo(typ, data);
     typ->SetValStr(val, data);
-    break;
-  }
+  } break;
   default: break;
   }
 }
