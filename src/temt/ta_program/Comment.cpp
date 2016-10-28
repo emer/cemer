@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(Comment);
 void Comment::Initialize() {
   static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
   desc = _def_comment;
+  SetProgFlag(ProgEl::NO_CODE);
 }
 
 void Comment::GenCssBody_impl(Program* prog) {
@@ -81,10 +82,3 @@ bool Comment::CvtFmCode(const String& code) {
   code_string = " ";  // if code_string is empty RevertToCode doesn't work
   return true;
 }
-
-bool Comment::ChooseMe() {
-  code_string = " ";  // if code_string is empty RevertToCode doesn't work
-  SetProgFlag(CAN_REVERT_TO_CODE);
-  return true;
-}
-

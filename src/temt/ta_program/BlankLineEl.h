@@ -40,10 +40,6 @@ public:
   String	GetTypeDecoKey() const override { return "Comment"; }
   String	GetToolbarName() const override { return "blank\nline"; }
   
-  bool    ChooseMe() override;
-  // no need to display a chooser but do set the code_string
-
-
   PROGEL_SIMPLE_BASEFUNS(BlankLineEl);
 protected:
   bool		useDesc() const override {return false;} 

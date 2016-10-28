@@ -22,6 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(BlankLineEl);
 #include <tabMisc>
 
 void BlankLineEl::Initialize() {
+  SetProgFlag(ProgEl::NO_CODE);
 }
 
 void BlankLineEl::GenCssBody_impl(Program* prog) {
@@ -73,11 +74,5 @@ bool BlankLineEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool BlankLineEl::CvtFmCode(const String& code) {
   code_string = " ";  // if code_string is empty RevertToCode doesn't work
-  return true;
-}
-
-bool BlankLineEl::ChooseMe() {
-  code_string = " ";  // if code_string is empty RevertToCode doesn't work
-  SetProgFlag(CAN_REVERT_TO_CODE);
   return true;
 }

@@ -40,9 +40,6 @@ public:
   String	GetTypeDecoKey() const override { return "Comment"; }
   String	GetToolbarName() const override { return "comment"; }
 
-  bool    ChooseMe() override;
-  // no need to display a chooser but do set the code_string
-
   PROGEL_SIMPLE_BASEFUNS(Comment);
 protected:
   bool		useDesc() const override {return false;} 
