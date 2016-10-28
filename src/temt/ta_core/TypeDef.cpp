@@ -969,6 +969,8 @@ void TypeDef::CacheParents_impl(TypeDef* src_typ) {
 }
 
 void TypeDef::ComputeMembBaseOff() {
+  if(HasInitFlag(IF_MEMBER_BASE_OFFS)) return;
+
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     TypeDef* mo = md->GetOwnerType();
@@ -976,10 +978,18 @@ void TypeDef::ComputeMembBaseOff() {
     // fix the COMMENT_UPDATE_ONLY guys!!
     if(md->off == NULL && !md->is_static && md->HasOption("COMMENT_UPDATE_ONLY")) {
       MemberDef* par_md = NULL;
-      for(int i=0; i<parents.size; i++) {
-        par_md = parents.FastEl(i)->members.FindName(md->name);
+      for(int pi=0; pi<parents.size; pi++) {
+        par_md = parents.FastEl(pi)->members.FindName(md->name);
         if(par_md) {
           mo = par_md->GetOwnerType(); // TRUE owner type!
+	  if(!mo->HasInitFlag(IF_MEMBER_BASE_OFFS))
+	    mo->ComputeMembBaseOff();
+          void* off = par_md->GetOff(0);
+	  int64_t offi = (int64_t)off;
+	  if(offi <= 0) {
+	    taMisc::Error("ComputeMembBaseOff(): member offset is not initialized for Type:", name, "found par_md:", par_md->name, "for md:", md->name, "own:", mo->name, "off: " + String(offi));
+	  }
+	  //	  taMisc::Info("Type:", name, "found par_md:", par_md->name, "for md:", md->name, "own:", mo->name, "off: " + String(offi));
           break;
         }
       }
@@ -1001,6 +1011,7 @@ void TypeDef::ComputeMembBaseOff() {
       MemberDef* nmd = md->Clone();
       nmd->base_off = base_off;
       members.ReplaceIdx(i, nmd);
+      // taMisc::Info("Type:", name, "base off:", "own:", mo->name, "off:", String(base_off), "new mbr:", nmd->name);
     }
     else if(base_off < 0) {
       taMisc::Error("ComputeMembBaseOff(): parent type not found:",mo->name,
