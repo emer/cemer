@@ -122,7 +122,6 @@ void ProgEl::Copy_(const ProgEl& cp) {
   desc = cp.desc;
   flags = cp.flags;
   code_string = cp.code_string;
-  pre_compile_code_string = cp.pre_compile_code_string;
   ClearBaseFlag(COPYING); // ala Copy__
 }
 
@@ -138,7 +137,6 @@ void ProgEl::UpdateProgFlags() {
 void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgFlags();
-  pre_compile_code_string = BrowserEditString();  // hold on to the current code; if compile successful copy to
   SigEmitUpdated();
 
   // update used flags on variables early and often!
@@ -264,7 +262,6 @@ void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
     return;
   }
   ProgVar* pv = (ProgVar*)obj;
-  pre_compile_code_string = BrowserEditString();  // get any change - e.g. the var was renamed
   if (!pv->schemaChanged()) {
     // taMisc::DebugInfo("updating progel:", GetDisplayName(), "b/c of ProgVar:", pv->name,
     //                   "schema NOT changed!, sig:", String(sls));
