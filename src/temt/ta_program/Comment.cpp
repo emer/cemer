@@ -23,7 +23,6 @@ TA_BASEFUNS_CTORS_DEFN(Comment);
 void Comment::Initialize() {
   static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
   desc = _def_comment;
-  SetProgFlag(ProgEl::NO_CODE);
 }
 
 void Comment::GenCssBody_impl(Program* prog) {

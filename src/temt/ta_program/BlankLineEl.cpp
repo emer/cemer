@@ -22,7 +22,6 @@ TA_BASEFUNS_CTORS_DEFN(BlankLineEl);
 #include <tabMisc>
 
 void BlankLineEl::Initialize() {
-  SetProgFlag(ProgEl::NO_CODE);
 }
 
 void BlankLineEl::GenCssBody_impl(Program* prog) {
