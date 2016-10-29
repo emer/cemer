@@ -28,8 +28,8 @@ void LeabraPrjn::Initialize() {
   avg_netin_rel_sum = 0.0f;
   avg_netin_n = 0;
 
-  bal_sum_max = 0.0f;
-  bal_sum_avg = 0.0f;
+  wt_avg_max = 0.0f;
+  wt_avg_avg = 0.0f;
   
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -50,8 +50,8 @@ void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   avg_netin_rel_sum = cp.avg_netin_rel_sum;
   avg_netin_n = cp.avg_netin_n;
 
-  bal_sum_max = cp.bal_sum_max;
-  bal_sum_avg = cp.bal_sum_avg;
+  wt_avg_max = cp.wt_avg_max;
+  wt_avg_avg = cp.wt_avg_avg;
 }
 
 void LeabraPrjn::Trial_Init_Specs(LeabraNetwork* net) {
@@ -78,8 +78,8 @@ void LeabraPrjn::Init_Stats() {
   avg_netin_rel_sum = 0.0f;
   avg_netin_n = 0;
 
-  bal_sum_max = 0.0f;
-  bal_sum_avg = 0.0f;
+  wt_avg_max = 0.0f;
+  wt_avg_avg = 0.0f;
 }
 
 #ifdef DMEM_COMPILE

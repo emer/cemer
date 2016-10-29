@@ -25,8 +25,7 @@
 
 inline void LeabraConSpec::Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* net,
                                              int thr_no) {
-  cg->fwt_avg = wt_norm_bal.norm_trg;
-  cg->bal_sum = 0.0f;
+  cg->wt_avg = 0.5f;
   cg->wb_inc = 1.0f;
   cg->wb_dec = 1.0f;
 }
@@ -190,7 +189,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 
   if(dwt_wta.on) {
     float* dwavgs = cg->OwnCnVar(DWAVG);
-    if(wt_norm_bal.bal_on) {
+    if(wt_bal.on) {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
         int ru_thr_no = ru->ThrNo(net);
@@ -209,7 +208,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
     }
   }
   else {
-    if(wt_norm_bal.bal_on) {
+    if(wt_bal.on) {
       if(slow_wts.on) {
         for(int i=0; i<sz; i++) {
           LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
@@ -252,37 +251,16 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 //////////////////////////////////////////////////////////////////////////////////
 //     Compute Wt Bal: receiver based 
 
-inline void LeabraConSpec::Compute_WtNormBal(LeabraConGroup* cg, LeabraNetwork* net,
-                                             int thr_no) {
-  if(!learn || cg->size < 1) return;
-  if(wt_norm_bal.norm_on) {
-    float sum_fwt = 0.0f;
-    for(int i=0; i<cg->size; i++) {
-      sum_fwt += cg->PtrCn(i,FWT,net);
-    }
-    cg->fwt_avg = sum_fwt / (float)cg->size;
-    float diff = wt_norm_bal.norm_rate * (wt_norm_bal.norm_trg - cg->fwt_avg);
-    for(int i=0; i<cg->size; i++) {
-      cg->PtrCn(i,FWT,net) += diff;
-    }
+inline void LeabraConSpec::Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
+                                         int thr_no) {
+  if(!learn || cg->size < 1 || !wt_bal.on) return;
+  float sum_wt = 0.0f;
+  for(int i=0; i<cg->size; i++) {
+    sum_wt += cg->PtrCn(i,WT,net);
   }
-  if(wt_norm_bal.bal_on) {
-    float bal_sum = 0.0f;
-    const float thr = wt_norm_bal.hi_thr;
-    for(int i=0; i<cg->size; i++) {
-      float wt = cg->PtrCn(i,WT,net);
-      if(wt > thr)
-        bal_sum += wt - thr;
-    }
-    cg->bal_sum = bal_sum;
-    wt_norm_bal.WtBal(bal_sum, cg->wb_inc, cg->wb_dec);
-  }
-}
-
-inline void LeabraConSpec::Compute_WtNormSub(LeabraConGroup* cg, LeabraNetwork* net,
-                                             int thr_no) {
-  if(!learn || cg->size < 1) return;
-  if(!wt_norm_bal.norm_on) return;
+  sum_wt /= (float)cg->size;
+  cg->wt_avg = sum_wt;
+  wt_bal.WtBal(sum_wt, cg->wb_inc, cg->wb_dec);
 }
 
 inline void LeabraConSpec::Compute_CopyWeights(ConGroup* cg, ConGroup* src_cg,

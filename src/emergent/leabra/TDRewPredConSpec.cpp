@@ -32,6 +32,6 @@ void TDRewPredConSpec::Initialize() {
   wt_sig.gain = 1.0f;
   wt_sig.off = 1.0f;
   
-  SetUnique("wt_norm_bal", true);
-  wt_norm_bal.bal_on = false;
+  SetUnique("wt_bal", true);
+  wt_bal.on = false;
 }

@@ -60,7 +60,7 @@ public:
   int           gate_cyc;       // #DEF_18 cycle within quarter to apply BG / PFC gating -- see PFCUnitSpec for more information about how gating works and its effects, etc.
   int           deep_cyc;       // #DEF_5 how often (in cycles) to perform deep layer updating -- typically not necessary to update as frequently as superficial activations -- and biologically driven by layer 5 ib neurons that emit just a few bursts
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants -- also affects rate-code computed spiking intervals in unit spec
-  int           norm_bal_int;   // #DEF_10 weight norm-balance update interval: if weight normalization or balance is being used, this is how frequently to update these in terms of trials (1 = every trial, 2 = every other trial, etc) -- these are relatively computationally intensive and don't typically need to be done too frequently
+  int           wt_bal_int;     // #DEF_10 weight balance update interval: if weight balance soft normalization is being used, this is how frequently to update in terms of trials (1 = every trial, 2 = every other trial, etc) -- this is relatively computationally intensive and doesn't typically need to be done too frequently
 
   int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
   int		plus;	        // #READ_ONLY computed total number of cycles per plus phase = quarter
@@ -87,6 +87,7 @@ public:
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
   bool          agg_unlearnable; // #DEF_false #CAT_Statistic should unlearnable trials be aggregated into epoch-level summary stats?  default is not to (i.e., false)
+  bool          wt_bal;         // #DEF_false #CAT_Statistic aggregate wt_avg_max and wt_avg_avg per projection when wt_balance mechanism is active (soft form of weight normalization) -- see times.wt_bal_int for interval when these stats are updated
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -108,7 +109,6 @@ public:
   bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
   bool          diff_scale_q1;  // #READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
-  bool		wt_norm;       // #READ_ONLY #SHOW wt_norm_bal.norm_on weight normalization is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.norm_on flag is on, and off if not -- updated in Trial_Init_Specs call
   bool		wt_bal;       // #READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_norm_bal.bal_on flag is on, and off if not -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;   // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
@@ -553,8 +553,8 @@ public:
 
   void	Compute_dWt() override;
     void Compute_dWt_Thr(int thr_no) override;
-    virtual void	Compute_WtNormBal_Thr(int thr_no);
-    // #IGNORE compute weight normalization / balance factors
+    virtual void	Compute_WtBal_Thr(int thr_no);
+    // #IGNORE compute weight balance factors
     virtual void	Compute_WtBalStats();
     // #IGNORE compute weight balance statistics
 

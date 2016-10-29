@@ -41,8 +41,8 @@ public:
   float		avg_netin_rel;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_rel_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
   int		avg_netin_n;		// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
-  float         bal_sum_max;            // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic maximum weight balance sum factor (sum of extent weights are over high threshold) across connections in this projection -- only computed if weight normalization is on, as part of that process
-  float         bal_sum_avg;            // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average weight balance sum factor (sum of extent weights are over high threshold) across connections in this projection -- only computed if weight normalization is on, as part of that process
+  float         wt_avg_max;            // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic maximum average weight across recv con groups of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
+  float         wt_avg_avg;            // #NO_SAVE #READ_ONLY #SHOW #CAT_Statistic average of weight averages across recv con group of units with this projection -- only computed if weight balance mechanism is on and network.lstats.wt_bal is on
 
   virtual void	Trial_Init_Specs(LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on epoch

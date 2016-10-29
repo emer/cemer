@@ -41,7 +41,7 @@ void LeabraTimes::Initialize() {
   gate_cyc = 18;
   deep_cyc = 5;
   time_inc = 0.001f;
-  norm_bal_int = 10;
+  wt_bal_int = 10;
 
   minus = 3 * quarter;
   plus = quarter;
@@ -60,6 +60,7 @@ void LeabraNetStats::Initialize() {
   off_errs = true;
   on_errs = true;
   agg_unlearnable = false;
+  wt_bal = false;
 }
 
 void LeabraNetMisc::Initialize() {
@@ -68,7 +69,6 @@ void LeabraNetMisc::Initialize() {
   trial_decay = false;
   diff_scale_p = false;
   diff_scale_q1 = false;
-  wt_norm = false;
   wt_bal = false;
   lay_gp_inhib = false;
   inhib_cons = false;
@@ -386,7 +386,6 @@ void LeabraNetwork::Trial_Init_Specs() {
   net_misc.trial_decay = false;
   net_misc.diff_scale_p = false;
   net_misc.diff_scale_q1 = false;
-  net_misc.wt_norm = false;
   net_misc.wt_bal = false;
   net_misc.lay_gp_inhib = false;
   net_misc.lrate_updtd = false;
@@ -1783,14 +1782,13 @@ void LeabraNetwork::Compute_Weights() {
   
   NET_THREAD_CALL(LeabraNetwork::Compute_Weights_Thr);
   
-  if(net_misc.wt_bal || net_misc.wt_norm) {
-    NET_THREAD_CALL(LeabraNetwork::Compute_WtNormBal_Thr);
+  if(net_misc.wt_bal && (total_trials % times.wt_bal_int == 0)) {
+    NET_THREAD_CALL(LeabraNetwork::Compute_WtBal_Thr);
+    if(lstats.wt_bal) {
+      Compute_WtBalStats();
+    }
   }
 
-  if(net_misc.wt_bal) {         // todo: make this optional
-    Compute_WtBalStats();
-  }
-  
   SaveWeights_ClusterRunTerm();
 }
 
@@ -1819,12 +1817,12 @@ void LeabraNetwork::Compute_Weights_Thr(int thr_no) {
     ((LeabraNetTiming*)net_timing[thr_no])->wt.EndIncrAvg();
 }
 
-void LeabraNetwork::Compute_WtNormBal_Thr(int thr_no) {
+void LeabraNetwork::Compute_WtBal_Thr(int thr_no) {
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
     LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
     if(rcg->NotActive()) continue;
-    ((LeabraConSpec*)rcg->con_spec)->Compute_WtNormBal(rcg, this, thr_no);
+    ((LeabraConSpec*)rcg->con_spec)->Compute_WtBal(rcg, this, thr_no);
   }
 }
 
@@ -1833,8 +1831,8 @@ void LeabraNetwork::Compute_WtBalStats() {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
       if(p->NotActive()) continue;
-      p->bal_sum_max = 0.0f;
-      p->bal_sum_avg = 0.0f;
+      p->wt_avg_max = 0.0f;
+      p->wt_avg_avg = 0.0f;
     }
     int denom = 0;
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
@@ -1843,15 +1841,15 @@ void LeabraNetwork::Compute_WtBalStats() {
       FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
         LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        p->bal_sum_max = fmaxf(p->bal_sum_max, cg->bal_sum);
-        p->bal_sum_avg += cg->bal_sum;
+        p->wt_avg_max = fmaxf(p->wt_avg_max, cg->wt_avg);
+        p->wt_avg_avg += cg->wt_avg;
       }
     }
     if(denom > 0) {
       float norm = 1.0f / denom;
       FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
-        p->bal_sum_avg *= norm;
+        p->wt_avg_avg *= norm;
       }
     }
   }

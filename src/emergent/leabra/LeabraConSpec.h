@@ -201,9 +201,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable dwt increase vs. decrease winner-take-all competition
   float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- decays over this time scale according to 1/dw_tau * dwt per trial
-  bool          wt_mod;         // #CONDSHOW_ON_on #DEF_true modulate strength of the WTA effect as a function of the contrast-enhanced weight value -- as weight moves toward the extremes, include a more balanced set of changes
-  // bool          wt_bal_mod;     // #CONDSHOW_ON_on&&wt_mod use weight bal factors to determine how much of the opposite-sign weight change is allowed and how much of the weight increase happens
-  float         wt_mod_gain;    // #CONDSHOW_ON_on&&wt_mod how strong is the wt_mod factor -- applies to the opposite direction change relative to running-average, also as a function of the current weight strength (e.g., if weights are going up on average, then this is how much to count weight decreases, also multplied by wt (i.e., only go down if weight is already high)
+  float         wb_inc_thr;     // #CONDSHOW_ON_on #MAX_1 #MIN_0 threshold value of the weight balance wb_inc factor, below which weight decreases are also included in learning even when dwavg > 0, in proportion to wb_inc_thr - wb_inc -- i.e., more decrease included as increases are weaker due to increasing hoggy-ness of this unit
+  float         wb_dec_thr;     // #CONDSHOW_ON_on #MAX_1 #MIN_0 threshold value of the weight balance wb_dec factor, below which weight increases are also included in learning even when dwavg < 0, in proportion to wb_dec_thr - wb_dec -- i.e., more increase included as decreases are weaker due to increasing anti-hoggy-ness (loser-ness) of this unit
 
 
   float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
@@ -220,29 +219,39 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(WtNormBalSpec);
+eTypeDef_Of(WtBalanceSpec);
 
-class E_API WtNormBalSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance and renormalization spec: option to renorm weights based on average recv unit weights to correct for overall main effects on weight values, and to maintain overall weight balance by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- plugs into soft bounding function -- see network times.norm_bal_int for interval in trials of updating
+class E_API WtBalanceSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of extent to which weight average exceeds high threshold value (and vice-versa for low threshold) -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
 INHERITED(SpecMemberBase)
 public:
-  bool          norm_on;        // renormalize the underlying linear weights by subtracting the difference between recv units mean linear weight value and the renorm target weight value (typically .5) -- corrects for overall main-effect drift in weight values and differences among units
-  float         norm_trg;       // #CONDSHOW_ON_norm_on #DEF_0.5 target mean value for linear underlying weights -- should generally be same as rnd.mean but for topographic projections it may be different
-  float         norm_rate;      // #CONDSHOW_ON_norm_on #MIN_0 #MAX_1 how fast does the normalization process move?  this is how much weights are moved back toward norm each time normalization is performed -- 1 = full renorm all the time
-  bool          bal_on;         // perform weight balance maintenance?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
-  float         hi_thr;         // #CONDSHOW_ON_bal_on #DEF_0.95 high threshold -- sum up extent to which weights are above this threshold, multiply by gain and that determines imbalance in weight increases vs. decreases, via a 1/(1+gain*sum) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases
-  float         gain;           // #CONDSHOW_ON_bal_on gain multiplier applied to above-threshold weight sum -- higher values turn weight increases down more rapidly as the weights become more imbalanced
+  bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
+  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.4 high threshold -- when average recv weights are above this threshold, weight increases are penalized in proportion to sigmoidal 1/(1+hi_gain*(avg-hi_thr)) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
+  float         hi_gain;        // #CONDSHOW_ON_on gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
+  float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
+  float         lo_gain;        // #CONDSHOW_ON_on gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   
-  inline void   WtBal(const float bal_sum, float& wb_inc, float& wb_dec) {
-    // wt inc is smaller toward 0 as weights are more imbalanced 
-    wb_inc = 1.0f / (1.0f + gain * bal_sum);
-    wb_dec = 2.0f - wb_inc;     // keep total dynamic range fixed -- wb_dec is stronger as wb_ince is weaker
+  inline void   WtBal(const float wt_avg, float& wb_inc, float& wb_dec) {
+    if(wt_avg > hi_thr) {
+      float wbi = hi_gain * (wt_avg - hi_thr);
+      wb_inc = 1.0f / (1.0f + wbi); // gets sigmoidally small toward 0 as wbi gets smaller -- is quick acting but saturates -- apply pressure earlier..
+      wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
+    }
+    else if(wt_avg < lo_thr) {
+      float wbd = lo_gain * (lo_thr - wt_avg);
+      wb_dec = 1.0f / (1.0f + wbd);
+      wb_inc = 2.0f - wb_dec;
+    }
+    else {
+      wb_inc = 1.0f;
+      wb_dec = 1.0f;
+    }
   }
-  // compute weight balance factors for increase and decrease based on extent to which weights exceed the high threshold
+  // compute weight balance factors for increase and decrease based on extent to which weights exceed thresholds
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  TA_SIMPLE_BASEFUNS(WtNormBalSpec);
+  TA_SIMPLE_BASEFUNS(WtBalanceSpec);
 protected:
   SPEC_DEFAULTS;
   // void        UpdateAfterEdit_impl() override;
@@ -379,7 +388,7 @@ public:
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   DwtWtaSpec    dwt_wta;        // #CAT_Learning #CONDSHOW_ON_learn delta weight increase vs. decrease winner-take-all competition -- based on sign of time-averaged delta-weight, either increases or decreases are applied correspondingly -- reflects the biological separation between CAMKII and PKA pathways in determining LTP vs. LTD -- computationally prevents equivocation of increases and decreases, so weights move more toward extremes and retain critical variance in the responses of neurons across the layer
-  WtNormBalSpec wt_norm_bal;    // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- plugs into soft bounding function
+  WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: a soft form of normalization that maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- alters rate of weight increases vs. decreases in soft bounding function
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
@@ -563,22 +572,21 @@ public:
     if(dwt == 0.0f) return;
     if(dwavg > 0.0f) {            // long-term is more pos than neg
       if(dwt > 0.0f) {
-        fwt += wb_inc * wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
+        fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
       }
-      else { // if(dwt_wta.wt_mod) {
-        fwt += (wb_dec - 1.0f) * wb_dec * fwt * dwt;
+      else if(wb_inc < dwt_wta.wb_inc_thr) {
+        fwt += (dwt_wta.wb_inc_thr - wb_inc) * wb_dec * fwt * dwt;
       }
       wt = scale * SigFmLinWt(fwt);
     }
     else {                      // long-term is more neg than pos
       if(dwt < 0.0f) {
         fwt += wb_dec * fwt * dwt;
-        wt = scale * SigFmLinWt(fwt);
       }
-      // no..
-      // else { // if(dwt_wta.wt_mod) {
-      //   fwt += (wb_dec - 1.0f) * wb_inc * (1.0f - fwt) * dwt;
-      // }
+      else if(wb_dec < dwt_wta.wb_dec_thr) {
+        fwt += (dwt_wta.wb_dec_thr - wb_dec) * wb_inc * (1.0f - fwt) * dwt;
+      }
+      wt = scale * SigFmLinWt(fwt);
     }
     dwt = 0.0f;
     //    C_ApplyLimits(fwt);         // don't need this..
@@ -618,12 +626,9 @@ public:
 
   inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
 
-  inline virtual void 	Compute_WtNormBal(LeabraConGroup* cg, LeabraNetwork* net,
+  inline virtual void 	Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
                                       int thr_no);
-  // #IGNORE compute weight norm and balance factors
-  inline virtual void 	Compute_WtNormSub(LeabraConGroup* cg, LeabraNetwork* net,
-                                      int thr_no);
-  // #IGNORE subtract difference from norm_trg to renormalize fwt values, based on prjn fwt_avg values computed at network level
+  // #IGNORE compute weight balance factors
 
   inline virtual void Compute_EpochWeights(LeabraConGroup* cg, LeabraNetwork* net,
                                            int thr_no) { };

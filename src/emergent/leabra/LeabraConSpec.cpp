@@ -24,7 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
-TA_BASEFUNS_CTORS_DEFN(WtNormBalSpec);
+TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(DwtWtaSpec);
@@ -110,8 +110,8 @@ void DwtWtaSpec::Initialize() {
 
 void DwtWtaSpec::Defaults_init() {
   dw_tau = 10.0f;
-  wt_mod = true;
-  wt_mod_gain = 1.0f;
+  wb_inc_thr = 1.0f;
+  wb_dec_thr = 1.0f;
   dw_dt = 1.0f / dw_tau;
 }
 
@@ -120,26 +120,25 @@ void DwtWtaSpec::UpdateAfterEdit_impl() {
   dw_dt = 1.0f / dw_tau;
 }
 
-void WtNormBalSpec::Initialize() {
+void WtBalanceSpec::Initialize() {
   Defaults_init();
 }
 
-void WtNormBalSpec::Defaults_init() {
-  // taVersion v787(7, 8, 7);
-  // if(taMisc::is_loading && taMisc::loading_version < v787) {
-  //   bal_on = false;
-  // }
-  // else {
-  // }
-  norm_on = false;
-  bal_on = false;
-  norm_trg = 0.5f;
-  norm_rate = 0.01f;
-  hi_thr = 0.95f;
-  gain = 1.0f;
+void WtBalanceSpec::Defaults_init() {
+  taVersion v787(7, 8, 7);
+  if(taMisc::is_loading && taMisc::loading_version < v787) {
+    on = false;
+  }
+  else {
+    on = true;
+  }
+  hi_thr = 0.4f;
+  lo_thr = 0.2f;
+  hi_gain = 2.0f;
+  lo_gain = 2.0f;
 }
 
-// void WtNormBalSpec::UpdateAfterEdit_impl() {
+// void WtBalanceSpec::UpdateAfterEdit_impl() {
 //   inherited::UpdateAfterEdit_impl();
 // }
 
@@ -323,10 +322,7 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   cur_lrate = lrate;            // as a backup..
   lrs_mult = 1.0f;
   if(!InheritsFrom(&TA_LeabraBiasSpec)) { // bias spec doesn't count
-    if(wt_norm_bal.norm_on) {
-      net->net_misc.wt_norm = true;
-    }
-    if(wt_norm_bal.bal_on) {
+    if(wt_bal.on) {
       net->net_misc.wt_bal = true;
     }
   }
