@@ -226,6 +226,7 @@ class E_API WtBalanceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
+  bool          linear;         // #CONDSHOW_ON_on use linear function of difference between threshold and weight average -- otherwise use sigmoidal function
   float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.4 high threshold -- when average recv weights are above this threshold, weight increases are penalized in proportion to sigmoidal 1/(1+hi_gain*(avg-hi_thr)) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
   float         hi_gain;        // #CONDSHOW_ON_on gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
@@ -234,12 +235,24 @@ public:
   inline void   WtBal(const float wt_avg, float& wb_inc, float& wb_dec) {
     if(wt_avg > hi_thr) {
       float wbi = hi_gain * (wt_avg - hi_thr);
-      wb_inc = 1.0f / (1.0f + wbi); // gets sigmoidally small toward 0 as wbi gets smaller -- is quick acting but saturates -- apply pressure earlier..
+      if(linear) {
+        if(wbi > 1.0f) wbi = 1.0f;
+        wb_inc = 1.0f - wbi;
+      }
+      else {
+        wb_inc = 1.0f / (1.0f + wbi); // gets sigmoidally small toward 0 as wbi gets smaller -- is quick acting but saturates -- apply pressure earlier..
+      }
       wb_dec = 2.0f - wb_inc; // as wb_inc goes down, wb_dec goes up..  sum to 2
     }
     else if(wt_avg < lo_thr) {
       float wbd = lo_gain * (lo_thr - wt_avg);
-      wb_dec = 1.0f / (1.0f + wbd);
+      if(linear) {
+        if(wbd > 1.0f) wbd = 1.0f;
+        wb_dec = 1.0f - wbd;
+      }
+      else {
+        wb_dec = 1.0f / (1.0f + wbd);
+      }
       wb_inc = 2.0f - wb_dec;
     }
     else {

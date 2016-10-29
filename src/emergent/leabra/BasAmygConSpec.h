@@ -153,10 +153,13 @@ public:
     if(ba_learn.learn_rule == BasAmygLearnSpec::DELTA) {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-        // todo: what to do about the following, and will it mess with delta computation?
-        // this is the key for learning: up-state or actual ru activation
-        // const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
-        C_Compute_dWt_BasAmyg_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, d2r, clrate);
+        if(acq) {
+          C_Compute_dWt_BasAmyg_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, d2r, clrate);
+        }
+        else {
+          const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
+          C_Compute_dWt_BasAmyg_Delta(dwts[i], su_act, ru_act_eff, ru->act_q0, ru->da_p, d2r, clrate);
+        }
       }
     }
     else {

@@ -1020,7 +1020,7 @@ bool taString::isFloat() const {
     char c = mrep->s[i];
     if((c == '+') || (c == '-')) continue; // could happen inside exp too -- just be flex
     if((c == 'e') || (c == 'E')) continue; // ok, but can't end..
-    if(!(isdigit(c) || c == '.')) break;   // allowed to end
+    if(!(isdigit(c) || c == '.' || c == 'f')) break;   // allowed to end, f for float indicator
     if(i == ((int)mrep->len - 1)) rval = true;
   }
   return rval;
