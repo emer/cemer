@@ -33,7 +33,7 @@ void Comment::GenCssBody_impl(Program* prog) {
 }
 
 String Comment::GetDisplayName() const {
-  return " // " + desc;
+  return "// " + desc;
 }
 
 String Comment::GetColText(const KeyString& key, int itm_idx) const {

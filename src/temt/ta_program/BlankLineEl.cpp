@@ -29,7 +29,7 @@ void BlankLineEl::GenCssBody_impl(Program* prog) {
 }
 
 String BlankLineEl::GetDisplayName() const {
-  return " ";
+  return "";
 }
 
 String BlankLineEl::GetColText(const KeyString& key, int itm_idx) const {
