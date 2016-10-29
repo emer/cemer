@@ -126,7 +126,7 @@ void ProgEl::Copy_(const ProgEl& cp) {
 }
 
 void ProgEl::UpdateProgFlags() {
-  if(code_string.nonempty()) { // && ProgElChildrenCount() == 0) {
+  if(code_string.nonempty() || HasProgFlag(ProgEl::NO_CODE)) {
     SetProgFlag(CAN_REVERT_TO_CODE);
   }
   else {
@@ -703,7 +703,12 @@ bool ProgEl::RevertToCode() {
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return false;
   ProgCode* cvt = new ProgCode;
-  cvt->desc = desc;
+  if (this->DerivesFromName("Comment")) {
+    cvt->desc = "";
+  }
+  else {
+    cvt->desc = desc;
+  }
   cvt->code.expr = code_string;
   if (HasSubCode() && children_()->DerivesFromName("ProgEl_List")) {  // should always be true
     cvt->sub_code.Copy(*(ProgEl_List*)children_());  // save the subcode in the ProgCode object for later replacement in new ProgEl

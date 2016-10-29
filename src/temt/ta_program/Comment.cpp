@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(Comment);
 void Comment::Initialize() {
   static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
   desc = _def_comment;
+  SetProgFlag(ProgEl::NO_CODE);
 }
 
 void Comment::GenCssBody_impl(Program* prog) {
@@ -69,13 +70,15 @@ bool Comment::BrowserEditSet(const String& code, int move_after) {
 
 
 bool Comment::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.startsWith("//") || code.startsWith("/*")) return true;
+  String trimmed_code = triml(code);
+  if(trimmed_code.startsWith("//") || trimmed_code.startsWith("/*")) return true;
   return false;
 }
 
 bool Comment::CvtFmCode(const String& code) {
-  if(code.startsWith("//")) desc = trim(code.after("//"));
-  else if(code.startsWith("/*")) trim(desc = code.after("/*"));
+  String trimmed_code = triml(code);
+  if(trimmed_code.startsWith("//")) desc = trim(trimmed_code.after("//"));
+  else if(trimmed_code.startsWith("/*")) trim(desc = trimmed_code.after("/*"));
   if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
   return true;
 }

@@ -1,4 +1,3 @@
-
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -158,8 +157,9 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
 
 bool ProgCode::BrowserEditSet(const String& code_str, int move_after) {
   edit_move_after = move_after;
-  if(code_str.startsWith("//") || code_str.startsWith("/*")) {
-    code.expr = code_str;
+  String trimmed_str = triml(code_str);
+  if(trimmed_str.startsWith("//") || trimmed_str.startsWith("/*")) {
+    code.expr = trimmed_str;
   }
   else {
     code.expr = CodeGetDesc(code_str, desc);

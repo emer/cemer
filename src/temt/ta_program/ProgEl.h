@@ -81,7 +81,8 @@ public:
     CAN_REVERT_TO_CODE  = 0x0800, // #NO_SHOW can revert to program code string -- computes whether this prog el can revert back to a ProgCode -- used for enabling button
     BREAKPOINT_ENABLED  = 0x1000, // #NO_SHOW breakpoint (ENABLED & DISABLED are mutually exclusive)
     BREAKPOINT_DISABLED = 0x2000, // #NO_SHOW breakpoint exists but is currently disabled
-};
+    NO_CODE             = 0x4000, // #NO_SHOW some program elements don't have code
+  };
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
