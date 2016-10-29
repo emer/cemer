@@ -70,11 +70,6 @@ TestIfElse
     Ensure Emergent Free
     Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"If_Else\\"]
 
-TestConditionalPrinting
-    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
-    Ensure Emergent Free
-    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"Conditional_Printing\\"]
-
 TestStrings
     Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
     Ensure Emergent Free
@@ -216,7 +211,6 @@ Test Program Browser Edit
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "TestProgramBrowserEdit", "var_name": "testee_program_path", "var_value": "${prog_path}"}
     Status OK                  ${output}
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "TestProgramBrowserEdit"}
-    Status OK No Result        ${output}
+    ${output} =                Run Emergent Program      TestProgramBrowserEdit
 
     Prog Var Should Equal   test_result            true
