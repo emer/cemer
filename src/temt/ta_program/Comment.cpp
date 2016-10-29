@@ -77,7 +77,5 @@ bool Comment::CvtFmCode(const String& code) {
   if(code.startsWith("//")) desc = trim(code.after("//"));
   else if(code.startsWith("/*")) trim(desc = code.after("/*"));
   if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
-  
-  code_string = " ";  // if code_string is empty RevertToCode doesn't work
   return true;
 }
