@@ -398,6 +398,11 @@ bool DataTable::AutoLoadData() {
     auto_load_file = cur_alf;
   }
   else {
+    // make sure data is all ready to go
+    for(int i=data.size-1; i>=0; i--) {
+      DataCol* da = data[i];
+      da->UpdateAfterEdit();
+    }
     LoadAnyData(auto_load_file, true, LD_AUTO, LQ_AUTO, -1, true);
   }
   return true;

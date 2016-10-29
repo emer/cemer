@@ -204,7 +204,6 @@ void DataCol::Init() {
   DataTable* tab = dataTable();
   if (tab) {
     rows = tab->rows_total;    // all rows, not just the visible rows
-    EnforceRows(rows);
   }
 
   if (is_matrix) {
@@ -212,13 +211,13 @@ void DataCol::Init() {
     tdim.SetDims(tdim.dims() + 1);
     tdim.Set(tdim.dims()-1, rows);
     UnSetMatrixViewMode();        // reset view temporarily
-    ar->SetGeomN(tdim);
+    ar->SetGeomN(tdim);           // this does same thing as EnforceRows!
     SetMatrixViewMode();          // reset it
     dim_names.SetGeom(1,cell_geom.dims());
   }
   else {
     UnSetMatrixViewMode();        // reset view temporarily
-    ar->SetGeom(1, rows);
+    ar->SetGeom(1, rows);         // this does same thing as EnforceRows!
     SetMatrixViewMode();          // reset it
     dim_names.SetGeom(1,0);
   }
