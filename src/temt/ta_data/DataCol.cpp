@@ -63,7 +63,7 @@ void DataCol::InitLinks() {
   taMatrix* ar = AR();
   if (ar != NULL) {
     taBase::Own(ar, this);
-    SetMatrixViewMode();
+    Init();
   }
   AutoNameMyMembers();
 //  taBase::Own(control_panel_cell, this);
