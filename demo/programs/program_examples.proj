@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.3.0 rev10212
+// ta_Dump File v3.0 -- code v8.0.3.0 rev10236
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [6] {
   taDoc @["ProjectDocs"] { 
@@ -5717,6 +5717,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -6310,6 +6311,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -6903,6 +6905,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7496,6 +7499,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7689,6 +7693,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7807,6 +7812,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7875,6 +7881,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8039,6 +8046,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8269,6 +8277,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8456,6 +8465,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8574,6 +8584,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8686,7 +8697,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -8706,7 +8716,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="can also go backward, or do any kind of test in the middle expression";
       flags=CAN_REVERT_TO_CODE;
       code_string="for (i=start_idx; i<max_idx; i+=increment)";
-      pre_compile_code_string="for (i=start_idx; i<max_idx; i+=increment)";
       loop_code {
        name="ProgEl_List_47";
        el_typ=ProgCode;
@@ -8715,7 +8724,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="could do anything here with this index..";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  i";
-	pre_compile_code_string="Print  i";
 	message=;
 	print_var=.projects["program_examples"].programs.gp["Control"]["For"].prog_code[0].local_vars["i"]$$;
 	print_var2=NULL;
@@ -8814,7 +8822,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -8834,7 +8841,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is another way to do a simple for loop, familar to python programmers -- [start:end:incr] creates an array from start to end (exclusive) with given increment (defaults to 1 if not specified)";
       flags=CAN_REVERT_TO_CODE;
       code_string="foreach(i in [0:10:1])";
-      pre_compile_code_string="foreach(i in [0:10:1])";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -8843,7 +8849,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="{ cout << i << endl; };";
-	pre_compile_code_string="{ cout << i << endl; };";
 	expr {
 	 expr="{ cout << i << endl; };";
 	};
@@ -8858,7 +8863,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="going backwards -- note that args work just like for loop and ALWAYS exclude end value, just like in Python";
       flags=CAN_REVERT_TO_CODE;
       code_string="foreach(i in [10:0:-1])";
-      pre_compile_code_string="foreach(i in [10:0:-1])";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -8867,7 +8871,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="{ cout << i << endl; };";
-	pre_compile_code_string="{ cout << i << endl; };";
 	expr {
 	 expr="{ cout << i << endl; };";
 	};
@@ -8882,7 +8885,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="going backwards -- note that args work just like for loop and ALWAYS exclude end value, just like in Python";
       flags=CAN_REVERT_TO_CODE;
       code_string="foreach(i in [-1:-10:-1])";
-      pre_compile_code_string="foreach(i in [-1:-10:-1])";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -8891,7 +8893,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="{ cout << i << endl; };";
-	pre_compile_code_string="{ cout << i << endl; };";
 	expr {
 	 expr="{ cout << i << endl; };";
 	};
@@ -8989,7 +8990,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -9000,7 +9000,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="IntZeroN randomly selects a number from 0 to N-1 (includes 0, excludes N)";
       flags=CAN_REVERT_TO_CODE;
       code_string="sw_int_var = Random::IntZeroN(5, )";
-      pre_compile_code_string="sw_int_var = Random::IntZeroN(5, )";
       result_var=.projects["program_examples"].programs.gp["Control"]["Switch"].vars["sw_int_var"]$$;
       object_type=Random;
       method=Random::IntZeroN;
@@ -9036,7 +9035,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  sw_int_var";
-      pre_compile_code_string="Print  sw_int_var";
       message=;
       print_var=$.projects["program_examples"].programs.gp["Control"]["Switch"].vars["sw_int_var"]$;
       print_var2=NULL;
@@ -9050,7 +9048,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="switch(sw_int_var)";
-      pre_compile_code_string="switch(sw_int_var)";
       switch_var=$.projects["program_examples"].programs.gp["Control"]["Switch"].vars["sw_int_var"]$;
       cases {
        name="cases";
@@ -9060,7 +9057,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: 0";
-	pre_compile_code_string="case: 0";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -9069,7 +9065,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"got case 0\"";
-	  pre_compile_code_string="Print \"got case 0\"";
 	  expr {
 	   expr="\"got case 0\"";
 	  };
@@ -9085,7 +9080,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: 1";
-	pre_compile_code_string="case: 1";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -9094,7 +9088,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"got case 1\"";
-	  pre_compile_code_string="Print \"got case 1\"";
 	  expr {
 	   expr="\"got case 1\"";
 	  };
@@ -9110,7 +9103,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: 2";
-	pre_compile_code_string="case: 2";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -9119,7 +9111,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"got case 2\"";
-	  pre_compile_code_string="Print \"got case 2\"";
 	  expr {
 	   expr="\"got case 2\"";
 	  };
@@ -9135,7 +9126,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: 3";
-	pre_compile_code_string="case: 3";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -9144,7 +9134,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"got case 3\"";
-	  pre_compile_code_string="Print \"got case 3\"";
 	  expr {
 	   expr="\"got case 3\"";
 	  };
@@ -9160,7 +9149,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="default:";
-	pre_compile_code_string="default:";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -9169,7 +9157,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"got default case\"";
-	  pre_compile_code_string="Print \"got default case\"";
 	  expr {
 	   expr="\"got default case\"";
 	  };
@@ -9270,13 +9257,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="tip - To clear the console window press control + .";
       flags=CAN_REVERT_TO_CODE;
       code_string="// tip - To clear the console window press control + .";
-      pre_compile_code_string=" // tip - To clear the console window press control + .";
      };
      LocalVars @[1] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -9287,7 +9272,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="value = Random::IntMinMax(0, 9, )";
-      pre_compile_code_string="value = Random::IntMinMax(0, 9, )";
       result_var=.projects["program_examples"].programs.gp["Control"]["If_Else"].vars["value"]$$;
       object_type=Random;
       method=Random::IntMinMax;
@@ -9334,7 +9318,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (value < 5)";
-      pre_compile_code_string="if (value < 5)";
       cond {
        expr="value < 5";
       };
@@ -9346,7 +9329,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print \"value is less than 5\"";
-	pre_compile_code_string="Print \"value is less than 5\"";
 	expr {
 	 expr="\"value is less than 5\"";
 	};
@@ -9358,7 +9340,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="else if (value > 5)";
-      pre_compile_code_string="else if (value > 5)";
       cond {
        expr="value > 5";
       };
@@ -9370,7 +9351,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print \"value is greater than 5\"";
-	pre_compile_code_string="Print \"value is greater than 5\"";
 	expr {
 	 expr="\"value is greater than 5\"";
 	};
@@ -9382,7 +9362,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="else";
-      pre_compile_code_string="else";
       cond {
        expr=;
       };
@@ -9394,7 +9373,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print \"value is exactly 5\"";
-	pre_compile_code_string="Print \"value is exactly 5\"";
 	expr {
 	 expr="\"value is exactly 5\"";
 	};
@@ -9497,7 +9475,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (3 vars)";
-      pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -9537,7 +9514,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="always use double-quotes for any string literal in the program";
       flags=CAN_REVERT_TO_CODE;
       code_string="str = \"abcdefg\"";
-      pre_compile_code_string="str = \"abcdefg\"";
       result_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$$;
       expr {
        expr="\"abcdefg\"";
@@ -9547,7 +9523,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  str";
-      pre_compile_code_string="Print  str";
       message=;
       print_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       print_var2=NULL;
@@ -9561,7 +9536,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Stop_Step Point";
-      pre_compile_code_string="Stop_Step Point";
       cond {
        expr=;
       };
@@ -9570,13 +9544,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="accessing substrings";
       flags=CAN_REVERT_TO_CODE;
       code_string="// accessing substrings";
-      pre_compile_code_string=" // accessing substrings";
      };
      PrintExpr @[5] {
       desc="access elements using standard array-like index operator";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str[1]: \" << str[1]";
-      pre_compile_code_string="Print \"str[1]: \" << str[1]";
       expr {
        expr="\"str[1]: \" << str[1]";
       };
@@ -9586,7 +9558,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="very easy to extract substrings using after, from, through..";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.after('c'): \" << str.after(\"c\")";
-      pre_compile_code_string="Print \"str.after('c'): \" << str.after(\"c\")";
       expr {
        expr="\"str.after('c'): \" << str.after(\"c\")";
       };
@@ -9596,7 +9567,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="before..";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.before('f'): \" << str.before(\"f\")";
-      pre_compile_code_string="Print \"str.before('f'): \" << str.before(\"f\")";
       expr {
        expr="\"str.before('f'): \" << str.before(\"f\")";
       };
@@ -9606,7 +9576,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="can specifiy optional starting position, -1 means start from back";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"abba.before('b',-1): \" << \"abba\".before(\"b\",-1)";
-      pre_compile_code_string="Print \"abba.before('b',-1): \" << \"abba\".before(\"b\",-1)";
       expr {
        expr="\"abba.before('b',-1): \" << \"abba\".before(\"b\",-1)";
       };
@@ -9616,7 +9585,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="between..";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.between('c', 'f'): \" << str.between(\"c\", \"f\")";
-      pre_compile_code_string="Print \"str.between('c', 'f'): \" << str.between(\"c\", \"f\")";
       expr {
        expr="\"str.between('c', 'f'): \" << str.between(\"c\", \"f\")";
       };
@@ -9626,13 +9594,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="finding strings";
       flags=CAN_REVERT_TO_CODE;
       code_string="// finding strings";
-      pre_compile_code_string=" // finding strings";
      };
      PrintExpr @[11] {
       desc="test what the string starts with";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.startsWith('ab'): \" << str.startsWith(\"ab\")";
-      pre_compile_code_string="Print \"str.startsWith('ab'): \" << str.startsWith(\"ab\")";
       expr {
        expr="\"str.startsWith('ab'): \" << str.startsWith(\"ab\")";
       };
@@ -9642,7 +9608,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="and what it ends with";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.endsWith('ab'): \" << str.endsWith(\"ab\")";
-      pre_compile_code_string="Print \"str.endsWith('ab'): \" << str.endsWith(\"ab\")";
       expr {
        expr="\"str.endsWith('ab'): \" << str.endsWith(\"ab\")";
       };
@@ -9652,7 +9617,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="what does it contain?";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.contains('de'): \" << str.contains(\"de\")";
-      pre_compile_code_string="Print \"str.contains('de'): \" << str.contains(\"de\")";
       expr {
        expr="\"str.contains('de'): \" << str.contains(\"de\")";
       };
@@ -9662,13 +9626,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="modifying the string";
       flags=CAN_REVERT_TO_CODE;
       code_string="// modifying the string";
-      pre_compile_code_string=" // modifying the string";
      };
      MethodCall @[15] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="str->upcase()";
-      pre_compile_code_string="str->upcase()";
       result_var=NULL;
       obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       method=taString::upcase;
@@ -9684,7 +9646,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this string is upcase'd";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.upcase(): \" << str";
-      pre_compile_code_string="Print \"str.upcase(): \" << str";
       expr {
        expr="\"str.upcase(): \" << str";
       };
@@ -9694,7 +9655,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="str->downcase()";
-      pre_compile_code_string="str->downcase()";
       result_var=NULL;
       obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       method=taString::downcase;
@@ -9710,7 +9670,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this string is back downcase'd";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.downcase(): \" << str";
-      pre_compile_code_string="Print \"str.downcase(): \" << str";
       expr {
        expr="\"str.downcase(): \" << str";
       };
@@ -9720,7 +9679,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="str->capitalize()";
-      pre_compile_code_string="str->capitalize()";
       result_var=NULL;
       obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       method=taString::capitalize;
@@ -9736,7 +9694,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this string is capitalize'd";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.capitalize(): \" << str";
-      pre_compile_code_string="Print \"str.capitalize(): \" << str";
       expr {
        expr="\"str.capitalize(): \" << str";
       };
@@ -9746,7 +9703,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="search-and-replace";
       flags=CAN_REVERT_TO_CODE;
       code_string="str->gsub(\"d\", \"delicious\")";
-      pre_compile_code_string="str->gsub(\"d\", \"delicious\")";
       result_var=NULL;
       obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       method=taString::gsub;
@@ -9784,7 +9740,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.gdub('d', 'delicious')): \" << str";
-      pre_compile_code_string="Print \"str.gdub('d', 'delicious')): \" << str";
       expr {
        expr="\"str.gdub('d', 'delicious')): \" << str";
       };
@@ -9794,13 +9749,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="looping, splitting, joining";
       flags=CAN_REVERT_TO_CODE;
       code_string="// looping, splitting, joining";
-      pre_compile_code_string=" // looping, splitting, joining";
      };
      ForeachLoop @[24] {
       desc="foreach is the most efficient way to iterate over the string elements";
       flags=CAN_REVERT_TO_CODE;
       code_string="foreach(chr in str)";
-      pre_compile_code_string="foreach(chr in str)";
       loop_code {
        name="ProgEl_List_196";
        el_typ=ProgCode;
@@ -9809,7 +9762,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  chr";
-	pre_compile_code_string="Print  chr";
 	message=;
 	print_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["chr"]$$;
 	print_var2=NULL;
@@ -9829,7 +9781,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="split breaks the string into an array of strings - esp handy for delimited strings";
       flags=CAN_REVERT_TO_CODE;
       code_string="sary = str->split(\"\")";
-      pre_compile_code_string="sary = str->split(\"\")";
       result_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["sary"]$$;
       obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       method=taString::split;
@@ -9856,7 +9807,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"split into array:\" sary";
-      pre_compile_code_string="Print  \"split into array:\" sary";
       message="split into array:";
       print_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["sary"]$;
       print_var2=NULL;
@@ -9870,7 +9820,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="join it back, with spaces now..";
       flags=CAN_REVERT_TO_CODE;
       code_string="str = sary->Join(\" \")";
-      pre_compile_code_string="str = sary->Join(\" \")";
       result_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["sary"]$;
       method=String_Array::Join;
@@ -9897,7 +9846,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"joined with spaces:\" str";
-      pre_compile_code_string="Print  \"joined with spaces:\" str";
       message="joined with spaces:";
       print_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       print_var2=NULL;
@@ -9911,13 +9859,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="converting strings to other things";
       flags=CAN_REVERT_TO_CODE;
       code_string="// converting strings to other things";
-      pre_compile_code_string=" // converting strings to other things";
      };
      AssignExpr @[30] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="str = 3.14159";
-      pre_compile_code_string="str = 3.14159";
       result_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
       expr {
        expr="3.14159";
@@ -9927,7 +9873,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="str ate some pi..";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str = 3.14159: \" << str";
-      pre_compile_code_string="Print \"str = 3.14159: \" << str";
       expr {
        expr="\"str = 3.14159: \" << str";
       };
@@ -9937,7 +9882,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="and spit it back out again";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"str.toFloat(): \" << str.toFloat()";
-      pre_compile_code_string="Print \"str.toFloat(): \" << str.toFloat()";
       expr {
        expr="\"str.toFloat(): \" << str.toFloat()";
       };
@@ -9947,7 +9891,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="the conversion is implied automatically as well";
       flags=CAN_REVERT_TO_CODE;
       code_string="mypi = str;";
-      pre_compile_code_string="mypi = str;";
       expr {
        expr="mypi = str;";
       };
@@ -9956,7 +9899,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="bools are represented as 'true' and 'false' in string form";
       flags=CAN_REVERT_TO_CODE;
       code_string="str = true;";
-      pre_compile_code_string="str = true;";
       expr {
        expr="str = true;";
       };
@@ -9965,7 +9907,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"(bool)str: \" << (bool)str";
-      pre_compile_code_string="Print \"(bool)str: \" << (bool)str";
       expr {
        expr="\"(bool)str: \" << (bool)str";
       };
@@ -9975,7 +9916,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="see DynEnum program examples for how to convert between strings and enumerated types";
       flags=CAN_REVERT_TO_CODE;
       code_string="// see DynEnum program examples for how to convert between strings and enumerated types";
-      pre_compile_code_string=" // see DynEnum program examples for how to convert between strings and enumerated types";
      };
     };
     step_prog=.projects["program_examples"].programs.gp["Variables"]["Strings"]$$;
@@ -10102,6 +10042,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -10194,6 +10135,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -10306,6 +10248,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -10521,7 +10464,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="SetConfigParams() returns: int";
-      pre_compile_code_string="SetConfigParams() returns: int";
       name="SetConfigParams";
       return_type=T_Int;
       object_type=taOBase;
@@ -10538,7 +10480,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
-	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -10549,7 +10490,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="param_1 = Configurations[\"param_1\"][cur_config]";
-	pre_compile_code_string="param_1 = Configurations[\"param_1\"][cur_config]";
 	result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_1"]$$;
 	expr {
 	 expr="Configurations[\"param_1\"][cur_config]";
@@ -10559,7 +10499,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="param_2 = Configurations[\"param_2\"][cur_config]";
-	pre_compile_code_string="param_2 = Configurations[\"param_2\"][cur_config]";
 	result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_2"]$$;
 	expr {
 	 expr="Configurations[\"param_2\"][cur_config]";
@@ -10569,7 +10508,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"current configuration parameters\" cur_config param_1 param_2";
-	pre_compile_code_string="Print  \"current configuration parameters\" cur_config param_1 param_2";
 	message="current configuration parameters";
 	print_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["cur_config"]$$;
 	print_var2=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_1"]$;
@@ -10595,7 +10533,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (2 vars)";
-      pre_compile_code_string="LocalVars (2 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -10624,7 +10561,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="always set the current parameters..";
       flags=CAN_REVERT_TO_CODE;
       code_string="SetConfigParams()";
-      pre_compile_code_string="SetConfigParams()";
       result_var=NULL;
       fun=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].functions["SetConfigParams"]$$;
       fun_args {
@@ -10637,7 +10573,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="switch statements are very frequently used with enum's -- very handy -- hit the Cases Fm Enum button to automatically get all the cases";
       flags=CAN_REVERT_TO_CODE;
       code_string="switch(cmd)";
-      pre_compile_code_string="switch(cmd)";
       switch_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].args["cmd"]$$;
       cases {
        name="ProgEl_List_181";
@@ -10647,7 +10582,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: RUN";
-	pre_compile_code_string="case: RUN";
 	prog_code {
 	 name="ProgEl_List_181";
 	 el_typ=ProgCode;
@@ -10656,7 +10590,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"we are now in run mode\"";
-	  pre_compile_code_string="Print \"we are now in run mode\"";
 	  expr {
 	   expr="\"we are now in run mode\"";
 	  };
@@ -10666,7 +10599,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="randomly select one of the unit names";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="unit_val = Random::IntZeroN(N_UnitNames, )";
-	  pre_compile_code_string="unit_val = Random::IntZeroN(N_UnitNames, )";
 	  result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["unit_val"]$$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
@@ -10702,7 +10634,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="make sure we've got a row";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="InputData->EnforceRows(1)";
-	  pre_compile_code_string="InputData->EnforceRows(1)";
 	  result_var=NULL;
 	  obj=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$$;
 	  method=DataTable::EnforceRows;
@@ -10729,7 +10660,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="initialize the values so we can write to them";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="InputData.Input.InitVals(0.0)";
-	  pre_compile_code_string="InputData.Input.InitVals(0.0)";
 	  obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
 	  path="Input";
 	  result_var=NULL;
@@ -10757,7 +10687,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="key advantage of enum: you can use them as a number (here as an index)";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="InputData[\"Input\"][unit_val,0,-1] = 1.0;";
-	  pre_compile_code_string="InputData[\"Input\"][unit_val,0,-1] = 1.0;";
 	  expr {
 	   expr="InputData[\"Input\"][unit_val,0,-1] = 1.0;";
 	  };
@@ -10766,7 +10695,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="but *also* as a string -- here we tell it to use the name (string) form";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="InputData[\"Name\"][-1] = (String)unit_val;";
-	  pre_compile_code_string="InputData[\"Name\"][-1] = (String)unit_val;";
 	  expr {
 	   expr="InputData[\"Name\"][-1] = (String)unit_val;";
 	  };
@@ -10781,7 +10709,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: TEST";
-	pre_compile_code_string="case: TEST";
 	prog_code {
 	 name="ProgEl_List_182";
 	 el_typ=ProgCode;
@@ -10790,7 +10717,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"we are now in test mode\"";
-	  pre_compile_code_string="Print \"we are now in test mode\"";
 	  expr {
 	   expr="\"we are now in test mode\"";
 	  };
@@ -10800,19 +10726,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="here we use one function to convert enum names into numbers -- these numbers can then be used directly in rest of code to access units, etc";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="// here we use one function to convert enum names into numbers -- these numbers can then be used directly in rest of code to access units, etc";
-	  pre_compile_code_string=" // here we use one function to convert enum names into numbers -- these numbers can then be used directly in rest of code to access units, etc";
 	 };
 	 Comment @[2] {
 	  desc="this is convenient if you want to setup particular orders of events, using easy-to-read string names";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="// this is convenient if you want to setup particular orders of events, using easy-to-read string names";
-	  pre_compile_code_string=" // this is convenient if you want to setup particular orders of events, using easy-to-read string names";
 	 };
 	 MethodCall @[3] {
 	  desc="the .ar gives access to the underlying matrix array of data for whole column";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="name_var->NameToNumber_Matrix(TestOrders[\"EnumVals\"].ar, TestOrders[\"EnumNames\"].ar)";
-	  pre_compile_code_string="name_var->NameToNumber_Matrix(TestOrders[\"EnumVals\"].ar, TestOrders[\"EnumNames\"].ar)";
 	  result_var=NULL;
 	  obj=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["name_var"]$$;
 	  method=DynEnum::NameToNumber_Matrix;
@@ -10850,13 +10773,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="// we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
-	  pre_compile_code_string=" // we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
 	 };
 	 RandomCall @[5] {
 	  desc="randomly select a row to read from the table";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="row = Random::IntZeroN(TestOrders.rows, )";
-	  pre_compile_code_string="row = Random::IntZeroN(TestOrders.rows, )";
 	  result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].prog_code[0].local_vars["row"]$$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
@@ -10892,7 +10813,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print  \"testing row number:\" row";
-	  pre_compile_code_string="Print  \"testing row number:\" row";
 	  message="testing row number:";
 	  print_var=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].prog_code[0].local_vars["row"]$;
 	  print_var2=NULL;
@@ -10906,7 +10826,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="clear out any existing rows";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="InputData->ResetData()";
-	  pre_compile_code_string="InputData->ResetData()";
 	  result_var=NULL;
 	  obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
 	  method=DataTable::ResetData;
@@ -10922,7 +10841,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="iterate over all the items listed in the cell";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="foreach(i in TestOrders[\"EnumVals\"][:,row])";
-	  pre_compile_code_string="foreach(i in TestOrders[\"EnumVals\"][:,row])";
 	  loop_code {
 	   name="ProgEl_List_185";
 	   el_typ=ProgCode;
@@ -10931,7 +10849,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    desc="add a new row";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="InputData->AddBlankRow()";
-	    pre_compile_code_string="InputData->AddBlankRow()";
 	    result_var=NULL;
 	    obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
 	    method=DataTable::AddBlankRow;
@@ -10947,7 +10864,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    desc="see RUN case above -- note we need ; at end when doing [ ] expressions on left-hand-side of =";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="InputData[\"Input\"][i,0,-1] = 1.0;";
-	    pre_compile_code_string="InputData[\"Input\"][i,0,-1] = 1.0;";
 	    expr {
 	     expr="InputData[\"Input\"][i,0,-1] = 1.0;";
 	    };
@@ -10956,7 +10872,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    desc="this is a fancy double-cast of the integer i first into the enum, and then into the string, to get the name";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="InputData[\"Name\"][-1] = (String)(UnitNames)i;";
-	    pre_compile_code_string="InputData[\"Name\"][-1] = (String)(UnitNames)i;";
 	    expr {
 	     expr="InputData[\"Name\"][-1] = (String)(UnitNames)i;";
 	    };
@@ -10965,7 +10880,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    desc="we could also use this method on the DynEnum variable itself";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="Print \"generated input: \" << name_var.NumberToName(i)";
-	    pre_compile_code_string="Print \"generated input: \" << name_var.NumberToName(i)";
 	    expr {
 	     expr="\"generated input: \" << name_var.NumberToName(i)";
 	    };
@@ -10975,7 +10889,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    desc="tells the gui etc that you're done writing to this row";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="InputData->WriteClose()";
-	    pre_compile_code_string="InputData->WriteClose()";
 	    result_var=NULL;
 	    obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
 	    method=DataTable::WriteClose;
@@ -11003,7 +10916,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: HELP";
-	pre_compile_code_string="case: HELP";
 	prog_code {
 	 name="ProgEl_List_183";
 	 el_typ=ProgCode;
@@ -11012,7 +10924,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"we are now in help mode\"";
-	  pre_compile_code_string="Print \"we are now in help mode\"";
 	  expr {
 	   expr="\"we are now in help mode\"";
 	  };
@@ -11022,7 +10933,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"select the 'RUN' cmd to generate a single random input in InputData (look at table in left browser)\"";
-	  pre_compile_code_string="Print \"select the 'RUN' cmd to generate a single random input in InputData (look at table in left browser)\"";
 	  expr {
 	   expr="\"select the 'RUN' cmd to generate a single random input in InputData (look at table in left browser)\"";
 	  };
@@ -11032,7 +10942,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print \"select the 'TEST' cmd to generate a sequence of InputData inputs according to a row in TestOrders\"";
-	  pre_compile_code_string="Print \"select the 'TEST' cmd to generate a sequence of InputData inputs according to a row in TestOrders\"";
 	  expr {
 	   expr="\"select the 'TEST' cmd to generate a sequence of InputData inputs according to a row in TestOrders\"";
 	  };
@@ -11114,7 +11023,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="softmax(double_Matrix* v, double temp) returns: double";
-      pre_compile_code_string="softmax(double_Matrix* v, double temp) returns: double";
       name="softmax";
       return_type=T_Real;
       object_type=taMath_double;
@@ -11151,7 +11059,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (1 vars)";
-	pre_compile_code_string="LocalVars (1 vars)";
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -11173,7 +11080,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="tmp_v = exp(v) / temp";
-	pre_compile_code_string="tmp_v = exp(v) / temp";
 	result_var=.projects["program_examples"].programs.gp["Variables"]["Matrix"].functions["softmax"].fun_code[0].local_vars["tmp_v"]$$;
 	expr {
 	 expr="exp(v) / temp";
@@ -11183,7 +11089,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="v = tmp_v / vec_sum(tmp_v)";
-	pre_compile_code_string="v = tmp_v / vec_sum(tmp_v)";
 	result_var=.projects["program_examples"].programs.gp["Variables"]["Matrix"].functions["softmax"].args["v"]$$;
 	expr {
 	 expr="tmp_v / vec_sum(tmp_v)";
@@ -11205,7 +11110,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (3 vars)";
-      pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -11247,31 +11151,26 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="note: look at the css console for output from this program";
       flags=CAN_REVERT_TO_CODE;
       code_string="// note: look at the css console for output from this program";
-      pre_compile_code_string=" // note: look at the css console for output from this program";
      };
      Comment @[2] {
       desc="see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
       flags=CAN_REVERT_TO_CODE;
       code_string="// see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
-      pre_compile_code_string=" // see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
      };
      Comment @[3] {
       desc="(this page is linked in the Doc button above)";
       flags=CAN_REVERT_TO_CODE;
       code_string="// (this page is linked in the Doc button above)";
-      pre_compile_code_string=" // (this page is linked in the Doc button above)";
      };
      Comment @[4] {
       desc="== initializing matricies ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == initializing matricies ==";
-      pre_compile_code_string=" // == initializing matricies ==";
      };
      CssExpr @[5] {
       desc="you can initialize a matrix from a list of values.  the ; in the middle indicates a dimension break, making this a 2d matrix";
       flags=CAN_REVERT_TO_CODE;
       code_string="a = [1., 2., 3.; 4., 5., 6.];";
-      pre_compile_code_string="a = [1., 2., 3.; 4., 5., 6.];";
       expr {
        expr="a = [1., 2., 3.; 4., 5., 6.];";
       };
@@ -11280,7 +11179,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="matricies have a pretty-print output (or pretty enough anyway)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a:\\n\" << a";
-      pre_compile_code_string="Print \"a:\\n\" << a";
       expr {
        expr="\"a:\\n\" << a";
       };
@@ -11290,13 +11188,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== figuring out their dimensions ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == figuring out their dimensions ==";
-      pre_compile_code_string=" // == figuring out their dimensions ==";
      };
      CssExpr @[8] {
       desc="b now has the dimension structure of a";
       flags=CAN_REVERT_TO_CODE;
       code_string="b = shape(a);";
-      pre_compile_code_string="b = shape(a);";
       expr {
        expr="b = shape(a);";
       };
@@ -11305,7 +11201,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"b = shape(a)\\n\" << b << endl";
-      pre_compile_code_string="Print \"b = shape(a)\\n\" << b << endl";
       expr {
        expr="\"b = shape(a)\\n\" << b << endl";
       };
@@ -11315,7 +11210,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="number of dimensions";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"ndims(a):\\n\" << ndims(a) << endl";
-      pre_compile_code_string="Print \"ndims(a):\\n\" << ndims(a) << endl";
       expr {
        expr="\"ndims(a):\\n\" << ndims(a) << endl";
       };
@@ -11325,13 +11219,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== accessing cells in the matrix ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == accessing cells in the matrix ==";
-      pre_compile_code_string=" // == accessing cells in the matrix ==";
      };
      PrintExpr @[12] {
       desc="access a specific cell in a -- first idx is always inner-most dim (col)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a[1,0]:\\n\" << a[1,0] << endl";
-      pre_compile_code_string="Print \"a[1,0]:\\n\" << a[1,0] << endl";
       expr {
        expr="\"a[1,0]:\\n\" << a[1,0] << endl";
       };
@@ -11341,7 +11233,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="if you put a : in for a dimension, you get the whole thing";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a[:,0]:\\n\" << a[:,0] << endl";
-      pre_compile_code_string="Print \"a[:,0]:\\n\" << a[:,0] << endl";
       expr {
        expr="\"a[:,0]:\\n\" << a[:,0] << endl";
       };
@@ -11351,13 +11242,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
       flags=CAN_REVERT_TO_CODE;
       code_string="// note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
-      pre_compile_code_string=" // note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
      };
      PrintExpr @[15] {
       desc=": is actually a subset of full start:end:increment syntax for specifying a range";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
-      pre_compile_code_string="Print \"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
       expr {
        expr="\"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
       };
@@ -11367,13 +11256,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== assignment -- setting values ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == assignment -- setting values ==";
-      pre_compile_code_string=" // == assignment -- setting values ==";
      };
      CssExpr @[17] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="b = [1., 2., 3.; 4., 5., 6.];";
-      pre_compile_code_string="b = [1., 2., 3.; 4., 5., 6.];";
       expr {
        expr="b = [1., 2., 3.; 4., 5., 6.];";
       };
@@ -11382,7 +11269,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="copy subsets of cells between matricies";
       flags=CAN_REVERT_TO_CODE;
       code_string="b[:,0] = a[:,1];";
-      pre_compile_code_string="b[:,0] = a[:,1];";
       expr {
        expr="b[:,0] = a[:,1];";
       };
@@ -11391,7 +11277,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"b[:,0] = a[:,1]:\\n\" << b";
-      pre_compile_code_string="Print \"b[:,0] = a[:,1]:\\n\" << b";
       expr {
        expr="\"b[:,0] = a[:,1]:\\n\" << b";
       };
@@ -11401,7 +11286,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="sets all cells to same value";
       flags=CAN_REVERT_TO_CODE;
       code_string="b = 3;";
-      pre_compile_code_string="b = 3;";
       expr {
        expr="b = 3;";
       };
@@ -11410,7 +11294,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"b=3:\\n\" << b << endl";
-      pre_compile_code_string="Print \"b=3:\\n\" << b << endl";
       expr {
        expr="\"b=3:\\n\" << b << endl";
       };
@@ -11420,7 +11303,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="assigning to a different matrix completely overwrites any existing values";
       flags=CAN_REVERT_TO_CODE;
       code_string="b = [10,20,30];";
-      pre_compile_code_string="b = [10,20,30];";
       expr {
        expr="b = [10,20,30];";
       };
@@ -11429,7 +11311,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"b = [10,20,30]:\\n\" << b << endl";
-      pre_compile_code_string="Print \"b = [10,20,30]:\\n\" << b << endl";
       expr {
        expr="\"b = [10,20,30]:\\n\" << b << endl";
       };
@@ -11439,13 +11320,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== making matricies out of matricies ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == making matricies out of matricies ==";
-      pre_compile_code_string=" // == making matricies out of matricies ==";
      };
      PrintExpr @[25] {
       desc="this is now a 4D matrix";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
-      pre_compile_code_string="Print \"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
       expr {
        expr="\"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
       };
@@ -11455,13 +11334,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== matrix math ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == matrix math ==";
-      pre_compile_code_string=" // == matrix math ==";
      };
      PrintExpr @[27] {
       desc="all your favorites are here.. * and / are element wise!!";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a+a:\\n\" << a+a << endl";
-      pre_compile_code_string="Print \"a+a:\\n\" << a+a << endl";
       expr {
        expr="\"a+a:\\n\" << a+a << endl";
       };
@@ -11471,7 +11348,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="b = [1., 2.; 3., 4.; 5., 6.];";
-      pre_compile_code_string="b = [1., 2.; 3., 4.; 5., 6.];";
       expr {
        expr="b = [1., 2.; 3., 4.; 5., 6.];";
       };
@@ -11480,7 +11356,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is how you do full matrix multiplication";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
-      pre_compile_code_string="Print \"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
       expr {
        expr="\"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
       };
@@ -11490,7 +11365,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="yes, min is avail too";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"max(a):\\n\" << max(a) << endl";
-      pre_compile_code_string="Print \"max(a):\\n\" << max(a) << endl";
       expr {
        expr="\"max(a):\\n\" << max(a) << endl";
       };
@@ -11500,7 +11374,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is now an element-wise operator with the scalar";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"max(a,2):\\n\" << max(a,2) << endl";
-      pre_compile_code_string="Print \"max(a,2):\\n\" << max(a,2) << endl";
       expr {
        expr="\"max(a,2):\\n\" << max(a,2) << endl";
       };
@@ -11510,7 +11383,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="sin, etc all here";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"cos(a):\\n\" << cos(a) << endl";
-      pre_compile_code_string="Print \"cos(a):\\n\" << cos(a) << endl";
       expr {
        expr="\"cos(a):\\n\" << cos(a) << endl";
       };
@@ -11520,7 +11392,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="element-wise to the 3rd power";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"pow(a,3):\\n\" << pow(a,3) << endl";
-      pre_compile_code_string="Print \"pow(a,3):\\n\" << pow(a,3) << endl";
       expr {
        expr="\"pow(a,3):\\n\" << pow(a,3) << endl";
       };
@@ -11530,7 +11401,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="a shorter form";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a^3:\\n\" << (a^3) << endl";
-      pre_compile_code_string="Print \"a^3:\\n\" << (a^3) << endl";
       expr {
        expr="\"a^3:\\n\" << (a^3) << endl";
       };
@@ -11540,13 +11410,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== boolean operators etc ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == boolean operators etc ==";
-      pre_compile_code_string=" // == boolean operators etc ==";
      };
      PrintExpr @[36] {
       desc="element-wise true or false";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a>3:\\n\" << (a>3) << endl";
-      pre_compile_code_string="Print \"a>3:\\n\" << (a>3) << endl";
       expr {
        expr="\"a>3:\\n\" << (a>3) << endl";
       };
@@ -11556,7 +11424,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="if a single element indexed, just a normal bool op";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
-      pre_compile_code_string="Print \"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
       expr {
        expr="\"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
       };
@@ -11566,7 +11433,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="use the bools as a filter on the original matrix, returning only the 1's";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a[a>3]:\\n\" << a[a>3] << endl";
-      pre_compile_code_string="Print \"a[a>3]:\\n\" << a[a>3] << endl";
       expr {
        expr="\"a[a>3]:\\n\" << a[a>3] << endl";
       };
@@ -11576,7 +11442,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="get the indexes of the cells that pass the test";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"find(a>3):\\n\" << find(a>3) << endl";
-      pre_compile_code_string="Print \"find(a>3):\\n\" << find(a>3) << endl";
       expr {
        expr="\"find(a>3):\\n\" << find(a>3) << endl";
       };
@@ -11586,7 +11451,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="get the values -- this is a different filter on a matrix, so the output is different from a[a>3] but otherwise behaves the same";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
-      pre_compile_code_string="Print \"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
       expr {
        expr="\"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
       };
@@ -11596,7 +11460,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="use flatten to turn a subset of a matrix into its own proper whole matrix -- always 1D due to arbitrary list-like nature of elements";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
-      pre_compile_code_string="Print \"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
       expr {
        expr="\"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
       };
@@ -11606,13 +11469,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== handy initializers ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == handy initializers ==";
-      pre_compile_code_string=" // == handy initializers ==";
      };
      PrintExpr @[43] {
       desc="make a new empty matrix of given dimensionality";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
-      pre_compile_code_string="Print \"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
       expr {
        expr="\"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
       };
@@ -11622,7 +11483,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="identity square matrix (1's along the diagonal, 0's elsewhere)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"eye(3):\\n\" << eye(3) << endl";
-      pre_compile_code_string="Print \"eye(3):\\n\" << eye(3) << endl";
       expr {
        expr="\"eye(3):\\n\" << eye(3) << endl";
       };
@@ -11632,7 +11492,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="put the elements from given matrix along diagonal of new square matrix";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"diag(a,0):\\n\" << diag(a,0) << endl";
-      pre_compile_code_string="Print \"diag(a,0):\\n\" << diag(a,0) << endl";
       expr {
        expr="\"diag(a,0):\\n\" << diag(a,0) << endl";
       };
@@ -11642,7 +11501,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="get them back out!";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
-      pre_compile_code_string="Print \"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
       expr {
        expr="\"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
       };
@@ -11652,7 +11510,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="uniform random 0-1 elements";
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"rand([4,3]):\\n\" << rand([4,3]) << endl";
-      pre_compile_code_string="Print \"rand([4,3]):\\n\" << rand([4,3]) << endl";
       expr {
        expr="\"rand([4,3]):\\n\" << rand([4,3]) << endl";
       };
@@ -11662,7 +11519,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
-      pre_compile_code_string="Print \"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
       expr {
        expr="\"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
       };
@@ -11672,7 +11528,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
-      pre_compile_code_string="Print \"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
       expr {
        expr="\"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
       };
@@ -11682,13 +11537,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== function calling ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == function calling ==";
-      pre_compile_code_string=" // == function calling ==";
      };
      CssExpr @[51] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="b = [1.0, 2.0, 3.0];";
-      pre_compile_code_string="b = [1.0, 2.0, 3.0];";
       expr {
        expr="b = [1.0, 2.0, 3.0];";
       };
@@ -11697,7 +11550,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="smax = softmax(b, 2.0)";
-      pre_compile_code_string="smax = softmax(b, 2.0)";
       result_var=.projects["program_examples"].programs.gp["Variables"]["Matrix"].prog_code[0].local_vars["smax"]$$;
       fun=.projects["program_examples"].programs.gp["Variables"]["Matrix"].functions["softmax"]$$;
       fun_args {
@@ -11732,7 +11584,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"softmax of b = [1,2,3]:\\n\" << b << endl";
-      pre_compile_code_string="Print \"softmax of b = [1,2,3]:\\n\" << b << endl";
       expr {
        expr="\"softmax of b = [1,2,3]:\\n\" << b << endl";
       };
@@ -11742,25 +11593,21 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="== more math functions ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == more math functions ==";
-      pre_compile_code_string=" // == more math functions ==";
      };
      Comment @[55] {
       desc="many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
       flags=CAN_REVERT_TO_CODE;
       code_string="// many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
-      pre_compile_code_string=" // many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
      };
      Comment @[56] {
       desc="either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
       flags=CAN_REVERT_TO_CODE;
       code_string="// either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
-      pre_compile_code_string=" // either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
      };
      PrintExpr @[57] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"vec_sum(a):\\n\" << vec_sum(a) << endl";
-      pre_compile_code_string="Print \"vec_sum(a):\\n\" << vec_sum(a) << endl";
       expr {
        expr="\"vec_sum(a):\\n\" << vec_sum(a) << endl";
       };
@@ -11848,7 +11695,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="aGlobalVar = 0";
-      pre_compile_code_string="aGlobalVar = 0";
       result_var=.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].vars["aGlobalVar"]$$;
       expr {
        expr="0";
@@ -11858,7 +11704,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"Click init and then run the program a few times - notice that the global variable holds its value but the local variable is reset each time the program is rerun\"";
-      pre_compile_code_string="Print \"Click init and then run the program a few times - notice that the global variable holds its value but the local variable is reset each time the program is rerun\"";
       expr {
        expr="\"Click init and then run the program a few times - notice that the global variable holds its value but the local variable is reset each time the program is rerun\"";
       };
@@ -11873,7 +11718,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -11893,7 +11737,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"before setting the vars\" aGlobalVar aLocalVar";
-      pre_compile_code_string="Print  \"before setting the vars\" aGlobalVar aLocalVar";
       message="before setting the vars";
       print_var=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].vars["aGlobalVar"]$;
       print_var2=.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].prog_code[0].local_vars["aLocalVar"]$$;
@@ -11907,7 +11750,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="aLocalVar = aLocalVar + 1";
-      pre_compile_code_string="aLocalVar = aLocalVar + 1";
       result_var=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].prog_code[0].local_vars["aLocalVar"]$;
       expr {
        expr="aLocalVar + 1";
@@ -11917,7 +11759,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="aGlobalVar = aGlobalVar + 1";
-      pre_compile_code_string="aGlobalVar = aGlobalVar + 1";
       result_var=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].vars["aGlobalVar"]$;
       expr {
        expr="aGlobalVar + 1";
@@ -11927,7 +11768,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"after setting the vars\" aGlobalVar aLocalVar";
-      pre_compile_code_string="Print  \"after setting the vars\" aGlobalVar aLocalVar";
       message="after setting the vars";
       print_var=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].vars["aGlobalVar"]$;
       print_var2=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].prog_code[0].local_vars["aLocalVar"]$;
@@ -12078,6 +11918,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -12148,13 +11989,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Goal - Print the values for all rows of a data table";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Goal - Print the values for all rows of a data table";
-       pre_compile_code_string=" // Goal - Print the values for all rows of a data table";
       };
       LocalVars @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (2 vars)";
-       pre_compile_code_string="LocalVars (2 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -12183,7 +12022,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Data Loop (SEQUENTIAL):  table=DemoData  index=data_loop_index  order_var=data_loop_order ";
-       pre_compile_code_string="Data Loop (SEQUENTIAL):  table=DemoData  index=data_loop_index  order_var=data_loop_order ";
        loop_code {
 	name="loop_code";
 	el_typ=ProgCode;
@@ -12192,13 +12030,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="read from data table gets a value from one column only";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="// read from data table gets a value from one column only";
-	 pre_compile_code_string=" // read from data table gets a value from one column only";
 	};
 	DataVarRead @[1] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="From table:  table=DemoData  column=Name  row_spec=cur_row  var=Name ";
-	 pre_compile_code_string="From table:  table=DemoData  column=Name  row_spec=cur_row  var=Name ";
 	 data_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadAndPrintAllRows"].vars["DemoData"]$$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
@@ -12209,19 +12045,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="get data from a second column name and variable can be different";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="// get data from a second column name and variable can be different";
-	 pre_compile_code_string=" // get data from a second column name and variable can be different";
 	};
 	Comment @[3] {
 	 desc="the column name and variable can be different";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="// the column name and variable can be different";
-	 pre_compile_code_string=" // the column name and variable can be different";
 	};
 	DataVarRead @[4] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="From table:  table=DemoData  column=Value  row_spec=cur_row  var=a_value ";
-	 pre_compile_code_string="From table:  table=DemoData  column=Value  row_spec=cur_row  var=a_value ";
 	 data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadAndPrintAllRows"].vars["DemoData"]$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
@@ -12232,7 +12065,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="you can print up to 6 variables with one call";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  Name a_value";
-	 pre_compile_code_string="Print  Name a_value";
 	 message=;
 	 print_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadAndPrintAllRows"].prog_code[1].local_vars["Name"]$;
 	 print_var2=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadAndPrintAllRows"].prog_code[1].local_vars["a_value"]$;
@@ -12374,6 +12206,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -12434,19 +12267,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Goal - We want to retrieve the Name and Value values from row 3";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Goal - We want to retrieve the Name and Value values from row 3";
-       pre_compile_code_string=" // Goal - We want to retrieve the Name and Value values from row 3";
       };
       Comment @[1] {
        desc="you need a variable that holds the row number - here it is 'the_row'";
        flags=CAN_REVERT_TO_CODE;
        code_string="// you need a variable that holds the row number - here it is 'the_row'";
-       pre_compile_code_string=" // you need a variable that holds the row number - here it is 'the_row'";
       };
       LocalVars @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (2 vars)";
-       pre_compile_code_string="LocalVars (2 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -12475,13 +12305,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Notice that row_spec is set to row_num & the variable 'the_row' (arbitrary name) holds the row number of the row we want to access";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Notice that row_spec is set to row_num & the variable 'the_row' (arbitrary name) holds the row number of the row we want to access";
-       pre_compile_code_string=" // Notice that row_spec is set to row_num & the variable 'the_row' (arbitrary name) holds the row number of the row we want to access";
       };
       DataVarRead @[4] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=DemoData  column=Name  row_spec=row_num  row_var=the_row  var=Name ";
-       pre_compile_code_string="From table:  table=DemoData  column=Name  row_spec=row_num  row_var=the_row  var=Name ";
        data_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingByNumber"].vars["DemoData"]$$;
        row_spec=ROW_NUM;
        row_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingByNumber"].vars["the_row"]$$;
@@ -12492,7 +12320,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=DemoData  column=Value  row_spec=row_num  row_var=the_row  var=Value ";
-       pre_compile_code_string="From table:  table=DemoData  column=Value  row_spec=row_num  row_var=the_row  var=Value ";
        data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingByNumber"].vars["DemoData"]$;
        row_spec=ROW_NUM;
        row_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingByNumber"].vars["the_row"]$;
@@ -12503,7 +12330,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  Name Value";
-       pre_compile_code_string="Print  Name Value";
        message=;
        print_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingByNumber"].prog_code[2].local_vars["Name"]$;
        print_var2=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingByNumber"].prog_code[2].local_vars["Value"]$;
@@ -12639,6 +12465,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -12699,13 +12526,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Goal - We want to retrieve the value associated with Huckleberry";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Goal - We want to retrieve the value associated with Huckleberry";
-       pre_compile_code_string=" // Goal - We want to retrieve the value associated with Huckleberry";
       };
       LocalVars @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (1 vars)";
-       pre_compile_code_string="LocalVars (1 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -12725,13 +12550,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Notice that row_spec is set to row_val & the variable 'Name' has the value of the row we want to retrieve";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Notice that row_spec is set to row_val & the variable 'Name' has the value of the row we want to retrieve";
-       pre_compile_code_string=" // Notice that row_spec is set to row_val & the variable 'Name' has the value of the row we want to retrieve";
       };
       DataVarRead @[3] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=DemoData  column=Quantity  row_spec=row_val  row_var=Name  var=count ";
-       pre_compile_code_string="From table:  table=DemoData  column=Quantity  row_spec=row_val  row_var=Name  var=count ";
        data_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingValue"].vars["DemoData"]$$;
        row_spec=ROW_VAL;
        row_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingValue"].vars["Name"]$$;
@@ -12742,7 +12565,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  \"Huckleberry in stock,\" count";
-       pre_compile_code_string="Print  \"Huckleberry in stock,\" count";
        message="Huckleberry in stock,";
        print_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadRowBySpecifyingValue"].prog_code[1].local_vars["count"]$;
        print_var2=NULL;
@@ -12842,6 +12664,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -12888,7 +12711,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="ResetDataRows:  table = SomeTable ";
-       pre_compile_code_string="ResetDataRows:  table = SomeTable ";
        data_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].vars["SomeTable"]$$;
       };
      };
@@ -12900,13 +12722,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Goal - Add 5 rows to a table and store a value for each row";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Goal - Add 5 rows to a table and store a value for each row";
-       pre_compile_code_string=" // Goal - Add 5 rows to a table and store a value for each row";
       };
       LocalVars @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (2 vars)";
-       pre_compile_code_string="LocalVars (2 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -12935,7 +12755,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="for (i = 0; i < 5; i++)";
-       pre_compile_code_string="for (i = 0; i < 5; i++)";
        loop_code {
 	name="ProgEl_List_394";
 	el_typ=ProgCode;
@@ -12944,7 +12763,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="text = text + text";
-	 pre_compile_code_string="text = text + text";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].prog_code[1].local_vars["text"]$$;
 	 expr {
 	  expr="text + text";
@@ -12954,14 +12772,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Add New Row:  table = SomeTable ";
-	 pre_compile_code_string="Add New Row:  table = SomeTable ";
 	 data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].vars["SomeTable"]$;
 	};
 	DataVarWrite @[2] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="To table:  table=SomeTable  column=StringData  row_spec=cur_row  var=text ";
-	 pre_compile_code_string="To table:  table=SomeTable  column=StringData  row_spec=cur_row  var=text ";
 	 data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].vars["SomeTable"]$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
@@ -12983,7 +12799,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="SomeTable->OpenInWindow()";
-       pre_compile_code_string="SomeTable->OpenInWindow()";
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].vars["SomeTable"]$;
        method=taBase::OpenInWindow;
@@ -13237,6 +13052,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -13361,19 +13177,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="To retrieve (or set) many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
        flags=CAN_REVERT_TO_CODE;
        code_string="// To retrieve (or set) many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
-       pre_compile_code_string=" // To retrieve (or set) many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
       };
       Comment @[1] {
        desc="You can specify particular columns (the variable name must match the column name)";
        flags=CAN_REVERT_TO_CODE;
        code_string="// You can specify particular columns (the variable name must match the column name)";
-       pre_compile_code_string=" // You can specify particular columns (the variable name must match the column name)";
       };
       LocalVars @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -13384,7 +13197,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Data Loop (SEQUENTIAL):  table=MoreDemoData  index=data_loop_index  order_var=data_loop_order ";
-       pre_compile_code_string="Data Loop (SEQUENTIAL):  table=MoreDemoData  index=data_loop_index  order_var=data_loop_order ";
        loop_code {
 	name="ProgEl_List_123";
 	el_typ=ProgCode;
@@ -13393,19 +13205,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="The variable name match a column name will be retrieved";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="// The variable name match a column name will be retrieved";
-	 pre_compile_code_string=" // The variable name match a column name will be retrieved";
 	};
 	Comment @[1] {
 	 desc="Any variable whose name matches a column name will be retrieved";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="// Any variable whose name matches a column name will be retrieved";
-	 pre_compile_code_string=" // Any variable whose name matches a column name will be retrieved";
 	};
 	DataVarProg @[2] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Data From:  table=MoreDemoData  row_spec=cur_row  set=from  all_matches=true ";
-	 pre_compile_code_string="Data From:  table=MoreDemoData  row_spec=cur_row  set=from  all_matches=true ";
 	 data_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["MoreDemoData"]$$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
@@ -13421,7 +13230,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  a b A B user_name value";
-	 pre_compile_code_string="Print  a b A B user_name value";
 	 message=;
 	 print_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["a"]$$;
 	 print_var2=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["b"]$$;
@@ -13713,6 +13521,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -13836,6 +13645,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -14374,6 +14184,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -14447,7 +14258,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="local_vars";
 	el_typ=ProgVar;
@@ -14458,13 +14268,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Exporting DemoDataOrig to json";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Exporting DemoDataOrig to json";
-       pre_compile_code_string=" // Exporting DemoDataOrig to json";
       };
       MethodCall @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoDataOrig->method()";
-       pre_compile_code_string="demo_data_orig->ExportDataJSON(\"DemoDataOrigExport.json\")";
        result_var=NULL;
        obj=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["demo_data_orig"]$$;
        method=DataTable::ExportDataJSON;
@@ -14491,7 +14299,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoDataOrig->ExportData(\"DemoDataOrigExport.csv\", , , )";
-       pre_compile_code_string="demo_data_orig->ExportData(\"DemoDataOrigExport.csv\", , , )";
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["demo_data_orig"]$;
        method=DataTable::ExportData;
@@ -14551,7 +14358,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoDataCopyJson->RemoveAllCols()";
-       pre_compile_code_string="demo_data_copy_json->RemoveAllCols()";
        result_var=NULL;
        obj=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["demo_data_copy_json"]$$;
        method=DataTable::RemoveAllCols;
@@ -14567,7 +14373,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoDataCopyJson->method()";
-       pre_compile_code_string="demo_data_copy_json->ImportDataJSON(\"DemoDataOrigExport.json\")";
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["demo_data_copy_json"]$;
        method=DataTable::ImportDataJSON;
@@ -14594,7 +14399,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoDataCopyCSV->RemoveAllCols()";
-       pre_compile_code_string="demo_data_copy_csv->RemoveAllCols()";
        result_var=NULL;
        obj=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["demo_data_copy_csv"]$$;
        method=DataTable::RemoveAllCols;
@@ -14610,7 +14414,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoDataCopyCSV->ImportData(\"DemoDataOrigExport.csv\", , , )";
-       pre_compile_code_string="demo_data_copy_csv->ImportData(\"DemoDataOrigExport.csv\", , , )";
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["demo_data_copy_csv"]$;
        method=DataTable::ImportData;
@@ -14833,6 +14636,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -14893,25 +14697,21 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="If you are reading Matrix values from a DataTable or another source, or are creating temporary Matrix objects,";
        flags=CAN_REVERT_TO_CODE;
        code_string="// If you are reading Matrix values from a DataTable or another source, or are creating temporary Matrix objects,";
-       pre_compile_code_string=" // If you are reading Matrix values from a DataTable or another source, or are creating temporary Matrix objects,";
       };
       Comment @[1] {
        desc="you should use a LocalVars local variable, which automatically manages the memory allocation and deallocation properly.";
        flags=CAN_REVERT_TO_CODE;
        code_string="// you should use a LocalVars local variable, which automatically manages the memory allocation and deallocation properly.";
-       pre_compile_code_string=" // you should use a LocalVars local variable, which automatically manages the memory allocation and deallocation properly.";
       };
       Comment @[2] {
        desc="LocalVars are also appropriate for loop variables and others that you want reset each time the program is run";
        flags=CAN_REVERT_TO_CODE;
        code_string="// LocalVars are also appropriate for loop variables and others that you want reset each time the program is run";
-       pre_compile_code_string=" // LocalVars are also appropriate for loop variables and others that you want reset each time the program is run";
       };
       LocalVars @[3] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (2 vars)";
-       pre_compile_code_string="LocalVars (2 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -14942,7 +14742,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="cell_mat = new float_Matrix";
-       pre_compile_code_string="cell_mat = new float_Matrix";
        result_var=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["UseLocalVarWhenAccessingMatrices"].prog_code[3].local_vars["cell_mat"]$$;
        expr {
 	expr="new float_Matrix";
@@ -14952,19 +14751,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="cell_mat will point to the matrix in row i of column named \"MatrixVal\"";
        flags=CAN_REVERT_TO_CODE;
        code_string="// cell_mat will point to the matrix in row i of column named \"MatrixVal\"";
-       pre_compile_code_string=" // cell_mat will point to the matrix in row i of column named \"MatrixVal\"";
       };
       Comment @[6] {
        desc="when the row changes the pointer will point to the matrix in the next row";
        flags=CAN_REVERT_TO_CODE;
        code_string="// when the row changes the pointer will point to the matrix in the next row";
-       pre_compile_code_string=" // when the row changes the pointer will point to the matrix in the next row";
       };
       ForLoop @[7] {
        desc="i is a LocalVar";
        flags=CAN_REVERT_TO_CODE;
        code_string="for (i = 0; i < DemoData.rows; i++)";
-       pre_compile_code_string="for (i = 0; i < DemoData.rows; i++)";
        loop_code {
 	name="ProgEl_List_175";
 	el_typ=ProgCode;
@@ -14973,7 +14769,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="cell_mat will point to the matrix in the column named \"MatrixVal\" and the pointer will change as we go from row to row";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cell_mat = DemoData->GetValAsMatrixColName(\"MatrixVal\", i, )";
-	 pre_compile_code_string="cell_mat = DemoData->GetValAsMatrixColName(\"MatrixVal\", i, )";
 	 result_var=$.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["UseLocalVarWhenAccessingMatrices"].prog_code[3].local_vars["cell_mat"]$;
 	 obj=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["UseLocalVarWhenAccessingMatrices"].vars["DemoData"]$$;
 	 method=DataTable::GetValAsMatrixColName;
@@ -15022,7 +14817,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="calculate the mean value of the matrix currently referred to by cell_mat";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cell_avg = taMath_float::vec_mean(cell_mat)";
-	 pre_compile_code_string="cell_avg = taMath_float::vec_mean(cell_mat)";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["UseLocalVarWhenAccessingMatrices"].vars["cell_avg"]$$;
 	 object_type=taMath_float;
 	 method=taMath_float::vec_mean;
@@ -15047,7 +14841,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="put the calculated value into the cell in row i of column \"Means\"";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="DemoData->SetVal(cell_avg, \"Means\", i)";
-	 pre_compile_code_string="DemoData->SetVal(cell_avg, \"Means\", i)";
 	 result_var=NULL;
 	 obj=$.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["UseLocalVarWhenAccessingMatrices"].vars["DemoData"]$;
 	 method=DataTable::SetVal;
@@ -15318,6 +15111,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -15369,7 +15163,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -15380,19 +15173,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="see DataTable_css wiki page (linked by Doc button above) for more info";
        flags=CAN_REVERT_TO_CODE;
        code_string="// see DataTable_css wiki page (linked by Doc button above) for more info";
-       pre_compile_code_string=" // see DataTable_css wiki page (linked by Doc button above) for more info";
       };
       Comment @[2] {
        desc="== accessing the data within a given column in various ways ==";
        flags=CAN_REVERT_TO_CODE;
        code_string="// == accessing the data within a given column in various ways ==";
-       pre_compile_code_string=" // == accessing the data within a given column in various ways ==";
       };
       PrintExpr @[3] {
        desc=": = all in given dimension -- row is last dimension, and only dimension for scalar columns";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"first column (Name), all rows of data:  DemoData[\\\"Name\\\"][:] \\n\" <<DemoData[\"Name\"][:] << endl";
-       pre_compile_code_string="Print \"first column (Name), all rows of data:  DemoData[\\\"Name\\\"][:] \\n\" <<DemoData[\"Name\"][:] << endl";
        expr {
 	expr="\"first column (Name), all rows of data:  DemoData[\\\"Name\\\"][:] \\n\" <<DemoData[\"Name\"][:] << endl";
        };
@@ -15402,7 +15192,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="full syntax is start : end : increment";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"first 3 rows from first column:  DemoData[0][0:3]\\n\" << DemoData[0][0:3] << endl";
-       pre_compile_code_string="Print \"first 3 rows from first column:  DemoData[0][0:3]\\n\" << DemoData[0][0:3] << endl";
        expr {
 	expr="\"first 3 rows from first column:  DemoData[0][0:3]\\n\" << DemoData[0][0:3] << endl";
        };
@@ -15412,7 +15201,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"every other row: DemoData[0][0:DemoData.rows:2]\\n\" << DemoData[0][0:DemoData.rows:2] << endl";
-       pre_compile_code_string="Print \"every other row: DemoData[0][0:DemoData.rows:2]\\n\" << DemoData[0][0:DemoData.rows:2] << endl";
        expr {
 	expr="\"every other row: DemoData[0][0:DemoData.rows:2]\\n\" << DemoData[0][0:DemoData.rows:2] << endl";
        };
@@ -15422,13 +15210,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="== accessing and copying matrix data ==";
        flags=CAN_REVERT_TO_CODE;
        code_string="// == accessing and copying matrix data ==";
-       pre_compile_code_string=" // == accessing and copying matrix data ==";
       };
       PrintExpr @[7] {
        desc="first row of matrix";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"first row of matrix data: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
-       pre_compile_code_string="Print \"first row of matrix data: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
        expr {
 	expr="\"first row of matrix data: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
        };
@@ -15438,7 +15224,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="random numbers";
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoData[\"MatrixVal\"][:,:,0] = rand(shape(DemoData[\"MatrixVal\"][:,:,0]));";
-       pre_compile_code_string="DemoData[\"MatrixVal\"][:,:,0] = rand(shape(DemoData[\"MatrixVal\"][:,:,0]));";
        expr {
 	expr="DemoData[\"MatrixVal\"][:,:,0] = rand(shape(DemoData[\"MatrixVal\"][:,:,0]));";
        };
@@ -15447,7 +15232,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="first row of matrix";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"now after randomizing: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
-       pre_compile_code_string="Print \"now after randomizing: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
        expr {
 	expr="\"now after randomizing: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
        };
@@ -15457,7 +15241,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="replicate to all other rows";
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoData[\"MatrixVal\"][:,:,1:DemoData.rows] = DemoData[\"MatrixVal\"][:,:,0];";
-       pre_compile_code_string="DemoData[\"MatrixVal\"][:,:,1:DemoData.rows] = DemoData[\"MatrixVal\"][:,:,0];";
        expr {
 	expr="DemoData[\"MatrixVal\"][:,:,1:DemoData.rows] = DemoData[\"MatrixVal\"][:,:,0];";
        };
@@ -15466,7 +15249,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"verifying a cell in all rows after copying:\\n\" << DemoData[\"MatrixVal\"][2,1,:] << endl";
-       pre_compile_code_string="Print \"verifying a cell in all rows after copying:\\n\" << DemoData[\"MatrixVal\"][2,1,:] << endl";
        expr {
 	expr="\"verifying a cell in all rows after copying:\\n\" << DemoData[\"MatrixVal\"][2,1,:] << endl";
        };
@@ -15476,13 +15258,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="== doing some scalar column math ==";
        flags=CAN_REVERT_TO_CODE;
        code_string="// == doing some scalar column math ==";
-       pre_compile_code_string=" // == doing some scalar column math ==";
       };
       CssExpr @[13] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="DemoData[\"Value3\"][:] = DemoData[\"Value\"][:] + DemoData[\"Value2\"][:];";
-       pre_compile_code_string="DemoData[\"Value3\"][:] = DemoData[\"Value\"][:] + DemoData[\"Value2\"][:];";
        expr {
 	expr="DemoData[\"Value3\"][:] = DemoData[\"Value\"][:] + DemoData[\"Value2\"][:];";
        };
@@ -15491,7 +15271,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"value3 = value + value2: \\n\" << DemoData[\"Value3\"][:] << endl";
-       pre_compile_code_string="Print \"value3 = value + value2: \\n\" << DemoData[\"Value3\"][:] << endl";
        expr {
 	expr="\"value3 = value + value2: \\n\" << DemoData[\"Value3\"][:] << endl";
        };
@@ -15501,7 +15280,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"mean of value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][:]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][:]) << endl";
-       pre_compile_code_string="Print \"mean of value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][:]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][:]) << endl";
        expr {
 	expr="\"mean of value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][:]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][:]) << endl";
        };
@@ -15511,7 +15289,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][0:3]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][0:3]) << endl";
-       pre_compile_code_string="Print \"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][0:3]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][0:3]) << endl";
        expr {
 	expr="\"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][0:3]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][0:3]) << endl";
        };
@@ -15521,7 +15298,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="note: use ctrl+L after taMath_float::vec_ to see all the various functions avail here -- many!";
        flags=CAN_REVERT_TO_CODE;
        code_string="// note: use ctrl+L after taMath_float::vec_ to see all the various functions avail here -- many!";
-       pre_compile_code_string=" // note: use ctrl+L after taMath_float::vec_ to see all the various functions avail here -- many!";
       };
      };
      step_prog=NULL;
@@ -15657,6 +15433,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -15727,7 +15504,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (2 vars)";
-       pre_compile_code_string="LocalVars (2 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -15756,19 +15532,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="You can access each row sequenially or in a permuted order and you can also choose rows randomly (with replacement)";
        flags=CAN_REVERT_TO_CODE;
        code_string="// You can access each row sequenially or in a permuted order and you can also choose rows randomly (with replacement)";
-       pre_compile_code_string=" // You can access each row sequenially or in a permuted order and you can also choose rows randomly (with replacement)";
       };
       Comment @[2] {
        desc="Here we are accessing rows sequenially to get data from 2 columns";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Here we are accessing rows sequenially to get data from 2 columns";
-       pre_compile_code_string=" // Here we are accessing rows sequenially to get data from 2 columns";
       };
       DataLoop @[3] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Data Loop (SEQUENTIAL):  table=DemoData  index=data_loop_index  order_var=data_loop_order ";
-       pre_compile_code_string="Data Loop (SEQUENTIAL):  table=DemoData  index=data_loop_index  order_var=data_loop_order ";
        loop_code {
 	name="ProgEl_List_51";
 	el_typ=ProgCode;
@@ -15777,7 +15550,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="read the value from the data table into variable";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Name = DemoData->GetVal(\"Name\", data_loop_index)";
-	 pre_compile_code_string="Name = DemoData->GetVal(\"Name\", data_loop_index)";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].prog_code[0].local_vars["Name"]$$;
 	 obj=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].vars["DemoData"]$$;
 	 method=DataTable::GetVal;
@@ -15815,7 +15587,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Value = DemoData->GetVal(\"Value\", data_loop_index)";
-	 pre_compile_code_string="Value = DemoData->GetVal(\"Value\", data_loop_index)";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].prog_code[0].local_vars["Value"]$$;
 	 obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].vars["DemoData"]$;
 	 method=DataTable::GetVal;
@@ -15853,7 +15624,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  Name Value";
-	 pre_compile_code_string="Print  Name Value";
 	 message=;
 	 print_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].prog_code[0].local_vars["Name"]$;
 	 print_var2=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].prog_code[0].local_vars["Value"]$;
@@ -15970,6 +15740,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -16065,6 +15836,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -16127,7 +15899,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -16138,13 +15909,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Make values in one column twice their value in another";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Make values in one column twice their value in another";
-       pre_compile_code_string=" // Make values in one column twice their value in another";
       };
       DataCalcLoop @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Calc loop:  src table = TableOne  dest table = TableTwo ";
-       pre_compile_code_string="Calc loop:  src table = TableOne  dest table = TableTwo ";
        src_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableOne"]$$;
        dest_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$$;
        src_cols {
@@ -16171,7 +15940,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="s_ColumnC = s_ColumnA * 2";
-	 pre_compile_code_string="s_ColumnC = s_ColumnA * 2";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].prog_code[2].src_col_vars["s_ColumnC"]$$;
 	 expr {
 	  expr="s_ColumnA * 2";
@@ -16181,7 +15949,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Set Src Row in: TableOne";
-	 pre_compile_code_string="Set Src Row in: TableOne";
 	 src_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableOne"]$;
 	 dest_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
 	};
@@ -16220,13 +15987,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Copy column from one table to another";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Copy column from one table to another";
-       pre_compile_code_string=" // Copy column from one table to another";
       };
       DataCalcLoop @[4] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Calc loop:  src table = TableOne  dest table = TableTwo ";
-       pre_compile_code_string="Calc loop:  src table = TableOne  dest table = TableTwo ";
        src_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableOne"]$;
        dest_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
        src_cols {
@@ -16256,7 +16021,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Add Dest Row in: TableTwo";
-	 pre_compile_code_string="Add Dest Row in: TableTwo";
 	 src_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableOne"]$;
 	 dest_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
 	};
@@ -16264,7 +16028,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="d_ColumnB = s_ColumnC";
-	 pre_compile_code_string="d_ColumnB = s_ColumnC";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].prog_code[4].dest_col_vars["d_ColumnB"]$$;
 	 expr {
 	  expr="s_ColumnC";
@@ -16274,7 +16037,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Set Dest Row in: TableTwo";
-	 pre_compile_code_string="Set Dest Row in: TableTwo";
 	 src_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableOne"]$;
 	 dest_data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
 	};
@@ -16322,7 +16084,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="TableTwo->OpenInWindow()";
-       pre_compile_code_string="TableTwo->OpenInWindow()";
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
        method=taBase::OpenInWindow;
@@ -16503,6 +16264,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -16615,6 +16377,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -16686,19 +16449,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="We have our input table 'DemoData' and the new table 'SelectedRows' that will only have those rows that match a spec";
        flags=CAN_REVERT_TO_CODE;
        code_string="// We have our input table 'DemoData' and the new table 'SelectedRows' that will only have those rows that match a spec";
-       pre_compile_code_string=" // We have our input table 'DemoData' and the new table 'SelectedRows' that will only have those rows that match a spec";
       };
       Comment @[1] {
        desc="We are selecting 'Fruit' with a minimum value of 10 (note the min_value variable in the vars section)";
        flags=CAN_REVERT_TO_CODE;
        code_string="// We are selecting 'Fruit' with a minimum value of 10 (note the min_value variable in the vars section)";
-       pre_compile_code_string=" // We are selecting 'Fruit' with a minimum value of 10 (note the min_value variable in the vars section)";
       };
       LocalVars @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -16709,7 +16469,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="SelectRows:  src table = DemoData  dest table = SelectedRows  comb_op = AND";
-       pre_compile_code_string="SelectRows:  src table = DemoData  dest table = SelectedRows  comb_op = AND";
        src_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataSelect"].vars["DemoData"]$$;
        dest_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataSelect"].vars["SelectedRows"]$$;
        select_spec {
@@ -16900,6 +16659,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -17012,6 +16772,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -17074,7 +16835,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -17085,25 +16845,21 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="the grouping operation requires a source and a destination data table, the columns for the destination table will be created by the grouping operation";
        flags=CAN_REVERT_TO_CODE;
        code_string="// the grouping operation requires a source and a destination data table, the columns for the destination table will be created by the grouping operation";
-       pre_compile_code_string=" // the grouping operation requires a source and a destination data table, the columns for the destination table will be created by the grouping operation";
       };
       Comment @[2] {
        desc="click on 'group_spec' to add columns to your destination table";
        flags=CAN_REVERT_TO_CODE;
        code_string="// click on 'group_spec' to add columns to your destination table";
-       pre_compile_code_string=" // click on 'group_spec' to add columns to your destination table";
       };
       Comment @[3] {
        desc="here we are calculating the mean and median for each category found in the DemoData table";
        flags=CAN_REVERT_TO_CODE;
        code_string="// here we are calculating the mean and median for each category found in the DemoData table";
-       pre_compile_code_string=" // here we are calculating the mean and median for each category found in the DemoData table";
       };
       DataGroupProg @[4] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Group from:  src table = DemoData dest table = DemoStats";
-       pre_compile_code_string="Group from:  src table = DemoData dest table = DemoStats";
        src_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataGroup"].vars["DemoData"]$$;
        dest_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataGroup"].vars["DemoStats"]$$;
        group_spec {
@@ -17289,6 +17045,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -17409,6 +17166,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -17471,7 +17229,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -17482,25 +17239,21 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Here we sort based on name and put the data into a different data table";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Here we sort based on name and put the data into a different data table";
-       pre_compile_code_string=" // Here we sort based on name and put the data into a different data table";
       };
       Comment @[2] {
        desc="You can sort using multiple columns - add columns by clicking on the sort_spec";
        flags=CAN_REVERT_TO_CODE;
        code_string="// You can sort using multiple columns - add columns by clicking on the sort_spec";
-       pre_compile_code_string=" // You can sort using multiple columns - add columns by clicking on the sort_spec";
       };
       Comment @[3] {
        desc="or duplicate an existing column 'e.g. Name' and change the column name";
        flags=CAN_REVERT_TO_CODE;
        code_string="// or duplicate an existing column 'e.g. Name' and change the column name";
-       pre_compile_code_string=" // or duplicate an existing column 'e.g. Name' and change the column name";
       };
       DataSortProg @[4] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Sort:  src table = DemoData  dest table = SortedRows ";
-       pre_compile_code_string="Sort:  src table = DemoData  dest table = SortedRows ";
        src_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataSort"].vars["DemoData"]$$;
        dest_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataSort"].vars["SortedRows"]$$;
        sort_spec {
@@ -17675,6 +17428,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -17795,6 +17549,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -17973,6 +17728,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -18046,7 +17802,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="local_vars";
 	el_typ=ProgVar;
@@ -18057,7 +17812,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Join tables:  src_a = DemoData src_b = FruitData dest table = JoinedData";
-       pre_compile_code_string="Join tables:  src_a = DemoData src_b = FruitData dest table = JoinedData";
        src_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].vars["DemoData"]$$;
        dest_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].vars["JoinedData"]$$;
        src_b_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].vars["FruitData"]$$;
@@ -18228,6 +17982,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	};
        };
+       row_with_hilite=-1;
        control_panel_cells {
 	name="control_panel_cells";
 	el_typ=DataTableCell;
@@ -18316,19 +18071,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="We have our input table 'DemoData' with 2 columns of data and a third column to track if the first 2 match";
        flags=CAN_REVERT_TO_CODE;
        code_string="// We have our input table 'DemoData' with 2 columns of data and a third column to track if the first 2 match";
-       pre_compile_code_string=" // We have our input table 'DemoData' with 2 columns of data and a third column to track if the first 2 match";
       };
       Comment @[1] {
        desc="We loop through the rows getting the value for each column and setting the value in the third column based on a comparison";
        flags=CAN_REVERT_TO_CODE;
        code_string="// We loop through the rows getting the value for each column and setting the value in the third column based on a comparison";
-       pre_compile_code_string=" // We loop through the rows getting the value for each column and setting the value in the third column based on a comparison";
       };
       LocalVars @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="local_vars";
 	el_typ=ProgVar;
@@ -18339,7 +18091,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Data Loop (SEQUENTIAL):  table=DemoData  index=data_loop_index  order_var=data_loop_order ";
-       pre_compile_code_string="Data Loop (SEQUENTIAL):  table=DemoData  index=data_loop_index  order_var=data_loop_order ";
        loop_code {
 	name="loop_code";
 	el_typ=ProgCode;
@@ -18348,7 +18099,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="read the value from the data table into variable";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="name_one_value = DemoData->GetVal(\"Name_One\", data_loop_index)";
-	 pre_compile_code_string="name_one_value = DemoData->GetVal(\"Name_One\", data_loop_index)";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["name_one_value"]$$;
 	 obj=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$$;
 	 method=DataTable::GetVal;
@@ -18386,7 +18136,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="name_two_value = DemoData->GetVal(\"Name_Two\", data_loop_index)";
-	 pre_compile_code_string="name_two_value = DemoData->GetVal(\"Name_Two\", data_loop_index)";
 	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["name_two_value"]$$;
 	 obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
 	 method=DataTable::GetVal;
@@ -18424,7 +18173,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="if (name_one_value == name_two_value)";
-	 pre_compile_code_string="if (name_one_value == name_two_value)";
 	 cond {
 	  expr="name_one_value == name_two_value";
 	 };
@@ -18436,7 +18184,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="DemoData->SetVal(1, \"Match\", data_loop_index)";
-	   pre_compile_code_string="DemoData->SetVal(1, \"Match\", data_loop_index)";
 	   result_var=NULL;
 	   obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
 	   method=DataTable::SetVal;
@@ -18487,7 +18234,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="else";
-	 pre_compile_code_string="else";
 	 cond {
 	  expr=;
 	 };
@@ -18499,7 +18245,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="DemoData->SetVal(0, \"Match\", data_loop_index)";
-	   pre_compile_code_string="DemoData->SetVal(0, \"Match\", data_loop_index)";
 	   result_var=NULL;
 	   obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
 	   method=DataTable::SetVal;
@@ -18659,6 +18404,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -18719,7 +18465,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -18730,7 +18475,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"IntZeroN will generate a number between zero and N - 1\"";
-      pre_compile_code_string="Print \"IntZeroN will generate a number between zero and N - 1\"";
       expr {
        expr="\"IntZeroN will generate a number between zero and N - 1\"";
       };
@@ -18740,13 +18484,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="Good for picking a random row of a data table because the first row is zero";
       flags=CAN_REVERT_TO_CODE;
       code_string="// Good for picking a random row of a data table because the first row is zero";
-      pre_compile_code_string=" // Good for picking a random row of a data table because the first row is zero";
      };
      RandomCall @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="row = Random::IntZeroN(DemoData.rows, )";
-      pre_compile_code_string="row = Random::IntZeroN(DemoData.rows, )";
       result_var=.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$$;
       object_type=Random;
       method=Random::IntZeroN;
@@ -18782,7 +18524,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  row";
-      pre_compile_code_string="Print  row";
       message=;
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$;
       print_var2=NULL;
@@ -18796,7 +18537,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"\"";
-      pre_compile_code_string="Print \"\"";
       expr {
        expr="\"\"";
       };
@@ -18806,7 +18546,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"\"";
-      pre_compile_code_string="Print \"\"";
       expr {
        expr="\"\"";
       };
@@ -18816,7 +18555,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"When your range doesn't start with zero use IntMinMax\"";
-      pre_compile_code_string="Print \"When your range doesn't start with zero use IntMinMax\"";
       expr {
        expr="\"When your range doesn't start with zero use IntMinMax\"";
       };
@@ -18826,7 +18564,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="row = Random::IntMinMax(1, 4, )";
-      pre_compile_code_string="row = Random::IntMinMax(1, 4, )";
       result_var=$.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$;
       object_type=Random;
       method=Random::IntMinMax;
@@ -18873,7 +18610,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  row";
-      pre_compile_code_string="Print  row";
       message=;
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$;
       print_var2=NULL;
@@ -18961,7 +18697,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (2 vars)";
-      pre_compile_code_string="LocalVars (2 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -18990,7 +18725,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is the simplest, most commonly-used random number";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_val = Random::ZeroOne()";
-      pre_compile_code_string="rnd_val = Random::ZeroOne()";
       result_var=.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$$;
       object_type=Random;
       method=Random::ZeroOne;
@@ -19015,7 +18749,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"ZeroOne():\" rnd_val";
-      pre_compile_code_string="Print  \"ZeroOne():\" rnd_val";
       message="ZeroOne():";
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
       print_var2=NULL;
@@ -19029,7 +18762,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="can also specify any range";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_val = Random::UniformMinMax(-1.0, 1.0, )";
-      pre_compile_code_string="rnd_val = Random::UniformMinMax(-1.0, 1.0, )";
       result_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
       object_type=Random;
       method=Random::UniformMinMax;
@@ -19076,7 +18808,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"UniformMinMax():\" rnd_val";
-      pre_compile_code_string="Print  \"UniformMinMax():\" rnd_val";
       message="UniformMinMax():";
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
       print_var2=NULL;
@@ -19090,7 +18821,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="gaussian is also very handy";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_val = Random::Gauss(1.0, )";
-      pre_compile_code_string="rnd_val = Random::Gauss(1.0, )";
       result_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
       object_type=Random;
       method=Random::Gauss;
@@ -19126,7 +18856,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"Gauss(1):\" rnd_val";
-      pre_compile_code_string="Print  \"Gauss(1):\" rnd_val";
       message="Gauss(1):";
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
       print_var2=NULL;
@@ -19140,7 +18869,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="binomial is very convenient for saying how many events will happen out of a sample of n, given probability p";
       flags=CAN_REVERT_TO_CODE;
       code_string="int_val = Random::Binom(10, .5, )";
-      pre_compile_code_string="int_val = Random::Binom(10, .5, )";
       result_var=.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["int_val"]$$;
       object_type=Random;
       method=Random::Binom;
@@ -19187,7 +18915,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"Binom(10,.5)\" int_val";
-      pre_compile_code_string="Print  \"Binom(10,.5)\" int_val";
       message="Binom(10,.5)";
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["int_val"]$;
       print_var2=NULL;
@@ -19299,7 +19026,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (3 vars)";
-      pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -19337,7 +19063,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::euc_dist(.5, .2, 2.5, 3.0)";
-      pre_compile_code_string="rval = taMath_float::euc_dist(.5, .2, 2.5, 3.0)";
       result_var=.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$$;
       object_type=taMath_float;
       method=taMath_float::euc_dist;
@@ -19395,7 +19120,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"euc_dist between .5,.2 and 2.5, 3.0:\" rval";
-      pre_compile_code_string="Print  \"euc_dist between .5,.2 and 2.5, 3.0:\" rval";
       message="euc_dist between .5,.2 and 2.5, 3.0:";
       print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       print_var2=NULL;
@@ -19409,7 +19133,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is also available as just plain atan2 -- but using taMath_float makes it easier to find them, and you can get some help too!";
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::atan2(1.0, 1.0)";
-      pre_compile_code_string="rval = taMath_float::atan2(1.0, 1.0)";
       result_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       object_type=taMath_float;
       method=taMath_float::atan2;
@@ -19445,7 +19168,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"atan2(1,1):\" rval";
-      pre_compile_code_string="Print  \"atan2(1,1):\" rval";
       message="atan2(1,1):";
       print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       print_var2=NULL;
@@ -19459,13 +19181,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="vector math -- lots of this -- let's make some data first";
       flags=CAN_REVERT_TO_CODE;
       code_string="// vector math -- lots of this -- let's make some data first";
-      pre_compile_code_string=" // vector math -- lots of this -- let's make some data first";
      };
      MethodCall @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="float_mat_data->SetGeom(1, data_n, , , , , , )";
-      pre_compile_code_string="float_mat_data->SetGeom(1, data_n, , , , , , )";
       result_var=NULL;
       obj=.projects["program_examples"].programs.gp["Math"]["MiscMath"].vars["float_mat_data"]$$;
       method=taMatrix::SetGeom;
@@ -19569,7 +19289,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="just make some random data";
       flags=CAN_REVERT_TO_CODE;
       code_string="for (int i=0; i<data_n;  i++)";
-      pre_compile_code_string="for (int i=0; i<data_n;  i++)";
       loop_code {
        name="ProgEl_List_195";
        el_typ=ProgCode;
@@ -19578,7 +19297,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="should be 0 mean, stdev 1 -- is it??";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="float_mat_data[i] = Random::Gauss(1.0);";
-	pre_compile_code_string="float_mat_data[i] = Random::Gauss(1.0);";
 	expr {
 	 expr="float_mat_data[i] = Random::Gauss(1.0);";
 	};
@@ -19598,7 +19316,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="get the mean of all the numbers";
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::vec_mean(float_mat_data)";
-      pre_compile_code_string="rval = taMath_float::vec_mean(float_mat_data)";
       result_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       object_type=taMath_float;
       method=taMath_float::vec_mean;
@@ -19623,7 +19340,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"mean of our gaussian (normal) random data:\" rval";
-      pre_compile_code_string="Print  \"mean of our gaussian (normal) random data:\" rval";
       message="mean of our gaussian (normal) random data:";
       print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       print_var2=NULL;
@@ -19637,7 +19353,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="we make it faster by using the existing mean -- hardly matters but wth";
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::vec_std_dev(float_mat_data, rval, true, )";
-      pre_compile_code_string="rval = taMath_float::vec_std_dev(float_mat_data, rval, true, )";
       result_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       object_type=taMath_float;
       method=taMath_float::vec_std_dev;
@@ -19695,7 +19410,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"standard deviation:\" rval";
-      pre_compile_code_string="Print  \"standard deviation:\" rval";
       message="standard deviation:";
       print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
       print_var2=NULL;
@@ -19709,7 +19423,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="see Matrix program for lots of Matrix math..";
       flags=CAN_REVERT_TO_CODE;
       code_string="// see Matrix program for lots of Matrix math..";
-      pre_compile_code_string=" // see Matrix program for lots of Matrix math..";
      };
     };
     step_prog=NULL;
@@ -19787,7 +19500,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Square(double value) returns: double";
-      pre_compile_code_string="Square(double value) returns: double";
       name="Square";
       return_type=T_Real;
       object_type=taOBase;
@@ -19813,13 +19525,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="This function returns a value but not all do";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="// This function returns a value but not all do";
-	pre_compile_code_string=" // This function returns a value but not all do";
        };
        LocalVars @[1] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (1 vars)";
-	pre_compile_code_string="LocalVars (1 vars)";
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -19839,7 +19549,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="sq_value = value * value";
-	pre_compile_code_string="sq_value = value * value";
 	result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionReturnValue"].functions["Square"].fun_code[1].local_vars["sq_value"]$$;
 	expr {
 	 expr="value * value";
@@ -19849,13 +19558,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="To return a value to the calling program use a return statement";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="// To return a value to the calling program use a return statement";
-	pre_compile_code_string=" // To return a value to the calling program use a return statement";
        };
        ReturnExpr @[4] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="return sq_value";
-	pre_compile_code_string="return sq_value";
 	expr {
 	 expr="sq_value";
 	};
@@ -19876,7 +19583,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="ProgVar_List_0";
        el_typ=ProgVar;
@@ -19896,13 +19602,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="Call the function Square()";
       flags=CAN_REVERT_TO_CODE;
       code_string="// Call the function Square()";
-      pre_compile_code_string=" // Call the function Square()";
      };
      AssignExpr @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="result = Square(25.5)";
-      pre_compile_code_string="result = Square(25.5)";
       result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionReturnValue"].prog_code[0].local_vars["result"]$$;
       expr {
        expr="Square(25.5)";
@@ -19912,7 +19616,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  result";
-      pre_compile_code_string="Print  result";
       message=;
       print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionReturnValue"].prog_code[0].local_vars["result"]$;
       print_var2=NULL;
@@ -20014,7 +19717,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="print the year by calling a method on taDateObject";
       flags=CAN_REVERT_TO_CODE;
       code_string="PrintDate() returns: taOBase*";
-      pre_compile_code_string="PrintDate() returns: taOBase*";
       name="PrintDate";
       return_type=T_Object;
       object_type=taOBase;
@@ -20031,7 +19733,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
-	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name=;
 	 el_typ=ProgVar;
@@ -20042,7 +19743,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="initialize the dateObject with the current date and time";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="dateObject->currentDateTime()";
-	pre_compile_code_string="dateObject->currentDateTime()";
 	result_var=NULL;
 	obj=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["dateObject"]$$;
 	method=taDateTime::currentDateTime;
@@ -20058,7 +19758,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc="get the current year";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="current_year = dateObject->year()";
-	pre_compile_code_string="current_year = dateObject->year()";
 	result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["current_year"]$$;
 	obj=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["dateObject"]$;
 	method=taDateTime::year;
@@ -20074,7 +19773,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  current_year";
-	pre_compile_code_string="Print  current_year";
 	message=;
 	print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["current_year"]$;
 	print_var2=NULL;
@@ -20100,7 +19798,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name=;
        el_typ=ProgVar;
@@ -20111,13 +19808,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="You still need parentheses even if you aren't passing anything to the function";
       flags=CAN_REVERT_TO_CODE;
       code_string="// You still need parentheses even if you aren't passing anything to the function";
-      pre_compile_code_string=" // You still need parentheses even if you aren't passing anything to the function";
      };
      FunctionCall @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="PrintDate()";
-      pre_compile_code_string="PrintDate()";
       result_var=NULL;
       fun=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].functions["PrintDate"]$$;
       fun_args {
@@ -20211,7 +19906,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -20222,13 +19916,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Run another program - perhaps one generates data and the second analyzes";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Run another program - perhaps one generates data and the second analyzes";
-       pre_compile_code_string=" // Run another program - perhaps one generates data and the second analyzes";
       };
       ProgramCall @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Program_B(1)";
-       pre_compile_code_string="Program_B(1)";
        prog_args {
 	name="ProgArg_List_0";
 	el_typ=ProgArg;
@@ -20326,7 +20018,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (1 vars)";
-       pre_compile_code_string="LocalVars (1 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -20346,13 +20037,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="Run another program - perhaps one generates data and the second analyzes";
        flags=CAN_REVERT_TO_CODE;
        code_string="// Run another program - perhaps one generates data and the second analyzes";
-       pre_compile_code_string=" // Run another program - perhaps one generates data and the second analyzes";
       };
       ProgramCallFun @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Program_B(int_var) TestFunction()";
-       pre_compile_code_string="Program_B(int_var) TestFunction()";
        prog_args {
 	name="prog_args";
 	el_typ=ProgArg;
@@ -20450,7 +20139,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="TestFunction() returns: int";
-       pre_compile_code_string="TestFunction() returns: int";
        name="TestFunction";
        return_type=T_Int;
        object_type=taOBase;
@@ -20467,7 +20155,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="LocalVars (0 vars)";
-	 pre_compile_code_string="LocalVars (0 vars)";
 	 local_vars {
 	  name="local_vars";
 	  el_typ=ProgVar;
@@ -20478,7 +20165,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print \"Program_B:TestFunction - I've been called\"";
-	 pre_compile_code_string="Print \"Program_B:TestFunction - I've been called\"";
 	 expr {
 	  expr="\"Program_B:TestFunction - I've been called\"";
 	 };
@@ -20500,13 +20186,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="This code gets run when Program_B is called from another program";
        flags=CAN_REVERT_TO_CODE;
        code_string="// This code gets run when Program_B is called from another program";
-       pre_compile_code_string=" // This code gets run when Program_B is called from another program";
       };
       LocalVars @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name=;
 	el_typ=ProgVar;
@@ -20517,7 +20201,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"Program_B - I've been called\"";
-       pre_compile_code_string="Print \"Program_B - I've been called\"";
        expr {
 	expr="\"Program_B - I've been called\"";
        };
@@ -20627,7 +20310,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -20638,19 +20320,16 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc="You can get or set the values of variables in another program";
        flags=CAN_REVERT_TO_CODE;
        code_string="// You can get or set the values of variables in another program";
-       pre_compile_code_string=" // You can get or set the values of variables in another program";
       };
       Comment @[2] {
        desc="To work the variable names in both programs must match!";
        flags=CAN_REVERT_TO_CODE;
        code_string="// To work the variable names in both programs must match!";
-       pre_compile_code_string=" // To work the variable names in both programs must match!";
       };
       OtherProgramVar @[3] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Vars Fm:  program=ProgramWithValue set=from  var_1=user_name  var_2=location  var_3=?  var_4=? ";
-       pre_compile_code_string="Vars Fm:  program=ProgramWithValue set=from  var_1=user_name  var_2=location  var_3=?  var_4=? ";
        other_prog=.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessVariablesInAnotherProgram"]["ProgramWithValue"]$$;
        set_other=0;
        var_1=.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessVariablesInAnotherProgram"]["ProgramSeekingValue"].vars["user_name"]$$;
@@ -20662,7 +20341,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  user_name location";
-       pre_compile_code_string="Print  user_name location";
        message=;
        print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessVariablesInAnotherProgram"]["ProgramSeekingValue"].vars["user_name"]$;
        print_var2=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessVariablesInAnotherProgram"]["ProgramSeekingValue"].vars["location"]$;
@@ -20768,7 +20446,6 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="ProgVar_List_0";
 	el_typ=ProgVar;
@@ -20809,7 +20486,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.02328864;
+     value 8 0=0.02292934;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -20819,7 +20496,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7974594;
+     value 8 0=0.7973795;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22155,17 +21832,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02399435;
+       value 8 0=0.00655124;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.03208138;
+       value 8 0=0.02164731;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7268878;
+       value 8 0=0.7599438;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -22532,15 +22209,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        use_unlearnable=1;
-       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: avg_l_gain=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: };
-       dwt_wta {on=0: dw_tau=20: wt_mod=0: wt_mod_gain=1: dw_dt=0.05: };
-       wt_norm_bal {
-	norm_on=0;
-	norm_trg=0.5;
-	bal_on=0;
-	hi_thr=0.75;
-	gain=5;
+       dwt_wta {on=0: dw_tau=20: wb_inc_thr=1: wb_dec_thr=1: dw_dt=0.05: };
+       wt_bal {
+	on=1;
+	linear=0;
+	hi_thr=0.4;
+	hi_gain=2;
+	lo_thr=0.2;
+	lo_gain=2;
        };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
@@ -22566,15 +22244,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      use_unlearnable=1;
-     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: avg_l_gain=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: };
-     dwt_wta {on=0: dw_tau=20: wt_mod=0: wt_mod_gain=1: dw_dt=0.05: };
-     wt_norm_bal {
-      norm_on=0;
-      norm_trg=0.5;
-      bal_on=0;
-      hi_thr=0.75;
-      gain=5;
+     dwt_wta {on=0: dw_tau=20: wb_inc_thr=1: wb_dec_thr=1: dw_dt=0.05: };
+     wt_bal {
+      on=1;
+      linear=0;
+      hi_thr=0.4;
+      hi_gain=2;
+      lo_thr=0.2;
+      lo_gain=2;
      };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
@@ -22875,7 +22554,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
-    norm_bal_int=10;
+    wt_bal_int=10;
     minus=75;
     plus=25;
     total_cycles=100;
@@ -22885,6 +22564,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     off_errs=1;
     on_errs=1;
     agg_unlearnable=0;
+    wt_bal=0;
    };
    net_misc {
     spike=0;
@@ -22893,7 +22573,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    wt_norm=0;
     wt_bal=0;
     lay_gp_inhib=0;
     inhib_cons=0;
