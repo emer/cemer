@@ -74,6 +74,7 @@ class E_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
+  bool          avgl_su_m;      // multiply the avg_l-based threshold times the sending activation, medium time scale -- this is what was in emergent 7.0
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
@@ -531,8 +532,14 @@ public:
      const float ru_avg_l_lrn) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
-    dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
-                     xcal.m_lrn * xcal.dWtFun(srs, srm));
+    if(xcal.avgl_su_m) {
+      dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, su_avg_m * ru_avg_l) +
+                       xcal.m_lrn * xcal.dWtFun(srs, srm));
+    }
+    else {
+      dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
+                       xcal.m_lrn * xcal.dWtFun(srs, srm));
+    }
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 

@@ -3803,22 +3803,30 @@ int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
 int taMisc::skip_past_err(istream& strm, bool peek) {
   int c;
   int depth = 0;
+  bool in_quote = false;
+  int prev_c = '\0';
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     int cur_pos = 0;
     ConsoleOutputChars("<<err_skp ->>", true);
-    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) &&
+                                           (depth <= 0 && !in_quote))) {
       ConsoleOutputChars((char)c, true); cur_pos++;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
     if(c != EOF) ConsoleOutputChars(String((char)c) + "<<- err_skp>>", true);
   }
   else {
-    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) &&
+                                           (depth <= 0 && !in_quote))) {
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
   }
   if(!peek) {
@@ -3831,21 +3839,27 @@ int taMisc::skip_past_err(istream& strm, bool peek) {
 int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   int c;
   int depth = 0;
+  bool in_quote = false;
+  int prev_c = '\0';
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     ConsoleOutputChars("<<err_skp ->>", true);
-    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0 && !in_quote))) {
       ConsoleOutputChars((char)c, true);
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
     if(c != EOF) ConsoleOutputChars(String((char)c) + "<<- err_skp>>", true);
   }
   else {
-    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0 && !in_quote))) {
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
   }
   if(!peek) {
