@@ -68,6 +68,7 @@ float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const floa
 
 void XCalLearnSpec::Initialize() {
   avgl_su_m = false;
+  one_thr = false;
   Defaults_init();
 }
 
