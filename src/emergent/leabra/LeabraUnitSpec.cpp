@@ -198,11 +198,19 @@ void LeabraActAvgSpec::Defaults_init() {
   s_tau = 2.0f;
   m_tau = 10.0f;
   m_in_s = 0.1f;
+  m_in_s_sqrt = false;
 
   ss_dt = 1.0f / ss_tau;
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
   s_in_s = 1.0f - m_in_s;
+  if(m_in_s_sqrt) {
+    m_in_s_eff = sqrtf(m_in_s_sqrt);
+    m_in_s = sqrtf(m_in_s);
+  }
+  else {
+    m_in_s_eff = m_in_s;
+  }
 }
 
 
@@ -212,6 +220,13 @@ void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
   s_in_s = 1.0f - m_in_s;
+  if(m_in_s_sqrt) {
+    m_in_s_eff = sqrtf(m_in_s_sqrt);
+    m_in_s = sqrtf(m_in_s);
+  }
+  else {
+    m_in_s_eff = m_in_s;
+  }
 }
 
 void LeabraAvgLSpec::Initialize() {
@@ -1889,7 +1904,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->avg_s += dt.integ * act_avg.s_dt * (u->avg_ss - u->avg_s);
   u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
 
-  u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
+  u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s_eff * u->avg_m;
 }
 
 ///////////////////////////////////////////////////////////////////////

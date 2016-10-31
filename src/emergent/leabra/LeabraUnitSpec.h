@@ -243,11 +243,13 @@ public:
   float         s_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
   float         m_tau;                // #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
   float         m_in_s;                // #DEF_0.1 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost
+  bool          m_in_s_sqrt;           // compute actual effective m_in_s factors to exactly match how it was computed in version 7.0, which mixed the *product* of send * recv terms, whereas here we're mixing each send, recv term *sparately* then taking the product -- thus we need to use the square roots of the original mixing factors!
 
-  float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
   float         ss_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         m_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
+  float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s -- optionally sqrt
+  float         m_in_s_eff;          // #READ_ONLY #EXPERT either m_in_s or sqrt(m_in_s)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
