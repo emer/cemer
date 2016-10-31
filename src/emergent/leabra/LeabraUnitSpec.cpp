@@ -205,8 +205,8 @@ void LeabraActAvgSpec::Defaults_init() {
   m_dt = 1.0f / m_tau;
   s_in_s = 1.0f - m_in_s;
   if(m_in_s_sqrt) {
-    m_in_s_eff = sqrtf(m_in_s_sqrt);
-    m_in_s = sqrtf(m_in_s);
+    m_in_s_eff = sqrtf(m_in_s);
+    s_in_s = sqrtf(s_in_s);
   }
   else {
     m_in_s_eff = m_in_s;
