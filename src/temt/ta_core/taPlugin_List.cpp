@@ -95,8 +95,6 @@ void taPlugin_List::LoadPlugins() {
     if (!pli) continue;
 
     pli->unload();
-    pl->plugin = NULL;
-    taPlugins::plugins.RemoveEl(pli);
   }
 
   // make a blank line in log
