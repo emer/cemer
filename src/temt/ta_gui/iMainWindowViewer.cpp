@@ -841,7 +841,7 @@ void iMainWindowViewer::Constr_ControlMenu()
   
   ctrlStopAction = new iAction("Stop", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STOP)), "ctrlStopAction");
   ctrlStopAction->setIcon(QIcon(QPixmap(":/images/stop_icon.png")));
-  ctrlStopAction->setToolTip(taiMisc::ToolTipPreProcess("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button."));
+  ctrlStopAction->setToolTip(taiMisc::ToolTipPreProcess("Stop: stop whatever program is currently running -- execution can be resumed with the Run button."));
 
   ctrlStepAction = new iAction("Step", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP)), "ctrlStepAction");
   ctrlStepAction->setIcon(QIcon(QPixmap(":/images/step_icon.png")));
