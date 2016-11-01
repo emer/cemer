@@ -123,7 +123,6 @@ void DwtWtaSpec::UpdateAfterEdit_impl() {
 }
 
 void WtBalanceSpec::Initialize() {
-  linear = false;
   Defaults_init();
 }
 

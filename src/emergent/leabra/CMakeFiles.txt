@@ -47,7 +47,6 @@ set(leabra_HEADS_MAKETA
   
   LayerActUnitSpec.h
     
-  LeabraContextLayerSpec.h
   ScalarValLayerSpec.h
 #  MotorForceLayerSpec.h
   TwoDValLeabraLayer.h
@@ -102,6 +101,7 @@ set(leabra_HEADS_MAKETA
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   LeabraMultCopyUnitSpec.h
+  LeabraContextUnitSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -171,7 +171,6 @@ set(leabra_SRCS
   
   LayerActUnitSpec.cpp
     
-  LeabraContextLayerSpec.cpp
   ScalarValLayerSpec.cpp
 #  MotorForceLayerSpec.cpp
   TwoDValLeabraLayer.cpp
@@ -226,6 +225,7 @@ set(leabra_SRCS
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
   LeabraMultCopyUnitSpec.cpp
+  LeabraContextUnitSpec.cpp
 )
 
 set(leabra_CUDA

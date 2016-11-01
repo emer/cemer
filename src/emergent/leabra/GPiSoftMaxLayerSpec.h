@@ -59,9 +59,12 @@ public:
   void	Compute_CycleStats_Pre(LeabraLayer* lay, LeabraNetwork* net) override;
 
  TA_SIMPLE_BASEFUNS(GPiSoftMaxLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void Initialize();
   void Destroy()     { };
+  void Defaults_init() { };
 };
 
 #endif // GPiSoftMaxLayerSpec_h

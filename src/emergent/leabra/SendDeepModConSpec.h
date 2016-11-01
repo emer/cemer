@@ -58,6 +58,8 @@ public:
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
   TA_SIMPLE_BASEFUNS(SendDeepModConSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void Initialize();
   void Defaults_init();

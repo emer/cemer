@@ -51,6 +51,8 @@ public:
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(DeepCopyUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void  Initialize();
   void  Destroy()     { };

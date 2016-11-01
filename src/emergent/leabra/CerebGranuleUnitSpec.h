@@ -89,9 +89,12 @@ public:
   bool CheckConfig_Unit(Layer* lay, bool quiet) override;
 
   TA_SIMPLE_BASEFUNS(CerebGranuleUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void Initialize()  { };
   void Destroy()     { };
+  void Defaults_init() { };
 };
 
 #endif // CerebGranuleUnitSpec_h

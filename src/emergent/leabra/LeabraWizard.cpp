@@ -38,7 +38,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 #include <DeepCtxtConSpec>
 #include <MarkerConSpec>
 #include <LayerActUnitSpec>
-#include <LeabraContextLayerSpec>
+#include <LeabraContextUnitSpec>
 
 #include <ExtRewLayerSpec>
 #include <TDRewPredConSpec>
@@ -814,7 +814,7 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net, const String& lay_name_contain
   }
   FMSpec(OneToOnePrjnSpec, otop, net, "CtxtPrjn");
   FMSpec(MarkerConSpec, marker, net, "CtxtMarkerCons");
-  FMSpec(LeabraContextLayerSpec, ctxts, net, "CtxtLayerSpec");
+  FMSpec(LeabraContextUnitSpec, ctxts, net, "CtxtUnitSpec");
 
   net->specs.UpdateAllSpecs();
   
@@ -830,8 +830,8 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net, const String& lay_name_contain
     ctxt->gp_geom = lay->gp_geom;
     net->layers.MoveAfter(lay, ctxt);
     ctxt->PositionBehind(lay, 2);
-    ctxt->SetUnitSpec(lay->GetUnitSpec());
-    ctxt->SetLayerSpec(ctxts);
+    ctxt->SetUnitSpec(ctxts);
+    ctxt->SetLayerSpec(lay->GetLayerSpec());
     net->FindMakePrjn(ctxt, lay, otop, marker); // one-to-one into the ctxt layer
     net->FindMakePrjn(lay, ctxt);       // std prjn back into the hidden from context
   }

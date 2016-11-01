@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraContextLayerSpec_h
-#define LeabraContextLayerSpec_h 1
+#ifndef LeabraContextUnitSpec_h
+#define LeabraContextUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -65,11 +65,11 @@ private:
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-eTypeDef_Of(LeabraContextLayerSpec);
+eTypeDef_Of(LeabraContextUnitSpec);
 
-class E_API LeabraContextLayerSpec : public LeabraLayerSpec {
-  // context layer that copies from its recv projection, which should have one-to-one connections with a source layer -- this is a slow and outdated way to achieve simple recurrent network (SRN) behavior -- consider using DeepCtxtConSpec connections within a single layer, which implements this more efficiently
-INHERITED(LeabraLayerSpec)
+class E_API LeabraContextUnitSpec : public LeabraUnitSpec {
+  // context units that copy from their recv projection, which should have one-to-one connections with a source layer -- this is one way to achieve simple recurrent network (SRN) behavior, that has more flexibility and uses a separate context layer for visualization purposes -- also consider using DeepCtxtConSpec connections within a single layer, which implements this same form of computation more efficiently, but less transparently and with fewer options
+INHERITED(LeabraUnitSpec)
 public:
   enum UpdateCriteria {
     UC_TRIAL = 0, // updates every trial (traditional "ContextLayer" behavior)
@@ -77,33 +77,36 @@ public:
     UC_N_TRIAL, // updates every n trials
   };
   
+  static const String do_update_key;
+  // user data key for variable on layer that holds whether to do updating now or not -- used by TriggerUpdate code
   UpdateCriteria update_criteria; // #DEF_UC_TRIAL #NO_SAVE_EMPTY how to determine when to copy the sending layer
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
   CtxtNSpec	n_spec; // #CONDSHOW_ON_update_criteria:UC_N_TRIAL trials per update and optional offset for multi
   
-  void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  // clamp from act_p values of sending layer
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
+  virtual void TriggerUpdate(LeabraLayer* lay, bool update);
+  // #CAT_Context manually set update trigger status -- must be both set and un-set manually -- flag remains set until explicitly called with update=false -- tested on first cycle of processing within a trial -- can always be called even if not on MANUAL -- sets user data do_update_key as state that triggers update
 
-  void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
-  
-#ifndef __MAKETA__
-  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
-#endif
+  virtual void Compute_Context(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // #CAT_Context compute context activation
+  virtual bool ShouldUpdateNow(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // #CAT_Context test whether it is time to update context rep now..
 
-  TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);
-  
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
+
+  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
+
+  TA_SIMPLE_BASEFUNS(LeabraContextUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  static const String do_update_key;
-  virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net,
-                               int thr_no);
-  // get context source value for given context unit
-
 private:
-  void 	Initialize();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()     { };
   void	Defaults_init();
 };
 
-#endif // LeabraContextLayerSpec_h
+#endif // LeabraContextUnitSpec_h

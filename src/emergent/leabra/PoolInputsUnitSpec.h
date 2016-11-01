@@ -49,6 +49,8 @@ public:
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(PoolInputsUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void  Initialize();
   void  Destroy()     { };

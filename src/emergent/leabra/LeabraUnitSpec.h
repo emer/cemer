@@ -243,13 +243,11 @@ public:
   float         s_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
   float         m_tau;                // #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
   float         m_in_s;                // #DEF_0.1 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost
-  bool          m_in_s_sqrt;           // compute actual effective m_in_s factors to exactly match how it was computed in version 7.0, which mixed the *product* of send * recv terms, whereas here we're mixing each send, recv term *sparately* then taking the product -- thus we need to use the square roots of the original mixing factors!
 
   float         ss_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         m_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
-  float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s -- optionally sqrt
-  float         m_in_s_eff;          // #READ_ONLY #EXPERT either m_in_s or sqrt(m_in_s)
+  float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -271,9 +269,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          leaky_int;      // use leaky-integrator dynamics for aggregating avg_l -- value is is driven up with additive contributions from current activation, while decaying multiplicatively with a given time constant -- this was used in version 7.0
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
-  bool          up_add_thr;     // #CONDSHOW_ON_leaky_int use threshold in leaky_int computation -- only decay if activation is below avg_l_2.act_thr threshold -- otherwise use standard leaky integrator equations and always decay while also incrementing
   float         act_pct;        // #CONDSHOW_ON_leaky_int #DEF_0.2 proportion of medium-time-constant average activation (avg_m) to add to avg_l value for leaky integrator formulation
-  float         decay_tau;      // #CONDSHOW_ON_leaky_int #DEF_20 decay time constant for multiplicative decreases in avg_l for leaky integrator formulation, for a layer that has 15% average activation levels -- the actual decay time constant is also a function of layer acts_p_avg value -- key idea is that sparser layers have less active units on average, so this produces more consistent avg_l values across layers
+  float         decay_tau;      // #CONDSHOW_ON_leaky_int #DEF_50 decay time constant for multiplicative decreases in avg_l for leaky integrator formulation, for a layer that has 15% average activation levels -- the actual decay time constant is also a function of layer acts_p_avg value -- key idea is that sparser layers have less active units on average, so this produces more consistent avg_l values across layers
   float         max;            // #CONDSHOW_OFF_leaky_int #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
   float         min;            // #CONDSHOW_OFF_leaky_int #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
   float         tau;            // #CONDSHOW_OFF_leaky_int #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
