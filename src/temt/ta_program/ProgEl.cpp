@@ -497,7 +497,25 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
     taBase::Ref(dlg);
     int choice = 2;
     ProgVar::VarType var_type = ProgVar::T_UnDef;
-    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
+    
+    bool type_is_guess = false;
+    if (var_type == ProgVar::T_UnDef && this->DerivesFromName("AssignExpr")) {
+      String expr = trim(code_string.after("="));
+      if (expr.isBool()) {
+        var_type = ProgVar::T_Bool;
+        type_is_guess = true;
+      }
+      else if (expr.isInt()) {
+        var_type = ProgVar::T_Int;
+        type_is_guess = true;
+      }
+      else if (expr.isFloat()) {
+        var_type = ProgVar::T_Real;
+        type_is_guess = true;
+      }
+    }
+
+    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type, type_is_guess);
     if (result == 1) {
       if(choice == 0) {
         rval = ((ProgEl*)this)->MakeLocalVar(var_nm);
@@ -806,8 +824,8 @@ bool ProgEl::CvtCodeToVar(String& code) {
     choice = 1;                 // can only be in globals
   }
   else {
-    result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type,
-                                      ProgElChoiceDlg::LOCALGLOBAL, true);
+    bool type_is_guess = false;
+    result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type, type_is_guess, ProgElChoiceDlg::LOCALGLOBAL, true);
   }
   // true = "make new.." instructions
   ProgVar* rval = NULL;

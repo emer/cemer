@@ -30,13 +30,18 @@ TA_BASEFUNS_CTORS_DEFN(ProgElChoiceDlg);
 
 
 int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
-  ProgVar::VarType& var_type_choice, LocalGlobalOption option,  
-                                          bool make_new_instr) {
+                                          ProgVar::VarType& var_type_choice, bool type_is_guess,
+                                          LocalGlobalOption option, bool make_new_instr) {
   String  row;  // reuse for each widget
   String  chs_str;
   bool    showInstruction = var_nm.nonempty();  // if we don't know the var name ask for it
   bool    show_type_chooser = (var_type_choice == ProgVar::T_UnDef);
   bool    show_local_global_chooser = (local_global_choice == 2); // not local or global so show the chooser
+  
+  if (!show_type_chooser && type_is_guess) {
+    // in this case show type chooser but select the guess type
+    show_type_chooser = true;
+  }
 
   dlg.win_title = "Create Variable - Local or Global";
   dlg.width = taiMisc::resizeByMainFont(300);
