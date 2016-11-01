@@ -300,7 +300,7 @@ bool PluginWizard::Compile() {
 
 bool PluginWizard::Clean() {
   if (TestError((!created),
-    "PluginWizard::Compile",
+    "PluginWizard::Clean",
     "You must Create the plugin before you can clean it"))
     return false;
 
