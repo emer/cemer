@@ -297,26 +297,26 @@ bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
 
 bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
                            bool system_plugin, bool full_rebuild) {
-//  if(taMisc::gui_active) {
-//    if(!make_thread) {
-//      make_thread = new PluginMakeThreadMgr;
-//      taBase::Own(make_thread, tabMisc::root); // own by root..
-//    }
-//    else {
-//#if (QT_VERSION >= 0x050000)
-//      int cur_running = make_thread->n_running.loadAcquire();
-//#else
-//      int cur_running = (int)make_thread->n_running;
-//#endif
-//      if(cur_running > 0)
-//        make_thread->SyncThreads();     // sync now before running again..
-//    }
-//    make_thread->MakePlugin(plugin_path, plugin_name, system_plugin, full_rebuild);
-//  }
-//  else {
+  if(taMisc::gui_active) {
+    if(!make_thread) {
+      make_thread = new PluginMakeThreadMgr;
+      taBase::Own(make_thread, tabMisc::root); // own by root..
+    }
+    else {
+#if (QT_VERSION >= 0x050000)
+      int cur_running = make_thread->n_running.loadAcquire();
+#else
+      int cur_running = (int)make_thread->n_running;
+#endif
+      if(cur_running > 0)
+        make_thread->SyncThreads();     // sync now before running again..
+    }
+    make_thread->MakePlugin(plugin_path, plugin_name, system_plugin, full_rebuild);
+  }
+  else {
     // no gui = just do it now
     return MakePlugin_impl(plugin_path, plugin_name, system_plugin, full_rebuild);
-  //}
+  }
   return true;
 }
 
@@ -434,11 +434,15 @@ void taPlugins::CleanAllOutOfDatePlugins() {
     taPluginInst* pli = plugins.FastEl(i);
     if(pli->load_state != taPluginInst::LS_OUT_OF_DATE) continue;
     String fnm = pli->fileName();
+    bool removed = false;
     if(fnm.contains(taMisc::app_plugin_dir)) {
-      CleanPlugin(taMisc::app_plugin_dir, fnm, true);
+      removed = CleanPlugin(taMisc::app_plugin_dir, fnm, true);
     }
     else {
-      CleanPlugin(taMisc::user_plugin_dir, fnm, false);
+      removed = CleanPlugin(taMisc::user_plugin_dir, fnm, false);
+    }
+    if (removed) {
+      plugins.RemoveEl(pli);
     }
   }
 }
