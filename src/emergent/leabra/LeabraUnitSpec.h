@@ -267,31 +267,21 @@ class E_API LeabraAvgLSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
 INHERITED(SpecMemberBase)
 public:
-  bool          leaky_int;      // use leaky-integrator dynamics for aggregating avg_l -- value is is driven up with additive contributions from current activation, while decaying multiplicatively with a given time constant -- this was used in version 7.0
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
-  float         act_pct;        // #CONDSHOW_ON_leaky_int #DEF_0.2 proportion of medium-time-constant average activation (avg_m) to add to avg_l value for leaky integrator formulation
-  float         decay_tau;      // #CONDSHOW_ON_leaky_int #DEF_50 decay time constant for multiplicative decreases in avg_l for leaky integrator formulation, for a layer that has 15% average activation levels -- the actual decay time constant is also a function of layer acts_p_avg value -- key idea is that sparser layers have less active units on average, so this produces more consistent avg_l values across layers
-  float         max;            // #CONDSHOW_OFF_leaky_int #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
-  float         min;            // #CONDSHOW_OFF_leaky_int #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
-  float         tau;            // #CONDSHOW_OFF_leaky_int #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
-  float         lrn_max;        // #DEF_0.05;0.0004 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units -- the default of 0.05, in combination with the err_mod flag, works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off) -- for leaky_int this is single constant value used
-  float         lrn_min;        // #CONDSHOW_OFF_leaky_int #DEF_0.005;0.0004 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- the default of 0.005 works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
+  float         max;            // #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
+  float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
+  float         tau;            // #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
+  float         lrn_max;        // #DEF_0.05;0.0004 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units -- the default of 0.05, in combination with the err_mod flag, works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
+  float         lrn_min;        // #DEF_0.005;0.0004 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- the default of 0.005 works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
   
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (max - min)
-  float         decay_dt;       // #READ_ONLY #EXPERT rate = (1 / decay_tau) / .15 -- corrected for .15 average activation that tau value is set for
   
   inline float  GetLrn(const float avg_l) {
-    if(leaky_int) return lrn_max;
     return lrn_min + lrn_fact * (avg_l - min);
   }
   // get the avg_l_lrn value for given avg_l value
 
-  inline void  AvgLInteg(float& avg_l, const float avg_m, const float acts_p_avg) {
-    avg_l += act_pct * avg_m - acts_p_avg * decay_dt * avg_l;
-  }
-  // leaky integrator integration of avg_l value from avg_m activation
-  
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraAvgLSpec);

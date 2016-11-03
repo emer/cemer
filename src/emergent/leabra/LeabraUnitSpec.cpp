@@ -219,10 +219,6 @@ void LeabraAvgLSpec::Initialize() {
 }
 
 void LeabraAvgLSpec::Defaults_init() {
-  leaky_int = false;
-  act_pct = 0.2f;
-  decay_tau = 50.0f;
-  
   init = 0.4f;
   max = 1.5f;
   min = 0.2f;
@@ -232,14 +228,12 @@ void LeabraAvgLSpec::Defaults_init() {
   
   dt = 1.0f / tau;
   lrn_fact = (lrn_max - lrn_min) / (max - min);
-  decay_dt = (1.0f / decay_tau) / .15f;
 }
 
 void LeabraAvgLSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   dt = 1.0f / tau;
   lrn_fact = (lrn_max - lrn_min) / (max - min);
-  decay_dt = (1.0f / decay_tau) / .15f;
 }
 
 
@@ -847,16 +841,11 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
   
   if(lay->acts_p.avg >= avg_l_2.lay_act_thr) {
     const float avg_m = u->avg_m;
-    if(avg_l.leaky_int) {
-      avg_l.AvgLInteg(u->avg_l, avg_m, lay->acts_p_avg);
+    if(avg_m > avg_l_2.act_thr) { // above threshold, raise it up
+      u->avg_l += avg_l.dt * (avg_l.max - u->avg_l);
     }
     else {
-      if(avg_m > avg_l_2.act_thr) { // above threshold, raise it up
-        u->avg_l += avg_l.dt * (avg_l.max - u->avg_l);
-      }
-      else {
-        u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
-      }
+      u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
     }
   }
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
