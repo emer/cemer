@@ -178,11 +178,19 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   //   }
   // }
   if(dwt_zone.on) {
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
+    float cos_diff;
+    if(slay->layer_type != Layer::INPUT)
+      cos_diff = 0.5f * (rlay->cos_diff_avg + slay->cos_diff_avg);
+    else
+      cos_diff = rlay->cos_diff_avg;
+    const float dwt_norm_fact = 1.0f / fmaxf(1.0f - cos_diff, dwt_zone.dwt_norm_min);
     clrate *= dwt_zone.lrate_mult;
     float* dwa_ss = cg->OwnCnVar(DWA_S);
     float* dwa_ls = cg->OwnCnVar(DWA_L);
     float* swts = cg->OwnCnVar(SWT);
-    float dwt_max = 0.0f;
+    // float dwt_max = 0.0f;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       float lrate_eff = clrate;
@@ -192,14 +200,14 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
       float avg_l_eff = xcal.AvgL(ru->avg_l);
       C_Compute_dWt_CtLeabraXCAL_DwtZone
-        (dwa_ss[i], dwa_ls[i], swts[i], dwts[i], dwt_max, cg->dwt_max_avg,
+        (dwa_ss[i], dwa_ls[i], swts[i], dwts[i], dwt_norm_fact, // dwt_max, cg->dwt_max_avg,
          lrate_eff, ru->avg_s_eff, ru->avg_m,
          su_avg_s, su_avg_m, avg_l_eff, l_lrn_eff);
     }
-    if(cg->dwt_max_avg == 0.0f)
-      cg->dwt_max_avg = dwt_max;
-    else 
-      cg->dwt_max_avg += dwt_zone.s_dt * (dwt_max - cg->dwt_max_avg);
+    // if(cg->dwt_max_avg == 0.0f)
+    //   cg->dwt_max_avg = dwt_max;
+    // else 
+    //   cg->dwt_max_avg += dwt_zone.s_dt * (dwt_max - cg->dwt_max_avg);
   }
   else {
     for(int i=0; i<sz; i++) {
