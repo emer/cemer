@@ -146,6 +146,7 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
+  bool          soft_bound;     // #DEF_true apply exponential soft bounding to the weight changes 
 
   static inline float	SigFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
@@ -194,6 +195,34 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(DwtZoneSpec);
+
+class E_API DwtZoneSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
+  float         s_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of shorter-term dwt average: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
+  float         l_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of longer-term dwt average: dwa_l -- this cascades on top of the dwa_s short term average value, so this essentially reflects the number of trials over which a new direction of learning is allowed to drive learning -- e.g., if this value was 1 then the time constant of integration is 1 and the learning rate will always be 0
+  float         gain;           // #CONDSHOW_ON_on #MIN_0 the zone-based learning rate is computed as an XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor) -- the dwts are normalized by the average max dwt magnitude across each set of sending connections prior to computing the dwa_s, _l values, compensating for differences across layers.
+  float         const_lrate;    // #CONDSHOW_ON_on #MIN_0 constant learning rate factor -- added to zone-based learning rate to determine net overall learning rate -- hedges the bet on this zone filtering mechanism and allows some learning to always operate
+  float         lrate_mult;     // #CONDSHOW_ON_on #MIN_0 overall learning rate multiplier to compensate for the fact that the effective learning rate is lower on average using this mechanism -- allows for a common master learning rate for comparison between zone and non-zone conditions
+
+  float         s_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / s_tau
+  float         l_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / s_tau
+
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(DwtZoneSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(DwtWtaSpec);
 
 class E_API DwtWtaSpec : public SpecMemberBase {
@@ -202,8 +231,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable dwt increase vs. decrease winner-take-all competition
   float         dw_tau;         // #CONDSHOW_ON_on #MIN_1 time constant for decay of aggregated dwt values -- decays over this time scale according to 1/dw_tau * dwt per trial
-  float         wb_inc_thr;     // #CONDSHOW_ON_on #MAX_1 #MIN_0 threshold value of the weight balance wb_inc factor, below which weight decreases are also included in learning even when dwavg > 0, in proportion to wb_inc_thr - wb_inc -- i.e., more decrease included as increases are weaker due to increasing hoggy-ness of this unit
-  float         wb_dec_thr;     // #CONDSHOW_ON_on #MAX_1 #MIN_0 threshold value of the weight balance wb_dec factor, below which weight increases are also included in learning even when dwavg < 0, in proportion to wb_dec_thr - wb_dec -- i.e., more increase included as decreases are weaker due to increasing anti-hoggy-ness (loser-ness) of this unit
+  float         wb_inc_thr;     // #CONDSHOW_ON_on #MAX_1 #MIN_0 threshold value of the weight balance wb_inc factor, below which weight decreases are also included in learning even when dwa_s > 0, in proportion to wb_inc_thr - wb_inc -- i.e., more decrease included as increases are weaker due to increasing hoggy-ness of this unit
+  float         wb_dec_thr;     // #CONDSHOW_ON_on #MAX_1 #MIN_0 threshold value of the weight balance wb_dec factor, below which weight increases are also included in learning even when dwa_s < 0, in proportion to wb_dec_thr - wb_dec -- i.e., more increase included as decreases are weaker due to increasing anti-hoggy-ness (loser-ness) of this unit
 
 
   float         dw_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / dw_tau
@@ -228,9 +257,9 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
   float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.4 high threshold -- when average recv weights are above this threshold, weight increases are penalized in proportion to sigmoidal 1/(1+hi_gain*(avg-hi_thr)) function that saturates at maximum of 1 which means that there are no weight increases and all weight decreases -- weight decreases increase proportionally
-  float         hi_gain;        // #CONDSHOW_ON_on gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
+  float         hi_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to above-threshold weight averages -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.2 low threshold -- when average recv weights are below this threshold, weight decreases are penalized in proportion to sigmoidal 1/(1+lo_gain*(lo-thr-avg)) function that saturates at maximum of 1 which means that there are no weight decreases and all weight increases -- weight increases increase proportionally
-  float         lo_gain;        // #CONDSHOW_ON_on gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
+  float         lo_gain;        // #CONDSHOW_ON_on #DEF_4 gain multiplier applied to below-threshold weight averages -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- see hi_thr for equation
   
   inline void   WtBal(const float wt_avg, float& wb_inc, float& wb_dec) {
     if(wt_avg > hi_thr) {
@@ -359,7 +388,8 @@ INHERITED(ConSpec)
 public:
   enum LeabraConVars {
     SCALE = N_CON_VARS,        // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
-    DWAVG,                     // average weight change (delta weight) over time -- integrated as a leaky integrator -- used primarily with the increase vs. decrease dwt mechanism
+    DWA_S,                     // average weight change (delta weight) over shorter time constant
+    DWA_L,                     // average weight change (delta weight) over longer time constant
     FWT,                       // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                       // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
     N_LEABRA_CON_VARS,         // #IGNORE number of leabra con vars
@@ -388,6 +418,7 @@ public:
 
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  DwtZoneSpec   dwt_zone;        // #CAT_Learning #CONDSHOW_ON_learn delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
   DwtWtaSpec    dwt_wta;        // #CAT_Learning #CONDSHOW_ON_learn delta weight increase vs. decrease winner-take-all competition -- based on sign of time-averaged delta-weight, either increases or decreases are applied correspondingly -- reflects the biological separation between CAMKII and PKA pathways in determining LTP vs. LTD -- computationally prevents equivocation of increases and decreases, so weights move more toward extremes and retain critical variance in the responses of neurons across the layer
   WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: a soft form of normalization that maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- alters rate of weight increases vs. decreases in soft bounding function
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
@@ -411,9 +442,12 @@ public:
   inline void Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
 
+    ((LeabraConGroup*)cg)->dwt_avg = 0.0f; // dwt_zone
+    
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
-    float* dwavgs = cg->OwnCnVar(DWAVG);
+    float* dwa_ss = cg->OwnCnVar(DWA_S);
+    float* dwa_ls = cg->OwnCnVar(DWA_L);
     float* scales = cg->OwnCnVar(SCALE);
 
     int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
@@ -427,7 +461,8 @@ public:
         C_Init_Weight_Rnd(wts[i], eff_thr_no);
       }
       C_Init_dWt(dwts[i]);
-      dwavgs[i] = 0.0f;
+      dwa_ss[i] = 0.0f;
+      dwa_ls[i] = 0.0f;
     }
   }
 
@@ -440,8 +475,13 @@ public:
     float* fwts = cg->OwnCnVar(FWT);
     float* scales = cg->OwnCnVar(SCALE);
     for(int i=0; i<cg->size; i++) {
-      swts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
-      fwts[i] = swts[i];
+      fwts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
+      if(dwt_zone.on) {
+        swts[i] = 0.0f;         // used for saving zone_lr val
+      }
+      else {
+        swts[i] = fwts[i];
+      }
       wts[i] *= scales[i];
     }
   }
@@ -528,8 +568,7 @@ public:
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
     if(xcal.ru_act_deriv) {
-      float ru_deriv = 8.0f * (1.0f - ru_avg_m) * ru_avg_m; // avg_m only thing that works -- could also try avg_l..
-      // 4.0 is minimum compensation factor -- need to determine empirically what works..
+      float ru_deriv = 4.0f * (1.0f - ru_avg_m) * ru_avg_m; // avg_m only thing that works -- could also try avg_l..
       dwt += ru_deriv * clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                                   xcal.m_lrn * xcal.dWtFun(srs, srm));
     }
@@ -541,15 +580,36 @@ public:
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_DwtWta
-    (float& dwavg, float& dwt, const float clrate, const float ru_avg_s,
+    (float& dwa_s, float& dwt, const float clrate, const float ru_avg_s,
      const float ru_avg_m, const float su_avg_s, const float su_avg_m,
      const float ru_avg_l, const float ru_avg_l_lrn) 
   {
     C_Compute_dWt_CtLeabraXCAL(dwt, clrate, ru_avg_s, ru_avg_m,
                                su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
-    dwavg += dwt - dwt_wta.dw_dt * dwavg;  // additive with constant decay
+    dwa_s += dwt - dwt_wta.dw_dt * dwa_s;  // additive with constant decay
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
+
+  inline void 	C_Compute_dWt_CtLeabraXCAL_DwtZone
+    (float& dwa_s, float& dwa_l, float& swt, float& dwt, float& dwt_max, const float dwt_avg,
+     const float clrate, const float ru_avg_s,
+     const float ru_avg_m, const float su_avg_s, const float su_avg_m,
+     const float ru_avg_l, const float ru_avg_l_lrn) 
+  {
+    // send in clrate = 1.0f -- apply clrate later
+    C_Compute_dWt_CtLeabraXCAL(dwt, 1.0f, ru_avg_s, ru_avg_m,
+                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
+    dwt_max = fmaxf(dwt_max, fabsf(dwt));
+    if(dwt_avg == 0.0f) { dwt = 0.0f; return; } // bail on first pass
+    const float dwnrm = dwt / dwt_avg;
+    dwa_s += dwt_zone.s_dt * (dwnrm - dwa_s);
+    dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
+    float zf = dwt_zone.gain * fabsf(dwa_s - dwa_l);
+    float zone_lr = zf / (1.0f + zf); // XX1 sigmoidify
+    swt = zone_lr;              // temp: save this for visualization -- incompat with slow..
+    dwt *= clrate * (zone_lr + dwt_zone.const_lrate); // clrate pre-mult by lrate_mult
+  }
+  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt zone of proximal development mechanism
 
 // #ifdef TA_VEC_USE
 //   inline void Compute_dWt_CtLeabraXCAL_vec
@@ -567,10 +627,12 @@ public:
      const float wb_inc, const float wb_dec)
   {
     if(dwt == 0.0f) return;
-    if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-    else		dwt *= wb_dec * fwt;
+    if(wt_sig.soft_bound) {
+      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+      else		dwt *= wb_dec * fwt;
+    }
     fwt += dwt;
-    // C_ApplyLimits(fwt);       // don't need this..
+    C_ApplyLimits(fwt);
     // swt = fwt;  // leave swt as pristine original weight value -- saves time
     // and is useful for visualization!
     wt = scale * SigFmLinWt(fwt);
@@ -583,11 +645,11 @@ public:
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no slow wts
 
   inline void	C_Compute_Weights_CtLeabraXCAL_DwtWta
-    (float& wt, float& dwt, float& dwavg, float& fwt, float& swt, float& scale,
+    (float& wt, float& dwt, float& dwa_s, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   {
     if(dwt == 0.0f) return;
-    if(dwavg > 0.0f) {            // long-term is more pos than neg
+    if(dwa_s > 0.0f) {            // long-term is more pos than neg
       if(dwt > 0.0f) {
         fwt += wb_inc * (1.0f - fwt) * dwt; // use the current weight inc, for pos only
       }

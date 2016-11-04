@@ -24,10 +24,11 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
+TA_BASEFUNS_CTORS_DEFN(DwtZoneSpec);
+TA_BASEFUNS_CTORS_DEFN(DwtWtaSpec);
 TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
-TA_BASEFUNS_CTORS_DEFN(DwtWtaSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
@@ -97,11 +98,34 @@ void WtSigSpec::Initialize() {
 void WtSigSpec::Defaults_init() {
   gain = 6.0f;
   off = 1.0f;
+  soft_bound = true;
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
+}
+
+void DwtZoneSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void DwtZoneSpec::Defaults_init() {
+  s_tau = 20.0f;
+  l_tau = 20.0f;
+  gain = 20.0f;
+  const_lrate = 0.0f;
+  lrate_mult = 2.0f;
+
+  s_dt = 1.0f / s_tau;
+  l_dt = 1.0f / l_tau;
+}
+
+void DwtZoneSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  s_dt = 1.0f / s_tau;
+  l_dt = 1.0f / l_tau;
 }
 
 void DwtWtaSpec::Initialize() {
@@ -135,8 +159,8 @@ void WtBalanceSpec::Defaults_init() {
   }
   hi_thr = 0.4f;
   lo_thr = 0.2f;
-  hi_gain = 2.0f;
-  lo_gain = 2.0f;
+  hi_gain = 4.0f;
+  lo_gain = 4.0f;
 }
 
 // void WtBalanceSpec::UpdateAfterEdit_impl() {
@@ -261,6 +285,11 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   slow_wts.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   CreateWtSigFun();
+
+  if(TestWarning(dwt_zone.on && slow_wts.on, "UAE",
+                 "dwt_zone and slow_wts cannot both be on at this point -- turning slow_wts off")) {
+    slow_wts.on = false;
+  }
 
   ClearBaseFlag(BF_MISC2);      // done..
 
