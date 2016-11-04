@@ -115,7 +115,7 @@ public:
   virtual void  LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net);
   // #CAT_Structure set loaded weight value for given connection index
   
-  inline void   C_Init_Weight_Rnd(float& wt, int thr_no) {
+  inline void     C_Init_Weight_Rnd(float& wt, int thr_no) {
     wt = rnd.Gen(thr_no);
     C_ApplyLimits(wt);
   }
@@ -136,6 +136,10 @@ public:
 
   inline virtual void   Init_Weights(ConGroup* cg, Network* net, int thr_no);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
+  
+  // NOTE: it is ESSENTIAL that Init_Weights ONLY does wt, dwt, and scale -- all other vars
+  // MUST be initialized in _post -- projections with topo weights ONLY do these specific
+  // variables but no others..
 
   inline virtual void   Init_Weights_sym_r(ConGroup* cg, Network* net, int thr_no);
   // #CAT_Structure apply symmetry after weight init, recv based

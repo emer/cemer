@@ -112,6 +112,7 @@ void DwtZoneSpec::Initialize() {
 }
 
 void DwtZoneSpec::Defaults_init() {
+  dwt_norm = false;
   s_tau = 20.0f;
   l_tau = 20.0f;
   gain = 20.0f;

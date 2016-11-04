@@ -100,24 +100,14 @@ public:
     }
   }
 
-  inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
-    Init_Weights_symflag(net, thr_no);
-
-    int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
-    
-    float* wts = cg->OwnCnVar(WT);
-    float* dwts = cg->OwnCnVar(DWT);
+  inline void   Init_Weights_post(ConGroup* cg, Network* net, int thr_no) override {
     float* pdws = cg->OwnCnVar(PDW);
-
-    if(rnd.type != Random::NONE) {
-      for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], eff_thr_no);
-        C_Init_dWt(dwts[i]);
-        pdws[i] = 0.0f;
-      }
+    for(int i=0; i<cg->size; i++) {
+      pdws[i] = 0.0f;
     }
   }
-
+  // all non-wt, pdw vars MUST be initialized in _post!
+  
   // vectorization notes: Compute_Weights is fully vectorized and easy, as everything
   // is in the connections
   // other functions require unit access -- the sending units are vector chunked,

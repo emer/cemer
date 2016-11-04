@@ -36,12 +36,12 @@ public:
   float	        wt_avg;	        // #NO_SAVE #CAT_Learning average effective weight values across this con group -- used for weight balance
   float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
-  float	        dwt_avg;	// #NO_SAVE #CAT_Learning average delta effective weight magnitude across this con group -- used for zone renorm
+  float	        dwt_max_avg;	// #NO_SAVE #CAT_Learning time-average of maximum delta weight magnitude across this con group -- used for zone renorm
 
   inline LeabraConSpec*    GetConSpec() const { return (LeabraConSpec*)con_spec; }
 
   void  LeabraInit()
-  { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f; dwt_avg = 0.0f;
+  { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f; dwt_max_avg = 0.0f;
     wb_inc = 1.0f; wb_dec = 1.0f;
   }
   // leabra initialize
