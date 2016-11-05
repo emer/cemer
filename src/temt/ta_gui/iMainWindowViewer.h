@@ -116,6 +116,8 @@ public:
 
   QAction*            history_back_action; // action for QToolButton
   QAction*            history_forward_action; // action for QToolButton
+  QAction*            edit_undo_action; // action for QToolButton
+  QAction*            edit_redo_action; // action for QToolButton
 
   iAction*            fileNewAction;
   iAction*            fileOpenAction;
@@ -139,8 +141,6 @@ public:
   iAction*            fileRecentsClearAction;
   iAction*            fileRecentsCleanAction;
   
-  iAction*            editUndoAction;
-  iAction*            editRedoAction;
   iAction*            editCutAction;
   iAction*            editCopyAction;
   iAction*            editDupeAction;

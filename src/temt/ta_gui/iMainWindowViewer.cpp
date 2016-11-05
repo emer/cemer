@@ -174,6 +174,8 @@ void iMainWindowViewer::Init() {
   toolsMenu = NULL;
   history_back_action = NULL;
   history_forward_action = NULL;
+  edit_undo_action = NULL;
+  edit_redo_action = NULL;
   fileNewAction = NULL;
   fileOpenAction = NULL;
   fileSaveAction = NULL;
@@ -595,12 +597,21 @@ void iMainWindowViewer::Constr_FileMenu()
 void iMainWindowViewer::Constr_EditMenu()
 {
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+  edit_undo_action = new QAction(this);
+  edit_undo_action->setIconText("Undo");
+  edit_undo_action->setText("Undo");
+  edit_undo_action->setToolTip(taiMisc::ToolTipPreProcess("Undo last edit - hold button down for list of possible undos\n"));
+  edit_undo_action->setStatusTip(edit_undo_action->toolTip());
+  
+  edit_redo_action = new QAction(this);
+  edit_redo_action->setIconText("Redo");
+  edit_redo_action->setText("Redo");
+  edit_redo_action->setToolTip(taiMisc::ToolTipPreProcess("Redo last undo - hold button down for list of possible redos\n"));
+  edit_redo_action->setStatusTip(edit_undo_action->toolTip());
 
-  // so standard we don't offer custom key binding
-  editUndoAction = AddAction(new iAction("&Undo", QKeySequence::Undo, "editUndoAction"));
-  editUndoAction->setIcon(QIcon(QPixmap(":/images/editundo.png")));
-  editRedoAction = AddAction(new iAction("&Redo", QKeySequence::Redo, "editRedoAction"));
-  editRedoAction->setIcon(QIcon(QPixmap(":/images/editredo.png")));
+  // When window first created, nothing to undo/redo
+  edit_undo_action->setEnabled(false);
+  edit_redo_action->setEnabled(false);
 
   editCutAction = AddAction(new iAction(iClipData::EA_CUT, "Cu&t", QKeySequence::Cut, "editCutAction"));
   editCutAction->setIcon(QIcon(QPixmap(":/images/editcut.png")));
@@ -632,8 +643,8 @@ void iMainWindowViewer::Constr_EditMenu()
 //  QKeySequence ks_find_next = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT);
 
   // Build menu items.
-  editMenu->AddAction(editUndoAction);
-  editMenu->AddAction(editRedoAction);
+  editMenu->menu()->addAction(edit_undo_action);
+  editMenu->menu()->addAction(edit_redo_action);
 
   editMenu->insertSeparator();
   editMenu->AddAction(editCutAction);
@@ -652,8 +663,8 @@ void iMainWindowViewer::Constr_EditMenu()
   editMenu->AddAction(editFindAction);
 
   // Make connections.
-  connect(editUndoAction, SIGNAL(Action()), this, SLOT(editUndo()));
-  connect(editRedoAction, SIGNAL(Action()), this, SLOT(editRedo()));
+  connect(edit_undo_action, SIGNAL(triggered()), this, SLOT(editUndo()));
+  connect(edit_redo_action, SIGNAL(triggered()), this, SLOT(editRedo()));
   connect(editCutAction, SIGNAL(Action()), this, SLOT(editCut()));
   connect(editCopyAction, SIGNAL(Action()), this, SLOT(editCopy()));
   connect(editPasteAction, SIGNAL(Action()), this, SLOT(editPaste()));
@@ -667,8 +678,6 @@ void iMainWindowViewer::Constr_EditMenu()
   connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
   
-  editUndoAction->setEnabled(false);
-  editRedoAction->setEnabled(false);
   editCutAction->setEnabled(false);
   editCopyAction->setEnabled(false);
   editPasteAction->setEnabled(false);
@@ -3053,13 +3062,13 @@ void iMainWindowViewer::UpdateUi() {
 
   taProject* proj = myProject();
   if(proj) {
-    editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
-    editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
+    edit_undo_action->setEnabled(proj->undo_mgr.UndosAvail() > 0);
+    edit_redo_action->setEnabled(proj->undo_mgr.RedosAvail() > 0);
     progStatusAction->setText(proj->ProgGlobalStatus());
   }
   else {
-    editUndoAction->setEnabled(false);
-    editRedoAction->setEnabled(false);
+    edit_undo_action->setEnabled(false);
+    edit_redo_action->setEnabled(false);
     progStatusAction->setEnabled(false);
   }
 

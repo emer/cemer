@@ -33,12 +33,16 @@ public:
 
   QMenu*                history_back_menu;
   QMenu*                history_forward_menu;
+  QMenu*                edit_undo_menu;
+  QMenu*                edit_redo_menu;
 
 protected:
   void                  Constr_post() override;
   
   QToolButton*          history_back_button;
   QToolButton*          history_forward_button;
+  QToolButton*          edit_undo_button;
+  QToolButton*          edit_redo_button;
   
 protected slots:
 
