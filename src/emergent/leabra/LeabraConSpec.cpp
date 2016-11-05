@@ -116,8 +116,8 @@ void DwtZoneSpec::Defaults_init() {
   dwt_norm_min = 0.01f;
   s_tau = 20.0f;
   l_tau = 20.0f;
+  norm_scp = CON;
   norm_tau = 40.0f;
-  norm_cg = false;
   gain = 20.0f;
   lrate_mult = 2.0f;
 

@@ -201,13 +201,19 @@ class E_API DwtZoneSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
 INHERITED(SpecMemberBase)
 public:
+  enum NormScope {
+    CON,                        // connection level: dwnorm variable in connection
+    CG,                         // connection group: dwt_max_avg aggregated in con group
+    LAY,                        // layer level: cos_diff_avg layer-level variables
+  };
+  
   bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
   bool          dwt_norm;       // #CONDSHOW_ON_on normalize actual dwt values used in learning based on running-average max absolute dwt value -- ensures a consistent dwt magnitude across layers
   float         dwt_norm_min;   // #CONDSHOW_ON_on&&dwt_norm minimum for cos_diff_avg value going into dwt normalization factor
   float         s_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of shorter-term dwt average: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
   float         l_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of longer-term dwt average: dwa_l -- this cascades on top of the dwa_s short term average value, so this essentially reflects the number of trials over which a new direction of learning is allowed to drive learning -- e.g., if this value was 1 then the time constant of integration is 1 and the learning rate will always be 0
+  NormScope     norm_scp;       // #CONDSHOW_ON_on scope of the normalization of the zone lrate factor
   float         norm_tau;       // #CONDSHOW_ON_on #MIN_1 time constant for integration of normalization dwt factor -- should probably be on scale at least of l_tau..
-  bool          norm_cg;        // #CONDSHOW_ON_on use the connection-group dwt_max_avg normalization factor for computing dwa values for then computing zone lrate factor -- for testing comparison with connection-level dwnorm factor
   float         gain;           // #CONDSHOW_ON_on #MIN_0 the zone-based learning rate is computed as: zone = XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor) -- the dwts are normalized by the average max dwt magnitude across each set of sending connections prior to computing the dwa_s, _l values, compensating for differences across layers.
   float         lrate_mult;     // #CONDSHOW_ON_on #MIN_0 overall learning rate multiplier to compensate for the fact that the effective learning rate is lower on average using this mechanism -- allows for a common master learning rate for comparison between zone and non-zone conditions
 
@@ -592,15 +598,18 @@ public:
     dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
     dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
     float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);
-    if(dwt_zone.norm_cg) {
+    if(dwt_zone.norm_scp == DwtZoneSpec::CON) {
+      if(dwnorm == 0.0f) { dwnorm = fabsf(dwt); dwt = 0.0f; return; }
+      dwnorm += dwt_zone.norm_dt * (fabsf(dwt) - dwnorm);
+      zone /= dwnorm;
+    }
+    else if(dwt_zone.norm_scp == DwtZoneSpec::CG) {
       dwt_max = fmaxf(dwt_max, fabsf(dwt));
       if(dwt_max_avg == 0.0f) { dwt = 0.0f; return; } // bail on first pass
       zone /= dwt_max_avg;
     }
-    else {
-      if(dwnorm == 0.0f) { dwnorm = fabsf(dwt); dwt = 0.0f; return; }
-      dwnorm += dwt_zone.norm_dt * (fabsf(dwt) - dwnorm);
-      zone /= dwnorm;
+    else { // layer
+      zone *= dwt_norm_fact;
     }
     float zone_lr = zone / (1.0f + zone); // XX1 sigmoidify
     swt = zone_lr;              // temp: save this for visualization -- incompat with slow..

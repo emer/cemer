@@ -207,7 +207,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
          cg->dwt_max_avg, dwt_norm_fact, lrate_eff, ru->avg_s_eff, ru->avg_m,
          su_avg_s, su_avg_m, avg_l_eff, l_lrn_eff);
     }
-    if(dwt_zone.norm_cg) {
+    if(dwt_zone.norm_scp == DwtZoneSpec::CG) {
       if(cg->dwt_max_avg == 0.0f)
         cg->dwt_max_avg = dwt_max;
       else 
