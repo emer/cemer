@@ -203,15 +203,17 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
   bool          dwt_norm;       // #CONDSHOW_ON_on normalize actual dwt values used in learning based on running-average max absolute dwt value -- ensures a consistent dwt magnitude across layers
-  float         dwt_norm_min;   // #CONDSHOW_ON_on minimum for cos_diff_avg value going into dwt normalization factor
+  float         dwt_norm_min;   // #CONDSHOW_ON_on&&dwt_norm minimum for cos_diff_avg value going into dwt normalization factor
   float         s_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of shorter-term dwt average: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
   float         l_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of longer-term dwt average: dwa_l -- this cascades on top of the dwa_s short term average value, so this essentially reflects the number of trials over which a new direction of learning is allowed to drive learning -- e.g., if this value was 1 then the time constant of integration is 1 and the learning rate will always be 0
-  float         gain;           // #CONDSHOW_ON_on #MIN_0 the zone-based learning rate is computed as an XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor) -- the dwts are normalized by the average max dwt magnitude across each set of sending connections prior to computing the dwa_s, _l values, compensating for differences across layers.
-  float         const_lrate;    // #CONDSHOW_ON_on #MIN_0 constant learning rate factor -- added to zone-based learning rate to determine net overall learning rate -- hedges the bet on this zone filtering mechanism and allows some learning to always operate
+  float         norm_tau;       // #CONDSHOW_ON_on #MIN_1 time constant for integration of normalization dwt factor -- should probably be on scale at least of l_tau..
+  bool          norm_cg;        // #CONDSHOW_ON_on use the connection-group dwt_max_avg normalization factor for computing dwa values for then computing zone lrate factor -- for testing comparison with connection-level dwnorm factor
+  float         gain;           // #CONDSHOW_ON_on #MIN_0 the zone-based learning rate is computed as: zone = XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor) -- the dwts are normalized by the average max dwt magnitude across each set of sending connections prior to computing the dwa_s, _l values, compensating for differences across layers.
   float         lrate_mult;     // #CONDSHOW_ON_on #MIN_0 overall learning rate multiplier to compensate for the fact that the effective learning rate is lower on average using this mechanism -- allows for a common master learning rate for comparison between zone and non-zone conditions
 
   float         s_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / s_tau
-  float         l_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / s_tau
+  float         l_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / l_tau
+  float         norm_dt;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight norm integration = 1 / norm_tau
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -392,6 +394,7 @@ public:
     SCALE = N_CON_VARS,        // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
     DWA_S,                     // average weight change (delta weight) over shorter time constant
     DWA_L,                     // average weight change (delta weight) over longer time constant
+    DWNORM,                    // dw normalization factor -- time integrated absolute dwt values
     FWT,                       // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                       // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
     N_LEABRA_CON_VARS,         // #IGNORE number of leabra con vars
@@ -575,25 +578,33 @@ public:
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_DwtZone
-    (float& dwa_s, float& dwa_l, float& swt, float& dwt, const float dwt_norm_fact,
-     const float clrate, const float ru_avg_s,
+    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& dwt,
+     float& dwt_max, const float dwt_max_avg,
+     const float dwt_norm_fact, const float clrate, const float ru_avg_s,
      const float ru_avg_m, const float su_avg_s, const float su_avg_m,
      const float ru_avg_l, const float ru_avg_l_lrn) 
   {
     // send in clrate = 1.0f -- apply clrate later
     C_Compute_dWt_CtLeabraXCAL(dwt, 1.0f, ru_avg_s, ru_avg_m,
                                su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
-    // dwt_max = fmaxf(dwt_max, fabsf(dwt));
-    // if(dwt_max_avg == 0.0f) { dwt = 0.0f; return; } // bail on first pass
-    const float dwnrm = dwt * dwt_norm_fact;
     if(dwt_zone.dwt_norm)       // actually use normed values!
-      dwt = dwnrm;
-    dwa_s += dwt_zone.s_dt * (dwnrm - dwa_s);
+      dwt *= dwt_norm_fact;
+    dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
     dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
-    float zf = dwt_zone.gain * fabsf(dwa_s - dwa_l);
-    float zone_lr = zf / (1.0f + zf); // XX1 sigmoidify
+    float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);
+    if(dwt_zone.norm_cg) {
+      dwt_max = fmaxf(dwt_max, fabsf(dwt));
+      if(dwt_max_avg == 0.0f) { dwt = 0.0f; return; } // bail on first pass
+      zone /= dwt_max_avg;
+    }
+    else {
+      if(dwnorm == 0.0f) { dwnorm = fabsf(dwt); dwt = 0.0f; return; }
+      dwnorm += dwt_zone.norm_dt * (fabsf(dwt) - dwnorm);
+      zone /= dwnorm;
+    }
+    float zone_lr = zone / (1.0f + zone); // XX1 sigmoidify
     swt = zone_lr;              // temp: save this for visualization -- incompat with slow..
-    dwt *= clrate * (zone_lr + dwt_zone.const_lrate); // clrate pre-mult by lrate_mult
+    dwt *= clrate * zone_lr; // clrate already pre-mult by lrate_mult
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt zone of proximal development mechanism
 

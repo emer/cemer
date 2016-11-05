@@ -116,18 +116,21 @@ void DwtZoneSpec::Defaults_init() {
   dwt_norm_min = 0.01f;
   s_tau = 20.0f;
   l_tau = 20.0f;
-  gain = 100.0f;
-  const_lrate = 0.0f;
+  norm_tau = 40.0f;
+  norm_cg = false;
+  gain = 20.0f;
   lrate_mult = 2.0f;
 
   s_dt = 1.0f / s_tau;
   l_dt = 1.0f / l_tau;
+  norm_dt = 1.0f / norm_tau;
 }
 
 void DwtZoneSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   s_dt = 1.0f / s_tau;
   l_dt = 1.0f / l_tau;
+  norm_dt = 1.0f / norm_tau;
 }
 
 void DwtWtaSpec::Initialize() {
