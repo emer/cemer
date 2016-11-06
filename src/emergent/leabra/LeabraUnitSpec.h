@@ -268,28 +268,28 @@ class E_API LeabraAvgLSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
-  bool          avg;            // avg_l is LITERALLY just a running average of activation
-  float         off_thr;        // #CONDSHOW_ON_avg threshold to use for avg based version for when the unit is effectively off -- activations lower than this threshold accumulate at the off_tau rate instead of at the regular tau rate -- the average should reflect activity when the unit is actually active, but that there can be relatively long periods of time when the unit is off, and learning doesn't take place during this time anyway, so we should discount these events significantly by using a much longer tau
-  float         off_tau;        // #CONDSHOW_ON_avg time constant for off units -- see off_thr for rationale
-  float         avg_gain;       // #CONDSHOW_ON_avg extra gain multiplier on activation value prior to applying to average -- provides a bit of inflation to the average, to counteract the positive feedback loops present in hebbian learning
-  float         max;            // #CONDSHOW_OFF_avg #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
-  float         min;            // #CONDSHOW_OFF_avg #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
+  bool          avg;            // use raw activation times max to drive avg_l, instead of doing thresholding and going towards max or min from there -- takes into account graded activations of units -- which may or may not be a good thing..
+  float         max;            // #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
+  float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
   float         tau;            // #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
   float         lrn_max;        // #DEF_0.05;0.0004 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units -- the default of 0.05, in combination with the err_mod flag, works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
   float         lrn_min;        // #DEF_0.005;0.0004 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- the default of 0.005 works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
   
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
-  float         off_dt;         // #READ_ONLY #EXPERT rate = 1 / tau
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (max - min)
   
   inline float  GetLrn(const float avg_l) {
-    if(avg)
-      return lrn_min + lrn_fact * avg_l;
-    else
-      return lrn_min + lrn_fact * (avg_l - min);
+    return lrn_min + lrn_fact * (avg_l - min);
   }
   // get the avg_l_lrn value for given avg_l value
 
+  inline void   UpdtAvgL(float& avg_l, const float act) {
+    avg_l += dt * (max * act - avg_l);
+    if(avg_l < min) avg_l = min;
+  }
+  // update long-term average value from given activation, using average-based update
+
+  
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraAvgLSpec);

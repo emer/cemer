@@ -74,13 +74,6 @@ class E_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
-  enum HebbThr {                // what to use for the floating threshold for hebbian term
-    RU_AVGL,                    // XCAL version of BCM rule: thresh is recv unit avg_l -- used in version 8.0 of Leabra
-    RU_SU_AVGL,                 // vanishing derivative formula: recv * send avg_l's
-    RU_AVGL_W,                  // use the weight as a standin for su avg_l
-  };
-
-  HebbThr       hebb_thr;       // what equation to use for the floating threshold for the hebbian component of learning (long-term average based learning)
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
@@ -547,19 +540,12 @@ public:
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
   inline void 	C_Compute_dWt_CtLeabraXCAL
-    (float& wt, float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
-     const float su_avg_s, const float su_avg_m, const float ru_avg_l, const float su_avg_l,
+    (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
+     const float su_avg_s, const float su_avg_m, const float ru_avg_l,
      const float ru_avg_l_lrn) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
-    float hebb_thr;
-    if(xcal.hebb_thr == XCalLearnSpec::RU_AVGL)
-      hebb_thr = ru_avg_l;
-    else if(xcal.hebb_thr == XCalLearnSpec::RU_SU_AVGL)
-      hebb_thr = ru_avg_l * su_avg_l;
-    else // RU_AVGL_W
-      hebb_thr = ru_avg_l * wt;
-    dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, hebb_thr) +
+    dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                      xcal.m_lrn * xcal.dWtFun(srs, srm));
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
@@ -576,15 +562,15 @@ public:
   // // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_DwtZone
-    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& wt, float& dwt,
+    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& dwt,
      float& dwt_max, const float dwt_max_avg, const float clrate,
      const float ru_avg_s, const float ru_avg_m,
      const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float su_avg_l, const float ru_avg_l_lrn) 
+     const float ru_avg_l, const float ru_avg_l_lrn) 
   {
     // send in clrate = 1.0f -- apply clrate later
-    C_Compute_dWt_CtLeabraXCAL(wt, dwt, 1.0f, ru_avg_s, ru_avg_m,
-                               su_avg_s, su_avg_m, ru_avg_l, su_avg_l, ru_avg_l_lrn);
+    C_Compute_dWt_CtLeabraXCAL(dwt, 1.0f, ru_avg_s, ru_avg_m,
+                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
     dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
     dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
     float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);

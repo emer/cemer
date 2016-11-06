@@ -68,7 +68,6 @@ float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const floa
 }
 
 void XCalLearnSpec::Initialize() {
-  hebb_thr = RU_AVGL;
   Defaults_init();
 }
 
@@ -111,11 +110,11 @@ void DwtZoneSpec::Initialize() {
 }
 
 void DwtZoneSpec::Defaults_init() {
-  con_norm = false;
+  con_norm = true;
   s_tau = 50.0f;
   l_tau = 5.0f;
   norm_tau = 40.0f;
-  gain = 20.0f;
+  gain = 2.0f;
   lrate_mult = 4.0f;
 
   s_dt = 1.0f / s_tau;
