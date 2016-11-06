@@ -160,9 +160,11 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 
   const float su_avg_s = su->avg_s_eff;
   const float su_avg_m = su->avg_m;
+  const float su_avg_l = su->avg_l;
   const int sz = cg->size;
 
   float* dwts = cg->OwnCnVar(DWT);
+  float* wts = cg->OwnCnVar(WT);
   
   // if(dwt_wta.on) {
   //   float* dwa_ss = cg->OwnCnVar(DWA_S);
@@ -180,14 +182,6 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   //   }
   // }
   if(dwt_zone.on) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
-    float cos_diff;
-    if(slay->layer_type != Layer::INPUT)
-      cos_diff = 0.5f * (rlay->cos_diff_avg + slay->cos_diff_avg);
-    else
-      cos_diff = rlay->cos_diff_avg;
-    const float dwt_norm_fact = 1.0f / fmaxf(1.0f - cos_diff, dwt_zone.dwt_norm_min);
     clrate *= dwt_zone.lrate_mult;
     float* dwa_ss = cg->OwnCnVar(DWA_S);
     float* dwa_ls = cg->OwnCnVar(DWA_L);
@@ -196,18 +190,19 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     float dwt_max = 0.0f;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      if(ru->avg_s < us->opt_thresh.xcal_lrn && ru->avg_m < us->opt_thresh.xcal_lrn)
+        continue;               // important for not updating averages when no learning happening
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
-      float avg_l_eff = xcal.AvgL(ru->avg_l);
       C_Compute_dWt_CtLeabraXCAL_DwtZone
-        (dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], dwts[i], dwt_max,
-         cg->dwt_max_avg, dwt_norm_fact, lrate_eff, ru->avg_s_eff, ru->avg_m,
-         su_avg_s, su_avg_m, avg_l_eff, l_lrn_eff);
+        (dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], wts[i], dwts[i],
+         dwt_max, cg->dwt_max_avg, lrate_eff,
+         ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, su_avg_l, l_lrn_eff);
     }
-    if(dwt_zone.norm_scp == DwtZoneSpec::CG) {
+    if(!dwt_zone.con_norm) {
       if(cg->dwt_max_avg == 0.0f)
         cg->dwt_max_avg = dwt_max;
       else 
@@ -217,15 +212,16 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   else {
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      if(ru->avg_s < us->opt_thresh.xcal_lrn && ru->avg_m < us->opt_thresh.xcal_lrn)
+        continue;
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
-      float avg_l_eff = xcal.AvgL(ru->avg_l);
       C_Compute_dWt_CtLeabraXCAL
-        (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-         avg_l_eff, l_lrn_eff);
+        (wts[i], dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+         ru->avg_l, su_avg_l, l_lrn_eff);
     }
   }
 // #endif

@@ -76,7 +76,9 @@ public:
 
     const float su_avg_s = su->deep_raw_prv; // value sent on prior trial..
     const float su_avg_m = su->deep_raw_prv;
+    const float su_avg_l = su->avg_l;
     float* dwts = cg->OwnCnVar(DWT);
+    float* wts = cg->OwnCnVar(WT);
 
     const int sz = cg->size;
 
@@ -96,8 +98,8 @@ public:
       }
       else {
         C_Compute_dWt_CtLeabraXCAL
-          (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-           ru->avg_l, l_lrn_eff);
+          (wts[i], dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+           ru->avg_l, su_avg_l, l_lrn_eff);
       }
     }
   }

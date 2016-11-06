@@ -74,11 +74,16 @@ class E_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
-  bool          ru_act_deriv; // multiply times the receiving unit activation derivative, 8.0 * (1-ru_act) * ru_act -- restricts learning to sensitive region of activation function, and potentially reduces hog unit dynamics
+  enum HebbThr {                // what to use for the floating threshold for hebbian term
+    RU_AVGL,                    // XCAL version of BCM rule: thresh is recv unit avg_l -- used in version 8.0 of Leabra
+    RU_SU_AVGL,                 // vanishing derivative formula: recv * send avg_l's
+    RU_AVGL_W,                  // use the weight as a standin for su avg_l
+  };
+
+  HebbThr       hebb_thr;       // what equation to use for the floating threshold for the hebbian component of learning (long-term average based learning)
   float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   bool          set_l_lrn;      // #DEF_false if true, set a fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. If false, then the receiving unit's avg_l_lrn factor is used, which dynamically modulates the amount of the long-term component as a function of how active overall it is
   float         l_lrn;          // #CONDSHOW_ON_set_l_lrn fixed l_lrn weighting factor that determines how much of the long-term floating average threshold (i.e., BCM, Hebbian) component of learning is used -- this is useful for setting a fully Hebbian learning connection, e.g., by setting m_lrn = 0 and l_lrn = 1. 
-  float         avg_l_gain;     // #DEF_1 extra per-projection multiplicative factor on unit-level avg_l long-term average value that is the long-term floating threshold for the BCM Hebbian component of learning -- this is useful if different projections have different levels of correlation and thus need higher or lower thresholds on average -- if the weights are systematically going down or up in a projection on average (but only for specific projections and not the whole recv unit), then adjust this in the corresponding direction (i.e., gain < 1 reduces threshold and generally makes weights stronger, and vice-versa for gain > 1)
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
   float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
@@ -120,11 +125,6 @@ public:
   }
   // get the learning rate for long-term floating average component (BCM)
 
-  inline float  AvgL(const float ru_avg_l) {
-    return ru_avg_l * avg_l_gain;
-  }
-  // multiply times gain factor
-  
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   SIMPLE_COPY(XCalLearnSpec);
@@ -201,18 +201,10 @@ class E_API DwtZoneSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
 INHERITED(SpecMemberBase)
 public:
-  enum NormScope {
-    CON,                        // connection level: dwnorm variable in connection
-    CG,                         // connection group: dwt_max_avg aggregated in con group
-    LAY,                        // layer level: cos_diff_avg layer-level variables
-  };
-  
   bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
-  bool          dwt_norm;       // #CONDSHOW_ON_on normalize actual dwt values used in learning based on running-average max absolute dwt value -- ensures a consistent dwt magnitude across layers
-  float         dwt_norm_min;   // #CONDSHOW_ON_on&&dwt_norm minimum for cos_diff_avg value going into dwt normalization factor
+  bool          con_norm;       // #CONDSHOW_ON_on use connection-level normalization of the dwt average values, via the dwnorm connection variable -- otherwise use sending connection-group normalization factor, which is less precise but much more memory efficient
   float         s_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of shorter-term dwt average: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
   float         l_tau;          // #CONDSHOW_ON_on #MIN_1 time constant for integration of longer-term dwt average: dwa_l -- this cascades on top of the dwa_s short term average value, so this essentially reflects the number of trials over which a new direction of learning is allowed to drive learning -- e.g., if this value was 1 then the time constant of integration is 1 and the learning rate will always be 0
-  NormScope     norm_scp;       // #CONDSHOW_ON_on scope of the normalization of the zone lrate factor
   float         norm_tau;       // #CONDSHOW_ON_on #MIN_1 time constant for integration of normalization dwt factor -- should probably be on scale at least of l_tau..
   float         gain;           // #CONDSHOW_ON_on #MIN_0 the zone-based learning rate is computed as: zone = XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor) -- the dwts are normalized by the average max dwt magnitude across each set of sending connections prior to computing the dwa_s, _l values, compensating for differences across layers.
   float         lrate_mult;     // #CONDSHOW_ON_on #MIN_0 overall learning rate multiplier to compensate for the fact that the effective learning rate is lower on average using this mechanism -- allows for a common master learning rate for comparison between zone and non-zone conditions
@@ -546,7 +538,7 @@ public:
                           float& bg_lrate, float& fg_lrate);
   // #IGNORE get the current learning rates including layer-specific and potential deep modulations
 
-  // potential option to explore at some point...
+  // todo: should go back and explore this at some point:
   // if(xcal.one_thr) {
   //   float eff_thr = ru_avg_l_lrn * ru_avg_l + (1.0f - ru_avg_l_lrn) * srm;
   //   eff_thr = fminf(eff_thr, 1.0f);
@@ -555,61 +547,56 @@ public:
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
   inline void 	C_Compute_dWt_CtLeabraXCAL
-    (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
-     const float su_avg_s, const float su_avg_m, const float ru_avg_l,
+    (float& wt, float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
+     const float su_avg_s, const float su_avg_m, const float ru_avg_l, const float su_avg_l,
      const float ru_avg_l_lrn) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
-    if(xcal.ru_act_deriv) {
-      float ru_deriv = 4.0f * (1.0f - ru_avg_m) * ru_avg_m; // avg_m only thing that works -- could also try avg_l..
-      dwt += ru_deriv * clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
-                                  xcal.m_lrn * xcal.dWtFun(srs, srm));
-    }
-    else {
-      dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
-                       xcal.m_lrn * xcal.dWtFun(srs, srm));
-    }
+    float hebb_thr;
+    if(xcal.hebb_thr == XCalLearnSpec::RU_AVGL)
+      hebb_thr = ru_avg_l;
+    else if(xcal.hebb_thr == XCalLearnSpec::RU_SU_AVGL)
+      hebb_thr = ru_avg_l * su_avg_l;
+    else // RU_AVGL_W
+      hebb_thr = ru_avg_l * wt;
+    dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, hebb_thr) +
+                     xcal.m_lrn * xcal.dWtFun(srs, srm));
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_DwtWta
-    (float& dwa_s, float& dwt, const float clrate, const float ru_avg_s,
-     const float ru_avg_m, const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float ru_avg_l_lrn) 
-  {
-    C_Compute_dWt_CtLeabraXCAL(dwt, clrate, ru_avg_s, ru_avg_m,
-                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
-    dwa_s += dwt - dwt_wta.dw_dt * dwa_s;  // additive with constant decay
-  }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
+  // inline void 	C_Compute_dWt_CtLeabraXCAL_DwtWta
+  //   (float& dwa_s, float& dwt, const float clrate, const float ru_avg_s,
+  //    const float ru_avg_m, const float su_avg_s, const float su_avg_m,
+  //    const float ru_avg_l, const float ru_avg_l_lrn) 
+  // {
+  //   C_Compute_dWt_CtLeabraXCAL(dwt, clrate, ru_avg_s, ru_avg_m,
+  //                              su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
+  //   dwa_s += dwt - dwt_wta.dw_dt * dwa_s;  // additive with constant decay
+  // }
+  // // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt WTA mechanism
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_DwtZone
-    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& dwt,
-     float& dwt_max, const float dwt_max_avg,
-     const float dwt_norm_fact, const float clrate, const float ru_avg_s,
-     const float ru_avg_m, const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float ru_avg_l_lrn) 
+    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& wt, float& dwt,
+     float& dwt_max, const float dwt_max_avg, const float clrate,
+     const float ru_avg_s, const float ru_avg_m,
+     const float su_avg_s, const float su_avg_m,
+     const float ru_avg_l, const float su_avg_l, const float ru_avg_l_lrn) 
   {
     // send in clrate = 1.0f -- apply clrate later
-    C_Compute_dWt_CtLeabraXCAL(dwt, 1.0f, ru_avg_s, ru_avg_m,
-                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
-    if(dwt_zone.dwt_norm)       // actually use normed values!
-      dwt *= dwt_norm_fact;
+    C_Compute_dWt_CtLeabraXCAL(wt, dwt, 1.0f, ru_avg_s, ru_avg_m,
+                               su_avg_s, su_avg_m, ru_avg_l, su_avg_l, ru_avg_l_lrn);
     dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
     dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
     float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);
-    if(dwt_zone.norm_scp == DwtZoneSpec::CON) {
+    if(dwt_zone.con_norm) {
       if(dwnorm == 0.0f) { dwnorm = fabsf(dwt); dwt = 0.0f; return; }
       dwnorm += dwt_zone.norm_dt * (fabsf(dwt) - dwnorm);
       zone /= dwnorm;
     }
-    else if(dwt_zone.norm_scp == DwtZoneSpec::CG) {
+    else {
       dwt_max = fmaxf(dwt_max, fabsf(dwt));
       if(dwt_max_avg == 0.0f) { dwt = 0.0f; return; } // bail on first pass
       zone /= dwt_max_avg;
-    }
-    else { // layer
-      zone *= dwt_norm_fact;
     }
     float zone_lr = zone / (1.0f + zone); // XX1 sigmoidify
     swt = zone_lr;              // temp: save this for visualization -- incompat with slow..
