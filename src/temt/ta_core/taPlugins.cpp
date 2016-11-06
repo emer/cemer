@@ -514,19 +514,29 @@ bool taPlugins::CleanSystemPlugin(const String& plugin_name) {
 }
 
 bool taPlugins::CleanPlugin(const String& plugin_path, const String& plugin_name,
-                           bool system_plugin) {
+  bool system_plugin) {
+
   taMisc::Info("=========================================================================");
   taMisc::Info("Cleaning Plugin:", plugin_name, "in dir:", plugin_path);
   taMisc::Info("=========================================================================");
 
-  String sudo_cmd;
-#ifndef TA_OS_WIN
-  if(system_plugin)
-    sudo_cmd = "sudo ";
-#endif
-
-  String rm_cmd = sudo_cmd + "rm " + plugin_name;
-  if(!ExecMakeCmd(rm_cmd, plugin_path)) return false;
+#ifdef TA_OS_WIN
+  String plugin_name_win = plugin_name;
+  plugin_name_win.repl("/", "\\");  // forward slash not always interpreted correctly by windows
+  String rm_cmd = "del " + plugin_name_win;
+  taMisc::Info(rm_cmd);
+  if (!ExecMakeCmd(rm_cmd, plugin_path)) return false;
   return true;
+#else // !TA_OS_WIN
+  if (system_plugin) {
+    String rm_cmd = "sudo rm " + plugin_name;
+  }
+  else {
+    String rm_cmd = "rm " + plugin_name;
+  }
+  taMisc::Info(rm_cmd);
+  if (!ExecMakeCmd(rm_cmd, plugin_path)) return false;
+  return false;
+#endif // TA_OS_WIN
 }
 
