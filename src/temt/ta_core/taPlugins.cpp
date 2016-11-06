@@ -528,11 +528,12 @@ bool taPlugins::CleanPlugin(const String& plugin_path, const String& plugin_name
   if (!ExecMakeCmd(rm_cmd, plugin_path)) return false;
   return true;
 #else // !TA_OS_WIN
+  String rm_cmd;
   if (system_plugin) {
-    String rm_cmd = "sudo rm " + plugin_name;
+    rm_cmd = "sudo rm " + plugin_name;
   }
   else {
-    String rm_cmd = "rm " + plugin_name;
+    rm_cmd = "rm " + plugin_name;
   }
   taMisc::Info(rm_cmd);
   if (!ExecMakeCmd(rm_cmd, plugin_path)) return false;
