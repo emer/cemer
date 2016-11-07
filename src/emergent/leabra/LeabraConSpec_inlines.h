@@ -188,8 +188,6 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     float dwt_max = 0.0f;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      if(ru->avg_s < us->opt_thresh.xcal_lrn && ru->avg_m < us->opt_thresh.xcal_lrn)
-        continue;               // important for not updating averages when no learning happening
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
@@ -210,8 +208,6 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   else {
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      if(ru->avg_s < us->opt_thresh.xcal_lrn && ru->avg_m < us->opt_thresh.xcal_lrn)
-        continue;
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
