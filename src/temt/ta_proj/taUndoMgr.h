@@ -53,9 +53,9 @@ public:
   virtual void  PurgeUnusedSrcs();
   // remove any undo_srcs that are not currently being used
 
-  virtual bool  Undo();
+  virtual bool  Undo(int index = -1);
   // undo the most recent action
-  virtual bool  Redo();
+  virtual bool  Redo(int index = -1);
   // redo the most recent action that was undone
 
   virtual int   UndosAvail();

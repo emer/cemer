@@ -362,7 +362,7 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
     this->Copy(obj);  // the second copy fixes up pointers for cases where the pointed to object was not yet available - see bug #2584
     this->SetName(saved_name);  // restore the name
     if (proj) {
-      proj->undo_mgr.SaveUndo(obj, "ASSIGN", NULL, false, this);
+      proj->undo_mgr.SaveUndo(obj, "ASSIGN " + obj->GetName(), NULL, false, this);
       proj->no_dialogs = false;
     }
     UpdateAfterEdit();
@@ -500,7 +500,7 @@ int taBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
   if (ea & iClipData::EA_DUPE) {
     taProject* proj = (taProject*)GetOwner(&TA_taProject);
     if(proj) {
-      proj->undo_mgr.SaveUndo(child, "Duplicate", NULL, false, this);
+      proj->undo_mgr.SaveUndo(child, "Duplicate " + child->GetName(), NULL, false, this);
       // list is save_undo_owner
     }
     if (ChildDuplicate(child) != NULL)
@@ -714,7 +714,7 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
       ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_COPY))
       ) {
     if(proj) {
-      proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, this);
+      proj->undo_mgr.SaveUndo(list, "Paste/Copy " + obj->GetName(), NULL, false, this);
       // list is save_undo_owner
     }
     taBase* new_obj = obj->MakeToken();
@@ -748,7 +748,7 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     if (obj == lst_itm)
       return 1; // nop
     if(proj) {
-      proj->undo_mgr.SaveUndo(obj, "Move", NULL, false, this);
+      proj->undo_mgr.SaveUndo(obj, "Move " + obj->GetName(), NULL, false, this);
       // list is save_undo_owner
     }
     if (obj_idx >= 0) { // in this list: just do a list move

@@ -341,14 +341,22 @@ void iTreeView::InsertDefaultEl(bool after) {
   TypeDef* td = sbo->el_typ;    // default type
 
   if(td) {
-    taProject* proj = myProject();
-    if(proj) {
-      proj->undo_mgr.SaveUndo(sbo, "InsertDefaultEl", NULL, false, sbo); // global save
-    }
 
     taBase* nwi = taBase::MakeToken(td);
 
     if(nwi) {
+      taProject* proj = myProject();
+      if(proj) {
+        String action;
+        if (nwi->InheritsFrom(&TA_taNBase)) {
+          action = "Insert " + nwi->GetName();
+        }
+        else {
+          action = "Insert " + td->name;
+        }
+        proj->undo_mgr.SaveUndo(sbo, action, NULL, false, sbo); // global save
+      }
+
       int idx = 0;
       if(sbo == sb) {           // it is the list
         idx = sbo->size;

@@ -3382,3 +3382,53 @@ void iMainWindowViewer::HistoryGoTo(QAction* action) {
   taiSigLink* link = brow_hist->items.SafeEl(index);
   AssertBrowserItem(link);
 }
+
+void iMainWindowViewer::UndoMenuAboutToShow() {
+  ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
+  iApplicationToolBar* ap_toolbar = (iApplicationToolBar*)tb->widget();
+  ap_toolbar->edit_undo_menu->clear();
+
+  taProject* proj = myProject();
+  if (!proj) return;
+  
+  for (int i = proj->undo_mgr.cur_undo_idx - 1; i >= 0; i--) {
+    String name = proj->undo_mgr.undo_recs.SafeEl(i)->action;
+    String menu_string = name.elidedTo(75);
+    QAction* action = new QAction(menu_string, this);
+    action->setData(i);
+    ap_toolbar->edit_undo_menu->addAction(action);
+  }
+}
+
+void iMainWindowViewer::RedoMenuAboutToShow() {
+  ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
+  iApplicationToolBar* ap_toolbar = (iApplicationToolBar*)tb->widget();
+  ap_toolbar->edit_redo_menu->clear();
+  
+  taProject* proj = myProject();
+  if (!proj) return;
+  
+  for (int i = proj->undo_mgr.cur_undo_idx; i < proj->undo_mgr.undo_recs.size; i++) {
+    String name = proj->undo_mgr.undo_recs.SafeEl(i)->action;
+    String menu_string = name.elidedTo(75);
+    QAction* action = new QAction(menu_string, this);
+    action->setData(i);
+    ap_toolbar->edit_redo_menu->addAction(action);
+  }
+}
+
+void iMainWindowViewer::UndoJump(QAction* action) {
+  taProject* proj = myProject();
+  if (!proj) return;
+
+  int index = action->data().toInt();
+  proj->undo_mgr.Undo(index);
+}
+
+void iMainWindowViewer::RedoJump(QAction* action) {
+  taProject* proj = myProject();
+  if (!proj) return;
+  
+  int index = action->data().toInt();
+  proj->undo_mgr.Redo(index);
+}

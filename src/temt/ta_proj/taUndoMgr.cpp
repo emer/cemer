@@ -213,8 +213,13 @@ void taUndoMgr::PurgeUnusedSrcs() {
   }
 }
 
-bool taUndoMgr::Undo() {
+bool taUndoMgr::Undo(int index) {
   if(!owner) return false;
+  
+  if (index > -1) {
+    cur_undo_idx = index + 1;
+  }
+  
   if(cur_undo_idx <= 0) {
     taMisc::Error("No more steps available to undo -- increase undo_depth in Preferences if you need more in general -- requires reload of project to take effect");
     return false;
@@ -300,8 +305,13 @@ bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
   return true;
 }
 
-bool taUndoMgr::Redo() {
+bool taUndoMgr::Redo(int index) {
   if(!owner) return false;
+  
+  if (index > -1) {
+    cur_undo_idx = index + 1;
+  }
+
   if(cur_undo_idx == 0) cur_undo_idx = 1;               // 0 is just err state
   if(cur_undo_idx >= undo_recs.length) {
     taMisc::Error("No more steps available to redo -- at end of undo list");

@@ -62,7 +62,7 @@ void iApplicationToolBar::Constr_post() {
   edit_undo_menu = new QMenu(this);
   connect(edit_undo_menu, SIGNAL(aboutToShow()), win, SLOT(UndoMenuAboutToShow()));
   edit_undo_button->setMenu(edit_undo_menu);
-  connect(edit_undo_menu, SIGNAL(triggered(QAction*)), win, SLOT(XXXXXX(QAction*)));
+  connect(edit_undo_menu, SIGNAL(triggered(QAction*)), win, SLOT(UndoJump(QAction*)));
   win->edit_undo_action->setIcon(QIcon(QPixmap(":/images/editundo.png")));
 
   edit_redo_button = new QToolButton();
@@ -71,9 +71,9 @@ void iApplicationToolBar::Constr_post() {
   tb->addWidget(edit_redo_button);
   edit_redo_button->setDefaultAction(win->edit_redo_action);
   edit_redo_menu = new QMenu(this);
-  connect(edit_redo_menu, SIGNAL(aboutToShow()), win, SLOT(UndoMenuAboutToShow()));
+  connect(edit_redo_menu, SIGNAL(aboutToShow()), win, SLOT(RedoMenuAboutToShow()));
   edit_redo_button->setMenu(edit_redo_menu);
-  connect(edit_redo_menu, SIGNAL(triggered(QAction*)), win, SLOT(XXXXXX(QAction*)));
+  connect(edit_redo_menu, SIGNAL(triggered(QAction*)), win, SLOT(RedoJump(QAction*)));
   win->edit_redo_action->setIcon(QIcon(QPixmap(":/images/editredo.png")));
 
   // Actions have already been constructed for the viewer window's menus.

@@ -324,6 +324,10 @@ public slots:
   virtual void  BackMenuAboutToShow();
   virtual void  ForwardMenuAboutToShow();
   virtual void  HistoryGoTo(QAction* action);
+  virtual void  UndoMenuAboutToShow();
+  virtual void  RedoMenuAboutToShow();
+  virtual void  UndoJump(QAction* action); // Will do an undo of the specified action jumping over more recent undo items
+  virtual void  RedoJump(QAction* action); // Will do a redo of the specified action jumping over more recent redo items
 
   virtual void  fileNew();      // New Project (in new viewer)
   virtual void  fileOpen();     // Open Project (in new viewer)
