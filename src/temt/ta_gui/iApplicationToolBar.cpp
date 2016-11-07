@@ -59,6 +59,7 @@ void iApplicationToolBar::Constr_post() {
   edit_undo_button->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(taMisc::app_toolbar_style));
   tb->addWidget(edit_undo_button);
   edit_undo_button->setDefaultAction(win->edit_undo_action);
+  win->edit_undo_action->setShortcut(QKeySequence(QKeySequence::Undo));
   edit_undo_menu = new QMenu(this);
   connect(edit_undo_menu, SIGNAL(aboutToShow()), win, SLOT(UndoMenuAboutToShow()));
   edit_undo_button->setMenu(edit_undo_menu);
@@ -70,6 +71,7 @@ void iApplicationToolBar::Constr_post() {
   edit_redo_button->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(taMisc::app_toolbar_style));
   tb->addWidget(edit_redo_button);
   edit_redo_button->setDefaultAction(win->edit_redo_action);
+  win->edit_redo_action->setShortcut(QKeySequence(QKeySequence::Redo));
   edit_redo_menu = new QMenu(this);
   connect(edit_redo_menu, SIGNAL(aboutToShow()), win, SLOT(RedoMenuAboutToShow()));
   edit_redo_button->setMenu(edit_redo_menu);
