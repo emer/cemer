@@ -36,6 +36,8 @@
 #include <Relation>
 
 #include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 #include <QDateTime>
 #include <QtGlobal>
 
@@ -46,7 +48,7 @@ bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& s
   if(src == dest) {
     in_place_req = true;
     dest = new DataTable;
-    taBase::Ref(dest);
+    taBase::Own(dest, tabMisc::root);
     return true;
   }
   in_place_req = false;
@@ -564,7 +566,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
       nda = new float_Data;
       if(!tmp_src) {
         tmp_src = new DataTable;
-        taBase::Ref(tmp_src);
+        taBase::Own(tmp_src, tabMisc::root); // needs to own so col can find table during change col type..
         tmp_src->CopyFrom(src);
       }
       // note: have to use data table based call -- datatable() on col doens't work!

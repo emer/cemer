@@ -32,6 +32,8 @@
 #include <T3Annotation>
 
 #include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 
 TA_BASEFUNS_CTORS_DEFN(taDataAnal);
 
@@ -198,7 +200,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   GetDest(dest_data, src_data, fun_name);
 
   // work - workspace with one row only. users can request to save this data in dest_data
-  DataTable* work = new DataTable; taBase::Ref(work);
+  DataTable* work = new DataTable; taBase::Own(work, tabMisc::root);
 
   // *_col - check for existence
   DataCol* data_col = src_data->FindColName(data_col_nm);
@@ -219,8 +221,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
     taMisc::Error(fun_name + " - data, name class and mode_col_nm's must all be of type string."); return false;}    
 
   // sorted_src_data - sort src_data by mode (train/test), class and name
-  DataTable* sorted_src_data = new DataTable; taBase::Ref(sorted_src_data);
-  DataSortSpec* sort_spec = new DataSortSpec; taBase::Ref(sort_spec);
+  DataTable* sorted_src_data = new DataTable; taBase::Own(sorted_src_data, tabMisc::root);
+  DataSortSpec* sort_spec = new DataSortSpec; taBase::Own(sort_spec, tabMisc::root);
   sort_spec->AddColumn(mode_col_nm, src_data);
   sort_spec->AddColumn(class_col_nm, src_data);
   sort_spec->AddColumn(name_col_nm, src_data);
@@ -263,8 +265,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
 
   for (int i=0; i < classes->size; i++) {
 
-    DataTable* select_tmp = new DataTable; taBase::Ref(select_tmp);
-    DataTable* one_cell_tmp = new DataTable; taBase::Ref(one_cell_tmp);
+    DataTable* select_tmp = new DataTable; taBase::Own(select_tmp, tabMisc::root);
+    DataTable* one_cell_tmp = new DataTable; taBase::Own(one_cell_tmp, tabMisc::root);
 
     category = classes->FastEl1d(i);
 
@@ -353,7 +355,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   }
 
   // Create class-level confusion matrix
-  DataTable* confusion = new DataTable; taBase::Ref(confusion);
+  DataTable* confusion = new DataTable; taBase::Own(confusion, tabMisc::root);
   String col_nm = "TEST_YPRIME_" + classes->FastEl1d(0);
   String cm = "ConfusionMatrix";
   DataCol* TEST_YPRIME_0 = work->FindColName(col_nm);
@@ -363,7 +365,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   confusion->ChangeColTypeGeom(cm, val_type, 2, d0, classes->size);
 
   // Create target confusion matrix
-  DataTable* confusion_target = new DataTable; taBase::Ref(confusion_target);
+  DataTable* confusion_target = new DataTable; taBase::Own(confusion_target, tabMisc::root);
   col_nm = "TEST_T_" + classes->FastEl1d(0);
   cm = "ConfusionMatrixTarget";
   DataCol* TEST_T_0 = work->FindColName(col_nm);
@@ -373,7 +375,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   confusion_target->ChangeColTypeGeom(cm, val_type, 2, d0, classes->size);
 
   // class lengths - how many stimuli are in each test class?
-  DataTable* class_lengths = new DataTable; taBase::Ref(class_lengths);
+  DataTable* class_lengths = new DataTable; taBase::Own(class_lengths, tabMisc::root);
   Relation* rel = new Relation; taBase::Ref(rel);
   double_Matrix* class_mat;
   double length;

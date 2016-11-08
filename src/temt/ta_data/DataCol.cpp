@@ -200,16 +200,16 @@ void DataCol::CopyExtras(const DataCol& cp) {
 
 void DataCol::Init() {
   taMatrix* ar = AR(); //cache
-  int rows = 0; // rows, based on table (not our frames, which may have changed)
+  int rws = 0; // rows, based on table (not our frames, which may have changed)
   DataTable* tab = dataTable();
   if (tab) {
-    rows = tab->rows_total;    // all rows, not just the visible rows
+    rws = tab->rows_total;    // all rows, not just the visible rows
   }
 
   if (is_matrix) {
     MatrixGeom tdim = cell_geom;
     tdim.SetDims(tdim.dims() + 1);
-    tdim.Set(tdim.dims()-1, rows);
+    tdim.Set(tdim.dims()-1, rws);
     UnSetMatrixViewMode();        // reset view temporarily
     ar->SetGeomN(tdim);           // this does same thing as EnforceRows!
     SetMatrixViewMode();          // reset it
@@ -217,7 +217,7 @@ void DataCol::Init() {
   }
   else {
     UnSetMatrixViewMode();        // reset view temporarily
-    ar->SetGeom(1, rows);         // this does same thing as EnforceRows!
+    ar->SetGeom(1, rws);         // this does same thing as EnforceRows!
     SetMatrixViewMode();          // reset it
     dim_names.SetGeom(1,0);
   }
