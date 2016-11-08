@@ -30,7 +30,7 @@ class E_API LHbRMTgSpecs : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs and params for LHbRMTg inputs
 INHERITED(SpecMemberBase)
 public:
-  bool          patch_cur;      // #DEF_false use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
+  bool          patch_cur;      // #DEF_true use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
   
   // TODO: matrix_td will need extensive rework if we still want to use it because of four different matrix inputs now entering LHb - LHbRMTgUnitSpec::see Quarter_Final()
   bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)

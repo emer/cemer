@@ -85,23 +85,15 @@ public:
     }
   }
 
-  inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
-    Init_Weights_symflag(net, thr_no);
-
-    float* wts = cg->OwnCnVar(WT);
-    float* dwts = cg->OwnCnVar(DWT);
+  inline void   Init_Weights_post(ConGroup* cg, Network* net, int thr_no) override {
     float* pdws = cg->OwnCnVar(PDW);
     float* aggs = cg->OwnCnVar(DWT_AGG);
-
-    if(rnd.type != Random::NONE) {
-      for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], thr_no);
-        C_Init_dWt(dwts[i]);
-        pdws[i] = 0.0f;
-        aggs[i] = 0.0f;
-      }
+    for(int i=0; i<cg->size; i++) {
+      pdws[i] = 0.0f;
+      aggs[i] = 0.0f;
     }
   }
+  // all non-wt, pdw vars MUST be initialized in _post!
 
   inline void C_Aggregate_dWt(float& dwt_agg, const float su_act,
                                         const float ru_act, const float phase)

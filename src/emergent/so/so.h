@@ -72,22 +72,13 @@ public:
     }
   }
 
-  inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
-    Init_Weights_symflag(net, thr_no);
-    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
-
-    float* wts = cg->OwnCnVar(WT);
-    float* dwts = cg->OwnCnVar(DWT);
+  inline void   Init_Weights_post(ConGroup* cg, Network* net, int thr_no) override {
     float* pdws = cg->OwnCnVar(PDW);
-
-    if(rnd.type != Random::NONE) {
-      for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], thr_no);
-        C_Init_dWt(dwts[i]);
-        pdws[i] = 0.0f;
-      }
+    for(int i=0; i<cg->size; i++) {
+      pdws[i] = 0.0f;
     }
   }
+  // all non-wt, pdw vars MUST be initialized in _post!
 
   inline void   B_Init_dWt(UnitVars* ru, Network* net, int thr_no) override;
 

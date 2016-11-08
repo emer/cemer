@@ -25,7 +25,7 @@ TA_BASEFUNS_CTORS_DEFN(LHbRMTgGains);
 TA_BASEFUNS_CTORS_DEFN(LHbRMTgUnitSpec);
 
 void LHbRMTgSpecs::Initialize() {
-  patch_cur = false;
+  patch_cur = true;
   Defaults_init();
 }
 

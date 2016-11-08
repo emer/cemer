@@ -25,7 +25,6 @@ TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(DwtZoneSpec);
-TA_BASEFUNS_CTORS_DEFN(DwtWtaSpec);
 TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
@@ -127,23 +126,6 @@ void DwtZoneSpec::UpdateAfterEdit_impl() {
   s_dt = 1.0f / s_tau;
   l_dt = 1.0f / l_tau;
   norm_dt = 1.0f / norm_tau;
-}
-
-void DwtWtaSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void DwtWtaSpec::Defaults_init() {
-  dw_tau = 10.0f;
-  wb_inc_thr = 1.0f;
-  wb_dec_thr = 1.0f;
-  dw_dt = 1.0f / dw_tau;
-}
-
-void DwtWtaSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dw_dt = 1.0f / dw_tau;
 }
 
 void WtBalanceSpec::Initialize() {
