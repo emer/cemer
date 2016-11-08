@@ -3392,8 +3392,9 @@ void iMainWindowViewer::UndoMenuAboutToShow() {
   if (!proj) return;
   
   for (int i = proj->undo_mgr.cur_undo_idx - 1; i >= 0; i--) {
-    String name = proj->undo_mgr.undo_recs.SafeEl(i)->action;
-    String menu_string = name.elidedTo(75);
+    taMisc::DebugInfo("undo " + (String) i);
+    String description = proj->undo_mgr.undo_recs.SafeEl(i)->action;
+    String menu_string = description.elidedTo(75);
     QAction* action = new QAction(menu_string, this);
     action->setData(i);
     ap_toolbar->edit_undo_menu->addAction(action);
@@ -3408,9 +3409,10 @@ void iMainWindowViewer::RedoMenuAboutToShow() {
   taProject* proj = myProject();
   if (!proj) return;
   
-  for (int i = proj->undo_mgr.cur_undo_idx; i < proj->undo_mgr.undo_recs.size; i++) {
-    String name = proj->undo_mgr.undo_recs.SafeEl(i)->action;
-    String menu_string = name.elidedTo(75);
+  for (int i = proj->undo_mgr.cur_undo_idx; i < proj->undo_mgr.undo_recs.size - 1; i++) {
+    taMisc::DebugInfo("redo " + (String) i);
+    String description = proj->undo_mgr.undo_recs.SafeEl(i)->action;
+    String menu_string = description.elidedTo(75);
     QAction* action = new QAction(menu_string, this);
     action->setData(i);
     ap_toolbar->edit_redo_menu->addAction(action);
