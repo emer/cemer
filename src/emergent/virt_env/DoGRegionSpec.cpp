@@ -413,6 +413,8 @@ bool DoGRegionSpec::InitDataTable() {
 
   int idx;
   if(dog_save & SAVE_DATA) {
+    TestError((data_table.ptr() == NULL), "InitDataTable", "You need to set the data table variable of the DoGRegionSpec before calling Init()" );
+    return false;
     DoGOutputToTable(data_table, true); // format only
   }
   return true;
