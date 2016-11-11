@@ -354,7 +354,7 @@ void iTreeView::InsertDefaultEl(bool after) {
         else {
           action = "Insert " + td->name;
         }
-        proj->undo_mgr.SaveUndo(sbo, action, NULL, false, sbo); // global save
+        proj->undo_mgr.SaveUndo(sbo->GetOwner(), action, NULL, false, sbo); // global save
       }
 
       int idx = 0;
