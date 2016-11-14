@@ -194,6 +194,7 @@ void LeabraActAvgSpec::Initialize() {
 }
 
 void LeabraActAvgSpec::Defaults_init() {
+  m_in_plus = true;
   ss_tau = 2.0f;
   s_tau = 2.0f;
   m_tau = 10.0f;
@@ -1873,7 +1874,14 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
 
   u->avg_ss += dt.integ * act_avg.ss_dt * (ru_act - u->avg_ss);
   u->avg_s += dt.integ * act_avg.s_dt * (u->avg_ss - u->avg_s);
-  u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
+  if(act_avg.m_in_plus) {
+    u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
+  }
+  else {
+    if(net->quarter < 3) {
+      u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
+    }
+  }
 
   u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
 }
@@ -2007,7 +2015,8 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
   case 3:
     u->act_q4 = use_act;
     u->act_p = use_act;
-    u->act_dif = u->act_p - u->act_m;
+    //    u->act_dif = u->act_p - u->act_m;
+    u->act_dif = u->avg_s_eff - u->avg_m;
     Compute_ActTimeAvg(u, net, thr_no);
     break;
   }
