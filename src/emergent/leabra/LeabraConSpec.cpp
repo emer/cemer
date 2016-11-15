@@ -71,8 +71,6 @@ void XCalLearnSpec::Initialize() {
 }
 
 void XCalLearnSpec::Defaults_init() {
-  avg_send = false;
-  avg_s_pct = 0.5f;
   m_lrn = 1.0f;
   set_l_lrn = false;
   l_lrn = 1.0f;

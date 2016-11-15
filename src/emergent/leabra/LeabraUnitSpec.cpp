@@ -194,7 +194,6 @@ void LeabraActAvgSpec::Initialize() {
 }
 
 void LeabraActAvgSpec::Defaults_init() {
-  m_in_plus = true;
   ss_tau = 2.0f;
   s_tau = 2.0f;
   m_tau = 10.0f;
@@ -426,7 +425,6 @@ void LeabraUnitSpec::Initialize() {
 }
 
 void LeabraUnitSpec::Defaults_init() {
-  // todo: shouldn't I call Defaults_init on all the sub-guys, or is this automatic?
   sse_tol = .5f;
   clamp_range.min = .0f;
   clamp_range.max = .95f;
@@ -437,7 +435,7 @@ void LeabraUnitSpec::Defaults_init() {
   vm_range.UpdateAfterEdit_NoGui();
 
   g_bar.e = 1.0f;
-  g_bar.l = 0.1f;
+  g_bar.l = 0.2f;
   g_bar.i = 1.0f;
   e_rev.e = 1.0f;
   e_rev.l = 0.3f;
@@ -1885,14 +1883,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
 
   u->avg_ss += dt.integ * act_avg.ss_dt * (ru_act - u->avg_ss);
   u->avg_s += dt.integ * act_avg.s_dt * (u->avg_ss - u->avg_s);
-  if(act_avg.m_in_plus) {
-    u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
-  }
-  else {
-    if(net->quarter < 3) {
-      u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
-    }
-  }
+  u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
 
   u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
 }

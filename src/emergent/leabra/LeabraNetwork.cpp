@@ -2123,7 +2123,7 @@ void LeabraNetwork::Compute_AvgActDiff_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
-      adiff += uv->act_p - uv->act_m;
+      adiff += uv->act_dif;
       nd += 1.0f;
     }
 
