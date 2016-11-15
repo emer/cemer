@@ -471,9 +471,9 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contain
   trc_uns->deep.on = true;
   trc_uns->deep.role = DeepSpec::TRC;
   trc_uns->SetUnique("avg_l", true);
-  trc_uns->avg_l.init = 0.3f;
-  trc_uns->avg_l.max = 1.2f;
-  trc_uns->avg_l.min = 0.2f;
+  // trc_uns->avg_l.init = 0.3f;
+  // trc_uns->avg_l.max = 1.2f;
+  // trc_uns->avg_l.min = 0.2f;
   
   fm_trc->SetUnique("wt_scale", true);
   fm_trc->wt_scale.rel = 0.1f;

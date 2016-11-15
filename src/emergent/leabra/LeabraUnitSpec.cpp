@@ -216,26 +216,48 @@ void LeabraActAvgSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraAvgLSpec::Initialize() {
-  avg = false;
   Defaults_init();
 }
 
 void LeabraAvgLSpec::Defaults_init() {
   init = 0.4f;
-  max = 1.5f;
+  gain = 2.5f;
   min = 0.2f;
   tau = 10.0f;
-  lrn_max = 0.05f;
-  lrn_min = 0.005f;
+  lrn_max = 0.5f;
+  lrn_min = 0.0001f;
   
   dt = 1.0f / tau;
-  lrn_fact = (lrn_max - lrn_min) / (max - min);
+  lrn_fact = (lrn_max - lrn_min) / (gain - min);
 }
 
 void LeabraAvgLSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  taVersion v804(8, 0, 4);
+  if(taMisc::is_loading && taMisc::loading_version < v804) {
+    if(gain == 1.5f || gain == 2.5f) {
+      gain = 2.5f;
+    }
+    else {
+      TestWarning(true, "UAE",
+                  "avg_l computation has been updated to a running-average formulation that works much better overall -- previous max value was a nonstandard:", String(gain),
+                  "(default was 1.5 before, 2.5 now) -- updating to 2.5 now but you should experiment and find the best current value for this param!");
+      gain = 2.5f;
+    }
+    if(lrn_max == 0.05f && lrn_min == 0.0001f) {
+      lrn_max = 0.5f;
+      lrn_min = 0.0001f;
+    }
+    else {
+      TestWarning(true, "UAE",
+                  "avg_l computation has been updated to a running-average formulation that works much better overall -- previous lrn_max and/or lrn_min value(s) were nonstandard:",
+                  String(lrn_max), String(lrn_min),
+                  "new defaults are 0.5, 0.0001 -- recommend trying them!");
+    }
+  }
+
   dt = 1.0f / tau;
-  lrn_fact = (lrn_max - lrn_min) / (max - min);
+  lrn_fact = (lrn_max - lrn_min) / (gain - min);
 }
 
 
@@ -246,7 +268,6 @@ void LeabraAvgL2Spec::Initialize() {
 void LeabraAvgL2Spec::Defaults_init() {
   err_mod = true;
   err_min = 0.01f;
-  act_thr = 0.2f;
   lay_act_thr = 0.01f;
 }
 
@@ -844,17 +865,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
   if(net->train_mode == Network::TRAIN) {
     if(lay->acts_p.avg >= avg_l_2.lay_act_thr) {
       const float avg_m = u->avg_m;
-      if(avg_l.avg) {
-        avg_l.UpdtAvgL(u->avg_l, avg_m);
-      }
-      else {
-        if(avg_m > avg_l_2.act_thr) { // above threshold, raise it up
-          u->avg_l += avg_l.dt * (avg_l.max - u->avg_l);
-        }
-        else {
-          u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
-        }
-      }
+      avg_l.UpdtAvgL(u->avg_l, avg_m);
     }
     u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
     if(avg_l_2.err_mod) {

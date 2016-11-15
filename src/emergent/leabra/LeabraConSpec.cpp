@@ -71,6 +71,8 @@ void XCalLearnSpec::Initialize() {
 }
 
 void XCalLearnSpec::Defaults_init() {
+  avg_send = false;
+  avg_s_pct = 0.5f;
   m_lrn = 1.0f;
   set_l_lrn = false;
   l_lrn = 1.0f;
@@ -111,8 +113,8 @@ void DwtZoneSpec::Initialize() {
 void DwtZoneSpec::Defaults_init() {
   con_norm = true;
   s_tau = 50.0f;
-  l_tau = 5.0f;
-  norm_tau = 40.0f;
+  l_tau = 2.0f;
+  norm_tau = 100.0f;
   gain = 2.0f;
   lrate_mult = 4.0f;
 

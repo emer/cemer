@@ -265,19 +265,18 @@ private:
 eTypeDef_Of(LeabraAvgLSpec);
 
 class E_API LeabraAvgLSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units -- it is computed as a running average of the (gain multiplied) medium-time-scale average activation at the end of the trial
 INHERITED(SpecMemberBase)
 public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
-  bool          avg;            // use raw activation times max to drive avg_l, instead of doing thresholding and going towards max or min from there -- takes into account graded activations of units -- which may or may not be a good thing..
-  float         max;            // #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
-  float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
-  float         tau;            // #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
-  float         lrn_max;        // #DEF_0.05;0.0004 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units -- the default of 0.05, in combination with the err_mod flag, works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
-  float         lrn_min;        // #DEF_0.005;0.0004 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- the default of 0.005 works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
+  float         gain;           // #DEF_1.5;2;2.5 #AKA_max #MIN_0 gain multiplier on activation used in computing the running average avg_l value -- lower values are sometimes better for some models but higher ones are generally not -- it is a good idea to experiment with this parameter a bit
+  float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- running average cannot go lower than this value even when it otherwise would due to inactivity -- this value is generally good and typically does not need to be changed
+  float         tau;            // #DEF_10 #MIN_1 time constant for updating the running average avg_l -- avg_l moves toward gain*act with this time constant on every trial - longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
+  float         lrn_max;        // #DEF_0.5 #MIN_0 maximum avg_l_lrn value, which is amount of learning driven by avg_l factor -- when avg_l is at its maximum value (i.e., gain, as act does not exceed 1), then avg_l_lrn will be at this maximum value -- by default, strong amounts of this homeostatic Hebbian form of learning can be used when the receiving unit is highly active -- this will then tend to bring down the average activity of units -- the default of 0.5, in combination with the err_mod flag, works well for most models -- use around 0.0004 for a single fixed value (with err_mod flag off)
+  float         lrn_min;        // #DEF_0.0001;0.0004 #MIN_0 miniumum avg_l_lrn value (amount of learning driven by avg_l factor) -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- use around 0.0004 for a single fixed value (with err_mod flag off)
   
   float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
-  float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (max - min)
+  float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (gain - min)
   
   inline float  GetLrn(const float avg_l) {
     return lrn_min + lrn_fact * (avg_l - min);
@@ -285,7 +284,7 @@ public:
   // get the avg_l_lrn value for given avg_l value
 
   inline void   UpdtAvgL(float& avg_l, const float act) {
-    avg_l += dt * (max * act - avg_l);
+    avg_l += dt * (gain * act - avg_l);
     if(avg_l < min) avg_l = min;
   }
   // update long-term average value from given activation, using average-based update
@@ -311,7 +310,6 @@ INHERITED(SpecMemberBase)
 public:
   bool          err_mod;        // #DEF_true if true, then we multiply avg_l_lrn factor by layer.cos_diff_avg_lrn to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers), so the effective lrn value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this error level tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- see LeabraLayerSpec cos_diff.avg_tau rate constant for integrating cos_diff_avg value
   float         err_min;        // #DEF_0.01:0.1 #CONDSHOW_ON_err_mod minimum layer.cos_diff_avg_lrn value (for non-zero cases, i.e., not for target or input layers) -- ensures a minimum amount of self-organizing learning even for layers that have a very small level of error signal
-  float         act_thr;        // #DEF_0.2 threshold of minus-phase activation value for whether to increase or decrease the avg_l value -- generally don't need to change this from the default value
   float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
