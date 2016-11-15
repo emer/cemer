@@ -243,7 +243,7 @@ void LeabraAvgLSpec::UpdateAfterEdit_impl() {
                   "(default was 1.5 before, 2.5 now) -- updating to 2.5 now but you should experiment and find the best current value for this param!");
       gain = 2.5f;
     }
-    if(lrn_max == 0.05f && lrn_min == 0.0001f) {
+    if(lrn_max == 0.05f && lrn_min == 0.005f) {
       lrn_max = 0.5f;
       lrn_min = 0.0001f;
     }
