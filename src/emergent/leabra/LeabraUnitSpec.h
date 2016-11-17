@@ -323,43 +323,6 @@ private:
   void        Defaults_init();
 };
 
-
-eTypeDef_Of(AdaptLeakSpec);
-
-class E_API AdaptLeakSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- uses the avg_l value that reflects the long-term running average activation -- bias weight reflects *addition* to default g_bar.l value -- need to turn bias weight learning OFF!
-INHERITED(SpecMemberBase)
-public:
-  bool          on;             // perform leak adaptation?  if so, adapts bias weight as an increment to default g_bar.l leak value as function of computed avg_l values which reflect longer-term average activation of unit -- be sure to turn learning off when using this!
-  float         tau;           // #CONDSHOW_ON_on #DEF_100 time constant for adapting the leak as a function of avg_l value -- just does a longer term running average of the avg_l value
-  float         gain;          // #CONDSHOW_ON_on multiplier on the avg_l value to turn it into the leak value -- roughly determines the maximum amount of additional leak that is applied
-  
-  // float         hi_thr;        // #CONDSHOW_ON_on #DEF_1:1.2 high-side threshold on avg_l value -- avg_l must exceed this value before increasing bias weight offset to leak value
-  // float         lo_thr;        // #CONDSHOW_ON_on #DEF_0.4 low-side threshold on avg_l value -- avg_l must be below this value before decreasing bias weight offset to leak value
-  // float         min_bwt;      // #CONDSHOW_ON_on #DEF_0;-0.05 minimum leak offset (i.e., bias weight or bwt) value -- don't want too decrease leak too much below default parameter in general
-  // float         max_bwt;      // #CONDSHOW_ON_on #DEF_0.2 maximum leak offset (i.e., bias weight or bwt) value -- prevents excessive modification for situations where units must be active
-
-  float         dt;            // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate =  1 / tau
-  // float         mid_thr;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT middle point between hi and low threshold
-
-  inline void   AdaptLeak(float& bwt, float& dwt, const float avg_l) {
-    dwt = dt * (gain * avg_l - bwt);
-    bwt += dwt;
-  }
-  // adadpt leak offset as bias weight values, given current avg_l value
-  
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(AdaptLeakSpec);
-protected:
-  SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl() override;
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
 eTypeDef_Of(LeabraChannels);
 
 class E_API LeabraChannels : public taOBase {
@@ -623,7 +586,6 @@ public:
   LeabraActAvgSpec act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   LeabraAvgLSpec   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   LeabraAvgL2Spec  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  AdaptLeakSpec    adapt_leak;     // #CAT_Learning adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- based on the avg_l value as computed in specs above -- bias weight reflects *addition* to default g_bar.l value
   LeabraChannels   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials

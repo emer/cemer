@@ -36,7 +36,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgL2Spec);
-TA_BASEFUNS_CTORS_DEFN(AdaptLeakSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
@@ -268,30 +267,6 @@ void LeabraAvgL2Spec::Defaults_init() {
   err_mod = true;
   err_min = 0.01f;
   lay_act_thr = 0.01f;
-}
-
-void AdaptLeakSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void AdaptLeakSpec::Defaults_init() {
-  tau = 100.0f;
-  gain = 0.2f;
-  
-  // hi_thr = 1.2f;
-  // lo_thr = 0.4f;
-  // min_bwt = 0.0f;
-  // max_bwt = 0.2f;
-  
-  dt = 1.0f / tau;
-  // mid_thr = 0.5f * (hi_thr + lo_thr);
-}
-
-void AdaptLeakSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dt = 1.0f / tau;
-  // mid_thr = 0.5f * (hi_thr + lo_thr);
 }
 
 void LeabraChannels::Initialize() {
@@ -875,10 +850,6 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
     if((lay->layer_type != Layer::HIDDEN) || deep.IsTRC()) {
       u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
     }
-  }
-
-  if(adapt_leak.on) {
-    adapt_leak.AdaptLeak(u->bias_wt, u->bias_dwt, u->avg_l);
   }
 }
 
@@ -1761,8 +1732,6 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     }
 
     float gc_l = g_bar.l;
-    if(adapt_leak.on)
-      gc_l += u->bias_wt;
     float gc_i = u->gc_i * g_bar.i;
 
     if(updt_spk_vm) {
