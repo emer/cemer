@@ -2431,6 +2431,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   pbwm_units->bias_spec.SetSpec(fix_bias);
   pbwm_units->deep_raw_qtr = LeabraUnitSpec::Q2_Q4; // beta by default
+  pbwm_units->g_bar.l = 0.1f;
   
   matrix_go_units->SetUnique("act_misc", true);
   matrix_go_units->act_misc.net_gain = 0.5f;
@@ -2599,6 +2600,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_deep_mod->wt_limits.sym = false;
 
   ////////////	LayerSpecs
+
+  // pbwm_sp->SetUnique("decay", true);
+  // pbwm_sp->decay.trial = 0.0f;
 
   matrix_sp->SetUnique("lay_inhib", true);
   matrix_sp->lay_inhib.on = true;

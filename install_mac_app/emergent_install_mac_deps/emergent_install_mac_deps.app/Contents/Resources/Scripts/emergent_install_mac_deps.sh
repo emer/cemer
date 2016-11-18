@@ -10,6 +10,7 @@ QUARTER_DMG=quarter_mac64_qt56.dmg
 CMAKE_DMG=cmake-3.6.1_mac64.dmg
 SVN_DMG=Subversion-1.9.4_10.11.x.dmg
 MISC_DMG=misclibs_mac64_8_0.dmg
+NEEDS_BREW_APR=""
 
 OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f1,2 -d.`
 echo "installing on OSX version: $OS_VERS"
@@ -32,6 +33,11 @@ fi
 if [[ "$OS_VERS" == "10.10" ]]; then
     echo "Note: updating the dependencies for 10.10"
     SVN_DMG=Subversion-1.9.4_10.10.x.dmg
+fi
+
+if [[ "$OS_VERS" == "10.12" ]]; then
+    echo "Note: updating the dependencies for 10.12: requires homebrew apr for Sierra"
+    NEEDS_BREW_APR=true
 fi
 
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
@@ -163,6 +169,29 @@ function installCMAKEinDMG {
   echo "then you may need to manually create cmake etc links in /usr/local/bin/"
 }
 
+function installHomeBrewAPR {
+    echo " "
+    echo "================================================="
+    echo "        Step 3: Installing apr and apr-util"
+    echo "================================================="
+    echo " "
+    echo "Installing apache apr and apr-util from homebrew, doing the following commands:"
+    echo '/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"'
+    echo "brew install apr"
+    echo "brew install apr-util"
+    echo "brew link apr"
+    echo "brew link apr-util"
+    echo " "
+    echo "IMPORTANT: if any of these commands fail, you may already have this installed, or may need to intervene manually.."
+    echo " "
+    
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew install apr
+    brew install apr-util
+    brew link apr
+    brew link apr-util
+}
+
 echo " "
 echo "================================================="
 echo "        Step 2: Installing The Packages"
@@ -179,6 +208,10 @@ installCMAKEinDMG ${CMAKE_DMG}
 installPKGinDMG ${QT_DMG}
 installPKGinDMG ${COIN_DMG}
 installPKGinDMG ${QUARTER_DMG}
+
+if [[ "$NEEDS_BREW_APR" == "true" ]]; then
+    installHomeBrewAPR
+fi    
 
 echo " "
 echo "================================================="
