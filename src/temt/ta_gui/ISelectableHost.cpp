@@ -529,6 +529,8 @@ void ISelectableHost::UpdateMethodsActions(int dyn_list, ISelectable::GuiContext
   dyn_methods[dyn_list].Fill(sel_items, gc_typ);
 
   // dynamically create actions
+  // note: see explanation in iMainWindowViewer::ConstrEditMenu for why the
+  // label is modified rather than call SetShortcut on the Action
   dyn_actions[dyn_list].Reset(); // note: items ref deleted if needed
   for (int i = 0; i < dyn_methods[dyn_list].size; ++i) {
     DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);

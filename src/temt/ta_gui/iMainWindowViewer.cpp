@@ -635,6 +635,18 @@ void iMainWindowViewer::Constr_EditMenu()
   editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate", ks_dupe, "editDuplicateAction"));
 
   // add actions for methods called on other treeview selections - allows use of key shortcuts
+  
+  // Note: For context menus on tree selections we don't set the shortcut but rather modify
+  // the label to display the shortcut. Would be better to do as shortcut but as the code stands
+  // not all actions are created "on select". Many methods are created when you make a selection
+  // the "dynamic" additions are made when the menu is created which means that they aren't
+  // available until someone asks for the menu and you might just want to use the shortcut.
+  // Also, there are a couple of methods like "FindFromHere" that are methods of the tree rather
+  // than an object in the tree and the action is only added when the menu is created and so
+  // the shortcut is handled by the KeyPressEvent method.
+  // This was an attempt to get all of this working via Actions and Shortcuts in a consistent manner.
+  // It wasn't accomplished but I now understand the situation and so it is a step along the way
+  // and it does work. -- rohrlich --
   signalMapperForSelection = new QSignalMapper (this);
   NameVar name_var;
   name_var.name = "ToggleOffFlag";

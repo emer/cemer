@@ -77,9 +77,8 @@ void taiWidgetMethod::AddToMenu(taiWidgetActions* mnu) {
     mnu->AddSep();
   
   String label = meth->GetLabel();
-  // would like to be able to reuse the action already created but
-  // won't work so just make a new action
-  // AND it won't work to have the same KeySequence so just mod the label
+  // note: see explanation in iMainWindowViewer::ConstrEditMenu for why the
+  // label is modified rather than call SetShortcut on the Action
   QKeySequence ks = taiMisc::GetMethodKeySequence(meth->name);
   if (!ks.isEmpty()) {
     label += "\t" + ks.toString();
