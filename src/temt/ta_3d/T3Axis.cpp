@@ -18,6 +18,7 @@
 #include <T3Misc>
 #include <taMath_float>
 #include <iVec3f>
+#include <GraphTableView>
 
 #include <taMisc>
 
@@ -148,6 +149,7 @@ void T3Axis::setDefaultCaptionTransform() {
 #include <Inventor/nodes/SoMarkerSet.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 
 SO_NODE_SOURCE(T3Axis);
 
@@ -167,6 +169,12 @@ T3Axis::T3Axis(Axis ax, T3DataView* dataView_, float fnt_sz, int n_axis)
 
   SoSeparator* ss = this->shapeSeparator(); //cache
 
+  GraphTableView* gtv = ((GraphAxisBase*)dataView_)->GetGTV();
+  if(gtv) {
+    line_style = new SoDrawStyle();
+    ss->addChild(line_style);
+    line_style->lineWidth.setValue(gtv->dev_pix_ratio * 2.0f);
+  }
   lines = new SoLineSet();
   lines->vertexProperty.setValue(new SoVertexProperty());
   ss->addChild(lines);

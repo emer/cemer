@@ -65,6 +65,7 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoText2.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
@@ -644,6 +645,7 @@ void GraphTableView::Render_impl() {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
     dev_pix_ratio = vw->devicePixelRatio();
+    // taMisc::Info("dev_pix_ratio:", String(dev_pix_ratio));
   }
 #endif
   
@@ -1436,7 +1438,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   
   if(render_svg) {
     svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
-    << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width)
+    << taSvg::Path(plv.color.color(), line_width)
     << "M " << taSvg::Coords(st)
     << "L " << taSvg::Coords(ed)
     << taSvg::PathEnd();
@@ -1678,6 +1680,10 @@ void GraphTableView::RenderGraph_XY() {
   
   SoSeparator* gr1 = new SoSeparator;
   graphs->addChild(gr1);
+
+  SoDrawStyle* lineDrawStyle_ = new SoDrawStyle();
+  lineDrawStyle_->lineWidth.setValue(dev_pix_ratio * 2.0f);
+  gr1->addChild(lineDrawStyle_);
   
   // each graph has a box and lines..
   SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
@@ -2193,7 +2199,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   String  svg_labels;
   
   if(render_svg) {
-    svg_str << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width);
+    svg_str << taSvg::Path(plv.color.color(), line_width);
   }
   
   for (int row = view_range.min; row <= view_range.max; row++) {
@@ -2406,7 +2412,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     svg_str << taSvg::PathEnd();
     
     if(svg_markers.nonempty()) {
-      svg_str << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width)
+      svg_str << taSvg::Path(plv.color.color(), line_width)
       << svg_markers
       << taSvg::PathEnd();
     }
@@ -2644,7 +2650,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     svg_str << taSvg::PathEnd();
     
     if(svg_bars.nonempty()) {
-      svg_str << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width)
+      svg_str << taSvg::Path(plv.color.color(), line_width)
       << svg_bars
       << taSvg::PathEnd();
     }

@@ -57,6 +57,13 @@ IF(SUBVERSION_INCLUDE_DIRS AND SUBVERSION_LIBRARIES)
     SET(SubversionLibrary_FIND_QUIETLY TRUE)
 ENDIF(SUBVERSION_INCLUDE_DIRS AND SUBVERSION_LIBRARIES)
 
+# See note below about this..
+# IF (APPLE)
+#    EXEC_PROGRAM(uname ARGS -v  OUTPUT_VARIABLE DARWIN_VERSION)
+#    STRING(REGEX MATCH "[0-9]+" DARWIN_VERSION ${DARWIN_VERSION})
+#    MESSAGE(STATUS "DARWIN_VERSION=${DARWIN_VERSION}")
+# ENDIF(APPLE)
+
 IF (NOT WIN32)
 
     MACRO(FIND_SUB_LIB targetvar libname)
@@ -91,12 +98,14 @@ IF (NOT WIN32)
             ${APR_CONFIG_PATH}
 	    /opt/local/bin
             /usr/local/apr/bin
+	    /usr/local/bin
         )
     ELSE(APR_CONFIG_PATH)
         FIND_PROGRAM(APR_CONFIG NAMES apr-config apr-1-config
             PATHS
 	    /opt/local/bin
             /usr/local/apr/bin
+	    /usr/local/bin
         )
     ENDIF(APR_CONFIG_PATH)
 
@@ -106,19 +115,33 @@ IF (NOT WIN32)
             ${APU_CONFIG_PATH}
 	    /opt/local/bin
             /usr/local/apr/bin
+	    /usr/local/bin
         )
     ELSE(APU_CONFIG_PATH)
         FIND_PROGRAM(APU_CONFIG NAMES apu-config apu-1-config
             PATHS
 	    /opt/local/bin
             /usr/local/apr/bin
+	    /usr/local/bin
         )
     ENDIF(APU_CONFIG_PATH)
 
-    IF(NOT APR_CONFIG)
+    
+    # This nonsense was due to residual cmake cache info!!  even when I did
+    # ./reconfigure clean it was having this problem!  jeez!
+    # IF (APPLE)
+    #   MESSAGE(STATUS "apr config: ${APR_CONFIG}")
+    #   IF ((DARWIN_VERSION GREATER 15) AND ("${APR_CONFIG}" MATCHES "/usr/bin/apr-1-config"))
+    # 	SET(APR_CONFIG "/usr/local/bin/apr-1-config")
+    # 	SET(APU_CONFIG "/usr/local/bin/apu-1-config")
+    #   ENDIF ()
+    # ENDIF()
+
+   IF(NOT APR_CONFIG)
         MESSAGE(STATUS "no apr-config found, subversion support will be disabled")
         SET(SUBVERSION_FOUND false)
-    ELSE(NOT APR_CONFIG)
+      ELSE(NOT APR_CONFIG)
+	MESSAGE(STATUS "apr config: ${APR_CONFIG}")
         EXEC_PROGRAM(${APR_CONFIG} ARGS "--includedir" OUTPUT_VARIABLE APR_INCLUDE_DIR)
         STRING(REPLACE "-I" "" APR_INCLUDE_DIR ${APR_INCLUDE_DIR})
         EXEC_PROGRAM(${APR_CONFIG} ARGS "--link-ld" OUTPUT_VARIABLE _LINK_LD_ARGS)
