@@ -139,6 +139,8 @@ public:
     EA_PASTE_ASSIGN	= 0x00004000, // set sel object from obj on clipboard
     EA_DUPE		= 0x00008000, // duplicate at point of selection
     EA_PASTE_COMPARE	= 0x00010000, // compare sel object from obj on clipboard
+    // these are mutually exclusive method calls - no dropping
+    EA_CALL	= 0x00040000, // call a method on the selected object
     EA_CLIP_OP_MASK	= 0x000FFFF0, // masks the clipboard op codes
 
     EA_DRAG		= 0x00100000, // initiation of a drag -- note that src can't distinguish move/copy/link ops

@@ -251,24 +251,18 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
 
 void iTreeViewItem::FillContextMenu_impl(taiWidgetActions* menu,
                                          GuiContext sh_typ) {
-  TypeDef* td = GetDataTypeDef();
-  // if(td && td->InheritsFrom(&TA_taList_impl)) {
-  // only really needed for list guys
   int kb_set = (static_cast<int>(taMisc::current_key_bindings));
-  String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND, kb_set);
-  String menu_item_str = "Find from here (" + key_seq + ")...";
+  String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT,
+                                                          taiMisc::TREE_FIND, kb_set);
+  String menu_item_str = "Find from here\t" + key_seq + "...";
   
-  //  menu->AddItem("Find from here (Alt+F)...", taiWidgetMenu::use_default,
   menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
                 iAction::men_act, treeView(), SLOT(mnuFindFromHere(iAction*)), this);
-  // }
-  // if(td) {
-  //  key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE);
-  //  menu_item_str = "Replace in selected (" + key_seq + ")...";
+  key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT,
+                                                   taiMisc::TREE_FIND_REPLACE, kb_set);
   
-  menu->AddItem("Replace in selected (Alt+R)...", taiWidgetMenu::use_default,
+  menu->AddItem("Replace in selected\t" + key_seq + "...", taiWidgetMenu::use_default,
                 iAction::men_act, treeView(), SLOT(mnuReplaceFromHere(iAction*)), this);
-  // }
   IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
 }
 

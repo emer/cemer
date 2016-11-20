@@ -46,6 +46,7 @@
 #include <QKeyEvent>
 
 const String iTreeView::opt_treefilt("TREEFILT_");
+String iTreeView::call_string = "";
 
 void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
   ISelectable_PtrList& list)

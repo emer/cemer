@@ -41,6 +41,7 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
     case taiMisc::GRAPHICS_CONTEXT:
       return &graphics_bindings;
     default:
+      taMisc::DebugInfo("Did you add a new context and forget to add to KeyBindings?");
       return NULL;
       break;
   }

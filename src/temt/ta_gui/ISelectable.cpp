@@ -266,20 +266,24 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
 //  cut copy paste link delete
   iAction* mel;
   if (ea & iClipData::EA_CUT) {
-    mel = menu->AddItem("Cu&t", taiWidgetMenu::use_default,
+    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_CUT, kb_set);
+   String menu_item_str = "Cu&t\t" + key_seq;
+    mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_CUT;
     mel->setData(sh_typ);
   }
   if (ea & iClipData::EA_COPY) {
-    mel = menu->AddItem("&Copy", taiWidgetMenu::use_default,
+    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_COPY, kb_set);
+    String menu_item_str = "&Copy\t" + key_seq;
+    mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_COPY;
     mel->setData(sh_typ);
   }
   if (ea & iClipData::EA_DUPE) {
     String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DUPLICATE, kb_set);
-    String menu_item_str = "Duplicate (" + key_seq + ")";
+    String menu_item_str = "Duplicate\t" + key_seq;
     mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_DUPE;
@@ -333,7 +337,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
 
   if (ea & iClipData::EA_DELETE) {
     String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE, kb_set);
-    String menu_item_str = "&Delete (" + key_seq + ")";
+    String menu_item_str = "&Delete\t" + key_seq;
     mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_DELETE;
@@ -480,6 +484,10 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
         proj->undo_mgr.Nest(false);
       }
     }
+  }
+  else if (ea == iClipData::EA_CALL) {
+    taBase* tab = taData();
+    tab->CallFun(iTreeView::call_string);
   }
   else { // paste-like op, get item data
     // confirm only 1 item selected for dst op -- Error is diagnostic, not operational

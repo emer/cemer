@@ -84,6 +84,7 @@ public:
   };
 
   static const String   opt_treefilt; // "TREEFILT_"
+  static String         call_string; // holds the method name bound to QKeySeqeunce called on the selected object
 
 #ifndef __MAKETA__
   QPointer<iMainWindowViewer> main_window; // set this to the main window we belong in -- NOTE this is NOT always the same as mainWindow() and must be set specifically -- could be the program editor or another similar such thing..

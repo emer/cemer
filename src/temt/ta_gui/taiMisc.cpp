@@ -107,7 +107,6 @@ iNetworkAccessManager*      taiMisc::net_access_mgr = NULL;
 
 int taiMisc::busy_count = 0;
 
-
 taiMisc* taiMisc::New(bool gui, QObject* parent) {
   taiMisc* rval = new taiMisc(parent);
   rval->Init(gui);
@@ -1121,43 +1120,20 @@ String taiMisc::GetSequenceFromActionFriendly(taiMisc::BindingContext context, t
   
 #ifdef TA_OS_MAC
   if (friendly_str.contains("Ctrl")) {
-    friendly_str = friendly_str.repl("Ctrl", "command");
+    friendly_str = friendly_str.repl("Ctrl", "Cmd");
   }
   else if (friendly_str.contains("Meta")) {
-    friendly_str = friendly_str.repl("Meta", "control");
+    friendly_str = friendly_str.repl("Meta", "Ctrl");
   }
-// not needed since Qt 5.5
-//  else if (friendly_str.contains("Alt")) {
-//    if (context == taiMisc::TEXTEDIT_CONTEXT) {
-//      if (action == taiMisc::TEXTEDIT_COPY_CLEAR) {
-//        friendly_str = friendly_str.repl("?", "W");
-//      }
-//      if (action == taiMisc::TEXTEDIT_WORD_FORWARD) {
-//        friendly_str = friendly_str.repl("?", "F");
-//      }
-//      if (action == taiMisc::TEXTEDIT_WORD_BACKWARD) {
-//        friendly_str = friendly_str.repl("?", "B");
-//      }
-//    }
-//    if (context == taiMisc::PROJECTWINDOW_CONTEXT) {
-//      if (action == taiMisc::PROJECTWINDOW_FRAME_LEFT_II) {
-//        friendly_str = friendly_str.repl("?", "J");
-//      }
-//      if (action == taiMisc::PROJECTWINDOW_FRAME_RIGHT_II) {
-//        friendly_str = friendly_str.repl("\xac", "L");
-//      }
-//    }
-//    if (context == taiMisc::TREE_CONTEXT) {
-//      if (action == taiMisc::TREE_FIND) {
-//        friendly_str = friendly_str.repl("?", "F");
-//      }
-//      if (action == taiMisc::taiMisc::TREE_FIND_REPLACE) {
-//        friendly_str = friendly_str.repl("?", "R");
-//      }
-//    }
-//  }
 #endif
   return friendly_str;
+}
+
+QKeySequence taiMisc::GetMethodKeySequence(String method_name) {
+  if (main_window) {
+    return main_window->GetMethodKeySequence(method_name);
+  }
+  return QKeySequence();
 }
 
 void taiMisc::ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos) {
@@ -1311,8 +1287,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_PANEL_VIEW_LEFT_II, QKeySequence());
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_PANEL_VIEW_RIGHT, QKeySequence(Qt::ShiftModifier + control_key + Qt::Key_F));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_PANEL_VIEW_RIGHT_II, QKeySequence());
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE, QKeySequence(control_key + Qt::Key_D));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE_II, QKeySequence());
+//  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE, QKeySequence(control_key + Qt::Key_D));
+//  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE_II, QKeySequence());
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN, QKeySequence(control_key + Qt::Key_P));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN_II, QKeySequence());
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT_II, QKeySequence(Qt::AltModifier + Qt::Key_J));
@@ -1538,6 +1514,12 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_COPY_CLEAR_II, QKeySequence());
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_FORWARD_II, QKeySequence());
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_BACKWARD_II, QKeySequence());
+  
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_TOGGLE_OFF_FLAG, QKeySequence(Qt::AltModifier + Qt::Key_T));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_TOGGLE_BREAKPOINT, QKeySequence(Qt::AltModifier + Qt::Key_B));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_REVERT_TO_CODE, QKeySequence(Qt::AltModifier + Qt::Key_C));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_EDIT_PROGRAM, QKeySequence(Qt::AltModifier + Qt::Key_P));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_EDIT_PROGRAM_EL, QKeySequence(Qt::AltModifier + Qt::Key_G));
 }
 
 void taiMisc::ResetKeyBindings() {

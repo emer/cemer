@@ -74,15 +74,12 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
 void ISelectableHost::AddDynActions(taiWidgetActions* menu, int dyn_list,
   ISelectable::GuiContext gc_typ)
 {
-  if (dyn_actions[dyn_list].count() == 0)
+  if (dyn_actions[dyn_list].count() == 0) {
     return;
+  }
   for (int i = 0; i < (int)dyn_actions[dyn_list].count(); ++i) {
     iAction* act = dyn_actions[dyn_list].FastEl(i);
     menu->AddAction(act);
-
-    
-    // rohrlich - would be nice if all the context menu items were added in one place!
-    // see taiWidgetMethod::AddToMenu 
     DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);
     MethodDef* meth =  dmd->md;
     if(meth->OptionAfter("GHOST_").nonempty()) {
@@ -535,7 +532,12 @@ void ISelectableHost::UpdateMethodsActions(int dyn_list, ISelectable::GuiContext
   dyn_actions[dyn_list].Reset(); // note: items ref deleted if needed
   for (int i = 0; i < dyn_methods[dyn_list].size; ++i) {
     DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);
-    iAction* act = new iAction(dyn_idx, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
+    String label = dmd->md->GetLabel();
+    QKeySequence ks = taiMisc::GetMethodKeySequence(dmd->md->name);
+    if (!ks.isEmpty()) {
+      label += "\t" + ks.toString();
+    }
+    iAction* act = new iAction(dyn_idx, label, QKeySequence(), dmd->md->name );
     QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
     dyn_actions[dyn_list].Add(act);
     dyn_idx++;

@@ -341,6 +341,12 @@ public:
     TREE_EDIT_DELETE_TO_END,
     TREE_EDIT_DELETE_TO_END_II,
     
+    TREE_EDIT_PROGRAM,
+    TREE_EDIT_PROGRAM_EL,
+    TREE_TOGGLE_OFF_FLAG,  // these are methods that apply to ProgEls
+    TREE_TOGGLE_BREAKPOINT,
+    TREE_REVERT_TO_CODE,
+
     GRAPHICS_INTERACTION_MODE_OFF,
     GRAPHICS_INTERACTION_MODE_OFF_II,
     GRAPHICS_INTERACTION_MODE_ON,
@@ -462,6 +468,8 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // #IGNORE get the key sequence bound to this action - will get the first it comes to (but shouldn't be more than one)
   static String         GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action, int kb_set);
   // #IGNORE get the key sequence bound to this action - and convert to human friendly and platform specific string  -- kb_set should be taMisc::KeyBindingSet but I don't want to include taMisc!! kb_set = 0 is KEY_BINDINGS_DEFAULT
+  static QKeySequence   GetMethodKeySequence(String method_name);
+  // #IGNORE get the QKeySequence from the main window which has the list
 #endif
   static void           LoadDefaultKeyBindings();
   // #IGNORE add all of the default key/action bindings - these are set in code

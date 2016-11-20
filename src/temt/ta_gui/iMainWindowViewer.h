@@ -26,6 +26,7 @@
 // member includes:
 #include <MainWindowViewer>
 #include <iAction_List>
+#include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:
 class taiWidgetMenu; //
@@ -91,6 +92,7 @@ public:
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataAnal;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataGen;   // #IGNORE used to map several actions to one action and pass a value
+  QSignalMapper*        signalMapperForSelection;   // #IGNORE used to map several actions to one action and pass a value
   
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
@@ -169,7 +171,9 @@ public:
   iAction_List         dataGenRandomActions;
   iAction_List         dataGenFeatPatsActions;
   iAction_List         dataGenFilesActions;
-  
+
+  iAction_List         selectionActions;  // methods that can be called on a tree selection
+
   iAction*            viewRefreshAction;
   iAction*            viewSetSaveViewAction;
   iAction*            viewResetViewAction;
@@ -217,8 +221,11 @@ public:
   
   iAction*            windowMinimizeAction;
   iAction*            windowZoomAction;
+  
+  NameVar_Array       method_key_bindings; // list of methods that can be called on selections and which are bound to QKeySequences; each name/value pair is the method name and int equivalent of BoundAction enum
+  QKeySequence        GetMethodKeySequence(String method_name); // checks method_key_bindings - empty string if not found
 
-  QObject*              clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
+  QObject*             clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
 
   taProject*            myProject() const; // project of which this viewer is a part
   taProject*            curProject() const; // only if we are a projviewer
@@ -375,6 +382,8 @@ public slots:
   virtual void  editCut();
   virtual void  editCopy();
   virtual void  editPaste();
+  
+  virtual void  editCallMethod(QString method);
 
   virtual void  ShowHideFrames(int combo);
   virtual void  showMenu_aboutToShow();

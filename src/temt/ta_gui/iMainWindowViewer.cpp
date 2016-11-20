@@ -57,6 +57,7 @@
 #include <iDialogKeyBindings>
 #include <taMediaWiki>
 #include <iApplicationToolBar>
+#include <NameVar_Array>
 
 #include <taMisc>
 #include <taiMisc>
@@ -633,6 +634,35 @@ void iMainWindowViewer::Constr_EditMenu()
   QKeySequence ks_dupe = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_DUPLICATE);
   editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate", ks_dupe, "editDuplicateAction"));
 
+  // add actions for methods called on other treeview selections - allows use of key shortcuts
+  signalMapperForSelection = new QSignalMapper (this);
+  NameVar name_var;
+  name_var.name = "ToggleOffFlag";
+  name_var.value = taiMisc::TREE_TOGGLE_OFF_FLAG;
+  method_key_bindings.Add(name_var);
+  name_var.name = "ToggleBreakpoint";
+  name_var.value = taiMisc::TREE_TOGGLE_BREAKPOINT;
+  method_key_bindings.Add(name_var);
+  name_var.name = "RevertToCode";
+  name_var.value = taiMisc::TREE_REVERT_TO_CODE;
+  method_key_bindings.Add(name_var);
+  name_var.name = "EditProgram";
+  name_var.value = taiMisc::TREE_EDIT_PROGRAM;
+  method_key_bindings.Add(name_var);
+  name_var.name = "EditProgramEl";
+  name_var.value = taiMisc::TREE_EDIT_PROGRAM_EL;
+  method_key_bindings.Add(name_var);
+
+  for (int i=0; i<method_key_bindings.size; i++) {
+    String actionString = method_key_bindings[i].name + "Action";
+    QKeySequence ks = taiMisc::GetMethodKeySequence(method_key_bindings[i].name);
+    selectionActions.Add(new iAction(method_key_bindings[i].name, method_key_bindings[i].name, ks, method_key_bindings[i].name));
+    this->AddAction(selectionActions[i]);  // MUST add action to some widget so it can be caught!
+    connect (selectionActions[i], SIGNAL(triggered()), signalMapperForSelection, SLOT(map())) ;
+    signalMapperForSelection->setMapping(selectionActions[i], method_key_bindings[i].name.chars());
+  }
+  connect (signalMapperForSelection, SIGNAL(mapped(QString)), this, SLOT(editCallMethod(QString))) ;
+
   editLinkAction = AddAction(new iAction(iClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));
   editLinkIntoAction = AddAction(new iAction(iClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction"));
   editUnlinkAction = AddAction(new iAction(iClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction"));
@@ -677,7 +707,7 @@ void iMainWindowViewer::Constr_EditMenu()
   connect(editDeleteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
-  
+
   editCutAction->setEnabled(false);
   editCopyAction->setEnabled(false);
   editPasteAction->setEnabled(false);
@@ -2424,6 +2454,11 @@ void iMainWindowViewer::editPaste() {
   }
 }
 
+void iMainWindowViewer::editCallMethod(QString method) {
+  iTreeView::call_string = method;
+  emit_EditAction(iClipData::EA_CALL);
+}
+
 void iMainWindowViewer::editMenu_aboutToShow() {
   UpdateUi();
 }
@@ -3433,4 +3468,15 @@ void iMainWindowViewer::RedoJump(QAction* action) {
   
   int index = action->data().toInt();
   proj->undo_mgr.Redo(index);
+}
+
+QKeySequence iMainWindowViewer::GetMethodKeySequence(String method_name) {
+  for (int i=0; i<method_key_bindings.size; i++) {
+    if (method_key_bindings[i].name == method_name) {
+      KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+      taiMisc::BoundAction bound_action = (taiMisc::BoundAction)method_key_bindings[i].value.toInt();
+      return bindings->KeySequence(taiMisc::TREE_CONTEXT, bound_action);
+    }
+  }
+  return QKeySequence();  // an empty sequence
 }

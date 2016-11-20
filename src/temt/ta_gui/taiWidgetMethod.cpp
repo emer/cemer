@@ -75,15 +75,26 @@ taiWidgetMethod::taiWidgetMethod(void* bs, MethodDef* md, TypeDef* typ_, IWidget
 void taiWidgetMethod::AddToMenu(taiWidgetActions* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
-  iAction* act = mnu->AddItem(meth->GetLabel(), taiWidgetMenu::use_default,
-        iAction::action, this, SLOT(CallFun()) );
+  
+  String label = meth->GetLabel();
+  // would like to be able to reuse the action already created but
+  // won't work so just make a new action
+  // AND it won't work to have the same KeySequence so just mod the label
+  QKeySequence ks = taiMisc::GetMethodKeySequence(meth->name);
+  if (!ks.isEmpty()) {
+    label += "\t" + ks.toString();
+  }
+  iAction* act = mnu->AddItem(label, taiWidgetMenu::use_default,
+                              iAction::action, this, SLOT(CallFun()) );
+  
   // add meth desc as a status item
   String statustip = meth->desc;
-  if (statustip.nonempty())
+  if (statustip.nonempty()) {
     act->setStatusTip(statustip);
+  }
   if (meth->HasOption("MENU_SEP_AFTER"))
     mnu->AddSep();
-
+  
   // works for context menus! Yes!
   if(meth->OptionAfter("GHOST_").nonempty()) {
     bool ghost = meth->GetCondOptTest("GHOST", typ, base);
