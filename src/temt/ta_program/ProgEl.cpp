@@ -513,6 +513,10 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
         var_type = ProgVar::T_Real;
         type_is_guess = true;
       }
+      else if (expr.isQuoted()) {
+        var_type = ProgVar::T_String;
+        type_is_guess = true;
+      }
     }
 
     int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type, type_is_guess);

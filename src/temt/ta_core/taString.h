@@ -332,6 +332,8 @@ public:
   // #CAT_Convert true if the string contains a value that can be interpreted as a floating-point number [+-]d*[.d*|[+-]ed*] -- also accepts ints so check isInt first to discriminate -- does not distinguish between float and double -- just any kind of floating point number -- call trim first to remove spaces, as this does not accept spaces
   bool                  isBool() const;
   // #CAT_Convert true if the string contains a value that can be interpreted as a bool -- accepts ONLY true, false, to distinguish from ints -- call trim first to remove spaces, as this does not accept spaces
+  bool                  isQuoted() const;
+  // #CAT_Convert true if the string begins and ends with quotes
 
   bool                  toBool() const;
   // #CAT_Convert accepts true as starting with t/T, or else 1

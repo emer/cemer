@@ -1030,6 +1030,10 @@ bool taString::isBool() const {
   return (*this == "true" || *this == "false");
 }
 
+bool taString::isQuoted() const {
+  return (this->firstchar() == '"' && this->lastchar() == '"');
+}
+
 void taString::makeUnique() {
   if (mrep->cnt > 1)
     setRep(Salloc(mrep->s, mrep->len));
