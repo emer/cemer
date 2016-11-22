@@ -485,9 +485,39 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
       }
     }
   }
+  // Note - I wonder if it would be better to just add each method to the iClipData enum.
+  // The method calls that go through here aren't any different than something like
+  // duplicate - or maybe this method is better and duplicate, etc. should go through this
+  // path - rohrlich
   else if (ea == iClipData::EA_CALL) {
     taBase* tab = taData();
-    tab->CallFun(iTreeView::call_string);
+    taProject* proj = NULL;
+    if(tab) {
+      proj = (taProject*)tab->GetThisOrOwner(&TA_taProject);
+      if (proj) {
+        proj->undo_mgr.Nest(true);
+      }
+    }
+    bool multi = false;
+    bool multi_off = false;
+    if(sel_items.size > 1) {
+      ++taMisc::in_gui_multi_action;
+      multi = true;
+    }
+    for (int i = 0; i < sel_items.size; ++i) {
+      if(multi && i == sel_items.size-1) {
+        --taMisc::in_gui_multi_action;
+        multi_off = true;
+      }
+      ISelectable* is = sel_items.SafeEl(i);
+      if (!is) continue;
+      is->link()->taData()->CallFun(iTreeView::call_string);
+    }
+    if(multi && !multi_off) // didn't reach end
+      --taMisc::in_gui_multi_action;
+    if (proj) {
+      proj->undo_mgr.Nest(false);
+    }
   }
   else { // paste-like op, get item data
     // confirm only 1 item selected for dst op -- Error is diagnostic, not operational
