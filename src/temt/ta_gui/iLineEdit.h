@@ -20,6 +20,9 @@
 
 #include <QLineEdit>
 
+// declare all other types mentioned but not required to include:
+class String_Array; //
+
 class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
@@ -30,17 +33,17 @@ public:
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
-  inline int	charWidth() {return mchar_width;} 
-  void		    setCharWidth(int num); // sets width to accommodate num chars of
-  inline int	minCharWidth() {return mmin_char_width;} 
-  void		    setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
+  inline int	  charWidth() {return mchar_width;}
+  void		      setCharWidth(int num); // sets width to accommodate num chars of
+  inline int	  minCharWidth() {return mmin_char_width;}
+  void		      setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
   virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
   virtual void	emitReturnPressed();	   // emit this signal
-  
+    
 #ifndef __MAKETA__
 signals:
-  void		focusChanged(bool got_focus);
-  void		lookupKeyPressed(iLineEdit* le);
+  void          focusChanged(bool got_focus);
+  void          lookupKeyPressed(iLineEdit* le);
   // use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
 #endif
 
@@ -50,19 +53,19 @@ public slots:
   virtual void  doLookup();     // what we do when the lookup key is pressed
 
 protected:
-  int		  mmin_char_width; // note: we limit to 128
-  int		  mchar_width; // note: we limit to 128
-  bool		ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  int           mmin_char_width; // note: we limit to 128
+  int           mchar_width; // note: we limit to 128
+  bool          ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  QCompleter*   completer; //
   
-  void 		focusInEvent(QFocusEvent* e) override;
-  void 		focusOutEvent(QFocusEvent* e) override;
-  void 		keyPressEvent(QKeyEvent* e) override;
-  void 		wheelEvent(QWheelEvent * e) override;
-  bool 		event(QEvent * e) override;
+  void          focusInEvent(QFocusEvent* e) override;
+  void          focusOutEvent(QFocusEvent* e) override;
+  void          keyPressEvent(QKeyEvent* e) override;
+  void          wheelEvent(QWheelEvent * e) override;
+  bool          event(QEvent * e) override;
 
 private:
-  void		init();
+  void		      init();
 };
-
 
 #endif // iLineEdit_h

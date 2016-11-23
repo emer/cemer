@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class String_Array; //
 
 
 class TA_API taiWidgetTokenChooser : public taiWidgetItemChooser {
@@ -48,6 +49,8 @@ public:
 
   void         EditPanel() override;
   void         EditDialog() override;
+
+  static void  GetTokenList(String_Array& strings, TypeDef* td);
 
   taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,
                     taiWidget* par, QWidget* gui_parent_, int flags_ = 0,

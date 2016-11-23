@@ -13,6 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#define use_completer 0
+
 #include "iLineEdit.h"
 
 #include <iDialogTextEdit>
@@ -29,6 +31,14 @@
 #include <taMisc>
 #include <KeyBindings>
 #include <KeyBindings_List>
+
+#include <QCompleter>
+#include <taiWidgetTokenChooser>
+#include <DataTable>
+#include <Program>
+#include <QStringListModel> // REMOVE THIS
+
+
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -58,6 +68,22 @@ void iLineEdit::init() {
 //   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
 //   sc->setContext(Qt::WidgetShortcut);
 //   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
+  
+#if use_completer
+  //  QStringList wordList;
+  //  wordList << "alpha" << "omega" << "omicron" << "zeta";
+  
+  //  QStringList* list = new QStringList();
+  //  String_Array strings;
+  //
+  //  taiWidgetTokenChooser::GetTokenList(strings, &TA_DataTable);
+  //
+  //  strings.ToQStringList(*list);
+  //  QStringListModel* list_model = new QStringListModel(*list, NULL);
+  //  completer = new QCompleter(list_model, NULL);
+  //  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  //  this->setCompleter(completer);
+#endif
 }
 
 void iLineEdit::editInEditor() {
@@ -180,6 +206,28 @@ bool iLineEdit::event(QEvent* e)
 void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+  
+#if use_completer
+  if (QApplication::keyboardModifiers() == 0)
+  {
+    QStringList* list = new QStringList();
+    String_Array strings;
+    
+    QString cur_text = text();
+    if (cur_text.startsWith("s")) {
+      taiWidgetTokenChooser::GetTokenList(strings, &TA_DataTable);
+    }
+    else {
+      taiWidgetTokenChooser::GetTokenList(strings, &TA_Program);
+    }
+    strings.ToQStringList(*list);
+    QStringListModel* list_model = new QStringListModel(*list, NULL);
+    completer = new QCompleter(list_model, NULL);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCompletionPrefix(text());
+    this->setCompleter(completer);
+  }
+#endif
   
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
   

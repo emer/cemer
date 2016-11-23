@@ -280,3 +280,33 @@ const String taiWidgetTokenChooser::viewText(int index) const {
   }
 }
 
+void taiWidgetTokenChooser::GetTokenList(String_Array& strings, TypeDef* td) {
+  for(int i=0; i<td->tokens.size; i++) {
+    taBase* btmp = (taBase*)td->tokens.FastEl(i);
+    if(!btmp)
+      continue;
+    taBase* parent = btmp->GetParent();
+    // keeps templates out of the list of actual instances
+    if (btmp->GetPath().startsWith(".templates")) {
+      continue;
+    }
+    // keeps templates out of the list of actual instances
+    if (!parent)
+      continue;
+    
+    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
+    taBase* owner = btmp->GetOwner();
+    if (owner) {
+      MemberDef* md = owner->FindMemberName(btmp->GetName());
+      if (md && md->HasOption("HIDDEN_CHOOSER"))
+        continue;
+    }
+    //    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
+    //      continue;
+    //    if (!ShowToken(btmp)) continue;
+    
+    strings.Add(btmp->GetColText(taBase::key_disp_name));
+  }
+}
+
+

@@ -306,6 +306,7 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iTableWidget.h
   iWebView.h
   iToolBar.h
+  iCodeCompleter.h
 
   # iTabBarMultiRow.h
   iTabBarBase.h
@@ -803,6 +804,7 @@ set(ta_gui_SRCS_NOMAKETA
   iTableWidget.cpp
   iWebView.cpp
   iToolBar.cpp
+  iCodeCompleter.cpp
 
   # iTabBarMultiRow.cpp
   iTabBarBase.cpp
