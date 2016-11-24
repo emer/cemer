@@ -20,21 +20,37 @@
 
 // parent includes:
 #include <QCompleter>
+#include <QStringListModel>
 
 // member includes:
+#include <taBase_List>
 
 // declare all other types mentioned but not required to include:
 
 class TA_API iCodeCompleter : public QCompleter {
   // Creates a list of code completions that make semantic sense - uses lookup logic to generate the list of options
+  Q_OBJECT
 INHERITED(QCompleter)
 public:
+  iCodeCompleter(QObject* parent = Q_NULLPTR);
+  iCodeCompleter(QAbstractItemModel *model, QObject *parent = Q_NULLPTR);
+
+  taBase_List             base_list;
+  
+  QStringList*            GetList() { return &string_list; }
+  QStringListModel*       list_model;
 
 
-
+protected:
+  QStringList             string_list;
+  
+  void                        GetTokens(TypeDef* td);
 
 private:
-  void		init();
+  void                     init();
+  
+public slots:
+  void                     setCompletionPrefix(const QString &prefix);
 };
 
 #endif // iCodeCompleter_h

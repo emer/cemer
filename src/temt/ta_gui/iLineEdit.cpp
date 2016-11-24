@@ -32,13 +32,7 @@
 #include <KeyBindings>
 #include <KeyBindings_List>
 
-#include <QCompleter>
-#include <taiWidgetTokenChooser>
-#include <DataTable>
-#include <Program>
-#include <QStringListModel> // REMOVE THIS
-
-
+#include <iCodeCompleter>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -70,19 +64,9 @@ void iLineEdit::init() {
 //   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
   
 #if use_completer
-  //  QStringList wordList;
-  //  wordList << "alpha" << "omega" << "omicron" << "zeta";
-  
-  //  QStringList* list = new QStringList();
-  //  String_Array strings;
-  //
-  //  taiWidgetTokenChooser::GetTokenList(strings, &TA_DataTable);
-  //
-  //  strings.ToQStringList(*list);
-  //  QStringListModel* list_model = new QStringListModel(*list, NULL);
-  //  completer = new QCompleter(list_model, NULL);
-  //  completer->setCaseSensitivity(Qt::CaseInsensitive);
-  //  this->setCompleter(completer);
+    completer = new iCodeCompleter();
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    this->setCompleter(completer);
 #endif
 }
 
@@ -210,22 +194,8 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 #if use_completer
   if (QApplication::keyboardModifiers() == 0)
   {
-    QStringList* list = new QStringList();
-    String_Array strings;
-    
     QString cur_text = text();
-    if (cur_text.startsWith("s")) {
-      taiWidgetTokenChooser::GetTokenList(strings, &TA_DataTable);
-    }
-    else {
-      taiWidgetTokenChooser::GetTokenList(strings, &TA_Program);
-    }
-    strings.ToQStringList(*list);
-    QStringListModel* list_model = new QStringListModel(*list, NULL);
-    completer = new QCompleter(list_model, NULL);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    completer->setCompletionPrefix(text());
-    this->setCompleter(completer);
+    completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
   }
 #endif
   

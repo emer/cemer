@@ -22,6 +22,7 @@
 
 // declare all other types mentioned but not required to include:
 class String_Array; //
+class iCodeCompleter; //
 
 class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
@@ -56,7 +57,7 @@ protected:
   int           mmin_char_width; // note: we limit to 128
   int           mchar_width; // note: we limit to 128
   bool          ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
-  QCompleter*   completer; //
+  iCodeCompleter*   completer; //
   
   void          focusInEvent(QFocusEvent* e) override;
   void          focusOutEvent(QFocusEvent* e) override;
