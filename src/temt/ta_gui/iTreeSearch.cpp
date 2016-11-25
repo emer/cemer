@@ -150,14 +150,14 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
     if(!tree_view->isItemExpanded(item) && !item->ChildrenCreated()) {
       // do full recursive search if not already expanded
       sub_srch.Reset();
-      tab->Search(ftxt, sub_srch, NULL, text_only, true, case_sens); // go with defaults for now
+      tab->Search(ftxt, sub_srch, NULL, text_only, true, case_sens, false, false, false, false, false, false); // go with defaults for now
       for(int k=0; k<sub_srch.size; k++) { // transfer to our ref list
         taBase* fnd = sub_srch.FastEl(k);
         found_items.Add(fnd);
       }
       sub_srch.Reset();
     }
-    else if(tab->SearchTestItem_impl(srch, text_only, true, case_sens)) {       // otherwise just test this one item
+    else if(tab->SearchTestItem_impl(srch, text_only, true, case_sens, false, false, false, false, false, false)) {       // otherwise just test this one item
       srch_found.append(item);
       found_items.Add(tab);
     }

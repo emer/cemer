@@ -2718,21 +2718,23 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
   if(srch.size == 0) return;
   TypeDef* td = GetTypeDef();
   int st_sz = items.size;
-  // first pass: just look at our guys
-  for(int m=0;m<td->members.size;m++) {
-    MemberDef* md = td->members[m];
-    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE")
-       || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) continue;
-    if(!md->type->IsActualTaBase()) continue;
-    taBase* obj = (taBase*)md->GetOff(this);
-    if(!obj) continue;
-    if(obj->SearchTestItem_impl(srch, text_only, contains, case_sensitive, obj_name, obj_type,
-                                obj_desc, obj_val, mbr_name, type_desc, md)) {
-//      taMisc::DebugInfo("memb search hit in:", GetPathNames(), "md:", md->name);
-      items.Link(obj);
+  
+  if (!text_only) {  // if text only we just search the visible text not the members
+    // first pass: just look at our guys
+    for(int m=0;m<td->members.size;m++) {
+      MemberDef* md = td->members[m];
+      if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE")
+         || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) continue;
+      if(!md->type->IsActualTaBase()) continue;
+      taBase* obj = (taBase*)md->GetOff(this);
+      if(!obj) continue;
+      if(obj->SearchTestItem_impl(srch, text_only, contains, case_sensitive, obj_name, obj_type,
+                                  obj_desc, obj_val, mbr_name, type_desc, md)) {
+        //      taMisc::DebugInfo("memb search hit in:", GetPathNames(), "md:", md->name);
+        items.Link(obj);
+      }
     }
   }
-
   // second pass: recurse
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
@@ -2743,7 +2745,7 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
     obj->SearchIn_impl(srch, items, owners, text_only, contains, case_sensitive, obj_name, obj_type,
                        obj_desc, obj_val, mbr_name, type_desc);
   }
-
+  
   if(owners && (items.size > st_sz)) { // we added somebody somewhere..
     owners->Link(this);
   }
