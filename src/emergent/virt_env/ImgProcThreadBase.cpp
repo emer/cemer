@@ -91,31 +91,4 @@ bool ImgProcThreadBase::GetThread2DGeom(int thr_no, const taVector2i& geom,
     end.y = geom.y;             // just double checking..
   
   return true;
-  // old strategy below here: splits up memory so not as efficient!
-  switch(threads.n_threads) {
-  case 1: {
-    start = 0;
-    end = geom;
-    break;
-  }
-  case 2: {
-    start.x = 0; end.x = geom.x; // full x
-    split_geom_half(geom.y, thr_no, start.y, end.y);
-    break;
-  }
-  case 4: {
-    int xhalf = thr_no % 2;
-    int yhalf = thr_no / 2;
-    split_geom_half(geom.x, xhalf, start.x, end.x);
-    split_geom_half(geom.y, yhalf, start.y, end.y);
-    break;
-  }
-  default: {
-    TestError(true, "GetThread2DGeom",
-              "thread count not supported yet for image processing!",
-              String(threads.n_threads));
-    return false;
-  }
-  }
-  return true;
 }

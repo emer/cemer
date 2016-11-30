@@ -41,7 +41,7 @@ void ColorSpace::sRGBtoGreyFastImg(float_Matrix& grey_img,
   taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
   grey_img.SetGeom(2, img_size.x, img_size.y);
   for(int yi = 0; yi < img_size.y; yi++) {
-    for(int xi = 0; xi < img_size.y; xi++) {
+    for(int xi = 0; xi < img_size.x; xi++) {
       float r_s = srgb_img.FastEl3d(xi, yi, 0);
       float g_s = srgb_img.FastEl3d(xi, yi, 1);
       float b_s = srgb_img.FastEl3d(xi, yi, 2);
@@ -56,7 +56,7 @@ void ColorSpace::sRGBtoXYZImg(float_Matrix& xyz_img,
   taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
   xyz_img.SetGeom(3, img_size.x, img_size.y, 3);
   for(int yi = 0; yi < img_size.y; yi++) {
-    for(int xi = 0; xi < img_size.y; xi++) {
+    for(int xi = 0; xi < img_size.x; xi++) {
       float r_s = srgb_img.FastEl3d(xi, yi, 0);
       float g_s = srgb_img.FastEl3d(xi, yi, 1);
       float b_s = srgb_img.FastEl3d(xi, yi, 2);

@@ -21,6 +21,8 @@ TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
   String act_name;
   while (targ) {
     act_name = targ->name.after("taSmartPtrT_");
+    if(act_name.endsWith('_'))
+      act_name = act_name.before(act_name.length()-1);
     if (act_name.nonempty()) {
       TypeDef* rval = taMisc::FindTypeName(act_name);
       if (rval && rval->IsActualTaBase())
