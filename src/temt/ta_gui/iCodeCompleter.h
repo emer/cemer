@@ -35,22 +35,21 @@ public:
   iCodeCompleter(QObject* parent = Q_NULLPTR);
   iCodeCompleter(QAbstractItemModel *model, QObject *parent = Q_NULLPTR);
 
-  taBase_List             base_list;
-  
-  QStringList*            GetList() { return &string_list; }
+  taBase_List*            base_list;
   QStringListModel*       list_model;
 
+  void                    SetModelList(taBase_List* list);
+  QStringList*            GetList() { return &string_list; }
+  taBase*                 GetToken();  // return the base_list item that is the current completion
 
 protected:
   QStringList             string_list;
-  
-  void                        GetTokens(TypeDef* td);
 
 private:
   void                     init();
   
 public slots:
-  void                     setCompletionPrefix(const QString &prefix);
+
 };
 
 #endif // iCodeCompleter_h

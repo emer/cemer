@@ -23,6 +23,7 @@
 #include <Program>
 
 #include <taMisc>
+#include <taBase>
 
 iCodeCompleter::iCodeCompleter(QObject* parent) {
   init();
@@ -33,69 +34,29 @@ iCodeCompleter::iCodeCompleter(QAbstractItemModel *model, QObject *parent) {
 }
 
 void iCodeCompleter::init() {
-  base_list.Reset();
-  GetTokens(&TA_DataTable);
-
-  for (int i=0; i<base_list.size; i++) {
-    taBase* base = base_list.FastEl(i);
-    string_list.append(base->GetName());
-  }
+  base_list = NULL;
+  setMaxVisibleItems(10);
   list_model = new QStringListModel(string_list, NULL);
-
   this->setModel(list_model);
 }
 
-void iCodeCompleter::GetTokens(TypeDef* td) {
-  for(int i=0; i<td->tokens.size; i++) {
-    taBase* btmp = (taBase*)td->tokens.FastEl(i);
-    if(!btmp)
-      continue;
-    taBase* parent = btmp->GetParent();
-    // keeps templates out of the list of actual instances
-    if (btmp->GetPath().startsWith(".templates")) {
-      continue;
-    }
-    // keeps templates out of the list of actual instances
-    if (!parent)
-      continue;
-
-    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
-    taBase* owner = btmp->GetOwner();
-    if (owner) {
-      MemberDef* md = owner->FindMemberName(btmp->GetName());
-      if (md && md->HasOption("HIDDEN_CHOOSER"))
-        continue;
-    }
-    //    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
-    //      continue;
-    //    if (!ShowToken(btmp)) continue;
-
-    base_list.Link(btmp);
-  }
-}
-
-void iCodeCompleter::setCompletionPrefix(const QString &prefix) {
-  taMisc::DebugInfo(prefix);
-  
-  base_list.RemoveAll();
+void iCodeCompleter::SetModelList(taBase_List* list) {
+  base_list = list;
   string_list.clear();
-
-  // just a quick and dirty way to test out changing model contents
-  // as the user types
-  // Real task is to hook this to the lookup code and build the lists
-  // from that existing logic.
-  if (prefix.length() > 2) {
-    GetTokens(&TA_Program);
-  }
-  else {
-    GetTokens(&TA_DataTable);
-  }
-  
-  for (int i=0; i<base_list.size; i++) {
-    taBase* base = base_list.FastEl(i);
+  for (int i=0; i<list->size; i++) {
+    taBase* base = list->FastEl(i);
     string_list.append(base->GetName());
   }
   list_model->setStringList(string_list);
 }
 
-
+taBase* iCodeCompleter::GetToken() {
+  int index = -1;
+  for (int i=0; i<base_list->size; i++) {
+    taBase* btmp = base_list->SafeEl(i);
+    if (btmp->GetName() == currentCompletion()) {
+      return base_list->SafeEl(i);
+    }
+  }
+  return NULL;
+}

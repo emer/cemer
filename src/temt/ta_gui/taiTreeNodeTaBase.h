@@ -21,9 +21,11 @@
 
 // member includes:
 #include <taSigLinkTaBase>
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 class iLineEdit; //
+class iCodeCompleter; //
 
 taTypeDef_Of(taiTreeNodeTaBase);
 
@@ -41,6 +43,8 @@ public:
 
   void          itemEdited(int column, int move_after = 0) override;
   void          lookupKeyPressed(iLineEdit* le, int column) override;
+  void          characterEntered(iLineEdit* le, int column) override;
+  String        PostCompletionEdit(iCodeCompleter* completer) override;
 
 public: // ISigLinkClient interface
 //  void*      This() override {return (void*)this;}

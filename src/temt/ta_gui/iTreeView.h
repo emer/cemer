@@ -100,7 +100,7 @@ public:
     // the map of role/key pairs, or an empty map if none
 #endif
   
-  ParentType            parent_type; // the context for the tree - browse, edit, list
+  ParentType            parent_type; // the context for the tree - browse, edit, list*&
   bool                  useEditorCustomExpand() const;
   bool                  useNavigatorCustomExpand() const;
   const KeyString       colKey(int col) const; // the key we set for data lookup
@@ -210,6 +210,9 @@ public slots:
   void                  itemWasEdited(const QModelIndex& index) const override;
   // calls ItemEdited on item directly
   void                  lookupKeyPressed(iLineEdit* le) const override;
+  void                  characterEntered(iLineEdit* le) const override;
+  void                  Highlighted(const QModelIndex& index);
+  void                  Completed(const QModelIndex& index);
 
 public: // ISelectableHost i/f
   bool         hasMultiSelect() const override;

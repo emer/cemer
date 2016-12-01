@@ -36,6 +36,7 @@
 #include <MemberProgEl>
 #include <SigLinkSignal>
 #include <taProject>
+#include <taBase_List>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
@@ -776,7 +777,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   String base_path;             // path to base element(s) if present
   String lookup_seed;           // start of text to seed lookup process
 
-  int   lookup_type;
+  LookUpType   lookup_type;
   int   expr_start = 0;
   bool  lookup_group_default = false;
   
@@ -1109,6 +1110,60 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   return rval;
 }
 
+taBase_List* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+                                          taBase*& path_own_obj, TypeDef*& path_own_typ,
+                                          MemberDef*& path_md, ProgEl* own_pel,
+                                          Program* own_prg, Function* own_fun,
+                                          taBase* path_base, TypeDef* path_base_typ) {
+  
+  String txt = cur_txt.before(cur_pos);
+  String append_txt;
+  String prepend_txt;
+  String path_prepend_txt;
+  String prog_el_txt;
+  String path_var;
+  String path_rest;
+  String base_path;             // path to base element(s) if present
+  String lookup_seed;           // start of text to seed lookup process
+  
+  LookUpType   lookup_type;
+  int   expr_start = 0;
+  bool  lookup_group_default = false;
+  
+  bool path_base_not_null = false;
+  // Rohrlich - see note in the parse code - remove this variable if all goes well
+  //  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
+  lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start, lookup_group_default);
+  
+  String rval = _nilString;
+  path_own_obj = NULL;
+  path_own_typ = NULL;
+  path_md = NULL;
+  
+  bool completion_ui = true;
+  
+  completion_lookup_type = lookup_type;
+  
+  switch(lookup_type) {
+    case ProgExprBase::VARIOUS: {  // multiple possibilities
+      tokens_of_type.RemoveAll();
+      GetTokensOfType(&TA_ProgVar, &tokens_of_type, own_prg, &TA_Program);
+      GetTokensOfType(&TA_DynEnumItem, &tokens_of_type);
+      GetTokensOfType(&TA_Function, &tokens_of_type);
+      
+      if (expr_start == 0) {  // program calls must be at beginning of line
+        GetTokensOfType(&TA_Program, &tokens_of_type);
+      }
+      completion_pre_text = prepend_txt;
+      completion_append_text = append_txt;
+      expr_lookup_cur_base = NULL;
+      break;
+    }
+  }
+  return &tokens_of_type;
+}
+
+
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
   
@@ -1127,6 +1182,23 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      own_pel, own_prg, own_fun);
 }
+
+taBase_List* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                          const String& mbr_name, int& new_pos) {
+  ProgEl* own_pel = GET_MY_OWNER(ProgEl);
+  if(!own_pel)
+    return NULL;
+  Program* own_prg = GET_OWNER(own_pel, Program);
+  if(!own_prg)
+    return NULL;
+  Function* own_fun = GET_OWNER(own_pel, Function);
+  taBase* path_own_obj = NULL;
+  TypeDef* path_own_typ = NULL;
+  MemberDef* path_md = NULL;
+  
+  return ProgExprBase::ExprLookupForCompleter(cur_txt, cur_pos, new_pos,
+                                       path_own_obj, path_own_typ, path_md,
+                                       own_pel, own_prg, own_fun, NULL, NULL);}
 
 bool ProgExprBase::ExprLookupIsFunc(const String& txt) {
   String trimmed_txt = trim(txt);
@@ -1192,5 +1264,110 @@ int ProgExprBase::Test_ParseForLookup(const String test_name, const String input
   return lookup_type;
 }
 
+String ProgExprBase::FinishCompletion(taBase* token, int& new_pos) {
+  String rval;
+  switch (completion_lookup_type) {
+    case VARIOUS: {
+      if (!token)
+        return _nilString;
+      
+      rval = completion_pre_text + token->GetName();
+      String type_name = token->GetTypeName();
+      if (type_name == "Program" || type_name == "Function") {
+        rval += "()";
+        new_pos = rval.length();
+      }
+      else {
+        new_pos = rval.length();
+        rval += completion_append_text;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  return rval;
+}
+
+//String ProgExprBase::PostCompletionList(taBase* token, const String& prepend_text, const String& append_text,
+//                                    int& new_pos) {
+//  String rval;
+//  TypeDef* path_own_typ = token->GetTypeDef();
+//  rval = prepend_text + token->GetName();
+//  new_pos = rval.length();
+//  rval += append_text;
+//  return rval;
+//}
+//
+//String ProgExprBase::PostCompletionMemberMethod(TypeItem* type_item, const String& prepend_text,
+//                                            const String& append_text, int& new_pos,
+//                                            MemberDef*& path_md, TypeDef*& path_own_type) {
+//  String rval;
+//  rval = prepend_text + type_item->name;
+//  path_md = (MemberDef*)type_item;  // not always relevant but set it anyway
+//  path_own_type = type_item->GetTypeDef();  // not always relevant but set it anyway
+//  if(type_item->TypeInfoKind() == TypeItem::TIK_METHOD) {
+//    rval += "()";
+//  }
+//  new_pos = rval.length();
+//  rval += append_text;
+//  return rval;
+//}
+//
+//String ProgExprBase::PostCompletionCallProgram(taBase* token, int& new_pos) {
+//  String rval;
+//  rval = token->GetName() + "()";
+//  new_pos = rval.length();
+//  return rval;
+//}
+//
+//String ProgExprBase::PostCompletionCallFunction(taBase* token, String& prepend_text, const String& prog_el_text, int& new_pos) {
+//  String rval;
+//  rval = prepend_text.repl(prog_el_text, token->GetName());
+//  rval += "()";
+//  new_pos = rval.length();
+//  return rval;
+//}
+//
+//String ProgExprBase::PostCompletionCallProgFun(taBase* token, String& prepend_text, int& new_pos) {
+//  String rval;
+//  rval = prepend_text + "() " + token->GetName();
+//  rval += "()";
+//  new_pos = rval.length();
+//  return rval;
+//}
+
+void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type) {
+  if (td == NULL) return;
+  
+  for(int i=0; i<td->tokens.size; i++) {
+    taBase* btmp = (taBase*)td->tokens.FastEl(i);
+    if(!btmp)
+      continue;
+    taBase* parent = btmp->GetParent();
+    // keeps templates out of the list of actual instances
+    if (btmp->GetPath().startsWith(".templates")) {  // maybe SameScope handles this
+      continue;
+    }
+    // keeps templates out of the list of actual instances
+    if (!parent)
+      continue;
+    
+    if (scope && scope_type) {
+      if (!btmp->SameScope(scope, scope_type))
+        continue;
+//      if (!ShowToken(btmp)) continue;
+    }
+    
+    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
+    taBase* owner = btmp->GetOwner();
+    if (owner) {
+      MemberDef* md = owner->FindMemberName(btmp->GetName());
+      if (md && md->HasOption("HIDDEN_CHOOSER"))
+        continue;
+    }
+    tokens->Link(btmp);
+  }
+}
 
 

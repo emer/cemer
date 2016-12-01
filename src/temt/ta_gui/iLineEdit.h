@@ -19,20 +19,21 @@
 #include "ta_def.h"
 
 #include <QLineEdit>
+#include <iCodeCompleter>
 
 // declare all other types mentioned but not required to include:
 class String_Array; //
-class iCodeCompleter; //
 
 class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
 public:
-  int  init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start 
+  int  init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start
   bool init_start_kill;          // at start of editing, kill contents
+  bool has_completer;
 
-  iLineEdit(QWidget* parent = 0);
-  iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
+  iLineEdit(QWidget* parent = 0, bool add_completer = false);
+  iLineEdit(const char* text, QWidget* parent, bool add_completer = false); //note: can't have defaults, ambiguity
 
   inline int	  charWidth() {return mchar_width;}
   void		      setCharWidth(int num); // sets width to accommodate num chars of
@@ -40,18 +41,25 @@ public:
   void		      setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
   virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
   virtual void	emitReturnPressed();	   // emit this signal
+  iCodeCompleter* GetCompleter() { return completer; }
     
 #ifndef __MAKETA__
 signals:
   void          focusChanged(bool got_focus);
   void          lookupKeyPressed(iLineEdit* le);
   // use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
+  void          characterEntered(iLineEdit* le); // use this as hook for looking up information based on current text etc (completion) -- when using the Completer feature rather than lookup feature
+  void          completed(QModelIndex index); // emit this signal when the use makes a completion selection
 #endif
 
 public slots:
   virtual void	setReadOnly(bool value);
   virtual void	editInEditor(); // edit contents in modal dialog
   virtual void  doLookup();     // what we do when the lookup key is pressed
+  virtual void  CharEntered();  // what we do when character entered and using completer
+  virtual void  CompletionDone(); // On return (selection of completion)
+  
+protected slots:
 
 protected:
   int           mmin_char_width; // note: we limit to 128

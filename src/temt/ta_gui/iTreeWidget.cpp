@@ -1,4 +1,3 @@
-
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -79,6 +78,7 @@ void  iTreeWidget::init() {
   m_highlightColors = NULL; // created if highlighting enabled
   // we never use this class for Qt-internal dnd semantics
   tree_dirty = false;
+  line_edit = NULL;
   
   setAutoScroll(true);
   setDragDropMode(DragDrop);
@@ -627,6 +627,8 @@ void iTreeWidget::itemWasEdited(const QModelIndex& index) const {
 void iTreeWidget::lookupKeyPressed(iLineEdit* le) const {
 }
 
+void iTreeWidget::characterEntered(iLineEdit* le) const {
+}
 
 ////////////////////////////////////////////////
 //      iTreeWidgetDefaultDelegate
@@ -644,12 +646,20 @@ QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
   QWidget* widg = inherited::createEditor(parent, option, index);
   QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
   if(le) {
-    iLineEdit* il = new iLineEdit(parent);
+    iLineEdit* il = new iLineEdit(parent, true);
     if(own_tree_widg) {
       QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
                        own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
+      QObject::connect(il, SIGNAL(characterEntered(iLineEdit*)),
+                       own_tree_widg, SLOT(characterEntered(iLineEdit*)) );
+      if (il->GetCompleter()) {
+        QObject::connect(il->GetCompleter(), SIGNAL(highlighted(QModelIndex)), own_tree_widg, SLOT(Highlighted(QModelIndex)));
+        //      QObject::connect(il->GetCompleter(), SIGNAL(activated(QModelIndex)), own_tree_widg, SLOT(Completed(QModelIndex))); // this should work but it didn't so I'm getting it to work with line below
+        QObject::connect(il, SIGNAL(completed(QModelIndex)), own_tree_widg, SLOT(Completed(QModelIndex)));
+      }
       il->init_start_pos = own_tree_widg->edit_start_pos;
       il->init_start_kill = own_tree_widg->edit_start_kill;
+      own_tree_widg->line_edit = il;
     }
     return il;
   }

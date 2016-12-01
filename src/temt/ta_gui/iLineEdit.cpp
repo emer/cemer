@@ -34,15 +34,17 @@
 
 #include <iCodeCompleter>
 
-iLineEdit::iLineEdit(QWidget* parent)
+iLineEdit::iLineEdit(QWidget* parent, bool add_completer)
 : QLineEdit(parent)
 {
+  has_completer = add_completer;
   init();
 }
 
-iLineEdit::iLineEdit(const char* text, QWidget* parent)
+iLineEdit::iLineEdit(const char* text, QWidget* parent, bool add_completer)
 : QLineEdit(QString(text), parent)
 {
+  has_completer = add_completer;
   init();
 }
 
@@ -63,10 +65,13 @@ void iLineEdit::init() {
 //   sc->setContext(Qt::WidgetShortcut);
 //   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
   
+  completer = NULL;
 #if use_completer
-    completer = new iCodeCompleter();
+  if (has_completer) {
+    completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompleter(completer);
+  }
 #endif
 }
 
@@ -192,13 +197,27 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
 #if use_completer
-  if (QApplication::keyboardModifiers() == 0)
-  {
+  if(!taiMisc::KeyEventCtrlPressed(key_event) &&
+     (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter)) {
+    inherited::keyPressEvent(key_event);
+    QModelIndex index = GetCompleter()->currentIndex();
+    CompletionDone();
+    return;
+  }
+  else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
+     key_event->key() != Qt::Key_Minus &&
+     key_event->key() != Qt::Key_Greater &&
+     key_event->key() != Qt::Key_Right &&
+     key_event->key() != Qt::Key_Left &&
+     key_event->key() != Qt::Key_Backspace) {  // knows about mac vs other OS
     QString cur_text = text();
     completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
+    CharEntered();
+    inherited::keyPressEvent(key_event);
+    return;
   }
 #endif
-  
+
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
   
   switch (action) {
@@ -302,6 +321,14 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 
 void iLineEdit::doLookup() {
   emit lookupKeyPressed(this);
+}
+
+void iLineEdit::CharEntered() {
+  emit characterEntered(this);
+}
+
+void iLineEdit::CompletionDone() {
+  emit completed(GetCompleter()->currentIndex());
 }
 
 void iLineEdit::wheelEvent(QWheelEvent * e)

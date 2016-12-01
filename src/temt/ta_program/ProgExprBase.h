@@ -22,6 +22,7 @@
 // member includes:
 #include <ProgVarRef_List>
 #include <String_Array>
+#include <taBase_List>
 
 
 // declare all other types mentioned but not required to include:
@@ -73,11 +74,18 @@ public:
   static cssSpace*      parse_tmp;  // #IGNORE temporary el's created during parsing (for types)
   int                   parse_ve_off; // #IGNORE offset to position information (for expressions = 10, otherwise 0)
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
+  
+  // these are for lookups
+  taBase_List           tokens_of_type;
+  String                completion_pre_text;
+  String                completion_append_text;
+  LookUpType            completion_lookup_type;
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
   bool          nonempty() const {return expr.nonempty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
+  
 
   virtual bool  SetExpr(const String& ex);
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
@@ -116,30 +124,44 @@ public:
   String GetName() const override;
   String GetTypeDecoKey() const override { return "ProgExpr"; }
 
-  static String   ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
+  static String       ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
                                 taBase*& path_own_obj, TypeDef*& path_own_typ,
                                 MemberDef*& path_md, ProgEl* own_pel,
                                 Program* own_prg, Function* own_fun,
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
   // generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
 
-  String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-                              const String& mbr_name, int& new_pos) override;
+  taBase_List*        ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+                                taBase*& path_own_obj, TypeDef*& path_own_typ,
+                                MemberDef*& path_md, ProgEl* own_pel,
+                                Program* own_prg, Function* own_fun,
+                                taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
+
+  String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
+                                            const String& mbr_name, int& new_pos) override;
+  taBase_List* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                             const String& mbr_name, int& new_pos) override;
   
-  static LookUpType ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start, bool& lookup_group_default);
+  static LookUpType    ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt,
+                                      String& path_prepend_txt, String& append_txt, String& prog_el_txt,
+                                      String& base_path, String& lookup_seed, String& path_var, String& path_rest,
+                                      bool path_base_not_null, int& expr_start, bool& lookup_group_default);
   // return the lookup type and set many arguments
   
-  static bool   FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
+  static bool           FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
   // locate either '.' or '->' working backwards
   
   // Signature must match that of the item_filter_fun typedef.
-  static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
-  static bool   ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
+  static bool           ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
+  static bool           ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
+  String                FinishCompletion(taBase* token, int& new_pos);
+  static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
+                                        TypeDef* scope_type = NULL);
 
-  static int   Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
-                                   String& lookup_seed, String& prepend_txt, String& append_txt,
-                                   String& prog_el_txt, String& path_var, String& path_prepend_txt,
-                                   String& path_rest, String& base_path, bool& lookup_group_default);
+  static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
+                                            String& lookup_seed, String& prepend_txt, String& append_txt,
+                                            String& prog_el_txt, String& path_var, String& path_prepend_txt,
+                                            String& path_rest, String& base_path, bool& lookup_group_default);
   // ONLY for testing - returns the lookup type and sets many variables
 
   void  InitLinks() override;
@@ -156,6 +178,15 @@ protected:
   void SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
   void SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                         int sls, void* op1_, void* op2_) override;
+  
+  // this will be absorbed into FinishCompletion()
+//  static String        PostCompletionVarious(taBase* token, const String& prepend_text, const String& append_text, int& new_pos);
+//  static String        PostCompletionList(taBase* token, const String& prepend_text, const String& append_text, int& new_pos);
+//  static String        PostCompletionMemberMethod(TypeItem* type_item, const String& prepend_text, const String& append_text,
+//                                              int& new_pos, MemberDef*& path_md, TypeDef*& path_own_type);
+//  static String        PostCompletionCallProgram(taBase* token, int& new_pos);
+//  static String        PostCompletionCallFunction(taBase* token, String& prepend_text, const String& prog_el_text, int& new_pos);
+//  static String        PostCompletionCallProgFun(taBase* token, String& prepend_text, int& new_pos);
 
 private:
   void  Copy_(const ProgExprBase& cp);

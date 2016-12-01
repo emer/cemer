@@ -35,6 +35,7 @@ public:
   int               edit_start_pos;  // position to start when editing
   bool              edit_start_kill; // kill to end of line at edit start?
   bool              tree_dirty;  // dirty if any item was expanded or collapsed since the project was opened
+  iLineEdit*        line_edit; // the current open iLineEdit object
 
   bool              hasHighlightColor(int idx) const;
   void              setHighlightColor(int idx, const QColor& base);
@@ -86,6 +87,8 @@ public slots:
   // called by delegate when item data at given index was edited
   virtual void      lookupKeyPressed(iLineEdit* le) const;
   // called by editor for lookup key
+  virtual void      characterEntered(iLineEdit* le) const;
+  // called by editor for completion
 
 protected:
   DropIndicatorPosition drop_ind; // we capture this from the dragMove event

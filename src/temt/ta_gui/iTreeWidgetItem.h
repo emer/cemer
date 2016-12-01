@@ -22,6 +22,7 @@
 #include <QPoint>
 #include <QTableView>
 #include <QTreeWidget>
+#include <iCodeCompleter>
 
 class iTreeWidget; //
 class iLineEdit; //
@@ -67,6 +68,10 @@ public:
   // automatically called when an item is edited -- can get new text that was entered with text() function -- move_after is direction to move down (+1) or up (-1) or nowhere 0
   virtual void          lookupKeyPressed(iLineEdit* le, int column) { };
   // called by editor for lookup key
+  virtual void          characterEntered(iLineEdit* le, int column) { };
+  // called by editor
+  virtual String          PostCompletionEdit(iCodeCompleter* completer) { return _nilString; }
+  // called by editor
   virtual bool          ChildrenCreated() { return children_created; };
   
   iTreeWidgetItem(iTreeWidget* parent);

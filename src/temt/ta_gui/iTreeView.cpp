@@ -44,6 +44,8 @@
 #include <QApplication>
 #include <QScrollBar>
 #include <QKeyEvent>
+#include <iLineEdit>
+#include <iCodeCompleter>
 
 const String iTreeView::opt_treefilt("TREEFILT_");
 String iTreeView::call_string = "";
@@ -1089,6 +1091,33 @@ void iTreeView::lookupKeyPressed(iLineEdit* le) const {
     item->lookupKeyPressed(le, 0); // todo: no col
   }
   inherited::lookupKeyPressed(le);
+}
+
+void iTreeView::characterEntered(iLineEdit* le) const {
+  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(currentItem());
+  if(item) {
+    item->characterEntered(le, 0);
+  }
+  inherited::characterEntered(le);
+}
+
+void iTreeView::Highlighted(const QModelIndex& index) {
+  if (line_edit) {
+    iCodeCompleter* completer = line_edit->GetCompleter();
+    if (completer) {
+      completer->setCurrentRow(index.row());
+    }
+  }
+}
+
+void iTreeView::Completed(const QModelIndex& index) {
+  iCodeCompleter* completer = line_edit->GetCompleter();
+  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(currentItem());
+  if(item) {
+    String full_expr = item->PostCompletionEdit(completer); // todo: no col
+    line_edit->clear();
+    line_edit->insert(full_expr);
+  }
 }
 
 void iTreeView::setTvFlags(int value) {
