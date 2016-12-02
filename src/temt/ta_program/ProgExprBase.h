@@ -139,8 +139,8 @@ public:
 
   String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                             const String& mbr_name, int& new_pos) override;
-  taBase_List* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
-                                             const String& mbr_name, int& new_pos) override;
+  virtual taBase_List* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                             const String& mbr_name, int& new_pos);
   
   static LookUpType    ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt,
                                       String& path_prepend_txt, String& append_txt, String& prog_el_txt,
