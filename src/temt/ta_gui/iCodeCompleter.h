@@ -20,6 +20,7 @@
 
 // parent includes:
 #include <QCompleter>
+#include <QStringList>
 #include <QStringListModel>
 
 // member includes:
@@ -35,18 +36,17 @@ public:
   iCodeCompleter(QObject* parent = Q_NULLPTR);
   iCodeCompleter(QAbstractItemModel *model, QObject *parent = Q_NULLPTR);
 
-  taBase_List*            base_list;
   QStringListModel*       list_model;
 
-  void                    SetModelList(taBase_List* list);
+  void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
-  taBase*                 GetToken();  // return the base_list item that is the current completion
+  String                  GetCurrent();  // return the current selection
 
 protected:
   QStringList             string_list;
 
 private:
-  void                     init();
+  void                    Init();
   
 public slots:
 

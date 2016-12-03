@@ -24,39 +24,28 @@
 
 #include <taMisc>
 #include <taBase>
+#include <String_Array>
 
 iCodeCompleter::iCodeCompleter(QObject* parent) {
-  init();
+  Init();
 }
 
 iCodeCompleter::iCodeCompleter(QAbstractItemModel *model, QObject *parent) {
-  init();
+  Init();
 }
 
-void iCodeCompleter::init() {
-  base_list = NULL;
+void iCodeCompleter::Init() {
   setMaxVisibleItems(10);
   list_model = new QStringListModel(string_list, NULL);
   this->setModel(list_model);
 }
 
-void iCodeCompleter::SetModelList(taBase_List* list) {
-  base_list = list;
+void iCodeCompleter::SetModelList(String_Array *list) {
   string_list.clear();
-  for (int i=0; i<list->size; i++) {
-    taBase* base = list->FastEl(i);
-    string_list.append(base->GetName());
-  }
+  list->ToQStringList(string_list);
   list_model->setStringList(string_list);
 }
 
-taBase* iCodeCompleter::GetToken() {
-  int index = -1;
-  for (int i=0; i<base_list->size; i++) {
-    taBase* btmp = base_list->SafeEl(i);
-    if (btmp->GetName() == currentCompletion()) {
-      return base_list->SafeEl(i);
-    }
-  }
-  return NULL;
+String iCodeCompleter::GetCurrent() {
+  return currentCompletion();
 }

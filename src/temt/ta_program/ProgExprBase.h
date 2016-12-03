@@ -23,7 +23,7 @@
 #include <ProgVarRef_List>
 #include <String_Array>
 #include <taBase_List>
-
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 class cssElPtr; //
@@ -60,6 +60,17 @@ public:
     PROGRAM_FUNCTION,
     METHOD,
   };
+  
+  enum FinishType {  // which code to use to modify the code string after the user selects a "completion"
+    FINISH_NOT_SET,
+    FINISH_VARIOUS,
+    FINISH_LIST,
+    FINISH_MEMB_METH,
+    FINISH_CALL_PROGRAM,
+    FINISH_CALL_FUNCTION,
+    FINISH_CALL_PROG_FUN,
+  };
+
 
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
@@ -76,10 +87,15 @@ public:
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
   
   // these are for lookups
-  taBase_List           tokens_of_type;
-  String                completion_pre_text;
-  String                completion_append_text;
-  LookUpType            completion_lookup_type;
+  static taBase_List            completion_token_list;
+  static Member_List            completion_member_list;
+  static Method_List            completion_method_list;
+  static String_Array           completion_choice_list;
+  static LookUpType             completion_lookup_type;
+  static FinishType             completion_finish_type;  // how to modify the code after the completion is chosen - add parens, set column, etc
+  static String                 completion_pre_text;
+  static String                 completion_append_text;
+  static String                 completion_prog_el_text;
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
@@ -131,7 +147,7 @@ public:
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
   // generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
 
-  taBase_List*        ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+  static String_Array* ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                 taBase*& path_own_obj, TypeDef*& path_own_typ,
                                 MemberDef*& path_md, ProgEl* own_pel,
                                 Program* own_prg, Function* own_fun,
@@ -139,7 +155,7 @@ public:
 
   String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                             const String& mbr_name, int& new_pos) override;
-  virtual taBase_List* StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+  String_Array*        StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                              const String& mbr_name, int& new_pos);
   
   static LookUpType    ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt,
@@ -154,9 +170,13 @@ public:
   // Signature must match that of the item_filter_fun typedef.
   static bool           ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
   static bool           ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
-  String                FinishCompletion(taBase* token, int& new_pos);
+  static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL);
+  static void           GetMembersForType(TypeDef* td, Member_List* members);
+  static void           GetMethodsForType(TypeDef* td, Method_List* methods);
+  static void           GetEnumsForType(TypeDef* td);
+  static taBase*        GetTokenForCurrentCompletion(const String& cur_completion);
 
   static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                             String& lookup_seed, String& prepend_txt, String& append_txt,
@@ -179,15 +199,6 @@ protected:
   void SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                         int sls, void* op1_, void* op2_) override;
   
-  // this will be absorbed into FinishCompletion()
-//  static String        PostCompletionVarious(taBase* token, const String& prepend_text, const String& append_text, int& new_pos);
-//  static String        PostCompletionList(taBase* token, const String& prepend_text, const String& append_text, int& new_pos);
-//  static String        PostCompletionMemberMethod(TypeItem* type_item, const String& prepend_text, const String& append_text,
-//                                              int& new_pos, MemberDef*& path_md, TypeDef*& path_own_type);
-//  static String        PostCompletionCallProgram(taBase* token, int& new_pos);
-//  static String        PostCompletionCallFunction(taBase* token, String& prepend_text, const String& prog_el_text, int& new_pos);
-//  static String        PostCompletionCallProgFun(taBase* token, String& prepend_text, int& new_pos);
-
 private:
   void  Copy_(const ProgExprBase& cp);
   void  Initialize();

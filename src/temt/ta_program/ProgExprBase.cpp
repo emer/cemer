@@ -43,9 +43,19 @@ TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
 
 
 cssProgSpace* ProgExprBase::parse_prog = NULL;
-cssSpace* ProgExprBase::parse_tmp = NULL;
+cssSpace*     ProgExprBase::parse_tmp = NULL;
 
 static ProgEl* expr_lookup_cur_base = NULL;
+
+String_Array                ProgExprBase::completion_choice_list;
+taBase_List                 ProgExprBase::completion_token_list;
+Member_List                 ProgExprBase::completion_member_list;
+Method_List                 ProgExprBase::completion_method_list;
+String                      ProgExprBase::completion_pre_text;
+String                      ProgExprBase::completion_append_text;
+String                      ProgExprBase::completion_prog_el_text;
+ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
+ProgExprBase::FinishType    ProgExprBase::completion_finish_type;
 
 void ProgExprBase::Initialize() {
   flags = PE_NONE;
@@ -1105,12 +1115,17 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       delete func_look_up;
       break;
     }
+      
+    case ProgExprBase::NOT_SET: {  // to eliminate compiler warning
+      taMisc::Error("ExprLookupFun - switch value doesn't fall into any case");
+      break;
+    }
   }
   
   return rval;
 }
 
-taBase_List* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                           taBase*& path_own_obj, TypeDef*& path_own_typ,
                                           MemberDef*& path_md, ProgEl* own_pel,
                                           Program* own_prg, Function* own_fun,
@@ -1140,27 +1155,252 @@ taBase_List* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cur
   path_own_typ = NULL;
   path_md = NULL;
   
-  bool completion_ui = true;
+  completion_prog_el_text = prog_el_txt;
   
+  bool completion_ui = true;
   completion_lookup_type = lookup_type;
+  completion_token_list.RemoveAll();
+  completion_member_list.RemoveAll();
+  completion_method_list.RemoveAll();
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
-      tokens_of_type.RemoveAll();
-      GetTokensOfType(&TA_ProgVar, &tokens_of_type, own_prg, &TA_Program);
-      GetTokensOfType(&TA_DynEnumItem, &tokens_of_type);
-      GetTokensOfType(&TA_Function, &tokens_of_type);
-      
+      GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
+      GetTokensOfType(&TA_DynEnumItem, &completion_token_list);
+      GetTokensOfType(&TA_Function, &completion_token_list);
       if (expr_start == 0) {  // program calls must be at beginning of line
-        GetTokensOfType(&TA_Program, &tokens_of_type);
+        GetTokensOfType(&TA_Program, &completion_token_list);
       }
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
       expr_lookup_cur_base = NULL;
+      completion_finish_type = FINISH_VARIOUS;
+      break;
+    }
+    
+    case ProgExprBase::METHOD: {
+      TypeDef* lookup_td = NULL;
+      ProgVar* st_var = NULL;
+      st_var = own_prg->FindVarName(path_var);
+      if (st_var) {
+        TypeDef* td = st_var->object_type;
+        if (td) {
+          MethodDef* md = td->methods.FindName(path_rest);
+          if (md) {
+            lookup_td = md->type;  // get the return type
+          }
+        }
+      }
+      if (lookup_td) {
+        GetMembersForType(lookup_td, &completion_member_list);
+      }
+      completion_finish_type = FINISH_MEMB_METH;
+      break;
+    }
+  
+    case ProgExprBase::OBJ_MEMB_METH: {                     // members/methods
+      TypeDef* lookup_td = NULL;
+      taList_impl* tal = NULL;
+      taBase* base_base = NULL;
+      TypeDef* own_td = NULL;
+      if(path_base) {
+        base_base = path_base;
+        path_rest = base_path;
+        own_td = path_base_typ;
+      }
+      else if(path_base_typ) {
+        own_td = path_base_typ;
+        path_rest = base_path;
+      }
+      else {
+        if (path_var.empty()) {
+          path_var = base_path;
+        }
+        ProgVar* st_var = NULL;
+        if(own_fun)
+          st_var = own_fun->FindVarName(path_var);
+        if(!st_var)
+          st_var = own_prg->FindVarName(path_var);
+        if(st_var) {
+          if(st_var->var_type == ProgVar::T_Object) {
+            if(!st_var->object_type) {
+              taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
+                           "because it is an Object* but has no type set yet!");
+            }
+            else {
+              own_td = st_var->object_type;
+              if(path_rest.empty()) {
+                lookup_td = st_var->object_type;
+              }
+              else {
+                base_base = st_var->object_val;
+              }
+            }
+          }
+          else if(st_var->var_type == ProgVar::T_String) {
+            lookup_td = &TA_taString;
+          }
+          else if(st_var->var_type == ProgVar::T_DynEnum) {
+            lookup_td = &TA_DynEnum;
+          }
+        }
+        else {
+          taMisc::Info("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
+        }
+      }
+      if(base_base && !lookup_td) {
+        MemberDef* md = NULL;
+        taBase* mb_tab = base_base->FindFromPath(path_rest, md);
+        if(mb_tab) {
+          lookup_td = mb_tab->GetTypeDef();
+          if(lookup_td->InheritsFrom(&TA_taList_impl))
+            tal = (taList_impl*)mb_tab;
+        }
+        else {
+          if(md) lookup_td = md->type;
+        }
+      }
+      if(!lookup_td && own_td) {
+        int net_base_off=0;
+        ta_memb_ptr net_mbr_off=0;
+        MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off,
+                                                      net_mbr_off, path_rest, false);
+        // no warn
+        if(md)
+          lookup_td = md->type;
+        
+        if (lookup_td && lookup_group_default) { // lookup is for group member vs group - i.e. group[0]. vs group.
+          taBase* tab = tabMisc::root->GetTemplateInstance(lookup_td);
+          if (tab && tab->InheritsFrom(&TA_taList_impl)) {
+            taList_impl* some_list = (taList_impl*)tab;
+            lookup_td = some_list->GetElType();
+          }
+        }
+      }
+      if(!lookup_td) {
+        taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
+                     path_var);
+      }
+      if(tal) {
+        if(tal->InheritsFrom(&TA_taGroup_impl)) {
+          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser
+          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
+          lilkup->GetImage((taGroup_impl*)tal, NULL);
+          bool okc = lilkup->OpenChooser();
+          if(okc && lilkup->item()) {
+            path_own_obj = lilkup->item();
+            path_own_typ = path_own_obj->GetTypeDef();
+            rval = path_prepend_txt + path_own_obj->GetName();
+            new_pos = rval.length();
+            rval += append_txt;
+          }
+          delete lilkup;
+        }
+        else {
+          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser
+          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
+          lilkup->GetImage(tal, NULL);
+          bool okc = lilkup->OpenChooser();
+          if(okc && lilkup->item()) {
+            path_own_obj = lilkup->item();
+            path_own_typ = path_own_obj->GetTypeDef();
+            rval = path_prepend_txt + path_own_obj->GetName();
+            new_pos = rval.length();
+            rval += append_txt;
+          }
+          delete lilkup;
+        }
+      }
+      else if(lookup_td) {
+        TypeItem* lookup_md = NULL;
+        if(path_base || path_base_typ) {          // can only lookup members, not methods
+          GetMembersForType(lookup_td, &completion_member_list);
+        }
+        else {
+          GetMembersForType(lookup_td, &completion_member_list);
+          GetMethodsForType(lookup_td, &completion_method_list);
+        }
+        if(lookup_md) {
+          completion_finish_type = FINISH_MEMB_METH;
+        }
+      }
+      break;
+    }
+    case ProgExprBase::SCOPED: {                      // enums
+      TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
+      if(lookup_td) {
+        // XXXXXXXXXXXXXXXXXXXX
+      }
+      else {                      // now try for local enums
+        ProgType* pt = own_prg->types.FindName(base_path);
+        if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
+          GetTokensOfType(&TA_DynEnumBase, &completion_token_list);
+        }
+      }
+      break;
+    }
+    case ProgExprBase::ARRAY_INDEX: {
+      taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
+      break;
+    }
+      
+    case ProgExprBase::CALL: {                 // ProgEl
+      String trimmed_txt = trim(completion_prog_el_text);
+      String el = trimmed_txt; // the program element
+      if(trimmed_txt.contains(' ')) {
+        lookup_seed = trimmed_txt.after(' ',-1);
+        el = trimmed_txt.before(' ');
+      }
+      if (el.downcase() == "call" || el.downcase().startsWith("prog")) {
+        GetTokensOfType(&TA_Program, &completion_token_list, NULL, &TA_taProject);
+        completion_finish_type = FINISH_CALL_PROGRAM;
+     }
+      else if (el.downcase().startsWith("fun")) {
+        GetTokensOfType(&TA_Function, &completion_token_list, NULL, &TA_Function);
+        completion_finish_type = FINISH_CALL_FUNCTION;
+      }
+      break;
+    }
+      
+    case ProgExprBase::PROGRAM_FUNCTION: {                 // call a function in a specific program
+      taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser
+      (&TA_Function, NULL, NULL, NULL, 0, lookup_seed);
+      // scope functions to the containing program - not this program
+      taProject* my_proj = own_prg->GetMyProj();
+      String scoped_prog_name = trim(prepend_txt);
+      Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
+      GetTokensOfType(&TA_Function, &completion_token_list, scope_program, &TA_Program);
+      completion_finish_type = FINISH_CALL_PROG_FUN;
+      break;
+    }
+      
+    case ProgExprBase::NOT_SET: {  // to eliminate compiler warning
+      taMisc::Error("ExprLookupFun - switch value doesn't fall into any case");
       break;
     }
   }
-  return &tokens_of_type;
+
+  completion_choice_list.Reset();
+  for (int i=0; i<completion_token_list.size; i++) {
+    taBase* base = completion_token_list.FastEl(i);
+    completion_choice_list.Add(base->GetName());
+  }
+
+  for (int i=0; i<completion_member_list.size; i++) {
+    MemberDef* member_def = completion_member_list.FastEl(i);
+    completion_choice_list.Add(member_def->name);
+  }
+
+  for (int i=0; i<completion_method_list.size; i++) {
+    MethodDef* method_def = completion_method_list.FastEl(i);
+    completion_choice_list.Add(method_def->name);
+  }
+  
+  for (int i=0; i<completion_choice_list.size; i++) {
+    taMisc::DebugInfo(completion_choice_list.SafeEl(i));
+  }
+
+  return &completion_choice_list;
 }
 
 
@@ -1183,7 +1423,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                      own_pel, own_prg, own_fun);
 }
 
-taBase_List* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+String_Array* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
   if(!own_pel)
@@ -1264,12 +1504,12 @@ int ProgExprBase::Test_ParseForLookup(const String test_name, const String input
   return lookup_type;
 }
 
-String ProgExprBase::FinishCompletion(taBase* token, int& new_pos) {
+String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos) {
   String rval;
   switch (completion_lookup_type) {
-    case VARIOUS: {
-      if (!token)
-        return _nilString;
+    case FINISH_VARIOUS: {
+      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+      if (!token) return _nilString;
       
       rval = completion_pre_text + token->GetName();
       String type_name = token->GetTypeName();
@@ -1281,64 +1521,73 @@ String ProgExprBase::FinishCompletion(taBase* token, int& new_pos) {
         new_pos = rval.length();
         rval += completion_append_text;
       }
+      completion_token_list.RemoveAll();
       break;
     }
+      
+    case FINISH_MEMB_METH: {
+      TypeItem* type_item = NULL;
+      rval = completion_pre_text + type_item->name;
+//      path_md = (MemberDef*)type_item;  // not always relevant but set it anyway
+//      path_own_type = type_item->GetTypeDef();  // not always relevant but set it anyway
+      if(type_item->TypeInfoKind() == TypeItem::TIK_METHOD) {
+        rval += "()";
+      }
+      new_pos = rval.length();
+      rval += completion_append_text;
+      break;
+    }
+    
+    case FINISH_LIST: {
+      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+      if (!token) return _nilString;
+
+      TypeDef* path_own_typ = token->GetTypeDef();
+      rval = completion_pre_text + token->GetName();
+      new_pos = rval.length();
+      rval += completion_append_text;
+      break;
+    }
+      
+    case FINISH_CALL_PROGRAM: {
+      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+      if (!token) return _nilString;
+      
+      rval = token->GetName() + "()";
+      new_pos = rval.length();
+      break;
+    }
+      
+    case FINISH_CALL_FUNCTION: {
+      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+      if (!token) return _nilString;
+      
+      rval = completion_pre_text.repl(completion_prog_el_text, token->GetName());
+      
+      rval += "()";
+      new_pos = rval.length();
+      break;
+    }
+      
+    case FINISH_CALL_PROG_FUN: {
+      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+      if (!token) return _nilString;
+      
+      rval = completion_pre_text + "() " + token->GetName();
+      rval += "()";
+      new_pos = rval.length();
+      break;
+    }
+
     default:
       break;
   }
+  
   return rval;
 }
 
-//String ProgExprBase::PostCompletionList(taBase* token, const String& prepend_text, const String& append_text,
-//                                    int& new_pos) {
-//  String rval;
-//  TypeDef* path_own_typ = token->GetTypeDef();
-//  rval = prepend_text + token->GetName();
-//  new_pos = rval.length();
-//  rval += append_text;
-//  return rval;
-//}
-//
-//String ProgExprBase::PostCompletionMemberMethod(TypeItem* type_item, const String& prepend_text,
-//                                            const String& append_text, int& new_pos,
-//                                            MemberDef*& path_md, TypeDef*& path_own_type) {
-//  String rval;
-//  rval = prepend_text + type_item->name;
-//  path_md = (MemberDef*)type_item;  // not always relevant but set it anyway
-//  path_own_type = type_item->GetTypeDef();  // not always relevant but set it anyway
-//  if(type_item->TypeInfoKind() == TypeItem::TIK_METHOD) {
-//    rval += "()";
-//  }
-//  new_pos = rval.length();
-//  rval += append_text;
-//  return rval;
-//}
-//
-//String ProgExprBase::PostCompletionCallProgram(taBase* token, int& new_pos) {
-//  String rval;
-//  rval = token->GetName() + "()";
-//  new_pos = rval.length();
-//  return rval;
-//}
-//
-//String ProgExprBase::PostCompletionCallFunction(taBase* token, String& prepend_text, const String& prog_el_text, int& new_pos) {
-//  String rval;
-//  rval = prepend_text.repl(prog_el_text, token->GetName());
-//  rval += "()";
-//  new_pos = rval.length();
-//  return rval;
-//}
-//
-//String ProgExprBase::PostCompletionCallProgFun(taBase* token, String& prepend_text, int& new_pos) {
-//  String rval;
-//  rval = prepend_text + "() " + token->GetName();
-//  rval += "()";
-//  new_pos = rval.length();
-//  return rval;
-//}
-
 void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type) {
-  if (td == NULL) return;
+  if (td == NULL || tokens == NULL) return;
   
   for(int i=0; i<td->tokens.size; i++) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
@@ -1370,4 +1619,49 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
   }
 }
 
+void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members) {
+  if (td == NULL || members == NULL) return;
+  
+  MemberSpace* mbs = &td->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+//    if (!ShowMember(mbr)) continue;
+    members->Link(mbr);
+  }
+}
 
+void ProgExprBase::GetMethodsForType(TypeDef *td, Method_List* methods) {
+ if (td == NULL || methods == NULL) return;
+ 
+  MethodSpace* mts = &td->methods;
+    for (int i = 0; i < mts->size; ++i) {
+      MethodDef* mth = mts->FastEl(i);
+//      if (!ShowMethod(mth)) continue;
+      methods->Link(mth);
+    }
+}
+
+void ProgExprBase::GetEnumsForType(TypeDef* td) {  // add list when I figure out what kind!
+//  for(int i=0; i < td->sub_types.size; i++) {
+//    TypeDef* td = td->sub_types.FastEl(i);
+//    if(td->IsEnum()) {
+//      for(int j=0;j< td->enum_vals.size; j++) {
+//        EnumDef* enum_def = td->enum_vals.FastEl(j);
+////        if(!ShowEnum(enum_def)) continue;
+//        completion_enum_list.Link(enum_def);
+//      }
+//    }
+//}
+}
+
+taBase* ProgExprBase::GetTokenForCurrentCompletion(const String& cur_completion) {
+  // get the token with the selection string
+  taBase* token = NULL;
+  for (int i=0; i<completion_token_list.size; i++) {
+    token = completion_token_list.SafeEl(i);
+    if (token->GetName() == cur_completion) {
+      return token;
+    }
+  }
+  return token;
+}
