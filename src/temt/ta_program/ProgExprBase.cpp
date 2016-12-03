@@ -1117,7 +1117,6 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     }
       
     case ProgExprBase::NOT_SET: {  // to eliminate compiler warning
-      taMisc::Error("ExprLookupFun - switch value doesn't fall into any case");
       break;
     }
   }
@@ -1163,6 +1162,8 @@ String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cu
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
   
+  completion_finish_type = FINISH_NOT_SET;
+  
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
@@ -1193,8 +1194,8 @@ String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cu
       }
       if (lookup_td) {
         GetMembersForType(lookup_td, &completion_member_list);
+        completion_finish_type = FINISH_MEMB_METH;
       }
-      completion_finish_type = FINISH_MEMB_METH;
       break;
     }
   
@@ -1312,7 +1313,6 @@ String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cu
         }
       }
       else if(lookup_td) {
-        TypeItem* lookup_md = NULL;
         if(path_base || path_base_typ) {          // can only lookup members, not methods
           GetMembersForType(lookup_td, &completion_member_list);
         }
@@ -1320,9 +1320,7 @@ String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cu
           GetMembersForType(lookup_td, &completion_member_list);
           GetMethodsForType(lookup_td, &completion_method_list);
         }
-        if(lookup_md) {
-          completion_finish_type = FINISH_MEMB_METH;
-        }
+        completion_finish_type = FINISH_MEMB_METH;
       }
       break;
     }
@@ -1375,7 +1373,6 @@ String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cu
     }
       
     case ProgExprBase::NOT_SET: {  // to eliminate compiler warning
-      taMisc::Error("ExprLookupFun - switch value doesn't fall into any case");
       break;
     }
   }
@@ -1383,23 +1380,32 @@ String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cu
   completion_choice_list.Reset();
   for (int i=0; i<completion_token_list.size; i++) {
     taBase* base = completion_token_list.FastEl(i);
-    completion_choice_list.Add(base->GetName());
+    if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
+      completion_choice_list.Add(base->GetName() + "()");
+    }
+    else {
+      completion_choice_list.Add(base->GetName());
+    }
   }
 
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
-    completion_choice_list.Add(member_def->name);
+    completion_choice_list.Add(txt + member_def->name);
   }
 
   for (int i=0; i<completion_method_list.size; i++) {
     MethodDef* method_def = completion_method_list.FastEl(i);
-    completion_choice_list.Add(method_def->name);
+    String full_seed = txt + method_def->name + "(";
+//    for (int j=0; j<method_def->arg_names.size; j++) {
+//      full_seed += method_def->arg_names.SafeEl(j);
+//      if (j < method_def->arg_names.size - 1) {
+//        full_seed += ", ";
+//      }
+//    }
+    full_seed += ")";
+    completion_choice_list.Add(full_seed);
   }
   
-  for (int i=0; i<completion_choice_list.size; i++) {
-    taMisc::DebugInfo(completion_choice_list.SafeEl(i));
-  }
-
   return &completion_choice_list;
 }
 
@@ -1506,7 +1512,7 @@ int ProgExprBase::Test_ParseForLookup(const String test_name, const String input
 
 String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos) {
   String rval;
-  switch (completion_lookup_type) {
+  switch (completion_finish_type) {
     case FINISH_VARIOUS: {
       taBase* token = GetTokenForCurrentCompletion(cur_completion);
       if (!token) return _nilString;

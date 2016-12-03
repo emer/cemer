@@ -178,20 +178,7 @@ String taiTreeNodeTaBase::PostCompletionEdit(iCodeCompleter* completer) {
   
   String rval;
   int new_pos;
-  
-//  TypeDef* td = tab->GetTypeDef();
-//  for(int i=0; i<td->members.size; i++) {
-//    MemberDef* md = td->members[i];
-//    if(!md->HasOption("BROWSER_EDIT_LOOKUP")) continue;
-//    if(!md->type->IsTaBase()) {
-//      taMisc::Warning("Programmer error in taiTreeNodeTaBase::lookupKeyPressed -- #BROWSER_EDIT_LOOKUP on member:", md->name, "type must be a taBase");
-//      return _nilString;
-//    }
-//    taBase* bel = (taBase*)md->GetOff(tab);
-//    ProgExprBase* peb = (ProgExprBase*)bel;
-    String cur_string = completer->GetCurrent();
-    rval = ProgExprBase::FinishCompletion(cur_string, new_pos);
-    return rval;
-//  }
-//  return _nilString;
+  String cur_string = completer->GetCurrent();
+  rval = ProgExprBase::FinishCompletion(cur_string, new_pos);
+  return rval;
 }

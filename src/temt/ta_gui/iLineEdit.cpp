@@ -210,15 +210,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
      key_event->key() != Qt::Key_Right &&
      key_event->key() != Qt::Key_Left &&
      key_event->key() != Qt::Key_Backspace) {  // knows about mac vs other OS
-    QString cur_text = text();
-    
-    if (cur_text.contains("network->")) {
-      cur_text.remove("network->");
-    }
-    
-    String foo = cur_text;
-    completer->setCompletionPrefix(cur_text + QString(key_event->key()).toLower());
-    String bar = completer->completionPrefix();
+    completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
     CharEntered();
     inherited::keyPressEvent(key_event);
     return;
