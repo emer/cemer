@@ -3553,7 +3553,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ecout_ecin_cons->SetUnique("lrate", true);
   ecout_ecin_cons->lrate = 0.0f;
   ecout_ecin_cons->SetUnique("wt_scale", true);
-  ecout_ecin_cons->wt_scale.rel = 0.5f;
+  ecout_ecin_cons->wt_scale.rel = 0.1f; // was .5 but .1 is better?  otherwise getting interf
   ecout_ecin_cons->SetUnique("rnd", true);
   ecout_ecin_cons->rnd.mean = 0.5f;
   ecout_ecin_cons->rnd.var = 0.01f;
