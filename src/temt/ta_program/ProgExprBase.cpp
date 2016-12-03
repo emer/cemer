@@ -771,7 +771,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
 }
 
 
-String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
+String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& new_pos,
                                    taBase*& path_own_obj, TypeDef*& path_own_typ,
                                    MemberDef*& path_md, ProgEl* own_pel,
                                    Program* own_prg, Function* own_fun,
@@ -1124,7 +1124,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   return rval;
 }
 
-String_Array* ProgExprBase::ExprLookupForCompleter(const String& cur_txt, int cur_pos, int& new_pos,
+String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                           taBase*& path_own_obj, TypeDef*& path_own_typ,
                                           MemberDef*& path_md, ProgEl* own_pel,
                                           Program* own_prg, Function* own_fun,
@@ -1424,7 +1424,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
   
-  return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
+  return ProgExprBase::ExprLookupChooser(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      own_pel, own_prg, own_fun);
 }
@@ -1442,7 +1442,7 @@ String_Array* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt,
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
   
-  return ProgExprBase::ExprLookupForCompleter(cur_txt, cur_pos, new_pos,
+  return ProgExprBase::ExprLookupCompleter(cur_txt, cur_pos, new_pos,
                                        path_own_obj, path_own_typ, path_md,
                                        own_pel, own_prg, own_fun, NULL, NULL);}
 
@@ -1476,7 +1476,7 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
   
-  rval = ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
+  rval = ProgExprBase::ExprLookupChooser(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      this, own_prg, own_fun, path_base, path_base_typ);
 

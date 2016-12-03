@@ -749,7 +749,7 @@ String ProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
-  return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
+  return ProgExprBase::ExprLookupChooser(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      this, own_prg, own_fun);
 }

@@ -33,9 +33,10 @@ public:
   ~taiWidgetField();
 
 protected slots:
-  void         btnEdit_clicked(bool) override;
-  void         lookupKeyPressed() override;
+  void                  btnEdit_clicked(bool) override;
+  void                  lookupKeyPressed() override;
   void                  lookupKeyPressed_dialog();
+  void                  characterEntered() override;
 
 public:
   MemberDef*            lookupfun_md;   // for lookup function, member def

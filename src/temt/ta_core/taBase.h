@@ -54,6 +54,7 @@ class iColor; //
 class MainWindowViewer; //
 class String_Array; //
 class taProject; //
+class String_Array; //
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1231,6 +1232,10 @@ public:
                                              const String& mbr_name, int& new_pos)
   { return _nilString; }
   // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
+  virtual String_Array*  StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                             const String& mbr_name, int& new_pos)
+  { return NULL; }
+  // #IGNORE lookup function called in code fields as each character is entered - returns a list of options that are legal entries for the field
 
   virtual void          CallFun(const String& fun_name, const String& args_str=NULLStr);
   // #CAT_ObjectMgmt call function (method) of given name on this object, using args as comma-separated simple literal expressions for argument values, or prompting for args using gui interface otherwise if needed

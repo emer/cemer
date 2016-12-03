@@ -117,3 +117,28 @@ void taiWidgetField::lookupKeyPressed_dialog() {
     edit_dialog->txtText->setTextCursor(cur2);
   }
 }
+
+void taiWidgetField::characterEntered() {
+  if(!lookupfun_md || !lookupfun_base) return;
+  taBase* tab = (taBase*)lookupfun_base;
+  
+  int cur_pos = rep()->cursorPosition();
+  int new_pos = -1;
+  if (rep()->GetCompleter()) {
+    String_Array* list = tab->StringFieldLookupForCompleter(rep()->text(), cur_pos, lookupfun_md->name, new_pos);
+    rep()->GetCompleter()->SetModelList(list);
+  }
+  
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  rep()->window()->setFocus();
+  rep()->setFocus();
+#endif
+//  if(rval.nonempty()) {
+//    rep()->setText(rval);
+//    if(new_pos >= 0)
+//      rep()->setCursorPosition(new_pos); // go back to orig pos
+//    else
+//      rep()->setCursorPosition(cur_pos); // go back to orig pos
+//  }
+}

@@ -30,7 +30,6 @@ INHERITED(QLineEdit)
 public:
   int  init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start
   bool init_start_kill;          // at start of editing, kill contents
-  bool has_completer;
 
   iLineEdit(QWidget* parent = 0, bool add_completer = false);
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false); //note: can't have defaults, ambiguity
@@ -62,9 +61,9 @@ public slots:
 protected slots:
 
 protected:
-  int           mmin_char_width; // note: we limit to 128
-  int           mchar_width; // note: we limit to 128
-  bool          ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  int               mmin_char_width; // note: we limit to 128
+  int               mchar_width; // note: we limit to 128
+  bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   iCodeCompleter*   completer; //
   
   void          focusInEvent(QFocusEvent* e) override;
@@ -74,7 +73,7 @@ protected:
   bool          event(QEvent * e) override;
 
 private:
-  void		      init();
+  void		      init(bool add_completer = false);
 };
 
 #endif // iLineEdit_h

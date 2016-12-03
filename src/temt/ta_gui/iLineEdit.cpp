@@ -37,18 +37,16 @@
 iLineEdit::iLineEdit(QWidget* parent, bool add_completer)
 : QLineEdit(parent)
 {
-  has_completer = add_completer;
-  init();
+  init(add_completer);
 }
 
 iLineEdit::iLineEdit(const char* text, QWidget* parent, bool add_completer)
 : QLineEdit(QString(text), parent)
 {
-  has_completer = add_completer;
-  init();
+  init(add_completer);
 }
 
-void iLineEdit::init() {
+void iLineEdit::init(bool add_completer) {
   // none of these did anything for the mac trackpad hypersensitivity:
   // see iMainWindowViewer for soln involving turning off touch events
   // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
@@ -67,7 +65,7 @@ void iLineEdit::init() {
   
   completer = NULL;
 #if use_completer
-  if (has_completer) {
+  if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompleter(completer);
@@ -197,26 +195,28 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
 #if use_completer
-  if(!taiMisc::KeyEventCtrlPressed(key_event) &&
-     (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter)) {
-    inherited::keyPressEvent(key_event);
-    QModelIndex index = GetCompleter()->currentIndex();
-    CompletionDone();
-    return;
-  }
-  else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
-     key_event->key() != Qt::Key_Minus &&
-     key_event->key() != Qt::Key_Greater &&
-     key_event->key() != Qt::Key_Right &&
-     key_event->key() != Qt::Key_Left &&
-     key_event->key() != Qt::Key_Backspace) {  // knows about mac vs other OS
-    completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
-    CharEntered();
-    inherited::keyPressEvent(key_event);
-    return;
+  if (completer) {
+    if(!taiMisc::KeyEventCtrlPressed(key_event) &&
+       (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter)) {
+      inherited::keyPressEvent(key_event);
+      QModelIndex index = GetCompleter()->currentIndex();
+      CompletionDone();
+      return;
+    }
+    else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
+            key_event->key() != Qt::Key_Minus &&
+            key_event->key() != Qt::Key_Greater &&
+            key_event->key() != Qt::Key_Right &&
+            key_event->key() != Qt::Key_Left &&
+            key_event->key() != Qt::Key_Backspace) {  // knows about mac vs other OS
+      completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
+      CharEntered();
+      inherited::keyPressEvent(key_event);
+      return;
+    }
   }
 #endif
-
+  
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
   
   switch (action) {

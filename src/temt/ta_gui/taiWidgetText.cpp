@@ -37,7 +37,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     lay->setMargin(0);
     lay->setSpacing(1);
 
-    leText = new iLineEdit(act_par);
+    leText = new iLineEdit(act_par, true);
     lay->addWidget(leText, 1);
 
     btnEdit = new QToolButton(act_par);
@@ -51,7 +51,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
       this, SLOT(btnEdit_clicked(bool)) );
   }
   else {
-    leText = new iLineEdit(gui_parent_);
+    leText = new iLineEdit(gui_parent_, true);
     SetRep(leText);
   }
 
@@ -74,6 +74,8 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
 
   QObject::connect(rep(), SIGNAL(lookupKeyPressed(iLineEdit*)),
                    this, SLOT(lookupKeyPressed()) );
+  QObject::connect(rep(), SIGNAL(characterEntered(iLineEdit*)),
+                   this, SLOT(characterEntered()) );
 }
 
 iLineEdit* taiWidgetText::rep() const { return leText; }

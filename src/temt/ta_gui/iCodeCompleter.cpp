@@ -41,9 +41,11 @@ void iCodeCompleter::Init() {
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {
-  string_list.clear();
-  list->ToQStringList(string_list);
-  list_model->setStringList(string_list);
+  if (list) {
+    string_list.clear();
+    list->ToQStringList(string_list);
+    list_model->setStringList(string_list);
+  }
 }
 
 String iCodeCompleter::GetCurrent() {

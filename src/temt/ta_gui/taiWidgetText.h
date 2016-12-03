@@ -45,6 +45,7 @@ protected slots:
   void                  selectionChanged();
   virtual void          btnEdit_clicked(bool) = 0;
   virtual void          lookupKeyPressed() = 0;
+  virtual void          characterEntered() {};
 
 protected:
 #ifndef __MAKETA__
