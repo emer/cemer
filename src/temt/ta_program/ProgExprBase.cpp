@@ -1285,34 +1285,34 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
                      path_var);
       }
-      if(tal) {
+      if(tal) {  // DO WE NEED THESE FOR COMPLETION?
         if(tal->InheritsFrom(&TA_taGroup_impl)) {
-          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser
-          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
-          lilkup->GetImage((taGroup_impl*)tal, NULL);
-          bool okc = lilkup->OpenChooser();
-          if(okc && lilkup->item()) {
-            path_own_obj = lilkup->item();
-            path_own_typ = path_own_obj->GetTypeDef();
-            rval = path_prepend_txt + path_own_obj->GetName();
-            new_pos = rval.length();
-            rval += append_txt;
-          }
-          delete lilkup;
+//          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser
+//          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
+//          lilkup->GetImage((taGroup_impl*)tal, NULL);
+//          bool okc = lilkup->OpenChooser();
+//          if(okc && lilkup->item()) {
+//            path_own_obj = lilkup->item();
+//            path_own_typ = path_own_obj->GetTypeDef();
+//            rval = path_prepend_txt + path_own_obj->GetName();
+//            new_pos = rval.length();
+//            rval += append_txt;
+//          }
+//          delete lilkup;
         }
         else {
-          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser
-          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
-          lilkup->GetImage(tal, NULL);
-          bool okc = lilkup->OpenChooser();
-          if(okc && lilkup->item()) {
-            path_own_obj = lilkup->item();
-            path_own_typ = path_own_obj->GetTypeDef();
-            rval = path_prepend_txt + path_own_obj->GetName();
-            new_pos = rval.length();
-            rval += append_txt;
-          }
-          delete lilkup;
+//          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser
+//          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
+//          lilkup->GetImage(tal, NULL);
+//          bool okc = lilkup->OpenChooser();
+//          if(okc && lilkup->item()) {
+//            path_own_obj = lilkup->item();
+//            path_own_typ = path_own_obj->GetTypeDef();
+//            rval = path_prepend_txt + path_own_obj->GetName();
+//            new_pos = rval.length();
+//            rval += append_txt;
+//          }
+//          delete lilkup;
         }
       }
       else if(lookup_td) {
@@ -1368,8 +1368,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     }
       
     case ProgExprBase::PROGRAM_FUNCTION: {                 // call a function in a specific program
-      taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser
-      (&TA_Function, NULL, NULL, NULL, 0, lookup_seed);
       // scope functions to the containing program - not this program
       taProject* my_proj = own_prg->GetMyProj();
       String scoped_prog_name = trim(prepend_txt);
@@ -1388,21 +1386,21 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   for (int i=0; i<completion_token_list.size; i++) {
     taBase* base = completion_token_list.FastEl(i);
     if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
-      completion_choice_list.Add(base->GetName() + "()");
+      completion_choice_list.Add(path_prepend_txt + base->GetName() + "()");
     }
     else {
-      completion_choice_list.Add(base->GetName());
+      completion_choice_list.Add(path_prepend_txt + base->GetName());
     }
   }
 
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
-    completion_choice_list.Add(txt + member_def->name);
+    completion_choice_list.Add(path_prepend_txt + member_def->name);
   }
 
   for (int i=0; i<completion_method_list.size; i++) {
     MethodDef* method_def = completion_method_list.FastEl(i);
-    String full_seed = txt + method_def->name + "(";
+    String full_seed = path_prepend_txt + method_def->name + "(";
 //    for (int j=0; j<method_def->arg_names.size; j++) {
 //      full_seed += method_def->arg_names.SafeEl(j);
 //      if (j < method_def->arg_names.size - 1) {
@@ -1415,7 +1413,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   for (int i=0; i<completion_enum_list.size; i++) {
     EnumDef* enum_def = completion_enum_list.FastEl(i);
-    completion_choice_list.Add(txt + enum_def->name);
+    completion_choice_list.Add(path_prepend_txt + enum_def->name);
   }
 
   return &completion_choice_list;
@@ -1617,8 +1615,8 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
       continue;
     }
     // keeps templates out of the list of actual instances
-    if (!parent)
-      continue;
+//    if (!parent)
+//      continue;
     
     if (scope && scope_type) {
       if (!btmp->SameScope(scope, scope_type))

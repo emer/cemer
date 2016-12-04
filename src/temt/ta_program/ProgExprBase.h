@@ -153,6 +153,7 @@ public:
                                 MemberDef*& path_md, ProgEl* own_pel,
                                 Program* own_prg, Function* own_fun,
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
+  // like ExprLookupChooser but returns the list of choosable strings and does not include calls to GUI widgets - just gets the list
 
   String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                             const String& mbr_name, int& new_pos) override;
