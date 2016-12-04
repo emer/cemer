@@ -90,6 +90,7 @@ public:
   static taBase_List            completion_token_list;
   static Member_List            completion_member_list;
   static Method_List            completion_method_list;
+  static EnumSpace              completion_enum_list;
   static String_Array           completion_choice_list;
   static LookUpType             completion_lookup_type;
   static FinishType             completion_finish_type;  // how to modify the code after the completion is chosen - add parens, set column, etc
@@ -173,9 +174,9 @@ public:
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL);
-  static void           GetMembersForType(TypeDef* td, Member_List* members);
-  static void           GetMethodsForType(TypeDef* td, Method_List* methods);
-  static void           GetEnumsForType(TypeDef* td);
+  static void           GetMembersForType(TypeDef* td, Member_List* members, bool just_static = false);
+  static void           GetMethodsForType(TypeDef* td, Method_List* methods, bool just_static = false);
+  static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static taBase*        GetTokenForCurrentCompletion(const String& cur_completion);
 
   static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,

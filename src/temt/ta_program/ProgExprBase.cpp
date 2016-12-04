@@ -37,6 +37,7 @@
 #include <SigLinkSignal>
 #include <taProject>
 #include <taBase_List>
+#include <EnumDef>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
@@ -51,6 +52,7 @@ String_Array                ProgExprBase::completion_choice_list;
 taBase_List                 ProgExprBase::completion_token_list;
 Member_List                 ProgExprBase::completion_member_list;
 Method_List                 ProgExprBase::completion_method_list;
+EnumSpace                   ProgExprBase::completion_enum_list;
 String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
@@ -1161,6 +1163,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_token_list.RemoveAll();
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
+  completion_enum_list.RemoveAll();
   
   completion_finish_type = FINISH_NOT_SET;
   
@@ -1327,16 +1330,20 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     case ProgExprBase::SCOPED: {                      // enums
       TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
       if(lookup_td) {
-        // XXXXXXXXXXXXXXXXXXXX
+        GetEnumsForType(lookup_td, &completion_enum_list);
+        bool just_statics = true;
+        GetMembersForType(lookup_td, &completion_member_list, just_statics);
+        GetMethodsForType(lookup_td, &completion_method_list, just_statics);
       }
       else {                      // now try for local enums
         ProgType* pt = own_prg->types.FindName(base_path);
         if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
-          GetTokensOfType(&TA_DynEnumBase, &completion_token_list);
+          GetTokensOfType(&TA_DynEnumItem, &completion_token_list, pt, &TA_DynEnumBase);
         }
       }
       break;
     }
+      
     case ProgExprBase::ARRAY_INDEX: {
       taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
       break;
@@ -1406,6 +1413,11 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     completion_choice_list.Add(full_seed);
   }
   
+  for (int i=0; i<completion_enum_list.size; i++) {
+    EnumDef* enum_def = completion_enum_list.FastEl(i);
+    completion_choice_list.Add(txt + enum_def->name);
+  }
+
   return &completion_choice_list;
 }
 
@@ -1625,39 +1637,45 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
   }
 }
 
-void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members) {
+void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members, bool just_static) {
   if (td == NULL || members == NULL) return;
   
   MemberSpace* mbs = &td->members;
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
-//    if (!ShowMember(mbr)) continue;
+    if (just_static && !mbr->is_static) {
+      continue;
+    }
     members->Link(mbr);
   }
 }
 
-void ProgExprBase::GetMethodsForType(TypeDef *td, Method_List* methods) {
+void ProgExprBase::GetMethodsForType(TypeDef *td, Method_List* methods, bool just_static) {
  if (td == NULL || methods == NULL) return;
  
   MethodSpace* mts = &td->methods;
     for (int i = 0; i < mts->size; ++i) {
       MethodDef* mth = mts->FastEl(i);
-//      if (!ShowMethod(mth)) continue;
+      if (just_static && !mth->is_static) {
+        continue;
+      }
       methods->Link(mth);
     }
 }
 
-void ProgExprBase::GetEnumsForType(TypeDef* td) {  // add list when I figure out what kind!
-//  for(int i=0; i < td->sub_types.size; i++) {
-//    TypeDef* td = td->sub_types.FastEl(i);
-//    if(td->IsEnum()) {
-//      for(int j=0;j< td->enum_vals.size; j++) {
-//        EnumDef* enum_def = td->enum_vals.FastEl(j);
-////        if(!ShowEnum(enum_def)) continue;
-//        completion_enum_list.Link(enum_def);
-//      }
-//    }
-//}
+void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
+  if (td == NULL || enums == NULL) return;
+  
+  for(int i=0; i < td->sub_types.size; i++) {
+    TypeDef* sub_td = td->sub_types.FastEl(i);
+    if(sub_td->IsEnum()) {
+      for(int j=0;j< sub_td->enum_vals.size; j++) {
+        EnumDef* enum_def = sub_td->enum_vals.FastEl(j);
+        if(enum_def->HasOption("EXPERT")) continue;
+        enums->Link(enum_def);
+      }
+    }
+}
 }
 
 taBase* ProgExprBase::GetTokenForCurrentCompletion(const String& cur_completion) {
