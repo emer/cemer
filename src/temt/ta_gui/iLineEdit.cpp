@@ -13,8 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#define use_completer 0
-
 #include "iLineEdit.h"
 
 #include <iDialogTextEdit>
@@ -58,19 +56,18 @@ void iLineEdit::init(bool add_completer) {
   mmin_char_width = 0;
   mchar_width = 0;
   ext_select_on = false;
+  first_focus = true;  // we haven't gotten focut yet
   // this seems unnecessary, and conflicts with ctrl-U select-all!
 //   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
 //   sc->setContext(Qt::WidgetShortcut);
 //   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
   
   completer = NULL;
-#if use_completer
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompleter(completer);
   }
-#endif
 }
 
 void iLineEdit::editInEditor() {
@@ -111,6 +108,15 @@ void iLineEdit::focusInEvent(QFocusEvent* e) {
       cut();
       clearExtSelection();
     }
+  }
+  
+  if (first_focus) {
+    if (text().length() == 0) {
+      // a bit of a kludge but Qt Completer doesn't have a mechanism for showing completion list with empty text field
+      QCoreApplication* app = QCoreApplication::instance();
+      app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
+    }
+    first_focus = false;
   }
   // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
@@ -193,29 +199,6 @@ bool iLineEdit::event(QEvent* e)
 void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
-  
-#if use_completer
-  if (completer) {
-    if(!taiMisc::KeyEventCtrlPressed(key_event) &&
-       (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter)) {
-      inherited::keyPressEvent(key_event);
-      QModelIndex index = GetCompleter()->currentIndex();
-      CompletionDone();
-      return;
-    }
-    else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
-            key_event->key() != Qt::Key_Minus &&
-            key_event->key() != Qt::Key_Greater &&
-            key_event->key() != Qt::Key_Right &&
-            key_event->key() != Qt::Key_Left &&
-            key_event->key() != Qt::Key_Backspace) {  // knows about mac vs other OS
-      completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
-      CharEntered();
-      inherited::keyPressEvent(key_event);
-      return;
-    }
-  }
-#endif
   
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
   
@@ -309,12 +292,33 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       cursorWordBackward(ext_select_on);
       return;
     case taiMisc::TEXTEDIT_LOOKUP:
+      
     case taiMisc::TEXTEDIT_LOOKUP_II:
       key_event->accept();
       doLookup();
       return;
     default:
-      inherited::keyPressEvent(key_event);
+      if (taMisc::code_completion && completer) {
+        if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter))) {
+          CompletionDone(key_event);
+          return;
+        }
+        else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
+                key_event->key() != Qt::Key_Minus &&
+                key_event->key() != Qt::Key_Greater &&
+                key_event->key() != Qt::Key_Right &&
+                key_event->key() != Qt::Key_Left) {
+          DoCompletion(key_event);
+          return;
+        }
+        else {
+          inherited::keyPressEvent(key_event);
+          return;
+        }
+      }
+      else{
+        inherited::keyPressEvent(key_event);
+      }
   }
 }
 
@@ -322,11 +326,25 @@ void iLineEdit::doLookup() {
   emit lookupKeyPressed(this);
 }
 
-void iLineEdit::CharEntered() {
+void iLineEdit::DoCompletion(QKeyEvent* key_event) {
+  if (!taMisc::code_completion || !completer) return;
+  
+  completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
   emit characterEntered(this);
+  inherited::keyPressEvent(key_event);
+  if (text().length() == 0) {  // no text - show all possibilities
+    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+    GetCompleter()->complete();
+  }
+  else {
+    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+  }
+  return;
 }
 
-void iLineEdit::CompletionDone() {
+void iLineEdit::CompletionDone(QKeyEvent* key_event) {
+  inherited::keyPressEvent(key_event);
+  QModelIndex index = GetCompleter()->currentIndex();
   emit completed(GetCompleter()->currentIndex());
 }
 

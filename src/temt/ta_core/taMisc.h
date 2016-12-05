@@ -383,6 +383,7 @@ public:
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
+  static bool           code_completion;  // #SAVE turns on the code completer which presents a popup menu of legal objects, members and methods as you enter code
 
   ////////////////////////////////////////////////////////
   //    Logging settings

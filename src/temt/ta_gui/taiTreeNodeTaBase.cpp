@@ -123,7 +123,8 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
   
   int cur_pos = le->cursorPosition();
   int new_pos = -1;
-  
+  String_Array* list = NULL;
+
   TypeDef* td = tab->GetTypeDef();
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members[i];
@@ -133,41 +134,29 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
       return;
     }
     taBase* bel = (taBase*)md->GetOff(tab);
-    
-    ProgExprBase* peb = (ProgExprBase*)bel;
-    String_Array* list = peb->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+    list = bel->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
     le->GetCompleter()->SetModelList(list);
-    
-    String rval;
 #ifdef TA_OS_MAC
     // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
     le->window()->setFocus();
     le->setFocus();
 #endif
-//    if(rval.nonempty()) {
-//      le->setText(rval);
-//      if(new_pos >= 0)
-//        le->setCursorPosition(new_pos); // go back to orig pos
-//      else
-//        le->setCursorPosition(cur_pos); // go back to orig pos
-//    }
     return;                     // if we get it, bail
   }
-  
   // didn't find any -- call the one on the guy itself!
-  String rval = tab->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
-#ifdef TA_OS_MAC
+//  list = tab->StringFieldLookupForCompleter(le->text(), cur_pos, "", new_pos);
+//#ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
-  le->window()->setFocus();
-  le->setFocus();
-#endif
-  if(rval.nonempty()) {
-    le->setText(rval);
-    if(new_pos >= 0)
-      le->setCursorPosition(new_pos); // go back to orig pos
-    else
-      le->setCursorPosition(cur_pos); // go back to orig pos
-  }
+//  le->window()->setFocus();
+//  le->setFocus();
+//#endif
+//  if(rval.nonempty()) {
+//    le->setText(rval);
+//    if(new_pos >= 0)
+//      le->setCursorPosition(new_pos); // go back to orig pos
+//    else
+//      le->setCursorPosition(cur_pos); // go back to orig pos
+//  }
 }
 
 String taiTreeNodeTaBase::PostCompletionEdit(iCodeCompleter* completer) {

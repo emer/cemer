@@ -350,6 +350,7 @@ short                   taMisc::num_browse_history = 20;
 bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
 taMisc::KeyBindingSet   taMisc::current_key_bindings = taMisc::KEY_BINDINGS_CUSTOM;
+bool                    taMisc::code_completion = false;
 
 
 ////////////////////////////////////////////////////////
