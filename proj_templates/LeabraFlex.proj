@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.3.0 rev10163
+// ta_Dump File v3.0 -- code v8.0.4.0 rev10309
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -17,26 +17,6 @@ LeabraProject .projects["LeabraFlex"] {
  };
 
  ControlPanel_Group @.ctrl_panels = [2] {
-  ControlPanel @["ControlPanel"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["user_pinned"] { };
-   };
-
-   EditMbrItem_Group @.mbrs = [5] {
-    EditMbrItem @[0] { };
-    EditMbrItem @[1] { };
-    EditMbrItem @[2] { };
-    EditMbrItem @[3] { };
-    EditMbrItem @[4] { };
-   };
-
-   EditMthItem_Group @.mths = [4] {
-    EditMthItem @[0] { };
-    EditMthItem @[1] { };
-    EditMthItem @[2] { };
-    EditMthItem @[3] { };
-   };
-  };
   ClusterRun @["ClusterRun"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["user_pinned"] { };
@@ -381,6 +361,26 @@ LeabraProject .projects["LeabraFlex"] {
    ParamSearchAlgo_List @.search_algos = [0] {
    };
   };
+  ControlPanel @["ControlPanel"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+
+   EditMbrItem_Group @.mbrs = [5] {
+    EditMbrItem @[0] { };
+    EditMbrItem @[1] { };
+    EditMbrItem @[2] { };
+    EditMbrItem @[3] { };
+    EditMbrItem @[4] { };
+   };
+
+   EditMthItem_Group @.mths = [4] {
+    EditMthItem @[0] { };
+    EditMthItem @[1] { };
+    EditMthItem @[2] { };
+    EditMthItem @[3] { };
+   };
+  };
  };
 
  ParamSet_Group @.param_sets = [0] {
@@ -404,7 +404,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [30] {
+    DataTableCols @.data = [33] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -540,6 +540,9 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
+     float_Data @["Input_avg_act"] { };
+     float_Data @["Hidden_avg_act"] { };
+     float_Data @["Output_avg_act"] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -647,7 +650,7 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     int_Data @["save_final_wts"] { 
+     bool_Data @["save_final_wts"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
@@ -662,12 +665,12 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     int_Data @["log_trials"] { 
+     bool_Data @["log_trials"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     int_Data @["load_weights"] { 
+     bool_Data @["load_weights"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
@@ -846,7 +849,7 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
     Else @[23] { 
-     ProgEl_List @.else_code = [2] {
+     ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
@@ -1175,7 +1178,7 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
       Else @[4] { 
-       ProgEl_List @.else_code = [1] {
+       ProgEl_List @.true_code = [1] {
 	MemberAssign @[0] { };
        };
       };
@@ -1417,7 +1420,7 @@ LeabraProject .projects["LeabraFlex"] {
 	};
        };
        Else @[2] { 
-	ProgEl_List @.else_code = [2] {
+	ProgEl_List @.true_code = [2] {
 	 AssignExpr @[0] { };
 	 WhileLoop @[1] { 
 	  ProgEl_List @.loop_code = [1] {
@@ -1514,7 +1517,7 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
      Else @[3] { 
-      ProgEl_List @.else_code = [1] {
+      ProgEl_List @.true_code = [1] {
        AssignExpr @[0] { };
       };
      };
@@ -1547,7 +1550,7 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
      Else @[7] { 
-      ProgEl_List @.else_code = [1] {
+      ProgEl_List @.true_code = [1] {
        VarIncr @[0] { };
       };
      };
@@ -1890,7 +1893,7 @@ LeabraProject .projects["LeabraFlex"] {
 	  };
 	 };
 	 Else @[3] { 
-	  ProgEl_List @.else_code = [2] {
+	  ProgEl_List @.true_code = [2] {
 	   MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
@@ -1963,7 +1966,7 @@ LeabraProject .projects["LeabraFlex"] {
 	  };
 	 };
 	 Else @[3] { 
-	  ProgEl_List @.else_code = [2] {
+	  ProgEl_List @.true_code = [2] {
 	   MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
@@ -2409,7 +2412,7 @@ LeabraProject .projects["LeabraFlex"] {
 		};
 	       };
 	       Else @[2] { 
-		ProgEl_List @.else_code = [3] {
+		ProgEl_List @.true_code = [3] {
 		 AssignExpr @[0] { };
 		 AssignExpr @[1] { };
 		 AssignExpr @[2] { };
@@ -2443,7 +2446,7 @@ LeabraProject .projects["LeabraFlex"] {
 		};
 	       };
 	       Else @[2] { 
-		ProgEl_List @.else_code = [3] {
+		ProgEl_List @.true_code = [3] {
 		 AssignExpr @[0] { };
 		 AssignExpr @[1] { };
 		 AssignExpr @[2] { };
@@ -2575,7 +2578,7 @@ LeabraProject .projects["LeabraFlex"] {
 	};
        };
        Else @[4] { 
-	ProgEl_List @.else_code = [1] {
+	ProgEl_List @.true_code = [1] {
 	 MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
@@ -4128,160 +4131,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
   name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
-  ControlPanel @["ControlPanel"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["user_pinned"] {
-     name="user_pinned";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="ControlPanel";
-   updt_while_running=0;
-   desc="main control panel for the system";
-   mbrs {
-    name="mbrs";
-    el_typ=EditMbrItem;
-    el_def=0;
-    EditMbrItem @[0] {
-     label="cur_config";
-     desc="configuration to run -- selects from configs in the Config data table";
-     cust_desc=1;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cur_config"].dyn_enum_val$$;
-     mbr=DynEnum::value;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      saved_value=;
-     };
-     notes {
-      notes=;
-     };
-    };
-    EditMbrItem @[1] {
-     label="mstr_run_stop_step_grain";
-     desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
-     cust_desc=1;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
-     mbr=DynEnum::value;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      saved_value=;
-     };
-     notes {
-      notes=;
-     };
-    };
-    EditMbrItem @[2] {
-     label="Cycle_update_net_view";
-     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
-     cust_desc=1;
-     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
-     mbr=ProgVar::bool_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      saved_value=;
-     };
-     notes {
-      notes=;
-     };
-    };
-    EditMbrItem @[3] {
-     label="cycle_qtr";
-     desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].networks["Network_0"].times$$;
-     mbr=LeabraTimes::cycle_qtr;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      saved_value=;
-     };
-     notes {
-      notes=;
-     };
-    };
-    EditMbrItem @[4] {
-     label="leabra_con_spec_0_lrate";
-     desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
-     mbr=LeabraConSpec::lrate;
-     is_numeric=1;
-     is_single=1;
-     param_search {
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      saved_value=;
-     };
-     notes {
-      notes=;
-     };
-    };
-   };
-   mths {
-    name="mths";
-    el_typ=EditMthItem;
-    el_def=0;
-    group_type=GT_BUTTONS;
-    EditMthItem @[0] {
-     label="Init";
-     desc=" run init_code, global variables retain current values unless reset in the init_code";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
-     mth=Program::Init;
-    };
-    EditMthItem @[1] {
-     label="Run";
-     desc=" run the program -- if not yet Init, will run Init first";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     mth=Program::Run_Gui;
-    };
-    EditMthItem @[2] {
-     label="Step";
-     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     mth=Program::Step_Gui;
-    };
-    EditMthItem @[3] {
-     label="Stop";
-     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     mth=Program::Stop;
-    };
-   };
-  };
   ClusterRun @["ClusterRun"] {
    UserDataItem_List @*(.user_data_) {
     name=;
@@ -4894,6 +4743,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -5487,6 +5337,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -6080,6 +5931,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -6673,6 +6525,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -6866,6 +6719,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -6984,6 +6838,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7052,6 +6907,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7093,6 +6949,160 @@ mw.config.set({\"wgBackendResponseTime\":192});
    enable_kill=0;
    enable_load=0;
    enable_notes=1;
+  };
+  ControlPanel @["ControlPanel"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ControlPanel";
+   updt_while_running=0;
+   desc="main control panel for the system";
+   mbrs {
+    name="mbrs";
+    el_typ=EditMbrItem;
+    el_def=0;
+    EditMbrItem @[0] {
+     label="cur_config";
+     desc="configuration to run -- selects from configs in the Config data table";
+     cust_desc=1;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cur_config"].dyn_enum_val$$;
+     mbr=DynEnum::value;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      record=0;
+      search=0;
+      range="0:1:0.1";
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[1] {
+     label="mstr_run_stop_step_grain";
+     desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
+     cust_desc=1;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
+     mbr=DynEnum::value;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      record=0;
+      search=0;
+      range="0:1:0.1";
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[2] {
+     label="Cycle_update_net_view";
+     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+     cust_desc=1;
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      record=0;
+      search=0;
+      range="0:1:0.1";
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[3] {
+     label="cycle_qtr";
+     desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].networks["Network_0"].times$$;
+     mbr=LeabraTimes::cycle_qtr;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      record=0;
+      search=0;
+      range="0:1:0.1";
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[4] {
+     label="leabra_con_spec_0_lrate";
+     desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
+     mbr=LeabraConSpec::lrate;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      record=0;
+      search=0;
+      range="0:1:0.1";
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+   };
+   mths {
+    name="mths";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+    EditMthItem @[0] {
+     label="Init";
+     desc=" run init_code, global variables retain current values unless reset in the init_code";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
+     mth=Program::Init;
+    };
+    EditMthItem @[1] {
+     label="Run";
+     desc=" run the program -- if not yet Init, will run Init first";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+     mth=Program::Run_Gui;
+    };
+    EditMthItem @[2] {
+     label="Step";
+     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+     mth=Program::Step_Gui;
+    };
+    EditMthItem @[3] {
+     label="Stop";
+     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+     mth=Program::Stop;
+    };
+   };
   };
  };
  param_sets {
@@ -7216,6 +7226,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -7930,6 +7941,48 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=19;
       matrix_col_width=10;
      };
+     float_Data @["Input_avg_act"] {
+      name="Input_avg_act";
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      matrix_col_width=10;
+     };
+     float_Data @["Hidden_avg_act"] {
+      name="Hidden_avg_act";
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      matrix_col_width=10;
+     };
+     float_Data @["Output_avg_act"] {
+      name="Output_avg_act";
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      matrix_col_width=10;
+     };
     };
     data_flags=AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
@@ -7945,6 +7998,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8553,6 +8607,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -8774,7 +8829,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        name="ar";
       [1] 50;      };
      };
-     int_Data @["save_final_wts"] {
+     bool_Data @["save_final_wts"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_68";
        el_typ=UserDataItem;
@@ -8800,7 +8855,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
       ar {
        name="ar";
-      [1] 1;      };
+      [1] true;      };
      };
      int_Data @["save_wts_interval"] {
       UserDataItem_List @*(.user_data_) {
@@ -8858,7 +8913,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        name="ar";
       [1] 1000;      };
      };
-     int_Data @["log_trials"] {
+     bool_Data @["log_trials"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_71";
        el_typ=UserDataItem;
@@ -8884,9 +8939,9 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
       ar {
        name="ar";
-      [1] 0;      };
+      [1] false;      };
      };
-     int_Data @["load_weights"] {
+     bool_Data @["load_weights"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_72";
        el_typ=UserDataItem;
@@ -8912,7 +8967,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
       ar {
        name="ar";
-      [1] 0;      };
+      [1] false;      };
      };
      String_Data @["weights_file"] {
       UserDataItem_List @*(.user_data_) {
@@ -9054,6 +9109,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       el_def=0;
      };
     };
+    row_with_hilite=-1;
     control_panel_cells {
      name="control_panel_cells";
      el_typ=DataTableCell;
@@ -9262,7 +9318,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="set_n_units(Layer* lay, int n_units) returns: bool";
-     pre_compile_code_string="set_n_units(Layer* lay, int n_units) returns: bool";
      name="set_n_units";
      return_type=T_Bool;
      object_type=taOBase;
@@ -9299,7 +9354,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (lay->un_geom.n == n_units || n_units <= 0)";
-       pre_compile_code_string="if (lay->un_geom.n == n_units || n_units <= 0)";
        cond {
 	expr="lay->un_geom.n == n_units || n_units <= 0";
        };
@@ -9311,7 +9365,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="return false";
-	 pre_compile_code_string="return false";
 	 expr {
 	  expr="false";
 	 };
@@ -9322,7 +9375,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="lay->SetNUnits(n_units)";
-       pre_compile_code_string="lay->SetNUnits(n_units)";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs["MasterStartup"].functions["set_n_units"].args["lay"]$$;
        method=Layer::SetNUnits;
@@ -9349,7 +9401,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
-       pre_compile_code_string="Print \"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
        expr {
 	expr="\"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
        };
@@ -9359,7 +9410,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="return true";
-       pre_compile_code_string="return true";
        expr {
 	expr="true";
        };
@@ -9380,13 +9430,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
      flags=CAN_REVERT_TO_CODE;
      code_string="Register Args";
-     pre_compile_code_string="Register Args";
     };
     PrintExpr @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Print \"Loaded project: \" << .projects[0].file_name";
-     pre_compile_code_string="Print \"Loaded project: \" << .projects[0].file_name";
      expr {
       expr="\"Loaded project: \" << .projects[0].file_name";
      };
@@ -9396,13 +9444,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="= Std variables in startup program itself =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Std variables in startup program itself =";
-     pre_compile_code_string="// = Std variables in startup program itself =";
     };
     ProgVarFmArg @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:tag in Program:MasterStartup from Arg:tag";
-     pre_compile_code_string="Set Var:tag in Program:MasterStartup from Arg:tag";
      prog=.projects["LeabraFlex"].programs["MasterStartup"]$$;
      var_name="tag";
      arg_name="tag";
@@ -9411,7 +9457,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:log_dir in Program:MasterStartup from Arg:log_dir";
-     pre_compile_code_string="Set Var:log_dir in Program:MasterStartup from Arg:log_dir";
      prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
      var_name="log_dir";
      arg_name="log_dir";
@@ -9420,7 +9465,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:param_set in Program:MasterStartup from Arg:param_set";
-     pre_compile_code_string="Set Var:param_set in Program:MasterStartup from Arg:param_set";
      prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
      var_name="param_set";
      arg_name="param_set";
@@ -9429,7 +9473,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="starting batch -- replaces b_start";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:batch_start in Program:MasterBatch from Arg:batch_start";
-     pre_compile_code_string="Set Var:batch_start in Program:MasterBatch from Arg:batch_start";
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="batch_start";
      arg_name="batch_start";
@@ -9438,7 +9481,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="number of batches to run";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:n_batches in Program:MasterBatch from Arg:n_batches";
-     pre_compile_code_string="Set Var:n_batches in Program:MasterBatch from Arg:n_batches";
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="n_batches";
      arg_name="n_batches";
@@ -9447,13 +9489,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="add our special args from command line";
      flags=CAN_REVERT_TO_CODE;
      code_string="// add our special args from command line";
-     pre_compile_code_string="// add our special args from command line";
     };
     ProgVarFmArg @[9] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:cur_config in Program:MasterTrain from Arg:config";
-     pre_compile_code_string="Set Var:cur_config in Program:MasterTrain from Arg:config";
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      var_name="cur_config";
      arg_name="config";
@@ -9462,7 +9502,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:config_id in Program:MasterTrain from Arg:config";
-     pre_compile_code_string="Set Var:config_id in Program:MasterTrain from Arg:config";
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      var_name="config_id";
      arg_name="config";
@@ -9471,7 +9510,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Vars Fm:  program=MasterTrain set=from  var_1=config_id  var_2=?  var_3=?  var_4=? ";
-     pre_compile_code_string="Vars Fm:  program=MasterTrain set=from  var_1=config_id  var_2=?  var_3=?  var_4=? ";
      other_prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      set_other=0;
      var_1=.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$$;
@@ -9483,7 +9521,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
-     pre_compile_code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
      result_var=NULL;
      obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$$;
      method=DataTable::SetCellsFromRowLookup;
@@ -9521,14 +9558,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     pre_compile_code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
     If @[14] {
      desc="set variables to values stored in a param set";
      flags=CAN_REVERT_TO_CODE;
      code_string="if (param_set.nonempty())";
-     pre_compile_code_string="if (param_set.nonempty())";
      cond {
       expr="param_set.nonempty()";
      };
@@ -9540,7 +9575,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="param_sets->LoadParamSet(param_set)";
-       pre_compile_code_string="param_sets->LoadParamSet(param_set)";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["param_sets"]$$;
        method=ParamSet_Group::LoadParamSet;
@@ -9569,19 +9603,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="TODO: Add your program comment here (multi-lines ok).";
      flags=CAN_REVERT_TO_CODE;
      code_string="// TODO: Add your program comment here (multi-lines ok).";
-     pre_compile_code_string="// TODO: Add your program comment here (multi-lines ok).";
     };
     Comment @[16] {
      desc="= Add args to tag name =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Add args to tag name =";
-     pre_compile_code_string="// = Add args to tag name =";
     };
     If @[17] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (config_id.empty())";
-     pre_compile_code_string="if (config_id.empty())";
      cond {
       expr="config_id.empty()";
      };
@@ -9593,7 +9624,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::Error(\"lesson_id is empty -- must specify!  bailing\", , , , , , , , )";
-       pre_compile_code_string="taMisc::Error(\"lesson_id is empty -- must specify!  bailing\", , , , , , , , )";
        result_var=NULL;
        object_type=taMisc;
        method=taMisc::Error;
@@ -9708,7 +9738,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tag = \"_\" +  config_id + tag";
-     pre_compile_code_string="tag = \"_\" +  config_id + tag";
      result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$$;
      expr {
       expr="\"_\" +  config_id + tag";
@@ -9718,13 +9747,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="set any params from Config";
      flags=CAN_REVERT_TO_CODE;
      code_string="// set any params from Config";
-     pre_compile_code_string="// set any params from Config";
     };
     DataColsFmArgs @[20] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Data Cols Fm Args:  table=Config  row_spec=row_val  row_var=config_id ";
-     pre_compile_code_string="Data Cols Fm Args:  table=Config  row_spec=row_val  row_var=config_id ";
      data_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$;
      row_spec=ROW_VAL;
      row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
@@ -9733,13 +9760,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="Set log files";
      flags=CAN_REVERT_TO_CODE;
      code_string="// Set log files";
-     pre_compile_code_string="// Set log files";
     };
     If @[22] {
      desc="set tag for starting batch (new code in v 8.0)";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
-     pre_compile_code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
      cond {
       expr="taMisc::CheckArgByName(\"batch_start\")";
      };
@@ -9751,7 +9776,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="read in the arg to us too, so we can set file names based on it";
        flags=CAN_REVERT_TO_CODE;
        code_string="Set Var:batch_start in Program:MasterStartup from Arg:batch_start";
-       pre_compile_code_string="Set Var:batch_start in Program:MasterStartup from Arg:batch_start";
        prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
        var_name="batch_start";
        arg_name="batch_start";
@@ -9760,7 +9784,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="string version with leading zeros";
        flags=CAN_REVERT_TO_CODE;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
-       pre_compile_code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
        result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["batch_str"]$$;
        object_type=taMisc;
        method=taMisc::LeadingZeros;
@@ -9796,7 +9819,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="add to tag for setting log file names";
        flags=CAN_REVERT_TO_CODE;
        code_string="tag += \".\" + batch_str";
-       pre_compile_code_string="tag += \".\" + batch_str";
        var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
        expr {
 	expr="\".\" + batch_str";
@@ -9806,7 +9828,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
        flags=CAN_REVERT_TO_CODE;
        code_string="if (batch_start == 0)";
-       pre_compile_code_string="if (batch_start == 0)";
        cond {
 	expr="batch_start == 0";
        };
@@ -9818,7 +9839,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="save args to file: last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
-	 pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$$;
 	 obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$$;
 	 method=taBase::GetFileNameFmProject;
@@ -9878,7 +9898,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::FullArgStringToFile(log_file_nm)";
-	 pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
 	 result_var=NULL;
 	 object_type=taMisc;
 	 method=taMisc::FullArgStringToFile;
@@ -9907,8 +9926,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="else";
-     pre_compile_code_string="else";
-     else_code {
+     cond {
+      expr=;
+     };
+     true_code {
       name="else_code";
       el_typ=ProgCode;
       el_def=0;
@@ -9916,7 +9937,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="save args to file: last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
-       pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$;
        obj=$.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$;
        method=taBase::GetFileNameFmProject;
@@ -9976,7 +9996,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::FullArgStringToFile(log_file_nm)";
-       pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
        result_var=NULL;
        object_type=taMisc;
        method=taMisc::FullArgStringToFile;
@@ -10003,7 +10022,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-     pre_compile_code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
      other_prog=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"]$$;
      set_other=1;
      var_1=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
@@ -10015,13 +10033,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="= Call sub-startup programs =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Call sub-startup programs =";
-     pre_compile_code_string="// = Call sub-startup programs =";
     };
     DataVarProg @[26] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=startup_prog  var_2=?  var_3=?  var_4=? ";
-     pre_compile_code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=startup_prog  var_2=?  var_3=?  var_4=? ";
      data_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$;
      row_spec=ROW_VAL;
      row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
@@ -10037,7 +10053,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Call Fm: prog_group=StartupProgs prog_name_var=startup_prog (network)";
-     pre_compile_code_string="Call Fm: prog_group=StartupProgs prog_name_var=startup_prog (network)";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -10061,7 +10076,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Print \"Running: \" << batch_prog.name";
-     pre_compile_code_string="Print \"Running: \" << batch_prog.name";
      expr {
       expr="\"Running: \" << batch_prog.name";
      };
@@ -10071,7 +10085,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="MasterBatch(network)";
-     pre_compile_code_string="MasterBatch(network)";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -10196,13 +10209,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="this can be used for misc startup functions for non-interactive (cluster) jobs";
       flags=CAN_REVERT_TO_CODE;
       code_string="// this can be used for misc startup functions for non-interactive (cluster) jobs";
-      pre_compile_code_string="// this can be used for misc startup functions for non-interactive (cluster) jobs";
      };
      Comment @[1] {
       desc="note that saving log files should happen in SaveLogFiles program, after network is configured";
       flags=CAN_REVERT_TO_CODE;
       code_string="// note that saving log files should happen in SaveLogFiles program, after network is configured";
-      pre_compile_code_string="// note that saving log files should happen in SaveLogFiles program, after network is configured";
      };
     };
     step_prog=NULL;
@@ -10323,7 +10334,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initializes local batch counter and batch field on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
-      pre_compile_code_string="Net Counter Init: batch";
       network_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$$;
       local_ctr_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$$;
       counter=Network::batch;
@@ -10338,7 +10348,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -10358,7 +10367,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start at the start";
       flags=CAN_REVERT_TO_CODE;
       code_string="batch = batch_start";
-      pre_compile_code_string="batch = batch_start";
       result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$;
       expr {
        expr="batch_start";
@@ -10368,7 +10376,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.batch = batch";
-      pre_compile_code_string="network.batch = batch";
       obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
       path="batch";
       expr {
@@ -10380,7 +10387,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="main loop over training runs";
       flags=CAN_REVERT_TO_CODE;
       code_string="for (i=0; i<n_batches; i++)";
-      pre_compile_code_string="for (i=0; i<n_batches; i++)";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -10389,7 +10395,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="run the training program -- sets the network and input_data args";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="MasterTrain(network)";
-	pre_compile_code_string="MasterTrain(network)";
 	prog_args {
 	 name="prog_args";
 	 el_typ=ProgArg;
@@ -10413,7 +10418,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="increment the local batch counter and copy to network";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
-	pre_compile_code_string="Net Counter Incr: batch";
 	network_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
 	local_ctr_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -10591,7 +10595,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="stop_train = false";
-      pre_compile_code_string="stop_train = false";
       result_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["stop_train"]$$;
       expr {
        expr="false";
@@ -10601,7 +10604,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="config_id = cur_config";
-      pre_compile_code_string="config_id = cur_config";
       result_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$$;
       expr {
        expr="cur_config";
@@ -10611,7 +10613,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="don't initialize weights without checking";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (gui && \"Do you want to Initialize Network Weights\")";
-      pre_compile_code_string="if (gui && \"Do you want to Initialize Network Weights\")";
       prompt="Do you want to Initialize Network Weights";
       yes_label="Yes";
       no_label="No";
@@ -10623,7 +10624,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="need to have built network by now in any case, so do it here to make double sure -- prevents errs when loading project with startup program";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Build()";
-	pre_compile_code_string="network->Build()";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].args["network"]$$;
 	method=Network::Build;
@@ -10639,7 +10639,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
-	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].args["network"]$;
 	method=Network::Init_Weights;
@@ -10655,7 +10654,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print network.name << \" Weights Initialized\"";
-	pre_compile_code_string="Print network.name << \" Weights Initialized\"";
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
@@ -10672,7 +10670,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="stop_train = false";
-      pre_compile_code_string="stop_train = false";
       result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["stop_train"]$;
       expr {
        expr="false";
@@ -10682,7 +10679,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="config_id = cur_config";
-      pre_compile_code_string="config_id = cur_config";
       result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$;
       expr {
        expr="cur_config";
@@ -10692,7 +10688,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=init_prog  var_2=run_prog  var_3=?  var_4=? ";
-      pre_compile_code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=init_prog  var_2=run_prog  var_3=?  var_4=? ";
       data_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["Config"]$$;
       row_spec=ROW_VAL;
       row_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$;
@@ -10708,7 +10703,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
-      pre_compile_code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["Config"]$;
       method=DataTable::SetCellsFromRowLookup;
@@ -10746,7 +10740,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Call Fm: prog_group=InitProgs prog_name_var=init_prog (network, config_id)";
-      pre_compile_code_string="Call Fm: prog_group=InitProgs prog_name_var=init_prog (network, config_id)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -10781,7 +10774,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="while (!stop_train)";
-      pre_compile_code_string="while (!stop_train)";
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -10790,7 +10782,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="MasterRun(network, config_id, run_prog)";
-	pre_compile_code_string="MasterRun(network, config_id, run_prog)";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -10988,7 +10979,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="StopStepTest() returns: bool";
-      pre_compile_code_string="StopStepTest() returns: bool";
       name="StopStepTest";
       return_type=T_Bool;
       object_type=taOBase;
@@ -11005,7 +10995,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
-	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -11016,7 +11005,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="switch(stop_step_grain)";
-	pre_compile_code_string="switch(stop_step_grain)";
 	switch_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"]$$;
 	cases {
 	 name="cases";
@@ -11026,7 +11014,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="case: TRIAL";
-	  pre_compile_code_string="case: TRIAL";
 	  prog_code {
 	   name="prog_code";
 	   el_typ=ProgCode;
@@ -11035,7 +11022,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="return true";
-	    pre_compile_code_string="return true";
 	    expr {
 	     expr="true";
 	    };
@@ -11050,7 +11036,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="case: EPOCH";
-	  pre_compile_code_string="case: EPOCH";
 	  prog_code {
 	   name="prog_code";
 	   el_typ=ProgCode;
@@ -11059,7 +11044,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="return (network->trial == 0)";
-	    pre_compile_code_string="return (network->trial == 0)";
 	    expr {
 	     expr="(network->trial == 0)";
 	    };
@@ -11074,7 +11058,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="case: ERROR";
-	  pre_compile_code_string="case: ERROR";
 	  prog_code {
 	   name="prog_code";
 	   el_typ=ProgCode;
@@ -11083,7 +11066,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="return (network->sse > 0.0f)";
-	    pre_compile_code_string="return (network->sse > 0.0f)";
 	    expr {
 	     expr="(network->sse > 0.0f)";
 	    };
@@ -11098,7 +11080,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="case: CORRECT";
-	  pre_compile_code_string="case: CORRECT";
 	  prog_code {
 	   name="prog_code";
 	   el_typ=ProgCode;
@@ -11107,7 +11088,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="return (network->sse == 0.0f)";
-	    pre_compile_code_string="return (network->sse == 0.0f)";
 	    expr {
 	     expr="(network->sse == 0.0f)";
 	    };
@@ -11136,7 +11116,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Call Fm: prog_group=RunProgs prog_name_var=run_prog (network, config_id)";
-      pre_compile_code_string="Call Fm: prog_group=RunProgs prog_name_var=run_prog (network, config_id)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -11308,7 +11287,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="always do std globals init";
        flags=CAN_REVERT_TO_CODE;
        code_string="StdGlobalsInit(network, config_id)";
-       pre_compile_code_string="StdGlobalsInit(network, config_id)";
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -11343,7 +11321,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="get rid of all non-essential layers";
        flags=CAN_REVERT_TO_CODE;
        code_string="ConfigNetwork(network, layer_group_lesion_list, layer_lesion_list, prjn_lesion_list, prjn_unlesion_list)";
-       pre_compile_code_string="ConfigNetwork(network, layer_group_lesion_list, layer_lesion_list, prjn_lesion_list, prjn_unlesion_list)";
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -11411,7 +11388,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="standard init of training";
        flags=CAN_REVERT_TO_CODE;
        code_string="TrainStart(network)";
-       pre_compile_code_string="TrainStart(network)";
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -11435,7 +11411,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (config_id.contains(\"_test\"))";
-       pre_compile_code_string="if (config_id.contains(\"_test\"))";
        cond {
 	expr="config_id.contains(\"_test\")";
        };
@@ -11447,7 +11422,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="set network to training mode";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="network.train_mode = LeabraNetwork::TEST";
-	 pre_compile_code_string="network.train_mode = LeabraNetwork::TEST";
 	 obj=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]["BasicInit"].args["network"]$$;
 	 path="train_mode";
 	 expr {
@@ -11461,8 +11435,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="else";
-       pre_compile_code_string="else";
-       else_code {
+       cond {
+	expr=;
+       };
+       true_code {
 	name=;
 	el_typ=ProgCode;
 	el_def=0;
@@ -11470,7 +11446,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="set network to training mode";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="network.train_mode = LeabraNetwork::TRAIN";
-	 pre_compile_code_string="network.train_mode = LeabraNetwork::TRAIN";
 	 obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]["BasicInit"].args["network"]$;
 	 path="train_mode";
 	 expr {
@@ -11624,13 +11599,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="== Execute One Trial of Basic Training ==";
        flags=CAN_REVERT_TO_CODE;
        code_string="// == Execute One Trial of Basic Training ==";
-       pre_compile_code_string="// == Execute One Trial of Basic Training ==";
       };
       MemberAssign @[1] {
        desc="always in tick 0 for this -- only one step of processing";
        flags=CAN_REVERT_TO_CODE;
        code_string="network.tick = 0";
-       pre_compile_code_string="network.tick = 0";
        obj=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].args["network"]$$;
        path="tick";
        expr {
@@ -11642,7 +11615,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="BasicTrain(network, StdInputData, update_net_view)";
-       pre_compile_code_string="BasicTrain(network, StdInputData, update_net_view)";
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -11688,13 +11660,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="== Done With One Trial ==";
        flags=CAN_REVERT_TO_CODE;
        code_string="// == Done With One Trial ==";
-       pre_compile_code_string="// == Done With One Trial ==";
       };
       MemberAssign @[4] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="network.trial = network.trial + 1";
-       pre_compile_code_string="network.trial = network.trial + 1";
        obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].args["network"]$;
        path="trial";
        expr {
@@ -11706,7 +11676,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (network.trial >= trials_per_epoch)";
-       pre_compile_code_string="if (network.trial >= trials_per_epoch)";
        cond {
 	expr="network.trial >= trials_per_epoch";
        };
@@ -11718,7 +11687,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="EpochEnd(network)";
-	 pre_compile_code_string="EpochEnd(network)";
 	 prog_args {
 	  name=;
 	  el_typ=ProgArg;
@@ -11742,7 +11710,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="network.epoch = network.epoch + 1";
-	 pre_compile_code_string="network.epoch = network.epoch + 1";
 	 obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].args["network"]$;
 	 path="epoch";
 	 expr {
@@ -11754,7 +11721,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="if (network.epoch >= train_epochs)";
-	 pre_compile_code_string="if (network.epoch >= train_epochs)";
 	 cond {
 	  expr="network.epoch >= train_epochs";
 	 };
@@ -11766,7 +11732,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   desc="calls stop_train and does final training stuff";
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="TrainEnd(network)";
-	   pre_compile_code_string="TrainEnd(network)";
 	   prog_args {
 	    name=;
 	    el_typ=ProgArg;
@@ -11790,7 +11755,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="return ";
-	   pre_compile_code_string="return ";
 	   expr {
 	    expr=;
 	   };
@@ -11801,7 +11765,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="time to start a new epoch!";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="EpochStart(network)";
-	 pre_compile_code_string="EpochStart(network)";
 	 prog_args {
 	  name=;
 	  el_typ=ProgArg;
@@ -11948,7 +11911,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->ResetUsed()";
-      pre_compile_code_string="BasicTrainTime->ResetUsed()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$$;
       method=TimeUsed::ResetUsed;
@@ -11969,7 +11931,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->StartTimer(false)";
-      pre_compile_code_string="BasicTrainTime->StartTimer(false)";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$;
       method=TimeUsed::StartTimer;
@@ -11996,13 +11957,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="=== Start Trial ===";
       flags=CAN_REVERT_TO_CODE;
       code_string="// === Start Trial ===";
-      pre_compile_code_string="// === Start Trial ===";
      };
      ProgramCall @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="TrialStart(network)";
-      pre_compile_code_string="TrialStart(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12026,7 +11985,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="pick next event permuted..";
       flags=CAN_REVERT_TO_CODE;
       code_string="ChooseNextEvent(network, input_data, true)";
-      pre_compile_code_string="ChooseNextEvent(network, input_data, true)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12072,7 +12030,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="apply std external input activations from the input_data table to the network";
       flags=CAN_REVERT_TO_CODE;
       code_string="ApplyInputs(network, input_data)";
-      pre_compile_code_string="ApplyInputs(network, input_data)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12107,13 +12064,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="=== Run Minus Phase ===";
       flags=CAN_REVERT_TO_CODE;
       code_string="// === Run Minus Phase ===";
-      pre_compile_code_string="// === Run Minus Phase ===";
      };
      ProgramCall @[6] {
       desc="settle for minus phase, using ct_time.minus as fixed number of cycles to run";
       flags=CAN_REVERT_TO_CODE;
       code_string="SettleMinus(network)";
-      pre_compile_code_string="SettleMinus(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12137,7 +12092,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="compute stats appropriate for given phase";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_PhaseStats()";
-      pre_compile_code_string="network->Compute_PhaseStats()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$$;
       method=LeabraNetwork::Compute_PhaseStats;
@@ -12153,7 +12107,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$$;
      };
@@ -12161,7 +12114,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Stop_Step Point";
-      pre_compile_code_string="Stop_Step Point";
       cond {
        expr=;
       };
@@ -12170,13 +12122,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="=== Run Plus Phase ===";
       flags=CAN_REVERT_TO_CODE;
       code_string="// === Run Plus Phase ===";
-      pre_compile_code_string="// === Run Plus Phase ===";
      };
      MethodCall @[11] {
       desc="only need to re-apply if something is new!";
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
-      pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=Network::Init_InputData;
@@ -12192,7 +12142,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="only need to re-apply if something is new!";
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="ApplyInputs(network, input_data)";
-      pre_compile_code_string="ApplyInputs(network, input_data)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12227,7 +12176,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="settle for designated plus phase number of cycles";
       flags=CAN_REVERT_TO_CODE;
       code_string="SettlePlus(network)";
-      pre_compile_code_string="SettlePlus(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12251,7 +12199,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="compute stats appropriate for given phase";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_PhaseStats()";
-      pre_compile_code_string="network->Compute_PhaseStats()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Compute_PhaseStats;
@@ -12267,7 +12214,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$;
      };
@@ -12275,7 +12221,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="standard end of trial stuff";
       flags=CAN_REVERT_TO_CODE;
       code_string="TrialEnd(network)";
-      pre_compile_code_string="TrialEnd(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -12299,7 +12244,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->EndTimer()";
-      pre_compile_code_string="BasicTrainTime->EndTimer()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$;
       method=TimeUsed::EndTimer;
@@ -12315,7 +12259,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LeabraTrialMonitor(network)";
-      pre_compile_code_string="LeabraTrialMonitor(network)";
       prog_args {
        name="prog_args";
        el_typ=ProgArg;
@@ -12433,6 +12376,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -12532,7 +12476,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="compute target number of rows, based on current dmem settings";
       flags=CAN_REVERT_TO_CODE;
       code_string="ComputeDmemRows() returns: int";
-      pre_compile_code_string="ComputeDmemRows() returns: int";
       name="ComputeDmemRows";
       return_type=T_Int;
       object_type=taOBase;
@@ -12549,7 +12492,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
-	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -12560,7 +12502,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="if (taMisc::dmem_nprocs <= 1)";
-	pre_compile_code_string="if (taMisc::dmem_nprocs <= 1)";
 	cond {
 	 expr="taMisc::dmem_nprocs <= 1";
 	};
@@ -12572,7 +12513,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="dmem_rows = input_data.rows";
-	  pre_compile_code_string="dmem_rows = input_data.rows";
 	  result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["dmem_rows"]$$;
 	  expr {
 	   expr="input_data.rows";
@@ -12584,8 +12524,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="else";
-	pre_compile_code_string="else";
-	else_code {
+	cond {
+	 expr=;
+	};
+	true_code {
 	 name=;
 	 el_typ=ProgCode;
 	 el_def=0;
@@ -12593,7 +12535,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="dmem_rows = input_data.rows / taMisc::dmem_nprocs";
-	  pre_compile_code_string="dmem_rows = input_data.rows / taMisc::dmem_nprocs";
 	  result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["dmem_rows"]$;
 	  expr {
 	   expr="input_data.rows / taMisc::dmem_nprocs";
@@ -12603,7 +12544,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc="ensure that we cover all the input data";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="while (dmem_rows * taMisc::dmem_nprocs < input_data.rows)";
-	  pre_compile_code_string="while (dmem_rows * taMisc::dmem_nprocs < input_data.rows)";
 	  loop_code {
 	   name="ProgEl_List_1382";
 	   el_typ=ProgCode;
@@ -12612,7 +12552,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="dmem_rows += 1";
-	    pre_compile_code_string="dmem_rows += 1";
 	    var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["dmem_rows"]$;
 	    expr {
 	     expr="1";
@@ -12631,7 +12570,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="PermuteIndexes() returns: int";
-      pre_compile_code_string="PermuteIndexes() returns: int";
       name="PermuteIndexes";
       return_type=T_Int;
       object_type=taOBase;
@@ -12648,7 +12586,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
-	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -12659,7 +12596,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="cur_idx = -1";
-	pre_compile_code_string="cur_idx = -1";
 	result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["cur_idx"]$$;
 	expr {
 	 expr="-1";
@@ -12669,7 +12605,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="if (permuted)";
-	pre_compile_code_string="if (permuted)";
 	cond {
 	 expr="permuted";
 	};
@@ -12681,7 +12616,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="taDataProc::Permute(PermIdxTable, PermIdxTable, taMisc::dmem_proc)";
-	  pre_compile_code_string="taDataProc::Permute(PermIdxTable, PermIdxTable, taMisc::dmem_proc)";
 	  result_var=NULL;
 	  object_type=taDataProc;
 	  method=taDataProc::Permute;
@@ -12732,7 +12666,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initialize indexes from current input data table";
       flags=CAN_REVERT_TO_CODE;
       code_string="InitIndexes() returns: int";
-      pre_compile_code_string="InitIndexes() returns: int";
       name="InitIndexes";
       return_type=T_Int;
       object_type=taOBase;
@@ -12749,7 +12682,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
-	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -12760,7 +12692,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="ComputeDmemRows()";
-	pre_compile_code_string="ComputeDmemRows()";
 	result_var=NULL;
 	fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["ComputeDmemRows"]$$;
 	fun_args {
@@ -12773,7 +12704,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermIdxTable->EnforceRows(dmem_rows)";
-	pre_compile_code_string="PermIdxTable->EnforceRows(dmem_rows)";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$$;
 	method=DataTable::EnforceRows;
@@ -12800,7 +12730,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermIdxTable->InitValsToRowNo(0)";
-	pre_compile_code_string="PermIdxTable->InitValsToRowNo(0)";
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$;
 	method=DataTable::InitValsToRowNo;
@@ -12827,7 +12756,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermuteIndexes()";
-	pre_compile_code_string="PermuteIndexes()";
 	result_var=NULL;
 	fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["PermuteIndexes"]$$;
 	fun_args {
@@ -12847,7 +12775,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="InitIndexes()";
-      pre_compile_code_string="InitIndexes()";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["InitIndexes"]$$;
       fun_args {
@@ -12860,7 +12787,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start at start -- index is incremented AFTER using";
       flags=CAN_REVERT_TO_CODE;
       code_string="cur_idx = 0";
-      pre_compile_code_string="cur_idx = 0";
       result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["cur_idx"]$;
       expr {
        expr="0";
@@ -12875,7 +12801,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ComputeDmemRows()";
-      pre_compile_code_string="ComputeDmemRows()";
       result_var=NULL;
       fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["ComputeDmemRows"]$;
       fun_args {
@@ -12888,7 +12813,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (dmem_rows != PermIdxTable.rows)";
-      pre_compile_code_string="if (dmem_rows != PermIdxTable.rows)";
       cond {
        expr="dmem_rows != PermIdxTable.rows";
       };
@@ -12900,7 +12824,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="InitIndexes()";
-	pre_compile_code_string="InitIndexes()";
 	result_var=NULL;
 	fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["InitIndexes"]$;
 	fun_args {
@@ -12915,7 +12838,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (permuted)";
-      pre_compile_code_string="if (permuted)";
       cond {
        expr="permuted";
       };
@@ -12927,7 +12849,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = PermIdxTable->GetVal(0, cur_idx)";
-	pre_compile_code_string="input_idx = PermIdxTable->GetVal(0, cur_idx)";
 	result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$$;
 	obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$;
 	method=DataTable::GetVal;
@@ -12967,8 +12888,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="else";
-      pre_compile_code_string="else";
-      else_code {
+      cond {
+       expr=;
+      };
+      true_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
@@ -12976,7 +12899,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = cur_idx";
-	pre_compile_code_string="input_idx = cur_idx";
 	result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$;
 	expr {
 	 expr="cur_idx";
@@ -12988,7 +12910,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (taMisc::dmem_nprocs > 1)";
-      pre_compile_code_string="if (taMisc::dmem_nprocs > 1)";
       cond {
        expr="taMisc::dmem_nprocs > 1";
       };
@@ -13000,7 +12921,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="for dmem, transform from virtual idx counter into actual row, unique to this processor";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
-	pre_compile_code_string="input_idx = taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
 	result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$;
 	expr {
 	 expr="taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
@@ -13010,7 +12930,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="choose at random if above actual input data";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="if (input_idx > input_data.rows)";
-	pre_compile_code_string="if (input_idx > input_data.rows)";
 	cond {
 	 expr="input_idx > input_data.rows";
 	};
@@ -13022,7 +12941,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_idx = Random::IntZeroN(input_data.rows, )";
-	  pre_compile_code_string="input_idx = Random::IntZeroN(input_data.rows, )";
 	  result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
@@ -13062,7 +12980,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="input_data->ReadItem(input_idx)";
-      pre_compile_code_string="input_data->ReadItem(input_idx)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].args["input_data"]$$;
       method=DataTable::ReadItem;
@@ -13089,7 +13006,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="now increment AFTER using, and wrap around..";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (cur_idx == PermIdxTable.rows -1)";
-      pre_compile_code_string="if (cur_idx == PermIdxTable.rows -1)";
       cond {
        expr="cur_idx == PermIdxTable.rows -1";
       };
@@ -13101,7 +13017,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermuteIndexes()";
-	pre_compile_code_string="PermuteIndexes()";
 	result_var=NULL;
 	fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["PermuteIndexes"]$;
 	fun_args {
@@ -13116,8 +13031,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="else";
-      pre_compile_code_string="else";
-      else_code {
+      cond {
+       expr=;
+      };
+      true_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
@@ -13125,7 +13042,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="cur_idx += 1";
-	pre_compile_code_string="cur_idx += 1";
 	var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["cur_idx"]$;
 	expr {
 	 expr="1";
@@ -13231,7 +13147,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="event_idx = Random::IntZeroN(input_data.rows, taMisc::dmem_proc)";
-      pre_compile_code_string="event_idx = Random::IntZeroN(input_data.rows, taMisc::dmem_proc)";
       result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseRandomEvent"].vars["event_idx"]$$;
       object_type=Random;
       method=Random::IntZeroN;
@@ -13267,7 +13182,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="input_data->ReadItem(event_idx)";
-      pre_compile_code_string="input_data->ReadItem(event_idx)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseRandomEvent"].args["input_data"]$$;
       method=DataTable::ReadItem;
@@ -13439,7 +13353,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
-      pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
@@ -13477,7 +13390,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->AutoConfig()";
-      pre_compile_code_string="LayerWriter_0->AutoConfig()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::AutoConfig;
@@ -13504,7 +13416,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
-      pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
@@ -13536,7 +13447,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
-      pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::SetDataNetwork;
@@ -13574,7 +13484,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
-      pre_compile_code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
@@ -13811,13 +13720,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="== Grab Global Params from Config Table for current config_id ==";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == Grab Global Params from Config Table for current config_id ==";
-      pre_compile_code_string="// == Grab Global Params from Config Table for current config_id ==";
      };
      DataVarProg @[1] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=true ";
-      pre_compile_code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=true ";
       data_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["Config"]$$;
       row_spec=ROW_VAL;
       row_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].args["config_id"]$$;
@@ -13833,7 +13740,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="trials_per_epoch_orig = trials_per_epoch";
-      pre_compile_code_string="trials_per_epoch_orig = trials_per_epoch";
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_orig"]$$;
       expr {
        expr="trials_per_epoch";
@@ -13843,7 +13749,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (taMisc::dmem_nprocs > 1)";
-      pre_compile_code_string="if (taMisc::dmem_nprocs > 1)";
       cond {
        expr="taMisc::dmem_nprocs > 1";
       };
@@ -13855,7 +13760,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trials_per_epoch = trials_per_epoch / taMisc::dmem_nprocs";
-	pre_compile_code_string="trials_per_epoch = trials_per_epoch / taMisc::dmem_nprocs";
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
 	expr {
 	 expr="trials_per_epoch / taMisc::dmem_nprocs";
@@ -13865,7 +13769,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="if (trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig)";
-	pre_compile_code_string="if (trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig)";
 	cond {
 	 expr="trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig";
 	};
@@ -13877,7 +13780,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc="round up..";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="trials_per_epoch += 1";
-	  pre_compile_code_string="trials_per_epoch += 1";
 	  var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$;
 	  expr {
 	   expr="1";
@@ -14095,7 +13997,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
-      pre_compile_code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["BatchRndSeed"].vars["rnd_seeds"]$$;
       method=RndSeed_List::UseSeed;
@@ -14233,7 +14134,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="UnlesionAll() returns: int";
-      pre_compile_code_string="UnlesionAll() returns: int";
       name="UnlesionAll";
       return_type=T_Int;
       object_type=taOBase;
@@ -14250,7 +14150,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (2 vars)";
-	pre_compile_code_string="LocalVars (2 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -14283,7 +14182,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="foreach(laygp in network.layers.gp)";
-	pre_compile_code_string="foreach(laygp in network.layers.gp)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -14292,7 +14190,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->UnLesionLayers()";
-	  pre_compile_code_string="laygp->UnLesionLayers()";
 	  result_var=NULL;
 	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["laygp"]$$;
 	  method=Layer_Group::UnLesionLayers;
@@ -14308,7 +14205,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->DeIconifyLayers()";
-	  pre_compile_code_string="laygp->DeIconifyLayers()";
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["laygp"]$;
 	  method=Layer_Group::DeIconifyLayers;
@@ -14330,7 +14226,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="foreach(lay in network.layers)";
-	pre_compile_code_string="foreach(lay in network.layers)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -14339,7 +14234,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay->UnLesion()";
-	  pre_compile_code_string="lay->UnLesion()";
 	  result_var=NULL;
 	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["lay"]$$;
 	  method=Layer::UnLesion;
@@ -14355,7 +14249,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay->DeIconify()";
-	  pre_compile_code_string="lay->DeIconify()";
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["lay"]$;
 	  method=Layer::DeIconify;
@@ -14379,7 +14272,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="turn layer groups on or off (lesion when lay_gp_on=false)";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerGpsOnOff(String laygps, bool lay_gp_on) returns: int";
-      pre_compile_code_string="LayerGpsOnOff(String laygps, bool lay_gp_on) returns: int";
       name="LayerGpsOnOff";
       return_type=T_Int;
       object_type=taOBase;
@@ -14414,7 +14306,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (3 vars)";
-	pre_compile_code_string="LocalVars (3 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -14456,7 +14347,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
-	pre_compile_code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["les_laygp_mat"]$$;
 	method=String_Matrix::FmDelimString;
@@ -14494,7 +14384,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="foreach(laygp_nm in les_laygp_mat)";
-	pre_compile_code_string="foreach(laygp_nm in les_laygp_mat)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -14503,7 +14392,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-	  pre_compile_code_string="laygp = network.layers.gp.FindName(laygp_nm)";
 	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$$;
 	  path="layers.gp";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$$;
@@ -14531,7 +14419,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!laygp)";
-	  pre_compile_code_string="if (!laygp)";
 	  cond {
 	   expr="!laygp";
 	  };
@@ -14543,7 +14430,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
-	    pre_compile_code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -14656,7 +14542,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="continue";
-	    pre_compile_code_string="continue";
 	    cond {
 	     expr=;
 	    };
@@ -14667,7 +14552,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!lay_gp_on)";
-	  pre_compile_code_string="if (!lay_gp_on)";
 	  cond {
 	   expr="!lay_gp_on";
 	  };
@@ -14679,7 +14563,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->LesionLayers()";
-	    pre_compile_code_string="laygp->LesionLayers()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
 	    method=Layer_Group::LesionLayers;
@@ -14695,7 +14578,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->IconifyLayers()";
-	    pre_compile_code_string="laygp->IconifyLayers()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
 	    method=Layer_Group::IconifyLayers;
@@ -14713,8 +14595,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="else";
-	  pre_compile_code_string="else";
-	  else_code {
+	  cond {
+	   expr=;
+	  };
+	  true_code {
 	   name="else_code";
 	   el_typ=ProgCode;
 	   el_def=0;
@@ -14722,7 +14606,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->UnLesionLayers()";
-	    pre_compile_code_string="laygp->UnLesionLayers()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
 	    method=Layer_Group::UnLesionLayers;
@@ -14738,7 +14621,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->DeIconifyLayers()";
-	    pre_compile_code_string="laygp->DeIconifyLayers()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
 	    method=Layer_Group::DeIconifyLayers;
@@ -14764,7 +14646,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="turn layers on or off (lesion when lay_on=false)";
       flags=CAN_REVERT_TO_CODE;
       code_string="LayersOnOff(String lays, bool lay_on) returns: int";
-      pre_compile_code_string="LayersOnOff(String lays, bool lay_on) returns: int";
       name="LayersOnOff";
       return_type=T_Int;
       object_type=taOBase;
@@ -14799,7 +14680,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (3 vars)";
-	pre_compile_code_string="LocalVars (3 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -14841,7 +14721,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="les_lays_mat->FmDelimString(lays, \" \")";
-	pre_compile_code_string="les_lays_mat->FmDelimString(lays, \" \")";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["les_lays_mat"]$$;
 	method=String_Matrix::FmDelimString;
@@ -14879,7 +14758,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="foreach(lay_nm in les_lays_mat)";
-	pre_compile_code_string="foreach(lay_nm in les_lays_mat)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -14888,7 +14766,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay = network.layers.FindLeafName(lay_nm)";
-	  pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
 	  path="layers";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$$;
@@ -14916,7 +14793,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!lay)";
-	  pre_compile_code_string="if (!lay)";
 	  cond {
 	   expr="!lay";
 	  };
@@ -14928,7 +14804,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
-	    pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -15041,7 +14916,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="continue";
-	    pre_compile_code_string="continue";
 	    cond {
 	     expr=;
 	    };
@@ -15052,7 +14926,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!lay_on)";
-	  pre_compile_code_string="if (!lay_on)";
 	  cond {
 	   expr="!lay_on";
 	  };
@@ -15064,7 +14937,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->Lesion()";
-	    pre_compile_code_string="lay->Lesion()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
 	    method=Layer::Lesion;
@@ -15080,7 +14952,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->Iconify()";
-	    pre_compile_code_string="lay->Iconify()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
 	    method=Layer::Iconify;
@@ -15098,8 +14969,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="else";
-	  pre_compile_code_string="else";
-	  else_code {
+	  cond {
+	   expr=;
+	  };
+	  true_code {
 	   name="else_code";
 	   el_typ=ProgCode;
 	   el_def=0;
@@ -15107,7 +14980,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->UnLesion()";
-	    pre_compile_code_string="lay->UnLesion()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
 	    method=Layer::UnLesion;
@@ -15123,7 +14995,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->DeIconify()";
-	    pre_compile_code_string="lay->DeIconify()";
 	    result_var=NULL;
 	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
 	    method=Layer::DeIconify;
@@ -15149,7 +15020,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="turn projections on or off";
       flags=CAN_REVERT_TO_CODE;
       code_string="ProjectionsOnOff(String prjns, bool prjn_on) returns: int";
-      pre_compile_code_string="ProjectionsOnOff(String prjns, bool prjn_on) returns: int";
       name="ProjectionsOnOff";
       return_type=T_Int;
       object_type=taOBase;
@@ -15184,7 +15054,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (5 vars)";
-	pre_compile_code_string="LocalVars (5 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -15246,7 +15115,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
-	pre_compile_code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["les_prjns_mat"]$$;
 	method=String_Matrix::FmDelimString;
@@ -15284,7 +15152,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="foreach(prjn_nm in les_prjns_mat)";
-	pre_compile_code_string="foreach(prjn_nm in les_prjns_mat)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -15293,7 +15160,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!prjn_nm.contains(\".\"))";
-	  pre_compile_code_string="if (!prjn_nm.contains(\".\"))";
 	  cond {
 	   expr="!prjn_nm.contains(\".\")";
 	  };
@@ -15305,7 +15171,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
-	    pre_compile_code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -15418,7 +15283,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="continue";
-	    pre_compile_code_string="continue";
 	    cond {
 	     expr=;
 	    };
@@ -15429,7 +15293,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay_nm = prjn_nm->before(\".\", )";
-	  pre_compile_code_string="lay_nm = prjn_nm->before(\".\", )";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["lay_nm"]$$;
 	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$$;
 	  method=taString::before;
@@ -15467,7 +15330,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="prjn_nm = prjn_nm->after(\".\", )";
-	  pre_compile_code_string="prjn_nm = prjn_nm->after(\".\", )";
 	  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
 	  method=taString::after;
@@ -15505,7 +15367,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay = network.layers.FindLeafName(lay_nm)";
-	  pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
 	  path="layers";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["lay"]$$;
@@ -15533,7 +15394,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!lay)";
-	  pre_compile_code_string="if (!lay)";
 	  cond {
 	   expr="!lay";
 	  };
@@ -15545,7 +15405,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
-	    pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -15658,7 +15517,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="continue";
-	    pre_compile_code_string="continue";
 	    cond {
 	     expr=;
 	    };
@@ -15669,7 +15527,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="prjn = lay.projections.FindName(prjn_nm)";
-	  pre_compile_code_string="prjn = lay.projections.FindName(prjn_nm)";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn"]$$;
 	  expr {
 	   expr="lay.projections.FindName(prjn_nm)";
@@ -15679,7 +15536,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (!prjn)";
-	  pre_compile_code_string="if (!prjn)";
 	  cond {
 	   expr="!prjn";
 	  };
@@ -15691,7 +15547,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
-	    pre_compile_code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -15804,7 +15659,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="continue";
-	    pre_compile_code_string="continue";
 	    cond {
 	     expr=;
 	    };
@@ -15815,7 +15669,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="prjn.off = !prjn_on";
-	  pre_compile_code_string="prjn.off = !prjn_on";
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn"]$;
 	  path="off";
 	  expr {
@@ -15845,7 +15698,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -15856,7 +15708,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="UnlesionAll()";
-      pre_compile_code_string="UnlesionAll()";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"]$$;
       fun_args {
@@ -15869,7 +15720,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerGpsOnOff(lesion_layer_groups, false)";
-      pre_compile_code_string="LayerGpsOnOff(lesion_layer_groups, false)";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"]$$;
       fun_args {
@@ -15904,7 +15754,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LayersOnOff(lesion_layers, false)";
-      pre_compile_code_string="LayersOnOff(lesion_layers, false)";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"]$$;
       fun_args {
@@ -15939,7 +15788,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ProjectionsOnOff(lesion_prjns, false)";
-      pre_compile_code_string="ProjectionsOnOff(lesion_prjns, false)";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$$;
       fun_args {
@@ -15974,7 +15822,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ProjectionsOnOff(un_lesion_prjns, true)";
-      pre_compile_code_string="ProjectionsOnOff(un_lesion_prjns, true)";
       result_var=NULL;
       fun=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$;
       fun_args {
@@ -16009,7 +15856,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Build()";
-      pre_compile_code_string="network->Build()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
       method=Network::Build;
@@ -16025,7 +15871,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UpdtAfterNetMod()";
-      pre_compile_code_string="network->UpdtAfterNetMod()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
       method=Network::UpdtAfterNetMod;
@@ -16041,7 +15886,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
-      pre_compile_code_string="Print \"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
       expr {
        expr="\"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
       };
@@ -16399,6 +16243,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -16708,6 +16553,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
        };
       };
+      row_with_hilite=-1;
       control_panel_cells {
        name="control_panel_cells";
        el_typ=DataTableCell;
@@ -16842,7 +16688,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="GetCurrent() returns: int";
-      pre_compile_code_string="GetCurrent() returns: int";
       name="GetCurrent";
       return_type=T_Int;
       object_type=taOBase;
@@ -16859,7 +16704,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (4 vars)";
-	pre_compile_code_string="LocalVars (4 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -16912,7 +16756,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LayerLayout_previous->CopyFrom(LayerLayout)";
-	pre_compile_code_string="LayerLayout_previous->CopyFrom(LayerLayout)";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].vars["LayerLayout_previous"]$$;
 	method=taBase::CopyFrom;
@@ -16939,7 +16782,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LayerLayout->RemoveAllRows()";
-	pre_compile_code_string="LayerLayout->RemoveAllRows()";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].vars["LayerLayout"]$$;
 	method=DataTable::RemoveAllRows;
@@ -16955,7 +16797,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="all of the layers";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="net_layers = network.layers";
-	pre_compile_code_string="net_layers = network.layers";
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["GetCurrent"].fun_code[0].local_vars["net_layers"]$$;
 	expr {
 	 expr="network.layers";
@@ -16965,13 +16806,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="first get all the layer groups";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="// first get all the layer groups";
-	pre_compile_code_string="// first get all the layer groups";
        };
        ForeachLoop @[5] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="foreach(layer_group in net_layers.gp)";
-	pre_compile_code_string="foreach(layer_group in net_layers.gp)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -16980,7 +16819,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout->AddBlankRow()";
-	  pre_compile_code_string="LayerLayout->AddBlankRow()";
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].vars["LayerLayout"]$;
 	  method=DataTable::AddBlankRow;
@@ -16996,7 +16834,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"LayerGroup\"][-1] = layer_group.name;";
-	  pre_compile_code_string="LayerLayout[\"LayerGroup\"][-1] = layer_group.name;";
 	  expr {
 	   expr="LayerLayout[\"LayerGroup\"][-1] = layer_group.name;";
 	  };
@@ -17005,7 +16842,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"X_Abs\"][-1] = layer_group.pos.x;";
-	  pre_compile_code_string="LayerLayout[\"X_Abs\"][-1] = layer_group.pos.x;";
 	  expr {
 	   expr="LayerLayout[\"X_Abs\"][-1] = layer_group.pos.x;";
 	  };
@@ -17014,7 +16850,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"Y_Abs\"][-1] = layer_group.pos.y;";
-	  pre_compile_code_string="LayerLayout[\"Y_Abs\"][-1] = layer_group.pos.y;";
 	  expr {
 	   expr="LayerLayout[\"Y_Abs\"][-1] = layer_group.pos.y;";
 	  };
@@ -17023,7 +16858,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"Z_Abs\"][-1] = layer_group.pos.z;";
-	  pre_compile_code_string="LayerLayout[\"Z_Abs\"][-1] = layer_group.pos.z;";
 	  expr {
 	   expr="LayerLayout[\"Z_Abs\"][-1] = layer_group.pos.z;";
 	  };
@@ -17038,7 +16872,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="for (leaf=0; leaf <net_layers.leaves; leaf++)";
-	pre_compile_code_string="for (leaf=0; leaf <net_layers.leaves; leaf++)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -17047,7 +16880,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout->AddBlankRow()";
-	  pre_compile_code_string="LayerLayout->AddBlankRow()";
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].vars["LayerLayout"]$;
 	  method=DataTable::AddBlankRow;
@@ -17063,7 +16895,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="current_layer = net_layers.Leaf(leaf)";
-	  pre_compile_code_string="current_layer = net_layers.Leaf(leaf)";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["current_layer"]$$;
 	  expr {
 	   expr="net_layers.Leaf(leaf)";
@@ -17073,7 +16904,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"LayerName\"][-1] = current_layer.name;";
-	  pre_compile_code_string="LayerLayout[\"LayerName\"][-1] = current_layer.name;";
 	  expr {
 	   expr="LayerLayout[\"LayerName\"][-1] = current_layer.name;";
 	  };
@@ -17082,7 +16912,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (current_layer.InLayerSubGroup())";
-	  pre_compile_code_string="if (current_layer.InLayerSubGroup())";
 	  cond {
 	   expr="current_layer.InLayerSubGroup()";
 	  };
@@ -17094,7 +16923,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="LayerLayout[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
-	    pre_compile_code_string="LayerLayout[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
 	    expr {
 	     expr="LayerLayout[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
 	    };
@@ -17105,7 +16933,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
-	  pre_compile_code_string="LayerLayout[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
 	  expr {
 	   expr="LayerLayout[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
 	  };
@@ -17114,7 +16941,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
-	  pre_compile_code_string="LayerLayout[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
 	  expr {
 	   expr="LayerLayout[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
 	  };
@@ -17123,7 +16949,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
-	  pre_compile_code_string="LayerLayout[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
 	  expr {
 	   expr="LayerLayout[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
 	  };
@@ -17132,7 +16957,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"X_Rel\"][-1] = current_layer.pos.x;";
-	  pre_compile_code_string="LayerLayout[\"X_Rel\"][-1] = current_layer.pos.x;";
 	  expr {
 	   expr="LayerLayout[\"X_Rel\"][-1] = current_layer.pos.x;";
 	  };
@@ -17141,7 +16965,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"Y_Rel\"][-1] = current_layer.pos.y;";
-	  pre_compile_code_string="LayerLayout[\"Y_Rel\"][-1] = current_layer.pos.y;";
 	  expr {
 	   expr="LayerLayout[\"Y_Rel\"][-1] = current_layer.pos.y;";
 	  };
@@ -17150,7 +16973,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout[\"Z_Rel\"][-1] = current_layer.pos.z;";
-	  pre_compile_code_string="LayerLayout[\"Z_Rel\"][-1] = current_layer.pos.z;";
 	  expr {
 	   expr="LayerLayout[\"Z_Rel\"][-1] = current_layer.pos.z;";
 	  };
@@ -17172,7 +16994,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="SetPos() returns: int";
-      pre_compile_code_string="SetPos() returns: int";
       name="SetPos";
       return_type=T_Int;
       object_type=taOBase;
@@ -17189,7 +17010,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (9 vars)";
-	pre_compile_code_string="LocalVars (9 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -17285,7 +17105,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="for (row = 0; row <LayerLayout.rows; row++)";
-	pre_compile_code_string="for (row = 0; row <LayerLayout.rows; row++)";
 	loop_code {
 	 name="loop_code";
 	 el_typ=ProgCode;
@@ -17294,7 +17113,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="layer_name = LayerLayout[\"LayerName\"][row]";
-	  pre_compile_code_string="layer_name = LayerLayout[\"LayerName\"][row]";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["layer_name"]$$;
 	  expr {
 	   expr="LayerLayout[\"LayerName\"][row]";
@@ -17304,7 +17122,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if(layer_name.empty()) continue";
-	  pre_compile_code_string="if(layer_name.empty()) continue";
 	  cond {
 	   expr="layer_name.empty()";
 	  };
@@ -17313,7 +17130,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="current_layer = network.FindLayer(layer_name)";
-	  pre_compile_code_string="current_layer = network.FindLayer(layer_name)";
 	  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["current_layer"]$;
 	  expr {
 	   expr="network.FindLayer(layer_name)";
@@ -17323,7 +17139,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="if (current_layer)";
-	  pre_compile_code_string="if (current_layer)";
 	  cond {
 	   expr="current_layer";
 	  };
@@ -17335,7 +17150,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="switch(use_group)";
-	    pre_compile_code_string="switch(use_group)";
 	    switch_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].args["use_group"]$$;
 	    cases {
 	     name="cases";
@@ -17345,7 +17159,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	      desc=;
 	      flags=CAN_REVERT_TO_CODE;
 	      code_string="case: IgnoreGroup";
-	      pre_compile_code_string="case: IgnoreGroup";
 	      prog_code {
 	       name="prog_code";
 	       el_typ=ProgCode;
@@ -17354,7 +17167,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="current_layer->SetAbsPos(LayerLayout[\"X_Abs\"][row], LayerLayout[\"Y_Abs\"][row], LayerLayout[\"Z_Abs\"][row])";
-		pre_compile_code_string="current_layer->SetAbsPos(LayerLayout[\"X_Abs\"][row], LayerLayout[\"Y_Abs\"][row], LayerLayout[\"Z_Abs\"][row])";
 		result_var=NULL;
 		obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["current_layer"]$;
 		method=Layer::SetAbsPos;
@@ -17409,7 +17221,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	      desc=;
 	      flags=CAN_REVERT_TO_CODE;
 	      code_string="case: LayerGroup";
-	      pre_compile_code_string="case: LayerGroup";
 	      prog_code {
 	       name="prog_code";
 	       el_typ=ProgCode;
@@ -17418,7 +17229,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="group_name = LayerLayout[\"LayerGroup\"][row]";
-		pre_compile_code_string="group_name = LayerLayout[\"LayerGroup\"][row]";
 		result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["group_name"]$$;
 		expr {
 		 expr="LayerLayout[\"LayerGroup\"][row]";
@@ -17428,7 +17238,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="if (group_name.nonempty())";
-		pre_compile_code_string="if (group_name.nonempty())";
 		cond {
 		 expr="group_name.nonempty()";
 		};
@@ -17440,7 +17249,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lgrow = LayerLayout->FindVal(group_name, \"LayerGroup\", 0, true)";
-		  pre_compile_code_string="lgrow = LayerLayout->FindVal(group_name, \"LayerGroup\", 0, true)";
 		  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lgrow"]$$;
 		  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].vars["LayerLayout"]$;
 		  method=DataTable::FindVal;
@@ -17500,7 +17308,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
-		  pre_compile_code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
 		  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_x"]$$;
 		  expr {
 		   expr="LayerLayout[\"X_Abs\"][lgrow]";
@@ -17510,7 +17317,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
-		  pre_compile_code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
 		  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_y"]$$;
 		  expr {
 		   expr="LayerLayout[\"Y_Abs\"][lgrow]";
@@ -17520,7 +17326,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
-		  pre_compile_code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
 		  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_z"]$$;
 		  expr {
 		   expr="LayerLayout[\"Z_Abs\"][lgrow]";
@@ -17532,8 +17337,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="else";
-		pre_compile_code_string="else";
-		else_code {
+		cond {
+		 expr=;
+		};
+		true_code {
 		 name="else_code";
 		 el_typ=ProgCode;
 		 el_def=0;
@@ -17541,7 +17348,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = 0";
-		  pre_compile_code_string="lg_x = 0";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_x"]$;
 		  expr {
 		   expr="0";
@@ -17551,7 +17357,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = 0";
-		  pre_compile_code_string="lg_y = 0";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_y"]$;
 		  expr {
 		   expr="0";
@@ -17561,7 +17366,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = 0";
-		  pre_compile_code_string="lg_z = 0";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_z"]$;
 		  expr {
 		   expr="0";
@@ -17573,7 +17377,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
-		pre_compile_code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
 		result_var=NULL;
 		obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["current_layer"]$;
 		method=Layer::SetAbsPos;
@@ -17628,7 +17431,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	      desc=;
 	      flags=CAN_REVERT_TO_CODE;
 	      code_string="case: LayoutGroup";
-	      pre_compile_code_string="case: LayoutGroup";
 	      prog_code {
 	       name="prog_code";
 	       el_typ=ProgCode;
@@ -17637,7 +17439,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="group_name = LayerLayout[\"LayoutGroup\"][row]";
-		pre_compile_code_string="group_name = LayerLayout[\"LayoutGroup\"][row]";
 		result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["group_name"]$;
 		expr {
 		 expr="LayerLayout[\"LayoutGroup\"][row]";
@@ -17647,7 +17448,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="if (group_name.nonempty())";
-		pre_compile_code_string="if (group_name.nonempty())";
 		cond {
 		 expr="group_name.nonempty()";
 		};
@@ -17659,7 +17459,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lgrow = LayerLayout->FindVal(group_name, \"LayoutGroup\", 0, true)";
-		  pre_compile_code_string="lgrow = LayerLayout->FindVal(group_name, \"LayoutGroup\", 0, true)";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lgrow"]$;
 		  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].vars["LayerLayout"]$;
 		  method=DataTable::FindVal;
@@ -17719,7 +17518,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
-		  pre_compile_code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_x"]$;
 		  expr {
 		   expr="LayerLayout[\"X_Abs\"][lgrow]";
@@ -17729,7 +17527,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
-		  pre_compile_code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_y"]$;
 		  expr {
 		   expr="LayerLayout[\"Y_Abs\"][lgrow]";
@@ -17739,7 +17536,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
-		  pre_compile_code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_z"]$;
 		  expr {
 		   expr="LayerLayout[\"Z_Abs\"][lgrow]";
@@ -17751,8 +17547,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="else";
-		pre_compile_code_string="else";
-		else_code {
+		cond {
+		 expr=;
+		};
+		true_code {
 		 name="else_code";
 		 el_typ=ProgCode;
 		 el_def=0;
@@ -17760,7 +17558,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = 0";
-		  pre_compile_code_string="lg_x = 0";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_x"]$;
 		  expr {
 		   expr="0";
@@ -17770,7 +17567,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = 0";
-		  pre_compile_code_string="lg_y = 0";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_y"]$;
 		  expr {
 		   expr="0";
@@ -17780,7 +17576,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = 0";
-		  pre_compile_code_string="lg_z = 0";
 		  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["lg_z"]$;
 		  expr {
 		   expr="0";
@@ -17792,7 +17587,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
-		pre_compile_code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
 		result_var=NULL;
 		obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"].fun_code[0].local_vars["current_layer"]$;
 		method=Layer::SetAbsPos;
@@ -17862,7 +17656,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Build()";
-	pre_compile_code_string="network->Build()";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].args["network"]$$;
 	method=LeabraNetwork::Build;
@@ -17890,7 +17683,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="switch(action)";
-      pre_compile_code_string="switch(action)";
       switch_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].args["action"]$$;
       cases {
        name="cases";
@@ -17900,7 +17692,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: GetCurrentPos";
-	pre_compile_code_string="case: GetCurrentPos";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -17909,7 +17700,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="GetCurrent()";
-	  pre_compile_code_string="GetCurrent()";
 	  result_var=NULL;
 	  fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["GetCurrent"]$$;
 	  fun_args {
@@ -17928,7 +17718,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="case: SetPositions";
-	pre_compile_code_string="case: SetPositions";
 	prog_code {
 	 name="prog_code";
 	 el_typ=ProgCode;
@@ -17937,7 +17726,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="SetPos()";
-	  pre_compile_code_string="SetPos()";
 	  result_var=NULL;
 	  fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].functions["SetPos"]$$;
 	  fun_args {
@@ -18104,7 +17892,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="get into easier to use matrix format";
       flags=CAN_REVERT_TO_CODE;
       code_string="les_lay_mat->FmDelimString(lesion_layers, \" \")";
-      pre_compile_code_string="les_lay_mat->FmDelimString(lesion_layers, \" \")";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["les_lay_mat"]$$;
       method=String_Matrix::FmDelimString;
@@ -18142,7 +17929,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="for (i = 0; i < les_lay_mat.size; i++)";
-      pre_compile_code_string="for (i = 0; i < les_lay_mat.size; i++)";
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -18151,7 +17937,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="laygp_nm = les_lay_mat->SafeEl_Flat(i)";
-	pre_compile_code_string="laygp_nm = les_lay_mat->SafeEl_Flat(i)";
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp_nm"]$$;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["les_lay_mat"]$;
 	method=taMatrixT_taString_::SafeEl_Flat;
@@ -18178,7 +17963,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-	pre_compile_code_string="laygp = network.layers.gp.FindName(laygp_nm)";
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].args["network"]$$;
 	path="layers.gp";
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp"]$$;
@@ -18206,7 +17990,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="if (!laygp)";
-	pre_compile_code_string="if (!laygp)";
 	cond {
 	 expr="!laygp";
 	};
@@ -18218,7 +18001,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
-	  pre_compile_code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
 	  result_var=NULL;
 	  object_type=taMisc;
 	  method=taMisc::Error;
@@ -18331,7 +18113,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="continue";
-	  pre_compile_code_string="continue";
 	  cond {
 	   expr=;
 	  };
@@ -18342,7 +18123,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="if (lesion)";
-	pre_compile_code_string="if (lesion)";
 	cond {
 	 expr="lesion";
 	};
@@ -18354,7 +18134,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->LesionLayers()";
-	  pre_compile_code_string="laygp->LesionLayers()";
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp"]$;
 	  method=Layer_Group::LesionLayers;
@@ -18372,8 +18151,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="else";
-	pre_compile_code_string="else";
-	else_code {
+	cond {
+	 expr=;
+	};
+	true_code {
 	 name=;
 	 el_typ=ProgCode;
 	 el_def=0;
@@ -18381,7 +18162,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->UnLesionLayers()";
-	  pre_compile_code_string="laygp->UnLesionLayers()";
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp"]$;
 	  method=Layer_Group::UnLesionLayers;
@@ -18410,7 +18190,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UpdtAfterNetMod()";
-      pre_compile_code_string="network->UpdtAfterNetMod()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].args["network"]$;
       method=Network::UpdtAfterNetMod;
@@ -18536,7 +18315,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_bump_step";
       var_type=T_Int;
       int_val=-1;
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
+      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -18591,7 +18370,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="BatchRndSeed(network)";
-      pre_compile_code_string="BatchRndSeed(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -18615,7 +18393,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if(!network->IsBuiltIntact())";
-      pre_compile_code_string="if (!network->IsBuiltIntact())";
       cond {
        expr="!network->IsBuiltIntact()";
       };
@@ -18627,7 +18404,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="needs to have been built by now..";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Build()";
-	pre_compile_code_string="network->Build()";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$$;
 	method=Network::Build;
@@ -18645,7 +18421,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="save log files for background, non-interactive jobs -- after network is fully configured and built";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (!taMisc::interactive)";
-      pre_compile_code_string="if (!taMisc::interactive)";
       cond {
        expr="!taMisc::interactive";
       };
@@ -18657,7 +18432,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="SaveLogFiles(network)";
-	pre_compile_code_string="SaveLogFiles(network)";
 	prog_args {
 	 name="prog_args";
 	 el_typ=ProgArg;
@@ -18683,7 +18457,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initialize network weights: could also load pre-set weights or something else here";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Weights()";
-      pre_compile_code_string="network->Init_Weights()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
       method=Network::Init_Weights;
@@ -18699,7 +18472,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print network.name << \" Weights Initialized\"";
-      pre_compile_code_string="Print network.name << \" Weights Initialized\"";
       expr {
        expr="network.name << \" Weights Initialized\"";
       };
@@ -18709,7 +18481,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="Load  weights if file is specified";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (load_weights && weights_file.nonempty())";
-      pre_compile_code_string="if (load_weights && weights_file.nonempty())";
       cond {
        expr="load_weights && weights_file.nonempty()";
       };
@@ -18721,7 +18492,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="Load weights from the specified file";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->LoadWeights(weights_file, false)";
-	pre_compile_code_string="network->LoadWeights(weights_file, false)";
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
 	method=Network::LoadWeights;
@@ -18759,7 +18529,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"loaded weights file:\" weights_file";
-	pre_compile_code_string="Print  \"loaded weights file:\" weights_file";
 	message="loaded weights file:";
 	print_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$$;
 	print_var2=NULL;
@@ -18773,7 +18542,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network.epoch = load_st_epc";
-	pre_compile_code_string="network.epoch = load_st_epc";
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
 	path="epoch";
 	expr {
@@ -18787,7 +18555,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 7)";
-      pre_compile_code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 5, lrs_bump_step)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["LRSConSpec"]$$;
       method=LeabraConSpec::LogLrateSched;
@@ -18836,7 +18603,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="if dmem, then from here on out, processors diverge so that lists of objs per processor are different!";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (dmem_new_seed && taMisc::dmem_nprocs > 1)";
-      pre_compile_code_string="if (dmem_new_seed && taMisc::dmem_nprocs > 1)";
       cond {
        expr="dmem_new_seed && taMisc::dmem_nprocs > 1";
       };
@@ -18848,7 +18614,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="dmem_rnd_seed->NewSeed()";
-	pre_compile_code_string="dmem_rnd_seed->NewSeed()";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["dmem_rnd_seed"]$$;
 	method=RndSeed::NewSeed;
@@ -18866,7 +18631,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="EpochStart(network)";
-      pre_compile_code_string="EpochStart(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -18995,7 +18759,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (save_final_wts)";
-      pre_compile_code_string="if (save_final_wts)";
       cond {
        expr="save_final_wts";
       };
@@ -19007,7 +18770,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="Always save weights at the end";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="SaveWeights(network)";
-	pre_compile_code_string="SaveWeights(network)";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -19033,7 +18795,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="stop training!";
       flags=CAN_REVERT_TO_CODE;
       code_string="Train->SetVar(\"stop_train\", true)";
-      pre_compile_code_string="Train->SetVar(\"stop_train\", true)";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainEnd"].vars["Train"]$$;
       method=Program::SetVar;
@@ -19178,7 +18939,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network.trial = 0";
-      pre_compile_code_string="network.trial = 0";
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].args["network"]$$;
       path="trial";
       expr {
@@ -19190,7 +18950,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start the epoch timer to record computation time per epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.epoch_time.StartTimer(true)";
-      pre_compile_code_string="network.epoch_time.StartTimer(true)";
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].args["network"]$;
       path="epoch_time";
       result_var=NULL;
@@ -19218,7 +18977,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="keep other time info on an epoch basis";
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->ResetUsed()";
-      pre_compile_code_string="BasicTrainTime->ResetUsed()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].vars["BasicTrainTime"]$$;
       method=TimeUsed::ResetUsed;
@@ -19234,7 +18992,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
-      pre_compile_code_string="trial_mon_data->ResetData()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].vars["trial_mon_data"]$$;
       method=DataTable::ResetData;
@@ -19250,7 +19007,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="added in 8.0: essential for param_seqs";
       flags=NEW_EL|CAN_REVERT_TO_CODE;
       code_string="network->Init_Epoch()";
-      pre_compile_code_string="network->Init_Epoch()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].args["network"]$;
       method=Network::Init_Epoch;
@@ -19360,7 +19116,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
-      pre_compile_code_string="network->Compute_EpochStats()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$$;
       method=LeabraNetwork::Compute_EpochStats;
@@ -19376,7 +19131,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start the epoch timer to record computation time per epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.epoch_time.EndTimer()";
-      pre_compile_code_string="network.epoch_time.EndTimer()";
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$;
       path="epoch_time";
       result_var=NULL;
@@ -19393,7 +19147,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LeabraEpochMonitor(network)";
-      pre_compile_code_string="LeabraEpochMonitor(network)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -19417,7 +19170,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network->epoch % save_wts_interval == 0 && network->epoch > 0)";
-      pre_compile_code_string="if (network->epoch % save_wts_interval == 0 && network->epoch > 0)";
       cond {
        expr="network->epoch % save_wts_interval == 0 && network->epoch > 0";
       };
@@ -19429,7 +19181,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="SaveWeights(network)";
-	pre_compile_code_string="SaveWeights(network)";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -19540,7 +19291,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initializes various counters at start of trial";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
-      pre_compile_code_string="network->Trial_Init()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$$;
       method=LeabraNetwork::Trial_Init;
@@ -19556,7 +19306,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network.Compute_Weights_Test(network.trial+1))";
-      pre_compile_code_string="if (network.Compute_Weights_Test(network.trial+1))";
       cond {
        expr="network.Compute_Weights_Test(network.trial+1)";
       };
@@ -19568,7 +19317,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="update the weight values -- do this at start so that dwt value is valid at end of trial";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
-	pre_compile_code_string="network->Compute_Weights()";
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$;
 	method=Network::Compute_Weights;
@@ -19586,7 +19334,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
-      pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$;
       method=Network::Init_InputData;
@@ -19602,7 +19349,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start at 0 cycle";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.cycle = 0";
-      pre_compile_code_string="network.cycle = 0";
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$;
       path="cycle";
       expr {
@@ -19708,7 +19454,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="after the trial is over, do final computations: Compute_AbsRelNetin";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Final()";
-      pre_compile_code_string="network->Trial_Final()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$$;
       method=LeabraNetwork::Trial_Final;
@@ -19724,7 +19469,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].vars["update_net_view"]$$;
      };
@@ -19826,7 +19570,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -19846,7 +19589,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=NEW_EL|CAN_REVERT_TO_CODE;
       code_string="for (qtr = 0; qtr < 3; qtr++)";
-      pre_compile_code_string="for (qtr = 0; qtr < 3; qtr++)";
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -19855,7 +19597,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Quarter(network)";
-	pre_compile_code_string="Quarter(network)";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -19890,7 +19631,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].args["network"]$$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].vars["update_net_view"]$$;
      };
@@ -19992,7 +19732,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -20003,7 +19742,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Quarter(network)";
-      pre_compile_code_string="Quarter(network)";
       prog_args {
        name="prog_args";
        el_typ=ProgArg;
@@ -20027,7 +19765,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].args["network"]$$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].vars["update_net_view"]$$;
      };
@@ -20129,7 +19866,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
-      pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -20149,7 +19885,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network.Compute_Weights_Test(network.trial+1))";
-      pre_compile_code_string="if (network.Compute_Weights_Test(network.trial+1))";
       cond {
        expr="network.Compute_Weights_Test(network.trial+1)";
       };
@@ -20161,7 +19896,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="update weights -- do this at start instead of end, so that dwt is valid";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
-	pre_compile_code_string="network->Compute_Weights()";
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$$;
 	method=Network::Compute_Weights;
@@ -20179,7 +19913,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initializes various counters at start of trial";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
-      pre_compile_code_string="network->Trial_Init()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
       method=LeabraNetwork::Trial_Init;
@@ -20195,13 +19928,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
-      pre_compile_code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
      };
      ForLoop @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="for (qtr = 0; qtr < 4; qtr++)";
-      pre_compile_code_string="for (qtr = 0; qtr < 4; qtr++)";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -20210,7 +19941,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="run the quarter program (which iterates over cyles of network activation updating) for each quarter";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Quarter(network)";
-	pre_compile_code_string="Quarter(network)";
 	prog_args {
 	 name="prog_args";
 	 el_typ=ProgArg;
@@ -20245,7 +19975,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="after the trial is over, do final computations";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Final()";
-      pre_compile_code_string="network->Trial_Final()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
       method=LeabraNetwork::Trial_Final;
@@ -20261,7 +19990,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$$;
      };
@@ -20367,7 +20095,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      pre_compile_code_string="Net Counter Init: cycle";
       network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$$;
       local_ctr_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["cycle"]$$;
       counter=Network::cycle;
@@ -20382,7 +20109,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (2 vars)";
-      pre_compile_code_string="LocalVars (2 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -20411,13 +20137,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
       flags=CAN_REVERT_TO_CODE;
       code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
-      pre_compile_code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
      };
      MethodCall @[2] {
       desc="initializes various counters at start of settling";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Init()";
-      pre_compile_code_string="network->Quarter_Init()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
       method=LeabraNetwork::Quarter_Init;
@@ -20433,7 +20157,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="cycle_max = network->CycleRunMax()";
-      pre_compile_code_string="cycle_max = network->CycleRunMax()";
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].prog_code[0].local_vars["cycle_max"]$$;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
       method=LeabraNetwork::CycleRunMax;
@@ -20449,7 +20172,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="// the main loop over cycles of updating";
       flags=CAN_REVERT_TO_CODE;
       code_string="for (cyc=0; cyc<cycle_max; cyc++)";
-      pre_compile_code_string="for (cyc=0; cyc<cycle_max; cyc++)";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -20458,7 +20180,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="run the cycle program -- can run multiple cycles at a time due to threading";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Cycle(network)";
-	pre_compile_code_string="Cycle(network)";
 	prog_args {
 	 name="prog_args";
 	 el_typ=ProgArg;
@@ -20482,7 +20203,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="grab the updated cycle count";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="cycle = network.cycle";
-	pre_compile_code_string="cycle = network.cycle";
 	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["cycle"]$;
 	expr {
 	 expr="network.cycle";
@@ -20503,7 +20223,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Final()";
-      pre_compile_code_string="network->Quarter_Final()";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
       method=LeabraNetwork::Quarter_Final;
@@ -20519,7 +20238,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$$;
      };
@@ -20621,7 +20339,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="this does all the standard leabra processing for one cycle of activation updating";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Cycle_Run()";
-      pre_compile_code_string="network->Cycle_Run()";
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].args["network"]$$;
       method=LeabraNetwork::Cycle_Run;
@@ -20637,7 +20354,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      pre_compile_code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$;
      };
@@ -20645,7 +20361,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="IMPORTANT: Cycle_Run() now updates cycle by itself, and can run multiple cycles!";
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="network.cycle = network.cycle + 1";
-      pre_compile_code_string="network.cycle = network.cycle + 1";
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].args["network"]$;
       path="cycle";
       expr {
@@ -20798,7 +20513,6 @@ also save specs.";
       desc="do not save if not first dmem processor";
       flags=CAN_REVERT_TO_CODE;
       code_string="if(taMisc::dmem_proc > 0) return";
-      pre_compile_code_string="if(taMisc::dmem_proc > 0) return";
       cond {
        expr="taMisc::dmem_proc > 0";
       };
@@ -20807,7 +20521,6 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
-      pre_compile_code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].vars["batch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -20843,7 +20556,6 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
-      pre_compile_code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].vars["epoch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -20879,7 +20591,6 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
-      pre_compile_code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].vars["final_tag"]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
@@ -20889,7 +20600,6 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
-      pre_compile_code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].vars["fname"]$$;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].args["network"]$$;
       method=taBase::GetFileNameFmProject;
@@ -20949,7 +20659,6 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
-      pre_compile_code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].args["network"]$;
       method=Network::SaveWeights;
@@ -21137,7 +20846,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
        local_vars {
 	name="local_vars";
 	el_typ=ProgVar;
@@ -21148,7 +20856,6 @@ also save specs.";
        desc="don't re-run if already saving!";
        flags=CAN_REVERT_TO_CODE;
        code_string="if(epoch_output_data.IsSavingDataLog()) return";
-       pre_compile_code_string="if(epoch_output_data.IsSavingDataLog()) return";
        cond {
 	expr="epoch_output_data.IsSavingDataLog()";
        };
@@ -21157,7 +20864,6 @@ also save specs.";
        desc="last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
-       pre_compile_code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
        result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_file_nm"]$$;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["epoch_output_data"]$$;
        method=taBase::GetFileNameFmProject;
@@ -21217,7 +20923,6 @@ also save specs.";
        desc="last arg is to restrict log to dmem_proc = 0";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_output_data->SaveDataLog(log_file_nm, false, true)";
-       pre_compile_code_string="epoch_output_data->SaveDataLog(log_file_nm, false, true)";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["epoch_output_data"]$;
        method=DataTable::SaveDataLog;
@@ -21266,7 +20971,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  \"Saving epoch log data to:\" log_file_nm";
-       pre_compile_code_string="Print  \"Saving epoch log data to:\" log_file_nm";
        message="Saving epoch log data to:";
        print_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_file_nm"]$;
        print_var2=NULL;
@@ -21280,7 +20984,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (log_trials)";
-       pre_compile_code_string="if (log_trials)";
        cond {
 	expr="log_trials";
        };
@@ -21292,7 +20995,6 @@ also save specs.";
 	 desc="last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\".trn_trl.dat\", tag, log_dir, true)";
-	 pre_compile_code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\".trn_trl.dat\", tag, log_dir, true)";
 	 result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_file_nm"]$;
 	 obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["trial_output_data"]$$;
 	 method=taBase::GetFileNameFmProject;
@@ -21352,7 +21054,6 @@ also save specs.";
 	 desc="last arg is to restrict log to dmem_proc = 0";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_output_data->SaveDataLog(log_file_nm, false, false)";
-	 pre_compile_code_string="trial_output_data->SaveDataLog(log_file_nm, false, false)";
 	 result_var=NULL;
 	 obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["trial_output_data"]$;
 	 method=DataTable::SaveDataLog;
@@ -21401,7 +21102,6 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  \"Saving trial log data to:\" log_file_nm";
-	 pre_compile_code_string="Print  \"Saving trial log data to:\" log_file_nm";
 	 message="Saving trial log data to:";
 	 print_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_file_nm"]$;
 	 print_var2=NULL;
@@ -22423,7 +22123,6 @@ also save specs.";
        desc="set the network and datatable for the NetMonitor";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
-       pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$$;
        method=NetMonitor::SetDataNetwork;
@@ -22461,7 +22160,6 @@ also save specs.";
        desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->CheckConfig(false)";
-       pre_compile_code_string="trial_netmon->CheckConfig(false)";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
        method=taBase::CheckConfig;
@@ -22488,7 +22186,6 @@ also save specs.";
        desc="update the monitor items and data schema based on current settings of the NetMonitor object";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->UpdateMonitors(true)";
-       pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
        method=NetMonitor::UpdateMonitors;
@@ -22515,7 +22212,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       pre_compile_code_string="run_already = false";
        result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["run_already"]$$;
        expr {
 	expr="false";
@@ -22530,7 +22226,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (!run_already)";
-       pre_compile_code_string="if (!run_already)";
        cond {
 	expr="!run_already";
        };
@@ -22542,7 +22237,6 @@ also save specs.";
 	 desc="set the network and datatable for the NetMonitor";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
-	 pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
 	 result_var=NULL;
 	 obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
 	 method=NetMonitor::SetDataNetwork;
@@ -22580,7 +22274,6 @@ also save specs.";
 	 desc="update the monitor items and data schema based on current settings of the NetMonitor object";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->UpdateMonitors(true)";
-	 pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
 	 obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
 	 method=NetMonitor::UpdateMonitors;
@@ -22607,7 +22300,6 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 pre_compile_code_string="run_already = true";
 	 result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["run_already"]$;
 	 expr {
 	  expr="true";
@@ -22619,7 +22311,6 @@ also save specs.";
        desc="add a new blank row to the data";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_mon_data->AddBlankRow()";
-       pre_compile_code_string="trial_mon_data->AddBlankRow()";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_mon_data"]$$;
        method=DataTable::AddBlankRow;
@@ -22635,7 +22326,6 @@ also save specs.";
        desc="get the new monitor data from the network and other sources -- this does the main work";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->GetMonVals()";
-       pre_compile_code_string="trial_netmon->GetMonVals()";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
        method=NetMonitor::GetMonVals;
@@ -22651,7 +22341,6 @@ also save specs.";
        desc="update views and other things after writing new data to monitor data table";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_mon_data->WriteClose()";
-       pre_compile_code_string="trial_mon_data->WriteClose()";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_mon_data"]$;
        method=DataTable::WriteClose;
@@ -22667,7 +22356,6 @@ also save specs.";
        desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
        flags=CAN_REVERT_TO_CODE;
        code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
-       pre_compile_code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].args["network"]$$;
        method=Network::DMem_ShareTrialData;
@@ -23712,7 +23400,7 @@ also save specs.";
 	 var_label="avg_act";
 	 name_style=AUTO_NAME;
 	 max_name_len=6;
-	 options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	 options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	 val_type=VT_FLOAT;
 	 matrix=0;
 	 matrix_geom{ 	 };
@@ -23858,7 +23546,6 @@ also save specs.";
        desc="get the epoch timer from current network";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_timer = network.epoch_time";
-       pre_compile_code_string="epoch_timer = network.epoch_time";
        result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_timer"]$$;
        expr {
 	expr="network.epoch_time";
@@ -23868,7 +23555,6 @@ also save specs.";
        desc="set data and network on NetMonitor object";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
-       pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$$;
        method=NetMonitor::SetDataNetwork;
@@ -23906,7 +23592,6 @@ also save specs.";
        desc="check configuration and emit errors/warnings for problems";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->CheckConfig(false)";
-       pre_compile_code_string="epoch_netmon->CheckConfig(false)";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
        method=taBase::CheckConfig;
@@ -23933,7 +23618,6 @@ also save specs.";
        desc="update the monitor items and data schema based on current settings of NetMonitor";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->UpdateMonitors(true)";
-       pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
        method=NetMonitor::UpdateMonitors;
@@ -23960,7 +23644,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       pre_compile_code_string="run_already = false";
        result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["run_already"]$$;
        expr {
 	expr="false";
@@ -23975,7 +23658,6 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (!run_already)";
-       pre_compile_code_string="if (!run_already)";
        cond {
 	expr="!run_already";
        };
@@ -23987,7 +23669,6 @@ also save specs.";
 	 desc="set data and network on NetMonitor object";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
-	 pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
 	 result_var=NULL;
 	 obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
 	 method=NetMonitor::SetDataNetwork;
@@ -24025,7 +23706,6 @@ also save specs.";
 	 desc="update the monitor items and data schema based on current settings of NetMonitor";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->UpdateMonitors(true)";
-	 pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
 	 obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
 	 method=NetMonitor::UpdateMonitors;
@@ -24052,7 +23732,6 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 pre_compile_code_string="run_already = true";
 	 result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["run_already"]$;
 	 expr {
 	  expr="true";
@@ -24064,7 +23743,6 @@ also save specs.";
        desc="add a new blank row to the data";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->AddBlankRow()";
-       pre_compile_code_string="epoch_mon_data->AddBlankRow()";
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$$;
        method=DataTable::AddBlankRow;
@@ -24080,7 +23758,6 @@ also save specs.";
        desc="get the new monitor data and stor it into the data table -- this does the main job here";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->GetMonVals()";
-       pre_compile_code_string="epoch_netmon->GetMonVals()";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
        method=NetMonitor::GetMonVals;
@@ -24096,7 +23773,6 @@ also save specs.";
        desc="get the epoch timer from current network";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_timer = network.epoch_time";
-       pre_compile_code_string="epoch_timer = network.epoch_time";
        result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_timer"]$;
        expr {
 	expr="network.epoch_time";
@@ -24106,7 +23782,6 @@ also save specs.";
        desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
-       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
        method=DataTable::SetValColName;
@@ -24166,7 +23841,6 @@ also save specs.";
        desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
-       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
        method=DataTable::SetValColName;
@@ -24226,7 +23900,6 @@ also save specs.";
        desc="update after writing new data to monitor data table";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->WriteClose()";
-       pre_compile_code_string="epoch_mon_data->WriteClose()";
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
        method=DataTable::WriteClose;
@@ -24253,18 +23926,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
 ";
        flags=CAN_REVERT_TO_CODE;
        code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
-http://grey.colorado.edu/emergent/index.php/Test_Programs
-quick summary here:
-* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
-* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
-  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
-* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
-* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
-This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
-and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
- 
-";
-       pre_compile_code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
 http://grey.colorado.edu/emergent/index.php/Test_Programs
 quick summary here:
 * Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
@@ -24306,22 +23967,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.002111932;
+     value 8 0=0.002089137;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.06785213;
+     value 8 0=0.0672748;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9923443;
+     value 8 0=0.9916434;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7941039;
+     value 8 0=0.7936146;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -24331,7 +23992,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABJQAAAvEAAALdAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAAB6AAAAgEAAAFGAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -25950,17 +25611,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.00655124;
+       value 8 0=0.01140251;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.02164731;
+       value 8 0=0.05710306;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7566682;
+       value 8 0=0.7080958;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -26003,7 +25664,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4][3].objs;.networks;.networks[0];.networks[0].specs; };
+ tree_state{ .;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[0][1];.programs.gp[4].gp[0][1].objs;.programs.gp[4].gp[0][1].objs[0];.programs.gp[4].gp[0][2];.programs.gp[4].gp[0][2].objs;.programs.gp[4].gp[0][2].objs[0];.programs.gp[4].gp[0][2].prog_code;.networks;.networks[0];.networks[0].specs; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -26259,19 +25920,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      init {v_m=0.4: act=0: netin=0: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
-     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
-     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
-     adapt_leak {
-      on=0;
-      tau=100;
-      hi_thr=1.2;
-      lo_thr=0.4;
-      min_bwt=0;
-      max_bwt=0.2;
-      dt=0.01;
-      mid_thr=0.8;
-     };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
+     avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
+     avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {
@@ -26384,15 +26035,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       wt_sig {gain=6: off=1: };
+       wt_sig {gain=6: off=1: soft_bound=1: };
+       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
        wt_bal {
 	on=1;
-	trg=0.3;
-	thr=0.1;
-	gain=2;
-	avg_updt=10;
 	hi_thr=0.4;
+	hi_gain=4;
 	lo_thr=0.2;
+	lo_gain=4;
        };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
@@ -26470,15 +26120,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       wt_sig {gain=6: off=1: };
+       wt_sig {gain=6: off=1: soft_bound=1: };
+       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
        wt_bal {
 	on=1;
-	trg=0.3;
-	thr=0.1;
-	gain=2;
-	avg_updt=10;
 	hi_thr=0.4;
+	hi_gain=4;
 	lo_thr=0.2;
+	lo_gain=4;
        };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
@@ -26546,15 +26195,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1: };
+     wt_sig {gain=6: off=1: soft_bound=1: };
+     dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
      wt_bal {
       on=1;
-      trg=0.3;
-      thr=0.1;
-      gain=2;
-      avg_updt=10;
       hi_thr=0.4;
+      hi_gain=4;
       lo_thr=0.2;
+      lo_gain=4;
      };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
@@ -26855,6 +26503,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     gate_cyc=18;
     deep_cyc=5;
     time_inc=0.001;
+    wt_bal_int=10;
     minus=75;
     plus=25;
     total_cycles=100;
@@ -26864,6 +26513,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     off_errs=1;
     on_errs=1;
     agg_unlearnable=0;
+    wt_bal=0;
    };
    net_misc {
     spike=0;
