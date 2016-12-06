@@ -33,8 +33,8 @@ class TA_API iCodeCompleter : public QCompleter {
   Q_OBJECT
 INHERITED(QCompleter)
 public:
-  iCodeCompleter(QObject* parent = Q_NULLPTR);
-  iCodeCompleter(QAbstractItemModel *model, QObject *parent = Q_NULLPTR);
+  iCodeCompleter(QObject* parent = 0);
+  iCodeCompleter(QAbstractItemModel *model, QObject *parent = 0);
 
   QStringListModel*       list_model;
 
