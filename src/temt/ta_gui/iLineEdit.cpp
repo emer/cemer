@@ -292,7 +292,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       cursorWordBackward(ext_select_on);
       return;
     case taiMisc::TEXTEDIT_LOOKUP:
-      
     case taiMisc::TEXTEDIT_LOOKUP_II:
       key_event->accept();
       doLookup();
@@ -333,6 +332,13 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   emit characterEntered(this);
   inherited::keyPressEvent(key_event);
   if (text().length() == 0) {  // no text - show all possibilities
+    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+    GetCompleter()->complete();
+  }
+  else if (text().endsWith("::") ||
+           text().endsWith("()") ||
+           text().endsWith(".") ||
+           text().endsWith("->")) {
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     GetCompleter()->complete();
   }

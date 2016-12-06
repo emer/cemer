@@ -1386,7 +1386,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   for (int i=0; i<completion_token_list.size; i++) {
     taBase* base = completion_token_list.FastEl(i);
     if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
-      completion_choice_list.Add(path_prepend_txt + base->GetName() + "()");
+      if (path_prepend_txt.empty()) {
+        completion_choice_list.Add(prepend_txt + base->GetName() + "()");
+      }
+      else {
+        completion_choice_list.Add(path_prepend_txt + base->GetName() + "()");
+      }
     }
     else {
       completion_choice_list.Add(path_prepend_txt + base->GetName());
