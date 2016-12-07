@@ -347,10 +347,19 @@ short                   taMisc::num_recent_files = 10;
 short                   taMisc::num_recent_paths = 10;
 short                   taMisc::num_browse_history = 20;
 
-bool                    taMisc::tree_spring_loaded = true;
-short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
 taMisc::KeyBindingSet   taMisc::current_key_bindings = taMisc::KEY_BINDINGS_CUSTOM;
-bool                    taMisc::code_completion = false;
+
+taSpringLoadedPrefs::taSpringLoadedPrefs() {
+  enabled = true;
+  delay = 1000;
+}
+taSpringLoadedPrefs taMisc::tree_spring_loaded;
+
+taCompletionPrefs::taCompletionPrefs() {
+  enabled = true;
+  max_choices = 10;
+}
+taCompletionPrefs taMisc::code_completion;
 
 
 ////////////////////////////////////////////////////////

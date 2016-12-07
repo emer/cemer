@@ -35,7 +35,7 @@ iCodeCompleter::iCodeCompleter(QAbstractItemModel *model, QObject *parent) {
 }
 
 void iCodeCompleter::Init() {
-  setMaxVisibleItems(10);
+  setMaxVisibleItems(taMisc::code_completion.max_choices);
   list_model = new QStringListModel(string_list, NULL);
   this->setModel(list_model);
 }

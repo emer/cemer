@@ -1333,7 +1333,7 @@ bool iTreeView::PosInView(int scr_pos) {
 void iTreeView::dragMoveEvent(QDragMoveEvent* ev) {
 #if (QT_VERSION >= 0x040700)
   iTreeWidgetItem* foo;
-  if (taMisc::tree_spring_loaded) {
+  if (taMisc::tree_spring_loaded.enabled) {
     int item_idx = -1;
     QModelIndex index = indexAt(ev->pos());
     iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
@@ -1356,7 +1356,7 @@ void iTreeView::dragMoveEvent(QDragMoveEvent* ev) {
         dropTimer.restart();
       }
       else {  // still over same possible target
-        if (dropTimer.elapsed() > taMisc::spring_loaded_delay) {
+        if (dropTimer.elapsed() > taMisc::tree_spring_loaded.delay) {
           if (!item->isExpanded()) {  // if previously expanded don't put on stack
             expandedItemList.Push(item);
             item->setExpanded(true);

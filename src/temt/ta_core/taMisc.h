@@ -141,6 +141,23 @@ public:
   taFontNames();
 };
 
+class TA_API taCompletionPrefs {
+  // #EDIT_INLINE options for the code completion feature
+public:
+  bool    enabled;       // default is to have code completion on
+  int     max_choices;  // maximum number of options to present in the popup list
+  
+  taCompletionPrefs();
+};
+
+class TA_API taSpringLoadedPrefs {
+  // #EDIT_INLINE options for the code completion feature
+public:
+  bool    enabled;  // do the tree view folders expand during drag and drop
+  int     delay;    // #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
+  
+  taSpringLoadedPrefs();
+};
 
 #define PATH_SEP taMisc::path_sep
 
@@ -381,10 +398,9 @@ public:
   static short          num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save
   static short          num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_50 number of browse history items to keep
 
-  static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
-  static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
-  static bool           code_completion;  // #SAVE turns on the code completer which presents a popup menu of legal objects, members and methods as you enter code
-
+  static taSpringLoadedPrefs    tree_spring_loaded;  // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
+  static taCompletionPrefs      code_completion;  // #SAVE #CAT_GUI turns on the code completer which presents a popup menu of legal objects, members and methods as you enter code and you can specify maximum choices to list in menu
+  
   ////////////////////////////////////////////////////////
   //    Logging settings
 

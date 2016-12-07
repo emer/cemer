@@ -297,7 +297,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       doLookup();
       return;
     default:
-      if (taMisc::code_completion && completer) {
+      if (taMisc::code_completion.enabled && completer) {
         if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter))) {
           CompletionDone(key_event);
           return;
@@ -326,7 +326,7 @@ void iLineEdit::doLookup() {
 }
 
 void iLineEdit::DoCompletion(QKeyEvent* key_event) {
-  if (!taMisc::code_completion || !completer) return;
+  if (!taMisc::code_completion.enabled || !completer) return;
   
   completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
   emit characterEntered(this);
