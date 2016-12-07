@@ -617,7 +617,9 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   dest->StructUpdate(false);
   spec->ClearColumns();
   if(in_place_req) {
-    src->Copy_DataOnly(*dest);
+    String saved_name = src->GetName();  // save name to restore after the copy
+    src->Copy(dest);
+    src->SetName(saved_name);  // restore the name
     delete dest;
   }
   if(tmp_src) {
