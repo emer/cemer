@@ -34,7 +34,7 @@ INHERITED(taBase)
 // Data Members:
 public:
   taBase*               owner;  // #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER #NO_FIND #CAT_taBase pointer to owner
-  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY #CAT_taBase storage for user data (created if needed)
+  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY #CAT_taBase storage for user data (created if needed) DO NOT ACCESS this list directly -- use the GetUserData / SetUserData etc interface!
 
 protected:
   taSigLink*           m_sig_link; //

@@ -2397,12 +2397,24 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
       }
 #endif
     }
+#ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taPtrList_impl)) {
+      return (((taPtrList_impl*)base)->size == 0);
+    }
+#endif
     // must be some other value or a class -- default to saying no to empty
-    else return false;
+    else  return false;
     // NOTE: other value types are not really supported, just fall through to return    invalid
   }
   else if(IsPointer()) {
-    return !(*((void**)base)); // only empty if NULL
+    void* ptr_val = *((void**)base);
+    if(!ptr_val) return false;
+#ifndef NO_TA_BASE
+    if(DerivesFrom(TA_taPtrList_impl)) {
+      return (((taPtrList_impl*)ptr_val)->size == 0);
+    }
+#endif
+    return false; // only empty if NULL
   }
   return false;
 }

@@ -248,6 +248,7 @@ void DataCol::UpdateAfterEdit_impl() {
       SetColFlag(AUTO_WIDTH);
       width = MAX(GridColDisplayWidth(), name.length());
     }
+    RemoveUserData("view_panel_wd"); // not used anymore
   }
   if(width == 0) {
     SetColFlag(AUTO_WIDTH);
