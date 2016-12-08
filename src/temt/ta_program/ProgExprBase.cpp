@@ -1394,7 +1394,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       }
     }
     else {
-      completion_choice_list.Add(path_prepend_txt + base->GetName());
+      if (path_prepend_txt.empty()) {
+        completion_choice_list.Add(prepend_txt + base->GetName());
+      }
+      else {
+        completion_choice_list.Add(path_prepend_txt + base->GetName());
+      }
     }
   }
 
