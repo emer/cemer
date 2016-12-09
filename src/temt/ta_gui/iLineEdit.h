@@ -71,6 +71,7 @@ protected:
   void          keyPressEvent(QKeyEvent* e) override;
   void          wheelEvent(QWheelEvent * e) override;
   bool          event(QEvent * e) override;
+  bool          eventFilter(QObject* obj, QEvent * e) override;
 
 private:
   void		      init(bool add_completer = false);

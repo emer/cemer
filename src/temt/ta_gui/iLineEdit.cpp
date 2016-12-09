@@ -67,6 +67,7 @@ void iLineEdit::init(bool add_completer) {
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompleter(completer);
   }
+  installEventFilter(this);
 }
 
 void iLineEdit::editInEditor() {
@@ -320,7 +321,7 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   
   completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
   emit characterEntered(this);
-  if ( (key_event->key() == Qt::Key_Alt) ){
+  if (key_event->key() == Qt::Key_Alt) {
     inherited::keyPressEvent(key_event);
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     GetCompleter()->complete();
@@ -349,3 +350,23 @@ void iLineEdit::emitReturnPressed()
 {
   emit returnPressed();
 }
+
+bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return inherited::eventFilter(obj, event);
+  }
+  else {
+    QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
+    if (key_event->key() == Qt::Key_Tab) {
+      completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
+      emit characterEntered(this);
+      inherited::keyPressEvent(key_event);
+      GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+      GetCompleter()->complete();
+      return true;
+    }
+    return inherited::eventFilter(obj, event);
+  }
+  return inherited::eventFilter(obj, event);
+}
+

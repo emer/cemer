@@ -685,14 +685,6 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
     QKeyEvent* ke = static_cast<QKeyEvent *>(event);
     bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(ke);
     switch (ke->key()) {
-      case Qt::Key_Tab:
-        if(own_tree_widg) {
-          own_tree_widg->move_after_edit = 1;
-          // own_tree_widg->edit_start_pos = 0;
-        }
-        emit commitData(editor);
-        emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
-        return true;
       case Qt::Key_Backtab:
         if(own_tree_widg) {
           own_tree_widg->move_after_edit = -1;
