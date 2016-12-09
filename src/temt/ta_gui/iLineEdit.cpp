@@ -306,7 +306,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
           return;
         }
       }
-      else{
+      else {
         inherited::keyPressEvent(key_event);
       }
   }
@@ -319,16 +319,24 @@ void iLineEdit::doLookup() {
 void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   if (!taMisc::code_completion.enabled || !completer) return;
   
-  completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
-  emit characterEntered(this);
-  if (key_event->key() == Qt::Key_Alt) {
-    inherited::keyPressEvent(key_event);
-    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-    GetCompleter()->complete();
+  if (key_event->key() == Qt::Key_Backspace) {
+    key_event->accept();
+    backspace();
+    clearExtSelection();
+    return;
   }
   else {
-    inherited::keyPressEvent(key_event);
-    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+    completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
+    emit characterEntered(this);
+    if (key_event->key() == Qt::Key_Alt) {
+      inherited::keyPressEvent(key_event);
+      GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+      GetCompleter()->complete();
+    }
+    else {
+      inherited::keyPressEvent(key_event);
+      GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+    }
   }
   return;
 }
