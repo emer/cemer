@@ -1171,7 +1171,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_DynEnumItem, &completion_token_list);
-      GetTokensOfType(&TA_Function, &completion_token_list);
+      GetTokensOfType(&TA_Function, &completion_token_list, own_prg, &TA_Program);
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_token_list);
       }
@@ -1426,6 +1426,10 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     completion_choice_list.Add(path_prepend_txt + enum_def->name);
   }
 
+  // useful for debug
+//  for (int i=0; i<completion_choice_list.size; i++) {
+//    taMisc::DebugInfo(completion_choice_list.SafeEl(i));
+//  }
   return &completion_choice_list;
 }
 

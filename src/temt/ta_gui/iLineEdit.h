@@ -30,7 +30,6 @@ INHERITED(QLineEdit)
 public:
   int  init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start
   bool init_start_kill;          // at start of editing, kill contents
-  bool first_focus;              // if this is the first focus pop completion list
 
   iLineEdit(QWidget* parent = 0, bool add_completer = false);
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false); //note: can't have defaults, ambiguity

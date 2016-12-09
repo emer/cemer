@@ -56,7 +56,6 @@ void iLineEdit::init(bool add_completer) {
   mmin_char_width = 0;
   mchar_width = 0;
   ext_select_on = false;
-  first_focus = true;  // we haven't gotten focut yet
   // this seems unnecessary, and conflicts with ctrl-U select-all!
 //   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
 //   sc->setContext(Qt::WidgetShortcut);
@@ -108,15 +107,6 @@ void iLineEdit::focusInEvent(QFocusEvent* e) {
       cut();
       clearExtSelection();
     }
-  }
-  
-  if (first_focus) {
-    if (text().length() == 0) {
-      // a bit of a kludge but Qt Completer doesn't have a mechanism for showing completion list with empty text field
-      QCoreApplication* app = QCoreApplication::instance();
-      app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
-    }
-    first_focus = false;
   }
   // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
@@ -330,19 +320,25 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   
   completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
   emit characterEntered(this);
-  inherited::keyPressEvent(key_event);
-  if (text().length() == 0) {  // no text - show all possibilities
+  if (text().length() == 0 && key_event->key() == Qt::Key_Alt) {  // no text - show all possibilities
+    inherited::keyPressEvent(key_event);
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     GetCompleter()->complete();
   }
-  else if (text().endsWith("::") ||
-           text().endsWith("()") ||
-           text().endsWith(".") ||
-           text().endsWith("->")) {
+  else if ( (key_event->key() == Qt::Key_Alt) &&
+             (text().endsWith("::")
+           || text().endsWith("()")
+           || text().endsWith(".")
+           || text().endsWith("->")
+           || text().endsWith("(")
+           || text().endsWith("==") )
+           ) {
+    inherited::keyPressEvent(key_event);
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     GetCompleter()->complete();
   }
   else {
+    inherited::keyPressEvent(key_event);
     GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
   }
   return;
