@@ -320,19 +320,7 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   
   completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
   emit characterEntered(this);
-  if (text().length() == 0 && key_event->key() == Qt::Key_Alt) {  // no text - show all possibilities
-    inherited::keyPressEvent(key_event);
-    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-    GetCompleter()->complete();
-  }
-  else if ( (key_event->key() == Qt::Key_Alt) &&
-             (text().endsWith("::")
-           || text().endsWith("()")
-           || text().endsWith(".")
-           || text().endsWith("->")
-           || text().endsWith("(")
-           || text().endsWith("==") )
-           ) {
+  if ( (key_event->key() == Qt::Key_Alt) ){
     inherited::keyPressEvent(key_event);
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
     GetCompleter()->complete();
