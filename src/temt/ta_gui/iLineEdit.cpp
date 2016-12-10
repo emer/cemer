@@ -319,7 +319,7 @@ void iLineEdit::doLookup() {
 void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   if (!taMisc::code_completion.enabled || !completer) return;
   
-  if (key_event->key() == Qt::Key_Backspace) {
+  if (key_event->key() == Qt::Key_Backspace && hasSelectedText()) {
     key_event->accept();
     backspace();
     clearExtSelection();
