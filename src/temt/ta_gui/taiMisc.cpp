@@ -1515,7 +1515,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_FORWARD_II, QKeySequence());
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_BACKWARD_II, QKeySequence());
   
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_TOGGLE_OFF_FLAG, QKeySequence(Qt::AltModifier + Qt::Key_T));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_TOGGLE_OFF_FLAG, QKeySequence(Qt::AltModifier + Qt::Key_O));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_TOGGLE_BREAKPOINT, QKeySequence(Qt::AltModifier + Qt::Key_B));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_REVERT_TO_CODE, QKeySequence(Qt::AltModifier + Qt::Key_C));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_EDIT_PROGRAM, QKeySequence(Qt::AltModifier + Qt::Key_P));
