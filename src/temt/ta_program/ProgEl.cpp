@@ -754,6 +754,20 @@ String ProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                      this, own_prg, own_fun);
 }
 
+
+String_Array* ProgEl::StringFieldLookupForCompleter(const String& cur_txt, int cur_pos,
+                                    const String& mbr_name, int& new_pos) {
+  Program* own_prg = GET_MY_OWNER(Program);
+  if(!own_prg) return NULL;
+  Function* own_fun = GET_MY_OWNER(Function);
+  taBase* path_own_obj = NULL;
+  TypeDef* path_own_typ = NULL;
+  MemberDef* path_md = NULL;
+  return ProgExprBase::ExprLookupCompleter(cur_txt, cur_pos, new_pos,
+                                           path_own_obj, path_own_typ, path_md,
+                                           this, own_prg, own_fun);
+}
+
 bool ProgEl::CvtCodeToVar(String& code) {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
