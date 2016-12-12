@@ -66,12 +66,13 @@ protected:
   bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   iCodeCompleter*   completer; //
   
-  void          focusInEvent(QFocusEvent* e) override;
-  void          focusOutEvent(QFocusEvent* e) override;
-  void          keyPressEvent(QKeyEvent* e) override;
-  void          wheelEvent(QWheelEvent * e) override;
-  bool          event(QEvent * e) override;
-  bool          eventFilter(QObject* obj, QEvent * e) override;
+  void              focusInEvent(QFocusEvent* e) override;
+  void              focusOutEvent(QFocusEvent* e) override;
+  void              keyPressEvent(QKeyEvent* e) override;
+  void              wheelEvent(QWheelEvent * e) override;
+  bool              event(QEvent * e) override;
+  bool              eventFilter(QObject* obj, QEvent * e) override;
+  virtual bool      IsDelimter(char a_char);
 
 private:
   void		      init(bool add_completer = false);

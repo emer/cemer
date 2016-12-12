@@ -326,17 +326,13 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
     return;
   }
   else {
-    completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
+    String prefix = text();
+    prefix = prefix.through(cursorPosition() - 1);
+    completer->setCompletionPrefix(prefix + QString(key_event->key()).toLower());
     emit characterEntered(this);
-    if (key_event->key() == Qt::Key_Alt) {
-      inherited::keyPressEvent(key_event);
-      GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-      GetCompleter()->complete();
-    }
-    else {
-      inherited::keyPressEvent(key_event);
-      GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-    }
+    inherited::keyPressEvent(key_event);
+    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+    GetCompleter()->complete();
   }
   return;
 }
@@ -365,16 +361,36 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   }
   else {
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-    if (key_event->key() == Qt::Key_Tab) {
-      completer->setCompletionPrefix(text() + QString(key_event->key()).toLower());
+    if (key_event->key() == Qt::Key_Tab || key_event->key() == Qt::Key_Alt) {
+      String prefix = text();
+      prefix = prefix.through(cursorPosition() - 1);
+      completer->setCompletionPrefix(prefix); // don't add character!
       emit characterEntered(this);
       inherited::keyPressEvent(key_event);
-      GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+      if (IsDelimter(prefix.lastchar())) {
+        GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+      }
+      else {
+        GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+      }
       GetCompleter()->complete();
       return true;
     }
     return inherited::eventFilter(obj, event);
   }
   return inherited::eventFilter(obj, event);
+}
+
+bool iLineEdit::IsDelimter(char a_char) {
+  if (a_char == '.'
+      || a_char == '>'
+      || a_char == '('
+      || a_char == ')'
+      || a_char == '['
+      || a_char == ']')
+    return true;
+  else {
+    return false;
+  }
 }
 
