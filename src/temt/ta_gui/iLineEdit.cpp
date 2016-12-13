@@ -319,21 +319,13 @@ void iLineEdit::doLookup() {
 void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   if (!taMisc::code_completion.enabled || !completer) return;
   
-  if (key_event->key() == Qt::Key_Backspace && hasSelectedText()) {
-    key_event->accept();
-    backspace();
-    clearExtSelection();
-    return;
-  }
-  else {
-    String prefix = text();
-    prefix = prefix.through(cursorPosition() - 1);
-    completer->setCompletionPrefix(prefix + QString(key_event->key()).toLower());
-    emit characterEntered(this);
-    inherited::keyPressEvent(key_event);
-    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-    GetCompleter()->complete();
-  }
+  inherited::keyPressEvent(key_event);
+  String prefix = text();
+  prefix = prefix.through(cursorPosition() - 1);
+  emit characterEntered(this);
+  completer->setCompletionPrefix(prefix);
+  GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+  GetCompleter()->complete();
   return;
 }
 
@@ -362,11 +354,11 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   else {
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
     if (key_event->key() == Qt::Key_Tab || key_event->key() == Qt::Key_Alt) {
+      inherited::keyPressEvent(key_event);
       String prefix = text();
       prefix = prefix.through(cursorPosition() - 1);
       completer->setCompletionPrefix(prefix); // don't add character!
       emit characterEntered(this);
-      inherited::keyPressEvent(key_event);
       if (IsDelimter(prefix.lastchar())) {
         GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
       }
@@ -387,7 +379,8 @@ bool iLineEdit::IsDelimter(char a_char) {
       || a_char == '('
       || a_char == ')'
       || a_char == '['
-      || a_char == ']')
+      || a_char == ']'
+      || a_char == ':')
     return true;
   else {
     return false;
