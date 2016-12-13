@@ -1106,14 +1106,16 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
       taProject* my_proj = own_prg->GetMyProj();
       String scoped_prog_name = trim(prepend_txt);
       Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
-      func_look_up->GetImageScoped(NULL, &TA_Function, scope_program, &TA_Program); // scope to this guy
-      bool okc = func_look_up->OpenChooser();
-      if(okc && func_look_up->token()) {
-        taBase* tok = func_look_up->token();
-        rval = prepend_txt + "() " + tok->GetName();
-        rval += "()";
+      if (scope_program != NULL) {
+        func_look_up->GetImageScoped(NULL, &TA_Function, scope_program, &TA_Program); // scope to this guy
+        bool okc = func_look_up->OpenChooser();
+        if(okc && func_look_up->token()) {
+          taBase* tok = func_look_up->token();
+          rval = prepend_txt + "() " + tok->GetName();
+          rval += "()";
+        }
+        new_pos = rval.length();
       }
-      new_pos = rval.length();
       delete func_look_up;
       break;
     }
@@ -1372,7 +1374,9 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       taProject* my_proj = own_prg->GetMyProj();
       String scoped_prog_name = trim(prepend_txt);
       Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
-      GetTokensOfType(&TA_Function, &completion_token_list, scope_program, &TA_Program);
+      if (scope_program != NULL) {
+        GetTokensOfType(&TA_Function, &completion_token_list, scope_program, &TA_Program);
+      }
       completion_finish_type = FINISH_CALL_PROG_FUN;
       break;
     }
