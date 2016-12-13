@@ -27,9 +27,6 @@
 #include <QVBoxLayout>
 
 
-#define LAYBODY_MARGIN  1
-#define LAYBODY_SPACING 0
-
 void taiEditor::MakeDarkBgColor(const iColor& bg, iColor& dk_bg) {
   dk_bg.set(taiMisc::ivBrightness_to_Qt_lightdark(bg, taiM->edit_darkbg_brightness));
 }

@@ -23,11 +23,9 @@
 #include <iSplitter>
 
 #include <taiMisc>
+#include <taMisc>
 
 #include <QHBoxLayout>
-
-#define LAYBODY_MARGIN  1
-#define LAYBODY_SPACING 0
 
 iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par,
   int ctrl_size, const String& desc, taiWidget* buddy,
@@ -239,8 +237,7 @@ void taiEditorWidgetsMain::Constr_Box() {
   pal.setColor(QPalette::Background, bg_color);
   body->setPalette(pal); 
   ((iStripeWidget*)body)->setHiLightColor(bg_color_dark);
-  ((iStripeWidget*)body)->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
-  //TODO: if adding spacing, need to include LAYBODY_SPACING;
+  ((iStripeWidget*)body)->setStripeHeight(row_height + (2 * taMisc::font_sizes.spacing));
   if (splBody == NULL) {
     vblDialog->addWidget(scrBody, 1); // gets all the space
   }
@@ -253,9 +250,9 @@ void taiEditorWidgetsMain::Constr_Body_impl() {
   layBody->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
   layBody->setLabelAlignment(Qt::AlignLeft);
   layBody->setRowWrapPolicy(iFormLayout::DontWrapRows);
-  layBody->setHorizontalSpacing(2 * LAYBODY_MARGIN);
-  layBody->setVerticalSpacing(2 * LAYBODY_MARGIN);
-  layBody->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
+  layBody->setHorizontalSpacing(2 * taMisc::font_sizes.spacing);
+  layBody->setVerticalSpacing(2 * taMisc::font_sizes.spacing);
+  layBody->setContentsMargins(taMisc::font_sizes.spacing, 0, taMisc::font_sizes.spacing, 0);
   layBody->setFieldGrowthPolicy(iFormLayout::AllNonFixedFieldsGrow); // TBD
   body_vlay->addLayout(layBody);
   body_vlay->addStretch(1);

@@ -250,7 +250,9 @@ taFontSizes::taFontSizes() {
   table = taMisc::font_sizes.labels;  //
   console = 12;  //
   browser = 14;
+  spacing = 1;
 }
+
 taFontNames::taFontNames() {
   general = "Lucida Grande";
   console = "Menlo";

@@ -128,6 +128,7 @@ public:
   int  table;  // #MIN_4 the font size for data table cells
   int  console;  // #MIN_4 the font size for the console window
   int  browser;  // #MIN_4 font size for web browser and docs
+  int  spacing;  // #DEF_1 amount of extra space to add above and below text in edit dialogs etc
   
   taFontSizes();
 };
