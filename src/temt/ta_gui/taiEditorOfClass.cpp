@@ -139,7 +139,11 @@ void taiEditorOfClass::bgrp_buttonClicked(int id) {
   if (!chk) return; // shouldn't happen
   if ((id < 0) || (id >= membs.size)) return; // ditto
   show_set(id) = chk->isChecked();
-  ReShow_Async();
+  //  ReShow_Async();  // bug 2581 - this isn't working because the async_reshow_list isn't
+  // getting processed because the dialog is modal
+  // taking the direct approach - rohrlich
+  defer_reshow_req = true;
+  Refresh();
 }
 
 void taiEditorOfClass::Cancel_impl() {
