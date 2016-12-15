@@ -139,15 +139,17 @@ void taiEditorOfClass::bgrp_buttonClicked(int id) {
   if (!chk) return; // shouldn't happen
   if ((id < 0) || (id >= membs.size)) return; // ditto
   show_set(id) = chk->isChecked();
-  //  ReShow_Async();  // bug 2581 - this isn't working because the async_reshow_list isn't
-  // getting processed because the dialog is modal
-  // taking the direct approach - rohrlich
-  defer_reshow_req = true;
-  Refresh();
+  if(host_type == HT_DIALOG) {
+    defer_reshow_req = true;
+    Refresh();
+  }
+  else {
+    ReShow_Async();
+  }
 }
 
 void taiEditorOfClass::Cancel_impl() {
-//NOTE: must be ok to call this if was still deferred
+  //NOTE: must be ok to call this if was still deferred
   // delete all methods and menu
   if (menu) {
     delete menu;
