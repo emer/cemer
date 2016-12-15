@@ -151,13 +151,6 @@ void taiTreeNodeTaBase::characterEntered(iLineEdit* le, int column) {
   le->window()->setFocus();
   le->setFocus();
 #endif
-//  if(rval.nonempty()) {
-//    le->setText(rval);
-//    if(new_pos >= 0)
-//      le->setCursorPosition(new_pos); // go back to orig pos
-//    else
-//      le->setCursorPosition(cur_pos); // go back to orig pos
-//  }
 }
 
 String taiTreeNodeTaBase::PostCompletionEdit(iCodeCompleter* completer) {

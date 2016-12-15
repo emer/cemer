@@ -1111,13 +1111,13 @@ void iTreeView::Highlighted(const QModelIndex& index) {
 }
 
 void iTreeView::Completed(const QModelIndex& index) {
-//  iCodeCompleter* completer = line_edit->GetCompleter();
-//  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(currentItem());
-//  if(item) {
-//    String full_expr = item->PostCompletionEdit(completer); // todo: no col
-//    line_edit->clear();
-//    line_edit->insert(full_expr);
-//  }
+  iCodeCompleter* completer = line_edit->GetCompleter();
+  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(currentItem());
+  if(item) {
+    String full_expr = item->PostCompletionEdit(completer);
+    line_edit->clear();
+    line_edit->insert(full_expr);
+  }
 }
 
 void iTreeView::setTvFlags(int value) {

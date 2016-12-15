@@ -134,11 +134,4 @@ void taiWidgetField::characterEntered() {
   rep()->window()->setFocus();
   rep()->setFocus();
 #endif
-//  if(rval.nonempty()) {
-//    rep()->setText(rval);
-//    if(new_pos >= 0)
-//      rep()->setCursorPosition(new_pos); // go back to orig pos
-//    else
-//      rep()->setCursorPosition(cur_pos); // go back to orig pos
-//  }
 }

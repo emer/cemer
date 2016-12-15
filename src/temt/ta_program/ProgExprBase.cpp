@@ -1540,82 +1540,72 @@ int ProgExprBase::Test_ParseForLookup(const String test_name, const String input
 
 String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos) {
   String rval;
-  switch (completion_finish_type) {
-    case FINISH_VARIOUS: {
-      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-      if (!token) return _nilString;
-      
-      rval = completion_pre_text + token->GetName();
-      String type_name = token->GetTypeName();
-      if (type_name == "Program" || type_name == "Function") {
-        rval += "()";
-        new_pos = rval.length();
-      }
-      else {
-        new_pos = rval.length();
-        rval += completion_append_text;
-      }
-      completion_token_list.RemoveAll();
-      break;
-    }
-      
-    case FINISH_MEMB_METH: {
-      TypeItem* type_item = NULL;
-      rval = completion_pre_text + type_item->name;
-//      path_md = (MemberDef*)type_item;  // not always relevant but set it anyway
-//      path_own_type = type_item->GetTypeDef();  // not always relevant but set it anyway
-      if(type_item->TypeInfoKind() == TypeItem::TIK_METHOD) {
-        rval += "()";
-      }
-      new_pos = rval.length();
-      rval += completion_append_text;
-      break;
-    }
-    
-    case FINISH_LIST: {
-      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-      if (!token) return _nilString;
 
-      TypeDef* path_own_typ = token->GetTypeDef();
-      rval = completion_pre_text + token->GetName();
-      new_pos = rval.length();
-      rval += completion_append_text;
-      break;
-    }
-      
-    case FINISH_CALL_PROGRAM: {
-      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-      if (!token) return _nilString;
-      
-      rval = token->GetName() + "()";
-      new_pos = rval.length();
-      break;
-    }
-      
-    case FINISH_CALL_FUNCTION: {
-      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-      if (!token) return _nilString;
-      
-      rval = completion_pre_text.repl(completion_prog_el_text, token->GetName());
-      
-      rval += "()";
-      new_pos = rval.length();
-      break;
-    }
-      
-    case FINISH_CALL_PROG_FUN: {
-      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-      if (!token) return _nilString;
-      
-      rval = completion_pre_text + "() " + token->GetName();
-      rval += "()";
-      new_pos = rval.length();
-      break;
-    }
+  rval = cur_completion;
+  new_pos = rval.length();
+  rval += completion_append_text;
 
-    default:
-      break;
-  }
+  return rval;
+  
+//  switch (completion_finish_type) {
+//    case FINISH_VARIOUS: {
+//      rval = cur_completion;
+//      new_pos = rval.length();
+//      rval += completion_append_text;
+//      break;
+//    }
+//      
+//    case FINISH_MEMB_METH: {
+//      rval = completion_pre_text;
+//      new_pos = rval.length();
+//      rval += completion_append_text;
+//      break;
+//    }
+//    
+//    case FINISH_LIST: {
+//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+//      if (!token) return _nilString;
+//
+//      TypeDef* path_own_typ = token->GetTypeDef();
+//      rval = completion_pre_text + token->GetName();
+//      new_pos = rval.length();
+//      rval += completion_append_text;
+//      break;
+//    }
+//      
+//    case FINISH_CALL_PROGRAM: {
+//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+//      if (!token) return _nilString;
+//      
+//      rval = token->GetName() + "()";
+//      new_pos = rval.length();
+//      break;
+//    }
+//      
+//    case FINISH_CALL_FUNCTION: {
+//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+//      if (!token) return _nilString;
+//      
+//      rval = completion_pre_text.repl(completion_prog_el_text, token->GetName());
+//      
+//      rval += "()";
+//      new_pos = rval.length();
+//      break;
+//    }
+//      
+//    case FINISH_CALL_PROG_FUN: {
+//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
+//      if (!token) return _nilString;
+//      
+//      rval = completion_pre_text + "() " + token->GetName();
+//      rval += "()";
+//      new_pos = rval.length();
+//      break;
+//    }
+//
+//    default:
+//      break;
+//  }
   
   return rval;
 }
