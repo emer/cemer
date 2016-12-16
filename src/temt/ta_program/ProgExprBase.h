@@ -86,17 +86,17 @@ public:
   int                   parse_ve_off; // #IGNORE offset to position information (for expressions = 10, otherwise 0)
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
   
-  // these are for lookups
-  static taBase_List            completion_token_list;
-  static Member_List            completion_member_list;
-  static Method_List            completion_method_list;
-  static EnumSpace              completion_enum_list;
-  static String_Array           completion_choice_list;
-  static LookUpType             completion_lookup_type;
-  static FinishType             completion_finish_type;  // how to modify the code after the completion is chosen - add parens, set column, etc
-  static String                 completion_pre_text;
-  static String                 completion_append_text;
-  static String                 completion_prog_el_text;
+  // these are for the code completer
+  static taBase_List            completion_token_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static Member_List            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
+  static Method_List            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
+  static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
+  static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
+  static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
+  static FinishType             completion_finish_type; // #READ_ONLY #HIDDEN #NO_SAVE how to modify the code after the completion is chosen - add parens, set column, etc
+  static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
+  static String                 completion_append_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
+  static String                 completion_prog_el_text;// #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
