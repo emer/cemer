@@ -351,7 +351,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
-  else {
+  else if (GetCompleter()) {
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
     if (key_event->key() == Qt::Key_Tab || key_event->key() == Qt::Key_Alt) {
       inherited::keyPressEvent(key_event);
@@ -370,7 +370,9 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
     }
     return inherited::eventFilter(obj, event);
   }
-  return inherited::eventFilter(obj, event);
+  else {
+    return inherited::eventFilter(obj, event);
+  }
 }
 
 bool iLineEdit::IsDelimter(char a_char) {
