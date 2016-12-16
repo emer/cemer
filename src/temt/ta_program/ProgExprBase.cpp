@@ -495,6 +495,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   String txt = cur_txt.before(cur_pos);
   String extra_txt = cur_txt.from(cur_pos);
   
+  // if we are in comment code don't parse
+  if (txt.startsWith("//") || (txt.length() == 1 && txt.startsWith('/'))) return NOT_SET;
+  
+  if (txt.length() > 2) {
+    if (txt.contains("//", -1)) return NOT_SET;
+  }
+
   int       prog_el_start_pos = -1;
   int       c = '\0';
   int       c_next = '\0';
@@ -503,6 +510,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   int       right_parens_cnt = 0;
   int       delims_used = 0;
   int_Array delim_pos;
+  
   
   // ** Working backwards - delimiters will be in reverse order **
   for(int i=cur_pos-1; i>= 0; i--) {
