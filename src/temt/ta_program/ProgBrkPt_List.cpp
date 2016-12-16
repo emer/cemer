@@ -41,7 +41,7 @@ ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, ProgLine* pl) {
       + " " + pl->code.elidedTo(-1);
     bp->Enable();
     SigEmitUpdated();
-    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+//    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");  // don't do this!! - will cause tree to scroll 
   }
   return bp;
 }
