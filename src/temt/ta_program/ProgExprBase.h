@@ -61,17 +61,6 @@ public:
     METHOD,
   };
   
-  enum FinishType {  // which code to use to modify the code string after the user selects a "completion"
-    FINISH_NOT_SET,
-    FINISH_VARIOUS,
-    FINISH_LIST,
-    FINISH_MEMB_METH,
-    FINISH_CALL_PROGRAM,
-    FINISH_CALL_FUNCTION,
-    FINISH_CALL_PROG_FUN,
-  };
-
-
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
   ExprFlags     flags;          // #HIDDEN #NO_SAVE Flags for controlling expression behavior -- should not be saved because they are set by the owning program every time
@@ -93,7 +82,6 @@ public:
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
-  static FinishType             completion_finish_type; // #READ_ONLY #HIDDEN #NO_SAVE how to modify the code after the completion is chosen - add parens, set column, etc
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_append_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_prog_el_text;// #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later

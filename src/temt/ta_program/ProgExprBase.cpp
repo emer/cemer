@@ -57,7 +57,6 @@ String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
-ProgExprBase::FinishType    ProgExprBase::completion_finish_type;
 
 void ProgExprBase::Initialize() {
   flags = PE_NONE;
@@ -1175,8 +1174,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
   
-  completion_finish_type = FINISH_NOT_SET;
-  
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
@@ -1188,7 +1185,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
       expr_lookup_cur_base = NULL;
-      completion_finish_type = FINISH_VARIOUS;
       break;
     }
     
@@ -1207,7 +1203,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       }
       if (lookup_td) {
         GetMembersForType(lookup_td, &completion_member_list);
-        completion_finish_type = FINISH_MEMB_METH;
       }
       break;
     }
@@ -1333,7 +1328,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
           GetMembersForType(lookup_td, &completion_member_list);
           GetMethodsForType(lookup_td, &completion_method_list);
         }
-        completion_finish_type = FINISH_MEMB_METH;
       }
       break;
     }
@@ -1368,11 +1362,9 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       }
       if (el.downcase() == "call" || el.downcase().startsWith("prog")) {
         GetTokensOfType(&TA_Program, &completion_token_list, NULL, &TA_taProject);
-        completion_finish_type = FINISH_CALL_PROGRAM;
      }
       else if (el.downcase().startsWith("fun")) {
         GetTokensOfType(&TA_Function, &completion_token_list, NULL, &TA_Function);
-        completion_finish_type = FINISH_CALL_FUNCTION;
       }
       break;
     }
@@ -1385,7 +1377,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       if (scope_program != NULL) {
         GetTokensOfType(&TA_Function, &completion_token_list, scope_program, &TA_Program);
       }
-      completion_finish_type = FINISH_CALL_PROG_FUN;
       break;
     }
       
@@ -1548,73 +1539,9 @@ int ProgExprBase::Test_ParseForLookup(const String test_name, const String input
 
 String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos) {
   String rval;
-
   rval = cur_completion;
   new_pos = rval.length();
   rval += completion_append_text;
-
-  return rval;
-  
-//  switch (completion_finish_type) {
-//    case FINISH_VARIOUS: {
-//      rval = cur_completion;
-//      new_pos = rval.length();
-//      rval += completion_append_text;
-//      break;
-//    }
-//      
-//    case FINISH_MEMB_METH: {
-//      rval = completion_pre_text;
-//      new_pos = rval.length();
-//      rval += completion_append_text;
-//      break;
-//    }
-//    
-//    case FINISH_LIST: {
-//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-//      if (!token) return _nilString;
-//
-//      TypeDef* path_own_typ = token->GetTypeDef();
-//      rval = completion_pre_text + token->GetName();
-//      new_pos = rval.length();
-//      rval += completion_append_text;
-//      break;
-//    }
-//      
-//    case FINISH_CALL_PROGRAM: {
-//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-//      if (!token) return _nilString;
-//      
-//      rval = token->GetName() + "()";
-//      new_pos = rval.length();
-//      break;
-//    }
-//      
-//    case FINISH_CALL_FUNCTION: {
-//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-//      if (!token) return _nilString;
-//      
-//      rval = completion_pre_text.repl(completion_prog_el_text, token->GetName());
-//      
-//      rval += "()";
-//      new_pos = rval.length();
-//      break;
-//    }
-//      
-//    case FINISH_CALL_PROG_FUN: {
-//      taBase* token = GetTokenForCurrentCompletion(cur_completion);
-//      if (!token) return _nilString;
-//      
-//      rval = completion_pre_text + "() " + token->GetName();
-//      rval += "()";
-//      new_pos = rval.length();
-//      break;
-//    }
-//
-//    default:
-//      break;
-//  }
-  
   return rval;
 }
 
