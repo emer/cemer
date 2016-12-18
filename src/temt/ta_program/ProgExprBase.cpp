@@ -520,13 +520,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     if(c == ' ') {
       if (i != txt.length()-1) {  // not the last char
         c_next = txt[i+1];
-        if (c_next == '(' || c_next == ',' || c_next == ' ') {
+        if (c_next == '(' || c_next == ',' || c_next == ' ' || c_next == ')') {
           continue;
         }
       }
       if (i > 0) {
         c_previous = txt[i-1];
-        if (c_previous == '(' || c_previous == ',' || c_previous == ' ') {
+        if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')') {
           continue;
         }
       }
@@ -772,7 +772,12 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   }
   
   if(delim_pos.size > 0) {
-    path_prepend_txt = txt.through(delim_pos[0]);
+    if (txt[delim_pos[0]] == ')') {
+      path_prepend_txt = txt;
+    }
+    else {
+      path_prepend_txt = txt.through(delim_pos[0]);
+    }
   }
   
   lookup_seed.trim();
@@ -781,10 +786,10 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
 
 
 String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& new_pos,
-                                   taBase*& path_own_obj, TypeDef*& path_own_typ,
-                                   MemberDef*& path_md, ProgEl* own_pel,
-                                   Program* own_prg, Function* own_fun,
-                                   taBase* path_base, TypeDef* path_base_typ) {
+                                       taBase*& path_own_obj, TypeDef*& path_own_typ,
+                                       MemberDef*& path_md, ProgEl* own_pel,
+                                       Program* own_prg, Function* own_fun,
+                                       taBase* path_base, TypeDef* path_base_typ) {
   
   String txt = cur_txt.before(cur_pos);
   String append_txt;
