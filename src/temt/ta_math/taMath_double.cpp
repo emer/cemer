@@ -2426,6 +2426,27 @@ bool taMath_double::vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
 
 
 /////////////////////////////////////////////////////////////////////////////////
+// Popular functions in place on vector
+
+void taMath_double::vec_apply_fun(double_Matrix* vec, taMath_double_fun fun) {
+  if(!vec_check_type(vec)) return;
+  if(vec->size == 0) return;
+  if(vec->ElView()) {		// significantly less efficient
+    TA_FOREACH_INDEX(i, *vec) {
+      double& val = vec->FastEl_Flat(i);
+      val = (*fun)(val);
+    }
+  }
+  else {
+    for(int i=0;i<vec->size;i++) {
+      double& val = vec->FastEl_Flat(i);
+      val = (*fun)(val);
+    }
+  }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
 bool taMath_double::mat_col(double_Matrix* col, const double_Matrix* mat, int col_no) {

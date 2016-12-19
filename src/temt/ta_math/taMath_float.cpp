@@ -2399,6 +2399,27 @@ bool taMath_float::vec_kern2d_gauss(float_Matrix* kernel, int sz_x, int sz_y,
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// Popular functions in place on vector
+
+void taMath_float::vec_apply_fun(float_Matrix* vec, taMath_float_fun fun) {
+  if(!vec_check_type(vec)) return;
+  if(vec->size == 0) return;
+  if(vec->ElView()) {		// significantly less efficient
+    TA_FOREACH_INDEX(i, *vec) {
+      float& val = vec->FastEl_Flat(i);
+      val = (*fun)(val);
+    }
+  }
+  else {
+    for(int i=0;i<vec->size;i++) {
+      float& val = vec->FastEl_Flat(i);
+      val = (*fun)(val);
+    }
+  }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
 bool taMath_float::mat_col(float_Matrix* col, const float_Matrix* mat, int col_no) {

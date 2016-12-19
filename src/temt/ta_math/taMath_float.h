@@ -30,6 +30,8 @@ class Relation; //
 class RelationFloat; // 
 class Aggregate; // 
 
+// single-arg float function on single float arg -- used for applying functions to vector
+typedef float (*taMath_float_fun)(float);
 
 taTypeDef_Of(taMath_float);
 
@@ -528,6 +530,86 @@ public:
   static bool   vec_kern2d_gauss(float_Matrix* kernel, int half_sz_x, int half_sz_y,
                                  float sigma_x, float sigma_y);
   // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given half-size in each axis (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value in each axis -- uses entire matrix, ignoring any view of sub-elements
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Popular functions in place on vector
+
+  static void   vec_apply_fun(float_Matrix* vec, taMath_float_fun fun);
+  // #CAT_VectorFunctions #IGNORE apply function to each element of a vector
+
+  static void   vec_abs(float_Matrix* vec)
+  { vec_apply_fun(vec, fabs); }
+  // #CAT_VectorFunctions applied to each element of vector: absolute value
+  static void   vec_ceil(float_Matrix* vec)
+  { vec_apply_fun(vec, ceil); }
+  // #CAT_VectorFunctions applied to each element of vector: ceiling
+  static void   vec_floor(float_Matrix* vec)
+  { vec_apply_fun(vec, floor); }
+  // #CAT_VectorFunctions applied to each element of vector: floor
+  static void   vec_round(float_Matrix* vec)
+  { vec_apply_fun(vec, round); }
+  // #CAT_VectorFunctions applied to each element of vector: round
+  static void   vec_sqrt(float_Matrix* vec)
+  { vec_apply_fun(vec, sqrt); }
+  // #CAT_VectorFunctions applied to each element of vector: square root
+  static void   vec_exp(float_Matrix* vec)
+  { vec_apply_fun(vec, exp); }
+  // #CAT_VectorFunctions applied to each element of vector: natural exponential e^x
+  static void   vec_exp2(float_Matrix* vec)
+  { vec_apply_fun(vec, exp2); }
+  // #CAT_VectorFunctions applied to each element of vector: base-2 exponential 2^x
+  static void   vec_exp_fast(float_Matrix* vec)
+  { vec_apply_fun(vec, exp_fast); }
+  // #CAT_VectorFunctions applied to each element of vector: fast natural exponential
+  static void   vec_log(float_Matrix* vec)
+  { vec_apply_fun(vec, log); }
+  // #CAT_VectorFunctions applied to each element of vector: natural logarithm ln(x)
+  static void   vec_log10(float_Matrix* vec)
+  { vec_apply_fun(vec, log10); }
+  // #CAT_VectorFunctions applied to each element of vector: log base 10
+  static void   vec_log2(float_Matrix* vec)
+  { vec_apply_fun(vec, log2); }
+  // #CAT_VectorFunctions applied to each element of vector: log base 2
+  static void   vec_acos(float_Matrix* vec)
+  { vec_apply_fun(vec, acos); }
+  // #CAT_VectorFunctions applied to each element of vector: arc-cosine (inverse cosine)
+  static void   vec_asin(float_Matrix* vec)
+  { vec_apply_fun(vec, asin); }
+  // #CAT_VectorFunctions applied to each element of vector: arc-sine (inverse sine)
+  static void   vec_atan(float_Matrix* vec)
+  { vec_apply_fun(vec, atan); }
+  // #CAT_VectorFunctions applied to each element of vector: arc-tangent (inverse tangent) operating on Y_over_X slope
+  static void   vec_cos(float_Matrix* vec)
+  { vec_apply_fun(vec, cos); }
+  // #CAT_VectorFunctions applied to each element of vector: cosine on radians
+  static void   vec_cos_deg(float_Matrix* vec)
+  { vec_apply_fun(vec, cos_deg); }
+  // #CAT_VectorFunctions applied to each element of vector: cosine on degrees
+  static void   vec_sin(float_Matrix* vec)
+  { vec_apply_fun(vec, sin); }
+  // #CAT_VectorFunctions applied to each element of vector: sine on radians
+  static void   vec_sin_deg(float_Matrix* vec)
+  { vec_apply_fun(vec, sin_deg); }
+  // #CAT_VectorFunctions applied to each element of vector: sine on degrees
+  static void   vec_tan(float_Matrix* vec)
+  { vec_apply_fun(vec, tan); }
+  // #CAT_VectorFunctions applied to each element of vector: tangent on radians
+  static void   vec_tan_deg(float_Matrix* vec)
+  { vec_apply_fun(vec, tan_deg); }
+  // #CAT_VectorFunctions applied to each element of vector: tangent on degrees
+  static void   vec_cosh(float_Matrix* vec)
+  { vec_apply_fun(vec, cosh); }
+  // #CAT_VectorFunctions applied to each element of vector: hyperbolic cosine
+  static void   vec_sinh(float_Matrix* vec)
+  { vec_apply_fun(vec, sinh); }
+  // #CAT_VectorFunctions applied to each element of vector: hyperbolic sine
+  static void   vec_tanh(float_Matrix* vec)
+  { vec_apply_fun(vec, tanh); }
+  // #CAT_VectorFunctions applied to each element of vector: hyperbolic tangent
+  static void   vec_gamma_ln(float_Matrix* vec)
+  { vec_apply_fun(vec, gamma_ln); }
+  // #CAT_VectorFunctions applied to each element of vector: natural log of gamma function (not gamma distribution)
+
 
   /////////////////////////////////////////////////////////////////////////////////
   // Matrix operations
