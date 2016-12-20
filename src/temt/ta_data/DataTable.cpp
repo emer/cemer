@@ -2075,21 +2075,12 @@ void DataTable::RemoveCol(const Variant& col) {
   if(!da) return;
   
   // Remove the DataTableCell objects and the corresponding control panel items from all the rows (visible or hidden) in the column
-  if(control_panel_cells.size > 0) {
-    // todo: this could be extremely expensive!  much better to iterate over ctrl panel cells!
-    for (int row = 0; row < row_indexes.size; row++) {
-      DataTableCell* dtc = NULL;
-      while ((dtc = control_panel_cells.FindCellIndexRow(da, row)) != NULL) {
-        RemoveCellFromControlPanel(dtc->control_panel, dtc->value_column, row);
-        control_panel_cells.RemoveEl(dtc);
-      }
+  for (int i = 0; i < control_panel_cells.size; i++) {
+    DataTableCell* dtc = control_panel_cells.SafeEl(i);
+    if (dtc->value_column == da) {
+      control_panel_cells.RemoveEl(dtc);
+      break;
     }
-  }
-  // Don't forget the column type DTC
-  DataTableCell* dtc = control_panel_cells.FindColumnTypeDTC(da);
-  if (dtc) {
-    RemoveColumnFromControlPanel(dtc->control_panel, dtc->value_column);
-    control_panel_cells.RemoveEl(dtc);
   }
   
   StructUpdate(true);
@@ -2201,17 +2192,16 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
 
   DataUpdate(true);
   
-  // Remove the DataTableCell objects and the corresponding control panel items from all the rows
-  // can be as many as one per column of each row
-  if(control_panel_cells.size > 0) {
-    for (int row = end_row; row >= st_row; row--) {
-      DataTableCell* cell = NULL;
-      while ((cell = control_panel_cells.FindCellEnabled(NULL, row)) != NULL) {
-        cell->SetControlPanelEnabled(false);
+  // When a row is removed it is really hidden so disable any control panel cells for any "deleted" row
+  for (int i = 0; i < control_panel_cells.size; i++) {
+    DataTableCell* dtc = control_panel_cells.SafeEl(i);
+    if (!dtc->dtc_is_column_type) {
+      if (dtc->view_row >= st_row && dtc->view_row < st_row + n_rows) {
+        dtc->SetControlPanelEnabled(false);
       }
     }
   }
-  
+
   row_indexes.RemoveFrames(st_row, n_rows);
   rows -= n_rows;		// the number of rows not hidden by filtering or hiding
   if (rows == 0) {
