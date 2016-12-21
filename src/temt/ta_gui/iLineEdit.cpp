@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QTextEdit>
 #include <QKeyEvent>
+#include <QEvent>
 #include <QObject>
 #include <QDebug>
 
@@ -360,6 +361,11 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
         app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
         event->accept();
         return true;                // we absorb this event
+//      case Qt::Key_Tab:
+//        // this works if we have a selection in the list but not if the there is no highlight!!
+//        app->postEvent(this->parent(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
+//        event->accept();
+//        return true;                // we absorb this event
     }
     return false;
   }
