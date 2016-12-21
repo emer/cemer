@@ -1036,14 +1036,16 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
       rcg->Initialize(rcg_flags, prjn, prjn->send_idx, flt_idx, i); 
       rcg_idx++;
     }
-
+    
     int scg_idx = 0;
     for(int j=0; j < lay->send_prjns.size; j++) {
       Projection* prjn = lay->send_prjns[j];
-      if(!prjn->IsActive()) continue;
+      if(!prjn || !prjn->IsActive()) continue;
       ConGroup* scg = ThrUnSendConGroup(thr_no, i, scg_idx);
-      scg->Initialize(scg_flags, prjn, prjn->recv_idx, flt_idx, i); 
-      scg_idx++;
+      if (scg) {
+        scg->Initialize(scg_flags, prjn, prjn->recv_idx, flt_idx, i);
+        scg_idx++;
+      }
     }
   }
 }
