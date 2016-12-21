@@ -27,6 +27,7 @@
 #include <QEvent>
 #include <QObject>
 #include <QDebug>
+#include <QAbstractItemView>
 
 #include <taMisc>
 #include <KeyBindings>
