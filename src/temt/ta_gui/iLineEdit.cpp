@@ -348,6 +348,21 @@ void iLineEdit::emitReturnPressed()
 }
 
 bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::ShortcutOverride) {
+    QCoreApplication* app = QCoreApplication::instance();
+    switch (static_cast<QKeyEvent*>(event)->key()) {
+      case Qt::Key_N:
+        app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+        event->accept();
+        return true;                // we absorb this event
+      case Qt::Key_P:
+        app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+        event->accept();
+        return true;                // we absorb this event
+    }
+    return false;
+  }
+
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
