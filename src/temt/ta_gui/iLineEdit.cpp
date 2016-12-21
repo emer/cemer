@@ -18,6 +18,7 @@
 #include <iDialogTextEdit>
 
 #include <taiMisc>
+#include <QCoreApplication>
 #include <QDesktopWidget>
 #include <QPalette>
 #include <QApplication>
