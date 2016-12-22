@@ -297,8 +297,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
           return;
         }
         else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
-                key_event->key() != Qt::Key_Minus &&
-                key_event->key() != Qt::Key_Greater &&
                 key_event->key() != Qt::Key_Right &&
                 key_event->key() != Qt::Key_Left) {
           DoCompletion(key_event);
