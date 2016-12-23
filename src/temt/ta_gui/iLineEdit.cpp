@@ -354,16 +354,15 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
     switch (static_cast<QKeyEvent*>(event)->key()) {
       case Qt::Key_N:
         app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-        event->accept();
         return true;                // we absorb this event
       case Qt::Key_P:
         app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-        event->accept();
         return true;                // we absorb this event
 //      case Qt::Key_Tab:
-//        // this works if we have a selection in the list but not if the there is no highlight!!
-//        app->postEvent(this->parent(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
-//        event->accept();
+//        if (GetCompleter()->currentRow() == 0) {
+//          app->postEvent(this->parentWidget(), new QKeyEvent(QEvent::KeyPress, Qt::Key_N, Qt::NoModifier));
+//        }
+//        app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
 //        return true;                // we absorb this event
     }
     return false;
@@ -375,7 +374,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   else if (GetCompleter()) {
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
     if (key_event->key() == Qt::Key_Tab || key_event->key() == Qt::Key_Alt) {
-      inherited::keyPressEvent(key_event);
+//      inherited::keyPressEvent(key_event);
       String prefix = text();
       prefix = prefix.through(cursorPosition() - 1);
       completer->setCompletionPrefix(prefix); // don't add character!
