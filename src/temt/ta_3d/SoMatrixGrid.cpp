@@ -638,7 +638,12 @@ void SoMatrixGrid::renderValues() {
 	else {
 	  ValToDispText(val, val_str);
 	}
-	txt->string.setValue(val_str.chars());
+        if(val_str.empty()) {
+          txt->string.setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+        }
+        else {
+          txt->string.setValue(val_str.chars());
+        }
 	t_idx++;
       }
     }
@@ -674,7 +679,12 @@ void SoMatrixGrid::renderValues() {
 	  else {
 	    ValToDispText(val, val_str);
 	  }
-	  txt->string.setValue(val_str.chars());
+          if(val_str.empty()) {
+            txt->string.setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+          }
+          else {
+            txt->string.setValue(val_str.chars());
+          }
 	  t_idx++;
 	}
       }
@@ -715,7 +725,12 @@ void SoMatrixGrid::renderValues() {
 	    else {
 	      ValToDispText(val, val_str);
 	    }
-	    txt->string.setValue(val_str.chars());
+            if(val_str.empty()) {
+              txt->string.setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+            }
+            else {
+              txt->string.setValue(val_str.chars());
+            }
 	    t_idx++;
 	  }
 	}
@@ -761,7 +776,12 @@ void SoMatrixGrid::renderValues() {
 	      else {
 		ValToDispText(val, val_str);
 	      }
-	      txt->string.setValue(val_str.chars());
+              if(val_str.empty()) {
+                txt->string.setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+              }
+              else {
+                txt->string.setValue(val_str.chars());
+              }
 	      t_idx++;
 	    }
 	  }
