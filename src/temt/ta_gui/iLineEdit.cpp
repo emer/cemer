@@ -350,23 +350,26 @@ void iLineEdit::emitReturnPressed()
 
 bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::ShortcutOverride) {
+    QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
     QCoreApplication* app = QCoreApplication::instance();
-    switch (static_cast<QKeyEvent*>(event)->key()) {
-      case Qt::Key_N:
-        app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_P:
-        app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_Tab:
-        if (GetCompleter()->currentRow() == 0) {
-          app->postEvent(this->parentWidget(), new QKeyEvent(QEvent::KeyPress, Qt::Key_N, Qt::NoModifier));
-        }
-        return true;                // we absorb this event
+    
+    if (taiMisc::KeyEventCtrlPressed(key_event)) {
+      switch (static_cast<QKeyEvent*>(event)->key()) {
+        case Qt::Key_N:
+          app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+          return true;                // we absorb this event
+        case Qt::Key_P:
+          app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+          return true;                // we absorb this event
+      }
+    }
+    else if (key_event->key() == Qt::Key_Tab && GetCompleter()->currentRow() == 0) {  // select first popup item
+      app->postEvent(this->parentWidget(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+      return true;                // we absorb this event
     }
     return false;
   }
-
+  
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
