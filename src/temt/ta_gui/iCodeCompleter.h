@@ -23,6 +23,8 @@
 #include <QStringList>
 #include <QStringListModel>
 
+#include <QListView>
+
 // member includes:
 #include <taBase_List>
 
@@ -44,6 +46,7 @@ public:
 
 protected:
   QStringList             string_list;
+  bool                    eventFilter(QObject* obj, QEvent* event) override;
 
 private:
   void                    Init();
@@ -51,5 +54,17 @@ private:
 public slots:
 
 };
+
+
+class TA_API iCompleterPopupView: public QListView {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER table editor; model flattens >2d into 2d by frames
+  INHERITED(QListView)
+  Q_OBJECT
+public:
+  
+protected:
+  bool                    eventFilter(QObject* obj, QEvent* event) override;
+};
+
 
 #endif // iCodeCompleter_h
