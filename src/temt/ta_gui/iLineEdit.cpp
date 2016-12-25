@@ -349,7 +349,7 @@ void iLineEdit::emitReturnPressed()
 }
 
 bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::ShortcutOverride) {
+  if (event->type() == QEvent::ShortcutOverride && GetCompleter()) {
     QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
     QCoreApplication* app = QCoreApplication::instance();
     
