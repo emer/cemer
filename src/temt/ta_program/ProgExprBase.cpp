@@ -507,12 +507,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   int       c_previous = '\0';
   int       left_parens_cnt = 0;
   int       right_parens_cnt = 0;
+  int       quote_count = 0;
   int       delims_used = 0;
   int_Array delim_pos;
   
   
   // ** Working backwards - delimiters will be in reverse order **
-  for(int i=cur_pos-1; i>= 0; i--) {
+  for(int i = cur_pos-1; i >= 0; i--) {
     c = txt[i];
     if(isdigit(c) || (c == '_')) {
       continue;
@@ -548,6 +549,10 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       delim_pos.Add(i);
       continue;
     }
+    if (c =='"') {
+      quote_count++;
+      continue;
+    }
     if (c == '(') {
       left_parens_cnt++;
       if (left_parens_cnt > right_parens_cnt) {
@@ -566,6 +571,10 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     expr_start = i+1;           // anything else is a bust
     break;
+  }
+  
+  if (quote_count % 2 != 0) {  // we're inside quotes no lookup
+    return NOT_SET;
   }
   
   if (prog_el_start_pos == 0 && delims_used == 0) {
