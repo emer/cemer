@@ -31,7 +31,7 @@ class E_API CElAmygLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         dalr_gain;      // gain multiplier on abs(da) learning rate multiplier
-  float         dalr_base;      // constant baseline amount of learning prior to abs(da) factor -- should in general be small to preserve da-modulation
+  float         dalr_base;      // constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 

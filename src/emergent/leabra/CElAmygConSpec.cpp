@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "CElAmygConSpec.h"
-#include <BasAmygUnitSpec>
+#include <CElAmygUnitSpec>
 
 TA_BASEFUNS_CTORS_DEFN(CElAmygLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(CElAmygConSpec);
@@ -42,9 +42,9 @@ bool CElAmygConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
   LeabraLayer* rlay = (LeabraLayer*)prjn->layer;
   LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
   
-  // if(rlay->CheckError(!rus->InheritsFrom(&TA_CElAmygUnitSpec), quiet, rval,
-  //                     "requires receiving unit to use an CElAmygUnitSpec"))
-  //   return false;
+  if(rlay->CheckError(!rus->InheritsFrom(&TA_CElAmygUnitSpec), quiet, rval,
+                    "requires receiving unit to use an CElAmygUnitSpec"))
+    return false;
   return rval;
 }
 
