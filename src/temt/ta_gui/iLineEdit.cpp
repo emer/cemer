@@ -65,10 +65,12 @@ void iLineEdit::init(bool add_completer) {
 //   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
   
   completer = NULL;
+  completion_enabled = false;
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompleter(completer);
+    completion_enabled = taMisc::code_completion.auto_complete;
   }
   installEventFilter(this);
 }
@@ -291,19 +293,17 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       doLookup();
       return;
     default:
-      if (taMisc::code_completion.enabled && completer) {
+      if (GetCompleter() && completion_enabled) {
         if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter))) {
           CompletionDone(key_event);
           return;
         }
-        else if(!taiMisc::KeyEventCtrlPressed(key_event) && key_event->key() != Qt::Key_Escape &&
-                key_event->key() != Qt::Key_Right &&
-                key_event->key() != Qt::Key_Left) {
+        else if(!taiMisc::KeyEventCtrlPressed(key_event)
+                && key_event->key() != Qt::Key_Escape
+                && key_event->key() != Qt::Key_Right
+                && key_event->key() != Qt::Key_Left)
+        {
           DoCompletion(key_event);
-          return;
-        }
-        else {
-          inherited::keyPressEvent(key_event);
           return;
         }
       }
@@ -318,7 +318,7 @@ void iLineEdit::doLookup() {
 }
 
 void iLineEdit::DoCompletion(QKeyEvent* key_event) {
-  if (!taMisc::code_completion.enabled || !completer) return;
+  if (!GetCompleter()) return;
   
   inherited::keyPressEvent(key_event);
   String prefix = text();
@@ -334,6 +334,9 @@ void iLineEdit::CompletionDone(QKeyEvent* key_event) {
   inherited::keyPressEvent(key_event);
   QModelIndex index = GetCompleter()->currentIndex();
   emit completed(GetCompleter()->currentIndex());
+  if (taMisc::code_completion.auto_complete == false) {
+    completion_enabled = false; // done with completion - disable until user enables again
+  }
 }
 
 void iLineEdit::wheelEvent(QWheelEvent * e)
@@ -361,6 +364,22 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
         case Qt::Key_P:
           app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
           return true;                // we absorb this event
+        case Qt::Key_Space:
+          if (!taMisc::code_completion.auto_complete) {
+            completion_enabled = true;
+            String prefix = text();
+            prefix = prefix.through(cursorPosition() - 1);
+            completer->setCompletionPrefix(prefix); // don't add character!
+            emit characterEntered(this);
+            if (IsDelimter(prefix.lastchar())) {
+              GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+            }
+            else {
+              GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+            }
+            GetCompleter()->complete();
+            return true;
+          }
       }
     }
     else if (key_event->key() == Qt::Key_Tab && GetCompleter()->currentRow() == 0) {  // select first popup item
@@ -373,7 +392,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
-  else if (GetCompleter()) {
+  else if (GetCompleter() && completion_enabled) {
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
     if (key_event->key() == Qt::Key_Tab) {
       String prefix = text();

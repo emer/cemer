@@ -145,8 +145,8 @@ public:
 class TA_API taCompletionPrefs {
   // #EDIT_INLINE options for the code completion feature
 public:
-  bool    enabled;       // default is to have code completion on
-  int     max_choices;  // maximum number of options to present in the popup list
+  bool    auto_complete; // if false can be invoked with Control + Space
+  int     max_choices;   // maximum number of options to present in the popup list
   
   taCompletionPrefs();
 };

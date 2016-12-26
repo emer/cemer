@@ -358,7 +358,7 @@ taSpringLoadedPrefs::taSpringLoadedPrefs() {
 taSpringLoadedPrefs taMisc::tree_spring_loaded;
 
 taCompletionPrefs::taCompletionPrefs() {
-  enabled = true;
+  auto_complete = true;
   max_choices = 10;
 }
 taCompletionPrefs taMisc::code_completion;
