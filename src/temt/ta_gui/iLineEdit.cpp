@@ -306,6 +306,9 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
           DoCompletion(key_event);
           return;
         }
+        else {
+          inherited::keyPressEvent(key_event);
+        }
       }
       else {
         inherited::keyPressEvent(key_event);
