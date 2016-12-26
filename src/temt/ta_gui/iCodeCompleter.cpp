@@ -75,13 +75,12 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
 }
 
 bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
-  // pretty sure we don't need this anymore
-//  if (event->type() == QEvent::ShortcutOverride) {
-//    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_N) {
-//      event->accept();
-//      return true;
-//    }
-//  }
+  if (event->type() == QEvent::ShortcutOverride) {
+    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_N || static_cast<QKeyEvent*>(event)->key() == Qt::Key_P) {
+      event->accept();
+      return true;
+    }
+  }
   
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
