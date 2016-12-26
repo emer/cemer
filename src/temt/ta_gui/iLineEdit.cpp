@@ -295,8 +295,13 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
     default:
       if (GetCompleter() && completion_enabled) {
         if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter))) {
-          CompletionDone(key_event);
-          return;
+//          if (GetCompleter()->currentRow() > 0) {  // if a completion is selected
+//            CompletionDone(key_event);
+//            return;
+//          }
+//          else { // no completion - just commit edit
+            inherited::keyPressEvent(key_event);
+//          }
         }
         else if(!taiMisc::KeyEventCtrlPressed(key_event)
                 && key_event->key() != Qt::Key_Escape
@@ -384,10 +389,6 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
             return true;
           }
       }
-    }
-    else if (key_event->key() == Qt::Key_Tab && GetCompleter()->currentRow() == 0) {  // select first popup item
-      app->postEvent(this->parentWidget(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-      return true;                // we absorb this event
     }
     return false;
   }

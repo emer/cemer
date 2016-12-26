@@ -63,8 +63,11 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {
     QCoreApplication* app = QCoreApplication::instance();
+    if (event->type() == QEvent::KeyPress && currentRow() == 0) { // select first popup item
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+    }
     app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
-  return true;
+    return true;
   }
   else {
     return inherited::eventFilter(obj, event);
@@ -72,13 +75,14 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
 }
 
 bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::ShortcutOverride) {
-    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_N) {
-      event->accept();
-      return true;
-    }
-  }
-    
+  // pretty sure we don't need this anymore
+//  if (event->type() == QEvent::ShortcutOverride) {
+//    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_N) {
+//      event->accept();
+//      return true;
+//    }
+//  }
+  
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
