@@ -237,25 +237,21 @@ ParseVarAfterConditional
     Prog Var Should Be Empty	path_rest	     
     Prog Var Should Be Empty	base_path	     
 
-ParseObjectMemberAfterPrint
-    Ensure Emergent Free
-    Set Suite Variable   ${program_test}       "object_member_after_print"
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
-    Status OK No Result        ${output}
-    
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  2
-
-    Prog Var Should Be Empty	lookup_seed	     
-    Prog Var Should Match	prepend_txt	     print .projects[\\\"TestLookupParse\\\"].programs.gp[\\\"TestPrograms\\\"][\\\"object_member_after_print\\\"].objs[\\\"DataTable_32\\\"
-    Prog Var Should Be Empty	append_txt	     
-    Prog Var Should Be Empty	prog_el_txt	     
-    Prog Var Should Be Empty	path_var	     	     	      
-    Prog Var Should Match	path_prepend_txt     print .projects[\\\"TestLookupParse\\\"].programs.gp[\\\"TestPrograms\\\"][\\\"object_member_after_print\\\"].objs[\\\"DataTable_32\\\"].
-    Prog Var Should Be Empty	path_rest	     
-    Prog Var Should Match	base_path	     ]	     
-
-
-
-
+#ParseObjectMemberAfterPrint
+#    Ensure Emergent Free
+#    Set Suite Variable   ${program_test}       "object_member_after_print"
+#    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+#   Status OK No Result        ${output}
+#    
+#   ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+#    Status OK 		       ${output}
+#   Json Value Should Equal    ${output}             /result  2
+#
+#   Prog Var Should Be Empty	lookup_seed	     
+#    Prog Var Should Match	prepend_txt	     print .projects[\\\"TestLookupParse\\\"].programs.gp[\\\"TestPrograms\\\"][\\\"object_member_after_print\\\"].objs[\\\"DataTable_32\\\"
+#   Prog Var Should Be Empty	append_txt	     
+#    Prog Var Should Be Empty	prog_el_txt	     
+#   Prog Var Should Be Empty	path_var	     	     	      
+#    Prog Var Should Match	path_prepend_txt     print .projects[\\\"TestLookupParse\\\"].programs.gp[\\\"TestPrograms\\\"][\\\"object_member_after_print\\\"].objs[\\\"DataTable_32\\\"].
+#   Prog Var Should Be Empty	path_rest	     
+#    Prog Var Should Match	base_path	     ]	     
