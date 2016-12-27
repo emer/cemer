@@ -44,7 +44,8 @@ void iCodeCompleter::Init() {
   //  iCompleterPopupView* completer_popup = new iCompleterPopupView();
   //  setPopup(completer_popup);
   list_model = new QStringListModel(string_list, NULL);
-  this->setModel(list_model);
+  setModel(list_model);
+//  setModelSorting(QCompleter::CaseInsensitivelySortedModel);
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {
@@ -52,7 +53,7 @@ void iCodeCompleter::SetModelList(String_Array *list) {
     string_list.clear();
     list->ToQStringList(string_list);
     list_model->setStringList(string_list);
-  }
+   }
 }
 
 String iCodeCompleter::GetCurrent() {
