@@ -80,6 +80,7 @@ public:
   static Member_List            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static Method_List            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
+  static String_Array           completion_keyword_list;// #READ_ONLY #HIDDEN #NO_SAVE
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
@@ -166,6 +167,7 @@ public:
   static void           GetMembersForType(TypeDef* td, Member_List* members, bool just_static = false);
   static void           GetMethodsForType(TypeDef* td, Method_List* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
+  static void           GetKeywords(String_Array* keywords, bool line_start);
   static taBase*        GetTokenForCurrentCompletion(const String& cur_completion);
 
   static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,

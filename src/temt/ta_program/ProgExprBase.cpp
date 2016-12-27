@@ -49,6 +49,7 @@ cssSpace*     ProgExprBase::parse_tmp = NULL;
 static ProgEl* expr_lookup_cur_base = NULL;
 
 String_Array                ProgExprBase::completion_choice_list;
+String_Array                ProgExprBase::completion_keyword_list;
 taBase_List                 ProgExprBase::completion_token_list;
 Member_List                 ProgExprBase::completion_member_list;
 Method_List                 ProgExprBase::completion_method_list;
@@ -1187,6 +1188,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
+  completion_keyword_list.Reset();
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
@@ -1195,6 +1197,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       GetTokensOfType(&TA_Function, &completion_token_list, own_prg, &TA_Program);
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_token_list);
+        GetKeywords(&completion_keyword_list, true); // true - expression start of line
       }
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
@@ -1400,6 +1403,11 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   }
 
   completion_choice_list.Reset();
+  
+  for (int i=0; i<completion_keyword_list.size; i++) {
+    completion_choice_list.Add(completion_keyword_list.SafeEl(i));
+  }
+  
   for (int i=0; i<completion_token_list.size; i++) {
     taBase* base = completion_token_list.FastEl(i);
     if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
@@ -1630,7 +1638,23 @@ void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
         enums->Link(enum_def);
       }
     }
+  }
 }
+
+void ProgExprBase::GetKeywords(String_Array* keywords, bool line_start) {
+  if (line_start) {
+    keywords->Add("if (");
+    keywords->Add("else (");
+    keywords->Add("else if (");
+    keywords->Add("for (");
+    keywords->Add("foreach (");
+    keywords->Add("while (");
+    keywords->Add("do...while (");
+    keywords->Add("switch (");
+    keywords->Add("break");
+    keywords->Add("continue");
+    keywords->Add("Stop_Step Point");
+  }
 }
 
 taBase* ProgExprBase::GetTokenForCurrentCompletion(const String& cur_completion) {

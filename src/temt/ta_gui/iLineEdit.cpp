@@ -373,7 +373,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
           app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
           return true;                // we absorb this event
         case Qt::Key_Space:
-          if (!taMisc::code_completion.auto_complete) {
+          if (!taMisc::code_completion.auto_complete || text().length() == 0) {
             completion_enabled = true;
             String prefix = text();
             prefix = prefix.through(cursorPosition() - 1);
