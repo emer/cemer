@@ -50,6 +50,7 @@ static ProgEl* expr_lookup_cur_base = NULL;
 
 String_Array                ProgExprBase::completion_choice_list;
 String_Array                ProgExprBase::completion_keyword_list;
+String_Array                ProgExprBase::completion_statics_list;
 taBase_List                 ProgExprBase::completion_token_list;
 Member_List                 ProgExprBase::completion_member_list;
 Method_List                 ProgExprBase::completion_method_list;
@@ -1189,6 +1190,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
   completion_keyword_list.Reset();
+  completion_statics_list.Reset();
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
@@ -1198,6 +1200,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_token_list);
         GetKeywords(&completion_keyword_list, true); // true - expression start of line
+        GetStatics(&completion_statics_list); // true - expression start of line
       }
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
@@ -1408,6 +1411,10 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     completion_choice_list.Add(completion_keyword_list.SafeEl(i));
   }
   
+  for (int i=0; i<completion_statics_list.size; i++) {
+    completion_choice_list.Add(completion_statics_list.SafeEl(i));
+  }
+
   for (int i=0; i<completion_token_list.size; i++) {
     taBase* base = completion_token_list.FastEl(i);
     if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
@@ -1656,6 +1663,11 @@ void ProgExprBase::GetKeywords(String_Array* keywords, bool line_start) {
     keywords->Add("Stop_Step Point");
   }
 }
+
+void ProgExprBase::GetStatics(String_Array* statics) {
+  statics->Add("taMisc::");
+}
+
 
 taBase* ProgExprBase::GetTokenForCurrentCompletion(const String& cur_completion) {
   // get the token with the selection string
