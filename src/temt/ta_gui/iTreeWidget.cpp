@@ -489,7 +489,6 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       e->accept();
       break;
-      
     case taiMisc::TREE_EDIT_HOME:
     case taiMisc::TREE_EDIT_HOME_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -498,7 +497,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         editItem(cur_item);     // todo: get column
       }
       e->accept();
-      break;
+      return;
     case taiMisc::TREE_EDIT_END:
     case taiMisc::TREE_EDIT_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -507,7 +506,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         editItem(cur_item);     // todo: get column
       }
       e->accept();
-      break;
+      return;
     case taiMisc::TREE_EDIT_DELETE_TO_END:
     case taiMisc::TREE_EDIT_DELETE_TO_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -516,7 +515,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         editItem(cur_item);     // todo: get column
       }
       e->accept();
-      break;
+      return;
     default:
       ;
   }
@@ -551,7 +550,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     selectionModel()->setCurrentIndex(newCurrent, command);
     return;
   }
-inherited::keyPressEvent( e );
+  inherited::keyPressEvent( e );
 }
 
 void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
