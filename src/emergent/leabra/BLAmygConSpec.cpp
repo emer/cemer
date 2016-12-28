@@ -14,6 +14,37 @@
 //   GNU General Public License for more details.
 
 #include "BLAmygConSpec.h"
+#include <BLAmygUnitSpec>
 
+TA_BASEFUNS_CTORS_DEFN(BLAmygLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(BLAmygConSpec);
+
+void BLAmygLearnSpec::Initialize() {
+  Defaults_init();
+}
+
+void BLAmygLearnSpec::Defaults_init() {
+  dalr_gain = 1.0f;
+  dalr_base = 0.0f;
+}
+
+void BLAmygConSpec::Initialize() {
+  Defaults_init();
+}
+
+void BLAmygConSpec::Defaults_init() {
+  SetUnique("wt_sig", true);
+  wt_sig.gain = 1.0f;
+}
+
+bool BLAmygConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(prjn, quiet);
+  LeabraLayer* rlay = (LeabraLayer*)prjn->layer;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
+  
+  if(rlay->CheckError(!rus->InheritsFrom(&TA_BLAmygUnitSpec), quiet, rval,
+                    "requires receiving unit to use an BLAmygUnitSpec"))
+    return false;
+  return rval;
+}
 

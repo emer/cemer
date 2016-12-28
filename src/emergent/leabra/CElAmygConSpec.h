@@ -49,7 +49,7 @@ private:
 eTypeDef_Of(CElAmygConSpec);
 
 class E_API CElAmygConSpec : public LeabraConSpec {
-  // simulates learning in the central amygdala (lateral), with separate equations for acquisition vs. extinction subpoplations 
+  // simulates learning in the central amygdala (lateral) using a simple delta-rule between this trial and previous trial, modulated also by absolute value of phasic dopamine -- delta influence comes from unit spec dopamine da_mod and US drive
 INHERITED(LeabraConSpec)
 public:
   CElAmygLearnSpec   cel_learn; // central amygdala, lateral learning specs

@@ -71,6 +71,10 @@ set(leabra_HEADS_MAKETA
   BasAmygUnitSpec.h
   LatAmygConSpec.h
   BasAmygConSpec.h
+  BLAmygUnitSpec.h
+  BLAmygConSpec.h
+  CElAmygUnitSpec.h
+  CElAmygConSpec.h
   PPTgUnitSpec.h
   LHbRMTgUnitSpec.h
   VTAUnitSpec.h
@@ -102,9 +106,6 @@ set(leabra_HEADS_MAKETA
   CerebPfPcConSpec.h
   LeabraMultCopyUnitSpec.h
   LeabraContextUnitSpec.h
-  BLAmygConSpec.h
-  CElAmygConSpec.h
-  CElAmygUnitSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -198,6 +199,10 @@ set(leabra_SRCS
   BasAmygUnitSpec.cpp
   LatAmygConSpec.cpp
   BasAmygConSpec.cpp
+  BLAmygUnitSpec.cpp
+  BLAmygConSpec.cpp
+  CElAmygUnitSpec.cpp
+  CElAmygConSpec.cpp
   PPTgUnitSpec.cpp
   LHbRMTgUnitSpec.cpp
   VTAUnitSpec.cpp
@@ -229,9 +234,6 @@ set(leabra_SRCS
   CerebPfPcConSpec.cpp
   LeabraMultCopyUnitSpec.cpp
   LeabraContextUnitSpec.cpp
-  BLAmygConSpec.cpp
-  CElAmygConSpec.cpp
-  CElAmygUnitSpec.cpp
 )
 
 set(leabra_CUDA
