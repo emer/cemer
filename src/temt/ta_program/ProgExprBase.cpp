@@ -1651,7 +1651,7 @@ void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
 void ProgExprBase::GetKeywords(String_Array* keywords, bool line_start) {
   if (line_start) {
     keywords->Add("if (");
-    keywords->Add("else (");
+    keywords->Add("else ");
     keywords->Add("else if (");
     keywords->Add("for (");
     keywords->Add("foreach (");
