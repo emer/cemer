@@ -32,6 +32,7 @@
 #include <iPanelOfProgramScript>
 #include <iNumberedTextView>
 #include <iPanelOfProgram>
+#include <iPanelOfProgramGroup>
 #include <iProgramEditor>
 #include <iTreeView>
 #include <iTreeViewItem>
@@ -2280,10 +2281,10 @@ bool Program::EditProgramEl(taBase* pel) {
 }
 
 
-iPanelOfProgram* Program::FindMyProgramPanel() {
+iPanelOfProgramBase* Program::FindMyProgramPanel() {
   if(!taMisc::gui_active) return NULL;
 
-  BrowserSelectMe();        // select my program
+//  BrowserSelectMe();        // select my program - no don't! rohrlich 12/28/2016 - see bug 2940
 
   taSigLink* link = sig_link();
   if(!link) return NULL;
@@ -2298,6 +2299,24 @@ iPanelOfProgram* Program::FindMyProgramPanel() {
       return el;
     }
   }
+  
+  // could be a group of programs in the editor
+  Program_Group* my_group = (Program_Group*)GetOwner(&TA_Program_Group);
+  if (my_group) {
+    link = my_group->sig_link();
+    if(!link) return NULL;
+    iPanelOfProgramGroup* group_el;
+    FOR_DLC_EL_OF_TYPE(iPanelOfProgramGroup, group_el, link, itr) {
+      //      if (el->prog() == this) {
+      iPanelSet* dps = group_el->data_panel_set();
+      if(dps) {
+        dps->setCurrentPanelId(0); // this is the editor
+        //        }
+        return group_el;
+      }
+    }
+  }
+
   return NULL;
 }
 
@@ -2309,7 +2328,7 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
 
-  iPanelOfProgram* mwv = FindMyProgramPanel();
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
   if(!mwv || !mwv->pe) return itm->taBase::BrowserSelectMe();
 
   iTreeView* itv = mwv->pe->items;
@@ -2372,7 +2391,7 @@ void Program::BrowserScrollToMe_ProgItem() {
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return;
 
-  iPanelOfProgram* mwv = FindMyProgramPanel();
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
   if(!mwv || !mwv->pe) return;
 
   iTreeView* itv = mwv->pe->items;
@@ -2387,7 +2406,7 @@ bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
 
-  iPanelOfProgram* mwv = FindMyProgramPanel();
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
   if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
 
   iTreeView* itv = mwv->pe->items;
@@ -2405,7 +2424,7 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
 
-  iPanelOfProgram* mwv = FindMyProgramPanel();
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
   if(!mwv || !mwv->pe) return itm->taBase::BrowserCollapseAll();
 
   iTreeView* itv = mwv->pe->items;

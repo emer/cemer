@@ -49,6 +49,7 @@ class ProgLibEl; //
 class ProgVar; // 
 class ProgramCallBase; //
 class iPanelOfProgram; //
+class iPanelOfProgramBase; //
 class iPanelSet; //
 class ProgBrkPt_List; //
 
@@ -395,7 +396,7 @@ public: // XxxGui versions provide feedback to the user
               const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #MENU_SEP_BEFORE #MENU_ON_ControlPanel #NULL_OK_0  #NULL_TEXT_0_CtrlPanel #CAT_Display add the program control functions (Init, Run, Step, Stop) to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.   extra_label is prepended to item names, and if sub_gp_nm is specified, items will be put in this sub-group (new one will be made if it does not yet exist)
 
-  virtual iPanelOfProgram* FindMyProgramPanel();
+  virtual iPanelOfProgramBase* FindMyProgramPanel();
   // #IGNORE find my program panel, which contains the program editor -- useful for browser-specific operations
   virtual iPanelSet* FindMyPanelSet();
   // #IGNORE find my panel set, which contains all the more specific view panels (editor, script etc)
