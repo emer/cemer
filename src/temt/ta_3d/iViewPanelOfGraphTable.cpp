@@ -366,6 +366,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   fldAxisSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldAxisSz->GetRep());
   ((iLineEdit*)fldAxisSz->GetRep())->setCharWidth(6);
+  
+  lblXlblRot = taiM->NewLabel("X Lbl\nRot", widg, font_spec);
+  lblXlblRot->setToolTip(taiMisc::ToolTipPreProcess("Rotation in degrees for the tick labels on the X axis -- rotating can allow longer string-based tick labels to be visible."));
+  layCAxis->addWidget(lblXlblRot);
+  fldXlblRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layCAxis->addWidget(fldXlblRot->GetRep());
+  ((iLineEdit*)fldXlblRot->GetRep())->setCharWidth(6);
   //  layCAxis->addSpacing(taiM->hsep_c);
   
   layCAxis->addStretch();
@@ -626,6 +633,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   fldLabelSz->GetImage((String)glv->label_font_size);
   fldPointSz->GetImage((String)glv->point_size);
   fldAxisSz->GetImage((String)glv->axis_font_size);
+  fldXlblRot->GetImage((String)glv->x_axis_label_rot);
   fldBarSpace->GetImage((String)glv->bar_space);
   fldBarDepth->GetImage((String)glv->bar_depth);
   
@@ -730,6 +738,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->label_font_size = (float)fldLabelSz->GetValue();
   glv->point_size = (float)fldPointSz->GetValue();
   glv->axis_font_size = (float)fldAxisSz->GetValue();
+  glv->x_axis_label_rot = (float)fldXlblRot->GetValue();
   glv->bar_space = (float)fldBarSpace->GetValue();
   glv->bar_depth = (float)fldBarDepth->GetValue();
   

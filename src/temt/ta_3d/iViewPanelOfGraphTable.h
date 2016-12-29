@@ -139,6 +139,8 @@ public:
   taiWidgetField*           fldPointSz;
   QLabel*                   lblAxisSz;
   taiWidgetField*           fldAxisSz;
+  QLabel*                   lblXlblRot;
+  taiWidgetField*           fldXlblRot;
   
   QHBoxLayout*            layRAxis;
   QLabel*                   lblRAxis;

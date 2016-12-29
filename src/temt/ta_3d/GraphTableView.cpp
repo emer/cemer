@@ -124,6 +124,7 @@ void GraphTableView::Initialize() {
   negative_draw_z = true;
   axis_font_size = .05f;
   label_font_size = .04f;
+  x_axis_label_rot = 0.0f;
   label_spacing = -1;
   matrix_mode = SEP_GRAPHS;
   mat_layout = taMisc::BOT_ZERO;

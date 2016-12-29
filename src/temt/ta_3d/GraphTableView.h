@@ -92,6 +92,7 @@ public:
   float                 axis_font_size; // #DEF_0.05 size to render axis text
   static float          tick_size;      // #DEF_0.05 size of tick marks
   float                 label_font_size;// #DEF_0.04 size to render value/string labels
+  float                 x_axis_label_rot; // rotation angle in degrees for the x axis labels
 
   GraphAxisView         x_axis;         // the x axis (horizontal, left-to-right)
   GraphAxisView         z_axis;         // the z axis (in depth, front-to-back)

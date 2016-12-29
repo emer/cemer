@@ -466,8 +466,23 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
   to = off;
   fm.y = off.y + -(.5f * GraphTableView::tick_size);
   to.y = off.y + (.5f * GraphTableView::tick_size);
-  
+
+  GraphTableView* gtv = GetGTV();
+
   float y_lab_off = (TICK_OFFSET + t3ax->font_size);
+  float x_lab_off = 0.0f;
+  
+#ifdef TA_QT3D
+
+#else
+  SbRotation tick_rot;
+  tick_rot.setValue(SbVec3f(0.0f, 0.0f, 1.0f),
+                    taMath_float::deg_to_rad(gtv->x_axis_label_rot));
+  if(fabsf(gtv->x_axis_label_rot) > 5.0f) {
+    y_lab_off -= t3ax->font_size;
+    x_lab_off = 0.4f * t3ax->font_size;
+  }
+#endif
   
   DataCol* da = GetDAPtr();
   
@@ -497,13 +512,32 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
           label = "";           // empty it!
       }
       if(label.nonempty()) {
-        t3ax->addLabel(label.chars(),
-                       iVec3f(fm.x, fm.y - y_lab_off, fm.z),
-                       T3_ALIGN_CENTER);
-        if(rnd_svg) {
-          // todo: get font size from graph
-          *rnd_svg << taSvg::Text(label, fm.x, fm.y-y_lab_off, fm.z, color.color(),
-                                  t3ax->font_size, taSvg::CENTER);
+        if(gtv->x_axis_label_rot != 0.0f) {
+#ifdef TA_QT3D
+          t3ax->addLabelRot(label.chars(),
+                            iVec3f(fm.x + x_lab_off, fm.y - y_lab_off, fm.z),
+                            T3_ALIGN_RIGHT, tick_rot);
+#else
+          t3ax->addLabelRot(label.chars(),
+                            iVec3f(fm.x + x_lab_off, fm.y - y_lab_off, fm.z),
+                            T3_ALIGN_RIGHT, tick_rot);
+#endif
+          if(rnd_svg) {
+            // todo: deal with rotation, and get font size from graph
+            *rnd_svg << taSvg::Text(label, fm.x + x_lab_off, fm.y-y_lab_off, fm.z,
+                                    color.color(),
+                                    t3ax->font_size, taSvg::CENTER);
+          }
+        }
+        else {
+          t3ax->addLabel(label.chars(),
+                         iVec3f(fm.x, fm.y - y_lab_off, fm.z),
+                         T3_ALIGN_CENTER);
+          if(rnd_svg) {
+            // todo: get font size from graph
+            *rnd_svg << taSvg::Text(label, fm.x, fm.y-y_lab_off, fm.z, color.color(),
+                                    t3ax->font_size, taSvg::CENTER);
+          }
         }
       }
     }
