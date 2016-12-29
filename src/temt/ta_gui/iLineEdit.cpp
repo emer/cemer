@@ -295,13 +295,16 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
     default:
       if (GetCompleter() && completion_enabled) {
         if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter))) {
-//          if (GetCompleter()->currentRow() > 0) {  // if a completion is selected
-//            CompletionDone(key_event);
-//            return;
-//          }
-//          else { // no completion - just commit edit
+          if (taMisc::code_completion.auto_complete == false) {
+            completion_enabled = false; // done with completion - disable until user enables again
+          }
+
+          if (GetCompleter()->currentRow() > 0) {
+            CompletionDone(key_event);
+          }
+          else {
             inherited::keyPressEvent(key_event);
-//          }
+          }
         }
         else if(!taiMisc::KeyEventCtrlPressed(key_event)
                 && key_event->key() != Qt::Key_Escape
@@ -332,7 +335,7 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   String prefix = text();
   prefix = prefix.through(cursorPosition() - 1);
   emit characterEntered(this);
-  completer->setCompletionPrefix(prefix);
+  GetCompleter()->setCompletionPrefix(prefix);
   GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
   GetCompleter()->complete();
   return;
@@ -342,9 +345,6 @@ void iLineEdit::CompletionDone(QKeyEvent* key_event) {
   inherited::keyPressEvent(key_event);
   QModelIndex index = GetCompleter()->currentIndex();
   emit completed(GetCompleter()->currentIndex());
-  if (taMisc::code_completion.auto_complete == false) {
-    completion_enabled = false; // done with completion - disable until user enables again
-  }
 }
 
 void iLineEdit::wheelEvent(QWheelEvent * e)

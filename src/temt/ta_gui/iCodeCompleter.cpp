@@ -60,6 +60,12 @@ String iCodeCompleter::GetCurrent() {
   return currentCompletion();
 }
 
+void iCodeCompleter::ClearList() {
+  string_list.clear();
+  list_model->setStringList(string_list);
+}
+
+
 bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {

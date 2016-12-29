@@ -43,7 +43,8 @@ public:
   void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
   String                  GetCurrent();  // return the current selection
-
+  void                    ClearList();   // clear the model list
+  
 protected:
   QStringList             string_list;
   bool                    eventFilter(QObject* obj, QEvent* event) override;
