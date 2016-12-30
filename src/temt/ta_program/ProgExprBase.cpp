@@ -58,12 +58,15 @@ EnumSpace                   ProgExprBase::completion_enum_list;
 String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
+bool                        ProgExprBase::include_statics;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
 
 void ProgExprBase::Initialize() {
   flags = PE_NONE;
   parse_ve_off = 11;
   parse_ve_pos = 0;
+  
+  GetStatics(&completion_statics_list); // get the list of statics - no need to do each parse
 }
 
 void ProgExprBase::Destroy() {
@@ -1183,14 +1186,13 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   completion_prog_el_text = prog_el_txt;
   
-  bool completion_ui = true;
+  include_statics = false;
   completion_lookup_type = lookup_type;
   completion_token_list.RemoveAll();
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
   completion_keyword_list.Reset();
-//  completion_statics_list.Reset();
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
@@ -1200,8 +1202,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_token_list);
         GetKeywords(&completion_keyword_list, true); // true - expression start of line
-        GetStatics(&completion_statics_list); // true - expression start of line
-        
+        include_statics = true;
       }
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
@@ -1412,10 +1413,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     completion_choice_list.Add(completion_keyword_list.SafeEl(i));
   }
   
-  for (int i=0; i<completion_statics_list.size; i++) {
-    completion_choice_list.Add(completion_statics_list.SafeEl(i));
+  if (include_statics) {
+    for (int i=0; i<completion_statics_list.size; i++) {
+      completion_choice_list.Add(completion_statics_list.SafeEl(i));
+    }
   }
-
+  
   for (int i=0; i<completion_token_list.size; i++) {
     taBase* base = completion_token_list.FastEl(i);
     if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){

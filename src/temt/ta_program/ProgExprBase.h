@@ -81,12 +81,13 @@ public:
   static Method_List            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
   static String_Array           completion_keyword_list;// #READ_ONLY #HIDDEN #NO_SAVE
-  static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE
+  static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once in Init()
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_append_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_prog_el_text;// #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
+  static bool                   include_statics; // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the static classes
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
@@ -182,7 +183,6 @@ public:
   void  CutLinks() override;
   TA_BASEFUNS(ProgExprBase);
 protected:
-
   virtual void  ParseExpr_SkipPath(int& pos);
   // skip over a path expression
 
