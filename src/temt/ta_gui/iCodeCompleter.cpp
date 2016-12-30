@@ -43,9 +43,11 @@ void iCodeCompleter::Init() {
 #endif
   //  iCompleterPopupView* completer_popup = new iCompleterPopupView();
   //  setPopup(completer_popup);
-  list_model = new QStringListModel(string_list, NULL);
+
+  list_model = new iCodeCompleterModel(string_list, NULL);
   setModel(list_model);
-//  setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+  
+  //  setModelSorting(QCompleter::CaseInsensitivelySortedModel);
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {
@@ -101,3 +103,28 @@ bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
     return inherited::eventFilter(obj, event);
   }
 }
+
+//iCodeCompleterModel::iCodeCompleterModel(QObject* parent) {
+//  inherited::QStringListModel(parent);
+//}
+
+iCodeCompleterModel::iCodeCompleterModel(const QStringList &strings, QObject *parent) {
+  inherited::QStringListModel(strings, parent);
+}
+
+//QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
+//  switch (role) {
+//    case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
+//      return "fgoo";
+//      
+//    case Qt::EditRole: {
+//      
+//    }
+//      
+//    default:
+//      break;
+//  }
+//  return QVariant();
+//}
+
+
