@@ -108,8 +108,9 @@ bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
 //  inherited::QStringListModel(parent);
 //}
 
-iCodeCompleterModel::iCodeCompleterModel(const QStringList &strings, QObject *parent) {
-  inherited::QStringListModel(strings, parent);
+iCodeCompleterModel::iCodeCompleterModel(const QStringList &strings, QObject *parent) :
+  inherited::QStringListModel(strings, parent)
+{
 }
 
 //QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
