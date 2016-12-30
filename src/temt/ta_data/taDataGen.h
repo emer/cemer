@@ -36,7 +36,7 @@ class taMatrix; //
 taTypeDef_Of(taDataGen);
 
 class TA_API taDataGen : public taNBase {
-  // #STEM_BASE ##CAT_Data collection of data generation functions (e.g., drawing, random patterns, combining lists)
+  // #STEM_BASE ##CAT_Data ##STATIC_COLLECTION collection of data generation functions (e.g., drawing, random patterns, combining lists)
 INHERITED(taNBase)
 public:
 

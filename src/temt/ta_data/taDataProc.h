@@ -34,7 +34,7 @@ class DataJoinSpec; //
 taTypeDef_Of(taDataProc);
 
 class TA_API taDataProc : public taNBase {
-  // #STEM_BASE ##CAT_Data collection of commonly-used datatable processing operations (database-style)
+  // #STEM_BASE ##CAT_Data ##STATIC_COLLECTION collection of commonly-used datatable processing operations (database-style)
 INHERITED(taNBase)
 public:
   

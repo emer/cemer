@@ -165,7 +165,7 @@ public:
 taTypeDef_Of(taMisc);
 
 class TA_API taMisc {
-  // #NO_TOKENS #INSTANCE global parameters and functions for the application
+  // #NO_TOKENS #INSTANCE ##STATIC_COLLECTION global parameters and functions for the application
 friend class InitProcRegistrar;
 public:
 
@@ -553,6 +553,7 @@ public:
   static TypeSpace      types;          // #READ_ONLY #NO_SAVE #NO_SHOW list of all the active types
   static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #NO_SHOW list of types that have AKA for other types that are no longer supported
   static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #NO_SHOW registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
+  static TypeSpace      static_collection; // #READ_ONLY #NO_SAVE #NO_SHOW list of classes with statics that we add to the completer popup list
   static TypeDef*       default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization

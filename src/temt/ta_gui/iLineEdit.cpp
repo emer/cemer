@@ -335,6 +335,7 @@ void iLineEdit::DoCompletion(QKeyEvent* key_event) {
   String prefix = text();
   prefix = prefix.through(cursorPosition() - 1);
   emit characterEntered(this);
+  prefix = prefix.trimr();
   GetCompleter()->setCompletionPrefix(prefix);
   GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
   GetCompleter()->complete();

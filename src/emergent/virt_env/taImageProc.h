@@ -31,7 +31,7 @@ class taVector2i; //
 eTypeDef_Of(taImageProc);
 
 class E_API taImageProc : public taNBase {
-  // #STEM_BASE ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
+  // #STEM_BASE ##CAT_Image ##STATIC_COLLECTION basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
   INHERITED(taNBase)
 public:
 

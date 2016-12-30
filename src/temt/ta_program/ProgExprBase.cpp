@@ -1201,6 +1201,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         GetTokensOfType(&TA_Program, &completion_token_list);
         GetKeywords(&completion_keyword_list, true); // true - expression start of line
         GetStatics(&completion_statics_list); // true - expression start of line
+        
       }
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
@@ -1665,7 +1666,9 @@ void ProgExprBase::GetKeywords(String_Array* keywords, bool line_start) {
 }
 
 void ProgExprBase::GetStatics(String_Array* statics) {
-  statics->Add("taMisc::");
+  for (int i=0; i<taMisc::static_collection.size; i++) {
+    statics->Add(taMisc::static_collection.SafeEl(i)->name + "::");
+  }
 }
 
 

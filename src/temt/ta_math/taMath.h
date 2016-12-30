@@ -53,7 +53,7 @@ class double_Matrix; //
 taTypeDef_Of(taMath);
 
 class TA_API taMath : public taNBase {
-  // #STEM_BASE ##CAT_Math ##NO_TOKENS ##INSTANCE collection of commonly-used math functions
+  // #STEM_BASE ##CAT_Math ##NO_TOKENS ##INSTANCE ##STATIC_COLLECTION collection of commonly-used math functions
 INHERITED(taNBase)
 public:
 
