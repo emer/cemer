@@ -56,6 +56,7 @@ Member_List                 ProgExprBase::completion_member_list;
 Method_List                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
 String                      ProgExprBase::completion_pre_text;
+String                      ProgExprBase::completion_path_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
 bool                        ProgExprBase::include_statics;
@@ -1185,6 +1186,9 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   path_own_typ = NULL;
   path_md = NULL;
   
+  completion_pre_text = prepend_txt;
+  completion_path_pre_text = path_prepend_txt;
+  
   completion_prog_el_text = prog_el_txt;
   
   include_statics = false;
@@ -1206,8 +1210,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_statics = true;
         include_progels = true;
       }
-      completion_pre_text = prepend_txt;
-      completion_append_text = append_txt;
       expr_lookup_cur_base = NULL;
       break;
     }
@@ -1427,30 +1429,30 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     taBase* base = completion_token_list.FastEl(i);
     if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
       if (path_prepend_txt.empty()) {
-        completion_choice_list.Add(prepend_txt + base->GetName() + "()");
+        completion_choice_list.Add(base->GetName() + "()");
       }
       else {
-        completion_choice_list.Add(path_prepend_txt + base->GetName() + "()");
+        completion_choice_list.Add(base->GetName() + "()");
       }
     }
     else {
       if (path_prepend_txt.empty()) {
-        completion_choice_list.Add(prepend_txt + base->GetName());
+        completion_choice_list.Add(base->GetName());
       }
       else {
-        completion_choice_list.Add(path_prepend_txt + base->GetName());
+        completion_choice_list.Add(base->GetName());
       }
     }
   }
 
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
-    completion_choice_list.Add(path_prepend_txt + member_def->name);
+    completion_choice_list.Add(member_def->name);
   }
 
   for (int i=0; i<completion_method_list.size; i++) {
     MethodDef* method_def = completion_method_list.FastEl(i);
-    String full_seed = path_prepend_txt + method_def->name + "(";
+    String full_seed = method_def->name + "(";
 //    for (int j=0; j<method_def->arg_names.size; j++) {
 //      full_seed += method_def->arg_names.SafeEl(j);
 //      if (j < method_def->arg_names.size - 1) {
@@ -1463,7 +1465,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   for (int i=0; i<completion_enum_list.size; i++) {
     EnumDef* enum_def = completion_enum_list.FastEl(i);
-    completion_choice_list.Add(path_prepend_txt + enum_def->name);
+    completion_choice_list.Add(enum_def->name);
   }
 
   // useful for debug

@@ -35,10 +35,10 @@ class TA_API iCodeCompleterModel: public QStringListModel {
   INHERITED(QStringListModel)
   Q_OBJECT
 public:
-//    iCodeCompleterModel(QObject *parent = 0);
+  iCodeCompleterModel(QObject *parent = 0);
   iCodeCompleterModel(const QStringList &strings, QObject *parent = 0);
 
-//  QVariant data(const QModelIndex &index, int role) const override;
+  QVariant data(const QModelIndex &index, int role) const override;
 
 protected:
   

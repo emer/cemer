@@ -87,10 +87,11 @@ public:
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
+  static String                 completion_path_pre_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_append_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_prog_el_text;// #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
-  static bool                   include_statics; // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the static classes
-  static bool                   include_progels; // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the ProgEls
+  static bool                   include_statics;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the static classes
+  static bool                   include_progels;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the ProgEls
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render

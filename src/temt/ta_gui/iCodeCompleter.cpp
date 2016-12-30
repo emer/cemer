@@ -104,28 +104,37 @@ bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
   }
 }
 
-//iCodeCompleterModel::iCodeCompleterModel(QObject* parent) {
-//  inherited::QStringListModel(parent);
-//}
+iCodeCompleterModel::iCodeCompleterModel(QObject* parent) :
+ inherited::QStringListModel(parent)
+{
+}
 
 iCodeCompleterModel::iCodeCompleterModel(const QStringList &strings, QObject *parent) :
   inherited::QStringListModel(strings, parent)
 {
 }
 
-//QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
-//  switch (role) {
-//    case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
-//      return "fgoo";
-//      
-//    case Qt::EditRole: {
-//      
-//    }
-//      
-//    default:
-//      break;
-//  }
-//  return QVariant();
-//}
+QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
+  switch (role) {
+    case Qt::DisplayRole:
+      return inherited::data(index, role);
+      
+    case Qt::EditRole: {
+      QVariant temp = inherited::data(index, role);
+      String pretext;
+      if (ProgExprBase::completion_path_pre_text.empty()) {
+        pretext = ProgExprBase::completion_pre_text;
+      }
+      else {
+        pretext = ProgExprBase::completion_path_pre_text;
+      }
+      return pretext + temp.toString();
+    }
+      
+    default:
+      break;
+  }
+  return QVariant();
+}
 
 
