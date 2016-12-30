@@ -28,9 +28,11 @@
 // declare all other types mentioned but not required to include:
 class cssElPtr; //
 class MemberDef; //
+class TypeDef; //
 class Program; //
 class Function; //
 class ProgEl; //
+class ProgEl_List; //
 class cssProgSpace; // #IGNORE
 class cssSpace; // #IGNORE
 
@@ -80,7 +82,7 @@ public:
   static Member_List            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static Method_List            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
-  static String_Array           completion_keyword_list;// #READ_ONLY #HIDDEN #NO_SAVE
+  static String_Array           completion_progels_list;// #READ_ONLY #HIDDEN #NO_SAVE
   static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once in Init()
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
@@ -88,6 +90,7 @@ public:
   static String                 completion_append_text; // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static String                 completion_prog_el_text;// #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
   static bool                   include_statics; // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the static classes
+  static bool                   include_progels; // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion list add in the ProgEls
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
@@ -169,9 +172,10 @@ public:
   static void           GetMembersForType(TypeDef* td, Member_List* members, bool just_static = false);
   static void           GetMethodsForType(TypeDef* td, Method_List* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
-  static void           GetKeywords(String_Array* keywords, bool line_start);
+  static void           GetProgEls(String_Array* progels);
   static void           GetStatics(String_Array* statics);
   static taBase*        GetTokenForCurrentCompletion(const String& cur_completion);
+  static void           GenProgElList(ProgEl_List& list, TypeDef* td);
 
   static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                             String& lookup_seed, String& prepend_txt, String& append_txt,

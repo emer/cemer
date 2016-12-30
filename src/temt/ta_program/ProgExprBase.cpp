@@ -49,7 +49,7 @@ cssSpace*     ProgExprBase::parse_tmp = NULL;
 static ProgEl* expr_lookup_cur_base = NULL;
 
 String_Array                ProgExprBase::completion_choice_list;
-String_Array                ProgExprBase::completion_keyword_list;
+String_Array                ProgExprBase::completion_progels_list;
 String_Array                ProgExprBase::completion_statics_list;
 taBase_List                 ProgExprBase::completion_token_list;
 Member_List                 ProgExprBase::completion_member_list;
@@ -59,6 +59,7 @@ String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
 bool                        ProgExprBase::include_statics;
+bool                        ProgExprBase::include_progels;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
 
 void ProgExprBase::Initialize() {
@@ -66,7 +67,7 @@ void ProgExprBase::Initialize() {
   parse_ve_off = 11;
   parse_ve_pos = 0;
   
-  GetStatics(&completion_statics_list); // get the list of statics - no need to do each parse
+  GetStatics(&completion_statics_list); // get the list of statics - no need to do for every parse
 }
 
 void ProgExprBase::Destroy() {
@@ -1187,13 +1188,14 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_prog_el_text = prog_el_txt;
   
   include_statics = false;
+  include_progels = false;
   completion_lookup_type = lookup_type;
   completion_token_list.RemoveAll();
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
-  completion_keyword_list.Reset();
-  
+  GetProgEls(&completion_progels_list); // get the list of program elements - Init() is too early to do this
+
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
@@ -1201,8 +1203,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       GetTokensOfType(&TA_Function, &completion_token_list, own_prg, &TA_Program);
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_token_list);
-        GetKeywords(&completion_keyword_list, true); // true - expression start of line
         include_statics = true;
+        include_progels = true;
       }
       completion_pre_text = prepend_txt;
       completion_append_text = append_txt;
@@ -1409,8 +1411,10 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
   completion_choice_list.Reset();
   
-  for (int i=0; i<completion_keyword_list.size; i++) {
-    completion_choice_list.Add(completion_keyword_list.SafeEl(i));
+  if (include_progels) {
+    for (int i=0; i<completion_progels_list.size; i++) {
+      completion_choice_list.Add(completion_progels_list.SafeEl(i));
+    }
   }
   
   if (include_statics) {
@@ -1652,19 +1656,27 @@ void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
   }
 }
 
-void ProgExprBase::GetKeywords(String_Array* keywords, bool line_start) {
-  if (line_start) {
-    keywords->Add("if (");
-    keywords->Add("else ");
-    keywords->Add("else if (");
-    keywords->Add("for (");
-    keywords->Add("foreach (");
-    keywords->Add("while (");
-    keywords->Add("do...while (");
-    keywords->Add("switch (");
-    keywords->Add("break");
-    keywords->Add("continue");
-    keywords->Add("Stop_Step Point");
+void ProgExprBase::GetProgEls(String_Array* progels) {
+  if (progels->size == 0) {
+    ProgEl_List prog_el_list;
+    GenProgElList(prog_el_list, &TA_ProgEl);
+    
+    for (int i=0; i<prog_el_list.size; i++) {
+      completion_progels_list.Add(prog_el_list.SafeEl(i)->GetToolbarName());
+    }
+  }
+}
+
+void ProgExprBase::GenProgElList(ProgEl_List& list, TypeDef* td) {
+  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
+  if(obj) {
+    if (td->IsActual()) {
+      list.LinkUnique(obj);
+    }
+  }
+  for(int i = 0; i < td->children.size; ++i) {
+    TypeDef* chld = td->children[i];
+    GenProgElList(list, chld);
   }
 }
 
@@ -1675,7 +1687,6 @@ void ProgExprBase::GetStatics(String_Array* statics) {
     }
   }
 }
-
 
 taBase* ProgExprBase::GetTokenForCurrentCompletion(const String& cur_completion) {
   // get the token with the selection string
