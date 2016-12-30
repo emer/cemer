@@ -1190,7 +1190,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
   completion_keyword_list.Reset();
-  completion_statics_list.Reset();
+//  completion_statics_list.Reset();
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
@@ -1666,8 +1666,10 @@ void ProgExprBase::GetKeywords(String_Array* keywords, bool line_start) {
 }
 
 void ProgExprBase::GetStatics(String_Array* statics) {
-  for (int i=0; i<taMisc::static_collection.size; i++) {
-    statics->Add(taMisc::static_collection.SafeEl(i)->name + "::");
+  if (statics->size == 0) {
+    for (int i=0; i<taMisc::static_collection.size; i++) {
+      statics->Add(taMisc::static_collection.SafeEl(i)->name + "::");
+    }
   }
 }
 
