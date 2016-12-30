@@ -31,7 +31,6 @@ INHERITED(SpecMemberBase)
 public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
-  bool          acq_deep_mod;   // use deep_mod_net for value from acquisition / go units, instead of inhibition current (otherwise use gi_syn) -- allows simpler parameter settting without titrating inhibition and this learning modulation signal
   float         us_clamp_avg;   // averaging factor for clamping US (PV) values when sent using a SendDeepRaw connection -- better form of hard-clamping..
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }

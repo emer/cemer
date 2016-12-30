@@ -47,8 +47,11 @@ public:
   { return ops.AddColumn(col_name, dt); }
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
   virtual void	AddAllColumns(DataTable* dt, bool exclude_strings = false)
+  { ops.AddAllColumns(dt, exclude_strings); }
+  // #CAT_DataOp add all columns from given data table -- optionally excluding string-valued columns -- use this one in Programs (gui one selects new columns in browser)
+  virtual void	AddAllColumns_gui(DataTable* dt, bool exclude_strings = false)
   { ops.AddAllColumns_gui(dt, exclude_strings); }
-  // #CAT_DataOp #BUTTON add all columns from given data table -- optionally excluding string-valued columns
+  // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table -- optionally excluding string-valued columns
 
   taList_impl*	children_() override {return &ops;}	
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override

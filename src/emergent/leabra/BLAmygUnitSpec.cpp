@@ -23,7 +23,6 @@ TA_BASEFUNS_CTORS_DEFN(BLAmygUnitSpec);
 void BLAmygDaMod::Initialize() {
   burst_da_gain = 1.0f;
   dip_da_gain = 1.0f;
-  acq_deep_mod = true;
   us_clamp_avg = 0.2f;
   Defaults_init();
 }
