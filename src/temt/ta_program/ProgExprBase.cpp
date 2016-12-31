@@ -1662,9 +1662,10 @@ void ProgExprBase::GetProgEls(String_Array* progels) {
   if (progels->size == 0) {
     ProgEl_List prog_el_list;
     GenProgElList(prog_el_list, &TA_ProgEl);
-    
     for (int i=0; i<prog_el_list.size; i++) {
-      completion_progels_list.Add(prog_el_list.SafeEl(i)->GetToolbarName());
+      String mod_str = prog_el_list.SafeEl(i)->GetToolbarName();
+      mod_str = mod_str.repl("\n", " ");
+      completion_progels_list.Add(mod_str);
     }
   }
 }
