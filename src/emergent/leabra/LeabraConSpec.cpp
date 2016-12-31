@@ -310,21 +310,22 @@ void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* fro
 
 void LeabraConSpec::RenormScales(ConGroup* cg, Network* net, int thr_no,
                                  bool mult_norm, float avg_wt) {
-  if(cg->size < 2) return;
+  const int sz = cg->size;
+  if(sz < 2) return;
   float avg = 0.0f;
-  for(int i=0; i<cg->size; i++) {
+  for(int i=0; i<sz; i++) {
     avg += cg->Cn(i, SCALE, net);
   }
-  avg /= (float)cg->size;
+  avg /= (float)sz;
   if(mult_norm) {
     float adj = avg_wt / avg;
-    for(int i=0; i<cg->size; i++) {
+    for(int i=0; i<sz; i++) {
       cg->Cn(i, SCALE, net) *= adj;
     }
   }
   else {
     float adj = avg_wt - avg;
-    for(int i=0; i<cg->size; i++) {
+    for(int i=0; i<sz; i++) {
       cg->Cn(i, SCALE, net) += adj;
     }
   }

@@ -33,6 +33,7 @@ void ProjectionSpec::Initialize() {
   self_con = false;
   init_wts = false;
   set_scale = false;
+  init_wt_val = 1.0f;
   add_rnd_var = false;
 }
 
@@ -108,7 +109,12 @@ void ProjectionSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                                        Network* net, int thr_no) {
   if(!init_wts) return;         // shouldn't happen
   ConSpec* cs = prjn->GetConSpec();
-  cs->Init_Weights(cg, net, thr_no);
+  if(set_scale) {
+    cs->Init_Weights_scale(cg, net, thr_no, init_wt_val);
+  }
+  else {
+    cs->Init_Weights(cg, net, thr_no);
+  }
 }
 
 void ProjectionSpec::Init_Weights_renorm(Projection* prjn, ConGroup* cg,

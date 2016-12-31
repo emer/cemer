@@ -420,11 +420,12 @@ public:
 
     int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
     
-    for(int i=0; i<cg->size; i++) {
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       scales[i] = 1.0f;         // default -- must be set in prjn spec if different
     }
     
-    for(int i=0; i<cg->size; i++) {
+    for(int i=0; i<sz; i++) {
       if(rnd.type != Random::NONE) {
         C_Init_Weight_Rnd(wts[i], eff_thr_no);
       }
@@ -432,6 +433,24 @@ public:
     }
   }
 
+  inline void Init_Weights_scale(ConGroup* rcg, Network* net, int thr_no, float init_wt_val)
+    override {
+    Init_Weights_symflag(net, thr_no);
+
+    // this is called *receiver based*!!!
+
+    int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+    
+    const int sz = rcg->size;
+    for(int i=0; i<sz; i++) {
+      if(rnd.type != Random::NONE) {
+        C_Init_Weight_Rnd(rcg->PtrCn(i, SCALE, net), eff_thr_no);
+      }
+      rcg->PtrCn(i, WT, net) = init_wt_val;
+      C_Init_dWt(rcg->PtrCn(i, DWT, net));
+    }
+  }
+  
   inline void Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no);
   // #IGNORE recv con group init weights -- for weight balance params
   

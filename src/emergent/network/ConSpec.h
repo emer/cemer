@@ -135,11 +135,15 @@ public:
   // #IGNORE must be called during Init_Weights to update net flag for weight symmetrizing
 
   inline virtual void   Init_Weights(ConGroup* cg, Network* net, int thr_no);
-  // #CAT_Learning initialize weight state variables (ie. at beginning of training)
+  // #CAT_Learning initialize connection weights based on random parameter settings (ie. at beginning of training)
   
   // NOTE: it is ESSENTIAL that Init_Weights ONLY does wt, dwt, and scale -- all other vars
   // MUST be initialized in _post -- projections with topo weights ONLY do these specific
   // variables but no others..
+
+  inline virtual void   Init_Weights_scale(ConGroup* cg, Network* net, int thr_no,
+                                           float init_wt_val = 1.0f) { };
+  // #CAT_Learning only for Leabra: initialize connection weights by setting scale multiplier values to random values, and setting adaptive weights to given constant initial value (weights end up as product of scale * weight)
 
   inline virtual void   Init_Weights_sym_r(ConGroup* cg, Network* net, int thr_no);
   // #CAT_Structure apply symmetry after weight init, recv based

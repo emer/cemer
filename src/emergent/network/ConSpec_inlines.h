@@ -46,8 +46,9 @@ inline void ConSpec::Init_Weights(ConGroup* cg, Network* net, int thr_no) {
 
   int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
   
+  const int sz = cg->size;
   if(rnd.type != Random::NONE) {
-    for(int i=0; i<cg->size; i++) {
+    for(int i=0; i<sz; i++) {
       C_Init_Weight_Rnd(wts[i], eff_thr_no);
       C_Init_dWt(dwts[i]);
     }

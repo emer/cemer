@@ -59,14 +59,15 @@ class E_API ProjectionSpec : public BaseSpec {
 INHERITED(BaseSpec)
 public:
   bool          self_con;          // #CAT_Structure whether to create self-connections or not (if applicable)
-  bool          init_wts;     	   // #CAT_Structure whether this projection spec does weight init (else conspec)
-  bool          set_scale;         // #CAT_Structure #CONDSHOW_ON_init_wts only for Leabra algorithm: if initializing the weights, set the connection scaling parameter in addition to intializing the weights -- this will for example set a gaussian scaling parameter on top of random initial weights, instead of just setting the initial weights to a gaussian weighted value
+  bool          init_wts;     	   // #CAT_Structure whether this projection spec should initialize the connection weights according to specific options supported by some specialized projection specs (e.g., topographically-organized connections) -- for any specs that do not have specific support for this, it will just fall back on the connection spec random weight settings, EXCEPT if set_scale is also selected, in which case it will set the scale values instead of the weights
+  bool          set_scale;         // #CAT_Structure #CONDSHOW_ON_init_wts only for Leabra algorithm: if initializing the weights, set the connection scaling parameter in addition to intializing the weights -- for specifically-supported specs, this will for example set a gaussian scaling parameter on top of random initial weights, instead of just setting the initial weights to a gaussian weighted value -- for other specs that do not support a custom init_wts function, this will set the scale values to what the random weights would otherwise be set to, and set the initial weight value to a constant (init_wt_val)
+  float         init_wt_val;       // #CAT_Structure #CONDSHOW_ON_init_wts&&set_scale constant initial weight value for specs that do not support a custom init_wts function and have set_scale set: the scale values are set to what the random weights would otherwise be set to, and the initial weight value is set to this constant: the net actual weight value is scale * init_wt_val..
   bool          add_rnd_var;  	   // #AKA_add_rnd_wts #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspec to add random values to the weights set by the projection spec -- the mean of the random distribution is subtracted, so we're just adding variance, not any mean value
   RenormInitWtsSpec renorm_wts;    // #CAT_Structure renormalize initial weight values -- this can be done even if this projection does not have init_wts set -- if set_scale is set, then the scales are renormalized instead of the weights
 
   virtual void  Connect_Sizes(Projection* prjn);
   // #CAT_Structure first-pass connects the network, doing Connect_impl(false), ending up with target allocation sizes
-    virtual void        Connect_impl(Projection*, bool make_cons) { };
+    virtual void Connect_impl(Projection*, bool make_cons) { };
     // #CAT_Structure actually implements specific connection code -- called in two passes -- first with make_cons = false does allocation, and second with make_cons = true
   virtual void  Connect_Cons(Projection* prjn);
   // #CAT_Structure second pass connection -- actually makes the connections via Connect_impl(true), and then calls Init_Weights
