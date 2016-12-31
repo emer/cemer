@@ -1188,7 +1188,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   completion_pre_text = prepend_txt;
   completion_path_pre_text = path_prepend_txt;
-  
+  completion_append_text = append_txt;
   completion_prog_el_text = prog_el_txt;
   
   include_statics = false;

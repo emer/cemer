@@ -128,7 +128,7 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
       else {
         pretext = ProgExprBase::completion_path_pre_text;
       }
-      return pretext + temp.toString();
+      return pretext + temp.toString() + ProgExprBase::completion_append_text;
     }
       
     default:
