@@ -127,6 +127,9 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
       }
       else {
         pretext = ProgExprBase::completion_path_pre_text;
+        if (ProgExprBase::completion_pre_text.nonempty()) { // this fixes bug 2938
+          pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
+        }
       }
       return pretext + temp.toString() + ProgExprBase::completion_append_text;
     }

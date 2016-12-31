@@ -59,6 +59,7 @@ String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_path_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
+String                      ProgExprBase::completion_lookup_seed;
 bool                        ProgExprBase::include_statics;
 bool                        ProgExprBase::include_progels;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
@@ -1190,6 +1191,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_path_pre_text = path_prepend_txt;
   completion_append_text = append_txt;
   completion_prog_el_text = prog_el_txt;
+  completion_lookup_seed = lookup_seed;
   
   include_statics = false;
   include_progels = false;
@@ -1199,7 +1201,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
   GetProgEls(&completion_progels_list); // get the list of program elements - Init() is too early to do this
-
+  
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
