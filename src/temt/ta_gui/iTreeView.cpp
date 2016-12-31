@@ -1114,9 +1114,9 @@ void iTreeView::Completed(const QModelIndex& index) {
   iCodeCompleter* completer = line_edit->GetCompleter();
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(currentItem());
   if(item) {
-    String full_expr = item->PostCompletionEdit(completer);
-    line_edit->clear();
-    line_edit->insert(full_expr);
+//    String full_expr = item->PostCompletionEdit(completer);  // don't call appending in iCodeCompleterModel
+//    line_edit->clear();
+//    line_edit->insert(full_expr);
   }
 }
 

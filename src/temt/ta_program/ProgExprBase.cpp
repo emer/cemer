@@ -60,6 +60,7 @@ String                      ProgExprBase::completion_path_pre_text;
 String                      ProgExprBase::completion_append_text;
 String                      ProgExprBase::completion_prog_el_text;
 String                      ProgExprBase::completion_lookup_seed;
+String                      ProgExprBase::completion_text_before;
 bool                        ProgExprBase::include_statics;
 bool                        ProgExprBase::include_progels;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
@@ -1192,6 +1193,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_append_text = append_txt;
   completion_prog_el_text = prog_el_txt;
   completion_lookup_seed = lookup_seed;
+  completion_text_before = txt;
   
   include_statics = false;
   include_progels = false;

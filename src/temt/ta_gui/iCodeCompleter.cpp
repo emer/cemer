@@ -119,18 +119,11 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
     case Qt::DisplayRole:
       return inherited::data(index, role);
       
-    case Qt::EditRole: {
+    case Qt::EditRole: { // this is the default role used for completion matching
       QVariant temp = inherited::data(index, role);
       String pretext;
-      if (ProgExprBase::completion_path_pre_text.empty()) {
-        pretext = ProgExprBase::completion_pre_text;
-      }
-      else {
-        pretext = ProgExprBase::completion_path_pre_text;
-        if (ProgExprBase::completion_pre_text.nonempty()) { // this fixes bug 2938
-          pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
-        }
-      }
+      pretext = ProgExprBase::completion_text_before;
+      pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
       return pretext + temp.toString() + ProgExprBase::completion_append_text;
     }
       
