@@ -40,7 +40,7 @@ public:
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   ProgVar*	FindVarName(const String& var_nm) const override;
-  String	GetToolbarName() const override { return "else.if"; }
+  String	GetToolbarName() const override { return "else if"; }
   
   PROGEL_SIMPLE_BASEFUNS(ElseIf);
 protected:
