@@ -45,6 +45,8 @@ public:
 protected:
   void		CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssBody_impl(Program* prog) override;
+  void		UpdateAfterEdit_impl() override;
+  void    ConvertToReturnExpr(); // #IGNORE separate into an If statement and a return statement - delete "this"
 
 private:
   void	Initialize();

@@ -46,7 +46,8 @@ taTypeDef_Of(Else);
 taTypeDef_Of(ElseIf);
 taTypeDef_Of(IfContinue);
 taTypeDef_Of(IfBreak);
-taTypeDef_Of(IfReturn);
+//taTypeDef_Of(IfReturn);
+taTypeDef_Of(ReturnExpr);
 taTypeDef_Of(IfGuiPrompt);
 taTypeDef_Of(Switch);
 taTypeDef_Of(CaseBlock);
@@ -165,7 +166,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ElseIf);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfContinue);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfBreak);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfReturn);
+//  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfReturn); // obsolete - gets converted on load to separate if and return
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ReturnExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfGuiPrompt);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Switch);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_CaseBlock);

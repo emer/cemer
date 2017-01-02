@@ -40,7 +40,7 @@ public:
 
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "return()"; }
+  String	GetToolbarName() const override { return "return"; }
 
   PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
 protected:

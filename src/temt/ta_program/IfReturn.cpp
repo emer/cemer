@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "IfReturn.h"
+#include <If>
+#include <ReturnExpr>
 #include <Program>
 #include <taMisc>
 
@@ -21,6 +23,35 @@ TA_BASEFUNS_CTORS_DEFN(IfReturn);
 
 
 void IfReturn::Initialize() {
+}
+
+void IfReturn::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    ConvertToReturnExpr();
+  }
+}
+
+void IfReturn::ConvertToReturnExpr() {
+  if(!owner) return;
+  if(!owner->InheritsFrom(&TA_ProgEl_List)) return;
+  ProgEl_List* own = (ProgEl_List*)owner;
+  int idx = own->FindEl(this);
+  if (cond.var_expr.empty()) {
+    ReturnExpr* ret_stmt = new ReturnExpr;
+    ret_stmt->flags = flags;         // get our flags
+    own->ReplaceLater(ret_stmt, idx);
+  }
+  else {
+    If* if_stmt = new If;
+    if_stmt->flags = flags;
+    if_stmt->cond.Copy(cond);
+    own->ReplaceLater(if_stmt, idx);
+    
+    ReturnExpr* ret_stmt = new ReturnExpr;
+    ret_stmt->flags = flags;
+    if_stmt->true_code.Add(ret_stmt);
+  }
 }
 
 void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -55,20 +86,22 @@ String IfReturn::GetDisplayName() const {
 }
 
 bool IfReturn::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
-  String code = code_str; code.downcase();
-  if(code.startsWith("if") && code.contains("return")) return true;
-  if(code == "return") return true;
-  return false;
+  return false; // obsolete - gets replaced on load by separate if and return statements
+//  String code = code_str; code.downcase();
+//  if(code.startsWith("if") && code.contains("return")) return true;
+//  if(code == "return") return true;
+//  return false;
 }
 
 bool IfReturn::CvtFmCode(const String& code) {
-  String cd = trim(code.after("if"));
-  cd = trim(cd.before("return"));
-  if(cd.startsWith('(')) {
-    cd = cd.after('(');
-    if(cd.endsWith(')'))
-      cd = cd.before(')', -1);
-  }
-  cond.SetExpr(cd);
-  return true;
+  return false;
+//  String cd = trim(code.after("if"));
+//  cd = trim(cd.before("return"));
+//  if(cd.startsWith('(')) {
+//    cd = cd.after('(');
+//    if(cd.endsWith(')'))
+//      cd = cd.before(')', -1);
+//  }
+//  cond.SetExpr(cd);
+//  return true;
 }
