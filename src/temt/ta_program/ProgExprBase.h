@@ -54,7 +54,8 @@ public:
   
   enum LookUpType {
     NOT_SET,
-    VARIOUS,         // no path or delimiter - could be one of several types
+    VARIOUS,        // no path or delimiter - could be one of several types
+    ASSIGN,         // could be ProgVar, method, function but not program
     OBJ_MEMB_METH,
     SCOPED,           // Class::
     ARRAY_INDEX,

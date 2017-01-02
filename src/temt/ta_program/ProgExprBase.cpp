@@ -530,13 +530,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     if(c == ' ') {
       if (i != txt.length()-1) {  // not the last char
         c_next = txt[i+1];
-        if (c_next == '(' || c_next == ',' || c_next == ' ' || c_next == ')') {
+        if (c_next == '(' || c_next == ',' || c_next == ' ' || c_next == ')' || c_next == '=') {
           continue;
         }
       }
       if (i > 0) {
         c_previous = txt[i-1];
-        if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')') {
+        if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')' || c_previous == '=') {
           continue;
         }
       }
@@ -578,10 +578,14 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       delim_pos.Add(i);
       continue;
     }
+    if (c == '=') {
+      expr_start = i+1;
+      delim_pos.Add(i);
+      continue;
+    }
     expr_start = i+1;           // anything else is a bust
     break;
   }
-  
   if (quote_count % 2 != 0) {  // we're inside quotes no lookup
     return NOT_SET;
   }
@@ -604,6 +608,10 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   }
   
   ProgExprBase::LookUpType lookup_type = NOT_SET;
+  
+//  for (int i=0; i<delim_pos.size; i++) {  // for debug
+//    taMisc::DebugInfo((String)i + ": " + txt[delim_pos[i]]);
+//  }
   
   if(delim_pos.size > 0) {
     if(delim_pos.size > 1 && txt[delim_pos[1]] == ')' && txt[delim_pos[0]] == '.') { // path sep = .
@@ -647,6 +655,17 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       if (delim_pos.size > 1 && txt[delim_pos[1]] == ']') {
         lookup_group_default = true;
       }
+    }
+    else if(txt[delim_pos[0]] == '=') { //
+      base_path = txt.at(expr_start, delim_pos[0]-expr_start);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start += shift;
+      prepend_txt = txt.through(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::ASSIGN;
+      delims_used = 1;
     }
     else if(delim_pos.size > 2 && txt[delim_pos[2]] == ')' && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
@@ -695,6 +714,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == ':' && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
+      
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
       int length = base_path.length();
       base_path = triml(base_path);
@@ -871,6 +891,40 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
       break;
     }
       
+    case ProgExprBase::ASSIGN: {  // multiple possibilities
+      taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
+      (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
+      varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
+      if(own_pel) {
+        LocalVars* pvs = own_pel->FindLocalVarList();
+        if(pvs) {
+          varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
+        }
+      }
+      varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
+      expr_lookup_cur_base = own_pel;
+      varlkup->type_list.Link(&TA_ProgVar);
+      varlkup->type_list.Link(&TA_DynEnumItem);
+      varlkup->type_list.Link(&TA_Function);
+      varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
+      bool okc = varlkup->OpenChooser();
+      if(okc && varlkup->token()) {
+        rval = prepend_txt + varlkup->token()->GetName();
+        String type_name = varlkup->token()->GetTypeName();
+        if (type_name == "Function") {
+          rval += "()";
+          new_pos = rval.length();
+        }
+        else {
+          new_pos = rval.length();
+          rval += append_txt;
+        }
+      }
+      delete varlkup;
+      expr_lookup_cur_base = NULL;
+      break;
+    }
+
     case ProgExprBase::OBJ_MEMB_METH: {                     // members/methods
       TypeDef* lookup_td = NULL;
       taList_impl* tal = NULL;
@@ -1218,6 +1272,15 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       break;
     }
     
+    case ProgExprBase::ASSIGN: {  // multiple possibilities
+      GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
+      GetTokensOfType(&TA_DynEnumItem, &completion_token_list);
+      GetTokensOfType(&TA_Function, &completion_token_list, own_prg, &TA_Program);
+      include_statics = true;
+      expr_lookup_cur_base = NULL;
+      break;
+    }
+
     case ProgExprBase::METHOD: {
       TypeDef* lookup_td = NULL;
       ProgVar* st_var = NULL;

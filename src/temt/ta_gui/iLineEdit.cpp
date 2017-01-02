@@ -301,6 +301,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 
           if (GetCompleter()->currentRow() > 0) {
             CompletionDone(key_event);
+            setCursorPosition(12);
           }
           else {
             inherited::keyPressEvent(key_event);
@@ -379,11 +380,9 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
           app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
           return true;                // we absorb this event
         case Qt::Key_Space:
-          if (!taMisc::code_completion.auto_complete || text().length() == 0) {
             completion_enabled = true;
             DoCompletion();
             return true;
-          }
       }
     }
     return false;
