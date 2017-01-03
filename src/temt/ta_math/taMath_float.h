@@ -300,8 +300,8 @@ public:
  // #CAT_Probability cumulative student's distribution df deg of free t test
   static float students_den(float t, float df);
   // #CAT_Probability density fctn of student's distribution df deg of free t test
-  static float Ftest_q(float F, float v1, float v2);
-  // #CAT_Probability F distribution probability F | (v1 < v2)
+  static float Ftest_q(float F, float df_num, float df_den);
+  // #CAT_Probability F distribution probability for given F ratio of mean square values and degrees of freedom for the numerator and denominator
   static float d_sub_a(float_Matrix* vec_signal, float_Matrix* vec_noise);
   // #CAT_Probability Computes d_sub_a, which reduces to d' in the equal variance case. See: http://psych.colorado.edu/~lharvey/P4165/P4165_2004_Fall/2004_Fall_pdf/P4165_SDT.pdf
 

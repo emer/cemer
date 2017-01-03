@@ -16,7 +16,7 @@
 #include "taDataAnal.h"
 #include <taProject>
 #include <DataTable>
-#include <DataCol>
+#include <float_Data>
 #include <float_Matrix>
 #include <double_Matrix>
 #include <taMath_double>
@@ -24,6 +24,8 @@
 #include <DataSortSpec>
 #include <DataSelectSpec>
 #include <DataSelectEl>
+#include <DataGroupSpec>
+#include <DataGroupEl>
 #include <taDataProc>
 #include <Relation>
 #include <int_Matrix>
@@ -49,8 +51,17 @@ bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& s
   return true;
 }
 
-DataCol* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
+DataCol* taDataAnal::GetDataCol(DataTable* src_data, const String& data_col_nm) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal: src_data is NULL or has no rows");
+    return NULL;
+  }
   DataCol* da = src_data->FindColName(data_col_nm, true); // err msg
+  return da;
+}
+
+DataCol* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
+  DataCol* da = GetDataCol(src_data, data_col_nm);
   if(!da)
     return NULL;
   if(!da->is_matrix) {
@@ -66,40 +77,40 @@ DataCol* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_co
   return da;
 }
 
-DataCol* taDataAnal::GetStringDataCol(DataTable* src_data, const String& name_col_nm) {
-  if(name_col_nm.empty()) return NULL;
-  DataCol* nmda = src_data->FindColName(name_col_nm, true); // err msg
-  if(!nmda)
+DataCol* taDataAnal::GetNonMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
+  DataCol* da = GetDataCol(src_data, data_col_nm);
+  if(!da)
     return NULL;
-  if(nmda->is_matrix) {
-    taMisc::Error("taDataAnal: column named:", name_col_nm,
+  if(da->is_matrix) {
+    taMisc::Error("taDataAnal: column named:", data_col_nm,
 		  "is a matrix where a scalar is required, in data table:", src_data->name);
     return NULL;
   }
-  if(nmda->valType() != VT_STRING) {
-    taMisc::Error("taDataAnal: column named:", name_col_nm,
+  return da;
+}
+
+DataCol* taDataAnal::GetStringDataCol(DataTable* src_data, const String& data_col_nm) {
+  DataCol* da = GetNonMatrixDataCol(src_data, data_col_nm);
+  if(!da)
+    return NULL;
+  if(da->valType() != VT_STRING) {
+    taMisc::Error("taDataAnal: column named:", data_col_nm,
 		  "is not of type String in data table:", src_data->name);
     return NULL;
   }
-  return nmda;
+  return da;
 }
 
-DataCol* taDataAnal::GetNumDataCol(DataTable* src_data, const String& name_col_nm) {
-  if(name_col_nm.empty()) return NULL;
-  DataCol* nmda = src_data->FindColName(name_col_nm, true); // err msg
-  if(!nmda)
+DataCol* taDataAnal::GetNumDataCol(DataTable* src_data, const String& data_col_nm) {
+  DataCol* da = GetNonMatrixDataCol(src_data, data_col_nm);
+  if(!da)
     return NULL;
-  if(nmda->is_matrix) {
-    taMisc::Error("taDataAnal: column named:", name_col_nm,
-		  "is a matrix where a scalar is required, in data table:", src_data->name);
-    return NULL;
-  }
-  if(!nmda->isNumeric()) {
-    taMisc::Error("taDataAnal: column named:", name_col_nm,
+  if(!da->isNumeric()) {
+    taMisc::Error("taDataAnal: column named:", data_col_nm,
 		  "is not a numeric type -- must be, in data table:", src_data->name);
     return NULL;
   }
-  return nmda;
+  return da;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +118,6 @@ DataCol* taDataAnal::GetNumDataCol(DataTable* src_data, const String& name_col_n
 
 String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_nm,
 				const String& y_data_col_nm, bool render_line) {
-  
   String rval = "err";
   DataCol* xda = GetNumDataCol(src_data, x_data_col_nm);
   if(!xda) return rval;
@@ -177,6 +187,126 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
     src_data->StructUpdate(false);
   }
   return rval;
+}
+
+float taDataAnal::AnovaOneWay(DataTable* result_data, DataTable* src_data,
+                              const String& cond_col_nm, const String& data_col_nm) {
+  float rval = 0.0f;
+  DataCol* cda = GetNonMatrixDataCol(src_data, cond_col_nm);
+  if(!cda) return rval;
+  DataCol* yda = GetNumDataCol(src_data, data_col_nm);
+  if(!yda) return rval;
+
+  GetDest(result_data, src_data, "AnovaOneWay", true);
+
+  DataGroupSpec gp_spec;
+  gp_spec.append_agg_name = true;
+  gp_spec.SetDataTable(src_data);
+  DataGroupEl* cond_gp = (DataGroupEl*)gp_spec.AddColumn(cond_col_nm, src_data);
+  cond_gp->agg.op = Aggregate::GROUP;
+  DataGroupEl* mean_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, src_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  DataGroupEl* ss_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, src_data);
+  ss_gp->agg.op = Aggregate::SS;
+  DataGroupEl* n_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, src_data);
+  n_gp->agg.op = Aggregate::N;
+
+  taDataProc::Group(result_data, src_data, &gp_spec);
+
+  int n_conds = result_data->rows;
+  int n_result_cols = 4;
+  
+  if(n_conds <= 1) {
+    taMisc::Error("ANOVA requires 2 or more conditions -- source data only has 1 or less");
+    return rval;
+  }
+
+  DataCol* conds_col = result_data->GetColData(0);
+  DataCol* means_col = result_data->GetColData(1);
+  DataCol* ss_col = result_data->GetColData(2);
+  DataCol* n_col = result_data->GetColData(3);
+  float grand_mean = 0.0f;
+  float between_ss = 0.0f;
+  float between_df = n_conds - 1;
+  float within_ss = 0.0f;
+  float within_df = src_data->rows - n_conds; // todo: check
+  if(means_col->valType() == taBase::VT_DOUBLE) {
+    double_Matrix* gp_means = (double_Matrix*)means_col->AR();
+    double_Matrix* gp_ss = (double_Matrix*)ss_col->AR();
+    grand_mean = (float)taMath_double::vec_mean(gp_means);
+    within_ss = (float)taMath_double::vec_sum(gp_ss);
+  }
+  else {
+    float_Matrix* gp_means = (float_Matrix*)means_col->AR();
+    float_Matrix* gp_ss = (float_Matrix*)ss_col->AR();
+    grand_mean = taMath_float::vec_mean(gp_means);
+    within_ss = taMath_float::vec_sum(gp_ss);
+  }
+
+  for(int i=0;i<n_conds;i++) {
+    float mean = means_col->GetValAsFloat(i);
+    float n = n_col->GetValAsFloat(i);
+    float md = (mean - grand_mean);
+    between_ss += n * md * md;
+  }
+
+  float between_ms = between_ss / between_df;
+  float within_ms = within_ss / within_df;
+  float f_ratio = between_ms / within_ms;
+  float prob = taMath_float::Ftest_q(f_ratio, between_df, within_df);
+
+  result_data->AddRows(3);
+  result_data->SetVal("Between_mean_MS_df", 0, n_conds);
+  result_data->SetVal(grand_mean, 1, n_conds);
+  result_data->SetVal(between_ms, 2, n_conds);
+  result_data->SetVal(between_df, 3, n_conds);
+  result_data->SetVal("Within_mean_MS_df", 0, n_conds+1);
+  result_data->SetVal(grand_mean, 1, n_conds+1);
+  result_data->SetVal(within_ms, 2, n_conds+1);
+  result_data->SetVal(within_df, 3, n_conds+1);
+  result_data->SetVal("Ftest_p_F", 0, n_conds+2);
+  result_data->SetVal(prob, 1, n_conds+2);
+  result_data->SetVal(f_ratio, 2, n_conds+2);
+
+  // now do all the pairwise t-tests
+  for(int i=1;i<n_conds;i++) {
+    String cn = conds_col->GetVal(i).toString();
+    float_Data* dt = result_data->NewColFloat(cn + "_t");
+    dt->desc = "Welch t-test statistic for pairwise comparison between these conditions";
+    float_Data* dp = result_data->NewColFloat(cn + "_p");
+    dp->desc = "probability for Welch t-test of pairwise comparison between these conditions";
+  }
+  for(int i=0;i<n_conds;i++) {
+    float mn1 = means_col->GetValAsFloat(i);
+    float ss1 = ss_col->GetValAsFloat(i);
+    float n1 = n_col->GetValAsFloat(i);
+    float var1 = ss1 / (n1 -1.0f);
+    float varon1 = var1 / n1;
+    for(int j=i+1;j<n_conds;j++) {
+      float mn2 = means_col->GetValAsFloat(j);
+      float ss2 = ss_col->GetValAsFloat(j);
+      float n2 = n_col->GetValAsFloat(j);
+      float var2 = ss2 / (n2 -1.0f);
+      float varon2 = var2 / n2;
+
+      // using Welch's t-test for unequal var, n etc -- more robust
+      float md = fabsf(mn1 - mn2);     // mean diff
+      float sum_varon = varon1 + varon2;
+      float sd_est = sqrtf(sum_varon);
+      float t_stat = md / sd_est;
+      
+      float welch_df = sum_varon * sum_varon / 
+        ( ((varon1*varon1) / (n1 - 1.0f)) + ((varon2 * varon2) / (n2 - 1.0f)) );
+
+      float welch_df_int = taMath_float::floor(welch_df);
+      float welch_p = 1.0f - taMath_float::students_cum(t_stat, welch_df_int);
+
+      result_data->SetVal(t_stat, n_result_cols + 2 * (j-1), i);
+      result_data->SetVal(welch_p, n_result_cols + 2 * (j-1) + 1, i);
+    }
+  }
+  
+  return prob;
 }
 
 bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data,

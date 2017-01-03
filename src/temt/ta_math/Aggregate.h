@@ -45,7 +45,7 @@ public:
     PROD,                       // Product
     MEAN,                       // Mean of values
     VAR,                        // Variance
-    SS,                 // Sum of squares around the mean
+    SS,                         // Sum of squares around the mean
     STDEV,                      // Standard deviation
     SEM,                        // Standard error of the mean (always uses the unbiased estimate of the variance)
     N,                          // the number of data items in the vector

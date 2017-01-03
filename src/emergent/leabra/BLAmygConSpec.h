@@ -32,6 +32,8 @@ INHERITED(SpecMemberBase)
 public:
   float         dalr_gain;      // gain multiplier on abs(da) learning rate multiplier
   float         dalr_base;      // constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
+  float         wt_decay;       // decay rate (applied each weight change, typically AlphaTrial) as proportion of the weight value above the weight floor
+  float         wt_floor;       // #DEF_0.5 minimum weight value below which no decay occurs
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -54,14 +56,15 @@ INHERITED(LeabraConSpec)
 public:
   BLAmygLearnSpec   bla_learn; // central amygdala, lateral learning specs
 
-  inline void C_Compute_dWt_CEl_Delta
+  inline void C_Compute_dWt_BLA_Delta
     (float& dwt, const float su_act, const float ru_act, const float ru_act_prv,
-     const float da_p, const float lrate_eff) {
+     const float da_p, const float lrate_eff, const float wt) {
     float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
     float da_lrate = bla_learn.dalr_base + bla_learn.dalr_gain * fabsf(da_p);
-    dwt += da_lrate * delta;
+    float wt_decay_base = fmaxf(0.0f, (wt - bla_learn.wt_floor));
+    dwt += da_lrate * delta - wt_decay_base * bla_learn.wt_decay;
   }
-  // #IGNORE abs(da) modulated delta learning
+  // #IGNORE abs(da) modulated delta learning with weight decay
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
@@ -72,6 +75,7 @@ public:
     
     float su_act = su->act_q0;  // previous trial
     float* dwts = cg->OwnCnVar(DWT);
+    float* wts = cg->OwnCnVar(WT);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
@@ -81,7 +85,8 @@ public:
     
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      C_Compute_dWt_CEl_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate);
+      C_Compute_dWt_BLA_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate,
+                              wts[i]);
     }
   }
 

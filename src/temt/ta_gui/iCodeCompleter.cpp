@@ -69,6 +69,9 @@ void iCodeCompleter::ClearList() {
 
 
 bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return inherited::eventFilter(obj, event);
+  }
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {
     QCoreApplication* app = QCoreApplication::instance();

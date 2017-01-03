@@ -37,8 +37,12 @@ public:
 
   static bool	GetDest(DataTable*& dest, const DataTable* src, const String& suffix, bool reset = true);
   // #IGNORE get a dest analysis datatable -- if NULL, make one in proj.data.AnalysisData with name based on src and suffix
+  static DataCol* GetDataCol(DataTable* src_data, const String& data_col_nm);
+  // #IGNORE get named column from data with error checks -- NULL if not found
   static DataCol* GetMatrixDataCol(DataTable* src_data, const String& data_col_nm);
   // #IGNORE get named column from data, with checks that it is a matrix of type float or double
+  static DataCol* GetNonMatrixDataCol(DataTable* src_data, const String& name_col_nm);
+  // #IGNORE get named column from data, with checks that it is a non-matrix 
   static DataCol* GetStringDataCol(DataTable* src_data, const String& name_col_nm);
   // #IGNORE get named column from data, with checks that it is a non-matrix of type String
   static DataCol* GetNumDataCol(DataTable* src_data, const String& name_col_nm);
@@ -50,6 +54,10 @@ public:
   static String	RegressLinear(DataTable* src_data, const String& x_data_col_nm,
 			      const String& y_data_col_nm, bool render_line = true);
   // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute linear regression (least squares fit of function y = mx + b) to given data -- if render_line, a column called "regress_line" is created and the function is generated into it as data.  Returns a string descriptor of the regression equation and r value
+
+  static float  AnovaOneWay(DataTable* result_data, DataTable* src_data,
+                            const String& cond_col_nm, const String& data_col_nm);
+  // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute a one-way analysis of variance (ANOVA) on source data for conditions in the cond_col_nm column (data is grouped by each different value appearing in that column), on data in data_col_nm -- anova test determines extent to which the means across conditions are unlikely to be drawn from the same underlying population (i.e., they differ) -- results are in the result_data, which contains the basic mean, SS, N stats for each condition, and 3 rows at the end containing summary stats for Between Group, Within Group, and overall Ftest -- returns the overall probability statistic that the 
 
   static bool	MultiClassClassificationViaLinearRegression(DataTable* src_data,
 							    DataTable* dest_data = NULL,
