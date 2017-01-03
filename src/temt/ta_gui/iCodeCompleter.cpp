@@ -72,7 +72,7 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {
     QCoreApplication* app = QCoreApplication::instance();
-    if (event->type() == QEvent::KeyPress && currentRow() == 0) { // select first popup item
+    if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() == -1) { // -1 no item selected
       app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
     }
     app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
