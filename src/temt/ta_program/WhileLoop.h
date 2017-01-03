@@ -29,7 +29,7 @@ class ProgEl; //
 taTypeDef_Of(WhileLoop);
 
 class TA_API WhileLoop: public Loop { 
-  // Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
+  // #PROGEL_COLLECTION #ADD_PARENS Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
 INHERITED(Loop)
 public:
   ProgExpr		test; // #BROWSER_EDIT_LOOKUP a test expression for whether to continue looping (e.g., 'i < max')

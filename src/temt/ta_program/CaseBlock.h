@@ -29,7 +29,7 @@ class ProgEl; //
 taTypeDef_Of(CaseBlock);
 
 class TA_API CaseBlock: public CodeBlock { 
-  // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
+  // ##PROGEL_COLLECTION one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
   INHERITED(CodeBlock)
 public:
   ProgExpr	case_val; // #BROWSER_EDIT_LOOKUP value of the switch variable -- if the switch condition value is equal to this, then this code is run (must use a concrete, literal expression here -- no variables or functions)

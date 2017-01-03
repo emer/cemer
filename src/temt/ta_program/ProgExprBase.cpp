@@ -1730,9 +1730,22 @@ void ProgExprBase::GetProgEls(String_Array* progels) {
     ProgEl_List prog_el_list;
     GenProgElList(prog_el_list, &TA_ProgEl);
     for (int i=0; i<prog_el_list.size; i++) {
-      String mod_str = prog_el_list.SafeEl(i)->GetToolbarName();
-      mod_str = mod_str.repl("\n", " ");
-      completion_progels_list.Add(mod_str);
+      ProgEl* pe = prog_el_list.SafeEl(i);
+      if (pe->GetTypeDef()->HasOption("PROGEL_COLLECTION")) {
+        String mod_str = pe->GetToolbarName();
+        mod_str = mod_str.repl("\n", " ");
+        if (pe->GetTypeDef()->HasOption("ADD_PARENS")) {
+          mod_str += "()";
+        }
+        // special case - if there were more than 2 I would use directive
+        if (pe->GetTypeDef()->name == "PrintVar") {
+          mod_str = "printvar";
+        }
+        else if (pe->GetTypeDef()->name == "PrintExpr") {
+          mod_str = "printexpr";
+        }
+        completion_progels_list.Add(mod_str);
+      }
     }
   }
 }

@@ -30,7 +30,7 @@ class ProgEl; //
 taTypeDef_Of(ForeachLoop);
 
 class TA_API ForeachLoop: public Loop { 
-  // iterate over each item in a container object (List, Group, Matrix), performing loop_code on each element, which is encoded in the el_var -- in expression can be any kind of selection over items 
+  // #PROGEL_COLLECTION #ADD_PARENS iterate over each item in a container object (List, Group, Matrix), performing loop_code on each element, which is encoded in the el_var -- in expression can be any kind of selection over items
 INHERITED(Loop)
 public:
   ProgVarRef	    	el_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable that will represent each element in the list of items
@@ -46,9 +46,9 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(ForeachLoop);
 protected:
-  void	UpdateAfterEdit_impl() override;
+  void	  UpdateAfterEdit_impl() override;
   bool		ParentForeachLoopVarClashes(); // true if a parent For loop is also using the loop_var
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void	  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
 private:

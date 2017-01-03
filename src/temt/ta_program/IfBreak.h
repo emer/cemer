@@ -28,7 +28,7 @@
 taTypeDef_Of(IfBreak);
 
 class TA_API IfBreak: public ProgEl { 
-  // if condition is true, break out of current loop (can leave condition empty to just insert an unconditional break
+  // ##PROGEL_COLLECTION if condition is true, break out of current loop (can leave condition empty to just insert an unconditional break
 INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for breaking loop

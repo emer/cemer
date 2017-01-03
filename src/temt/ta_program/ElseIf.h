@@ -28,7 +28,7 @@ class ProgVar; //
 taTypeDef_Of(ElseIf);
 
 class TA_API ElseIf: public CondBase {
-  //  a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
+  //  #ADD_PARENS a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
 INHERITED(CondBase)
 public:
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;

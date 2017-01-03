@@ -27,7 +27,7 @@ class ProgVar; //
 taTypeDef_Of(If);
 
 class TA_API If: public CondBase {
-  // #AKA_IfElse  a conditional test element: if(condition) then run true_code -- can be followed by an Else or ElseIf to run if condition is false
+  // #AKA_IfElse  #ADD_PARENS a conditional test element: if(condition) then run true_code -- can be followed by an Else or ElseIf to run if condition is false
 INHERITED(CondBase)
 public:
   ProgEl_List	    false_code; // #HIDDEN #NO_SAVE #OBSOLETE items to execute if condition false (now moved to a separate Else code)

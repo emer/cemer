@@ -29,7 +29,7 @@ class ProgEl; //
 taTypeDef_Of(DoLoop);
 
 class TA_API DoLoop: public Loop { 
-  // Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
+  // #PROGEL_COLLECTION #ADD_PARENS Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
 INHERITED(Loop)
 public:
   ProgExpr		test; // #BROWSER_EDIT_LOOKUP a test expression for whether to continue looping (e.g., 'i < max')
