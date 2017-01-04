@@ -14,11 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "ProgExprBase.h"
+
 #include <ProgEl>
+#include <ProgVar>
+#include <LocalVars>
 #include <Program>
 #include <Program_Group>
 #include <Function>
-#include <ProgVar>
+#include <taProject>
+#include <MemberProgEl>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
@@ -27,16 +31,13 @@
 #include <css_ta.h>
 #include <css_c_ptr_types.h>
 #include <taiWidgetTokenChooserMultiType>
-#include <LocalVars>
 #include <taiWidgetGroupElChooser>
 #include <taiWidgetListElChooser>
 #include <taiWidgetMemberDefChooser>
 #include <taiWidgetMemberMethodDefChooser>
 #include <taiWidgetEnumStaticChooser>
 #include <taiWidgetTokenChooser>
-#include <MemberProgEl>
 #include <SigLinkSignal>
-#include <taProject>
 #include <taBase_List>
 #include <EnumDef>
 
@@ -56,8 +57,8 @@ taBase_List                 ProgExprBase::completion_progvar_list;
 taBase_List                 ProgExprBase::completion_dynenum_list;
 taBase_List                 ProgExprBase::completion_function_list;
 taBase_List                 ProgExprBase::completion_program_list;
-Member_List                 ProgExprBase::completion_member_list;
-Method_List                 ProgExprBase::completion_method_list;
+MemberSpace                 ProgExprBase::completion_member_list;
+MethodSpace                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
 String                      ProgExprBase::completion_pre_text;
 String                      ProgExprBase::completion_path_pre_text;
@@ -1507,6 +1508,11 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     }
   }
 
+  for (int i=0; i<completion_progvar_list.size; i++) {
+    taBase* base = completion_progvar_list.FastEl(i);
+    completion_choice_list.Add(base->GetName());
+  }
+  
   for (int i=0; i<completion_program_list.size; i++) {
     taBase* base = completion_program_list.FastEl(i);
     completion_choice_list.Add(base->GetName() + "()");
@@ -1517,11 +1523,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     completion_choice_list.Add(base->GetName() + "()");
   }
 
-  for (int i=0; i<completion_progvar_list.size; i++) {
-    taBase* base = completion_progvar_list.FastEl(i);
-      completion_choice_list.Add(base->GetName());
-  }
-
+  completion_member_list.Sort();
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
     completion_choice_list.Add(member_def->name);
@@ -1688,49 +1690,6 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
 //      if (!ShowToken(btmp)) continue;
     }
     
-//    if (td == &TA_ProgVar) {
-//      switch (var_type) {
-//        case ProgVar::T_Bool: {
-//          ProgVar* pv = (ProgVar*)btmp;
-//          if (pv->var_type != ProgVar::T_Bool || pv->var_type != ProgVar::T_Int) {
-//            continue;
-//          }
-//          break;
-//        }
-//    
-//        case ProgVar::T_Int: {
-//          ProgVar* pv = (ProgVar*)btmp;
-//          if (pv->var_type != ProgVar::T_Bool
-//              || pv->var_type != ProgVar::T_Int
-//              || pv->var_type != ProgVar::T_DynEnum
-//              || pv->var_type != ProgVar::T_HardEnum) {
-//            continue;
-//          }
-//          break;
-//        }
-//
-//        case ProgVar::T_Real: {
-//          ProgVar* pv = (ProgVar*)btmp;
-//          if (pv->var_type != ProgVar::T_Real) {
-//            continue;
-//          }
-//          break;
-//        }
-//
-//        case ProgVar::T_String: {
-//          ProgVar* pv = (ProgVar*)btmp;
-//          if (pv->var_type != ProgVar::T_Bool || pv->var_type != ProgVar::T_Int) {
-//            continue;
-//          }
-//          break;
-//        }
-//
-//        default:
-//          break;
-//      }
-//    }
-    
-    
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
     if (owner) {
@@ -1743,7 +1702,7 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
   tokens->Sort();
 }
 
-void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members, bool just_static) {
+void ProgExprBase::GetMembersForType(TypeDef *td, MemberSpace* members, bool just_static) {
   if (td == NULL || members == NULL) return;
   
   MemberSpace* mbs = &td->members;
@@ -1753,16 +1712,11 @@ void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members, bool jus
       continue;
     }
     members->Link(mbr);
-    taMisc::DebugInfo(mbr->name);
   }
-  taMisc::DebugInfo("now sort");
-  members->Sort_();
-  for (int i=0; i<members->size; i++) {
-    taMisc::DebugInfo(members->SafeEl(i)->name);
-  }
+  members->Sort();
 }
 
-void ProgExprBase::GetMethodsForType(TypeDef *td, Method_List* methods, bool just_static) {
+void ProgExprBase::GetMethodsForType(TypeDef *td, MethodSpace* methods, bool just_static) {
   if (td == NULL || methods == NULL) return;
   
   MethodSpace* mts = &td->methods;

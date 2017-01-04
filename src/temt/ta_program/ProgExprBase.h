@@ -20,10 +20,12 @@
 #include <taOBase>
 
 // member includes:
+#include <taBase_List>
 #include <ProgVarRef_List>
 #include <String_Array>
-#include <taBase_List>
-#include <String_Array>
+#include <EnumSpace>
+#include <MemberSpace>
+#include <MethodSpace>
 
 // declare all other types mentioned but not required to include:
 class cssElPtr; //
@@ -83,8 +85,8 @@ public:
   static taBase_List            completion_dynenum_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_function_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_program_list;  // #READ_ONLY #HIDDEN #NO_SAVE
-  static Member_List            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
-  static Method_List            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
+  static MemberSpace            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
+  static MethodSpace            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
   static String_Array           completion_progels_list;// #READ_ONLY #HIDDEN #NO_SAVE
   static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once in Init()
@@ -176,8 +178,8 @@ public:
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
-  static void           GetMembersForType(TypeDef* td, Member_List* members, bool just_static = false);
-  static void           GetMethodsForType(TypeDef* td, Method_List* methods, bool just_static = false);
+  static void           GetMembersForType(TypeDef* td, MemberSpace* members, bool just_static = false);
+  static void           GetMethodsForType(TypeDef* td, MethodSpace* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static void           GetProgEls(String_Array* progels);
   static void           GetStatics(String_Array* statics);
