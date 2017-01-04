@@ -57,7 +57,11 @@ public:
 
   static float  AnovaOneWay(DataTable* result_data, DataTable* src_data,
                             const String& cond_col_nm, const String& data_col_nm);
-  // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute a one-way analysis of variance (ANOVA) on source data for conditions in the cond_col_nm column (data is grouped by each different value appearing in that column), on data in data_col_nm -- anova test determines extent to which the means across conditions are unlikely to be drawn from the same underlying population (i.e., they differ) -- results are in the result_data, which contains the basic mean, SS, N stats for each condition, and 3 rows at the end containing summary stats for Between Group, Within Group, and overall Ftest -- returns the overall probability statistic that the 
+  // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute a one-way analysis of variance (ANOVA) on source data for conditions in the cond_col_nm column (data is grouped by each different value appearing in that column), on data in data_col_nm -- anova test determines extent to which the means across conditions are unlikely to be drawn from the same underlying population (i.e., they differ) -- results are in the result_data, which contains the basic mean, SS, N stats for each condition, and 3 rows at the end containing summary stats for Between Group, Within Group, and overall F-statistic probability -- returns the overall probability statistic that the between-group differences are due purely to chance
+
+  static bool   AnovaNWay(DataTable* result_data, DataTable* src_data,
+                          const String& cond_col_nms, const String& data_col_nm);
+  // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute an n-way analysis of variance (ANOVA) on source data for conditions in the cond_col_nms columns (space-separated list of columns containing factor levels (regressors) (data is grouped by each different value appearing in that column), on data in data_col_nm -- anova test determines extent to which the means across conditions are unlikely to be drawn from the same underlying population (i.e., they differ) -- results are in the result_data, which contains the summary stats for each of the main effects and all the two-way and three-way interaction terms (no higher than 3-way interactions)
 
   static bool	MultiClassClassificationViaLinearRegression(DataTable* src_data,
 							    DataTable* dest_data = NULL,

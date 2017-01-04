@@ -213,11 +213,11 @@ float taDataAnal::AnovaOneWay(DataTable* result_data, DataTable* src_data,
 
   taDataProc::Group(result_data, src_data, &gp_spec);
 
-  int n_conds = result_data->rows;
+  int n_gps = result_data->rows;
   int n_result_cols = 4;
   
-  if(n_conds <= 1) {
-    taMisc::Error("ANOVA requires 2 or more conditions -- source data only has 1 or less");
+  if(n_gps <= 1) {
+    taMisc::Error("ANOVA requires 2 or more groups / levels within condition variable -- source data only has 1 or less");
     return rval;
   }
 
@@ -227,9 +227,9 @@ float taDataAnal::AnovaOneWay(DataTable* result_data, DataTable* src_data,
   DataCol* n_col = result_data->GetColData(3);
   float grand_mean = 0.0f;
   float between_ss = 0.0f;
-  float between_df = n_conds - 1;
+  float between_df = n_gps - 1;
   float within_ss = 0.0f;
-  float within_df = src_data->rows - n_conds; // todo: check
+  float within_df = src_data->rows - n_gps; // todo: check
   if(means_col->valType() == taBase::VT_DOUBLE) {
     double_Matrix* gp_means = (double_Matrix*)means_col->AR();
     double_Matrix* gp_ss = (double_Matrix*)ss_col->AR();
@@ -243,7 +243,7 @@ float taDataAnal::AnovaOneWay(DataTable* result_data, DataTable* src_data,
     within_ss = taMath_float::vec_sum(gp_ss);
   }
 
-  for(int i=0;i<n_conds;i++) {
+  for(int i=0;i<n_gps;i++) {
     float mean = means_col->GetValAsFloat(i);
     float n = n_col->GetValAsFloat(i);
     float md = (mean - grand_mean);
@@ -256,33 +256,33 @@ float taDataAnal::AnovaOneWay(DataTable* result_data, DataTable* src_data,
   float prob = taMath_float::Ftest_q(f_ratio, between_df, within_df);
 
   result_data->AddRows(3);
-  result_data->SetVal("Between_mean_MS_df", 0, n_conds);
-  result_data->SetVal(grand_mean, 1, n_conds);
-  result_data->SetVal(between_ms, 2, n_conds);
-  result_data->SetVal(between_df, 3, n_conds);
-  result_data->SetVal("Within_mean_MS_df", 0, n_conds+1);
-  result_data->SetVal(grand_mean, 1, n_conds+1);
-  result_data->SetVal(within_ms, 2, n_conds+1);
-  result_data->SetVal(within_df, 3, n_conds+1);
-  result_data->SetVal("Ftest_p_F", 0, n_conds+2);
-  result_data->SetVal(prob, 1, n_conds+2);
-  result_data->SetVal(f_ratio, 2, n_conds+2);
+  result_data->SetVal("Between_mean_MS_df", 0, n_gps);
+  result_data->SetVal(grand_mean, 1, n_gps);
+  result_data->SetVal(between_ms, 2, n_gps);
+  result_data->SetVal(between_df, 3, n_gps);
+  result_data->SetVal("Within_mean_MS_df", 0, n_gps+1);
+  result_data->SetVal(grand_mean, 1, n_gps+1);
+  result_data->SetVal(within_ms, 2, n_gps+1);
+  result_data->SetVal(within_df, 3, n_gps+1);
+  result_data->SetVal("Ftest_p_F", 0, n_gps+2);
+  result_data->SetVal(prob, 1, n_gps+2);
+  result_data->SetVal(f_ratio, 2, n_gps+2);
 
   // now do all the pairwise t-tests
-  for(int i=1;i<n_conds;i++) {
+  for(int i=1;i<n_gps;i++) {
     String cn = conds_col->GetVal(i).toString();
     float_Data* dt = result_data->NewColFloat(cn + "_t");
     dt->desc = "Welch t-test statistic for pairwise comparison between these conditions";
     float_Data* dp = result_data->NewColFloat(cn + "_p");
     dp->desc = "probability for Welch t-test of pairwise comparison between these conditions";
   }
-  for(int i=0;i<n_conds;i++) {
+  for(int i=0;i<n_gps;i++) {
     float mn1 = means_col->GetValAsFloat(i);
     float ss1 = ss_col->GetValAsFloat(i);
     float n1 = n_col->GetValAsFloat(i);
     float var1 = ss1 / (n1 -1.0f);
     float varon1 = var1 / n1;
-    for(int j=i+1;j<n_conds;j++) {
+    for(int j=i+1;j<n_gps;j++) {
       float mn2 = means_col->GetValAsFloat(j);
       float ss2 = ss_col->GetValAsFloat(j);
       float n2 = n_col->GetValAsFloat(j);
@@ -307,6 +307,212 @@ float taDataAnal::AnovaOneWay(DataTable* result_data, DataTable* src_data,
   }
   
   return prob;
+}
+
+bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
+                           const String& cond_col_nms, const String& data_col_nm) {
+  bool rval = false;
+  String_Array cond_cols;
+  cond_cols.Split(cond_col_nms, " ");
+  if(cond_cols.size == 0) {
+    taMisc::Error("AnovaNWay: no condition column names specified:", cond_col_nms);
+    return rval;
+  }
+  if(cond_cols.size == 1) {
+    return AnovaOneWay(result_data, src_data, cond_col_nms, data_col_nm);
+  }
+
+  // this is just for verifying src_data really
+  DataCol* cda = GetNonMatrixDataCol(src_data, cond_cols[0]);
+  if(!cda) return rval;
+  DataCol* yda = GetNumDataCol(src_data, data_col_nm);
+  if(!yda) return rval;
+
+  GetDest(result_data, src_data, "AnovaNWay", true);
+
+  int cidx;
+  DataCol* r_src_col = result_data->FindMakeColName("source", cidx, VT_STRING);
+  r_src_col->desc = "Source of variability";
+
+  DataCol* r_df_col = result_data->FindMakeColName("df", cidx, VT_FLOAT);
+  r_df_col->desc = "Degrees of freedom for source -- n-1";
+  DataCol* r_ss_col = result_data->FindMakeColName("SS", cidx, VT_FLOAT);
+  r_ss_col->desc = "Sum of squares due to source ";
+  DataCol* r_ms_col = result_data->FindMakeColName("MS", cidx, VT_FLOAT);
+  r_ms_col->desc = "Mean squares due to source: SS / df";
+
+  DataCol* r_f_col = result_data->FindMakeColName("F_ratio", cidx, VT_FLOAT);
+  r_f_col->desc = "F-statistic for source: MS_b / MS_w = ratio of MS for source (between factor) over overall MS within groups (error)";
+  DataCol* r_p_col = result_data->FindMakeColName("p", cidx, VT_FLOAT);
+  r_p_col->desc = "probability associated with given F statistic for this source -- how likely that differences are due strictly to chance";
+  
+  int n_conds = cond_cols.size;
+
+  DataTable all_conds;
+
+  DataGroupSpec all_gp_spec;
+  all_gp_spec.append_agg_name = true;
+  all_gp_spec.SetDataTable(src_data);
+  for(int ci=0; ci < n_conds; ci++) {
+    String cond = cond_cols[ci];
+    DataGroupEl* cond_gp = (DataGroupEl*)all_gp_spec.AddColumn(cond_cols[ci], src_data);
+    cond_gp->agg.op = Aggregate::GROUP;
+  }
+  DataGroupEl* mean_gp = (DataGroupEl*)all_gp_spec.AddColumn(data_col_nm, src_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  DataGroupEl* ss_gp = (DataGroupEl*)all_gp_spec.AddColumn(data_col_nm, src_data);
+  ss_gp->agg.op = Aggregate::SS;
+  DataGroupEl* n_gp = (DataGroupEl*)all_gp_spec.AddColumn(data_col_nm, src_data);
+  n_gp->agg.op = Aggregate::N;
+
+  taDataProc::Group(&all_conds, src_data, &all_gp_spec);
+
+  float all_gps = all_conds.rows;
+  float n_per_cell = (float)src_data->rows / all_gps;
+  float within_df = all_gps * (n_per_cell - 1.0f);
+  
+  float grand_mean = 0.0f;
+  float within_ss = 0.0f;
+  DataCol* all_means_col = all_conds.GetColData(n_conds);
+  DataCol* all_ss_col = all_conds.GetColData(n_conds+1);
+
+  if(all_means_col->valType() == taBase::VT_DOUBLE) {
+    double_Matrix* gp_means = (double_Matrix*)all_means_col->AR();
+    double_Matrix* gp_ss = (double_Matrix*)all_ss_col->AR();
+    grand_mean = (float)taMath_double::vec_mean(gp_means);
+    within_ss = (float)taMath_double::vec_sum(gp_ss);
+  }
+  else {
+    float_Matrix* gp_means = (float_Matrix*)all_means_col->AR();
+    float_Matrix* gp_ss = (float_Matrix*)all_ss_col->AR();
+    grand_mean = taMath_float::vec_mean(gp_means);
+    within_ss = taMath_float::vec_sum(gp_ss);
+  }
+
+  float within_ms = within_ss / within_df;
+
+  DataTable_Group cond_tabs;
+  cond_tabs.SetSize(n_conds);
+
+  // main effects
+  DataGroupSpec gp_spec;
+  gp_spec.append_agg_name = true;
+  gp_spec.SetDataTable(src_data);
+  DataGroupEl* cond_gp = (DataGroupEl*)gp_spec.AddColumn(cond_cols[0], src_data);
+  cond_gp->agg.op = Aggregate::GROUP;
+  mean_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, src_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  n_gp = (DataGroupEl*)gp_spec.AddColumn(data_col_nm, src_data);
+  n_gp->agg.op = Aggregate::N;
+
+  for(int ci=0; ci < n_conds; ci++) {
+    String cond = cond_cols[ci];
+    DataTable* res_tab = cond_tabs[ci];
+    DataGroupEl* cond_gp = (DataGroupEl*)gp_spec.ops[0];
+    cond_gp->SetColName(cond);
+    
+    taDataProc::Group(res_tab, src_data, &gp_spec);
+    int n_gps = res_tab->rows;
+    if(n_gps <= 1) {
+      taMisc::Error("ANOVA requires 2 or more groups / levels per condition -- source data only has 1 or less for condition:", cond);
+      return rval;
+    }
+
+    DataCol* means_col = res_tab->GetColData(1);
+    DataCol* n_col = res_tab->GetColData(2);
+    float between_ss = 0.0f;
+    float between_df = n_gps - 1;
+
+    for(int i=0;i<n_gps;i++) {
+      float mean = means_col->GetValAsFloat(i);
+      float n = n_col->GetValAsFloat(i);
+      float md = (mean - grand_mean);
+      between_ss += n * md * md;
+    }
+
+    float between_ms = between_ss / between_df;
+
+    float f_ratio = between_ms / within_ms;
+    float prob = taMath_float::Ftest_q(f_ratio, between_df, within_df);
+
+    result_data->AddRows(1);
+    r_src_col->SetVal(cond, -1);
+    r_df_col->SetVal(between_df, -1);
+    r_ss_col->SetVal(between_ss, -1);
+    r_ms_col->SetVal(between_ms, -1);
+
+    r_f_col->SetVal(f_ratio, -1);
+    r_p_col->SetVal(prob, -1);
+  }
+
+  // two-way interactions
+  DataGroupSpec gp_spec_2w;
+  gp_spec_2w.append_agg_name = true;
+  gp_spec_2w.SetDataTable(src_data);
+  cond_gp = (DataGroupEl*)gp_spec_2w.AddColumn(cond_cols[0], src_data);
+  cond_gp->agg.op = Aggregate::GROUP;
+  cond_gp = (DataGroupEl*)gp_spec_2w.AddColumn(cond_cols[1], src_data);
+  cond_gp->agg.op = Aggregate::GROUP;
+  mean_gp = (DataGroupEl*)gp_spec_2w.AddColumn(data_col_nm, src_data);
+  mean_gp->agg.op = Aggregate::MEAN;
+  n_gp = (DataGroupEl*)gp_spec_2w.AddColumn(data_col_nm, src_data);
+  n_gp->agg.op = Aggregate::N;
+
+  for(int c1=0; c1 < n_conds; c1++) {
+    String cond1 = cond_cols[c1];
+    int n1 = cond_tabs[c1]->rows;
+    cond_gp = (DataGroupEl*)gp_spec_2w.ops[0];
+    cond_gp->SetColName(cond1);
+    for(int c2=c1+1; c2 < n_conds; c2++) {
+      String cond2 = cond_cols[c2];
+      int n2 = cond_tabs[c2]->rows;
+      cond_gp = (DataGroupEl*)gp_spec_2w.ops[1];
+      cond_gp->SetColName(cond2);
+
+      DataTable* res_tab = (DataTable*)cond_tabs.NewEl(1);
+      taDataProc::Group(res_tab, src_data, &gp_spec_2w);
+
+      DataCol* means_col = res_tab->GetColData(2);
+      DataCol* n_col = res_tab->GetColData(3);
+      float inter_ss = 0.0f;
+      float inter_df = (n1-1) * (n2-1);
+
+      int cell = 0;
+      for(int j=0; j<n1; j++) { // j = level of factor1
+        float mean1 = cond_tabs[c1]->GetValAsFloat(1, j);
+        for(int i=0; i<n2; i++, cell++) { // i = level of factor2
+          float mean2 = cond_tabs[c2]->GetValAsFloat(1, i);
+          float mean = means_col->GetValAsFloat(cell);
+          float n = n_col->GetValAsFloat(cell);
+          
+          float md = (mean - mean1 - mean2 + grand_mean);
+          inter_ss += n * md * md;
+        }
+      }
+
+      float inter_ms = inter_ss / inter_df;
+
+      float f_ratio = inter_ms / within_ms;
+      float prob = taMath_float::Ftest_q(f_ratio, inter_df, within_df);
+
+      result_data->AddRows(1);
+      r_src_col->SetVal(cond1 + "*" + cond2, -1);
+      r_df_col->SetVal(inter_df, -1);
+      r_ss_col->SetVal(inter_ss, -1);
+      r_ms_col->SetVal(inter_ms, -1);
+
+      r_f_col->SetVal(f_ratio, -1);
+      r_p_col->SetVal(prob, -1);
+    }
+  }
+  
+  result_data->AddRows(1);
+  r_src_col->SetVal("within_error", -1);
+  r_df_col->SetVal(within_df, -1);
+  r_ss_col->SetVal(within_ss, -1);
+  r_ms_col->SetVal(within_ms, -1);
+
+  return true;
 }
 
 bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data,

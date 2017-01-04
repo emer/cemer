@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.4.0 rev10389
+// ta_Dump File v3.0 -- code v8.0.4.0 rev10391
 LeabraProject .projects["anova"] { 
  Doc_Group @.docs = [0] {
  };
@@ -260,7 +260,7 @@ LeabraProject .projects["anova"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   ProgObjList @.objs = [2] {
+   ProgObjList @.objs = [7] {
     DataTable @["OneWayData"] { 
      DataTableCols @.data = [2] {
       String_Data @["cond"] { };
@@ -291,6 +291,74 @@ LeabraProject .projects["anova"] {
      DataTableCell_List @.control_panel_cells = [0] {
      };
     };
+    DataTable @["OneWayPlot"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["cond_group"] { };
+      float_Data @["data_mean"] { };
+      float_Data @["data_sem"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["TwoWayData"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["seed"] { };
+      String_Data @["fert"] { };
+      float_Data @["data"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["TwoWayPlot_Seed"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["seed_group"] { };
+      float_Data @["data_mean"] { };
+      float_Data @["data_sem"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["TwoWayPlot_Fert"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["fert_group"] { };
+      float_Data @["data_mean"] { };
+      float_Data @["data_sem"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["TwoWayResults"] { 
+     DataTableCols @.data = [6] {
+      String_Data @["source"] { };
+      float_Data @["df"] { };
+      float_Data @["SS"] { };
+      float_Data @["MS"] { };
+      float_Data @["F_ratio"] { };
+      float_Data @["p"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
    };
 
    ProgType_List @.types = [0] {
@@ -299,9 +367,14 @@ LeabraProject .projects["anova"] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [2] {
+   ProgVar_List @.vars = [7] {
     ProgVar @["one_way_data"] { };
     ProgVar @["one_way_results"] { };
+    ProgVar @["two_way_data"] { };
+    ProgVar @["two_way_results"] { };
+    ProgVar @["one_way_plot"] { };
+    ProgVar @["two_way_plot_seed"] { };
+    ProgVar @["two_way_plot_fert"] { };
    };
 
    Function_List @.functions = [0] {
@@ -310,12 +383,41 @@ LeabraProject .projects["anova"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [2] {
+   ProgEl_List @.prog_code = [6] {
     LocalVars @[0] { 
      ProgVar_List @.local_vars = [0] {
      };
     };
-    DataAnalCall @[1] { 
+    DataGroupProg @[1] { 
+     DataOpList @.group_spec.ops = [3] {
+      DataGroupEl @["cond_GROUP_0"] { };
+      DataGroupEl @["data_MEAN_1"] { };
+      DataGroupEl @["data_SEM_2"] { };
+     };
+    };
+    DataAnalCall @[2] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    DataGroupProg @[3] { 
+     DataOpList @.group_spec.ops = [3] {
+      DataGroupEl @["seed_GROUP_0"] { };
+      DataGroupEl @["data_MEAN_1"] { };
+      DataGroupEl @["data_SEM_2"] { };
+     };
+    };
+    DataGroupProg @[4] { 
+     DataOpList @.group_spec.ops = [3] {
+      DataGroupEl @["fert_GROUP_0"] { };
+      DataGroupEl @["data_MEAN_1"] { };
+      DataGroupEl @["data_SEM_2"] { };
+     };
+    };
+    DataAnalCall @[5] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -338,8 +440,101 @@ LeabraProject .projects["anova"] {
     PanelViewer @["Editor"] { };
     T3PanelViewer @["Visualizer"] { 
      T3Panel_List @.panels = [1] {
-      T3Panel @["Frame1"] { 
-       T3DataView_List @.root_view.children = [0] {
+      T3Panel @["Plots"] { 
+       T3DataView_List @.root_view.children = [3] {
+	GraphTableView @["OneWayPlot_Graph"] { 
+	 T3DataView_List @.children = [3] {
+	  GraphColView @["cond_group"] { };
+	  GraphColView @["data_mean"] { };
+	  GraphColView @["data_sem"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [6] {
+	  GraphPlotView @["OneWayPlot_Graph_plot_1"] { };
+	  GraphPlotView @["OneWayPlot_Graph_plot_2"] { };
+	  GraphPlotView @["OneWayPlot_Graph_plot_3"] { };
+	  GraphPlotView @["OneWayPlot_Graph_plot_4"] { };
+	  GraphPlotView @["OneWayPlot_Graph_plot_5"] { };
+	  GraphPlotView @["OneWayPlot_Graph_plot_6"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [6] {
+	  GraphPlotView @["OneWayPlot_Graph_err_1"] { };
+	  GraphPlotView @["OneWayPlot_Graph_err_2"] { };
+	  GraphPlotView @["OneWayPlot_Graph_err_3"] { };
+	  GraphPlotView @["OneWayPlot_Graph_err_4"] { };
+	  GraphPlotView @["OneWayPlot_Graph_err_5"] { };
+	  GraphPlotView @["OneWayPlot_Graph_err_6"] { };
+	 };
+	};
+	GraphTableView @["TwoWayPlot_Seed_Graph"] { 
+	 T3DataView_List @.children = [3] {
+	  GraphColView @["seed_group"] { };
+	  GraphColView @["data_mean"] { };
+	  GraphColView @["data_sem"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [6] {
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_plot_1"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_plot_2"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_plot_3"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_plot_4"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_plot_5"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_plot_6"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [6] {
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_err_1"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_err_2"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_err_3"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_err_4"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_err_5"] { };
+	  GraphPlotView @["TwoWayPlot_Seed_Graph_err_6"] { };
+	 };
+	};
+	GraphTableView @["TwoWayPlot_Fert_Graph"] { 
+	 T3DataView_List @.children = [3] {
+	  GraphColView @["fert_group"] { };
+	  GraphColView @["data_mean"] { };
+	  GraphColView @["data_sem"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [6] {
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_plot_1"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_plot_2"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_plot_3"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_plot_4"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_plot_5"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_plot_6"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [6] {
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_err_1"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_err_2"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_err_3"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_err_4"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_err_5"] { };
+	  GraphPlotView @["TwoWayPlot_Fert_Graph_err_6"] { };
+	 };
+	};
        };
 
        T3SavedView_List @.saved_views = [10] {
@@ -416,6 +611,7 @@ LeabraProject .projects["anova"] {
   el_typ=ControlPanel;
   el_def=0;
   ControlPanel @["ControlPanel"] {
+   user_data_=NULL;
    name="ControlPanel";
    updt_while_running=0;
    desc=;
@@ -434,6 +630,7 @@ LeabraProject .projects["anova"] {
    };
   };
   ClusterRun @["ClusterRun"] {
+   user_data_=NULL;
    name="ClusterRun";
    updt_while_running=0;
    desc=;
@@ -3498,6 +3695,7 @@ LeabraProject .projects["anova"] {
     el_typ=DataTable;
     el_def=0;
     DataTable @["OneWayData"] {
+     user_data_=NULL;
      name="OneWayData";
      desc=;
      data {
@@ -3607,7 +3805,7 @@ LeabraProject .projects["anova"] {
        ar {
 	user_data_=NULL;
 	name="ar";
-       [6] "a";"b";"c";"Between_Mean_MS_df";"Within_Mean_MS_df";"Ftest_p_F";       };
+       [6] "a";"b";"c";"Between_mean_MS_df";"Within_mean_MS_df";"Ftest_p_F";       };
       };
       float_Data @["data_mean"] {
        user_data_=NULL;
@@ -3687,7 +3885,7 @@ LeabraProject .projects["anova"] {
 	user_data_=NULL;
 	name="dim_names";
        [0]        };
-       width=8;
+       width=0;
        matrix_col_width=10;
        ar {
 	user_data_=NULL;
@@ -3709,7 +3907,7 @@ LeabraProject .projects["anova"] {
 	user_data_=NULL;
 	name="dim_names";
        [0]        };
-       width=8;
+       width=0;
        matrix_col_width=10;
        ar {
 	user_data_=NULL;
@@ -3731,7 +3929,7 @@ LeabraProject .projects["anova"] {
 	user_data_=NULL;
 	name="dim_names";
        [0]        };
-       width=8;
+       width=0;
        matrix_col_width=10;
        ar {
 	user_data_=NULL;
@@ -3753,7 +3951,7 @@ LeabraProject .projects["anova"] {
 	user_data_=NULL;
 	name="dim_names";
        [0]        };
-       width=8;
+       width=0;
        matrix_col_width=10;
        ar {
 	user_data_=NULL;
@@ -3771,6 +3969,592 @@ LeabraProject .projects["anova"] {
       user_data_=NULL;
       name="row_indexes";
      [6] 0;1;2;3;4;5;     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["OneWayPlot"] {
+     user_data_=NULL;
+     name="OneWayPlot";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["cond_group"] {
+       user_data_=NULL;
+       name="cond_group";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [3] "a";"b";"c";       };
+      };
+      float_Data @["data_mean"] {
+       user_data_=NULL;
+       name="data_mean";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [3] 5;9;10;       };
+      };
+      float_Data @["data_sem"] {
+       user_data_=NULL;
+       name="data_sem";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [3] 0.73029673;0.89442718;0.96609175;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [3] 0;1;2;     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["TwoWayData"] {
+     user_data_=NULL;
+     name="TwoWayData";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["seed"] {
+       user_data_=NULL;
+       name="seed";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [38] "A";"A";"A";"A";"A";"A";"A";"A";"A";"A";
+"B";"B";"B";"B";"B";"B";"B";"B";"B";"B";
+"C";"C";"C";"C";"C";"C";"C";"C";"C";"C";
+;;;;;;;;       };
+      };
+      String_Data @["fert"] {
+       user_data_=NULL;
+       name="fert";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [38] "1";"1";"2";"2";"3";"3";"4";"4";"5";"5";
+"1";"1";"2";"2";"3";"3";"4";"4";"5";"5";
+"1";"1";"2";"2";"3";"3";"4";"4";"5";"5";
+;;;;;;;;       };
+      };
+      float_Data @["data"] {
+       user_data_=NULL;
+       name="data";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [38] 106;110;95;100;94;107;103;104;100;102;
+110;112;98;99;100;101;108;112;105;107;
+94;97;86;87;98;99;99;101;94;98;
+0;0;0;0;0;0;0;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [30] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["TwoWayPlot_Seed"] {
+     user_data_=NULL;
+     name="TwoWayPlot_Seed";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["seed_group"] {
+       user_data_=NULL;
+       name="seed_group";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [3] "A";"B";"C";       };
+      };
+      float_Data @["data_mean"] {
+       user_data_=NULL;
+       name="data_mean";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [3] 102.1;105.2;95.300003;       };
+      };
+      float_Data @["data_sem"] {
+       user_data_=NULL;
+       name="data_sem";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [3] 1.6017351;1.7048948;1.6196707;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [3] 0;1;2;     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["TwoWayPlot_Fert"] {
+     user_data_=NULL;
+     name="TwoWayPlot_Fert";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["fert_group"] {
+       user_data_=NULL;
+       name="fert_group";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [5] "1";"2";"3";"4";"5";       };
+      };
+      float_Data @["data_mean"] {
+       user_data_=NULL;
+       name="data_mean";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [5] 104.83334;94.166664;99.833336;104.5;101;       };
+      };
+      float_Data @["data_sem"] {
+       user_data_=NULL;
+       name="data_sem";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [5] 3.0813055;2.5221243;1.7400512;1.9450793;1.9321835;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [5] 0;1;2;3;4;     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["TwoWayResults"] {
+     user_data_=NULL;
+     name="TwoWayResults";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["source"] {
+       user_data_=NULL;
+       name="source";
+       desc="Source of variability";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [4] "seed";"fert";"seed*fert";"within_error";       };
+      };
+      float_Data @["df"] {
+       user_data_=NULL;
+       name="df";
+       desc="Degrees of freedom for source -- n-1";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [4] 2;4;8;15;       };
+      };
+      float_Data @["SS"] {
+       user_data_=NULL;
+       name="SS";
+       desc="Sum of squares due to source ";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [4] 512.86603;449.46695;143.13335;136;       };
+      };
+      float_Data @["MS"] {
+       user_data_=NULL;
+       name="MS";
+       desc="Mean squares due to source: SS / df";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [4] 256.43301;112.36674;17.891668;9.0666666;       };
+      };
+      float_Data @["F_ratio"] {
+       user_data_=NULL;
+       name="F_ratio";
+       desc="F-statistic for source: MS_b / MS_w = ratio of MS for source (between factor) over overall MS within groups (error)";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [4] 28.283052;12.393391;1.9733458;0;       };
+      };
+      float_Data @["p"] {
+       user_data_=NULL;
+       name="p";
+       desc="probability associated with given F statistic for this source -- how likely that differences are due strictly to chance";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [4] 8.1354001e-06;0.00011887187;0.12208981;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [4] 0;1;2;3;     };
      last_sort_spec {
       user_data_=NULL;
       name="last_sort_spec";
@@ -3831,6 +4615,66 @@ LeabraProject .projects["anova"] {
      desc=;
      init_from=NULL;
     };
+    ProgVar @["two_way_data"] {
+     user_data_=NULL;
+     name="two_way_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["TwoWayData"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["two_way_results"] {
+     user_data_=NULL;
+     name="two_way_results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["TwoWayResults"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["one_way_plot"] {
+     user_data_=NULL;
+     name="one_way_plot";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["OneWayPlot"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["two_way_plot_seed"] {
+     user_data_=NULL;
+     name="two_way_plot_seed";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Seed"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["two_way_plot_fert"] {
+     user_data_=NULL;
+     name="two_way_plot_fert";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Fert"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    functions {
     user_data_=NULL;
@@ -3861,7 +4705,44 @@ LeabraProject .projects["anova"] {
       el_def=0;
      };
     };
-    DataAnalCall @[1] {
+    DataGroupProg @[1] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="group";
+     src_data_var=.projects["anova"].programs["AnovaTest"].vars["one_way_data"]$$;
+     dest_data_var=.projects["anova"].programs["AnovaTest"].vars["one_way_plot"]$$;
+     group_spec {
+      user_data_=NULL;
+      name="group_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataGroupEl;
+       el_def=0;
+       DataGroupEl @["cond_GROUP_0"] {
+	user_data_=NULL;
+	col_name="cond";
+	name="cond_GROUP_0";
+	agg {user_data_=NULL: name="agg": op=GROUP: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @["data_MEAN_1"] {
+	user_data_=NULL;
+	col_name="data";
+	name="data_MEAN_1";
+	agg {user_data_=NULL: name="agg": op=MEAN: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @["data_SEM_2"] {
+	user_data_=NULL;
+	col_name="data";
+	name="data_SEM_2";
+	agg {user_data_=NULL: name="agg": op=SEM: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+      };
+      append_agg_name=1;
+     };
+    };
+    DataAnalCall @[2] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -3921,6 +4802,147 @@ LeabraProject .projects["anova"] {
        required=1;
        def_val=;
        prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="\"data\"";
+       };
+      };
+     };
+    };
+    DataGroupProg @[3] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="group";
+     src_data_var=.projects["anova"].programs["AnovaTest"].vars["two_way_data"]$$;
+     dest_data_var=.projects["anova"].programs["AnovaTest"].vars["two_way_plot_seed"]$$;
+     group_spec {
+      user_data_=NULL;
+      name="group_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataGroupEl;
+       el_def=0;
+       DataGroupEl @["seed_GROUP_0"] {
+	user_data_=NULL;
+	col_name="seed";
+	name="seed_GROUP_0";
+	agg {user_data_=NULL: name="agg": op=GROUP: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @["data_MEAN_1"] {
+	user_data_=NULL;
+	col_name="data";
+	name="data_MEAN_1";
+	agg {user_data_=NULL: name="agg": op=MEAN: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @["data_SEM_2"] {
+	user_data_=NULL;
+	col_name="data";
+	name="data_SEM_2";
+	agg {user_data_=NULL: name="agg": op=SEM: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+      };
+      append_agg_name=1;
+     };
+    };
+    DataGroupProg @[4] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="group";
+     src_data_var=$.projects["anova"].programs["AnovaTest"].vars["two_way_data"]$;
+     dest_data_var=.projects["anova"].programs["AnovaTest"].vars["two_way_plot_fert"]$$;
+     group_spec {
+      user_data_=NULL;
+      name="group_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataGroupEl;
+       el_def=0;
+       DataGroupEl @["fert_GROUP_0"] {
+	user_data_=NULL;
+	col_name="fert";
+	name="fert_GROUP_0";
+	agg {user_data_=NULL: name="agg": op=GROUP: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @["data_MEAN_1"] {
+	user_data_=NULL;
+	col_name="data";
+	name="data_MEAN_1";
+	agg {user_data_=NULL: name="agg": op=MEAN: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @["data_SEM_2"] {
+	user_data_=NULL;
+	col_name="data";
+	name="data_SEM_2";
+	agg {user_data_=NULL: name="agg": op=SEM: rel={user_data_=NULL: name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
+       };
+      };
+      append_agg_name=1;
+     };
+    };
+    DataAnalCall @[5] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="taDataAnal::AnovaOneWay()";
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::AnovaNWay;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       user_data_=NULL;
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="result_data";
+       required=1;
+       def_val=;
+       prev_expr="one_way_results";
+       expr {
+	user_data_=NULL;
+	expr="two_way_results";
+       };
+      };
+      ProgArg @[1] {
+       user_data_=NULL;
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr="one_way_data";
+       expr {
+	user_data_=NULL;
+	expr="two_way_data";
+       };
+      };
+      ProgArg @[2] {
+       user_data_=NULL;
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="cond_col_nms";
+       required=1;
+       def_val=;
+       prev_expr="\"cond\"";
+       expr {
+	user_data_=NULL;
+	expr="\"seed fert\"";
+       };
+      };
+      ProgArg @[3] {
+       user_data_=NULL;
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       prev_expr="\"data\"";
        expr {
 	user_data_=NULL;
 	expr="\"data\"";
@@ -4020,9 +5042,9 @@ LeabraProject .projects["anova"] {
       name="panels";
       el_typ=T3Panel;
       el_def=0;
-      T3Panel @["Frame1"] {
+      T3Panel @["Plots"] {
        user_data_=NULL;
-       name="Frame1";
+       name="Plots";
        m_data=NULL;
        cur_font_size=12;
        visible=1;
@@ -4037,6 +5059,1425 @@ LeabraProject .projects["anova"] {
 	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
+	 GraphTableView @["OneWayPlot_Graph"] {
+	  user_data_=NULL;
+	  name="OneWayPlot_Graph";
+	  m_data=$.projects["anova"].programs["AnovaTest"].objs["OneWayPlot"]$;
+	  cur_font_size=14;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	  children {
+	   user_data_=NULL;
+	   name="children";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["cond_group"] {
+	    user_data_=NULL;
+	    name="cond_group";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["OneWayPlot"].data["cond_group"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["data_mean"] {
+	    user_data_=NULL;
+	    name="data_mean";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["OneWayPlot"].data["data_mean"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["data_sem"] {
+	    user_data_=NULL;
+	    name="data_sem";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["OneWayPlot"].data["data_sem"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	  annotations {
+	   user_data_=NULL;
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   user_data_=NULL;
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=2: };
+	  page_rows=-1094795586;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=BAR;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=4;
+	  point_size=0.01;
+	  point_spacing=1;
+	  solid_lines=0;
+	  bar_space=0.6;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis_label_rot=0;
+	  x_axis {
+	   user_data_=NULL;
+	   name="x_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="cond_group";
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=1: min=-0.5: fix_max=1: max=2.5: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  z_axis {
+	   user_data_=NULL;
+	   name="z_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  tot_plots=6;
+	  plots {
+	   user_data_=NULL;
+	   name="plots";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["OneWayPlot_Graph_plot_1"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_plot_1";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="data_mean";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=0: fix_max=1: max=15: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_plot_2"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_plot_2";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_plot_3"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_plot_3";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_plot_4"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_plot_4";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_plot_5"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_plot_5";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_plot_6"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_plot_6";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	  };
+	  errbars {
+	   user_data_=NULL;
+	   name="errbars";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["OneWayPlot_Graph_err_1"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_err_1";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="data_sem";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0.730297: fix_max=0: max=0.966092: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_err_2"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_err_2";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_err_3"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_err_3";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_err_4"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_err_4";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_err_5"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_err_5";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["OneWayPlot_Graph_err_6"] {
+	    user_data_=NULL;
+	    name="OneWayPlot_Graph_err_6";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED;
+	  color_axis {
+	   user_data_=NULL;
+	   name="color_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   user_data_=NULL;
+	   name="colorscale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   user_data_=NULL;
+	   name="raster_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	 GraphTableView @["TwoWayPlot_Seed_Graph"] {
+	  user_data_=NULL;
+	  name="TwoWayPlot_Seed_Graph";
+	  m_data=$.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Seed"]$;
+	  cur_font_size=14;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=-0.6472943: y=1.359359: z=0: }: };
+	  children {
+	   user_data_=NULL;
+	   name="children";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["seed_group"] {
+	    user_data_=NULL;
+	    name="seed_group";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Seed"].data["seed_group"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["data_mean"] {
+	    user_data_=NULL;
+	    name="data_mean";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Seed"].data["data_mean"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["data_sem"] {
+	    user_data_=NULL;
+	    name="data_sem";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Seed"].data["data_sem"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=-0.6472943: y=1.359359: z=0: }: };
+	  annotations {
+	   user_data_=NULL;
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   user_data_=NULL;
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=2: };
+	  page_rows=-1094795586;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=BAR;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=3;
+	  point_size=0.01;
+	  point_spacing=1;
+	  solid_lines=0;
+	  bar_space=0.6;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis_label_rot=0;
+	  x_axis {
+	   user_data_=NULL;
+	   name="x_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="seed_group";
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=1: min=-0.5: fix_max=1: max=2.5: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  z_axis {
+	   user_data_=NULL;
+	   name="z_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=14: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  tot_plots=6;
+	  plots {
+	   user_data_=NULL;
+	   name="plots";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_plot_1"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_plot_1";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="data_mean";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=50: fix_max=1: max=120: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_plot_2"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_plot_2";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_plot_3"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_plot_3";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_plot_4"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_plot_4";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_plot_5"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_plot_5";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_plot_6"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_plot_6";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	  };
+	  errbars {
+	   user_data_=NULL;
+	   name="errbars";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_err_1"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_err_1";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="data_sem";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0.5: fix_max=0: max=6.5: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_err_2"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_err_2";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_err_3"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_err_3";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_err_4"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_err_4";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_err_5"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_err_5";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Seed_Graph_err_6"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Seed_Graph_err_6";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED;
+	  color_axis {
+	   user_data_=NULL;
+	   name="color_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   user_data_=NULL;
+	   name="colorscale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   user_data_=NULL;
+	   name="raster_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	 GraphTableView @["TwoWayPlot_Fert_Graph"] {
+	  user_data_=NULL;
+	  name="TwoWayPlot_Fert_Graph";
+	  m_data=$.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Fert"]$;
+	  cur_font_size=14;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.7333316: y=1.355266: z=0: }: };
+	  children {
+	   user_data_=NULL;
+	   name="children";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["fert_group"] {
+	    user_data_=NULL;
+	    name="fert_group";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Fert"].data["fert_group"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["data_mean"] {
+	    user_data_=NULL;
+	    name="data_mean";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Fert"].data["data_mean"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["data_sem"] {
+	    user_data_=NULL;
+	    name="data_sem";
+	    m_data=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Fert"].data["data_sem"]$$;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.7333316: y=1.355266: z=0: }: };
+	  annotations {
+	   user_data_=NULL;
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   user_data_=NULL;
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=4: };
+	  page_rows=-1094795586;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=BAR;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=3;
+	  point_size=0.01;
+	  point_spacing=1;
+	  solid_lines=0;
+	  bar_space=0.6;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis_label_rot=0;
+	  x_axis {
+	   user_data_=NULL;
+	   name="x_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="fert_group";
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=1: min=-0.5: fix_max=1: max=4.5: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  z_axis {
+	   user_data_=NULL;
+	   name="z_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=14: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  tot_plots=6;
+	  plots {
+	   user_data_=NULL;
+	   name="plots";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_plot_1"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_plot_1";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="data_mean";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=50: fix_max=1: max=120: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_plot_2"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_plot_2";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_plot_3"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_plot_3";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_plot_4"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_plot_4";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_plot_5"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_plot_5";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_plot_6"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_plot_6";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	  };
+	  errbars {
+	   user_data_=NULL;
+	   name="errbars";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_err_1"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_err_1";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="data_sem";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0.5: fix_max=0: max=6.5: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_err_2"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_err_2";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_err_3"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_err_3";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_err_4"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_err_4";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_err_5"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_err_5";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["TwoWayPlot_Fert_Graph_err_6"] {
+	    user_data_=NULL;
+	    name="TwoWayPlot_Fert_Graph_err_6";
+	    m_data=NULL;
+	    cur_font_size=14;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED;
+	  color_axis {
+	   user_data_=NULL;
+	   name="color_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   user_data_=NULL;
+	   name="colorscale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   user_data_=NULL;
+	   name="raster_axis";
+	   m_data=NULL;
+	   cur_font_size=14;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
+	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
 	};
        };
        bg_color {r=1: g=1: b=1: a=1: };
@@ -4061,9 +6502,9 @@ LeabraProject .projects["anova"] {
 	 user_data_=NULL;
 	 name="Vw_0";
 	 view_saved=1;
-	 pos {x=0: y=0: z=-0.4765596: };
+	 pos {x=0.4614133: y=1.139679: z=3.370142: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=3.52344;
+	 focal_dist=3.370142;
 	};
 	T3SavedView @["Vw_1"] {
 	 user_data_=NULL;
@@ -4163,7 +6604,7 @@ LeabraProject .projects["anova"] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].objs[0];.programs[0].types;.programs[0].args;.programs[0].vars;.programs[0].functions;.programs[0].init_code;.programs[0].prog_code;.programs[0].prog_code[0];.networks; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].functions;.networks; };
  networks {
   user_data_=NULL;
   name="networks";
