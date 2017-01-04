@@ -301,7 +301,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 
           if (GetCompleter()->currentRow() > 0) {
             CompletionDone(key_event);
-            setCursorPosition(12);
           }
           else {
             inherited::keyPressEvent(key_event);

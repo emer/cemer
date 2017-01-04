@@ -79,7 +79,10 @@ public:
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
   
   // these are for the code completer
-  static taBase_List            completion_token_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_progvar_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_dynenum_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_function_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_program_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static Member_List            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static Method_List            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
@@ -172,13 +175,12 @@ public:
   static bool           ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
-                                        TypeDef* scope_type = NULL);
+                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
   static void           GetMembersForType(TypeDef* td, Member_List* members, bool just_static = false);
   static void           GetMethodsForType(TypeDef* td, Method_List* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static void           GetProgEls(String_Array* progels);
   static void           GetStatics(String_Array* statics);
-  static taBase*        GetTokenForCurrentCompletion(const String& cur_completion);
   static void           GenProgElList(ProgEl_List& list, TypeDef* td);
 
   static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,

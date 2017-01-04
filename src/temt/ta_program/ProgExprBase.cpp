@@ -18,6 +18,7 @@
 #include <Program>
 #include <Program_Group>
 #include <Function>
+#include <ProgVar>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
@@ -51,7 +52,10 @@ static ProgEl* expr_lookup_cur_base = NULL;
 String_Array                ProgExprBase::completion_choice_list;
 String_Array                ProgExprBase::completion_progels_list;
 String_Array                ProgExprBase::completion_statics_list;
-taBase_List                 ProgExprBase::completion_token_list;
+taBase_List                 ProgExprBase::completion_progvar_list;
+taBase_List                 ProgExprBase::completion_dynenum_list;
+taBase_List                 ProgExprBase::completion_function_list;
+taBase_List                 ProgExprBase::completion_program_list;
 Member_List                 ProgExprBase::completion_member_list;
 Method_List                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
@@ -1252,7 +1256,10 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   include_statics = false;
   include_progels = false;
   completion_lookup_type = lookup_type;
-  completion_token_list.RemoveAll();
+  completion_progvar_list.RemoveAll();
+  completion_dynenum_list.RemoveAll();
+  completion_function_list.RemoveAll();
+  completion_program_list.RemoveAll();
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
@@ -1260,11 +1267,11 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
-      GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
-      GetTokensOfType(&TA_DynEnumItem, &completion_token_list);
-      GetTokensOfType(&TA_Function, &completion_token_list, own_prg, &TA_Program);
+      GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program);
+      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list);
+      GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       if (expr_start == 0) {  // program calls must be at beginning of line
-        GetTokensOfType(&TA_Program, &completion_token_list);
+        GetTokensOfType(&TA_Program, &completion_program_list);
         include_statics = true;
         include_progels = true;
       }
@@ -1273,9 +1280,17 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     }
     
     case ProgExprBase::ASSIGN: {  // multiple possibilities
-      GetTokensOfType(&TA_ProgVar, &completion_token_list, own_prg, &TA_Program);
-      GetTokensOfType(&TA_DynEnumItem, &completion_token_list);
-      GetTokensOfType(&TA_Function, &completion_token_list, own_prg, &TA_Program);
+      String lhs = prepend_txt;
+      lhs = lhs.before('=', -1);
+      lhs = lhs.trimr();
+      ProgVar* lhs_var = own_prg->FindVarName(lhs);
+      ProgVar::VarType var_type = ProgVar::T_UnDef;
+      if (lhs_var) {
+        var_type = lhs_var->var_type;
+      }
+      GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
+      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list);
+      GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       include_statics = true;
       expr_lookup_cur_base = NULL;
       break;
@@ -1435,7 +1450,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       else {                      // now try for local enums
         ProgType* pt = own_prg->types.FindName(base_path);
         if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
-          GetTokensOfType(&TA_DynEnumItem, &completion_token_list, pt, &TA_DynEnumBase);
+          GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, pt, &TA_DynEnumBase);
         }
       }
       break;
@@ -1454,10 +1469,10 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         el = trimmed_txt.before(' ');
       }
       if (el.downcase() == "call" || el.downcase().startsWith("prog")) {
-        GetTokensOfType(&TA_Program, &completion_token_list, NULL, &TA_taProject);
+        GetTokensOfType(&TA_Program, &completion_program_list, NULL, &TA_taProject);
      }
       else if (el.downcase().startsWith("fun")) {
-        GetTokensOfType(&TA_Function, &completion_token_list, NULL, &TA_Function);
+        GetTokensOfType(&TA_Function, &completion_function_list, NULL, &TA_Function);
       }
       break;
     }
@@ -1468,7 +1483,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       String scoped_prog_name = trim(prepend_txt);
       Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
       if (scope_program != NULL) {
-        GetTokensOfType(&TA_Function, &completion_token_list, scope_program, &TA_Program);
+        GetTokensOfType(&TA_Function, &completion_function_list, scope_program, &TA_Program);
       }
       break;
     }
@@ -1491,25 +1506,20 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       completion_choice_list.Add(completion_statics_list.SafeEl(i));
     }
   }
-  
-  for (int i=0; i<completion_token_list.size; i++) {
-    taBase* base = completion_token_list.FastEl(i);
-    if (base->GetTypeDef() == &TA_Program || base->GetTypeDef() == &TA_Function){
-      if (path_prepend_txt.empty()) {
-        completion_choice_list.Add(base->GetName() + "()");
-      }
-      else {
-        completion_choice_list.Add(base->GetName() + "()");
-      }
-    }
-    else {
-      if (path_prepend_txt.empty()) {
-        completion_choice_list.Add(base->GetName());
-      }
-      else {
-        completion_choice_list.Add(base->GetName());
-      }
-    }
+
+  for (int i=0; i<completion_program_list.size; i++) {
+    taBase* base = completion_program_list.FastEl(i);
+    completion_choice_list.Add(base->GetName() + "()");
+  }
+
+  for (int i=0; i<completion_function_list.size; i++) {
+    taBase* base = completion_function_list.FastEl(i);
+    completion_choice_list.Add(base->GetName() + "()");
+  }
+
+  for (int i=0; i<completion_progvar_list.size; i++) {
+    taBase* base = completion_progvar_list.FastEl(i);
+      completion_choice_list.Add(base->GetName());
   }
 
   for (int i=0; i<completion_member_list.size; i++) {
@@ -1530,6 +1540,11 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     completion_choice_list.Add(full_seed);
   }
   
+  for (int i=0; i<completion_dynenum_list.size; i++) {
+    taBase* base = completion_dynenum_list.FastEl(i);
+    completion_choice_list.Add(base->GetName());
+  }
+
   for (int i=0; i<completion_enum_list.size; i++) {
     EnumDef* enum_def = completion_enum_list.FastEl(i);
     completion_choice_list.Add(enum_def->name);
@@ -1651,7 +1666,7 @@ String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos
   return rval;
 }
 
-void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type) {
+void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
   if (td == NULL || tokens == NULL) return;
   
   for(int i=0; i<td->tokens.size; i++) {
@@ -1673,6 +1688,49 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
 //      if (!ShowToken(btmp)) continue;
     }
     
+//    if (td == &TA_ProgVar) {
+//      switch (var_type) {
+//        case ProgVar::T_Bool: {
+//          ProgVar* pv = (ProgVar*)btmp;
+//          if (pv->var_type != ProgVar::T_Bool || pv->var_type != ProgVar::T_Int) {
+//            continue;
+//          }
+//          break;
+//        }
+//    
+//        case ProgVar::T_Int: {
+//          ProgVar* pv = (ProgVar*)btmp;
+//          if (pv->var_type != ProgVar::T_Bool
+//              || pv->var_type != ProgVar::T_Int
+//              || pv->var_type != ProgVar::T_DynEnum
+//              || pv->var_type != ProgVar::T_HardEnum) {
+//            continue;
+//          }
+//          break;
+//        }
+//
+//        case ProgVar::T_Real: {
+//          ProgVar* pv = (ProgVar*)btmp;
+//          if (pv->var_type != ProgVar::T_Real) {
+//            continue;
+//          }
+//          break;
+//        }
+//
+//        case ProgVar::T_String: {
+//          ProgVar* pv = (ProgVar*)btmp;
+//          if (pv->var_type != ProgVar::T_Bool || pv->var_type != ProgVar::T_Int) {
+//            continue;
+//          }
+//          break;
+//        }
+//
+//        default:
+//          break;
+//      }
+//    }
+    
+    
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
     if (owner) {
@@ -1682,6 +1740,7 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
     }
     tokens->Link(btmp);
   }
+  tokens->Sort();
 }
 
 void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members, bool just_static) {
@@ -1694,20 +1753,27 @@ void ProgExprBase::GetMembersForType(TypeDef *td, Member_List* members, bool jus
       continue;
     }
     members->Link(mbr);
+    taMisc::DebugInfo(mbr->name);
+  }
+  taMisc::DebugInfo("now sort");
+  members->Sort_();
+  for (int i=0; i<members->size; i++) {
+    taMisc::DebugInfo(members->SafeEl(i)->name);
   }
 }
 
 void ProgExprBase::GetMethodsForType(TypeDef *td, Method_List* methods, bool just_static) {
- if (td == NULL || methods == NULL) return;
- 
+  if (td == NULL || methods == NULL) return;
+  
   MethodSpace* mts = &td->methods;
-    for (int i = 0; i < mts->size; ++i) {
-      MethodDef* mth = mts->FastEl(i);
-      if (just_static && !mth->is_static) {
-        continue;
-      }
-      methods->Link(mth);
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (just_static && !mth->is_static) {
+      continue;
     }
+    methods->Link(mth);
+  }
+  methods->Sort();
 }
 
 void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
@@ -1723,6 +1789,7 @@ void ProgExprBase::GetEnumsForType(TypeDef* td, EnumSpace* enums) {
       }
     }
   }
+  enums->Sort();
 }
 
 void ProgExprBase::GetProgEls(String_Array* progels) {
@@ -1744,10 +1811,11 @@ void ProgExprBase::GetProgEls(String_Array* progels) {
         else if (pe->GetTypeDef()->name == "PrintExpr") {
           mod_str = "printexpr";
         }
-        completion_progels_list.Add(mod_str);
+        progels->Add(mod_str);
       }
     }
   }
+  progels->Sort();
 }
 
 void ProgExprBase::GenProgElList(ProgEl_List& list, TypeDef* td) {
@@ -1768,17 +1836,6 @@ void ProgExprBase::GetStatics(String_Array* statics) {
     for (int i=0; i<taMisc::static_collection.size; i++) {
       statics->Add(taMisc::static_collection.SafeEl(i)->name + "::");
     }
+    statics->Sort();
   }
-}
-
-taBase* ProgExprBase::GetTokenForCurrentCompletion(const String& cur_completion) {
-  // get the token with the selection string
-  taBase* token = NULL;
-  for (int i=0; i<completion_token_list.size; i++) {
-    token = completion_token_list.SafeEl(i);
-    if (token->GetName() == cur_completion) {
-      return token;
-    }
-  }
-  return token;
 }
