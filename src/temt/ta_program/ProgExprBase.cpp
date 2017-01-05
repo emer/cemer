@@ -565,7 +565,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         continue;
       }
     }
-    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
+    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':' || c == '!') {
       delim_pos.Add(i);
       continue;
     }
@@ -666,6 +666,18 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       if (delim_pos.size > 1 && txt[delim_pos[1]] == ']') {
         lookup_group_default = true;
       }
+    }
+    else if(delim_pos.size > 1 && txt[delim_pos[0]] == '=' && (txt[delim_pos[1]] == '=' || txt[delim_pos[1]] == '!')
+            && (delim_pos[0] == delim_pos[1] + 1)) { // equality
+      base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start += shift;
+      prepend_txt = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::EQUALITY;
+      delims_used = 2;
     }
     else if(txt[delim_pos[0]] == '=') { //
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
@@ -1282,7 +1294,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program);
-      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list);
+      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_program_list);
@@ -1310,14 +1322,35 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       }
       include_statics = true;
       GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
-      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list);
+      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       expr_lookup_cur_base = NULL;
       break;
     }
 
     case ProgExprBase::EQUALITY: {  // multiple possibilities
-      // TODO - add to parser
+      String lhs = prepend_txt;
+      lhs = lhs.before('=', -1);
+      if (lhs.empty()) {  // if true we had "!=" - but really the prepend_txt should have either "==" or "!=" - check this
+        lhs = prepend_txt;
+      }
+      lhs = lhs.trimr();
+      ProgVar* lhs_var = own_prg->FindVarName(lhs);
+      ProgVar::VarType var_type = ProgVar::T_UnDef;
+      if (lhs_var) {
+        var_type = lhs_var->var_type;
+      }
+      if (var_type == ProgVar::T_Object) {
+        include_null = true;
+      }
+      if (var_type == ProgVar::T_Bool) {
+        include_bools = true;
+      }
+      include_statics = true;
+      GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
+      GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
+      GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
+      expr_lookup_cur_base = NULL;
       break;
     }
 
