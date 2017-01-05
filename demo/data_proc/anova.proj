@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.4.0 rev10391
+// ta_Dump File v3.0 -- code v8.0.4.0 rev10393
 LeabraProject .projects["anova"] { 
  Doc_Group @.docs = [0] {
  };
@@ -260,7 +260,7 @@ LeabraProject .projects["anova"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   ProgObjList @.objs = [7] {
+   ProgObjList @.objs = [9] {
     DataTable @["OneWayData"] { 
      DataTableCols @.data = [2] {
       String_Data @["cond"] { };
@@ -359,6 +359,36 @@ LeabraProject .projects["anova"] {
      DataTableCell_List @.control_panel_cells = [0] {
      };
     };
+    DataTable @["ThreeWayData"] { 
+     DataTableCols @.data = [4] {
+      String_Data @["monitor"] { };
+      String_Data @["argument"] { };
+      String_Data @["source"] { };
+      float_Data @["data"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["ThreeWayResults"] { 
+     DataTableCols @.data = [6] {
+      String_Data @["source"] { };
+      float_Data @["df"] { };
+      float_Data @["SS"] { };
+      float_Data @["MS"] { };
+      float_Data @["F_ratio"] { };
+      float_Data @["p"] { };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
    };
 
    ProgType_List @.types = [0] {
@@ -367,7 +397,7 @@ LeabraProject .projects["anova"] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [7] {
+   ProgVar_List @.vars = [9] {
     ProgVar @["one_way_data"] { };
     ProgVar @["one_way_results"] { };
     ProgVar @["two_way_data"] { };
@@ -375,6 +405,8 @@ LeabraProject .projects["anova"] {
     ProgVar @["one_way_plot"] { };
     ProgVar @["two_way_plot_seed"] { };
     ProgVar @["two_way_plot_fert"] { };
+    ProgVar @["three_way_data"] { };
+    ProgVar @["three_way_results"] { };
    };
 
    Function_List @.functions = [0] {
@@ -383,7 +415,7 @@ LeabraProject .projects["anova"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [6] {
+   ProgEl_List @.prog_code = [7] {
     LocalVars @[0] { 
      ProgVar_List @.local_vars = [0] {
      };
@@ -418,6 +450,14 @@ LeabraProject .projects["anova"] {
      };
     };
     DataAnalCall @[5] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    DataAnalCall @[6] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -4573,6 +4613,343 @@ LeabraProject .projects["anova"] {
       el_def=0;
      };
     };
+    DataTable @["ThreeWayData"] {
+     user_data_=NULL;
+     name="ThreeWayData";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["monitor"] {
+       user_data_=NULL;
+       name="monitor";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [96] "high";"high";"high";"high";"high";"high";"high";"high";"high";"high";
+"high";"high";"high";"high";"high";"high";"high";"high";"high";"high";
+"high";"high";"high";"high";"high";"high";"high";"high";"high";"high";
+"high";"high";"high";"high";"high";"high";"high";"high";"high";"high";
+"high";"high";"high";"high";"high";"high";"high";"high";"low";"low";
+"low";"low";"low";"low";"low";"low";"low";"low";"low";"low";
+"low";"low";"low";"low";"low";"low";"low";"low";"low";"low";
+"low";"low";"low";"low";"low";"low";"low";"low";"low";"low";
+"low";"low";"low";"low";"low";"low";"low";"low";"low";"low";
+"low";"low";"low";"low";"low";"low";       };
+      };
+      String_Data @["argument"] {
+       user_data_=NULL;
+       name="argument";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [96] "strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";
+"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";
+"strong";"strong";"strong";"strong";"weak";"weak";"weak";"weak";"weak";"weak";
+"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";
+"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";"strong";"strong";
+"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";
+"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";"strong";
+"strong";"strong";"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";
+"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";"weak";
+"weak";"weak";"weak";"weak";"weak";"weak";       };
+      };
+      String_Data @["source"] {
+       user_data_=NULL;
+       name="source";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [96] "expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";
+"expert";"expert";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";
+"attrac";"attrac";"attrac";"attrac";"expert";"expert";"expert";"expert";"expert";"expert";
+"expert";"expert";"expert";"expert";"expert";"expert";"attrac";"attrac";"attrac";"attrac";
+"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"expert";"expert";
+"expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";
+"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";
+"attrac";"attrac";"expert";"expert";"expert";"expert";"expert";"expert";"expert";"expert";
+"expert";"expert";"expert";"expert";"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";
+"attrac";"attrac";"attrac";"attrac";"attrac";"attrac";       };
+      };
+      float_Data @["data"] {
+       user_data_=NULL;
+       name="data";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [96] 4;3;4;5;2;5;4;6;3;4;
+5;4;4;4;2;3;5;3;2;3;
+4;3;2;4;3;5;3;2;6;4;
+4;3;5;3;2;3;5;5;7;5;
+6;4;3;5;6;7;7;6;3;5;
+5;4;3;2;1;5;3;4;3;4;
+5;4;3;2;4;6;2;4;4;3;
+4;3;5;6;4;7;6;7;5;6;
+4;6;7;5;6;4;4;2;4;5;
+4;3;4;2;3;4;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [96] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
+80;81;82;83;84;85;86;87;88;89;
+90;91;92;93;94;95;     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["ThreeWayResults"] {
+     user_data_=NULL;
+     name="ThreeWayResults";
+     desc=;
+     data {
+      user_data_=NULL;
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["source"] {
+       user_data_=NULL;
+       name="source";
+       desc="Source of variability";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=16;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [8] "monitor";"argument";"source";"monitor*argument";"monitor*source";"argument*source";"monitor*argument*source";"within_error";       };
+      };
+      float_Data @["df"] {
+       user_data_=NULL;
+       name="df";
+       desc="Degrees of freedom for source -- n-1";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [8] 1;1;1;1;1;1;1;88;       };
+      };
+      float_Data @["SS"] {
+       user_data_=NULL;
+       name="SS";
+       desc="Sum of squares due to source ";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [8] 0.041667301;24;0.66666919;0.375;12.04168;0.66666538;35.041687;115.66667;       };
+      };
+      float_Data @["MS"] {
+       user_data_=NULL;
+       name="MS";
+       desc="Mean squares due to source: SS / df";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [8] 0.041667301;24;0.66666919;0.375;12.04168;0.66666538;35.041687;1.314394;       };
+      };
+      float_Data @["F_ratio"] {
+       user_data_=NULL;
+       name="F_ratio";
+       desc="F-statistic for source: MS_b / MS_w = ratio of MS for source (between factor) over overall MS within groups (error)";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [8] 0.031700771;18.259365;0.5072065;0.28530258;9.1613932;0.50720358;26.659956;0;       };
+      };
+      float_Data @["p"] {
+       user_data_=NULL;
+       name="p";
+       desc="probability associated with given F statistic for this source -- how likely that differences are due strictly to chance";
+       col_flags=SAVE_DATA|AUTO_WIDTH;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	user_data_=NULL;
+	expr=;
+       };
+       dim_names {
+	user_data_=NULL;
+	name="dim_names";
+       [0]        };
+       width=8;
+       matrix_col_width=10;
+       ar {
+	user_data_=NULL;
+	name="ar";
+       [8] 0.85910332;4.8661394e-05;0.4782393;0.59459805;0.003241542;0.47824156;1.4915948e-06;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     row_height=1;
+     max_col_width=50;
+     keygen 4 0=0;
+     row_indexes {
+      user_data_=NULL;
+      name="row_indexes";
+     [8] 0;1;2;3;4;5;6;7;     };
+     last_sort_spec {
+      user_data_=NULL;
+      name="last_sort_spec";
+      ops {
+       user_data_=NULL;
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     row_with_hilite=-1;
+     control_panel_cells {
+      user_data_=NULL;
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
    };
    types {
     user_data_=NULL;
@@ -4669,6 +5046,30 @@ LeabraProject .projects["anova"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["anova"].programs["AnovaTest"].objs["TwoWayPlot_Fert"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["three_way_data"] {
+     user_data_=NULL;
+     name="three_way_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["ThreeWayData"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["three_way_results"] {
+     user_data_=NULL;
+     name="three_way_results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["anova"].programs["AnovaTest"].objs["ThreeWayResults"]$$;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -4943,6 +5344,73 @@ LeabraProject .projects["anova"] {
        required=1;
        def_val=;
        prev_expr="\"data\"";
+       expr {
+	user_data_=NULL;
+	expr="\"data\"";
+       };
+      };
+     };
+    };
+    DataAnalCall @[6] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="taDataAnal::AnovaOneWay()";
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::AnovaNWay;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       user_data_=NULL;
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="result_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="three_way_results";
+       };
+      };
+      ProgArg @[1] {
+       user_data_=NULL;
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="three_way_data";
+       };
+      };
+      ProgArg @[2] {
+       user_data_=NULL;
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="cond_col_nms";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="\"monitor argument source\"";
+       };
+      };
+      ProgArg @[3] {
+       user_data_=NULL;
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
        expr {
 	user_data_=NULL;
 	expr="\"data\"";
@@ -6604,7 +7072,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].functions;.networks; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[0];.programs[0].objs;.programs[0].objs[7];.programs[0].objs[8];.programs[0].functions;.networks; };
  networks {
   user_data_=NULL;
   name="networks";

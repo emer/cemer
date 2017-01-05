@@ -458,6 +458,9 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
   n_gp = (DataGroupEl*)gp_spec_2w.AddColumn(data_col_nm, src_data);
   n_gp->agg.op = Aggregate::N;
 
+  int_Matrix tidx2w;
+  tidx2w.SetGeom(2, n_conds, n_conds); // store table index for pairwise comparisons
+  
   for(int c1=0; c1 < n_conds; c1++) {
     String cond1 = cond_cols[c1];
     int n1 = cond_tabs[c1]->rows;
@@ -469,6 +472,7 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
       cond_gp = (DataGroupEl*)gp_spec_2w.ops[1];
       cond_gp->SetColName(cond2);
 
+      tidx2w.FastEl2d(c1, c2) = cond_tabs.size;
       DataTable* res_tab = (DataTable*)cond_tabs.NewEl(1);
       taDataProc::Group(res_tab, src_data, &gp_spec_2w);
 
@@ -503,6 +507,96 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
 
       r_f_col->SetVal(f_ratio, -1);
       r_p_col->SetVal(prob, -1);
+    }
+  }
+  
+  // three-way interactions
+  if(n_conds >= 3) {
+    DataGroupSpec gp_spec_3w;
+    gp_spec_3w.append_agg_name = true;
+    gp_spec_3w.SetDataTable(src_data);
+    cond_gp = (DataGroupEl*)gp_spec_3w.AddColumn(cond_cols[0], src_data);
+    cond_gp->agg.op = Aggregate::GROUP;
+    cond_gp = (DataGroupEl*)gp_spec_3w.AddColumn(cond_cols[1], src_data);
+    cond_gp->agg.op = Aggregate::GROUP;
+    cond_gp = (DataGroupEl*)gp_spec_3w.AddColumn(cond_cols[2], src_data);
+    cond_gp->agg.op = Aggregate::GROUP;
+    mean_gp = (DataGroupEl*)gp_spec_3w.AddColumn(data_col_nm, src_data);
+    mean_gp->agg.op = Aggregate::MEAN;
+    n_gp = (DataGroupEl*)gp_spec_3w.AddColumn(data_col_nm, src_data);
+    n_gp->agg.op = Aggregate::N;
+
+    for(int c1=0; c1 < n_conds; c1++) {
+      String cond1 = cond_cols[c1];
+      int n1 = cond_tabs[c1]->rows;
+      cond_gp = (DataGroupEl*)gp_spec_3w.ops[0];
+      cond_gp->SetColName(cond1);
+      for(int c2=c1+1; c2 < n_conds; c2++) {
+        String cond2 = cond_cols[c2];
+        int n2 = cond_tabs[c2]->rows;
+        cond_gp = (DataGroupEl*)gp_spec_3w.ops[1];
+        cond_gp->SetColName(cond2);
+        for(int c3=c2+1; c3 < n_conds; c3++) {
+          String cond3 = cond_cols[c3];
+          int n3 = cond_tabs[c3]->rows;
+          cond_gp = (DataGroupEl*)gp_spec_3w.ops[2];
+          cond_gp->SetColName(cond3);
+
+          DataTable* res_tab = (DataTable*)cond_tabs.NewEl(1);
+          taDataProc::Group(res_tab, src_data, &gp_spec_3w);
+
+          DataCol* means_col = res_tab->GetColData(3);
+          DataCol* n_col = res_tab->GetColData(4);
+          float inter_ss = 0.0f;
+          float inter_df = (n1-1) * (n2-1) * (n3-1);
+
+          int tidx12 = tidx2w.FastEl2d(c1, c2);
+          int tidx13 = tidx2w.FastEl2d(c1, c3);
+          int tidx23 = tidx2w.FastEl2d(c2, c3);
+          
+          int cell = 0;
+          for(int j=0; j<n1; j++) { // j = level of factor1
+            float mean1 = cond_tabs[c1]->GetValAsFloat(1, j);
+            for(int i=0; i<n2; i++) { // i = level of factor2
+              float mean2 = cond_tabs[c2]->GetValAsFloat(1, i);
+              int cidx12 = j * n2 + i; // cell index
+              float mean12 = cond_tabs[tidx12]->GetValAsFloat(2, cidx12);
+              for(int k=0; k<n3; k++, cell++) { // k = level of factor3
+                float mean3 = cond_tabs[c3]->GetValAsFloat(1, k);
+
+                int cidx13 = j * n3 + k; // cell index
+                float mean13 = cond_tabs[tidx13]->GetValAsFloat(2, cidx13);
+
+                int cidx23 = i * n3 + k; // cell index
+                float mean23 = cond_tabs[tidx23]->GetValAsFloat(2, cidx23);
+
+                
+                float mean = means_col->GetValAsFloat(cell);
+                float n = n_col->GetValAsFloat(cell);
+
+                // [ABC] - [AB] - [AC] - [BC] + [A] + [B] + [C] - [T]
+                float md = (mean - mean12 - mean13 - mean23 + mean1 + mean2 + mean3 -
+                            grand_mean);
+                inter_ss += n * md * md;
+              }
+            }
+          }
+
+          float inter_ms = inter_ss / inter_df;
+
+          float f_ratio = inter_ms / within_ms;
+          float prob = taMath_float::Ftest_q(f_ratio, inter_df, within_df);
+
+          result_data->AddRows(1);
+          r_src_col->SetVal(cond1 + "*" + cond2 + "*" + cond3, -1);
+          r_df_col->SetVal(inter_df, -1);
+          r_ss_col->SetVal(inter_ss, -1);
+          r_ms_col->SetVal(inter_ms, -1);
+
+          r_f_col->SetVal(f_ratio, -1);
+          r_p_col->SetVal(prob, -1);
+        }
+      }
     }
   }
   
