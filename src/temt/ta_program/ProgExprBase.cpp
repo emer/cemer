@@ -594,6 +594,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       delim_pos.Add(i);
       continue;
     }
+
     expr_start = i+1;           // anything else is a bust
     break;
   }
@@ -1295,9 +1296,9 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
     case ProgExprBase::VARIOUS: {  // multiple possibilities
       GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
-      GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       if (expr_start == 0) {  // program calls must be at beginning of line
-        GetTokensOfType(&TA_Program, &completion_program_list);
+        GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
+        GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
         include_statics = true;
         include_progels = true;
       }
