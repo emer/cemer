@@ -50,11 +50,8 @@ ParseNoText
     Set Suite Variable   ${program_test}       "no_text"
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
-    
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  1
 
+    Prog Var Should Match       lookup_type_str	     VARIOUS
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Be Empty	prepend_txt
     Prog Var Should Be Empty	append_txt
@@ -71,9 +68,7 @@ ParseObjectSelectMethodOrMember
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  2
+    Prog Var Should Match      lookup_type_str	     OBJ_MEMB_METH
 
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Be Empty	prepend_txt
@@ -90,10 +85,8 @@ ParseStaticMethodRandom
     Set Suite Variable   ${program_test}       "static_method_random"
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
-    
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  3
+
+    Prog Var Should Match      lookup_type_str	     SCOPED
 
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Be Empty	prepend_txt
@@ -110,9 +103,7 @@ ParseStaticMethodRandomSeeded
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  3
+    Prog Var Should Match      lookup_type_str	     SCOPED
 
     Prog Var Should Match	lookup_seed	     Int
     Prog Var Should Be Empty	prepend_txt
@@ -129,9 +120,7 @@ ParseObjectMemberSelectMethodOrMember
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  2
+    Prog Var Should Match      lookup_type_str	     OBJ_MEMB_METH
 
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Be Empty	prepend_txt
@@ -147,10 +136,8 @@ ParseObjectMemberSelectMethodOrMemberSeeded
     Set Suite Variable   ${program_test}       "object_member_select_method_or_member_seeded"
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
-    
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  2
+
+    Prog Var Should Match      lookup_type_str	     OBJ_MEMB_METH
 
     Prog Var Should MAtch	lookup_seed	     af
     Prog Var Should Be Empty	prepend_txt
@@ -167,9 +154,7 @@ ParseCallFunctionOtherProgram
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  6
+    Prog Var Should Match      lookup_type_str	     PROGRAM_FUNCTION
 
     Prog Var Should Be Empty	lookup_seed
     Prog Var Should Match	prepend_txt		has_function
@@ -186,9 +171,7 @@ ParseMethodArgumentsFirstArg
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  1
+    Prog Var Should Match      lookup_type_str	     VARIOUS
 
     Prog Var Should Match	lookup_seed	     x
     Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(
@@ -205,9 +188,7 @@ ParseMethodArgumentsSecondArg
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  1
+    Prog Var Should Match      lookup_type_str	     VARIOUS
 
     Prog Var Should Match	lookup_seed	     x
     Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(0,
@@ -223,10 +204,8 @@ ParseVarAfterConditional
     Set Suite Variable   ${program_test}       "var_after_conditional"
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
     Status OK No Result        ${output}
-    
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
-    Status OK 		       ${output}
-    Json Value Should Equal    ${output}             /result  1
+
+    Prog Var Should Match      lookup_type_str	     EQUALITY
 
     Prog Var Should Be Empty	lookup_seed	     
     Prog Var Should Match	prepend_txt	     bool = (a ==
