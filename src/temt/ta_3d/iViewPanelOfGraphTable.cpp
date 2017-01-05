@@ -249,11 +249,31 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layXAxis->addWidget(lblcellXAxis);
   cellXAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layXAxis->addWidget(cellXAxis->GetRep());
-  
+
+  labonXAxis = new iCheckBox("Lbls On", widg);
+  labonXAxis->setToolTip(taiMisc::ToolTipPreProcess("Use a different column for the axis labels?"));
+  labonXAxis->setFixedHeight(row_height);
+  connect(labonXAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layXAxis->addWidget(labonXAxis);
+  layXAxis->addSpacing(taiM->hsep_c);
+    
+  labXAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  QWidget* ew = labXAxis->GetRep();
+  ew->setFixedHeight(row_height);
+  layXAxis->addWidget(ew);
+  layXAxis->addSpacing(taiM->hsep_c);
+
+  flipXAxis = new iCheckBox("Flip", widg);
+  flipXAxis->setToolTip(taiMisc::ToolTipPreProcess("Flip (invert) the order of values plotted (high to low)"));
+  flipXAxis->setFixedHeight(row_height);
+  connect(flipXAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layXAxis->addWidget(flipXAxis);
+
   butLinePropsXAxis = new QPushButton("", widg);
   butLinePropsXAxis->setIcon(QIcon(QPixmap(":/images/editedit.png")));
   butLinePropsXAxis->setToolTip(taiMisc::ToolTipPreProcess("Set axis color, tick marks, etc"));
   butLinePropsXAxis->setFixedHeight(row_height);
+  butLinePropsXAxis->setFixedWidth(row_height);
   butLinePropsXAxis->setFlat(true);  // hide the border or the row height will be wrong and the alternating color background won't be right
   connect(butLinePropsXAxis, SIGNAL(pressed()), this, SLOT(butSetLineStyleXAxis()));
   layXAxis->addWidget(butLinePropsXAxis);
@@ -294,10 +314,31 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   cellZAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layZAxis->addWidget(cellZAxis->GetRep());
   
+  labonZAxis = new iCheckBox("Lbls On", widg);
+  labonZAxis->setToolTip(taiMisc::ToolTipPreProcess("Use a different column for the axis labels?"));
+  labonZAxis->setFixedHeight(row_height);
+  connect(labonZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layZAxis->addWidget(labonZAxis);
+  layZAxis->addSpacing(taiM->hsep_c);
+    
+  labZAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  ew = labZAxis->GetRep();
+  ew->setFixedHeight(row_height);
+  layZAxis->addWidget(ew);
+  layZAxis->addSpacing(taiM->hsep_c);
+
+  flipZAxis = new iCheckBox("Flip", widg);
+  flipZAxis->setToolTip(taiMisc::ToolTipPreProcess("Flip (invert) the order of values plotted (high to low)"));
+  flipZAxis->setFixedHeight(row_height);
+  connect(flipZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layZAxis->addWidget(flipZAxis);
+  // layZAxis->addSpacing(taiM->hsep_c);
+    
   butLinePropsZAxis = new QPushButton("", widg);
   butLinePropsZAxis->setIcon(QIcon(QPixmap(":/images/editedit.png")));
   butLinePropsZAxis->setToolTip(taiMisc::ToolTipPreProcess("Set axis color, tick marks, etc"));
   butLinePropsZAxis->setFixedHeight(row_height);
+  butLinePropsZAxis->setFixedWidth(row_height);
   butLinePropsZAxis->setFlat(true);  // hide the border or the row height will be wrong and the alternating color background won't be right
   connect(butLinePropsZAxis, SIGNAL(pressed()), this, SLOT(butSetLineStyleZAxis()));
   layZAxis->addWidget(butLinePropsZAxis);
@@ -544,10 +585,17 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     layYAxis[i]->addWidget(ew);
     layYAxis[i]->addSpacing(taiM->hsep_c);
     
+    flipYAxis[i] = new iCheckBox("Flip", widg);
+    flipYAxis[i]->setToolTip(taiMisc::ToolTipPreProcess("Flip (invert) the order of values plotted (high to low)"));
+    flipYAxis[i]->setFixedHeight(row_height);
+    connect(flipYAxis[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layYAxis[i]->addWidget(flipYAxis[i]);
+
     butLineProps[i] = new QPushButton("", widg);
     butLineProps[i]->setIcon( QIcon( QPixmap(":/images/editedit.png") ) );
     butLineProps[i]->setToolTip(taiMisc::ToolTipPreProcess("Set color, line style, etc"));
     butLineProps[i]->setFixedHeight(row_height);
+    butLineProps[i]->setFixedWidth(row_height);
     butLineProps[i]->setFlat(true);  // hide the border or the row height will be wrong and the alternating color background won't be right
     connect(butLineProps[i], SIGNAL(pressed()), sig_map_for_prop_buttons, SLOT(map()));
     sig_map_for_prop_buttons->setMapping(butLineProps[i], i);
@@ -588,12 +636,17 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   fldWidth->GetImage((String)glv->width);
   fldDepth->GetImage((String)glv->depth);
   fldNPlots->GetImage((String)glv->tot_plots);
+  chkLinesSolid->setChecked(glv->solid_lines);
   
   lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
   rncXAxis->setChecked(glv->x_axis.row_num);
   pdtXAxis->GetImage_(&(glv->x_axis.fixed_range));
   cellXAxis->GetImage((String)glv->x_axis.matrix_cell);
   chkXAxisLabel->setChecked(glv->x_axis.show_axis_label);
+  labXAxis->GetImage(&(glv->children), glv->x_axis.GetLabelsColPtr());
+  labonXAxis->setReadOnly(glv->x_axis.GetLabelsColPtr() == NULL);
+  labonXAxis->setChecked(glv->x_axis.labels_on);
+  flipXAxis->setChecked(glv->x_axis.flip);
   
   lelZAxis->GetImage(&(glv->children), glv->z_axis.GetColPtr());
   oncZAxis->setReadOnly(glv->z_axis.GetColPtr() == NULL);
@@ -602,7 +655,10 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   pdtZAxis->GetImage_(&(glv->z_axis.fixed_range));
   cellZAxis->GetImage((String)glv->z_axis.matrix_cell);
   chkZAxisLabel->setChecked(glv->z_axis.show_axis_label);
-  chkLinesSolid->setChecked(glv->solid_lines);
+  labZAxis->GetImage(&(glv->children), glv->z_axis.GetLabelsColPtr());
+  labonZAxis->setReadOnly(glv->z_axis.GetLabelsColPtr() == NULL);
+  labonZAxis->setChecked(glv->z_axis.labels_on);
+  flipZAxis->setChecked(glv->z_axis.flip);
   
   lelZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
@@ -623,6 +679,8 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
     lelErr[i]->GetImage(&(glv->children), glv->errbars[i]->GetColPtr());
     oncErr[i]->setReadOnly(glv->errbars[i]->GetColPtr() == NULL);
     oncErr[i]->setChecked(glv->errbars[i]->on);
+    
+    flipYAxis[i]->setChecked(glv->plots[i]->flip);
     
     // set each but all set by single checkbox
     chkYAxisLabel->setChecked(glv->plots[i]->show_axis_label);
@@ -690,6 +748,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->width = (float)fldWidth->GetValue();
   glv->depth = (float)fldDepth->GetValue();
   glv->tot_plots = (float)fldNPlots->GetValue();
+  glv->solid_lines = chkLinesSolid->isChecked();
   
   glv->setScaleData(false, cbar->min(), cbar->max());
 
@@ -698,7 +757,10 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
   glv->x_axis.matrix_cell = (int)cellXAxis->GetValue();
   glv->x_axis.show_axis_label = chkXAxisLabel->isChecked();
-  
+  glv->x_axis.SetLabelsColPtr((GraphColView*)labXAxis->GetValue());
+  glv->x_axis.labels_on = labonXAxis->isChecked();
+  glv->x_axis.flip = flipXAxis->isChecked();
+
   // if setting a col for 1st time, we automatically turn on (since it would be ro)
   GraphColView* tcol = (GraphColView*)lelZAxis->GetValue();
   if (tcol && !glv->z_axis.GetColPtr())
@@ -709,7 +771,9 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
   glv->z_axis.show_axis_label = chkZAxisLabel->isChecked();
-  glv->solid_lines = chkLinesSolid->isChecked();
+  glv->z_axis.SetLabelsColPtr((GraphColView*)labZAxis->GetValue());
+  glv->z_axis.labels_on = labonZAxis->isChecked();
+  glv->z_axis.flip = flipZAxis->isChecked();
   
   int pltsz = MIN(max_plots, glv->plots.size);
   
@@ -728,6 +792,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
       oncErr[i]->setChecked(true);
     glv->errbars[i]->on = oncErr[i]->isChecked();
     glv->errbars[i]->SetColPtr(tcol);
+    glv->plots[i]->flip = flipYAxis[i]->isChecked();
     
     // set each but all set by single checkbox
     glv->plots[i]->show_axis_label = chkYAxisLabel->isChecked();

@@ -93,6 +93,9 @@ public:
   taiWidgetPoly*            pdtXAxis; // fixed_range polydata (inline)
   QLabel*                   lblcellXAxis;
   taiWidgetFieldIncr*       cellXAxis; // matrix cell
+  iCheckBox*                labonXAxis; // labels on checkbox
+  taiWidgetListElChooser*   labXAxis; // labels list element chooser
+  iCheckBox*                flipXAxis;
   QPushButton*              butLinePropsXAxis;
   
   QHBoxLayout*            layZAxis;
@@ -103,6 +106,9 @@ public:
   taiWidgetPoly*            pdtZAxis; // fixed_range polydata (inline)
   QLabel*                   lblcellZAxis;
   taiWidgetFieldIncr*       cellZAxis; // matrix cell
+  iCheckBox*                labonZAxis; // labels on checkbox
+  taiWidgetListElChooser*   labZAxis; // labels list element chooser
+  iCheckBox*                flipZAxis;
   QPushButton*              butLinePropsZAxis;
   
   iStripeWidget*            plotsWidg; // plot holding widget
@@ -120,6 +126,7 @@ public:
   taiWidgetFieldIncr*       cellYAxis[max_plots]; // matrix cell
   taiWidgetListElChooser*   lelErr[max_plots];
   iCheckBox*                oncErr[max_plots]; // on checkbox
+  iCheckBox*                flipYAxis[max_plots];
   QPushButton*              butLineProps[max_plots];
   
   //  QLabel*                   lblErr[max_plots];

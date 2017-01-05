@@ -56,6 +56,7 @@ public:
 
   MinMax                data_range;     // #READ_ONLY #NO_SAVE actual min and max of data (including fixed range)
   MinMax                range;          // #READ_ONLY #NO_SAVE actual display range of the axis data
+  bool                  flip;           // flip the display of values on this axis
 
   int                   n_ticks;        // #DEF_10 number of ticks desired
   float                 axis_length;    // #READ_ONLY #NO_COPY in view units (width or depth)
@@ -108,7 +109,9 @@ public:
   //    Rendering
 
   inline float          DataToPlot(float data)
-  { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Normalize(data); }
+  { if(range.Range() == 0.0f) return 0.0f;
+    float rval = axis_length * range.Normalize(data); if(flip) rval = axis_length - rval;
+    return rval; }
   // convert data value to plotting value
   inline float          DistToPlot(float dist) // convert data value to plotting value
   { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Scale() * dist; }

@@ -208,12 +208,15 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
   line_width = cp->line_width;
   point_size = cp->point_size;
   point_spacing = cp->point_spacing;
+  solid_lines = cp->solid_lines;
   bar_space = cp->bar_space;
+  bar_depth = cp->bar_depth;
   label_spacing = cp->label_spacing;
   width = cp->width;
   depth = cp->depth;
   axis_font_size = cp->axis_font_size;
   label_font_size = cp->label_font_size;
+  x_axis_label_rot = cp->x_axis_label_rot;
   
   x_axis.CopyFromView(&(cp->x_axis));
   z_axis.CopyFromView(&(cp->z_axis));

@@ -574,6 +574,7 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
                 float mean = means_col->GetValAsFloat(cell);
                 float n = n_col->GetValAsFloat(cell);
 
+                // from http://www.skidmore.edu/~hfoley/Handouts/_baks/K.Ch19.notes.pdf.0002.81ae.bak
                 // [ABC] - [AB] - [AC] - [BC] + [A] + [B] + [C] - [T]
                 float md = (mean - mean12 - mean13 - mean23 + mean1 + mean2 + mean3 -
                             grand_mean);

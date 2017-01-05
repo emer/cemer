@@ -30,25 +30,30 @@ class TA_API GraphAxisView : public GraphAxisBase {
   // a non-Y axis (X, Z, etc)
 INHERITED(GraphAxisBase)
 public:
-
-  bool          row_num;        // display row number instead of column value for this axis
+  bool         labels_on;       // use a separate column for labels for this axis
+  String       labels_col_name; // name of datatable column for labels 
+  bool         row_num;         // display row number instead of column value for this axis (e.g., for string columns)
 
   void         ComputeRange() override;
   bool         UpdateRange() override;
   void         UpdateOnFlag() override;
   void         SetRange(float min, float max) override;
 
-  void          CopyFromView(GraphAxisView* cp);
+  void         CopyFromView(GraphAxisView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
 
+  GraphColView* GetLabelsColPtr(); // get column pointer from labels_col_name
+  DataCol*      GetLabelsDAPtr();  // get dataarray ptr
+  void          SetLabelsColPtr(GraphColView* cgv);
+  
   SIMPLE_COPY(GraphAxisView);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
 protected:
   void         UpdateAfterEdit_impl() override;
 
 private:
-  void                  Initialize();
-  void                  Destroy() { };
+  void  Initialize();
+  void  Destroy() { };
 };
 
 #endif // GraphAxisView_h

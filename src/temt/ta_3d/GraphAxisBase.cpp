@@ -23,6 +23,7 @@
 #include <iViewPanelOfGraphTable>
 #include <taSvg>
 #include <String_Array>
+#include <GraphAxisView>
 
 #include <taMisc>
 
@@ -60,6 +61,7 @@ void GraphAxisBase::Initialize() {
   is_matrix = false;
   n_cells = 1;
   matrix_cell = 0;
+  flip = false;
   col_list = NULL;
   color.name = taMisc::t3d_text_color;
   n_ticks = 10;
@@ -111,6 +113,7 @@ void GraphAxisBase::CopyFromView_base(GraphAxisBase* cp){
   col_name = cp->col_name;
   fixed_range= cp->fixed_range;
   color= cp->color;
+  flip = cp->flip;
   n_ticks = cp->n_ticks;
 }
 
@@ -409,6 +412,9 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
                                  bool ticks_only, String* rnd_svg) {
   iVec3f fm = off;
   iVec3f to = off;
+
+  GraphAxisView* thisax = (GraphAxisView*)this;
+  DataCol* labda = thisax->GetLabelsDAPtr();
   
   // axis line itself
   to.x += axis_length;
@@ -442,7 +448,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
       fm.y = off.y + -(GraphTableView::tick_size + TICK_OFFSET + 1.5f * t3ax->font_size);
       String label = col_name;
       taMisc::SpaceLabel(label);
-      if(((GraphAxisView*)this)->row_num) {
+      if(thisax->row_num) {
         if(isString()) {
           use_str_labels = true;
         }
@@ -504,12 +510,21 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
       if (fabsf(val / tick_incr) < range_zero_label_range)
         lab_val = 0.0f;         // the 0 can be screwy
       label = String(lab_val);
-      if(use_str_labels && da) {
-        int rnum = (int)lab_val;// lab_val is row number!
-        if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
-          label = da->GetValAsString(rnum);
+      if(labda && da) {
+        int lbrow = da->FindVal(val);
+        if(lbrow >= 0)
+          label = labda->GetValAsString(lbrow);
         else
-          label = "";           // empty it!
+          label = "";
+      }
+      else {
+        if(use_str_labels && da) {
+          int rnum = (int)lab_val;// lab_val is row number!
+          if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
+            label = da->GetValAsString(rnum);
+          else
+            label = "";           // empty it!
+        }
       }
       if(label.nonempty()) {
         if(gtv->x_axis_label_rot != 0.0f) {
@@ -676,6 +691,9 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
   iVec3f fm = off;
   iVec3f to = off;
   
+  GraphAxisView* thisax = (GraphAxisView*)this;
+  DataCol* labda = thisax->GetLabelsDAPtr();
+
   // axis line itself
   to.z = off.z + axis_length;
   t3ax->addLine(fm, to);
@@ -768,10 +786,19 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
       if (fabsf(val / tick_incr) < range_zero_label_range)
         lab_val = 0.0f;         // the 0 can be screwy
       label = String(lab_val);
-      if(use_str_labels && da) {
-        int rnum = (int)lab_val;// lab_val is row number!
-        if(rnum >= 0 && rnum < da->rows())
-          label = da->GetValAsString(rnum);
+      if(labda && da) {
+        int lbrow = da->FindVal(val);
+        if(lbrow >= 0)
+          label = labda->GetValAsString(lbrow);
+        else
+          label = "";
+      }
+      else {
+        if(use_str_labels && da) {
+          int rnum = (int)lab_val;// lab_val is row number!
+          if(rnum >= 0 && rnum < da->rows())
+            label = da->GetValAsString(rnum);
+        }
       }
       if(label.nonempty()) {
         t3ax->addLabel(label.chars(),
