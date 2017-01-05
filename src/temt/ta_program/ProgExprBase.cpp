@@ -892,9 +892,9 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
       expr_lookup_cur_base = own_pel;
       varlkup->type_list.Link(&TA_ProgVar);
       varlkup->type_list.Link(&TA_DynEnumItem);
-      varlkup->type_list.Link(&TA_Function);
       if (expr_start == 0) {  // program calls must be at beginning of line
         varlkup->type_list.Link(&TA_Program);
+        varlkup->type_list.Link(&TA_Function);
       }
       varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
       bool okc = varlkup->OpenChooser();
