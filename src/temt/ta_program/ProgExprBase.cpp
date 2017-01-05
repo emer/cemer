@@ -53,6 +53,8 @@ static ProgEl* expr_lookup_cur_base = NULL;
 String_Array                ProgExprBase::completion_choice_list;
 String_Array                ProgExprBase::completion_progels_list;
 String_Array                ProgExprBase::completion_statics_list;
+String_Array                ProgExprBase::completion_bool_list;
+String_Array                ProgExprBase::completion_null_list;
 taBase_List                 ProgExprBase::completion_progvar_list;
 taBase_List                 ProgExprBase::completion_dynenum_list;
 taBase_List                 ProgExprBase::completion_function_list;
@@ -68,6 +70,8 @@ String                      ProgExprBase::completion_lookup_seed;
 String                      ProgExprBase::completion_text_before;
 bool                        ProgExprBase::include_statics;
 bool                        ProgExprBase::include_progels;
+bool                        ProgExprBase::include_bools;
+bool                        ProgExprBase::include_null;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
 
 void ProgExprBase::Initialize() {
@@ -76,6 +80,8 @@ void ProgExprBase::Initialize() {
   parse_ve_pos = 0;
   
   GetStatics(&completion_statics_list); // get the list of statics - no need to do for every parse
+  GetBools(&completion_bool_list); // create the bools list
+  GetNull(&completion_null_list); // create the bools list
 }
 
 void ProgExprBase::Destroy() {
@@ -929,6 +935,11 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
       expr_lookup_cur_base = NULL;
       break;
     }
+      
+    case ProgExprBase::EQUALITY: {  // multiple possibilities
+      // TODO - add to parser
+      break;
+    }
 
     case ProgExprBase::OBJ_MEMB_METH: {                     // members/methods
       TypeDef* lookup_td = NULL;
@@ -1256,6 +1267,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   include_statics = false;
   include_progels = false;
+  include_bools = false;
+  include_null = false;
   completion_lookup_type = lookup_type;
   completion_progvar_list.RemoveAll();
   completion_dynenum_list.RemoveAll();
@@ -1289,11 +1302,22 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       if (lhs_var) {
         var_type = lhs_var->var_type;
       }
+      if (var_type == ProgVar::T_Object) {
+        include_null = true;
+      }
+      if (var_type == ProgVar::T_Bool) {
+        include_bools = true;
+      }
+      include_statics = true;
       GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
-      include_statics = true;
       expr_lookup_cur_base = NULL;
+      break;
+    }
+
+    case ProgExprBase::EQUALITY: {  // multiple possibilities
+      // TODO - add to parser
       break;
     }
 
@@ -1507,7 +1531,19 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       completion_choice_list.Add(completion_statics_list.SafeEl(i));
     }
   }
-
+  
+  if (include_bools) {
+    for (int i=0; i<completion_bool_list.size; i++) {
+      completion_choice_list.Add(completion_bool_list.SafeEl(i));
+    }
+  }
+  
+  if (include_null) {
+    for (int i=0; i<completion_null_list.size; i++) {
+      completion_choice_list.Add(completion_null_list.SafeEl(i));
+    }
+  }
+  
   for (int i=0; i<completion_progvar_list.size; i++) {
     taBase* base = completion_progvar_list.FastEl(i);
     completion_choice_list.Add(base->GetName());
@@ -1791,5 +1827,18 @@ void ProgExprBase::GetStatics(String_Array* statics) {
       statics->Add(taMisc::static_collection.SafeEl(i)->name + "::");
     }
     statics->Sort();
+  }
+}
+
+void ProgExprBase::GetBools(String_Array* bools) {
+  if (bools->size == 0) {
+    bools->Add("false");
+    bools->Add("true");
+  }
+}
+
+void ProgExprBase::GetNull(String_Array* nulls) {
+  if (nulls->size == 0) {
+    nulls->Add("NULL");
   }
 }

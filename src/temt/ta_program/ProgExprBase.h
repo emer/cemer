@@ -57,13 +57,14 @@ public:
   enum LookUpType {
     NOT_SET,
     VARIOUS,        // no path or delimiter - could be one of several types
-    ASSIGN,         // could be ProgVar, method, function but not program
     OBJ_MEMB_METH,
     SCOPED,           // Class::
     ARRAY_INDEX,
     CALL,
     PROGRAM_FUNCTION,
     METHOD,
+    ASSIGN,         // could be ProgVar, method, function but not program
+    EQUALITY,       // either == or !=
   };
   
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
@@ -83,13 +84,15 @@ public:
   // these are for the code completer
   static taBase_List            completion_progvar_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_dynenum_list;  // #READ_ONLY #HIDDEN #NO_SAVE
-  static taBase_List            completion_function_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_function_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_program_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static MemberSpace            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static MethodSpace            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
-  static String_Array           completion_progels_list;// #READ_ONLY #HIDDEN #NO_SAVE
-  static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once in Init()
+  static String_Array           completion_progels_list;// #READ_ONLY #HIDDEN #NO_SAVE built once
+  static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once
+  static String_Array           completion_bool_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
+  static String_Array           completion_null_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
@@ -100,6 +103,8 @@ public:
   static String                 completion_text_before; // #READ_ONLY #HIDDEN #NO_SAVE completers copy - this is text before cursor
   static bool                   include_statics;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the static classes
   static bool                   include_progels;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
+  static bool                   include_bools;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the bools
+  static bool                   include_null;           // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render
@@ -183,6 +188,8 @@ public:
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static void           GetProgEls(String_Array* progels);
   static void           GetStatics(String_Array* statics);
+  static void           GetBools(String_Array* bools);
+  static void           GetNull(String_Array* nulls);
   static void           GenProgElList(ProgEl_List& list, TypeDef* td);
 
   static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
