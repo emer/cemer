@@ -192,7 +192,7 @@ public:
   static void           GetNull(String_Array* nulls);
   static void           GenProgElList(ProgEl_List& list, TypeDef* td);
 
-  static int            Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
+  static ProgExprBase::LookUpType           Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                             String& lookup_seed, String& prepend_txt, String& append_txt,
                                             String& prog_el_txt, String& path_var, String& path_prepend_txt,
                                             String& path_rest, String& base_path, bool& lookup_group_default);

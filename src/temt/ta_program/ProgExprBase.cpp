@@ -1707,11 +1707,11 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   return rval;
 }
 
-int ProgExprBase::Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
+ProgExprBase::LookUpType ProgExprBase::Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                       String& lookup_seed, String& prepend_txt, String& append_txt,
                                       String& prog_el_txt, String& path_var, String& path_prepend_txt,
                                       String& path_rest, String& base_path, bool& lookup_group_default) {
-  int     lookup_type = 0;
+  ProgExprBase::LookUpType     lookup_type;
   bool    path_base_not_null = false;
   int     expr_start = 0;
   
