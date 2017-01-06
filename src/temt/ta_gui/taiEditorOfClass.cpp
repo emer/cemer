@@ -142,6 +142,7 @@ void taiEditorOfClass::bgrp_buttonClicked(int id) {
   if(host_type == HT_DIALOG) {
     defer_reshow_req = true;
     Refresh();
+    GetImage(true);
   }
   else {
     ReShow_Async();
