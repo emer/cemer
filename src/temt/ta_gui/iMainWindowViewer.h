@@ -180,6 +180,7 @@ public:
   iAction*            viewIncrFontSizeAction;
   iAction*            viewDecrFontSizeAction;
   iAction*            viewSetFontSizeAction;
+  iAction*            viewScreenInfoAction;
 
   iAction*            viewBrowseOnlyAction;   // all possible combinations of the main frames
   iAction*            viewPanelsOnlyAction;
@@ -378,6 +379,7 @@ public slots:
   virtual void  viewIncrFontSize();
   virtual void  viewDecrFontSize();
   virtual void  viewSetFontSize();
+  virtual void  viewScreenInfo();
   
   virtual void  editCut();
   virtual void  editCopy();

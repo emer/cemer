@@ -70,6 +70,7 @@ taTypeDef_Of(EnumDef);
 #include <QList>
 #include <QThread>
 #include <QApplication>
+#include <QScreen>
 #endif
 
 #include <ctime>
@@ -363,6 +364,14 @@ taCompletionPrefs::taCompletionPrefs() {
 }
 taCompletionPrefs taMisc::code_completion;
 
+taScreenPrefs::taScreenPrefs() {
+  line_width = 1.0f;
+}
+
+taScreenPrefs taMisc::screen1;
+taScreenPrefs taMisc::screen2;
+taScreenPrefs taMisc::screen3;
+taScreenPrefs taMisc::screen4;
 
 ////////////////////////////////////////////////////////
 //    Logging settings
@@ -389,7 +398,6 @@ String  taMisc::user_plugin_dir;
 String  taMisc::user_log_dir;
 String  taMisc::exe_cmd;
 String  taMisc::exe_path;
-String  taMisc::custom_key_file;
 
 // note: app should set all these url's in its main or other app-specific code
 String  taMisc::web_home = "https://grey.colorado.edu/emergent/index.php/Main_Page";
@@ -1704,6 +1712,32 @@ void taMisc::SetCurrentFontSizeToDefaults() {
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
   inst->SaveConfig();
 #endif
+}
+
+String taMisc::CurrentScreenName() {
+#ifndef NO_TA_BASE
+  QScreen* sc = QGuiApplication::primaryScreen();
+  if(sc) {
+    return sc->name();
+  }
+#endif
+  return "";
+}
+
+float taMisc::ScreenLineWidth() {
+#ifndef NO_TA_BASE
+  String scr_nm = CurrentScreenName();
+  if(scr_nm.empty()) return 1.0f;
+  if(screen1.name == scr_nm)
+    return screen1.line_width;
+  if(screen2.name == scr_nm)
+    return screen2.line_width;
+  if(screen3.name == scr_nm)
+    return screen3.line_width;
+  if(screen4.name == scr_nm)
+    return screen4.line_width;
+#endif
+  return 1.0f;
 }
 
 

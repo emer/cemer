@@ -173,7 +173,7 @@ T3Axis::T3Axis(Axis ax, T3DataView* dataView_, float fnt_sz, int n_axis)
   if(gtv) {
     line_style = new SoDrawStyle();
     ss->addChild(line_style);
-    line_style->lineWidth.setValue(gtv->dev_pix_ratio * 2.0f);
+    line_style->lineWidth.setValue(gtv->line_width_mult);
   }
   lines = new SoLineSet();
   lines->vertexProperty.setValue(new SoVertexProperty());

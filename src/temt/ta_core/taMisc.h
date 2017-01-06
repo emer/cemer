@@ -160,6 +160,15 @@ public:
   taSpringLoadedPrefs();
 };
 
+class TA_API taScreenPrefs {
+  // #EDIT_INLINE options for screen-specific parameters
+public:
+  String  name;  // name of screen -- use View/Screen Info to get names of currently attached screens -- these settings are specific to this screen
+  float   line_width;   // extra multiplier for the line widths for this display
+  
+  taScreenPrefs();
+};
+
 #define PATH_SEP taMisc::path_sep
 
 taTypeDef_Of(taMisc);
@@ -399,8 +408,13 @@ public:
   static short          num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save
   static short          num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_50 number of browse history items to keep
 
-  static taSpringLoadedPrefs    tree_spring_loaded;  // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
-  static taCompletionPrefs      code_completion;  // #SAVE #CAT_GUI turns on the code completer which presents a popup menu of legal objects, members and methods as you enter code and you can specify maximum choices to list in menu
+  static taSpringLoadedPrefs    tree_spring_loaded;  // #SAVE #CAT_GUI #EXPERT do the tree view folders expand during drag and drop
+  static taCompletionPrefs      code_completion;  // #SAVE #CAT_GUI #EXPERT turns on the code completer which presents a popup menu of legal objects, members and methods as you enter code and you can specify maximum choices to list in menu
+
+  static taScreenPrefs  screen1; // #SAVE #CAT_GUI #EXPERT preferences associated with given screen name, applicable if name is set -- use View / Screen Info for name and info of screens
+  static taScreenPrefs  screen2; // #SAVE #CAT_GUI #EXPERT preferences associated with given screen name, applicable if name is set -- use View / Screen Info for name and info of screens
+  static taScreenPrefs  screen3; // #SAVE #CAT_GUI #EXPERT preferences associated with given screen name, applicable if name is set -- use View / Screen Info for name and info of screens
+  static taScreenPrefs  screen4; // #SAVE #CAT_GUI #EXPERT preferences associated with given screen name, applicable if name is set -- use View / Screen Info for name and info of screens
   
   ////////////////////////////////////////////////////////
   //    Logging settings
@@ -434,7 +448,6 @@ public:
   // #SHOW #READ_ONLY #CAT_File executable command path and filename -- how was this program invoked (from argv0)
   static String         exe_path;
   // #SHOW #READ_ONLY #CAT_File full absoluate path to executable
-  static String         custom_key_file;
 
   static String         web_home;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for location of main web home page for this application
@@ -773,16 +786,21 @@ public:
   static void   Decode_Signal(int err);
   // #IGNORE printout translation of signal on cerr
 
-  static bool    InMainThread();
+  static bool   InMainThread();
   // #CAT_Threads am I currently in the main thread - the one that the main program is running in?
-  static String  CurrentThreadName();
+  static String CurrentThreadName();
   // #CAT_Threads name of the current thread
   
-  static int            GetCurrentFontSize(const String& component);
+  static int    GetCurrentFontSize(const String& component);
   // #CAT_GUI return preferred font size plus global_font_incr_decr
-  static void           SetCurrentFontSizeToDefaults();
+  static void   SetCurrentFontSizeToDefaults();
   // #CAT_GUI set current font sizes to defaults -- adds global_font_incr_decr to font sizes and saves prefs
 
+  static String CurrentScreenName();
+  // #CAT_GUI get the name of the current primary screen
+  static float  ScreenLineWidth();
+  // #CAT_GUI get the line width multiplier for the current primary screen, from the user screen settings
+  
   /////////////////////////////////////////////////
   //    Startup/Args
 

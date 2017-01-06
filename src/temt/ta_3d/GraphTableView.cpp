@@ -113,7 +113,7 @@ void GraphTableView::Initialize() {
   graph_type = XY;
   plot_style = LINE;
   line_width = 1.0f;
-  dev_pix_ratio = 1.0f;
+  line_width_mult = 1.0f;
   point_size = .01f;
   point_spacing = 1;
   solid_lines = false;
@@ -648,8 +648,8 @@ void GraphTableView::Render_impl() {
 #if (QT_VERSION >= 0x050000)
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
-    dev_pix_ratio = vw->devicePixelRatio();
-    // taMisc::Info("dev_pix_ratio:", String(dev_pix_ratio));
+    line_width_mult = vw->devicePixelRatio() * taMisc::ScreenLineWidth();
+    // taMisc::Info("line_width_mult:", String(line_width_mult));
   }
 #endif
   
@@ -1407,7 +1407,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
                                      taVector2f& cur_tr, int group) {
   t3gl->clear();
   t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width_mult * line_width);
   t3gl->setMarkerSize(point_size);
   t3gl->setValueColorMode(false);
   if (color_mode == BY_GROUP) {
@@ -1686,7 +1686,7 @@ void GraphTableView::RenderGraph_XY() {
   graphs->addChild(gr1);
 
   SoDrawStyle* lineDrawStyle_ = new SoDrawStyle();
-  lineDrawStyle_->lineWidth.setValue(dev_pix_ratio * 2.0f);
+  lineDrawStyle_->lineWidth.setValue(line_width_mult);
   gr1->addChild(lineDrawStyle_);
   
   // each graph has a box and lines..
@@ -2143,7 +2143,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   plv.eff_y_axis = &yax;                // set this for point clicking!
   
   t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width_mult * line_width);
   t3gl->setMarkerSize(point_size);
   
   DataCol* da_er = erv.GetDAPtr();
@@ -2457,7 +2457,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   plv.eff_y_axis = &yax;                // set this for point clicking!
   
   t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width_mult * line_width);
   t3gl->setMarkerSize(point_size);
   
   DataCol* da_er = erv.GetDAPtr();

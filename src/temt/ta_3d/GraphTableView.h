@@ -79,7 +79,7 @@ public:
   bool                  negative_draw;  // continue same line when X value resets in negative axis direction?
   bool                  negative_draw_z; // continue same line when Z value resets in negative axis direction?
   float                 line_width;     // width of line -- 0 means use default
-  float                 dev_pix_ratio;  // #NO_SAVE multiplier on display device -- for multiplying line_width 
+  float                 line_width_mult;  // #NO_SAVE multiplier on display device -- for multiplying line_width -- also takes into account taMisc screen prefs
   float                 point_size;     // size of point marker symbols
   int                   point_spacing;  // #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers
   bool                  solid_lines;    // only use solid line style -- not dotted or dashed

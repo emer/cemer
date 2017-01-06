@@ -82,6 +82,7 @@
 #include <iWebView>
 #include <QMenuBar>
 #include <QTimer>
+#include <QScreen>
 
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
@@ -803,6 +804,10 @@ void iMainWindowViewer::Constr_ViewMenu()
   if (curProject() != NULL)
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // reinstate setting
 
+  viewScreenInfoAction = AddAction(new iAction("Screen Info", QKeySequence(),
+                                               "screenInfoAction"));
+  viewMenu->AddAction(viewScreenInfoAction);
+
   // don't add to menu - it is on the window menu anyway - it will be added to toolbar for easy access
   viewConsoleFrontAction = AddAction(new iAction("Console", QKeySequence(), "viewConsoleFrontAction"));
   viewConsoleFrontAction->setIcon(QIcon(QPixmap(":/images/console_icon.png")));
@@ -843,6 +848,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
   connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
   connect(viewSetFontSizeAction, SIGNAL(Action()), this, SLOT(viewSetFontSize()));
+  connect(viewScreenInfoAction, SIGNAL(Action()), this, SLOT(viewScreenInfo()));
   connect(viewConsoleFrontAction, SIGNAL(Action()), this, SLOT(ConsoleToFront()));
   connect(signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
 }
@@ -2633,6 +2639,26 @@ void iMainWindowViewer::viewSetFontSize() {
   viewRefresh();
   taMisc::Info("current font sizes are now permanently saved in preferences / options");
 }
+
+void iMainWindowViewer::viewScreenInfo() {
+  QList<QScreen*> screens = QGuiApplication::screens();
+  for(int i=0; i<screens.count(); i++) {
+    QScreen* sc = screens[i];
+    QRect geom = sc->geometry();
+    String geo_str = "left: " + String(geom.left()) + " bot: " + String(geom.bottom())
+      + " width: " + String(geom.width()) + " height: " + String(geom.height());
+    geom = sc->virtualGeometry();
+    String virt_geo_str = "left: " + String(geom.left()) + " bot: " + String(geom.bottom())
+      + " width: " + String(geom.width()) + " height: " + String(geom.height());
+    taMisc::Info("Screen " + String(i) + ": " + (String)sc->name() + "\n",
+                 "geom: " + geo_str + "\n",
+                 "virtual geom: " + virt_geo_str + "\n",
+                 "device pixel ratio: " + String(sc->devicePixelRatio()) + "\n",
+                 "physical dpi: " + String(sc->physicalDotsPerInch()) + "\n",
+                 "logical dpi: " + String(sc->logicalDotsPerInch()) + "\n");
+  }
+}
+
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjShower()) return; // changes only applied for proj showers
