@@ -366,6 +366,7 @@ taCompletionPrefs taMisc::code_completion;
 
 taScreenPrefs::taScreenPrefs() {
   line_width = 1.0f;
+  window_scale = 1.0f;
 }
 
 taScreenPrefs taMisc::screen1;
@@ -1724,22 +1725,31 @@ String taMisc::CurrentScreenName() {
   return "";
 }
 
-float taMisc::ScreenLineWidth() {
-#ifndef NO_TA_BASE
+taScreenPrefs* taMisc::CurrentScreenParams() {
   String scr_nm = CurrentScreenName();
-  if(scr_nm.empty()) return 1.0f;
+  if(scr_nm.empty()) return NULL;
   if(screen1.name == scr_nm)
-    return screen1.line_width;
+    return &screen1;
   if(screen2.name == scr_nm)
-    return screen2.line_width;
+    return &screen2;
   if(screen3.name == scr_nm)
-    return screen3.line_width;
+    return &screen3;
   if(screen4.name == scr_nm)
-    return screen4.line_width;
-#endif
-  return 1.0f;
+    return &screen4;
+  return NULL;
 }
 
+float taMisc::ScreenLineWidth() {
+  taScreenPrefs* sc = CurrentScreenParams();
+  if(!sc) return 1.0f;
+  return sc->line_width;
+}
+
+float taMisc::ScreenWindowScale() {
+  taScreenPrefs* sc = CurrentScreenParams();
+  if(!sc) return 1.0f;
+  return sc->window_scale;
+}
 
 /////////////////////////////////////////////////
 //      Startup

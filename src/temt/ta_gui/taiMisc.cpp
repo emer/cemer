@@ -312,6 +312,9 @@ void taiMisc::InitMetrics(bool reinit) {
   int primaryScreen = d->primaryScreen();
   scrn_geom = d->availableGeometry(primaryScreen);
   scrn_s = scrn_geom.size();
+  float win_sc = taMisc::ScreenWindowScale();
+  scrn_s.w = (int)(win_sc * scrn_s.w);
+  scrn_s.h = (int)(win_sc * scrn_s.h);
   if (scrn_s.height() <= 768)   // jr 07/11/13 - base_height only used in T3 UnitNode
     base_height = 21;
   else if (scrn_s.height() <= 1024)
