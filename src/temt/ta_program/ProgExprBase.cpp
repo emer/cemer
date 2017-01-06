@@ -517,9 +517,9 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   // if we are in comment code don't parse
   if (txt.startsWith("//") || (txt.length() == 1 && txt.startsWith('/'))) return NOT_SET;
   
-  if (txt.length() > 2) {
-    if (txt.contains("//", -1)) return NOT_SET;
-  }
+//  if (txt.length() > 2) {
+//    if (txt.contains("//", -1)) return NOT_SET;
+//  }
 
   int       prog_el_start_pos = -1;
   int       c = '\0';
@@ -530,7 +530,6 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   int       quote_count = 0;
   int       delims_used = 0;
   int_Array delim_pos;
-  
   
   // ** Working backwards - delimiters will be in reverse order **
   for(int i = cur_pos-1; i >= 0; i--) {
@@ -556,6 +555,43 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         break;
       }
     }
+    
+    if(c == '=') {
+      if (i != txt.length()-1) {  // not the last char
+        c_next = txt[i+1];
+        if (c_next == '=') {
+          delim_pos.Add(i);
+          break;
+        }
+        else {
+          expr_start = i+1;
+          delim_pos.Add(i);
+          continue;
+        }
+      }
+      else {
+        expr_start = i+1;
+        delim_pos.Add(i);
+        continue;
+      }
+    }
+
+    if(c == '!') {
+      if (i != txt.length()-1) {  // not the last char
+        c_next = txt[i+1];
+        if (c_next == '=') {
+          delim_pos.Add(i);
+          break;
+        }
+        else {
+          continue;
+        }
+      }
+      else {
+        continue;
+      }
+    }
+
     if(isalpha(c)) {
       if (delim_pos.size > 0) {  // we only collect chars just before the preceeding position
         continue;
@@ -565,14 +601,17 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         continue;
       }
     }
-    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':' || c == '!') {
+    
+    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
       delim_pos.Add(i);
       continue;
     }
+    
     if (c =='"') {
       quote_count++;
       continue;
     }
+    
     if (c == '(') {
       left_parens_cnt++;
       if (left_parens_cnt > right_parens_cnt) {
@@ -584,17 +623,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         continue;
       }
     }
+    
     if (c == ')') {
       right_parens_cnt++;
       delim_pos.Add(i);
       continue;
     }
-    if (c == '=') {
-      expr_start = i+1;
-      delim_pos.Add(i);
-      continue;
-    }
-
+    
     expr_start = i+1;           // anything else is a bust
     break;
   }
@@ -1331,11 +1366,13 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
     case ProgExprBase::EQUALITY: {  // multiple possibilities
       String lhs = prepend_txt;
-      lhs = lhs.before('=', -1);
-      if (lhs.empty()) {  // if true we had "!=" - but really the prepend_txt should have either "==" or "!=" - check this
+      lhs = lhs.before("==", -1);
+      if (lhs.empty()) {
         lhs = prepend_txt;
+        lhs = lhs.before("!=", -1); // only other choice
       }
       lhs = lhs.trimr();
+      lhs = lhs.after('(', -1);
       ProgVar* lhs_var = own_prg->FindVarName(lhs);
       ProgVar::VarType var_type = ProgVar::T_UnDef;
       if (lhs_var) {
