@@ -584,11 +584,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
           break;
         }
         else {
-          continue;
+          expr_start = i+1;
+          break;
         }
       }
       else {
-        continue;
+        expr_start = i+1;
+        break;
       }
     }
 
@@ -1373,6 +1375,9 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       }
       lhs = lhs.trimr();
       lhs = lhs.after('(', -1);
+      if (lhs.firstchar() == '!') {
+        lhs = lhs.after('!');
+      }
       ProgVar* lhs_var = own_prg->FindVarName(lhs);
       ProgVar::VarType var_type = ProgVar::T_UnDef;
       if (lhs_var) {
