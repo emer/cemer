@@ -335,6 +335,23 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
       }
     }
   }
+  if(var_type == T_DynEnum && prg) {
+    if(!dyn_enum_val.enum_type) {
+      if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
+                                    "enum_type is not set for this dynamic enum value");
+      rval = false;
+    }
+    else {
+      Program* dtprg = GET_OWNER(dyn_enum_val.enum_type, Program);
+      if(prg != dtprg && dtprg) {
+        if(!quiet) taMisc::CheckError
+                     ("Error in ProgVar in program:", prognm, "var name:",name,
+                      "enum_type is in a different Program:",dtprg->name,
+                      "than this variable");
+        rval = false;
+      }
+    }
+  }
   GetInitFromVar(true);         // warn
 }
 

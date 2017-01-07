@@ -37,8 +37,9 @@ String DynEnum::GetDisplayName() const {
 
 void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!enum_type, quiet, rval,
-             "enum_type is not set for this dynamic enum value");
+  // doing this at progvar level now
+  // CheckError(!enum_type, quiet, rval,
+  //            "enum_type is not set for this dynamic enum value");
 }
 
 String DynEnum::NameVal() const {

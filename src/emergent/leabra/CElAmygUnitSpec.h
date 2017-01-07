@@ -70,6 +70,7 @@ public:
                         int thr_no) override;
   float Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
+  void  Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(CElAmygUnitSpec);
 protected:

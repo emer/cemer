@@ -116,4 +116,10 @@ float BLAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   return net_ex;
 }
 
-
+void BLAmygUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
+                                        int thr_no) {
+  inherited::Quarter_Final_RecVals(u, net, thr_no);
+  if(net->quarter == 3) {
+    u->act_dif = u->act_p - u->act_q0; // prior trial -- this is learning delta
+  }
+}
