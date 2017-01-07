@@ -182,6 +182,7 @@ public:
   // Signature must match that of the item_filter_fun typedef.
   static bool           ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupChooser
   static bool           ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
+  static bool           ExprIsType(const String& txt);  // bool, int, float, etc
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);

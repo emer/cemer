@@ -841,19 +841,16 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   else {
     prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
     
-    if (prog_el_start_pos > -1 && ExprLookupIsFunc(prog_el_txt)) {
+    if (prog_el_start_pos > -1 && ExprLookupIsFunc(prog_el_txt)) { // line starts with function call
       lookup_type = ProgExprBase::CALL;
       expr_start = txt.length();
       prepend_txt = txt.before(expr_start);
     }
-    // rohrlich - this will be true if the code is already compiled and that is causing a problem - see bug 2453
-    // - honestly I don't know of any situation that uses this and I think we should always take the code as uncompiled
-    // so commenting out to see if there are repercussions
-//    else if(path_base_not_null) {
-//      lookup_type = ProgExprBase::OBJ_MEMB_METH;
-//      lookup_seed = txt.from(expr_start);
-//      prepend_txt = txt.before(expr_start);
-//    }
+    else if (prog_el_start_pos == -1 && (prog_el_txt)) { // line starts with type (int, bool, float, etc)
+      lookup_type = ProgExprBase::NOT_SET;
+      expr_start = txt.length();
+      prepend_txt = txt.before(expr_start);
+    }
     else {
       lookup_type = ProgExprBase::VARIOUS;
       lookup_seed = txt.from(expr_start);
@@ -1742,6 +1739,18 @@ bool ProgExprBase::ExprLookupIsFunc(const String& txt) {
     trimmed_txt = trimmed_txt.before(' ');
   }
   return (trimmed_txt == "call");
+}
+
+bool ProgExprBase::ExprIsType(const String& txt) {
+  String first_word = txt.before(' ');
+  if (first_word.empty()) {
+    return false;
+  }
+  
+  if (completion_type_list.FindEl(first_word)) {
+    return true;
+  }
+  return false;
 }
 
 String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
