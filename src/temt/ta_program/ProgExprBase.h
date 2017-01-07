@@ -93,6 +93,7 @@ public:
   static String_Array           completion_statics_list;// #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_bool_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_null_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
+  static String_Array           completion_type_list;   // #READ_ONLY #HIDDEN #NO_SAVE built once
   static String_Array           completion_choice_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static LookUpType             completion_lookup_type; // #READ_ONLY #HIDDEN #NO_SAVE
   static String                 completion_pre_text;    // #READ_ONLY #HIDDEN #NO_SAVE completers copy because it needs to be static so we can get it later
@@ -103,6 +104,7 @@ public:
   static String                 completion_text_before; // #READ_ONLY #HIDDEN #NO_SAVE completers copy - this is text before cursor
   static bool                   include_statics;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the static classes
   static bool                   include_progels;        // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
+  static bool                   include_types;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
   static bool                   include_bools;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the bools
   static bool                   include_null;           // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
 
@@ -190,6 +192,7 @@ public:
   static void           GetStatics(String_Array* statics);
   static void           GetBools(String_Array* bools);
   static void           GetNull(String_Array* nulls);
+  static void           GetTypes(String_Array* types);
   static void           GenProgElList(ProgEl_List& list, TypeDef* td);
 
   static ProgExprBase::LookUpType           Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,

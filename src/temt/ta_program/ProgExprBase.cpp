@@ -55,6 +55,7 @@ String_Array                ProgExprBase::completion_progels_list;
 String_Array                ProgExprBase::completion_statics_list;
 String_Array                ProgExprBase::completion_bool_list;
 String_Array                ProgExprBase::completion_null_list;
+String_Array                ProgExprBase::completion_type_list;
 taBase_List                 ProgExprBase::completion_progvar_list;
 taBase_List                 ProgExprBase::completion_dynenum_list;
 taBase_List                 ProgExprBase::completion_function_list;
@@ -70,6 +71,7 @@ String                      ProgExprBase::completion_lookup_seed;
 String                      ProgExprBase::completion_text_before;
 bool                        ProgExprBase::include_statics;
 bool                        ProgExprBase::include_progels;
+bool                        ProgExprBase::include_types;
 bool                        ProgExprBase::include_bools;
 bool                        ProgExprBase::include_null;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
@@ -82,6 +84,7 @@ void ProgExprBase::Initialize() {
   GetStatics(&completion_statics_list); // get the list of statics - no need to do for every parse
   GetBools(&completion_bool_list); // create the bools list
   GetNull(&completion_null_list); // create the bools list
+  GetTypes(&completion_type_list); // create the bools list
 }
 
 void ProgExprBase::Destroy() {
@@ -604,7 +607,24 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       }
     }
     
-    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
+    if (c == '.') {
+      if (i > 0) {
+        c_previous = txt[i-1];
+        if (isdigit(c_previous)) {
+          continue;
+        }
+        else {
+          delim_pos.Add(i);
+          continue;
+        }
+      }
+      else {
+        delim_pos.Add(i);
+        continue;
+      }
+    }
+    
+    if(c == ']' || c == '[' || c == '>' || c == '-' || c == ':') {
       delim_pos.Add(i);
       continue;
     }
@@ -1319,6 +1339,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   include_progels = false;
   include_bools = false;
   include_null = false;
+  include_types = false;
   completion_lookup_type = lookup_type;
   completion_progvar_list.RemoveAll();
   completion_dynenum_list.RemoveAll();
@@ -1336,6 +1357,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       if (expr_start == 0) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
+        include_types = true;
         include_statics = true;
         include_progels = true;
       }
@@ -1496,8 +1518,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         }
       }
       if(!lookup_td) {
-        taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
-                     path_var);
+        taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:", path_var);
       }
       if(tal) {  // DO WE NEED THESE FOR COMPLETION?
         if(tal->InheritsFrom(&TA_taGroup_impl)) {
@@ -1596,6 +1617,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
   completion_choice_list.Reset();
   
+  if (include_types) {
+    for (int i=0; i<completion_type_list.size; i++) {
+      completion_choice_list.Add(completion_type_list.SafeEl(i));
+    }
+  }
+
   if (include_progels) {
     for (int i=0; i<completion_progels_list.size; i++) {
       completion_choice_list.Add(completion_progels_list.SafeEl(i));
@@ -1918,3 +1945,15 @@ void ProgExprBase::GetNull(String_Array* nulls) {
     nulls->Add("NULL");
   }
 }
+
+void ProgExprBase::GetTypes(String_Array* types) {
+  if (types->size == 0) {
+    types->Add("bool");
+    types->Add("int");
+    types->Add("real");
+    types->Add("float");
+    types->Add("double");
+    types->Add("String");
+  }
+}
+
