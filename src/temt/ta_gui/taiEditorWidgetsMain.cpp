@@ -91,7 +91,18 @@ int taiEditorWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String& d
   QFont f(taiM->nameFont(ctrl_size));
   f.setBold(true);
   wid->setFont(f);
-  wid->setFixedHeight(row_height);
+
+  QLabel* labwid = dynamic_cast<QLabel*>(wid);
+  if(labwid) {
+#ifdef TA_OS_MAC
+    labwid->setFixedHeight(row_height-2); // label widgets on mac too big for some reason
+#else
+    labwid->setFixedHeight(row_height);
+#endif    
+  }
+  else {
+    wid->setFixedHeight(row_height);
+  }
 
   QPalette pal = wid->palette();
   pal.setColor(QPalette::Background, colorOfRow(row));

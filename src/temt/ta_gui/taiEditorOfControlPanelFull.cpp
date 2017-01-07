@@ -117,6 +117,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
     if (!def_grp) {
       iLabel* lbl = new iLabel(grp->GetName(), body);
       AddSectionLabel(-1, lbl, "");
+      dat_cnt++;                // these count toward rows!!
     }
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);

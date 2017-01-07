@@ -365,6 +365,7 @@ taCompletionPrefs::taCompletionPrefs() {
 taCompletionPrefs taMisc::code_completion;
 
 taScreenPrefs::taScreenPrefs() {
+  font_incr = 0;
   line_width = 1.0f;
   window_scale = 1.0f;
 }
@@ -1678,27 +1679,28 @@ String taMisc::CurrentThreadName() {
 }
 
 int taMisc::GetCurrentFontSize(const String& component) {
+  float sc_font_incr = ScreenFontIncr();
   if (component == "labels") {
-    return font_sizes.labels + global_font_incr_decr;
+    return font_sizes.labels + global_font_incr_decr + sc_font_incr;
   }
   else if (component == "navigator") {
-    return font_sizes.navigator + global_font_incr_decr;
+    return font_sizes.navigator + global_font_incr_decr + sc_font_incr;
   }
   else if (component == "editor") {
-    return font_sizes.editor + global_font_incr_decr;
+    return font_sizes.editor + global_font_incr_decr + sc_font_incr;
   }
   else if (component == "table") {
-    return font_sizes.table + global_font_incr_decr;
+    return font_sizes.table + global_font_incr_decr + sc_font_incr;
   }
   else if (component == "console") {
-    return font_sizes.console + global_font_incr_decr;
+    return font_sizes.console + global_font_incr_decr + sc_font_incr;
   }
   else if (component == "browser") {
-    return font_sizes.browser + global_font_incr_decr;
+    return font_sizes.browser + global_font_incr_decr + sc_font_incr;
   }
   taMisc::Error("Programmer Error - please report - GetCurrentFontSize - component unknown:",
                 component);
-  return font_sizes.labels + global_font_incr_decr;
+  return font_sizes.labels + global_font_incr_decr + sc_font_incr;
 }
 
 void taMisc::SetCurrentFontSizeToDefaults() {
@@ -1737,6 +1739,12 @@ taScreenPrefs* taMisc::CurrentScreenParams() {
   if(screen4.name == scr_nm)
     return &screen4;
   return NULL;
+}
+
+int taMisc::ScreenFontIncr() {
+  taScreenPrefs* sc = CurrentScreenParams();
+  if(!sc) return 0;
+  return sc->font_incr;
 }
 
 float taMisc::ScreenLineWidth() {

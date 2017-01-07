@@ -164,7 +164,8 @@ class TA_API taScreenPrefs {
   // #EDIT_INLINE options for screen-specific parameters
 public:
   String  name;  // name of screen -- use View/Screen Info to get names of currently attached screens -- these settings are specific to this screen
-  float   line_width;   // extra multiplier for the line widths for this display
+  float   font_incr;    // screen-specific font size increment (or decrement) -- this number is added to the default point sizes for each font category, when this screen is active
+  float   line_width;   // extra multiplier for the line widths for this display -- some screens render lines (e.g., in graph view) as too thin..
   float   window_scale; // #MAX_1 scaling factor for effective size of screen used when computing the size of windows, which are automatically sized relative to overall screen size -- making this smaller makes windows automatically smaller, which can be useful on large screens (it does not make sense to make it larger, as this would cause windows to routinely e larger than the available screen)
   
   taScreenPrefs();
@@ -800,7 +801,9 @@ public:
   static String CurrentScreenName();
   // #CAT_GUI get the name of the current primary screen
   static taScreenPrefs* CurrentScreenParams();
-  // #CAT_GUI get the parameters for the current primary screen, based on name (NULL if no settings set)
+  // #CAT_GUI get the parameters for the current primary screen, based on name (NULL if no settings set for current screen name)
+  static int    ScreenFontIncr();
+  // #CAT_GUI get the font increment (or decrement) for the current primary screen, from the user screen settings
   static float  ScreenLineWidth();
   // #CAT_GUI get the line width multiplier for the current primary screen, from the user screen settings
   static float  ScreenWindowScale();
