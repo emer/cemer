@@ -569,7 +569,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         else {
           expr_start = i+1;
           delim_pos.Add(i);
-          continue;
+          break;
         }
       }
       else {
