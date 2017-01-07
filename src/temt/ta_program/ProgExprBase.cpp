@@ -846,7 +846,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start = txt.length();
       prepend_txt = txt.before(expr_start);
     }
-    else if (prog_el_start_pos == -1 && (prog_el_txt)) { // line starts with type (int, bool, float, etc)
+    else if (prog_el_start_pos == -1 && ExprIsType(prog_el_txt)) { // line starts with type (int, bool, float, etc)
       lookup_type = ProgExprBase::NOT_SET;
       expr_start = txt.length();
       prepend_txt = txt.before(expr_start);
