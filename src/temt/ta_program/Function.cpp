@@ -18,6 +18,7 @@
 #include <taProject>
 #include <taBase_PtrList>
 #include <FunctionCall>
+#include <ProgramCallFun>
 #include <LocalVars>
 
 #include <taMisc>
@@ -201,19 +202,46 @@ void Function::RunFunction() {
 }
 
 void Function::GetCallers(taBase_PtrList& callers) {
-  Program* prog = program();
-  if(!prog) return;
+  Program* our_program = program();
+  if(!our_program) return;
   
-  prog->Search("FunctionCall", callers, NULL,
-               false,  // text_only
-               false,  // contains
+  our_program->Search(this->name, callers, NULL,
+               true,  // text_only
+               true,  // contains
                true,   // case_sensitive
                false,  // obj_name
-               true,   // obj_type
+               false,   // obj_type
                false,  // obj_desc
                false,  // obj_val
                false,  // mbr_name
                false); // type_desc
+  
+  for (int i = callers.size - 1; i >= 0; i--) {
+    taBase* foo = callers.SafeEl(i);
+    if (foo->InheritsFrom(&TA_Function)) {
+      callers.RemoveEl(foo);
+      continue;
+    }
+    else if (foo->InheritsFrom(&TA_FunctionCall)) {
+      // make sure it is this function and not another with same name
+      FunctionCall* fun_call = (FunctionCall*)foo;
+      if (fun_call->fun.ptr() != this) {
+        callers.RemoveEl(foo); // some other guy
+        continue;
+      }
+    }
+//    else if (foo->InheritsFrom(&TA_ProgramCallFun)) {  // only sensible when we start search other programs
+//      // make sure it is this function and not another with same name
+//      ProgramCallFun* prog_call_fun = (ProgramCallFun*)foo;
+//      if (prog_call_fun->target != our_program) {
+//        callers.RemoveEl(foo); // some other guy
+//        continue;
+//      }
+//    }
+    else {
+      // calls within conditionals and while loops
+    }
+  }
 }
 
 void Function::ListCallers() {
