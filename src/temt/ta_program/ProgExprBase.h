@@ -67,6 +67,11 @@ public:
     EQUALITY,       // either == or !=
   };
   
+  enum ExpressionStart {
+    LINE_START,                 // start of line
+    LEFT_PARENS,                // following a left parens
+  };
+  
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
   ExprFlags     flags;          // #HIDDEN #NO_SAVE Flags for controlling expression behavior -- should not be saved because they are set by the owning program every time
@@ -173,7 +178,7 @@ public:
   static LookUpType    ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt,
                                       String& path_prepend_txt, String& append_txt, String& prog_el_txt,
                                       String& base_path, String& lookup_seed, String& path_var, String& path_rest,
-                                      bool path_base_not_null, int& expr_start, bool& lookup_group_default);
+                                      bool path_base_not_null, ExpressionStart& expr_start, bool& lookup_group_default);
   // return the lookup type and set many arguments
   
   static bool           FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
