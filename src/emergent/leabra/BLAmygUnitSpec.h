@@ -29,6 +29,7 @@ class E_API BLAmygDaMod : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in BL Amygdala learning
 INHERITED(SpecMemberBase)
 public:
+  float         mod_base;       // #MIN_0.5 base amount of effective netinput or activation that multiplies the da modulation 
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
   float         us_clamp_avg;   // averaging factor for clamping US (PV) values when sent using a SendDeepRaw connection -- better form of hard-clamping..

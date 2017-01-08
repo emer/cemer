@@ -36,8 +36,6 @@ void PVLVDaSpec::Initialize() {
 
 void PVLVDaSpec::Defaults_init() {
   tonic_da = 0.0f;
-  pv_thr = 0.1f;
-  vsp_thr = 0.1f;
 }
   
 void PVLVDaGains::Initialize() {
@@ -355,9 +353,6 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   // neg PVi shunting
   float net_dip_da = tot_dip_da - vsnegpvi;
   net_dip_da = fmaxf(net_dip_da, 0.0f);
-    
-  float net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.lhb_dip * lhb_da));
-  net_block = fmaxf(0.0f, net_block);
     
   float net_da = net_burst_da - net_dip_da;
   net_da *= gains.da_gain;

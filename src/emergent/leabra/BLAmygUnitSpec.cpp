@@ -21,13 +21,14 @@ TA_BASEFUNS_CTORS_DEFN(BLAmygDaMod);
 TA_BASEFUNS_CTORS_DEFN(BLAmygUnitSpec);
 
 void BLAmygDaMod::Initialize() {
-  burst_da_gain = 1.0f;
-  dip_da_gain = 1.0f;
-  us_clamp_avg = 0.2f;
   Defaults_init();
 }
 
 void BLAmygDaMod::Defaults_init() {
+  mod_base = 0.1f;
+  burst_da_gain = 0.1f;
+  dip_da_gain = 0.1f;
+  us_clamp_avg = 0.2f;
 }
 
 void BLAmygUnitSpec::Initialize() {
@@ -75,8 +76,9 @@ float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
   else {
     da_val *= bla_da_mod.dip_da_gain;
   }
-  
-  da_val *= u->act; // net_syn;
+
+  float mod_val = bla_da_mod.mod_base + net_syn;
+  da_val *= mod_val;
   if(dar == D2R)
     da_val = -da_val;           // flip the sign
   if(net->phase == LeabraNetwork::PLUS_PHASE) {

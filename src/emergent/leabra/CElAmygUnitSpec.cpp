@@ -95,8 +95,10 @@ float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
     da_val *= cel_da_mod.dip_da_gain;
   }
   
+  float mod_val = cel_da_mod.mod_base + net_syn;
+
   if(acq_ext == ACQ) {
-    da_val *= u->act; // net_syn;
+    da_val *= mod_val;
     if(dar == D2R)
       da_val = -da_val;           // flip the sign
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
@@ -108,10 +110,10 @@ float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
   }
   else {                        // extinction -- gets from Acq/Go inhib
     if(cel_da_mod.acq_deep_mod) {
-      da_val *= u->deep_mod_net;
+      da_val *= fmaxf(u->deep_mod_net, mod_val);
     }
     else {
-      da_val *= u->gi_syn;
+      da_val *= fmaxf(u->gi_syn, mod_val);
     }
     if(dar == D2R)
       da_val = -da_val;           // flip the sign
