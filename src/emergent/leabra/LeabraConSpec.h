@@ -451,6 +451,8 @@ public:
     }
   }
   
+  void  ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) override;
+
   inline void Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no);
   // #IGNORE recv con group init weights -- for weight balance params
   

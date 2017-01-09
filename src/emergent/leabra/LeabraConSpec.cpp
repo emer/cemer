@@ -308,6 +308,30 @@ void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* fro
   recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
 }
 
+void LeabraConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
+  Unit* su = cg->ThrOwnUn(net, thr_no);
+  if(!wt_limits.sym) return;
+  const int sz = cg->size;
+  for(int i=0; i<sz;i++) {
+    int con_idx = -1;
+    ConGroup* rscg = ConGroup::FindRecipSendCon(con_idx, cg->Un(i,net), su,
+                                                cg->prjn->from.ptr());
+    if(rscg && con_idx >= 0) {
+      ConSpec* rscs = rscg->GetConSpec();
+      if(rscs && rscs->wt_limits.sym) {
+        if(wt_limits.sym_fm_top) {
+          cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
+          cg->OwnCn(i, SCALE) = rscg->OwnCn(con_idx, SCALE); // only diff: sync scales!
+        }
+        else {
+          rscg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
+          rscg->OwnCn(con_idx, SCALE) = cg->OwnCn(i, SCALE);
+        }
+      }
+    }
+  }
+}
+
 void LeabraConSpec::RenormScales(ConGroup* cg, Network* net, int thr_no,
                                  bool mult_norm, float avg_wt) {
   const int sz = cg->size;
