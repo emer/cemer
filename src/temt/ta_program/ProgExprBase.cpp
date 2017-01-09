@@ -544,14 +544,30 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     if(c == ' ') {
       if (i != txt.length()-1) {  // not the last char
         c_next = txt[i+1];
-        if (c_next == '(' || c_next == ',' || c_next == ' ' || c_next == ')' || c_next == '=') {
+        if (c_next == '(' || c_next == ',' || c_next == ' ' || c_next == ')') {
           continue;
         }
       }
       if (i > 0) {
         c_previous = txt[i-1];
-        if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')' || c_previous == '=') {
+        if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')') {
           continue;
+        }
+        else if (c_previous == '=' || c_previous == '!') {
+          if (i > 1) {
+            c_previous = txt[i-2];
+            if (c_previous == '=') {
+              continue;
+            }
+            else {
+              expr_start_pos = i+1;
+              break;
+            }
+          }
+          else { // i equals 1
+            expr_start_pos = i+1;
+            break;
+          }
         }
       }
       else {
