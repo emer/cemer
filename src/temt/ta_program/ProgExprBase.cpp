@@ -553,15 +553,15 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')') {
           continue;
         }
-        else if (c_previous == '=' || c_previous == '!') {
+        else if (c_previous == '=') {
           if (i > 1) {
             c_previous = txt[i-2];
-            if (c_previous == '=') {
+            if (c_previous == '=' || c_previous == '!') {
               continue;
             }
             else {
               expr_start_pos = i+1;
-              break;
+              continue;
             }
           }
           else { // i equals 1
@@ -695,6 +695,9 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   }
   
   ProgExprBase::LookUpType lookup_type = NOT_SET;
+  if (expr_start_pos > 0 && expr_start == LINE_START) {
+    expr_start = LINE_MID;
+  }
   
 //  for (int i=0; i<delim_pos.size; i++) {  // for debug
 //    taMisc::DebugInfo((String)i + ": " + txt[delim_pos[i]]);
@@ -814,7 +817,16 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == ':' && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
       
-      base_path = txt.at(expr_start_pos, delim_pos[1]-expr_start_pos);
+      int base_path_start = 0;
+      for (int j = delim_pos[1] - 1; j >= 0; j--) {
+        c = txt[j];
+        if (!isalpha(c) && c != '_') {
+          base_path_start = j+1;
+          break;
+        }
+      }
+      base_path = txt.from(base_path_start);
+      base_path = base_path.before(':');
       int length = base_path.length();
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
@@ -1375,6 +1387,11 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_statics = true;
         include_progels = true;
       }
+      else if (expr_start == LINE_MID) {
+        GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
+        GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
+        include_statics = true;
+     }
       else if (expr_start == LEFT_PARENS) {
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
         include_statics = true;

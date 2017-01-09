@@ -69,6 +69,7 @@ public:
   
   enum ExpressionStart {
     LINE_START,                 // start of line
+    LINE_MID,
     LEFT_PARENS,                // following a left parens
   };
   
