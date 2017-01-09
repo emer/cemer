@@ -515,33 +515,20 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
 
   // first, try the recursive end, look for terminal member in ourself
   if (var.contains('.')) {
-    String membname = var.before('.');
-    // user data is a special case
-    if (membname == "user_data") {
+    if(var.startsWith("user_data.")) {
       return ScanObject_InUserData(obj, var.after("."), name_obj);
     }
 
-    md = obj->FindMemberName(membname);
-    //note: if memb not found, then we assume it is in an iterated subobj...
-    if (!md) return false;
+    String path = var.before('.',-1);
+    taBase* mbr = obj->FindFromPath(path, md);
+    if(TestError(!mbr,"ScanObject_InObject",
+                 "path to variable not found in parent object, path:",
+                 path, "var: ", var, "parent:", obj->GetPathNames())) {
+      return true; //no mon, but we did handle it
+    }
 
-    if(TestError(!md->type->IsActualTaBase(),"ScanObject_InObject",
-          "can only monitor taBase objects, not: ", md->type->name, " var: ", var)) {
-      return true; //no mon, but we did handle it
-    }
-    // we can only handle embedded objs and ptrs to objs
-    taBase* ths = NULL;
-    if (!md->type->IsAnyPtr())
-      ths = (taBase*) md->GetOff((void*)obj);
-    else if (md->type->IsPointer())
-      ths = *((taBase**)md->GetOff((void*)obj));
-    else {
-      TestError(true, "ScanObject_InObject", "can only handle embedded taBase objects"
-                " or ptrs to them, not pointer-pointers, var: ", var);
-      return true; //no mon, but we did handle it
-    }
-    var = var.after('.');
-    return ScanObject_InObject(ths, var, name_obj);
+    String membname = var.after('.',-1);
+    return ScanObject_InObject(mbr, membname, name_obj);
   }
   else {
     md = obj->FindMemberName(var);
@@ -595,11 +582,22 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
 }
 
 void NetMonItem::ScanObject_Network(Network* net, String var) {
-  if(var.startsWith("layers.") || var.startsWith(".layers.")) { // go direct to layers
+  if(var.startsWith("layers.") || var.startsWith(".layers.")) {
     var = var.after("layers.");
     ScanObject_Network_Layers(net, var);
     return;
   }
+  if(var.startsWith("prjns.") || var.startsWith(".prjns.")) {
+    var = var.after("prjns.");
+    ScanObject_Network_Layers(net, var);
+    return;
+  }
+  if(var.startsWith("projections.") || var.startsWith(".projections.")) {
+    var = var.after("projections.");
+    ScanObject_Network_Layers(net, var);
+    return;
+  }
+
   if (ScanObject_InObject(net, var, net)) return;
 
   ScanObject_Network_Layers(net, var);
@@ -629,7 +627,7 @@ void NetMonItem::ScanObject_Network_Layers(Network* net, String var) {
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   // check for projection monitor
   if(var.contains('.')) {
-    if(var.contains('[')) {
+    if(var.startsWith("units[")) {
       ScanObject_LayerUnits(lay, var);
       return;
     }
@@ -918,16 +916,13 @@ void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
 
 void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   if(prjn->NotActive()) return;
-  if (ScanObject_InObject(prjn, var, prjn)) return;
 
-  Layer* lay = NULL;
-  if (var.before('.') == "r") lay = prjn->layer;
-  else if (var.before('.') == "s") lay = prjn->from;
-  if(TestError(!lay, "ScanObject_Projection", "projection does not have layer's set or",
-               "selected var does not apply to connections")) {
-    return;
+  if(var.startsWith("r.") || var.startsWith("s.")) {
+    ScanObject_PrjnCons(prjn, var);
   }
-  ScanObject_PrjnCons(prjn, var);
+  else {
+    ScanObject_InObject(prjn, var, prjn);
+  }
 }
 
 void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {

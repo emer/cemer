@@ -211,6 +211,8 @@ public:
   // #CAT_Modify build a hash table with given number of buckets and key type (not dynamic, so make it big)
   virtual void  ReBuildHashTable();
   // #CAT_Modify re-build existing hash table for all items on the list
+  virtual void  RemoveHashTable();
+  // #CAT_Modify remove any existing hash table
   
   virtual bool  RemoveName(const String& item_nm);
   // #CAT_Modify remove (and delete) named element from list

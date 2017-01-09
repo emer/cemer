@@ -44,10 +44,7 @@ taPtrList_impl::~taPtrList_impl() {
     el = NULL;
     alloc_size = 0;
   }
-  if(hash_table) {
-    delete hash_table;
-    hash_table = NULL;
-  }
+  RemoveHashTable();
 }
 
 // allocate by powers of two, minus the amount of overhead required by the
@@ -120,6 +117,12 @@ void taPtrList_impl::ReBuildHashTable() {
   for(int i=0; i<size; i++) {
     hash_table->AddHash(El_GetHashVal_(el[i]), i, El_GetHashString_(el[i]));
   }
+}
+
+void taPtrList_impl::RemoveHashTable() {
+  if(!hash_table) return;
+  delete hash_table;
+  hash_table = NULL;
 }
 
 taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
