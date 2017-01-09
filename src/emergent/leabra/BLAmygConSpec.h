@@ -62,7 +62,8 @@ public:
     float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
     float da_lrate = bla_learn.dalr_base + bla_learn.dalr_gain * fabsf(da_p);
     float wt_decay_base = fmaxf(0.0f, (wt - bla_learn.wt_floor));
-    dwt += da_lrate * delta - wt_decay_base * bla_learn.wt_decay;
+    dwt += da_lrate * delta -
+      lrate_eff * su_act * ru_act * wt_decay_base * bla_learn.wt_decay;
   }
   // #IGNORE abs(da) modulated delta learning with weight decay
 
@@ -76,6 +77,7 @@ public:
     float su_act = su->act_q0;  // previous trial
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);
+    float* scales = cg->OwnCnVar(SCALE);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
@@ -86,7 +88,7 @@ public:
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       C_Compute_dWt_BLA_Delta(dwts[i], su_act, ru->act_eq, ru->act_q0, ru->da_p, clrate,
-                              wts[i]);
+                              wts[i] / scales[i]);
     }
   }
 
