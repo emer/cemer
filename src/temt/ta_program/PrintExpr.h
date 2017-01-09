@@ -29,7 +29,7 @@
 taTypeDef_Of(PrintExpr);
 
 class TA_API PrintExpr: public ProgEl { 
-  // ##PROGEL_COLLECTION print out (to the console) an expression -- e.g., an informational message for the user
+  // ##PROGEL_COMPLETION print out (to the console) an expression -- e.g., an informational message for the user
 INHERITED(ProgEl)
 public:
   ProgExpr		  expr;

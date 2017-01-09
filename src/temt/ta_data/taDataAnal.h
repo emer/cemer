@@ -31,7 +31,7 @@ class DataCol; //
 taTypeDef_Of(taDataAnal);
 
 class TA_API taDataAnal : public taNBase {
-  // #STEM_BASE ##CAT_Data ##STATIC_COLLECTION collection of data analysis functions
+  // #STEM_BASE ##CAT_Data ##STATIC_COMPLETION collection of data analysis functions
 INHERITED(taNBase)
 public:
 

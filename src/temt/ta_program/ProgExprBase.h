@@ -113,6 +113,7 @@ public:
   static bool                   include_types;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the ProgEls
   static bool                   include_bools;          // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include the bools
   static bool                   include_null;           // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
+  static bool                   include_css_functions;  // #READ_ONLY #HIDDEN #NO_SAVE should lookup/completion include null
 
   bool          empty() const {return expr.empty();}
     // #IGNORE quicky test for whether has anything or not, without needing to render

@@ -29,7 +29,7 @@ class DataTable; //
 taTypeDef_Of(DataSrcDestProg);
 
 class TA_API DataSrcDestProg : public ProgEl { 
-  // #VIRT_BASE #NO_INSTANCE ##PROGEL_COLLECTION a program element for data operations involving a source and destination (virtual base class -- do not use)
+  // #VIRT_BASE #NO_INSTANCE ##PROGEL_COMPLETION a program element for data operations involving a source and destination (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
   ProgVarRef	    src_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to source data for operation

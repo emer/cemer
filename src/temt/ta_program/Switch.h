@@ -30,7 +30,7 @@ class CaseBlock; //
 taTypeDef_Of(Switch);
 
 class TA_API Switch: public ProgEl { 
-  // ##DEF_CHILD_cases ##PROGEL_COLLECTION #ADD_PARENS switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
+  // ##DEF_CHILD_cases ##PROGEL_COMPLETION #ADD_PARENS switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
   ProgVarRef        switch_var;	 // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on

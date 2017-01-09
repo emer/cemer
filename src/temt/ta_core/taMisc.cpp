@@ -2167,7 +2167,7 @@ void taMisc::Init_Types_Gui(bool gui) {
   
   for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
     TypeDef* td = types.FastEl(i);
-    if(td->HasOption("STATIC_COLLECTION") && td->IsActualClass()) {
+    if(td->HasOption("STATIC_COMPLETION") && td->IsActualClass()) {
       static_collection.Link(td);
     }
   }

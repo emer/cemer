@@ -336,6 +336,12 @@ void iLineEdit::DoCompletion() {
   prefix = prefix.through(cursorPosition() - 1);
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
+//  if (isupper(prefix.firstchar())) {
+//    GetCompleter()->setCaseSensitivity(Qt::CaseSensitive);
+//  }
+//  else {
+//    GetCompleter()->setCaseSensitivity(Qt::CaseInsensitive);
+//  }
   if (IsDelimter(prefix.lastchar())) {
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
   }

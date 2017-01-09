@@ -27,7 +27,7 @@
 eTypeDef_Of(NetUpdateView);
 
 class E_API NetUpdateView: public NetBaseProgEl { 
-  // update the network view, conditional on an update_net_view variable that is created by this progam element
+  // #PROGEL_COMPLETION update the network view, conditional on an update_net_view variable that is created by this progam element
 INHERITED(NetBaseProgEl)
 public:
   ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network

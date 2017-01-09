@@ -74,6 +74,7 @@ bool                        ProgExprBase::include_progels;
 bool                        ProgExprBase::include_types;
 bool                        ProgExprBase::include_bools;
 bool                        ProgExprBase::include_null;
+bool                        ProgExprBase::include_css_functions;
 ProgExprBase::LookUpType    ProgExprBase::completion_lookup_type;
 
 void ProgExprBase::Initialize() {
@@ -1366,6 +1367,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   include_bools = false;
   include_null = false;
   include_types = false;
+  include_css_functions = false;
   completion_lookup_type = lookup_type;
   completion_progvar_list.RemoveAll();
   completion_dynenum_list.RemoveAll();
@@ -1419,6 +1421,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
+      include_css_functions = true;
       expr_lookup_cur_base = NULL;
       break;
     }
@@ -1652,49 +1655,55 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
   completion_choice_list.Reset();
   
-  if (include_types) {
-    for (int i=0; i<completion_type_list.size; i++) {
-      completion_choice_list.Add(completion_type_list.SafeEl(i));
-    }
-  }
-
-  if (include_progels) {
-    for (int i=0; i<completion_progels_list.size; i++) {
-      completion_choice_list.Add(completion_progels_list.SafeEl(i));
-    }
-  }
-  
-  if (include_statics) {
-    for (int i=0; i<completion_statics_list.size; i++) {
-      completion_choice_list.Add(completion_statics_list.SafeEl(i));
-    }
+  for (int i=0; i<completion_progvar_list.size; i++) {
+    taBase* base = completion_progvar_list.FastEl(i);
+    completion_choice_list.Add(base->GetName());
   }
   
   if (include_bools) {
     for (int i=0; i<completion_bool_list.size; i++) {
-      completion_choice_list.Add(completion_bool_list.SafeEl(i));
+      completion_choice_list.Add(completion_bool_list.FastEl(i));
     }
   }
   
   if (include_null) {
     for (int i=0; i<completion_null_list.size; i++) {
-      completion_choice_list.Add(completion_null_list.SafeEl(i));
+      completion_choice_list.Add(completion_null_list.FastEl(i));
     }
   }
   
-  for (int i=0; i<completion_progvar_list.size; i++) {
-    taBase* base = completion_progvar_list.FastEl(i);
-    completion_choice_list.Add(base->GetName());
+  for (int i=0; i<completion_function_list.size; i++) {
+    taBase* base = completion_function_list.FastEl(i);
+    completion_choice_list.Add(base->GetName() + "()");
   }
   
   for (int i=0; i<completion_program_list.size; i++) {
     taBase* base = completion_program_list.FastEl(i);
     completion_choice_list.Add(base->GetName() + "()");
   }
+  
+  if (include_types) {
+    for (int i=0; i<completion_type_list.size; i++) {
+      completion_choice_list.Add(completion_type_list.FastEl(i));
+    }
+  }
 
-  for (int i=0; i<completion_function_list.size; i++) {
-    taBase* base = completion_function_list.FastEl(i);
-    completion_choice_list.Add(base->GetName() + "()");
+  if (include_progels) {
+    for (int i=0; i<completion_progels_list.size; i++) {
+      completion_choice_list.Add(completion_progels_list.FastEl(i));
+    }
+  }
+  
+  if (include_statics) {
+    for (int i=0; i<completion_statics_list.size; i++) {
+      completion_choice_list.Add(completion_statics_list.FastEl(i));
+    }
+  }
+  
+  if (include_css_functions) {
+    for (int i=0; i<cssMisc::Functions.size; i++) {
+      completion_choice_list.Add(cssMisc::Functions.FastEl(i)->name);
+    }
   }
 
   completion_member_list.Sort();
@@ -1938,11 +1947,11 @@ void ProgExprBase::GetProgEls(String_Array* progels) {
     GenProgElList(prog_el_list, &TA_ProgEl);
     for (int i=0; i<prog_el_list.size; i++) {
       ProgEl* pe = prog_el_list.SafeEl(i);
-      if (pe->GetTypeDef()->HasOption("PROGEL_COLLECTION")) {
+      if (pe->GetTypeDef()->HasOption("PROGEL_COMPLETION")) {
         String mod_str = pe->GetToolbarName();
         mod_str = mod_str.repl("\n", " ");
         if (pe->GetTypeDef()->HasOption("ADD_PARENS")) {
-          mod_str += "()";
+          mod_str += " (";
         }
         // special case - if there were more than 2 I would use directive
         if (pe->GetTypeDef()->name == "PrintVar") {

@@ -127,7 +127,8 @@ QVariant iCodeCompleterModel::data(const QModelIndex& index, int role) const {
       String pretext;
       pretext = ProgExprBase::completion_text_before;
       pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
-      return pretext + temp.toString() + ProgExprBase::completion_append_text;
+      String complete = pretext + temp.toString() + ProgExprBase::completion_append_text;
+      return complete;
     }
       
     default:
