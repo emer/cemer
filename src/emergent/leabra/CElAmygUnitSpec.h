@@ -29,10 +29,9 @@ class E_API CElAmygDaMod : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in CEl central amygdala lateral learning
 INHERITED(SpecMemberBase)
 public:
-  float         mod_base;       // #MIN_0 base amount of effective netinput or activation that multiplies the da modulation 
-  float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
-  float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
-  bool          acq_deep_mod;   // use deep_mod_net for value from acquisition / go units, instead of inhibition current (otherwise use gi_syn) -- allows simpler parameter settting without titrating inhibition and this learning modulation signal
+  float         burst_da_gain;  // #MIN_0 #DEF_0;0.04 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
+  float         dip_da_gain;    // #MIN_0 #DEF_0.1 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
+  bool          acq_deep_mod;   // #DEF_true use deep_mod_net for value from acquisition / go units, instead of inhibition current (otherwise use gi_syn) -- allows simpler parameter settting without titrating inhibition and this learning modulation signal
   float         us_clamp_avg;   // #DEF_0.2 averaging factor for clamping US (PV) values when sent using a SendDeepRaw connection -- better form of hard-clamping..
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }

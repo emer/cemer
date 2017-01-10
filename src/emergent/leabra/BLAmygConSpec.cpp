@@ -27,7 +27,7 @@ void BLAmygLearnSpec::Defaults_init() {
   dalr_gain = 1.0f;
   dalr_base = 0.0f;
   wt_decay = 0.1f;
-  wt_floor = 0.5f;
+  wt_floor = 0.3f;
 }
 
 void BLAmygConSpec::Initialize() {

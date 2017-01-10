@@ -144,10 +144,14 @@ void ProgEl_List::ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl) {
   el_to_repl = el;
   el_to_repl_idx = idx;
   el_to_repl_fun = fun_on_repl;
+  taMisc::DebugInfo("adding replace later:", String((void*)el), "to:",
+                    String((void*)this));
   tabMisc::DelayedFunCall_nogui(this, "DoReplaceLater");
 }
 
 void ProgEl_List::DoReplaceLater() {
+  taMisc::DebugInfo("doing replace later:", String((void*)el_to_repl), "in:",
+                    String((void*)this));
   if(!el_to_repl) {
     taMisc::Warning("DoReplaceLater: nothing to replace!  Programmer error");
     return;

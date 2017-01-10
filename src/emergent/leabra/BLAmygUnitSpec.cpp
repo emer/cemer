@@ -25,7 +25,7 @@ void BLAmygDaMod::Initialize() {
 }
 
 void BLAmygDaMod::Defaults_init() {
-  mod_base = 0.1f;
+  pct_act = 1.0f;
   burst_da_gain = 0.1f;
   dip_da_gain = 0.1f;
   us_clamp_avg = 0.2f;
@@ -77,7 +77,7 @@ float BLAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
     da_val *= bla_da_mod.dip_da_gain;
   }
 
-  float mod_val = bla_da_mod.mod_base + net_syn;
+  float mod_val = bla_da_mod.pct_act * u->act_eq + (1.0f - bla_da_mod.pct_act) * net_syn;
   da_val *= mod_val;
   if(dar == D2R)
     da_val = -da_val;           // flip the sign

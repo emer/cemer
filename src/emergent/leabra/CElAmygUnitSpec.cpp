@@ -21,8 +21,8 @@ TA_BASEFUNS_CTORS_DEFN(CElAmygDaMod);
 TA_BASEFUNS_CTORS_DEFN(CElAmygUnitSpec);
 
 void CElAmygDaMod::Initialize() {
-  burst_da_gain = 1.0f;
-  dip_da_gain = 1.0f;
+  burst_da_gain = 0.0f;
+  dip_da_gain = 0.1f;
   acq_deep_mod = true;
   us_clamp_avg = 0.2f;
   Defaults_init();
@@ -44,6 +44,15 @@ void CElAmygUnitSpec::Defaults_init() {
   deep.role = DeepSpec::DEEP;
   deep.raw_thr_rel = 0.1f;
   deep.raw_thr_abs = 0.1f;
+
+  // these are params to produce low-level baseline tonic activation
+  SetUnique("init", true);
+  init.v_m = 0.55f;
+  SetUnique("g_bar", true);
+  g_bar.l = 0.2f;
+  SetUnique("e_rev", true);
+  e_rev.l = 0.55f;
+  e_rev.i = 0.4f;
 }
 
 void CElAmygUnitSpec::UpdateAfterEdit_impl() {
@@ -95,7 +104,7 @@ float CElAmygUnitSpec::Compute_DaModNetin(LeabraUnitVars* u, LeabraNetwork* net,
     da_val *= cel_da_mod.dip_da_gain;
   }
   
-  float mod_val = cel_da_mod.mod_base + net_syn;
+  float mod_val = net_syn;
 
   if(acq_ext == ACQ) {
     da_val *= mod_val;

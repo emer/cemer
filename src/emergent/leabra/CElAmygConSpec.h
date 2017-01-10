@@ -30,8 +30,8 @@ class E_API CElAmygLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for gain factors and other learning parameters in CEl central amygdala lateral learning
 INHERITED(SpecMemberBase)
 public:
-  float         dalr_gain;      // gain multiplier on abs(da) learning rate multiplier
-  float         dalr_base;      // constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
+  float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier
+  float         dalr_base;      // #DEF_0 constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 

@@ -30,10 +30,10 @@ class E_API BLAmygLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for gain factors and other learning parameters in Basal Lateral Amygdala learning
 INHERITED(SpecMemberBase)
 public:
-  float         dalr_gain;      // gain multiplier on abs(da) learning rate multiplier
-  float         dalr_base;      // constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
-  float         wt_decay;       // decay rate (applied each weight change, typically AlphaTrial) as proportion of the weight value above the weight floor
-  float         wt_floor;       // #DEF_0.5 minimum weight value below which no decay occurs
+  float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier
+  float         dalr_base;      // #DEF_0 constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
+  float         wt_decay;       // #DEF_0.1 decay rate (applied each weight change, typically AlphaTrial) as proportion of the weight value above the weight floor (times sending * recv activation)
+  float         wt_floor;       // #DEF_0.3 minimum weight value below which no decay occurs
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 

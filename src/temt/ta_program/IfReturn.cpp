@@ -46,11 +46,12 @@ void IfReturn::ConvertToReturnExpr() {
     If* if_stmt = new If;
     if_stmt->flags = flags;
     if_stmt->cond.Copy(cond);
-    own->ReplaceLater(if_stmt, idx);
     
     ReturnExpr* ret_stmt = new ReturnExpr;
     ret_stmt->flags = flags;
     if_stmt->true_code.Add(ret_stmt);
+    
+    own->ReplaceLater(if_stmt, idx);
   }
 }
 

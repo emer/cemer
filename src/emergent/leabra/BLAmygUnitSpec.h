@@ -29,9 +29,9 @@ class E_API BLAmygDaMod : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in BL Amygdala learning
 INHERITED(SpecMemberBase)
 public:
-  float         mod_base;       // #MIN_0 base amount of effective netinput or activation that multiplies the da modulation 
-  float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
-  float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
+  float         pct_act;        // #DEF_1;0.8 proportion of activation used for computing dopamine modulation value -- 1-pct_act comes from net-input -- activation is more differentiated and leads to more differentiated representations, but if there is no activation then dopamine modulation has no effect, so it depends on having that activation signal
+  float         burst_da_gain;  // #MIN_0 #DEF_0.1 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
+  float         dip_da_gain;    // #MIN_0 #DEF_0.1 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
   float         us_clamp_avg;   // #DEF_0.2 averaging factor for clamping US (PV) values when sent using a SendDeepRaw connection -- better form of hard-clamping..
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
