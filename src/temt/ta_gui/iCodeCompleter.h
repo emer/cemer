@@ -52,12 +52,13 @@ public:
   iCodeCompleter(QObject* parent = 0);
   iCodeCompleter(QAbstractItemModel *model, QObject *parent = 0);
 
-  iCodeCompleterModel*       list_model;
+  iCodeCompleterModel*        list_model;
 
   void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
   String                  GetCurrent();  // return the current selection
   void                    ClearList();   // clear the model list
+  void                    ExtendSeed(String& seed); // extend the seed if possible -- called prefix in QCompleter terminology
   
 protected:
   QStringList             string_list;

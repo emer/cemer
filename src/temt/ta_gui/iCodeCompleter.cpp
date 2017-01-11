@@ -75,14 +75,50 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {
     QCoreApplication* app = QCoreApplication::instance();
-    if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() == -1) { // -1 no item selected
-      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-    }
+//    if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() == -1) { // -1 no item selected
+//      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+//    }
     app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
     return true;
   }
   else {
     return inherited::eventFilter(obj, event);
+  }
+}
+
+void iCodeCompleter::ExtendSeed(String& seed) {
+  // filter the original list using current "prefix"
+  for (int i = string_list.size() - 1; i >= 0; i--) {
+    String item = string_list.at(i);
+    String item_copy = item;
+    item_copy.downcase();
+    if (!item_copy.startsWith(seed)) {
+      string_list.removeAt(i);
+    }
+  }
+  
+  if (string_list.size() <= 1) return;
+  
+  bool keep_trying = true;
+  String first_item = (String)string_list.at(0);
+  String extended_seed;
+  // get next char of first item and see if all the other items have the same next char
+  while (keep_trying) {
+    extended_seed = first_item.through(seed.length());
+    String extended_seed_copy = extended_seed;
+    extended_seed_copy.downcase();
+    for (int i = string_list.size() - 1; i >= 0; i--) {
+      String item = string_list.at(i);
+      String item_copy = item;
+      item_copy.downcase();
+      if (!item_copy.startsWith(extended_seed_copy)) {
+        keep_trying = false;
+        break;
+      }
+    }
+    if (keep_trying) {
+      seed = extended_seed;
+    }
   }
 }
 

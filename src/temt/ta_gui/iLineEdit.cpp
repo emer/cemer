@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QAbstractItemView>
+#include <QListView>
 
 #include <taMisc>
 #include <KeyBindings>
@@ -294,13 +295,16 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       return;
     default:
       if (GetCompleter() && completion_enabled) {
-        if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter))) {
+        if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return))) {
           if (taMisc::code_completion.auto_complete == false) {
             completion_enabled = false; // done with completion - disable until user enables again
           }
-
-          if (GetCompleter()->currentRow() > 0) {
+          
+          if (key_event->key() == Qt::Key_Return && GetCompleter()->currentRow() > 0) {
             CompletionDone(key_event);
+          }
+          else if (key_event->key() == Qt::Key_Enter) {
+            DoCompletion(true);  // try to extend
           }
           else {
             inherited::keyPressEvent(key_event);
@@ -312,7 +316,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
                 && key_event->key() != Qt::Key_Left)
         {
           inherited::keyPressEvent(key_event);
-          DoCompletion();
+          DoCompletion(false);
           return;
         }
         else {
@@ -329,26 +333,39 @@ void iLineEdit::doLookup() {
   emit lookupKeyPressed(this);
 }
 
-void iLineEdit::DoCompletion() {
+void iLineEdit::DoCompletion(bool extend) {
   if (!GetCompleter()) return;
   
   String prefix = text();
   prefix = prefix.through(cursorPosition() - 1);
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
-//  if (isupper(prefix.firstchar())) {
-//    GetCompleter()->setCaseSensitivity(Qt::CaseSensitive);
-//  }
-//  else {
-//    GetCompleter()->setCaseSensitivity(Qt::CaseInsensitive);
-//  }
+  //  if (isupper(prefix.firstchar())) {
+  //    GetCompleter()->setCaseSensitivity(Qt::CaseSensitive);
+  //  }
+  //  else {
+  //    GetCompleter()->setCaseSensitivity(Qt::CaseInsensitive);
+  //  }
   if (IsDelimter(prefix.lastchar())) {
     GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
   }
   else {
     GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
   }
-
+  
+  if (extend) {
+    String extended_prefix = prefix;
+    GetCompleter()->ExtendSeed(extended_prefix);
+    if (extended_prefix.length() > prefix.length()) {
+      String extension = extended_prefix.after(prefix.length()-1);
+      insert(extension);
+    }
+    else {
+      QCoreApplication* app = QCoreApplication::instance();
+      app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+    }
+  }
+  
   GetCompleter()->complete();
   return;
 }
@@ -386,7 +403,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
           return true;                // we absorb this event
         case Qt::Key_Space:
             completion_enabled = true;
-            DoCompletion();
+            DoCompletion(false);
             return true;
       }
     }
@@ -399,7 +416,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
   else if (GetCompleter() && completion_enabled) {
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
     if (key_event->key() == Qt::Key_Tab) {
-      DoCompletion();
+      DoCompletion(true);
       return true;
     }
     return inherited::eventFilter(obj, event);
