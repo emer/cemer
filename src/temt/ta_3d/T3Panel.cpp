@@ -141,6 +141,17 @@ void T3Panel::SigEmit(int sls, void* op1, void* op2) {
   }
 }
 
+void T3Panel::UpdateNameFmFirstChild() {
+  T3DataViewMain* fc = FirstChild();
+  if(fc && fc->data()) {
+    String nm = fc->data()->GetDisplayName();
+    if(name != nm) {
+      SetName(nm);
+      UpdateAfterEdit();
+    }
+  }
+}
+
 T3DataView* T3Panel::FindRootViewOfData(taBase* data) {
   if (!data) return NULL;
   for (int i = 0; i < root_view.children.size; ++i) {

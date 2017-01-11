@@ -732,8 +732,9 @@ void NetView::UpdateName() {
 
 void NetView::SigRecvUpdateAfterEdit_impl() {
   UpdateName();
-  InitDisplay(true);
-  UpdateDisplay();
+  inherited::SigRecvUpdateAfterEdit_impl();
+  // InitDisplay(true);
+  // UpdateDisplay();
 }
 
 void NetView::SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) {
@@ -754,8 +755,10 @@ taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
   // don't save Layers/Prjn's, they have no persist state, and just get rebuilt
   if (md->name == "children") {
     return DQR_NO_SAVE;
-  } else
+  }
+  else {
     return inherited::Dump_QuerySaveMember(md);
+  }
 }
 
 UnitView* NetView::FindUnitView(Unit* unit) {

@@ -326,3 +326,10 @@ void T3DataViewMain::AnnoteClearAll() {
   annotations.Reset();
 }
 
+void T3DataViewMain::SigRecvUpdateAfterEdit_impl() {
+  T3Panel* panel = GetFrame();
+  if(panel) {
+    panel->UpdateNameFmFirstChild();
+  }
+  inherited::SigRecvUpdateAfterEdit_impl();
+}

@@ -180,6 +180,7 @@ void iT3PanelViewer::tw_currentChanged(int tab_idx) {
 // 2) but show/hide order prevents panel tab switching away
 // TODO: known bug: when you delete a panel, it switches from CtrlPanel tab
 // different logic required when tab numbers are the same!
+  UpdateTabNames();             // agressively try to update!
   iT3Panel* ipanl;
   if(tab_idx == last_idx) {
     ipanl = iViewPanel(tab_idx);
@@ -227,6 +228,7 @@ void iT3PanelViewer::Refresh_impl() {
 void iT3PanelViewer::UpdateTabNames() {
   for (int i = 0; i < viewer()->panels.size; ++i) {
     T3Panel* panl = viewer()->panels.FastEl(i);
+    panl->UpdateNameFmFirstChild();
     iT3Panel* ipanl = panl->widget();
     if (!ipanl) continue;
     int idx = tw->indexOf(ipanl);

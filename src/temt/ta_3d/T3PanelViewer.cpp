@@ -148,6 +148,10 @@ T3Panel* T3PanelViewer::FirstEmptyT3Panel() {
 void T3PanelViewer::PanelChanged(T3Panel* panel) {
   // just update all the tab names, in case that is what changed
   if (isMapped()) {
+    for (int i = 0; i < panels.size; ++i) {
+      T3Panel* f = panels.FastEl(i);
+      f->UpdateNameFmFirstChild(); // keep 'em updated..
+    }
     widget()->UpdateTabNames();
   }
 }

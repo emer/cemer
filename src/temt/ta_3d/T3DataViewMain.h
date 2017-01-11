@@ -140,6 +140,7 @@ public:
 protected:
   void         DoActionChildren_impl(DataViewAction acts) override;
   void         ReInit_impl() override; //note: does a depth-first calls to children, before self
+  void         SigRecvUpdateAfterEdit_impl() override; // called by data for an UAE
 
 private:
   void  Copy_(const T3DataViewMain& cp);

@@ -175,6 +175,8 @@ public:
   virtual void          CopyFromViewPanel(T3Panel* cp);
   // #CAT_Display copy key view information from another view panel (saved views, other view info)
 
+  virtual void          UpdateNameFmFirstChild();
+  
   void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override; // we notify viewer
   void  InitLinks() override;
   void  CutLinks() override;
