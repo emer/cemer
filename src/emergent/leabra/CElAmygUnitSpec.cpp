@@ -49,7 +49,7 @@ void CElAmygUnitSpec::Defaults_init() {
   SetUnique("init", true);
   init.v_m = 0.55f;
   SetUnique("g_bar", true);
-  g_bar.l = 0.2f;
+  g_bar.l = 0.6f;               // todo: maybe higher?
   SetUnique("e_rev", true);
   e_rev.l = 0.55f;
   e_rev.i = 0.4f;

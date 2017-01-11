@@ -29,7 +29,7 @@ void ProgEl_List::Initialize() {
   el_typ = &TA_ProgCode;
   setUseStale(true);
   el_to_repl = NULL;
-  el_to_repl_idx = 0;
+  el_to_repl_fun = NULL;
   check_with_parent = true;
 }
 
@@ -140,61 +140,56 @@ bool ProgEl_List::RemoveIdx(int idx) {
   return inherited::RemoveIdx(idx);
 }
 
-void ProgEl_List::ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl) {
-  el_to_repl = el;
-  el_to_repl_idx = idx;
-  el_to_repl_fun = fun_on_repl;
-  taMisc::DebugInfo("adding replace later:", String((void*)el), "to:",
-                    String((void*)this));
+void ProgEl_List::ReplaceLater(ProgEl* old_el, ProgEl* new_el, const String& fun_on_repl) {
+  if(!el_to_repl) {
+    el_to_repl = new ProgEl_List;
+  }
+  if(!el_to_repl_fun) {
+    el_to_repl_fun = new String_Array;
+  }
+  el_to_repl->Link(old_el);
+  el_to_repl->Link(new_el);
+  el_to_repl_fun->Add(fun_on_repl);
   tabMisc::DelayedFunCall_nogui(this, "DoReplaceLater");
 }
 
 void ProgEl_List::DoReplaceLater() {
-  taMisc::DebugInfo("doing replace later:", String((void*)el_to_repl), "in:",
-                    String((void*)this));
-  if(!el_to_repl) {
-    taMisc::Warning("DoReplaceLater: nothing to replace!  Programmer error");
-    return;
-  }
-  ReplaceIdx(el_to_repl_idx, el_to_repl);
-  tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserExpandAll");
-  tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserSelectMe");
-  if(el_to_repl_fun.nonempty()) {
-    tabMisc::DelayedFunCall_nogui(el_to_repl, el_to_repl_fun);
-  }
-  el_to_repl = NULL;
-}
+  if(!el_to_repl) return;       // already done!  not a programmer error b/c all done in 1 call!
+  int cnt = el_to_repl->size / 2;
+  for(int i=cnt-1; i>=0; i--) {
+    ProgEl* new_el = el_to_repl->Pop();
+    ProgEl* old_el = el_to_repl->Pop();
+    String fun = el_to_repl_fun->Pop();
 
-void ProgEl_List::MoveElseLater(ProgEl* el, int idx, const String& fun_on_repl) {
-  el_to_repl = el;
-  el_to_repl_idx = idx;
-  el_to_repl_fun = fun_on_repl;
-  tabMisc::DelayedFunCall_gui(this, "DoMoveElseLater");
-}
-
-void ProgEl_List::DoMoveElseLater() {
-  if(!el_to_repl) {
-    taMisc::Warning("DoMoveElseLater: nothing to replace!  Programmer error");
-    return;
-  }
-
-  ProgEl_List* nwown = GET_OWNER(owner, ProgEl_List);
-  if(nwown) {
-    int nwmyidx = nwown->FindEl(owner);
-    if(nwmyidx >= 0) {
-      RemoveIdx(el_to_repl_idx); // nuke ProgCode from us
-      nwown->Insert(el_to_repl, nwmyidx+1);
-      tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserExpandAll");
-      tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserSelectMe");
-      if(el_to_repl_fun.nonempty()) {
-        tabMisc::DelayedFunCall_gui(el_to_repl, el_to_repl_fun); 
+    if(fun.startsWith("MoveElse::")) { // special code!
+      fun = fun.after("MoveElse::");
+      ProgEl_List* nwown = GET_OWNER(owner, ProgEl_List);
+      if(nwown) {
+        int nwmyidx = nwown->FindEl(owner);
+        if(nwmyidx >= 0) {
+          RemoveEl(old_el); // nuke ProgCode from us
+          nwown->Insert(new_el, nwmyidx+1);
+          tabMisc::DelayedFunCall_gui(new_el, "BrowserExpandAll");
+          tabMisc::DelayedFunCall_gui(new_el, "BrowserSelectMe");
+          if(fun.nonempty()) {
+            tabMisc::DelayedFunCall_gui(new_el, fun); 
+          }
+        }
       }
-      el_to_repl = NULL;
-      return;
     }
+    else {
+      ReplaceEl(old_el, new_el);
+      tabMisc::DelayedFunCall_gui(new_el, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(new_el, "BrowserSelectMe");
+      if(fun.nonempty()) {
+        tabMisc::DelayedFunCall_nogui(new_el, fun);
+      }
+    }      
   }
+  delete el_to_repl;
   el_to_repl = NULL;
-  taMisc::Warning("DoMoveElseLater: could not move the else / elseif statment");
+  delete el_to_repl_fun;
+  el_to_repl_fun = NULL;
 }
 
 void ProgEl_List::AddAcceptableType(const String& type) {

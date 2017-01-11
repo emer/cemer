@@ -735,9 +735,8 @@ bool ProgEl::RevertToCode() {
   if (HasSubCode() && children_()->DerivesFromName("ProgEl_List")) {  // should always be true
     cvt->sub_code.Copy(*(ProgEl_List*)children_());  // save the subcode in the ProgCode object for later replacement in new ProgEl
   }
-  int myidx = own->FindEl(this);
   SetBaseFlag(BF_MISC4); // indicates that we're done..
-  own->ReplaceLater(cvt, myidx, "");
+  own->ReplaceLater(this, cvt);
   return true;
 }
 

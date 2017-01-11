@@ -36,11 +36,10 @@ void IfReturn::ConvertToReturnExpr() {
   if(!owner) return;
   if(!owner->InheritsFrom(&TA_ProgEl_List)) return;
   ProgEl_List* own = (ProgEl_List*)owner;
-  int idx = own->FindEl(this);
   if (cond.var_expr.empty()) {
     ReturnExpr* ret_stmt = new ReturnExpr;
     ret_stmt->flags = flags;         // get our flags
-    own->ReplaceLater(ret_stmt, idx);
+    own->ReplaceLater(this, ret_stmt);
   }
   else {
     If* if_stmt = new If;
@@ -51,7 +50,7 @@ void IfReturn::ConvertToReturnExpr() {
     ret_stmt->flags = flags;
     if_stmt->true_code.Add(ret_stmt);
     
-    own->ReplaceLater(if_stmt, idx);
+    own->ReplaceLater(this, if_stmt);
   }
 }
 

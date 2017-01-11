@@ -57,16 +57,11 @@ public:
 
   bool         RemoveIdx(int idx) override;   // override to delete brk_pt before ProgEl is removed
 
-  void         ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl = "");
-  // #IGNORE replace an el into given location, and optionally do a delayed function call on new replacement guy
+  void         ReplaceLater(ProgEl* old_el, ProgEl* new_el, const String& fun_on_repl = "");
+  // #IGNORE replace old_el with new_el into given location, and optionally do a delayed function call on new replacement guy
   void         DoReplaceLater();
   // actually do the later replacement that was setup earlier
 
-  void         MoveElseLater(ProgEl* el, int idx, const String& fun_on_repl = "");
-  // #IGNORE move an else / else-if up to higher level, after given item, and optionally do a delayed function call on new replacement guy
-  void         DoMoveElseLater();
-  // actually do the later replacement that was setup earlier
-  
   virtual void  AddAcceptableType(const String& type);
   // Add the name of a type that is allowed in this list - only used if unacceptable list is empty
   virtual void  AddUnacceptableType(const String& type);
@@ -82,9 +77,8 @@ public:
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 protected:
-  ProgEl*       el_to_repl;  // element to replace with another
-  int           el_to_repl_idx; // index of where to replace
-  String        el_to_repl_fun; // function name to call
+  ProgEl_List*  el_to_repl;  // element(s) to replace with another -- in pairs: old, new
+  String_Array* el_to_repl_fun; // function name(s) to call on new after replacing -- blank added to keep in register with els_to_repl list
 
   void         UpdateAfterEdit_impl() override;
 private:
