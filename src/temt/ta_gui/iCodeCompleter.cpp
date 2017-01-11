@@ -75,10 +75,16 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {
     QCoreApplication* app = QCoreApplication::instance();
-//    if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() == -1) { // -1 no item selected
-//      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-//    }
-    app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
+    if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+    }
+    else if (GetList()->size() == 1) {
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+    }
+    else {
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
+    }
     return true;
   }
   else {
@@ -86,8 +92,7 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   }
 }
 
-void iCodeCompleter::ExtendSeed(String& seed) {
-  // filter the original list using current "prefix"
+void iCodeCompleter::FilterList(String seed) {
   for (int i = string_list.size() - 1; i >= 0; i--) {
     String item = string_list.at(i);
     String item_copy = item;
@@ -96,7 +101,9 @@ void iCodeCompleter::ExtendSeed(String& seed) {
       string_list.removeAt(i);
     }
   }
-  
+}
+
+void iCodeCompleter::ExtendSeed(String& seed) {
   if (string_list.size() <= 1) return;
   
   bool keep_trying = true;

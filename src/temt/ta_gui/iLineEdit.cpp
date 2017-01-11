@@ -301,7 +301,8 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
           }
           
           if (key_event->key() == Qt::Key_Return && GetCompleter()->currentRow() > 0) {
-            CompletionDone(key_event);
+            inherited::keyPressEvent(key_event);
+            CompletionDone();
           }
           else if (key_event->key() == Qt::Key_Enter) {
             DoCompletion(true);  // try to extend
@@ -353,25 +354,23 @@ void iLineEdit::DoCompletion(bool extend) {
     GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
   }
   
-  if (extend) {
-    String extended_prefix = prefix;
-    GetCompleter()->ExtendSeed(extended_prefix);
-    if (extended_prefix.length() > prefix.length()) {
-      String extension = extended_prefix.after(prefix.length()-1);
-      insert(extension);
-    }
-    else {
-      QCoreApplication* app = QCoreApplication::instance();
-      app->postEvent(GetCompleter()->popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-    }
-  }
+  GetCompleter()->FilterList(prefix);
   
+
+  if (extend) {
+      String extended_prefix = prefix;
+      GetCompleter()->ExtendSeed(extended_prefix);
+      if (extended_prefix.length() > prefix.length()) {
+        String extension = extended_prefix.after(prefix.length()-1);
+        insert(extension);
+      }
+  }
+
   GetCompleter()->complete();
   return;
 }
 
-void iLineEdit::CompletionDone(QKeyEvent* key_event) {
-  inherited::keyPressEvent(key_event);
+void iLineEdit::CompletionDone() {
   QModelIndex index = GetCompleter()->currentIndex();
   emit completed(GetCompleter()->currentIndex());
 }
@@ -409,21 +408,7 @@ bool iLineEdit::eventFilter(QObject* obj, QEvent* event) {
     }
     return false;
   }
-  
-  if (event->type() != QEvent::KeyPress) {
-    return inherited::eventFilter(obj, event);
-  }
-  else if (GetCompleter() && completion_enabled) {
-    QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-    if (key_event->key() == Qt::Key_Tab) {
-      DoCompletion(true);
-      return true;
-    }
-    return inherited::eventFilter(obj, event);
-  }
-  else {
-    return inherited::eventFilter(obj, event);
-  }
+  return inherited::eventFilter(obj, event);
 }
 
 bool iLineEdit::IsDelimter(char a_char) {

@@ -56,8 +56,9 @@ public:
 
   void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
-  String                  GetCurrent();  // return the current selection
-  void                    ClearList();   // clear the model list
+  String                  GetCurrent();             // return the current selection
+  void                    ClearList();              // clear the model list
+  void                    FilterList(String seed);  // pair down based on seed
   void                    ExtendSeed(String& seed); // extend the seed if possible -- called prefix in QCompleter terminology
   
 protected:

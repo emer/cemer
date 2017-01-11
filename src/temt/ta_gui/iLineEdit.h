@@ -57,7 +57,7 @@ public slots:
   virtual void	editInEditor(); // edit contents in modal dialog
   virtual void  doLookup();     // what we do when the lookup key is pressed
   virtual void  DoCompletion(bool extend); // what we do when the code completion key combo is pressed
-  virtual void  CompletionDone(QKeyEvent* key_event); // On return (selection of completion)
+  virtual void  CompletionDone(); // On return (selection of completion)
   
 protected slots:
 
