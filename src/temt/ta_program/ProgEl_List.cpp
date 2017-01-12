@@ -127,13 +127,15 @@ bool ProgEl_List::BrowserEditTest() {
 }
 
 bool ProgEl_List::RemoveIdx(int idx) {
-  ProgEl* pel = FastEl(idx);
-  if(pel->owner == this) {
-    Program* prog = GET_MY_OWNER(Program);
-    if (prog) {
-      ProgBrkPt_List* brk_pts = prog->GetBrkPts();
-      if(brk_pts) {
-        brk_pts->DeleteBrkPt(pel);
+  if(!HasBaseFlag(DESTROYED) && !isDestroying()) {
+    ProgEl* pel = FastEl(idx);
+    if(pel->owner == this) {
+      Program* prog = GET_MY_OWNER(Program);
+      if (prog) {
+        ProgBrkPt_List* brk_pts = prog->GetBrkPts();
+        if(brk_pts) {
+          brk_pts->DeleteBrkPt(pel);
+        }
       }
     }
   }

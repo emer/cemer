@@ -87,6 +87,7 @@ public:
   bool         BrowserEditSet(const String& code, int move_after = 0) override;
 
   void         InitLinks() override;
+  void         CutLinks() override;
   void         Copy_(const Function& cp);
   TA_BASEFUNS(Function);
 protected:

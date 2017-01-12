@@ -49,6 +49,12 @@ void Function::InitLinks() {
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
 
+void Function::CutLinks() {
+  args.Reset();
+  fun_code.Reset();
+  inherited::CutLinks();
+}
+
 void Function::SetDefaultName() {
   if(taMisc::not_constr || taMisc::in_init)
     return;
