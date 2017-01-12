@@ -113,6 +113,10 @@ void iCodeCompleter::ExtendSeed(String& seed) {
   String extended_seed;
   // get next char of first item and see if all the other items have the same next char
   while (keep_trying) {
+    if (first_item.length() <= seed.length()) { // ran out of chars
+      keep_trying = false;
+      break;
+    }
     extended_seed = first_item.through(seed.length());
     for (int i = string_list.size() - 1; i >= 0; i--) {
       String item = string_list.at(i);
