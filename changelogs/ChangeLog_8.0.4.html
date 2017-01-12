@@ -1,0 +1,3511 @@
+<html><body>
+<h2>ChangeLog for Emergent Version 8.0.4
+  Revisions 10019:10437</h2>
+<table border="1" style="table-layout:fixed;width: 100%;">
+<tr>
+<td width="5%">Rev No.</td>
+<td width="10%">
+                Date               
+        </td>
+<td width="5%">
+                    Author
+                 
+        </td>
+<td width="">
+                    Message
+                 
+        </td>
+</tr>
+<tr>
+<td><pre>10019</pre></td>
+<td><pre>2016-09-15</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix up missing dependencies in the ubuntu packaging script.
+
+These dependecies were installed in the quarter packaging script, but if we install quarter from a package
+and then try to create a package for emergent, we need to install these dependecies in the emergent scripts as well
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10020</pre></td>
+<td><pre>2016-09-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for Revert To Code - bug #2798
+</pre></td>
+</tr>
+<tr>
+<td><pre>10021</pre></td>
+<td><pre>2016-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>configure script updates for generator option</pre></td>
+</tr>
+<tr>
+<td><pre>10022</pre></td>
+<td><pre>2016-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bump emergent version to 8.0.2 now that 8.0.1 is out.
+* fix a few xcode warnings -- one actually fixes an error in annotations.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10025</pre></td>
+<td><pre>2016-09-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>reset I_net to 0 when spiking and vm is refractory -- just affects display, not numbers, but
+allows use of t_r &gt; 0 in neuron.proj without crazy blowup graph..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10026</pre></td>
+<td><pre>2016-09-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Back out the "fix" for 2798 (revert to code bug)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10027</pre></td>
+<td><pre>2016-09-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Second try fixing bug 2798
+</pre></td>
+</tr>
+<tr>
+<td><pre>10028</pre></td>
+<td><pre>2016-09-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2802 - old projects had wrong name for graphics frame in view menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>10029</pre></td>
+<td><pre>2016-09-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* browser font size setting, now applies to qwebengine views, properly scales dynamically
+* LocalVars no longer tries to convert for any expression of form: type name
+* MemberMethodCall requires final )
+</pre></td>
+</tr>
+<tr>
+<td><pre>10030</pre></td>
+<td><pre>2016-09-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* turn off msn_deriv in PVLV wizard!
+* fix spiking netin integration to use alpha function &amp; spike buffer window -- key!
+:* required a fully static CircBufferIndex class that manages circular buffer logic using
+all-external state variables
+</pre></td>
+</tr>
+<tr>
+<td><pre>10031</pre></td>
+<td><pre>2016-09-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>flgNoCancel - don't create the cancel button - previously was hiding the button
+</pre></td>
+</tr>
+<tr>
+<td><pre>10032</pre></td>
+<td><pre>2016-09-19</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New feature - resizing of data table row height
+- rows resize with font changes
+- options to resize all rows, resize by content and restore (from resize by content)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10033</pre></td>
+<td><pre>2016-09-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add taDataGenSem -- generate semantic patterns -- was a plugin but this makes it more
+accessible -- virt_env is a good place for this kind of thing..
+* add View action: Set Font Size to Default (and corresponding taMisc method) -- easy way
+to set font size without going through prefs.
+* update row_height to be in terms of lines of text instead of pixels, so it is portable
+across different users's configs.  set font size to "table" when getting actual row
+height so you don't need to use the resize method..  added a setRowHieght method in
+iTableView.
+* call InitCtrHist in InitDisplay, always, with non-force -- this should prevent
+"matrix geom = 0" error message and *maybe* some of those crashes from switching
+views -- shouldn't destroy any existing history if already properly init'd
+</pre></td>
+</tr>
+<tr>
+<td><pre>10034</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Write out a timestamp for the cluster run script to verify it is working and running
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10035</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Allow emergent to create the datatable structure of cluster run timestamp datatable and check it in
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10036</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Restrict max lines of text per table row to 10
+- done in iDataTableView rather than iTableView because iDataTableView has its own header class
+</pre></td>
+</tr>
+<tr>
+<td><pre>10037</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add bit flag ROWS_SIZE_TO_CONTENT
+</pre></td>
+</tr>
+<tr>
+<td><pre>10038</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Set or clear ROWS_SIZE_TO_CONTENT flag
+</pre></td>
+</tr>
+<tr>
+<td><pre>10039</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>inline editing of learning rate schedules -- much easier!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10040</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- resize row height to contents code now in SetRowHeightByContents
+- setRowHeight now SetRowHeight
+- you no longer lose the resizing to contents when switching views
+- resize to contents takes about 2 seconds for 10,000 rows but this depends on the number of columns
+-- you can control the "precision" of the resize to contents if you restrict the height calculation
+to a subset of columns - we may want to do this - but hard to know which columns!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10041</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Checkin the clusterrun script timestamp on starting of the cluster run script
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10042</pre></td>
+<td><pre>2016-09-20</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Print the correct timestamp of the backend cluster run script on the cluster run pannel
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10043</pre></td>
+<td><pre>2016-09-21</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Popup dialog reminding a user to check their cluster-run backend script if backend timestamp is more than 1 hour old
+
+This checks and verifies that the latest cluster script timestamp is no more than 1 hour when doing an update
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10044</pre></td>
+<td><pre>2016-09-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>lrate schedule fixes: n_steps is an int, not a float!  and call UAE so display
+updates -- and added "bump_step" to LogLrateSched to implement the new "bump" in the
+lrate schedule, at a specified point in the schedule.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10045</pre></td>
+<td><pre>2016-09-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>add share_cons support for TiledGpRFOnetToOnePrjnSpec -- used for max pooling -- save a little space..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10046</pre></td>
+<td><pre>2016-09-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added RGBOuterToInner and vice-versa -- needed for presenting images directly to net
+* IMPORTANT: Renamed existing FlipY -&gt; FlipYInPlace -- much more efficient to have
+a not-in-place version that is then called by the in place version
+* added many more checking routines and const for args for all methods
+* matrix GetSlice routines are now const -- not really but close enough..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10047</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>actually flip y.. :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10048</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>MAX_POOL fixups -- forgot act = net and linear deriv..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10049</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change column width sizing from pixels to characters
+</pre></td>
+</tr>
+<tr>
+<td><pre>10050</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for column sizing problem with new projects
+</pre></td>
+</tr>
+<tr>
+<td><pre>10051</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* bp: enforce some key constraints: err_tol = 0 for SOFTMAX, act_range.max &gt; 1 for RELU
+* IMPORTANT fix for weight sharing: need to count the "nonshared" cons AFTER connections
+are all made, as that is when that happens -- this could affect dmem sync in bp projs
+* restore setting table font size when computing font metrics for table view -- key for
+resize to work properly..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10052</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>use secsTo instead of msecsTo -- latter not supported on older Qt (dream)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10053</pre></td>
+<td><pre>2016-09-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>setMaximumSectionSize was introduced in qt5.2.. conditionalize for dream compile..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10054</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update the font size when the panel updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>10055</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>This is part of the fix for the slow table update behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>10056</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remainder of fix for slow table updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>10057</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Call our ResizeColumnToContents method - important bug doesn't fix the max section size bug
+</pre></td>
+</tr>
+<tr>
+<td><pre>10058</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix bump step to use std epc_size in log lrate sched
+* moved Graph, Grid Table view methods for DataTable back to DataTable.cpp
+* add select_view to FindMake*View options -- taDataAnal methods set to false -- doesn't
+  select existing views for those analysis methods
+* set maximum col size constraints for iDataTableView, but still needs ResizeToContents
+  flag to be set
+</pre></td>
+</tr>
+<tr>
+<td><pre>10059</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>View fixes:
+* use ResizeToContents flag instead of manually resizing
+* save width in terms of chars, not pixels!
+* set resize precision to 100, instead of 1000
+* HOWEVER, it STILL doesn't work!  columsn are too wide.  if you go try to manually resize a
+column, the 50 chars is actually enforced!  so some kind of update is needed.  I added
+a manual call to resizeSections() but still not working.. ugh.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10060</pre></td>
+<td><pre>2016-09-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Kludge to get columns to constrain to a maximum width.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10061</pre></td>
+<td><pre>2016-09-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Bumped version to 8.0.3 to auto-update projects for new column sizing stuff..
+* datatable colum widths all working great -- key issue was that we were calling the
+"imperative" resize method, instead of just setting the flag, and allowing Qt to take
+care of everything for us automatically.. Meanwhile, the iDataTableEditor had a whole
+redundant loop of column width setting that was messing with things (unbeknownst to me
+at least), and then, insult to injury, the iDataTableColHeaderView::resizedSection call
+was being called for *ALL* resizes (including programmatically triggered ones) and
+re-setting flags and widths!  It is now all much simpler!
+* replaced DataCol bool with a flag for SIZE_TO_CONTENTS, and initialize all existing,
+  &lt; 8.0.3 projects to use this SIZE_TO_CONTENTS flag and set a default fallback width based on
+  GridColDisplayWidth (renamed that from previously ambiguous displayWidth) and name..
+* add a max_col_width to the DataTable -- defaults to 50 -- BUT, if a user resizes a colunn
+wider than that, it is automatically increased.  Otherwise, there is NO way to ever get
+a column wider than this max..
+:* MUST use the gui menu Set Column Width thing to set a col width &gt; the current max --
+  gui will not let you do that..
+:* This is also true for columns that are auto-sizing (i.e., all of them now) -- gui won't
+   let you resize an auto-sized column.  So use the gui method (or settings on the DataCol)
+* ClusterRun tables initialized to row_height=2 for projects &lt; 8.0.3 as new default..
+* initialize extended select mode in iTextEdit to false -- was randomly on and causing
+things to be cut etc..  we should look for a clang tool that figures out if you never
+intialize a class member -- seems like that is a major source of bugs..
+* RandomSpec is actually fully redundant with Random now. Oh well.  Not worth fixing.
+* NetMonItem don't check config for off items
+* UnitSpec duplicate was causing a weird error for bias spec in Bp -- fixed CheckObjType..
+not sure how that ever worked properly before..
+* fixed bad connect name in svn browser
+</pre></td>
+</tr>
+<tr>
+<td><pre>10062</pre></td>
+<td><pre>2016-09-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>get rid of connect error in nogui jobs
+</pre></td>
+</tr>
+<tr>
+<td><pre>10063</pre></td>
+<td><pre>2016-09-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>backprop: don't accumulate dEdA during compute error during testing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10064</pre></td>
+<td><pre>2016-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't save shared weights!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10065</pre></td>
+<td><pre>2016-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* table view: don't update flags, width, height, if already set to same -- MAYBE speeds
+things up a bit -- hard to tell exactly..  still a bit of a lag
+* dynamically set the resize precision based on number of columns..  min = 10.  this
+definitely speeds up larger cluster-run tables..
+* add column index to tooltip in table editor
+* lowercase names in new control panel label generator
+</pre></td>
+</tr>
+<tr>
+<td><pre>10066</pre></td>
+<td><pre>2016-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* auto-click fixed buttons in graph view when min / max changed
+* moved grid view labeling functions to GridTableView::AddHorizLabels and AddVertLabels
+functions -- called with a column of a data table with names that will be placed
+across the top horiz or left vert size of grid view.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10067</pre></td>
+<td><pre>2016-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* use HasExtFlag for all such cases -- bp had this nasty error:
+if(!u-&gt;ext_flag &amp; UnitVars::TARG) return..
+
+that does NOT do what it should!  still can't tell why it is not the case, but apparently
+this doesn't make a diff in the perf, when it looks like it should.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10068</pre></td>
+<td><pre>2016-09-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>old qt ifdefs for dream
+</pre></td>
+</tr>
+<tr>
+<td><pre>10069</pre></td>
+<td><pre>2016-09-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Popup menu buttons for program editing history;
+</pre></td>
+</tr>
+<tr>
+<td><pre>10070</pre></td>
+<td><pre>2016-09-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Popup history buttons at application level
+</pre></td>
+</tr>
+<tr>
+<td><pre>10071</pre></td>
+<td><pre>2016-09-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Include changes to get this to compile from command line
+</pre></td>
+</tr>
+<tr>
+<td><pre>10072</pre></td>
+<td><pre>2016-09-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bp: clear misc1 during init-acts
+</pre></td>
+</tr>
+<tr>
+<td><pre>10073</pre></td>
+<td><pre>2016-09-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for crash viewing a datatable with no columns
+</pre></td>
+</tr>
+<tr>
+<td><pre>10074</pre></td>
+<td><pre>2016-09-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Get rid of the iActionMenuButton class - better to just use parent class QToolButton
+</pre></td>
+</tr>
+<tr>
+<td><pre>10075</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Add ability to highlight a single DataTable row
+- Bug Fix DataOpBaseSpec ClearColumns was not removing all the ops
+</pre></td>
+</tr>
+<tr>
+<td><pre>10076</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>revert change to ClearColumns
+</pre></td>
+</tr>
+<tr>
+<td><pre>10077</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>avg_l init from avg_l.init -- good catch Fabien!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10078</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Initialize acts_m acts_p etc in Init_Weights
+</pre></td>
+</tr>
+<tr>
+<td><pre>10079</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>major speedup for net view: dont search for cons if layer doesnt match</pre></td>
+</tr>
+<tr>
+<td><pre>10080</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Unfilter now does RemoveAll on ops so that cluster run updates don't restore the filtering that you just cleared.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10081</pre></td>
+<td><pre>2016-09-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>If tab is closed set pinned to false
+</pre></td>
+</tr>
+<tr>
+<td><pre>10082</pre></td>
+<td><pre>2016-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bot_zero flag for grid vertical labels.  not seeing the issue about the alignment -- can you
+send a screen shot??
+</pre></td>
+</tr>
+<tr>
+<td><pre>10083</pre></td>
+<td><pre>2016-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>docs and multiple levels of errors / warnings about sharing connections not on the same
+thread -- must be on same thread!  means that unit group size must be even multple of
+n_threads.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10084</pre></td>
+<td><pre>2016-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* INIT_WTS_1_THREAD fully working -- can get FULLY identical behavior for diff number of
+threads with this flag on.  Required a separate Init_Weights method that goes through
+the units and connections *in the same order* regardless of the number of threads --
+the thread-based code goes according to thread organization and so even though the
+rnd number sequence is identical, these numbers were applied to different units..
+* bp also required some eff_thr_no cases for INIT_WTS_1_THREAD
+* but none of this revealed any problems in running lvis bp models! :(  so all that
+weirdness still remains, including the STRONG thread-specific effects..
+* used the objrec_bp.proj model to test here which has all the same elements..
+including shared weights and SOFTMAX.  hmm.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10085</pre></td>
+<td><pre>2016-09-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* rename "resize to contents" to "auto width / height mode" to make it clearer about
+the "mode" vs. "imperitive" nature of it.  including flags.  and disable if already set.
+* also attempt to have "view" of new 3d views be temporary and revert back, so the display
+is updated etc.  needs more work..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10086</pre></td>
+<td><pre>2016-09-28</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Exclude "savetmp" files from checking in as .dat files
+
+If you save out files every epoch, there is a chance that you are just replacing the files while the cluster_run script scans for dats.
+It then tries to add the temp files, which then might fail because the file gets delted while still trying to finish off the svn checkin.
+ 
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10087</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Restore these files - I forgot that the advantage over QToolButton is that
+it changes the buttons label to be the selected menu item.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10088</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for temp viewing -- shows the new display and then moves back to the original one..
+kinda blinky but should hopefully fix bugs with displays not being fully initialized?
+</pre></td>
+</tr>
+<tr>
+<td><pre>10089</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>The text box for the search term was too small!
+-- Changed to only show the replace text box when the user selects find/replace
+-- Default state is find so you get a much wider text box
+-- Also the replace button 'R&gt;' only appears when in find/replace mode - even more space for find text box
+</pre></td>
+</tr>
+<tr>
+<td><pre>10090</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Restore use of iActionMenuButton
+- But I left the replace text button visible as there is a lot of room horizontally
+in the editor panel
+- Inconsistent with iTreeSearch but I think it is ok
+</pre></td>
+</tr>
+<tr>
+<td><pre>10091</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add iActionMenuButton back to CMakeFiles
+* delayed open of project downloaded from web..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10092</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>info message about loading happening
+</pre></td>
+</tr>
+<tr>
+<td><pre>10093</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed CopyFrom to add StructUpdate around renaming back to original name, so you don't
+end up with spurious _copy guys from program code that uses CopyFrom
+* added taMisc::OpenURL with internal_browser option (default true)
+* help browser and doc browsers now have Ext option to open external browser at given
+page -- handy for editing etc which I prefer to do in external browser.
+* css console does not re-show prompt at every activation event -- was losing thigns
+you were in middle of typing!
+* taDataGenSem updated and verified to work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10094</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* added taMisc::in_eventproc flag -- set when RunPending or ProcessEvents is running --
+and wait proc specifically avoids running during this time!  somehow it was running
+even though I wouldn't have thought so.
+* this allows the DistMatrix et al guys to get a full ProcessEvents call for each
+show of them, and it still ends up back at the original view tab -- the wait proc
+properly waits until the end!
+* this might fix some other stuff too!  OTOH, it might BREAK some other stuff too!
+BE ON THE LOOKOUT FOR ANY SUSPICIOUS BEHAVIOR! :)
+* and we COULD consider adding a block on recursive calls to ProcessEvents but
+probably that is not such a great idea..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10095</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>leave a space after GetPathNames() so the ) doesn't get incorporated into the path name
+which prevents clicking on the path to get to where the error is..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10096</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add the ability to pass in extra arguments like n_threads when launching emergent during testing
+
+Quieten down the "Output from telnet was null, when it shouldn't have been" output during testing
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10097</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Test random weights initializations with different thread numbers
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10098</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Conditionally set n_threads default pref to 1 (one) for Windows</pre></td>
+</tr>
+<tr>
+<td><pre>10099</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A temporary edit in tabMisc was checked in by accident when checking in taMisc. This undoes that mistake.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10100</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a test for the PBWM wizard.
+
+At this point it simply runs the wizard on a 3 layer network. This test does not check if it creates a sensible network. Only that it doesn't crash emergent/throw errors
+
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10101</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MSNConSpec: max_vs_deep_mod parameter and use deep_mod_net instead of deep_lrn to get
+more graded signals.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10102</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Restart emergent between testing multi threded weights initialisation, as it otherwise is using the wrong number of threads
+and this part of the test is known to differ by thread number.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10103</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>pvlv layer decay.trial default = 1 instead of 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>10104</pre></td>
+<td><pre>2016-09-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Fix for 3d bar graphs -- needed negative z axis and -- width is function of X axis now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10105</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Matrix view now resizes cell heights to match font size
+</pre></td>
+</tr>
+<tr>
+<td><pre>10106</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for panel values not updating for graph -- needs an update post-Render_impl but that
+cannot happen during UpdateDisplay else it happens 2x so added to _post!  works.
+* added object-specific color to frame where Apply, Revert buttons are on iViewPanel.. guys
+so that you can actually see when the apply, revert buttons are inactive vs. active.
+* restored functionality of iHighlightButton to indicate that Apply button is default --
+dark green font.  can't use background b/c that drives a whole diff button rendering..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10107</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for GHOST_OFF code on network flags: BUILT, INTACT were NOT showing up in test code
+because of the NO_SAVE flag -- added StrContext to get enum string code, VALUE and SEARCH
+don't ignore NO_SAVE, and code uses this
+* viewers explicitly call GetImage on meth buttons -- wasn't happening there before
+* EXPERIMENTAL: copied multi-row tab code from example on Qt bug, and it mostly kinda
+works!  more in email..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10108</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Crashing open grid view - guard against NULL pointer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10109</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Add a basic test for a backpropagation network.
+
+Test that it learns this very basic task.
+Test that the resulting weights are identical independent of with how many threads the model is run
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10110</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Bug 2085 - Only restore panels if is_post_loading is true.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10111</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix spelling of backpropagation test project
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10112</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add column header context menu to matrix table view
+- You can now set the column width (all columns) but value not saved with project
+</pre></td>
+</tr>
+<tr>
+<td><pre>10113</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Persist column width for matrix table view - each data table column gets its own width
+- remaining item is to get matrix view to redraw with new width when selecting a different data table column
+</pre></td>
+</tr>
+<tr>
+<td><pre>10114</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* same crash guard for network view
+* call WaitProc explicitly for running programs -- editors will now update etc
+</pre></td>
+</tr>
+<tr>
+<td><pre>10115</pre></td>
+<td><pre>2016-09-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Done with matrix table view column sizing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10116</pre></td>
+<td><pre>2016-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>doh - got bit flipped on select view -- sorry!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10117</pre></td>
+<td><pre>2016-10-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Major further fixes to preventing waitproc callling while inside a localized event
+processing loop that is not the main outer loop.  This should *really* prevent crashing
+from delayed closes!
+* menu-&gt;exec() and dlg-&gt;exec() are localized event loops, just like ProcessEvents!
+* so added the in_eventproc guard around those -- mostly in a few base classes..
+* now it is very clear that when you delete something, even from a menu,
+it doesn't get deleted until after it gets back to the main event loop. IN FACT,
+if you are very careful and just delete something from the menu and don't do
+anything else with the mouse, it won't disappear yet -- only once you move the mouse!
+I'm not super excited about that particular "feature" but it does at least let us
+know it is working properly.  I wonder if we can add some kind of bogus event
+after returning from the menu loop that would give us one pass through event loop?
+* also fixed startup wizard not showing -- need to not run css event loop for command shells
+including the startup file compiling, which was running the waitproc too soon..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10118</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Changes to make the program step buttons readable
+- no luck removing the menu indicator - decided to go with the flow!
+- increased button height defaults for entire app (#ifdef TA_OS_WIN) as the different font on Windows
+was causing a lot of text to get cut off top and bottom
+- for the buttons in the program step controller I also set a minimum width (ifdef'd)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10119</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Init_Weights for Layer and Projection
+* remove ProcessEvents for gui delete so it doesn't gum up the menu exec loop
+* Dummy event dead end attempt at above
+* raw port of qt QTabBar over to iTabBarMultiRow -- will tweak that and see if it can work easily.
+* backed out test of multi row tabs for now.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10120</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mac case insensitivity bites again..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10121</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>more case fixes</pre></td>
+</tr>
+<tr>
+<td><pre>10122</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>device pixel ratio not on older qt's</pre></td>
+</tr>
+<tr>
+<td><pre>10123</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* menu cleanup
+* iBrowseHistory: multi-inherit classes require instances..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10124</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* move view panel coloration to update panel so it happens with new panels
+* add taDataAnal::MatrixCellFreq -- handy for visualizing frequency of activation in input
+patterns for each cell / unit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10125</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* consolidated and improved sem vec gen -- toward and away concept is key, and
+also has penalty for frequency deviations
+</pre></td>
+</tr>
+<tr>
+<td><pre>10126</pre></td>
+<td><pre>2016-10-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Call method not signal! dumb!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10127</pre></td>
+<td><pre>2016-10-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>override keyword must be at end of declaration for c++11
+</pre></td>
+</tr>
+<tr>
+<td><pre>10128</pre></td>
+<td><pre>2016-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* very old bug fixed: any obj with DEF_CHILD would not show user data!  was re-assigning
+the arg sig data link to a sub-obj one.  Now DataTable shows user data, including params
+that are auto-set by graph, grid generation routines..
+* taDataGenSem::SemVeGen_Flip is now working very well and has apprpriate controls etc
+to enforce sparser vectors etc.  
+</pre></td>
+</tr>
+<tr>
+<td><pre>10129</pre></td>
+<td><pre>2016-10-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dist_off for taDataGenSem -- absolutely KEY for getting a nicely distributed distance
+matrix -- removes the "positive manifold" of the LSA distances, so we don't need to have
+units that are basically always on to capture this commonality among all reps..
+* giving up on multi row tab stuff -- not enough access b/c of pimpl
+* but did fix minimum size to not reduce to oblivion of ..  so that's something.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10130</pre></td>
+<td><pre>2016-10-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change EMERGENT_PLUGIN_DEST for user plugins to plugins64 - we only support 64 bit now
+</pre></td>
+</tr>
+<tr>
+<td><pre>10131</pre></td>
+<td><pre>2016-10-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update list of contributors
+</pre></td>
+</tr>
+<tr>
+<td><pre>10132</pre></td>
+<td><pre>2016-10-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Matrix n_mnt_x  and n_out_x parameters for differential numbers of mnt and output stripes
+-- only first pass impl of the -1 case -- NEEDS MORE CODE to deal with != -1 case
+</pre></td>
+</tr>
+<tr>
+<td><pre>10133</pre></td>
+<td><pre>2016-10-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Doubleclick of row header highlights row
+-- toggles if row already highlighted
+-- if another row is currently highlighted that row is cleared 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10134</pre></td>
+<td><pre>2016-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix typeo and rest of n_mnt_x impl -- only need to specify this -- remainder is n_out_x --
+for the MDM model set it to 0..
+* copy code for matrix_col_width in DataCol -- good idea when adding a new member to double
+check whether it has a manual copy function -- many "core" classes do..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10135</pre></td>
+<td><pre>2016-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>learning threshold options -- random and running-maximum.. we'll see..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10136</pre></td>
+<td><pre>2016-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* use recv unit lrn_thr flag so can just do in one place..
+* compile fix for dream..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10137</pre></td>
+<td><pre>2016-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>typo fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10138</pre></td>
+<td><pre>2016-10-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bar graph fix: graph width must be proportional to the number of distinct bars along
+the x axis. this is just view_range when only x axis being used (prior "fix" was incorrect)
+-- but when there is a z axis, we don't know how many bars are along z vs. x.  so
+now we just guess and say there are 50/50 distributed x and z, so we take sqrt..  probably
+close enough for most cases -- further tweaking can be done with bar width param.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10139</pre></td>
+<td><pre>2016-10-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>When restoring program panels also restore panels of program objects
+</pre></td>
+</tr>
+<tr>
+<td><pre>10140</pre></td>
+<td><pre>2016-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove lrn_thr in Leabra - not effective
+* VS d1 to d2 wt_scale.abs = 1.0 in wizard, per recent pvlv fix -- there is a simlar
+potential issue with baa to bae deep mod that we should also discuss..  (default is .1)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10142</pre></td>
+<td><pre>2016-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>row hilight fix -- stored in underlying "secret" index..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10143</pre></td>
+<td><pre>2016-10-06</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Clear SSE variable for scalar value layers if it isn't either a target or a comparison.
+
+This is useful when switching back and forth between layer types.
+
+see bug #2840
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10144</pre></td>
+<td><pre>2016-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* don't compute SSE or other error measures for HIDDEN layer types, even if they have COMP flag set..
+* allow more procs than on cluster, and don't ask twice..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10145</pre></td>
+<td><pre>2016-10-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update tick analysis program -- reset data at init only, for non-interactive case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10146</pre></td>
+<td><pre>2016-10-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* average-netin soft clamping: works MUCH better than additive soft clamping -- in both
+TRC and regular layerspec..  theory at work!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10147</pre></td>
+<td><pre>2016-10-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>update config check message to be clearer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10148</pre></td>
+<td><pre>2016-10-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix typo in FastElIndex4d
+</pre></td>
+</tr>
+<tr>
+<td><pre>10149</pre></td>
+<td><pre>2016-10-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2839 - FindMember("avg") failing 
+-- It seems that the wrong version of the overloaded method FindMember is getting called
+-- Fix was to call GetTypeDef().FindName("avg")
+</pre></td>
+</tr>
+<tr>
+<td><pre>10150</pre></td>
+<td><pre>2016-10-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* WARNING: major new change to obj* variable naming but not super extensively tested --
+works for several major projects but not much testing of copying, removing vars etc.
+* Program objs now default to snake_case naming -- this actually auto-updates b/c
+names need to be updated based on object name changes.
+* RenameVarsToObjs button / methods at all levels to rename Object* variables to
+the snake_case version of object names
+* DataTable::FilterRowNumbers -- previously-missing method for filtering by lists of
+row numbers.
+* DataTable DMem_SplitRowsAcrossProcs -- each dmem proc gets its own share of a complete
+table.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10151</pre></td>
+<td><pre>2016-10-11</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Fix tests after commit 10150 changing object variable naming.
+
+In the tests we were relying on program-&gt;GetVar("variableName"), i.e.
+had encoded the variable name as a string. That commit changed the variable
+names, and thus the variable name string didn't match anymore and couldn't be found
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10152</pre></td>
+<td><pre>2016-10-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixes to DataTable::DMem_SelectRows.. and FilterByRows -- always the edge case..
+* program objs default type is DataTable
+</pre></td>
+</tr>
+<tr>
+<td><pre>10153</pre></td>
+<td><pre>2016-10-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2839 - Windows compiler handling overload taBase::FindMember method differently than Mac/Linux
+- FindMember methods renamed to FindMemberName, FindMemberType and FindMemberBase
+</pre></td>
+</tr>
+<tr>
+<td><pre>10154</pre></td>
+<td><pre>2016-10-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* warning about having SAVE_VAL and NULL_CHECK both on for ProgVar
+* taMediaWiki Save -&gt; SaveAs(file_name) -- prevents dialog popup for programs
+</pre></td>
+</tr>
+<tr>
+<td><pre>10155</pre></td>
+<td><pre>2016-10-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Enable Delayed Function Calls for "DoReplaceLater" and "ReplaceLater" in non-gui mode.
+
+We need this for doing some code manipulation in non-gui mode, e.g. through the server protocol.
+
+In addition in non-gui server mode WaitProc doesn't seem to be automatically get called, so you need to call in css tabMisc::WaitProc to actually get it processed
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10156</pre></td>
+<td><pre>2016-10-13</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Allow to test CvtFmCode for arbitrary code strings.
+
+This tests code strings "switch (i)" and "switch(i)"
+
+Try and make sure this runs in server mode as well by calling tabMisc::WaitProc in the css code between after the convert to code is called
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10157</pre></td>
+<td><pre>2016-10-14</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Null checks to make sure we have a MethodDef before we start updating the MethodCall element
+</pre></td>
+</tr>
+<tr>
+<td><pre>10158</pre></td>
+<td><pre>2016-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>copy args and expr lists when copying program elements across programs
+</pre></td>
+</tr>
+<tr>
+<td><pre>10159</pre></td>
+<td><pre>2016-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated TickAnalysis program -- automatically does not exceed max rows avail, and
+control over resetting cols using first_run flag
+* added lay_bin_err to LeabraFlex trial stats by default
+</pre></td>
+</tr>
+<tr>
+<td><pre>10160</pre></td>
+<td><pre>2016-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>also update leabra std and std trial mon with lay_bin_err
+</pre></td>
+</tr>
+<tr>
+<td><pre>10161</pre></td>
+<td><pre>2016-10-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>updates to use_ext_act option for LeabraLayerSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>10162</pre></td>
+<td><pre>2016-10-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>windows linker fix: include call to FastEl4d in taMath_float</pre></td>
+</tr>
+<tr>
+<td><pre>10163</pre></td>
+<td><pre>2016-10-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>test of permute function randomness</pre></td>
+</tr>
+<tr>
+<td><pre>10164</pre></td>
+<td><pre>2016-10-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>first part of Group speedups -- pre-allocate dest size, and optimize N part of int
+computation -- but needs to just replace int -&gt; float up-front -- should be easy.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10165</pre></td>
+<td><pre>2016-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add back guard for context menu on plain taBase objs w/out proj owner pointer
+* LeabraFlex proj updated with lrs_bump_step option in config table, and network is
+only built if it needs it..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10166</pre></td>
+<td><pre>2016-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>rest of group optimization -- convert int to float if used in a float-producing computation -- single up-front conversion much faster than doing incrementally all the time..
+* NOTE: existing code was already converting int -&gt; float -- did NOT change to double --
+that could break existing projects.  Anyone needing the extra precision can do the
+conversion int -&gt; double up-front, so there is a good work-around, and we almost never
+need the precision.. (at least I never have... :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10167</pre></td>
+<td><pre>2016-10-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DelayedUpdateUi implemented -- not clear if it fixes anything yet tho -- I was unable to
+recreate the crash in the original pre-mod code.. be on lookout for any issues from this --
+easy to back out any actual calling of the delayed case..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10168</pre></td>
+<td><pre>2016-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for tool-bar program control crashes -- main thing was removing the "Cont" action
+which was synonymous with "Run" and was being swapped out in the toolbar all the time!
+* also removed a ProcessEvents in the UpdateUi call for programs -- not needed and seems
+to make things more robust.
+* overall DelayedUpdateUi turned out to NOT be very useful, but it is sitting there in
+case we need it down the road..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10169</pre></td>
+<td><pre>2016-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>send thread timing report to console, and test project for basic timing info
+</pre></td>
+</tr>
+<tr>
+<td><pre>10170</pre></td>
+<td><pre>2016-10-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>eliminate taThreadMgr::sync_sleep_usec -- it is exceptionally slow on windows and
+now seems to be slowing down linux / mac a bit as well..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10171</pre></td>
+<td><pre>2016-10-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 1910 - losing code when converting between conditional types, If, Else, ElseIf
+- still to do - fix for converting between loop types
+</pre></td>
+</tr>
+<tr>
+<td><pre>10172</pre></td>
+<td><pre>2016-10-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remainder of fix for #1910 - losing code converting between loop type ProgEls
+</pre></td>
+</tr>
+<tr>
+<td><pre>10173</pre></td>
+<td><pre>2016-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed the changelog generation from svn logs -- uses svn_to_changelog.sh script, logs in changelogs dir -- easy to grep, view on html etc</pre></td>
+</tr>
+<tr>
+<td><pre>10174</pre></td>
+<td><pre>2016-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>generate index file too</pre></td>
+</tr>
+<tr>
+<td><pre>10175</pre></td>
+<td><pre>2016-10-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Refactoring
+- Else now inherits from CondBase instead of ProgEl (same as If and ElseIf)
+- all 3 now using ProgEl_List (true_code) of base class
+- some methods removed from subclasses - base class can handle
+</pre></td>
+</tr>
+<tr>
+<td><pre>10176</pre></td>
+<td><pre>2016-10-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fixes for Else class changes
+- mark CondBase true_code as #AKA_else_code to convert all the old else code
+- change Else's ##DEF_CHILD to true_code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10177</pre></td>
+<td><pre>2016-10-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>notes on new BA learning rule</pre></td>
+</tr>
+<tr>
+<td><pre>10178</pre></td>
+<td><pre>2016-10-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't emit warning triggered by else code change unless doing verbose loading messages --
+it loads fine so people don't need to be warned!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10179</pre></td>
+<td><pre>2016-10-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Where used now prints link to console as well as displaying list in dialog
+</pre></td>
+</tr>
+<tr>
+<td><pre>10180</pre></td>
+<td><pre>2016-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* MatrixColToScalarRows function on DataTable and taDataProc -- convert matrix cells to
+rows of a scalar column (existing funs convert to columns)
+* fix Program parsing of // and /* comments to deal with possibility of // inside quoted
+strings -- now one ProgEl::GetCodeDesc method used by everything that does this more
+robust parsing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10181</pre></td>
+<td><pre>2016-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Basal amygdala and lateral amygdala options: DELTA lrate and D1 vs. D2 in LA
+* also BA units can do dar-specific dopamine modulation of activation
+* these are untested as of yet and defaults remain for the "old" behavior for the time being
+</pre></td>
+</tr>
+<tr>
+<td><pre>10182</pre></td>
+<td><pre>2016-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>show delta_da option for US_DELTA
+</pre></td>
+</tr>
+<tr>
+<td><pre>10183</pre></td>
+<td><pre>2016-10-20</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Test a function call and a string assignment with // in the string
+
+verify that the parser does not turn the // into comments when within a string
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10184</pre></td>
+<td><pre>2016-10-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BA neg neg lrate and da lrate
+</pre></td>
+</tr>
+<tr>
+<td><pre>10186</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for new matrix column dialog being too small
+- Couldn't get the dialog to resize automatically
+- added a directive MIN_DLG_WIDTH that can be set on the method
+</pre></td>
+</tr>
+<tr>
+<td><pre>10187</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2872 - Row out of range error - no escape from endless dialogs
+- Call EnforceRows in Init()
+</pre></td>
+</tr>
+<tr>
+<td><pre>10188</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Code string returned for switch does not strip blank as expected in tests
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10189</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* option for separate increase and decrease weight change aggregation -- inspired by separate
+pathways for LTP, LTD -- there is a WTA dynamic at the synapse -- either increase or
+decrease wins -- prevents "dithering" and averaging and should preserve contrast??
+</pre></td>
+</tr>
+<tr>
+<td><pre>10190</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove debug code; reinstate TestError
+</pre></td>
+</tr>
+<tr>
+<td><pre>10191</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix 2845 - Fixes default creation for DataTable
+- If no columns a string column is created
+- If columns a new table is created
+- Now consistent with other types
+</pre></td>
+</tr>
+<tr>
+<td><pre>10192</pre></td>
+<td><pre>2016-10-22</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove ObjectsEnv from std lib -- online one is always current one!
+* additive option for sep_dwt -- stronger momentum dynamics
+</pre></td>
+</tr>
+<tr>
+<td><pre>10193</pre></td>
+<td><pre>2016-10-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix 2856 - revert to code not working for ProgEls Comment and BlankLineEl
+- you can now revert either of these and turn them into other ProgEls
+</pre></td>
+</tr>
+<tr>
+<td><pre>10194</pre></td>
+<td><pre>2016-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>separate dwt param cleanup and consolidation: add mode works a lot better, don't need
+loser_gain, and hence only need sep_bound
+</pre></td>
+</tr>
+<tr>
+<td><pre>10195</pre></td>
+<td><pre>2016-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>comments updates for sep_dwt
+</pre></td>
+</tr>
+<tr>
+<td><pre>10196</pre></td>
+<td><pre>2016-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>temp test removing dw_dt multiplier</pre></td>
+</tr>
+<tr>
+<td><pre>10197</pre></td>
+<td><pre>2016-10-23</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>yep dw_dt multiplier probably not useful</pre></td>
+</tr>
+<tr>
+<td><pre>10198</pre></td>
+<td><pre>2016-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>sep_dwt -- new logic: only apply the cur dwt for weight changes -- the long-term averages
+are only the "gate keepers" for whether weight inc vs. dec are applied -- makes much
+more sense for longer-time scale averaging -- otherwise the current value is lost..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10199</pre></td>
+<td><pre>2016-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't update for 0 weight changes, and filter 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>10200</pre></td>
+<td><pre>2016-10-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>guard for viewerWindow() null</pre></td>
+</tr>
+<tr>
+<td><pre>10201</pre></td>
+<td><pre>2016-10-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>support ode.dll name on windows -- seems to need that now at runtime</pre></td>
+</tr>
+<tr>
+<td><pre>10202</pre></td>
+<td><pre>2016-10-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>simplified sep_dwt -&gt; dwt_wta  -- now using a single running average dwavg -- look at the
+sign of this
+</pre></td>
+</tr>
+<tr>
+<td><pre>10203</pre></td>
+<td><pre>2016-10-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>prevent crash when quitting app in windows with project open -- don't select a new tab when quitting</pre></td>
+</tr>
+<tr>
+<td><pre>10204</pre></td>
+<td><pre>2016-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for "random" min / max graph settings -- don't apply that logic if graph panel is
+not current!  we don't update the panel for basic data updates..
+* wt_mod option for strength of dwt_wta effect -- maybe give us more of a soft landing?
+</pre></td>
+</tr>
+<tr>
+<td><pre>10205</pre></td>
+<td><pre>2016-10-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt_wta wt_mod_sgn option -- experimenting..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10206</pre></td>
+<td><pre>2016-10-25</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Duplicate demo/programs/program-examples.proj and copy it into the test-projects folder.
+
+This allows to change some of the examples to be better suited for testing purposes.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10207</pre></td>
+<td><pre>2016-10-25</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Test all of the cases for if/else and case
+
+Test the actual results of program calling and don't just test that it doesn't throw an error.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10208</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Last part of fix for bug 2870 - new matrix col dialog
+-- now has good default arguments
+</pre></td>
+</tr>
+<tr>
+<td><pre>10209</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>option to compute wt with fwt avg offset -- renorm..  currently only per-unti -- much
+more work to do per projection..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10210</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Make the ChangeColCellGeom dialog wide enough to show typical 2 dimensions
+</pre></td>
+</tr>
+<tr>
+<td><pre>10211</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraConSpec::wt_bal -&gt; wt_norm_bal -- norm_on, bal_on options -- bal is now based on
+sum of weights that exceed the high threshold -- more targeted on hogs specifically..
+and norm is based on the projection average fwt value -- directly renorms the fwts
+which preserves the savability of the weights -- otherwise would need the dynamic
+offset factor to transform wt and fwt..
+* IMPORTANT: did NOT cause existing wt_bal settings to load into this version --
+the settings are sufficiently different that it makes sense to explicitly re-enable
+and set parameters appropriately. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10212</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2864 - control panels items show generic description instead of user description
+</pre></td>
+</tr>
+<tr>
+<td><pre>10213</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Removed separator before "Load Data Native" so that all of the menu items for save/load native were in the same group
+</pre></td>
+</tr>
+<tr>
+<td><pre>10214</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>compute wt_bal stats always for now</pre></td>
+</tr>
+<tr>
+<td><pre>10215</pre></td>
+<td><pre>2016-10-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove the Condtional_Printing program example
+-- new style debug printing doesn't need example - just doc
+</pre></td>
+</tr>
+<tr>
+<td><pre>10216</pre></td>
+<td><pre>2016-10-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>renorm is now relative to recv unit weight average, not projection, and added per-conspec avg_l_gain factor</pre></td>
+</tr>
+<tr>
+<td><pre>10217</pre></td>
+<td><pre>2016-10-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>wt balance factors now affect dwavg integration in dwt_wta mechanism -- should work a lot better
+</pre></td>
+</tr>
+<tr>
+<td><pre>10218</pre></td>
+<td><pre>2016-10-27</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>restoring wt_mod factor -- seems to work best</pre></td>
+</tr>
+<tr>
+<td><pre>10219</pre></td>
+<td><pre>2016-10-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2885
+***CHECK ERROR: Config Error in: taList_impl sub_code
+ Copy: Lists must have same el_base to be copyable
+</pre></td>
+</tr>
+<tr>
+<td><pre>10220</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* taString now has isFloat, isHex, isBool functions (in addition to existing isInt) that parse string for those contents
+* Variant now has setFromStringGuessType method that uses above taString functions to
+set the type of the variant based on the guessed type of the string
+* ProgVar uses above to initialize unknown variable type to type of value set to it
+* got rid of balance effects directly on dwavg integration -- was overly-depressing
+weights and is not a good mechanism
+</pre></td>
+</tr>
+<tr>
+<td><pre>10221</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ak! the original toInt fun was using -&gt;cnt instead of -&gt;len!  -&gt;cnt is ref count!  fixes the toInt, etc detectors..
+* progvar: set type to current obj type if was prev undef
+</pre></td>
+</tr>
+<tr>
+<td><pre>10222</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>minor break move -- attempt to fix crash on mpi blanca
+</pre></td>
+</tr>
+<tr>
+<td><pre>10223</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>error msg on typ load fail
+</pre></td>
+</tr>
+<tr>
+<td><pre>10224</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Delete obsolete member pre_compile_code_string
+</pre></td>
+</tr>
+<tr>
+<td><pre>10225</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for latent time-bomb bug on blanca: was not getting member offset correctly due to random order of initialization -- thought it was latest changes in string / variant but it was due to mistake that requried a full rebuild revealing this bug that ws sitting there for months -- yuk.</pre></td>
+</tr>
+<tr>
+<td><pre>10226</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Support Percent aggregate operator on string relation (not) contains
+
+Percent aggregate operator is not a percent, but a fraction. So need result to be float, not int.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10227</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Test the percentage group aggregation operator
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10228</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Reverting the fix for "Not being able to call RevertToCode on Comment and BlankLine"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10229</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A couple of lines of code that shouldn't have been checked in
+</pre></td>
+</tr>
+<tr>
+<td><pre>10230</pre></td>
+<td><pre>2016-10-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* save datatable row highlight -- no reason not to and convenient to keep highlighing..
+* new wb_dec modulation of when weight decrease is included.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10231</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A couple of lines missed when reverting
+</pre></td>
+</tr>
+<tr>
+<td><pre>10232</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>One more part of the revert - should have just looked at the checkin diff!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10233</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fixes for bugs 2856 2889 - both related to Comment ProgEl
+Let's see what the automated tests show :)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10234</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* revert to previous wt_bal formulation, but trying the new sigmoidal-style equation --
+should give better dynamic range.  logic is on hog prob fix page on wiki -- really need
+to think of this as soft weight normalization!  also broke out gains separately and
+separate hi/lo thr -- seems clearer.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10235</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Add an extra UAE step for all Cols during DataTable::AutoLoadData -- wasn't able to
+open ss.proj because of this -- somehow the cols were not initialized.
+* remove extra EnforceRows call in DataCol::Init() -- the equivalent of this call
+is already happening later in this same function, where it sets the geom of the
+matrix AR -- and doing it earlier before the rest of the geom is set is not good..
+John was this just a "tidying up" kind of thing or did it actually fix some kind
+of problem??  if the latter, it isn't clear why that would be the case so we
+should revisit!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10236</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Remove test for conditional printing, as that program example no longer exists in the demo project
+
+Use Test primative "Run Emergent Program" instead of directly sending the json command to improve
+error handling of the test
+
+Include a null pointer check in the TestBrowserEdit project in case the program no longer exists.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10237</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* use MAX(deep_lrn, act) for DELTA BasAmygConSpec for EXT case -- previous US_DELTA
+learning rule is also avail so can just experiment between the two..
+* previous linear version of weight balance mechanism -- not sure new sigmoidal one is
+as effective.
+* allow f in floating point numbers in case someone types 3.14f etc.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10238</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>DataCol: call Init() in InitLinks so the column is always valid when constructed if
+owned by a datatable..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10239</pre></td>
+<td><pre>2016-10-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fixed program examples project -- could fix the bug but it is likely to be a pita and
+unlikely to recur anytime soon -- very peculiar confluence of situations.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10240</pre></td>
+<td><pre>2016-10-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Rewrite the "out of date plugin" message to be easier to read
+- Don't quit if just cleaning - Do quit if will be rebuilding stale plugins
+- Clean isn't working - the list to iterate is empty - I'll fix this
+</pre></td>
+</tr>
+<tr>
+<td><pre>10241</pre></td>
+<td><pre>2016-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix loading bug in taMisc::skip_past_err -- now tracks quotes and is not fooled
+by ; or } showing up in quoted strings.  this happened again on objrec_d5b project..
+* add option to multiply avgl component of learning by su_act_m -- this is how it used to work, and it is likely that some of the issues with dwt_wta with weights always going down
+are due to the strong negative dwt that can happen if sender is weakly active in prev
+scheme?  this is how learning worked in 7.0, and I did also notice in several projs that
+learning is not as good (family trees, sentence gestalt) -- could be the hebb diff --
+will explore in lvis models and ss models, but initial tests in several textbook projs
+seemed promising.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10242</pre></td>
+<td><pre>2016-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>option for using 7.0 leaky-integrator style avg_l dynamics.. what will it take for sg.proj
+to learn!?
+</pre></td>
+</tr>
+<tr>
+<td><pre>10243</pre></td>
+<td><pre>2016-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Perhaps the last major element of 7.0 tech: option for single integrated xcal threshold
+</pre></td>
+</tr>
+<tr>
+<td><pre>10244</pre></td>
+<td><pre>2016-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>m_in_s_sqrt option -- turns out our s-m mixing factors in 7.0 worked on the su * ru product,
+whereas now they are working on the separate terms -- to match prior values you need
+to take the sqrt of the separate mixing factors!  no idea if this makes a diff but..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10245</pre></td>
+<td><pre>2016-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>typo fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10246</pre></td>
+<td><pre>2016-10-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>one more typo.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10247</pre></td>
+<td><pre>2016-11-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- If the user types an assignment expression and the type can be guessed to be an int, real or bool
+the type menu in the dialog is set to that type.
+- If the user explictly declares the type it behaves as it did previously, the type menu is not shown.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10248</pre></td>
+<td><pre>2016-11-01</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fixed some missing SPEC_DEFAULTS macro in various specs with Defaults_init -- must have
+this in all such specs!
+* replaced LeabraContextLayerSpec -&gt; LeabraContextUnitSpec -- unit spec is the new way..
+* removed some experimental options from recent checkins..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10249</pre></td>
+<td><pre>2016-11-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix cut/paste error in an error message
+</pre></td>
+</tr>
+<tr>
+<td><pre>10250</pre></td>
+<td><pre>2016-11-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update the 'Stop' tooltip - we no longer have a 'Continue' button
+</pre></td>
+</tr>
+<tr>
+<td><pre>10251</pre></td>
+<td><pre>2016-11-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove the remove call on plugins that are out of date - let Clean handle that
+</pre></td>
+</tr>
+<tr>
+<td><pre>10252</pre></td>
+<td><pre>2016-11-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>reinstate some commented out code in MakePlugin
+</pre></td>
+</tr>
+<tr>
+<td><pre>10253</pre></td>
+<td><pre>2016-11-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove leaky integrator of avg_l value -- was consistently worse than current mech
+in tests on lvis model
+* remove avgl_su_m option -- similarly non-better / worse than existing..
+* also got rid of one-thr for the time being -- can revisit this later -- could be interesting but unlikely to be performance relevant.
+* ADD option for multiplying by recv unit derivative of activation function (under simple
+sigmoidal assumptions) -- seems to at least learn in basic tests.. let's see how it does
+on bigger models..  only avg_m worked -- avg_s did not at all, and nor did max of m and s.
+could think about avg_l-based derivatives here too, which raises basic question of TD-like
+nature of BCM..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10254</pre></td>
+<td><pre>2016-11-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rewritten with normal loop and data calls - all calc loop calls are gone
+- all cases tested
+</pre></td>
+</tr>
+<tr>
+<td><pre>10255</pre></td>
+<td><pre>2016-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>new dwt_zone  zone of proximal development temporal deriviative learning rate filter --
+initial tests on laptop are promising -- time to test out on larger models!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10256</pre></td>
+<td><pre>2016-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* dwt was STILL not being initialized properly: for topo projections, weren't calling
+C_Dwt_Init
+* furthermore other con vars MUST be initialized in Init_Weights_post -- topo prjns
+ONLY call the basic wt and dwt init functions..
+* added option to normalize all dwts based on dwt_max_avg variable -- probably need
+a better normalizer for all cases here, before that is useful.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10257</pre></td>
+<td><pre>2016-11-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt norm by layer cos_diff_avg -- more sensible baseline norm common to all connections..</pre></td>
+</tr>
+<tr>
+<td><pre>10258</pre></td>
+<td><pre>2016-11-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Undo/Redo now popup menu tool buttons but they only do the single undo/redo
+- Still need to do the menu function part of the task
+</pre></td>
+</tr>
+<tr>
+<td><pre>10259</pre></td>
+<td><pre>2016-11-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added dwnorm connection variable -- this is the most "proper" normalization factor
+and we need to test it compared to con-group one -- previous cos_diff_avg norm creates
+a squared dwt term which is not good -- the more local the better..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10260</pre></td>
+<td><pre>2016-11-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>explore all 3 scopes for now: con, congroup, layer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10261</pre></td>
+<td><pre>2016-11-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for CleanPlugin on Windows
+- Use "del" not "rm" for Windows
+- Fix path - use '\' for Windows path separator when path is argument to command
+</pre></td>
+</tr>
+<tr>
+<td><pre>10262</pre></td>
+<td><pre>2016-11-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for last checkin that didn't compile on Mac
+</pre></td>
+</tr>
+<tr>
+<td><pre>10263</pre></td>
+<td><pre>2016-11-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add the name of the object to the SaveUndo action when Deleting
+- will be very helpful with the Undo menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>10264</pre></td>
+<td><pre>2016-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>experimental Hebbian floating threshold version -- checking this in for
+posterity -- will then back out changes given insights as recorded on
+vanishing derivative wiki page..  original hebbian learning is best for
+various reasons..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10265</pre></td>
+<td><pre>2016-11-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* back to original hebbian form, with new avg option for avg_l computation -- literally
+a running average..
+* also, this has a further test on ru_avg_s and ru_avg_m -- if both below the
+learning threshold for activation, then skip even calling the dwt function --
+this will affect updating of dwa averages for zone, so need to check on that..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10266</pre></td>
+<td><pre>2016-11-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Implementation of random access undo/redo from menu on undo/redo buttons
+- redo not always correct - may be the same problem as bug 2899
+- some of the SaveUndo actions - for example "insert default element" have been modified
+to provide more specific information to help the user doing undo from the menu of undos
+</pre></td>
+</tr>
+<tr>
+<td><pre>10267</pre></td>
+<td><pre>2016-11-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>don't apply opt_thresh.xcal_lrn to recv units -- doesn't work well for zone</pre></td>
+</tr>
+<tr>
+<td><pre>10268</pre></td>
+<td><pre>2016-11-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Keyboard shortcuts for Undo and Redo
+</pre></td>
+</tr>
+<tr>
+<td><pre>10269</pre></td>
+<td><pre>2016-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* remove dwt_wta mechanism in leabra
+* remainder of fix for pdw etc vars in Init_Weights_post for so, cs
+* lhb patch_cur is default setting now -- updated DEF and init.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10270</pre></td>
+<td><pre>2016-11-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>all temporary data tables should be: taBase::Own(tmp_table, tabMisc::root) so that
+their columns can find the table during the Init() call and get the proper number of
+rows at all times!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10271</pre></td>
+<td><pre>2016-11-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Off by one change when adding menu items to redo menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>10272</pre></td>
+<td><pre>2016-11-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2902 - Crash calling Init() on DoGRetinaProc
+</pre></td>
+</tr>
+<tr>
+<td><pre>10273</pre></td>
+<td><pre>2016-11-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>New function AnalyzeTicksExistingData and supporting function GetExistingData
+- set variable existing_data_analysis to true to analyze trial data from a a completed run
+- works by running over the existing data and running the analysis on each epoch's data and
+adding to TickDataLog just as it works when running the model in place
+
+-This line, and those below, will be ignored--
+prog_lib/TickAnalysis.prog
+</pre></td>
+</tr>
+<tr>
+<td><pre>10274</pre></td>
+<td><pre>2016-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>changelogs for 8.0.3</pre></td>
+</tr>
+<tr>
+<td><pre>10276</pre></td>
+<td><pre>2016-11-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>update version to 8.0.4 after 8.0.3 beta release</pre></td>
+</tr>
+<tr>
+<td><pre>10277</pre></td>
+<td><pre>2016-11-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for	bug 2899 - Redo	failing	in some	cases
+- turns	out the	 redo was only failing AFAIK when SaveUndo was called from InsertDefaultEl
+(too bad I didn't realize this early on!)
+- it was passing in the list   instead of the list owner for the mod_obj
+</pre></td>
+</tr>
+<tr>
+<td><pre>10278</pre></td>
+<td><pre>2016-11-14</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* m_in_plus option for integrating minus phase data in plus phase (which is normally 
+what is done -- but looking at the avg_m vs avg_s states it is striking how little minus
+phase activation remains in avg_m).
+* also change act_diff to reflect avg_s_eff - avg_m -- the actual learning signal!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10279</pre></td>
+<td><pre>2016-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* LeabraUnitSpec AvgL computation updated to running-average only, with messages and
+logic for updating existing projects..
+* some experimental options for exploring learning rule issues..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10280</pre></td>
+<td><pre>2016-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove experimental items -- not obviously an improvement and generall worse..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10281</pre></td>
+<td><pre>2016-11-15</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>param test fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10282</pre></td>
+<td><pre>2016-11-16</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>testing out new simpler adaptleak algo -- again just another running average instead of
+thresholds..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10283</pre></td>
+<td><pre>2016-11-17</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>remove adapt leak mechanism entirely -- does not appear to be beneficial in various sims.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10284</pre></td>
+<td><pre>2016-11-18</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>mac install script runs homebrew commands to install apr apr-utils</pre></td>
+</tr>
+<tr>
+<td><pre>10285</pre></td>
+<td><pre>2016-11-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>qt5.3 windows build script</pre></td>
+</tr>
+<tr>
+<td><pre>10286</pre></td>
+<td><pre>2016-11-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add shortcuts for methods on tree selections
+- The code that	makes this possible through actions - not key events - is in iMainWindowViewer
+- Default values (up for discussion but many constraints) - user can edit as usual
+-- ToggleOffFlag	Alt + T
+-- ToggleBreakpoint     Alt + B
+-- EditProgram          Alt + P
+-- EditProgEl           Alt + G
+-- RevertToCode	        Alt + C
+- I chose these	methods because	I use all of these frequently :)
+- Cleaned up the way shortcuts are added to menu labels
+- Added	shortcuts to labels for	Cut and	Copy 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10287</pre></td>
+<td><pre>2016-11-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Documenting thinking behind current implementation of context menu shortcuts.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10288</pre></td>
+<td><pre>2016-11-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* set line width for graph view box, axes to 2 instead of 0..
+* notes about finding apr, apu -- lesson is to physically remove build directory!!!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10289</pre></td>
+<td><pre>2016-11-20</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>dwt zone lrate mult = 3 default</pre></td>
+</tr>
+<tr>
+<td><pre>10290</pre></td>
+<td><pre>2016-11-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Standalone program that generates an OID file from a directory of images
+</pre></td>
+</tr>
+<tr>
+<td><pre>10291</pre></td>
+<td><pre>2016-11-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>touch the CMakeLists file
+</pre></td>
+</tr>
+<tr>
+<td><pre>10292</pre></td>
+<td><pre>2016-11-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add isQuoted() to String class
+Use this method when guessing type of new var, e.g. xyz = "the answer" - guess that this is a string
+</pre></td>
+</tr>
+<tr>
+<td><pre>10293</pre></td>
+<td><pre>2016-11-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2908 - methods invoked on ProgEls via command key weren't working for multiple selections
+Several design questions to discuss with Randy
+</pre></td>
+</tr>
+<tr>
+<td><pre>10294</pre></td>
+<td><pre>2016-11-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A bare bones start on the code completer feature
+- very experimental and will be #if 0 until it works well
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10295</pre></td>
+<td><pre>2016-11-24</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Some work on the code completer
+- major task now is to reuse the lookup code to build the lists normally
+displayed by the various choosers
+</pre></td>
+</tr>
+<tr>
+<td><pre>10296</pre></td>
+<td><pre>2016-11-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for search bug 2909.
+Text only search was looking at members but should only look at displayed text 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10297</pre></td>
+<td><pre>2016-11-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix bug in ColorSpace that was using y instead of x for horizontal image dimension!  didn't notice with square images.. fixes saliency proj
+* fix type name parsing in taSmartPtr to deal with final _
+</pre></td>
+</tr>
+<tr>
+<td><pre>10298</pre></td>
+<td><pre>2016-12-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Update of code completer feature - not yet turned on
+- everything in place but doesn't handle all cases yet
+- pulling all of the lookup/chooser implementation apart was getting messy so the
+current implemntation is mostly parallel but uses the same parser
+- once the completer is fully featured some of the code duplication, 
+the building of token lists and post selection expression completion be eliminated.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10299</pre></td>
+<td><pre>2016-12-02</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>override was on non-virtual function -- john did you forget c++11 arg for configure?
+</pre></td>
+</tr>
+<tr>
+<td><pre>10300</pre></td>
+<td><pre>2016-12-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Updates to the code completer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10301</pre></td>
+<td><pre>2016-12-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Code completer - more cases working
+</pre></td>
+</tr>
+<tr>
+<td><pre>10302</pre></td>
+<td><pre>2016-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>hippo test wizard case: reconfigure input patterns to be 4x2 instead of 2x4 so they fit the actual net geom</pre></td>
+</tr>
+<tr>
+<td><pre>10303</pre></td>
+<td><pre>2016-12-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* updated hippo wizard patterns with patterns in every group
+* ec-out to in rel wt scale default .1 instead of .5 -- much less inteference.. 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10304</pre></td>
+<td><pre>2016-12-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Code completion for code fields in dialog
+- add a couple of NULL guards, other minor updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>10305</pre></td>
+<td><pre>2016-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Completions for enums and static members/methods
+</pre></td>
+</tr>
+<tr>
+<td><pre>10306</pre></td>
+<td><pre>2016-12-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Bug fix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10307</pre></td>
+<td><pre>2016-12-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Code Completer
+- show unfiltered list if no text
+- prefenence to enable/disable code completer
+- rework some code in iLineEdit
+</pre></td>
+</tr>
+<tr>
+<td><pre>10308</pre></td>
+<td><pre>2016-12-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Replace Q_NULLPTR macro with 0 so we can compile on Dream cluster
+- didn't seem worth ifdef'ing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10309</pre></td>
+<td><pre>2016-12-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>A couple of small updates
+- fixes lookup for calling functions of programs when the programmer puts a space
+e.g. LeabraTrain() G - was not finding GetRandomSeed()
+- You can now force the display of an unfiltered list of options after "::", ".", "-&gt;" and "()" by pressing option or command key
+-- previously you would need to type a character so you didn't get the unfiltered list of all possible choices
+</pre></td>
+</tr>
+<tr>
+<td><pre>10310</pre></td>
+<td><pre>2016-12-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Turn on recording of avg_act for input layers in EpochMonitor
+- Change load_weights, log_trials and save_final_wts columns to bool type
+</pre></td>
+</tr>
+<tr>
+<td><pre>10311</pre></td>
+<td><pre>2016-12-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* update comment on user_data_ list to not access list directly and use the Get/Set api.
+sorry for the big rebuild!
+* remove the view_panel_md user data item from data columns -- not used anymore
+* user_data_ was listed as NO_SAVE_EMPTY but this used TypeDef ValIsEmpty function
+which didn't have cases for taPtrList_impl classes -- added that -- empty if size = 0
+</pre></td>
+</tr>
+<tr>
+<td><pre>10312</pre></td>
+<td><pre>2016-12-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Turn on CodeCompleter by default and add max completer items to preferences
+- Put the 2 tree_spring_loaded prefs on one line (i.e. make it a small class) 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10313</pre></td>
+<td><pre>2016-12-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for data grouping when src and dest are the same - bug 2917
+</pre></td>
+</tr>
+<tr>
+<td><pre>10314</pre></td>
+<td><pre>2016-12-07</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Test for group by to work with source and destination data tables being the same.
+
+Tests for #2917
+ 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10315</pre></td>
+<td><pre>2016-12-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Part of the fix for 2919
+</pre></td>
+</tr>
+<tr>
+<td><pre>10316</pre></td>
+<td><pre>2016-12-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Changes to code completion functionality and bug fixes
+- fix - no longer shows functions that are out of scope
+- fix - works after "if(" and "=="
+- change - removed the automatic popup when first editing
+-- to get an unfiltered list when the line is empty press ALT key
+-- after any delimiter :: , () . -&gt; ( == press ALT key to get unfiltered list
+this works much better and is less intrusive!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10317</pre></td>
+<td><pre>2016-12-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Major simplification of key handling code - no change in functionality
+</pre></td>
+</tr>
+<tr>
+<td><pre>10318</pre></td>
+<td><pre>2016-12-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Tab key forces code completer to pop an unfiltered list (same as Alt key)
+- couldn't be done in KeyPressEvent - eventFilter() overridden
+- tab key no long closes progcode edit - use return/enter
+</pre></td>
+</tr>
+<tr>
+<td><pre>10319</pre></td>
+<td><pre>2016-12-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Hopeful fix for backspace/delete key not deleting selection in line edit - bug 2921
+</pre></td>
+</tr>
+<tr>
+<td><pre>10320</pre></td>
+<td><pre>2016-12-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for backspace problem when code completing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10321</pre></td>
+<td><pre>2016-12-10</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Change shortcut for Toggle_Off_Flag to Alt-O
+</pre></td>
+</tr>
+<tr>
+<td><pre>10322</pre></td>
+<td><pre>2016-12-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Most of the fix for Code Completer 2922 - no code completer for some program elements
+- it was for ProgEls without a ProgExpr in them
+- needed to add StringFieldLookupForCompleter override in ProgEl
+</pre></td>
+</tr>
+<tr>
+<td><pre>10323</pre></td>
+<td><pre>2016-12-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Bug fix and refinement of code completer
+</pre></td>
+</tr>
+<tr>
+<td><pre>10324</pre></td>
+<td><pre>2016-12-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Call inherited::keyPresEvent before any completer code - solves a few problems
+- remove special case backspace code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10325</pre></td>
+<td><pre>2016-12-13</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Fix a bug that was in both chooser and completer
+-- lookup after function() was generating a list of other functions because
+there was no check as to whether xxx() was a function or a program
+</pre></td>
+</tr>
+<tr>
+<td><pre>10326</pre></td>
+<td><pre>2016-12-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>added a taMisc::font_sizes.spacing parameter to control spacing in edit dialogs
+</pre></td>
+</tr>
+<tr>
+<td><pre>10327</pre></td>
+<td><pre>2016-12-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2581 - Neither Hidden nor Expert preferences were unhiding when the checkbox was checked.
+- The problem is that the async_reshow_list isn't getting processed during the modal dialog
+- I worked around this by calling Refresh directly 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10328</pre></td>
+<td><pre>2016-12-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Refine the bug fix for 2581
+- call Refresh() if the host is dialog, otherwise call ReShow_Async()
+which is what was always being called before.
+- this leaves the panel cases still using ReShow_Async()
+</pre></td>
+</tr>
+<tr>
+<td><pre>10329</pre></td>
+<td><pre>2016-12-15</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Append the remaining text after the completion.
+Fixes cases like this one:
+
+      final_tag = tag + "." + batch_str + "_" + epoch_str // string 'tag' to identify the batch, epoch, and other user id info for the weights
+
+where you select and replace "tag" from the completer list - previously you would lose the remainder of the line  
+</pre></td>
+</tr>
+<tr>
+<td><pre>10330</pre></td>
+<td><pre>2016-12-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for crashing bug 2930 - guard against the no code completer case in the event filter
+</pre></td>
+</tr>
+<tr>
+<td><pre>10331</pre></td>
+<td><pre>2016-12-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Mark all of the static lists kept for the completer as #READ_ONLY #HIDDEN #NO_SAVE
+</pre></td>
+</tr>
+<tr>
+<td><pre>10332</pre></td>
+<td><pre>2016-12-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2929 - don't invoke completer or lookup in comment
+</pre></td>
+</tr>
+<tr>
+<td><pre>10333</pre></td>
+<td><pre>2016-12-16</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>When setting a breakpoint don't expand the breakpoint group, it will cause the tree to scroll
+away from the current selection - fixes bug 2928
+</pre></td>
+</tr>
+<tr>
+<td><pre>10334</pre></td>
+<td><pre>2016-12-17</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Remove some obsolete completer code
+</pre></td>
+</tr>
+<tr>
+<td><pre>10335</pre></td>
+<td><pre>2016-12-18</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>2 parser changes to fix code completer and lookup
+- neither not finding functions of programs if there is trailing space
+</pre></td>
+</tr>
+<tr>
+<td><pre>10336</pre></td>
+<td><pre>2016-12-19</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>taMath* vec_apply_fun and vec_* functions for all single-arg functions defined within
+taMath*, including exp, abs, cos, etc -- can run apply function to each element of vector
+/ matrix
+</pre></td>
+</tr>
+<tr>
+<td><pre>10337</pre></td>
+<td><pre>2016-12-20</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rewrite DataTable RemoveRows and RemoveCols to more efficiently handle delete and disabling
+of control panel members linked to data table cells
+</pre></td>
+</tr>
+<tr>
+<td><pre>10338</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Control N/P now work in code completer as substitues for up/down arrows
+Still need to get tab key working as substitute for enter
+- magic was to use the QEvent::ShortcutOverride event in iLineEdit::eventFilter
+and post the down/up arrow event to the completer popup menu
+</pre></td>
+</tr>
+<tr>
+<td><pre>10339</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Let's see if this fixes the build
+</pre></td>
+</tr>
+<tr>
+<td><pre>10340</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Include QEvent
+</pre></td>
+</tr>
+<tr>
+<td><pre>10341</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Try again - casting QAbstractItemView to QObject
+</pre></td>
+</tr>
+<tr>
+<td><pre>10342</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>just needed to include QAbstractItemView, at least on 16.04</pre></td>
+</tr>
+<tr>
+<td><pre>10343</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>no need for static cast anymore actually</pre></td>
+</tr>
+<tr>
+<td><pre>10344</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for dream compile</pre></td>
+</tr>
+<tr>
+<td><pre>10345</pre></td>
+<td><pre>2016-12-21</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add 2 NULL guards to prevent crash during network build if missing projection
+</pre></td>
+</tr>
+<tr>
+<td><pre>10346</pre></td>
+<td><pre>2016-12-22</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for completer not showing up automatically after "-&gt;"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10347</pre></td>
+<td><pre>2016-12-23</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Still can't get tab to work like return for completion but I want to add
+some code that is commented out that works up to a point
+</pre></td>
+</tr>
+<tr>
+<td><pre>10348</pre></td>
+<td><pre>2016-12-24</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for empty string in GridView -- coin crash on linux</pre></td>
+</tr>
+<tr>
+<td><pre>10349</pre></td>
+<td><pre>2016-12-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Tab key now works (as well as return/enter) for completions.
+- Dropped Alt key - tab much more natural
+- Control-P/N for up/down were reversed!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10350</pre></td>
+<td><pre>2016-12-25</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>simple abs(da) * delta learning rule for CEl -- should work.. we'll see..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10351</pre></td>
+<td><pre>2016-12-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for reopened bug 2915
+only repsond to 'n' and 'p' shortcuts when ctrl key down even in shortcut override event
+</pre></td>
+</tr>
+<tr>
+<td><pre>10352</pre></td>
+<td><pre>2016-12-25</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Only process shortcut event if LineEdit has a completer - fixes crash in lookup chooser when tabbing
+</pre></td>
+</tr>
+<tr>
+<td><pre>10353</pre></td>
+<td><pre>2016-12-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Instead of completer being on or off it is now always available and the choice
+is between automatic and manually invoked
+- it is invoked with control + space which is common
+</pre></td>
+</tr>
+<tr>
+<td><pre>10354</pre></td>
+<td><pre>2016-12-26</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>CEl learning working for basic pos acquisition w/ 100% and 50% reinf cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>10355</pre></td>
+<td><pre>2016-12-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for ctrl + enter not calling apply - missing "else"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10356</pre></td>
+<td><pre>2016-12-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for "return shouldn't select completion"
+- Not exactly what you are asking for so this may be intermediary fix
+- Does get rid of the spurious completion problem
+</pre></td>
+</tr>
+<tr>
+<td><pre>10357</pre></td>
+<td><pre>2016-12-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Restore tabbing in property dialogs
+- but means no code completion in code field of dialog
+pretty sure I can special case that - will return to it
+- but the fix doesn't restore tabbing in modal dialogs, yet
+</pre></td>
+</tr>
+<tr>
+<td><pre>10358</pre></td>
+<td><pre>2016-12-26</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>If inside quotes no lookup or completion
+</pre></td>
+</tr>
+<tr>
+<td><pre>10359</pre></td>
+<td><pre>2016-12-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- When you open a code line but haven't typed a character you can get the completer
+by pressing control + space
+- Program control elements like, if, for, while, break, etc are now in completer
+- no context smarts yet
+</pre></td>
+</tr>
+<tr>
+<td><pre>10360</pre></td>
+<td><pre>2016-12-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>comment out the SetModelSorting line - causing some strange behavior
+</pre></td>
+</tr>
+<tr>
+<td><pre>10361</pre></td>
+<td><pre>2016-12-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add taMisc:: to list of choices for code where the expression starts at beginning of line
+</pre></td>
+</tr>
+<tr>
+<td><pre>10362</pre></td>
+<td><pre>2016-12-27</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Temporarily comment-out test object_member_after_print
+- The end result of the parse and lookup is correct but the value of prepend_txt
+and path_rest are different since I stopped parsing within quotes
+- Will take a bit more investigation to make a choice between changing code to
+cause the intermediate variables match what we had before or to keep the new behavior
+and change the test
+</pre></td>
+</tr>
+<tr>
+<td><pre>10363</pre></td>
+<td><pre>2016-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Ctrl-A fix in linux: once TREE_EDIT_HOME is processed, return, don't break.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10364</pre></td>
+<td><pre>2016-12-28</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>BLA conspec and unitspecs -- basic delta with fabs(da) lrate mod -- similar to CEl but
+no separate acq / ext subtypes -- just basic D1 vs. D2..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10365</pre></td>
+<td><pre>2016-12-28</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Completer - else should not be followed by '('
+</pre></td>
+</tr>
+<tr>
+<td><pre>10366</pre></td>
+<td><pre>2016-12-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2940 - default element, and duplicate selecting the program tree item instead of the
+new ProgEl item
+- 2 changes - FindMyProgramPanel now checks for a group panel if the program panel isn't found
+this was causing an early exit previously
+- second - commented out the call to BrowserSelectMe() in that method which was the reason the
+program was being selected
+- Looks good to me but there might be side effects
+- This fix is for the program Editor - does NOT fix the same problem in the Navigator
+</pre></td>
+</tr>
+<tr>
+<td><pre>10367</pre></td>
+<td><pre>2016-12-29</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>Graph: x-axis label rotation -- makes long labels visible!
+</pre></td>
+</tr>
+<tr>
+<td><pre>10368</pre></td>
+<td><pre>2016-12-29</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Rearrange the code a bit to make sure append text isn't lost
+</pre></td>
+</tr>
+<tr>
+<td><pre>10369</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Expand the list of static classes that appear in the completer
+Implemented by generating a list of classes with the directive STATIC_COLLECTION
+</pre></td>
+</tr>
+<tr>
+<td><pre>10370</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Only build the ProgExprBase list of statics once
+</pre></td>
+</tr>
+<tr>
+<td><pre>10371</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Build list of statics once but don't always include in completer list!
+And a bit of code cleanup.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10372</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Refactor
+</pre></td>
+</tr>
+<tr>
+<td><pre>10373</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Subclass QStringListModel
+- I think a way we can display just the completion portion (bug 2947) is to have separate
+roles for matching and display - thus the need to subclass the model - we'll see if it works
+</pre></td>
+</tr>
+<tr>
+<td><pre>10374</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix inheritance bug on linux
+</pre></td>
+</tr>
+<tr>
+<td><pre>10375</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* add a AddAllColumns_gui to DataOpBaseSpec (e.g., base for DataGroupSpec etc) -- base
+non-gui gui no longer does BrowserSelectMe -- TickAnalysis program no longer
+expands the first time it is run anymore!
+* remove unused option from BLAmygUnitSpec
+</pre></td>
+</tr>
+<tr>
+<td><pre>10376</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Completer now includes all program elements and uses toolbar name 
+</pre></td>
+</tr>
+<tr>
+<td><pre>10377</pre></td>
+<td><pre>2016-12-30</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Enhancement 2947 - only show the completion in the popup - not the pretext as well
+</pre></td>
+</tr>
+<tr>
+<td><pre>10378</pre></td>
+<td><pre>2016-12-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for code completer bug 2950 - losing text when completing in middle of expression
+</pre></td>
+</tr>
+<tr>
+<td><pre>10379</pre></td>
+<td><pre>2016-12-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2949 - handle toolbar names with embedded "\n"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10380</pre></td>
+<td><pre>2016-12-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2938 - extra characters before function call following program call in same expression
+</pre></td>
+</tr>
+<tr>
+<td><pre>10381</pre></td>
+<td><pre>2016-12-31</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2924 - code completer not working correctly with whitespace in expression
+</pre></td>
+</tr>
+<tr>
+<td><pre>10382</pre></td>
+<td><pre>2016-12-31</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ProjectionSpec:: init_wts and set_scale will call Init_Weights_scale to set random
+values to the *scale* values, while weights are uniform -- produces permanent structure
+to the connectivity in the face of learning -- works for all prjns that don't otherwise
+support scale
+</pre></td>
+</tr>
+<tr>
+<td><pre>10383</pre></td>
+<td><pre>2017-01-01</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Toolbar names changed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10384</pre></td>
+<td><pre>2017-01-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add '=' to parser's know delimters and add a case for ASSIGN to Lookup and Completer
+- Next step is to restrict lookup/completer options for rhs based on lhs type
+</pre></td>
+</tr>
+<tr>
+<td><pre>10385</pre></td>
+<td><pre>2017-01-02</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>IfReturn is now obsolete
+- Replaced in toolbar with ReturnExpr
+- CanCvtFmCode now returns false
+- When loading an IfReturn is replaced by either a simple ReturnExpr or
+an If with a ReturnExpr inside
+- Bug alert - if there are multiple IfReturns in the same ProgEl_List only one will be converted
+due to a bug somewhere in the ReplaceLater or FindEl code
+-- The program still runs correctly and on the next load another IfReturn gets converted
+-- So committing this change but this other bug - not specific to IfReturn - needs to be fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10386</pre></td>
+<td><pre>2017-01-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Add directive #PROGEL_COLLECTION for program elements that should be included in lookup/completer lists
+- Add directive #ADD_PARENS for items like if() that should be followed by parentheses
+- Use these directives in the implementation
+</pre></td>
+</tr>
+<tr>
+<td><pre>10387</pre></td>
+<td><pre>2017-01-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for 2955 - problem selecting first item in code completer popup
+- Check the popup selection itself rather than the code completer and note
+that the popup items start with zero so -1 means no selection
+</pre></td>
+</tr>
+<tr>
+<td><pre>10388</pre></td>
+<td><pre>2017-01-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Replace obsolete IfReturn with ReturnExpr
+</pre></td>
+</tr>
+<tr>
+<td><pre>10389</pre></td>
+<td><pre>2017-01-03</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Replace obsolete IfReturn statements
+</pre></td>
+</tr>
+<tr>
+<td><pre>10390</pre></td>
+<td><pre>2017-01-03</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* one-way analysis of variance (ANOVA) in taDataAnal -- also includes all pairwise t-tests
+using Welch's robust version of t-test
+* got crash in eventFilter on iCodeCompleter -- added test for non-key-events -- it was
+assuming all events were key events.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10391</pre></td>
+<td><pre>2017-01-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Add lists for ProgVars, DynEnums, Functions and Programs - previously all in one list
+- Methods, members, ProgEls and Statics already in separate lists
+- This allows for sorting of each type
+- Added sorting for each list but this only works now for ProgEls and Statics because
+those are StringArray. The others are lists of pointers and I don't see a method to pass
+a member on which to sort a list of objects that are stored by address.
+Perhaps I'll keep them all as StringArray
+</pre></td>
+</tr>
+<tr>
+<td><pre>10392</pre></td>
+<td><pre>2017-01-04</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* N-way anova -- currently only computes 2-way interactions -- will add 3-way interactions
+but no higher than that, no matter how many factors you run..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10393</pre></td>
+<td><pre>2017-01-04</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Code completer - all types now sorting
+- Using MemberSpace instead of Member_List - to get override of El_GetName_ for sorting
+- Using MethodSpace instead of Method_List - same reason
+</pre></td>
+</tr>
+<tr>
+<td><pre>10394</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add true, false and NULL to completer
+- Now only show up for assignment - but will show up for equality tests
+after I add that case to the parser
+</pre></td>
+</tr>
+<tr>
+<td><pre>10395</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add parser case for ==  and !=
+- not fully working yet
+- fix scoping on dynamic enums so they don't always appear in completion list
+</pre></td>
+</tr>
+<tr>
+<td><pre>10396</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>3-way interactions on n-way anova -- done with anova for now..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10397</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* Graph axes have optional separate labels column -- key for 3d graphs with text label axes
+* flip button to flip display order of values -- very handy for time-evolving 3d plots where
+you want to see the last stuff first..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10398</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for functions showing up in completer in a case where they shouldn't.
+Also a fix for program scoping, was showing programs from all open projects.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10399</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Return an Enum for ProgExprBase::Test_ParseForLookup instead of just an int
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10400</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Update parser tests to reflect the exposed Enum
+
+Check against textual representation of the Enum
+
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10401</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Same fix for ExprLookupChooser as I made for ExprLookupCompleter for listing functions appropriately
+</pre></td>
+</tr>
+<tr>
+<td><pre>10402</pre></td>
+<td><pre>2017-01-05</pre></td>
+<td><pre>krueger</pre></td>
+<td><pre>Comment out parser test ParseVarAfterConditional
+
+John is still working on this code and the behaviour will likely change,
+so wait with this test until the intended behaviour is clear.
+
+</pre></td>
+</tr>
+<tr>
+<td><pre>10403</pre></td>
+<td><pre>2017-01-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Parser now smart about == and != within parentheses
+- Parser doesn't like if(!variable == variable) - but it will be fixed
+</pre></td>
+</tr>
+<tr>
+<td><pre>10404</pre></td>
+<td><pre>2017-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* per-screen line_width params in taMisc options -- get screen names from View / Screen Info
+</pre></td>
+</tr>
+<tr>
+<td><pre>10405</pre></td>
+<td><pre>2017-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for preferences expert editing -- just needed GetImage() call..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10406</pre></td>
+<td><pre>2017-01-06</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>screen-specific window_scale setting in preferences -- handy for large monitors -- .8 works well on my 4k display
+</pre></td>
+</tr>
+<tr>
+<td><pre>10407</pre></td>
+<td><pre>2017-01-06</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Parser fix
+- Now parsers "if (!var)"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10408</pre></td>
+<td><pre>2017-01-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Add strings bool, int, real, float, double, String to completer which appear
+at the start of an expression, e.g. float some_float = 7.7
+- If '.' is preceded by a digit it isn't object.member -- gets rid of the error
+message that was generated for this case "Var lookup: cannot find path:  7 in variable: b"
+</pre></td>
+</tr>
+<tr>
+<td><pre>10409</pre></td>
+<td><pre>2017-01-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Another completer enhancement
+- If line starts with "type" (bool, int, ...) don't show existing vars,
+it will be a new variable
+</pre></td>
+</tr>
+<tr>
+<td><pre>10410</pre></td>
+<td><pre>2017-01-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bugs 2953 and 2967
+</pre></td>
+</tr>
+<tr>
+<td><pre>10411</pre></td>
+<td><pre>2017-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* prefs screen font_incr instead of font_scale -- more natural units
+* fixes for paramset: was not using FindLeaf for searching items for ActiveEqualsSaved --
+now works for items in sub-groups -- also the counter var was off in editor
+* and stripe row sizing was off for subgroup titles, only on mac.. fixed with simple hack.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10412</pre></td>
+<td><pre>2017-01-07</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* ProgVar does CheckConfig error about dyn_enum_type that is not is the same program --
+still need to add code that auto-copies to prevent this error in first place
+* BLA, CEl compute act_dif as act_p - act_q0 -- the trial-wise diff that they use for learning -- monitor this to see what is learning..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10413</pre></td>
+<td><pre>2017-01-07</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix 2969 - somehow I accidently deleted a method call in a conditional - basically a typo
+</pre></td>
+</tr>
+<tr>
+<td><pre>10414</pre></td>
+<td><pre>2017-01-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for functions not showing up after left parens
+- changed the ParseForLookup api which was passing and setting the expr_start position from int to enum
+- no reason for caller to know the character position but caller does need to know if the expression starts at the
+beginning of the line or after parens
+</pre></td>
+</tr>
+<tr>
+<td><pre>10415</pre></td>
+<td><pre>2017-01-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2952 - "function call in expression does not count for function being used"
+- Search for function name instead of FunctionCall and check types of objects found
+- Only checks in same program - I wonder how expensive it will be to check for ProgramCallFun
+in other programs
+</pre></td>
+</tr>
+<tr>
+<td><pre>10416</pre></td>
+<td><pre>2017-01-08</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* VTAUnitSpec -- removed unused "detect" params
+* BLA, CEl: switch to netinput for da_mod and baseline param, also ext on CEl uses
+max of act and deep mod acq enabler -- forgot about that.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10417</pre></td>
+<td><pre>2017-01-08</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Add directive PROGEL_COLLECTION
+</pre></td>
+</tr>
+<tr>
+<td><pre>10418</pre></td>
+<td><pre>2017-01-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix parsing bug 2973 - when c = ' ' look back 2 characters to handle the == and != cases
+</pre></td>
+</tr>
+<tr>
+<td><pre>10419</pre></td>
+<td><pre>2017-01-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Simpler, more reliable way to handle the static class case
+</pre></td>
+</tr>
+<tr>
+<td><pre>10420</pre></td>
+<td><pre>2017-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* RemoveHashTable function for Lists -- previously no way to remove one once made
+* fix for net monitor path processing -- use FindFromPath to support full arbitrary paths
+* and also report if path not found -- used to fail silently
+* tested on several cases and verified that it works -- but may be some that were missed --
+please report if you find a valid monitor that has an error
+* missed checkin from yesterday on vta unit spec -- remove detect params from .h
+</pre></td>
+</tr>
+<tr>
+<td><pre>10421</pre></td>
+<td><pre>2017-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* symmetrize scale values too -- key for random scale weights
+</pre></td>
+</tr>
+<tr>
+<td><pre>10422</pre></td>
+<td><pre>2017-01-09</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* improved BLA weight decay function -- divide by scale for wt floor, and include lrate, su * ru acts to modulate decay only for active synapses
+* minor defaults updates
+</pre></td>
+</tr>
+<tr>
+<td><pre>10423</pre></td>
+<td><pre>2017-01-09</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Make css functions available on completer list
+- Reorder list groups, vars are first
+- Change directive PROGEL_COLLECTION TO PROGEL_COMPLETION - ditto for STATIC
+</pre></td>
+</tr>
+<tr>
+<td><pre>10424</pre></td>
+<td><pre>2017-01-10</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>bla and cel param updates and defaults based on currently working params
+</pre></td>
+</tr>
+<tr>
+<td><pre>10425</pre></td>
+<td><pre>2017-01-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Code completer now extends 'seed' to common characters
+- Not quite what was asked for - still some work to do
+- tab extends completion if possible
+- if no extend is possible the first item is highlighted
+- to actually SELECT you hit return - may require some brain rewiring
+- as usual the algorithm took a few minutes and the key/event handling was the usual nightmare
+- give it a try and give me feedback
+- a bit more to do on completer but close to done
+</pre></td>
+</tr>
+<tr>
+<td><pre>10426</pre></td>
+<td><pre>2017-01-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>do replace later fix -- now maintains a list of items to replace
+</pre></td>
+</tr>
+<tr>
+<td><pre>10427</pre></td>
+<td><pre>2017-01-11</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>keep Viewer tab names updated to that of the first child view in display -- surprisingly
+hard to get it to update but this will get it eventually -- the siglink connection is
+not made initially for non-viewed tabs (probably a good thing) so that makes the auto-
+update impossible.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10428</pre></td>
+<td><pre>2017-01-11</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>- Change Tab behavior
+-- if there is only one item in the list - select it
+-- if there are multiple items and on is highlighted - select it
+-- otherwise try to extend seed characters
+- Always do our own filtering of the list
+- Remove key param from CompletionDone()
+- Remove Tab case from iLineEdit::eventFilter
+</pre></td>
+</tr>
+<tr>
+<td><pre>10429</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fixes for both code completer bugs in 2980
+- Add taString method StartsWithCI - case insensitive
+- Fix code completer filtering and tab extension where there is pretext (for example after an '=', '.', etc)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10430</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for bug 2978 - copy/paste not working for inline code editing
+- Solution - Don't do code completion if the user is pressing control key (command key on mac)
+</pre></td>
+</tr>
+<tr>
+<td><pre>10431</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>ScreenPrefs change font_incr from float to int - failing compile on Windows because getter returns an int and int makes sense
+</pre></td>
+</tr>
+<tr>
+<td><pre>10432</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for completer bug 2981
+</pre></td>
+</tr>
+<tr>
+<td><pre>10433</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Turning code completion on and off now that we have tab completion was a little wierd
+- The behavior now is that once turned on in a edit field it says on until that edit is complete
+- Still gets turned on with control + space
+</pre></td>
+</tr>
+<tr>
+<td><pre>10434</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>Fix for tab completion hanging bug
+- was not handling the case of running out of characters, e.g.
+-- avg_cos_err, avg_cos_err_prv and trying to access the character after avg_cos_err when there isn't one
+</pre></td>
+</tr>
+<tr>
+<td><pre>10435</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>fix for TA_taMisc compilation on windows -- needed to declare TA's for inline classes (probably -- still building)</pre></td>
+</tr>
+<tr>
+<td><pre>10436</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another attempt to prevent crash on exit: pre-kill elements of Function in CutLinks.
+</pre></td>
+</tr>
+<tr>
+<td><pre>10437</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>another fix for shutdown bug -- check !taMisc::in_shutdown
+</pre></td>
+</tr>
+</table>
+</body></html>
