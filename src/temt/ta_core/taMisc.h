@@ -62,6 +62,8 @@ class cssConsoleWindow;
 
 typedef  void (*init_proc_t)() ;        // initialization proc
 
+taTypeDef_Of(InitProcRegistrar);
+
 class TA_API InitProcRegistrar {
   // #IGNORE object used as a module static instance to register an init_proc
 public:
@@ -70,6 +72,8 @@ private:
   InitProcRegistrar(const InitProcRegistrar&);
   InitProcRegistrar& operator =(const InitProcRegistrar&);
 };
+
+taTypeDef_Of(taExpandDefaultsProject);
 
 class TA_API taExpandDefaultsProject {
   // #EDIT_INLINE defaults for expanding top level groups
@@ -89,6 +93,8 @@ public:
   taExpandDefaultsProject();
 };
 
+taTypeDef_Of(taExpandDefaultsEditor);
+
 class TA_API taExpandDefaultsEditor {
   // #EDIT_INLINE defaults for expanding program groups in program editor
 public:
@@ -104,6 +110,8 @@ public:
   taExpandDefaultsEditor();
 };
 
+taTypeDef_Of(taExpandDefaultsNavigator);
+
 class TA_API taExpandDefaultsNavigator {
   // #EDIT_INLINE defaults for expanding program groups in the navigator panel
 public:
@@ -118,6 +126,9 @@ public:
   
   taExpandDefaultsNavigator();
 };
+
+
+taTypeDef_Of(taFontSizes);
 
 class TA_API taFontSizes {
   // #EDIT_INLINE font size preferences for various parts of the GUI
@@ -142,6 +153,8 @@ public:
   taFontNames();
 };
 
+taTypeDef_Of(taCompletionPrefs);
+
 class TA_API taCompletionPrefs {
   // #EDIT_INLINE options for the code completion feature
 public:
@@ -151,6 +164,8 @@ public:
   taCompletionPrefs();
 };
 
+taTypeDef_Of(taSprigLoadedPrefs);
+
 class TA_API taSpringLoadedPrefs {
   // #EDIT_INLINE options for the code completion feature
 public:
@@ -159,6 +174,8 @@ public:
   
   taSpringLoadedPrefs();
 };
+
+taTypeDef_Of(taScreenPrefs);
 
 class TA_API taScreenPrefs {
   // #EDIT_INLINE options for screen-specific parameters
@@ -801,7 +818,7 @@ public:
   static String CurrentScreenName();
   // #CAT_GUI get the name of the current primary screen
   static taScreenPrefs* CurrentScreenParams();
-  // #CAT_GUI get the parameters for the current primary screen, based on name (NULL if no settings set for current screen name)
+  // #CAT_GUI #IGNORE get the parameters for the current primary screen, based on name (NULL if no settings set for current screen name)
   static int    ScreenFontIncr();
   // #CAT_GUI get the font increment (or decrement) for the current primary screen, from the user screen settings
   static float  ScreenLineWidth();
