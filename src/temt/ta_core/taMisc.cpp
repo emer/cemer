@@ -70,7 +70,9 @@ taTypeDef_Of(EnumDef);
 #include <QList>
 #include <QThread>
 #include <QApplication>
+#if (QT_VERSION >= 0x050000)
 #include <QScreen>
+#endif
 #endif
 
 #include <ctime>
@@ -1719,10 +1721,12 @@ void taMisc::SetCurrentFontSizeToDefaults() {
 
 String taMisc::CurrentScreenName() {
 #ifndef NO_TA_BASE
+#if (QT_VERSION >= 0x050000)
   QScreen* sc = QGuiApplication::primaryScreen();
   if(sc) {
     return sc->name();
   }
+#endif
 #endif
   return "";
 }
