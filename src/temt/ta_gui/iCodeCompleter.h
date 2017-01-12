@@ -52,7 +52,7 @@ public:
   iCodeCompleter(QObject* parent = 0);
   iCodeCompleter(QAbstractItemModel *model, QObject *parent = 0);
 
-  iCodeCompleterModel*        list_model;
+  iCodeCompleterModel*    list_model;
 
   void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
@@ -64,6 +64,7 @@ public:
 protected:
   QStringList             string_list;
   bool                    eventFilter(QObject* obj, QEvent* event) override;
+  String                  GetPretext();  // get the pretext from the expression parser
 
 private:
   void                    Init();

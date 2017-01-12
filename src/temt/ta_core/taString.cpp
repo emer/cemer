@@ -976,6 +976,14 @@ bool taString::startsWith(const taString& y) const {
   return matches(y, 0);
 }
 
+bool taString::startsWithCI(const taString& y) const {
+  String item_string = this;
+  String match_string = y;
+  item_string.downcase();
+  match_string.downcase();
+  return item_string.startsWith(match_string);
+}
+
 bool taString::startsWith(const char* t) const {
   return startsWith(taString(t));
 }

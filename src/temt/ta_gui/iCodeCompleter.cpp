@@ -95,9 +95,8 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
 void iCodeCompleter::FilterList(String seed) {
   for (int i = string_list.size() - 1; i >= 0; i--) {
     String item = string_list.at(i);
-    String item_copy = item;
-    item_copy.downcase();
-    if (!item_copy.startsWith(seed)) {
+    item = GetPretext() + item;  //
+    if (!item.startsWithCI(seed)) {
       string_list.removeAt(i);
     }
   }
@@ -106,19 +105,18 @@ void iCodeCompleter::FilterList(String seed) {
 void iCodeCompleter::ExtendSeed(String& seed) {
   if (string_list.size() <= 1) return;
   
+  String pretext = GetPretext(); // strip off the pretext (restore at end)
+  seed = seed.after(pretext);
+  
   bool keep_trying = true;
   String first_item = (String)string_list.at(0);
   String extended_seed;
   // get next char of first item and see if all the other items have the same next char
   while (keep_trying) {
     extended_seed = first_item.through(seed.length());
-    String extended_seed_copy = extended_seed;
-    extended_seed_copy.downcase();
     for (int i = string_list.size() - 1; i >= 0; i--) {
       String item = string_list.at(i);
-      String item_copy = item;
-      item_copy.downcase();
-      if (!item_copy.startsWith(extended_seed_copy)) {
+      if (!item.startsWithCI(extended_seed)) {
         keep_trying = false;
         break;
       }
@@ -127,6 +125,14 @@ void iCodeCompleter::ExtendSeed(String& seed) {
       seed = extended_seed;
     }
   }
+  seed = pretext + seed;
+}
+
+String iCodeCompleter::GetPretext() {
+  String pretext;
+  pretext = ProgExprBase::completion_text_before;
+  pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
+  return pretext;
 }
 
 bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {

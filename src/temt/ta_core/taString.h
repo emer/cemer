@@ -440,6 +440,7 @@ public:
   bool                  startsWith(char c) const;
   bool                  startsWith(const char* t) const;
   bool                  startsWith(const taString& y) const;
+  bool                  startsWithCI(const taString& y) const;  // case insensitive
   // #CAT_Find return 'true' if target is at start of String
 
   int                   freq(char        c) const;
