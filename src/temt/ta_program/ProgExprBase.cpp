@@ -1066,7 +1066,7 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
         if(st_var) {
           if(st_var->var_type == ProgVar::T_Object) {
             if(!st_var->object_type) {
-              taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
+              taMisc::DebugInfo("Var lookup: cannot lookup anything about variable:", path_var,
                            "because it is an Object* but has no type set yet!");
             }
             else {
@@ -1087,7 +1087,7 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
           }
         }
         else {
-          taMisc::Info("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
+          taMisc::DebugInfo("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
         }
       }
       if(base_base && !lookup_td) {
@@ -1120,7 +1120,7 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
         }
       }
       if(!lookup_td) {
-        taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
+        taMisc::DebugInfo("Var lookup: cannot find path:", path_rest, "in variable:",
                      path_var);
       }
       if(tal) {
@@ -1502,7 +1502,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         if(st_var) {
           if(st_var->var_type == ProgVar::T_Object) {
             if(!st_var->object_type) {
-              taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
+              taMisc::DebugInfo("Var lookup: cannot lookup anything about variable:", path_var,
                            "because it is an Object* but has no type set yet!");
             }
             else {
@@ -1523,7 +1523,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
           }
         }
         else {
-          taMisc::Info("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
+          taMisc::DebugInfo("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
         }
       }
       if(base_base && !lookup_td) {
@@ -1556,7 +1556,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         }
       }
       if(!lookup_td) {
-        taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:", path_var);
+        taMisc::DebugInfo("Var lookup: cannot find path:", path_rest, "in variable:", path_var);
       }
       if(tal) {  // DO WE NEED THESE FOR COMPLETION?
         if(tal->InheritsFrom(&TA_taGroup_impl)) {
