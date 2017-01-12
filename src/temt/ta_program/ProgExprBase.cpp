@@ -562,7 +562,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
             }
             else {
               expr_start_pos = i+1;
-              continue;
+              break;
             }
           }
           else { // i equals 1
