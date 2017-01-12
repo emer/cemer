@@ -127,7 +127,7 @@ bool ProgEl_List::BrowserEditTest() {
 }
 
 bool ProgEl_List::RemoveIdx(int idx) {
-  if(!HasBaseFlag(DESTROYED) && !isDestroying()) {
+  if(!taMisc::in_shutdown && !HasBaseFlag(DESTROYED) && !isDestroying()) {
     ProgEl* pel = FastEl(idx);
     if(pel->owner == this) {
       Program* prog = GET_MY_OWNER(Program);
