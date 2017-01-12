@@ -317,8 +317,17 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
                 && key_event->key() != Qt::Key_Left)
         {
           inherited::keyPressEvent(key_event);
-          DoCompletion(false);
-          return;
+#ifdef TA_OS_MAC
+          if (!(key_event->modifiers() & Qt::ControlModifier)) { // don't complete if mac command key
+            DoCompletion(false);
+            return;
+          }
+#else
+          if (!(key_event->modifiers() & Qt::MetaModifier)) { // don't complete if other platform control key
+            DoCompletion(false);
+            return;
+          }
+#endif
         }
         else {
           inherited::keyPressEvent(key_event);
