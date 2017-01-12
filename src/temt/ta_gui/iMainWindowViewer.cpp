@@ -82,7 +82,9 @@
 #include <iWebView>
 #include <QMenuBar>
 #include <QTimer>
+#if (QT_VERSION >= 0x050000)
 #include <QScreen>
+#endif
 
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
@@ -2641,6 +2643,7 @@ void iMainWindowViewer::viewSetFontSize() {
 }
 
 void iMainWindowViewer::viewScreenInfo() {
+#if (QT_VERSION >= 0x050000)
   QList<QScreen*> screens = QGuiApplication::screens();
   for(int i=0; i<screens.count(); i++) {
     QScreen* sc = screens[i];
@@ -2657,6 +2660,7 @@ void iMainWindowViewer::viewScreenInfo() {
                  "physical dpi: " + String(sc->physicalDotsPerInch()) + "\n",
                  "logical dpi: " + String(sc->logicalDotsPerInch()) + "\n");
   }
+#endif
 }
 
 
