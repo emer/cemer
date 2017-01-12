@@ -626,20 +626,21 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     
     if (c == '.') {
-      if (i > 0) {
-        c_previous = txt[i-1];
-        if (isdigit(c_previous)) {
-          continue;
-        }
-        else {
-          delim_pos.Add(i);
-          continue;
-        }
-      }
-      else {
+      // to do - distinguish legal C names from numerics like 5.7
+//      if (i > 0) {
+//        c_previous = txt[i-1];
+//        if (isdigit(c_previous)) {
+//          continue;
+//        }
+//        else {
+//          delim_pos.Add(i);
+//          continue;
+//        }
+//      }
+//      else {
         delim_pos.Add(i);
         continue;
-      }
+//      }
     }
     
     if(c == ']' || c == '[' || c == '>' || c == '-' || c == ':') {
