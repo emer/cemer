@@ -296,9 +296,9 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
     default:
       if (GetCompleter() && completion_enabled) {
         if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return))) {
-          if (taMisc::code_completion.auto_complete == false) {
-            completion_enabled = false; // done with completion - disable until user enables again
-          }
+//          if (taMisc::code_completion.auto_complete == false) {
+//            completion_enabled = false; // done with completion - disable until user enables again
+//          }
           
           if (key_event->key() == Qt::Key_Return && GetCompleter()->currentRow() > 0) {
             inherited::keyPressEvent(key_event);
