@@ -28,9 +28,10 @@ class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
 public:
-  int  init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start
-  bool init_start_kill;          // at start of editing, kill contents
-  bool completion_enabled;
+  int           init_start_pos;            // initial starting position for editing -- -1 = end, 0 = start
+  bool          init_start_kill;           // at start of editing, kill contents
+  bool          completion_enabled;
+  int           cursor_position_from_end;  // cursor position for start of completion - only set during completion
 
   iLineEdit(QWidget* parent = 0, bool add_completer = false);
   iLineEdit(const char* text, QWidget* parent, bool add_completer = false); //note: can't have defaults, ambiguity
@@ -53,11 +54,12 @@ signals:
 #endif
 
 public slots:
-  virtual void	setReadOnly(bool value);
-  virtual void	editInEditor(); // edit contents in modal dialog
-  virtual void  doLookup();     // what we do when the lookup key is pressed
-  virtual void  DoCompletion(bool extend); // what we do when the code completion key combo is pressed
-  virtual void  CompletionDone(); // On return (selection of completion)
+  void          setReadOnly(bool value);
+  void          editInEditor(); // edit contents in modal dialog
+  void          doLookup();     // what we do when the lookup key is pressed
+  void          DoCompletion(bool extend); // what we do when the code completion key combo is pressed
+  void          CompletionDone(); // On return (selection of completion)
+  void          setText(const QString &str);  // "override" so we can fix cursor position after completion
   
 protected slots:
 

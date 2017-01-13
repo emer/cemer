@@ -67,6 +67,7 @@ void iLineEdit::init(bool add_completer) {
   
   completer = NULL;
   completion_enabled = false;
+  cursor_position_from_end = 0;
   if (add_completer) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -296,10 +297,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
     default:
       if (GetCompleter() && completion_enabled) {
         if(!taiMisc::KeyEventCtrlPressed(key_event) && ((key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return))) {
-//          if (taMisc::code_completion.auto_complete == false) {
-//            completion_enabled = false; // done with completion - disable until user enables again
-//          }
-          
           if (key_event->key() == Qt::Key_Return && GetCompleter()->currentRow() > 0) {
             inherited::keyPressEvent(key_event);
             CompletionDone();
@@ -348,6 +345,9 @@ void iLineEdit::DoCompletion(bool extend) {
   
   String prefix = text();
   prefix = prefix.through(cursorPosition() - 1);
+  if (prefix.length() < text().length()) {
+    cursor_position_from_end = text().length() - cursorPosition();
+  }
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
   if (IsDelimter(prefix.lastchar())) {
@@ -359,7 +359,6 @@ void iLineEdit::DoCompletion(bool extend) {
   
   GetCompleter()->FilterList(prefix);
   
-
   if (extend) {
       String extended_prefix = prefix;
       GetCompleter()->ExtendSeed(extended_prefix);
@@ -428,5 +427,10 @@ bool iLineEdit::IsDelimter(char a_char) {
   else {
     return false;
   }
+}
+
+void iLineEdit::setText(const QString& str) {
+  inherited::setText(str);
+  setCursorPosition(text().length() - cursor_position_from_end);  // zero unless doing completion
 }
 
