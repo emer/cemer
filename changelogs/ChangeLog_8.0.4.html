@@ -1,6 +1,6 @@
 <html><body>
 <h2>ChangeLog for Emergent Version 8.0.4
-  Revisions 10019:10437</h2>
+  Revisions 10019:10445</h2>
 <table border="1" style="table-layout:fixed;width: 100%;">
 <tr>
 <td width="5%">Rev No.</td>
@@ -3505,6 +3505,61 @@ update impossible.
 <td><pre>2017-01-12</pre></td>
 <td><pre>oreilly</pre></td>
 <td><pre>another fix for shutdown bug -- check !taMisc::in_shutdown
+</pre></td>
+</tr>
+<tr>
+<td><pre>10438</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>svn changelog update</pre></td>
+</tr>
+<tr>
+<td><pre>10439</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>QScreen introduced in qt 5 -- ifdef</pre></td>
+</tr>
+<tr>
+<td><pre>10440</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>QScreen introduced in qt 5 -- ifdef -- another</pre></td>
+</tr>
+<tr>
+<td><pre>10442</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>make Var lookup error messages DebugInfo instead of Info -- not useful / confusing for
+production users..
+</pre></td>
+</tr>
+<tr>
+<td><pre>10443</pre></td>
+<td><pre>2017-01-12</pre></td>
+<td><pre>rohrlich</pre></td>
+<td><pre>fix for failure to parse var_name_ending_in_digit_0
+</pre></td>
+</tr>
+<tr>
+<td><pre>10444</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* fix for toolbar, programming toolbox loading as saved wrt visibility -- perhaps a change
+in Sierra that caused the global window Show to propagate down to these guys and that overwrote their saved settings -- now check against this for post-loading phase.
+* remove generic mac edit and view options that are not otherwise supported
+</pre></td>
+</tr>
+<tr>
+<td><pre>10445</pre></td>
+<td><pre>2017-01-13</pre></td>
+<td><pre>oreilly</pre></td>
+<td><pre>* major fix for user-data saving: code was checking only for taPtrList_impl but
+taList_impl is a *multiple inheritance* child with the ptrlist as 2nd class, so size
+member is in a different place.. yuk.  checked that this doesn't appear to be happening
+anywhere else! This now fixes reliability of saving splitter sizes etc for windows,
+and various other user data settings since that save fix was implemented..
+* don't update plugin dependencies if there aren't any active plugins!  and also for
+autosave -- should speed up saving in most cases
 </pre></td>
 </tr>
 </table>
