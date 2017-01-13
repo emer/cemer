@@ -40,6 +40,8 @@ public:
   void			ListAllPlugins(); // list all the available plugins and their status
   void			LoadPlugins(); // Load all the enabled plugins (init's type system), unload remainder
   void			InitPlugins(); // Initialize all the loaded plugins -- creates/loads state object first; then plugin can post Wizards, etc.
+  int                   ActivePluginCount();
+  // how many enabled, loaded plugins are in this list
   
   void			ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
   TA_BASEFUNS_NOCOPY(taPlugin_List);

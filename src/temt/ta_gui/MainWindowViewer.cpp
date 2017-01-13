@@ -258,7 +258,10 @@ void MainWindowViewer::UpdateAfterEdit() {
 }
 
 bool MainWindowViewer::GetWinState() {
-  if (!inherited::GetWinState()) return false;
+  if (!inherited::GetWinState()) {
+    taMisc::Info("didn't save window state -- viewer GetWinState false -- not mapped?");
+    return false;
+  }
   toolbars.GetWinState();
   frames.GetWinState();
   docks.GetWinState();
@@ -284,7 +287,10 @@ void MainWindowViewer::ResetSplitterState() {
 }
 
 bool MainWindowViewer::SetWinState() {
-  if (!inherited::SetWinState()) return false;
+  if (!inherited::SetWinState()) {
+    taMisc::Info("didn't restore window state -- viewer SetWinState false -- not mapped?");
+    return false;
+  }
   toolbars.SetWinState();
   frames.SetWinState();
   docks.SetWinState();

@@ -2398,6 +2398,9 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
 #endif
     }
 #ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taList_impl)) { // multiple inheritance != PtrList!
+      return (((taList_impl*)base)->size == 0);
+    }
     else if(DerivesFrom(TA_taPtrList_impl)) {
       return (((taPtrList_impl*)base)->size == 0);
     }
@@ -2410,7 +2413,10 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     void* ptr_val = *((void**)base);
     if(!ptr_val) return false;
 #ifndef NO_TA_BASE
-    if(DerivesFrom(TA_taPtrList_impl)) {
+    if(DerivesFrom(TA_taList_impl)) { // multiple inheritance != PtrList!
+      return (((taList_impl*)ptr_val)->size == 0);
+    }
+    else if(DerivesFrom(TA_taPtrList_impl)) {
       return (((taPtrList_impl*)ptr_val)->size == 0);
     }
 #endif

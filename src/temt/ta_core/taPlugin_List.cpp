@@ -210,6 +210,17 @@ void taPlugin_List::ReconcilePlugins() {
    }
 }
 
+int taPlugin_List::ActivePluginCount() {
+  int cnt = 0;
+  for (int i = 0; i < size; ++i) {
+    taPlugin* pl = FastEl(i);
+    if (pl->enabled && pl->loaded) {
+      cnt++;
+    }
+  }
+  return cnt;
+}
+
 void taPlugin_List::ViewPluginLog() {
   if (taPlugins::logfile.empty()) return; // shouldn't happen...
   taMisc::EditFile(taPlugins::logfile);

@@ -82,10 +82,12 @@ bool MemberDef::DumpMember(void* par) {
   } 
   
   // first, check explicit rules
-  if (HasOption("SAVE"))
+  if (HasOption("SAVE")) {
     return true;
-  else if (HasOption("NO_SAVE"))
+  }
+  else if (HasOption("NO_SAVE")) {
     return false;
+  }
   else if (HasOption("NO_SAVE_EMPTY")) {
     void* new_base = GetOff(par);
     return !(type->ValIsEmpty(new_base, this));
@@ -96,17 +98,20 @@ bool MemberDef::DumpMember(void* par) {
     return !(ValIsDefault(par, TypeItem::SHOW_CHECK_MASK));
   }
   // embedded types (simple or objects) get saved by default
-  else if (type->IsNotPtr())
+  else if (type->IsNotPtr()) {
     return true;
+  }
   // ok, so it is a ptr -- some types get saved by default
   else if (type->IsTaBase() ||
-     type->DerivesFrom(TA_TypeDef) ||
-     type->DerivesFrom(TA_MemberDef) ||
-     type->DerivesFrom(TA_MethodDef))
+           type->DerivesFrom(TA_TypeDef) ||
+           type->DerivesFrom(TA_MemberDef) ||
+           type->DerivesFrom(TA_MethodDef)) {
     return true;
-  else
+  }
+  else {
     // if its a pointer object you own
     return false;
+  }
 }
 
 
@@ -423,8 +428,11 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       dumpMisc::dump_root_path = rbase->GetPath();
     
     rbase->Dump_Save_pre();
-    if(!taMisc::is_undo_saving)
-      rbase->Dump_Save_GetPluginDeps();
+    if(!taMisc::is_undo_saving && !taMisc::is_auto_saving) {
+      if(tabMisc::root->plugins.ActivePluginCount() > 0) {
+        rbase->Dump_Save_GetPluginDeps();
+      }
+    }
     // if any plugins were used, write out the list of deps
     taPluginBase_List* plst = &(tabMisc::root->plugin_deps);
     if (plst->size > 0) {
