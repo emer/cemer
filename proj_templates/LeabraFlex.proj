@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.4.0 rev10385
+// ta_Dump File v3.0 -- code v8.0.4.0 rev10443
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -324,7 +324,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [41] {
+    DataTableCols @.data = [40] {
      int_Data @["batch"] { };
      int_Data @["epoch"] { };
      float_Data @["avg_sse"] { };
@@ -363,9 +363,8 @@ LeabraProject .projects["LeabraFlex"] {
      float_Data @["Input_avg_act"] { };
      float_Data @["Hidden_avg_act"] { };
      float_Data @["Output_avg_act"] { };
-     float_Data @["Hidden_Fm_Input_netrel"] { };
-     float_Data @["Hidden_Fm_Output_netrel"] { };
-     float_Data @["Output_Fm_Hidden_netrel"] { };
+     float_Data @["Hidden_netrel"] { };
+     float_Data @["Output_netrel"] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -409,10 +408,6 @@ LeabraProject .projects["LeabraFlex"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["MasterStartup"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserData_DocLink @["DocLink"] { };
-   };
-
    ProgObjList @.objs = [0] {
    };
 
@@ -729,10 +724,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["MasterRun"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @["DocLink"] { };
-    };
-
     ProgObjList @.objs = [0] {
     };
 
@@ -870,10 +861,6 @@ LeabraProject .projects["LeabraFlex"] {
    };
    Program_Group @.gp["RunProgs"] = [1] { 
     Program @["BasicRun"] { 
-     UserDataItem_List @*(.user_data_) {
-      UserData_DocLink @["DocLink"] { };
-     };
-
      ProgObjList @.objs = [0] {
      };
 
@@ -1045,10 +1032,6 @@ LeabraProject .projects["LeabraFlex"] {
   };
   Program_Group @.gp["EnviroProgs"] = [3] { 
    Program @["ChooseNextEvent"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @["DocLink"] { };
-    };
-
     ProgObjList @.objs = [1] {
      DataTable @["PermIdxTable"] { 
       DataTableCols @.data = [1] {
@@ -1435,10 +1418,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["ConfigNetwork"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @["DocLink"] { };
-    };
-
     ProgObjList @.objs = [0] {
     };
 
@@ -1791,11 +1770,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["PositionLayersFromTable"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserDataItem @["user_pinned"] { };
-     UserData_DocLink @["DocLink"] { };
-    };
-
     ProgObjList @.objs = [2] {
      DataTable @["LayerLayout"] { 
       DataTableCols @.data = [9] {
@@ -2663,10 +2637,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["SaveWeights"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @["DocLink"] { };
-    };
-
     ProgObjList @.objs = [0] {
     };
 
@@ -2729,10 +2699,6 @@ LeabraProject .projects["LeabraFlex"] {
    };
    Program_Group @.gp["Monitors"] = [3] { 
     Program @["SaveLogFiles"] { 
-     UserDataItem_List @*(.user_data_) {
-      UserData_DocLink @["DocLink"] { };
-     };
-
      ProgObjList @.objs = [0] {
      };
 
@@ -3084,7 +3050,7 @@ LeabraProject .projects["LeabraFlex"] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
-	 T3DataView_List @.children = [41] {
+	 T3DataView_List @.children = [40] {
 	  GraphColView @["batch"] { };
 	  GraphColView @["epoch"] { };
 	  GraphColView @["avg_sse"] { };
@@ -3123,9 +3089,8 @@ LeabraProject .projects["LeabraFlex"] {
 	  GraphColView @["Input_avg_act"] { };
 	  GraphColView @["Hidden_avg_act"] { };
 	  GraphColView @["Output_avg_act"] { };
-	  GraphColView @["Hidden_Fm_Input_netrel"] { };
-	  GraphColView @["Hidden_Fm_Output_netrel"] { };
-	  GraphColView @["Output_Fm_Hidden_netrel"] { };
+	  GraphColView @["Hidden_netrel"] { };
+	  GraphColView @["Output_netrel"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -6961,6 +6926,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_typ=int_Data;
      el_def=0;
      int_Data @["batch"] {
+      user_data_=NULL;
       name="batch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6977,6 +6943,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      int_Data @["epoch"] {
+      user_data_=NULL;
       name="epoch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6993,6 +6960,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      String_Data @["train_mode"] {
+      user_data_=NULL;
       name="train_mode";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7009,6 +6977,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      int_Data @["group"] {
+      user_data_=NULL;
       name="group";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7025,6 +6994,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      int_Data @["trial"] {
+      user_data_=NULL;
       name="trial";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7041,6 +7011,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      int_Data @["tick"] {
+      user_data_=NULL;
       name="tick";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7057,6 +7028,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["time"] {
+      user_data_=NULL;
       name="time";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7073,6 +7045,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      String_Data @["trial_name"] {
+      user_data_=NULL;
       name="trial_name";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7089,6 +7062,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      String_Data @["group_name"] {
+      user_data_=NULL;
       name="group_name";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7105,6 +7079,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      String_Data @["output_name"] {
+      user_data_=NULL;
       name="output_name";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7121,6 +7096,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["rt_cycles"] {
+      user_data_=NULL;
       name="rt_cycles";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7137,6 +7113,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["sse"] {
+      user_data_=NULL;
       name="sse";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7153,6 +7130,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["norm_err"] {
+      user_data_=NULL;
       name="norm_err";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7169,6 +7147,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["cos_err"] {
+      user_data_=NULL;
       name="cos_err";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7185,6 +7164,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["ext_rew"] {
+      user_data_=NULL;
       name="ext_rew";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7201,6 +7181,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_lay_sse"] {
+      user_data_=NULL;
       name="Output_lay_sse";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7234,6 +7215,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_lay_norm_err"] {
+      user_data_=NULL;
       name="Output_lay_norm_err";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7250,6 +7232,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_lay_cos_err"] {
+      user_data_=NULL;
       name="Output_lay_cos_err";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7283,6 +7266,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_lay_net_sd"] {
+      user_data_=NULL;
       name="Output_lay_net_sd";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7299,6 +7283,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["net_cos_diff"] {
+      user_data_=NULL;
       name="net_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7315,6 +7300,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["net_trial_cos_diff"] {
+      user_data_=NULL;
       name="net_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7331,6 +7317,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["net_avg_act_diff"] {
+      user_data_=NULL;
       name="net_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7364,6 +7351,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_cos_diff"] {
+      user_data_=NULL;
       name="Output_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7397,6 +7385,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_trial_cos_diff"] {
+      user_data_=NULL;
       name="Output_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7430,6 +7419,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      float_Data @["Output_avg_act_diff"] {
+      user_data_=NULL;
       name="Output_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7480,6 +7470,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_typ=int_Data;
      el_def=0;
      int_Data @["batch"] {
+      user_data_=NULL;
       name="batch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -7496,6 +7487,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       matrix_col_width=10;
      };
      int_Data @["epoch"] {
+      user_data_=NULL;
       name="epoch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -8086,7 +8078,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        user_data_=NULL;
        name="dim_names";
       [0]       };
-      width=0;
+      width=13;
       matrix_col_width=10;
      };
      float_Data @["Hidden_avg_act"] {
@@ -8123,12 +8115,12 @@ mw.config.set({\"wgBackendResponseTime\":192});
       width=14;
       matrix_col_width=10;
      };
-     float_Data @["Hidden_Fm_Input_netrel"] {
+     float_Data @["Hidden_netrel"] {
       user_data_=NULL;
-      name="Hidden_Fm_Input_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      name="Hidden_netrel";
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 5;5;      };
       calc_expr {
        user_data_=NULL;
        expr=;
@@ -8136,16 +8128,16 @@ mw.config.set({\"wgBackendResponseTime\":192});
       dim_names {
        user_data_=NULL;
        name="dim_names";
-      [0]       };
-      width=22;
+      [2] ;;      };
+      width=0;
       matrix_col_width=10;
      };
-     float_Data @["Hidden_Fm_Output_netrel"] {
+     float_Data @["Output_netrel"] {
       user_data_=NULL;
-      name="Hidden_Fm_Output_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      name="Output_netrel";
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=1;
+      cell_geom{ 5;5;      };
       calc_expr {
        user_data_=NULL;
        expr=;
@@ -8153,25 +8145,8 @@ mw.config.set({\"wgBackendResponseTime\":192});
       dim_names {
        user_data_=NULL;
        name="dim_names";
-      [0]       };
-      width=23;
-      matrix_col_width=10;
-     };
-     float_Data @["Output_Fm_Hidden_netrel"] {
-      user_data_=NULL;
-      name="Output_Fm_Hidden_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=23;
+      [2] ;;      };
+      width=0;
       matrix_col_width=10;
      };
     };
@@ -8223,6 +8198,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_typ=String_Data;
      el_def=0;
      String_Data @["config_id"] {
+      user_data_=NULL;
       name="config_id";
       desc="identifier for this type of configuration";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8244,6 +8220,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] "basic_train";      };
      };
      String_Data @["config_desc"] {
+      user_data_=NULL;
       name="config_desc";
       desc="description of this configuration";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8265,6 +8242,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] "default basic training";      };
      };
      String_Data @["init_prog"] {
+      user_data_=NULL;
       name="init_prog";
       desc="program to run to initialize at start of training";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8286,6 +8264,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] "BasicInit";      };
      };
      String_Data @["run_prog"] {
+      user_data_=NULL;
       name="run_prog";
       desc="program controlling each step of running";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8307,6 +8286,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] "BasicRun";      };
      };
      String_Data @["startup_prog"] {
+      user_data_=NULL;
       name="startup_prog";
       desc="program for handling startup args specific to this environment";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8328,6 +8308,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] "BasicStartup";      };
      };
      int_Data @["train_epochs"] {
+      user_data_=NULL;
       name="train_epochs";
       desc="number of total epochs to train for";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8349,6 +8330,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] 50;      };
      };
      int_Data @["trials_per_epoch"] {
+      user_data_=NULL;
       name="trials_per_epoch";
       desc="number of individual trials per epoch";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8370,6 +8352,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] 50;      };
      };
      bool_Data @["save_final_wts"] {
+      user_data_=NULL;
       name="save_final_wts";
       desc="save final weights after training (1 = yes, 0 = no)";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8391,6 +8374,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] true;      };
      };
      int_Data @["save_wts_interval"] {
+      user_data_=NULL;
       name="save_wts_interval";
       desc="how frequently to save weights during training (in epochs)";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8412,6 +8396,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] 200;      };
      };
      int_Data @["test_interval"] {
+      user_data_=NULL;
       name="test_interval";
       desc="how frequently to test performance without training -- only applicable to training cases";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8433,6 +8418,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] 1000;      };
      };
      bool_Data @["log_trials"] {
+      user_data_=NULL;
       name="log_trials";
       desc="whether to log trial-level data or not (1 = yes, 0 = no)";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8454,6 +8440,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] false;      };
      };
      bool_Data @["load_weights"] {
+      user_data_=NULL;
       name="load_weights";
       desc="whether to load weights at start";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8475,6 +8462,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] false;      };
      };
      String_Data @["weights_file"] {
+      user_data_=NULL;
       name="weights_file";
       desc="full relative path (from project) to a weights file to load at start of training";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8496,6 +8484,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] ;      };
      };
      int_Data @["load_st_epc"] {
+      user_data_=NULL;
       name="load_st_epc";
       desc="if loading weights, what epoch does it start at?";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8517,6 +8506,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] 1;      };
      };
      int_Data @["lrs_step_epochs"] {
+      user_data_=NULL;
       name="lrs_step_epochs";
       desc="how many epochs per given step in the lrate schedule: each step drops the lrate roughly in half (log scale)";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8538,6 +8528,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
       [1] 50;      };
      };
      int_Data @["lrs_bump_step"] {
+      user_data_=NULL;
       name="lrs_bump_step";
       desc="what step to bump the lrate back up to 1 and then come back down -- 3 typical when used -- gets closer to global maximum, but requires 1.5x as many epochs";
       col_flags=SAVE_DATA|AUTO_WIDTH;
@@ -8598,17 +8589,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
   desc=;
   debug_mode=0;
   Program @["MasterStartup"] {
-   UserDataItem_List @*(.user_data_) {
-    user_data_=NULL;
-    name=;
-    el_typ=UserData_DocLink;
-    el_def=0;
-    UserData_DocLink @["DocLink"] {
-     user_data_=NULL;
-     name="DocLink";
-     doc=.projects["LeabraFlex"].programs["MasterStartup"].doc$$;
-    };
-   };
    name="MasterStartup";
    short_nm="Startup";
    tags="Leabra, Startup";
@@ -10557,17 +10537,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
    };
    Program @["MasterRun"] {
-    UserDataItem_List @*(.user_data_) {
-     user_data_=NULL;
-     name=;
-     el_typ=UserData_DocLink;
-     el_def=0;
-     UserData_DocLink @["DocLink"] {
-      user_data_=NULL;
-      name="DocLink";
-      doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].doc$$;
-     };
-    };
     name="MasterRun";
     short_nm="MstrRn";
     tags=;
@@ -11289,17 +11258,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc=;
     debug_mode=0;
     Program @["BasicRun"] {
-     UserDataItem_List @*(.user_data_) {
-      user_data_=NULL;
-      name=;
-      el_typ=UserData_DocLink;
-      el_def=0;
-      UserData_DocLink @["DocLink"] {
-       user_data_=NULL;
-       name="DocLink";
-       doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].doc$$;
-      };
-     };
      name="BasicRun";
      short_nm="BaseRun";
      tags=;
@@ -12234,17 +12192,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["ChooseNextEvent"] {
-    UserDataItem_List @*(.user_data_) {
-     user_data_=NULL;
-     name=;
-     el_typ=UserData_DocLink;
-     el_def=0;
-     UserData_DocLink @["DocLink"] {
-      user_data_=NULL;
-      name="DocLink";
-      doc=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].doc$$;
-     };
-    };
     name="ChooseNextEvent";
     short_nm="ChNxEvt";
     tags="InputData, Permuted, FlexProgs, ApplyInput";
@@ -12277,6 +12224,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=int_Data;
        el_def=0;
        int_Data @["Index"] {
+	user_data_=NULL;
 	name="Index";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -14200,17 +14148,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
    };
    Program @["ConfigNetwork"] {
-    UserDataItem_List @*(.user_data_) {
-     user_data_=NULL;
-     name=;
-     el_typ=UserData_DocLink;
-     el_def=0;
-     UserData_DocLink @["DocLink"] {
-      user_data_=NULL;
-      name="DocLink";
-      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].doc$$;
-     };
-    };
     name="ConfigNetwork";
     short_nm="CfgNet";
     tags="Network, Configure";
@@ -16384,23 +16321,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
    };
    Program @["PositionLayersFromTable"] {
-    UserDataItem_List @*(.user_data_) {
-     user_data_=NULL;
-     name=;
-     el_typ=UserDataItem;
-     el_def=0;
-     UserDataItem @["user_pinned"] {
-      user_data_=NULL;
-      name="user_pinned";
-      value 1 0=0;
-      val_type_fixed=0;
-     };
-     UserData_DocLink @["DocLink"] {
-      user_data_=NULL;
-      name="DocLink";
-      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].doc$$;
-     };
-    };
     name="PositionLayersFromTable";
     short_nm="PstLyr";
     tags="Network, Layer, Position";
@@ -16424,6 +16344,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=taNBase;
      el_def=0;
      DataTable @["LayerLayout"] {
+      user_data_=NULL;
       name="LayerLayout";
       desc=;
       data {
@@ -16432,6 +16353,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=int_Data;
        el_def=0;
        String_Data @["LayerName"] {
+	user_data_=NULL;
 	name="LayerName";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16452,6 +16374,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] "Input";"Hidden";"Output";	};
        };
        String_Data @["LayerGroup"] {
+	user_data_=NULL;
 	name="LayerGroup";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16472,6 +16395,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] ;;;	};
        };
        String_Data @["LayoutGroup"] {
+	user_data_=NULL;
 	name="LayoutGroup";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16492,6 +16416,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] ;;;	};
        };
        int_Data @["X_Abs"] {
+	user_data_=NULL;
 	name="X_Abs";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16512,6 +16437,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Y_Abs"] {
+	user_data_=NULL;
 	name="Y_Abs";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16532,6 +16458,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Z_Abs"] {
+	user_data_=NULL;
 	name="Z_Abs";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16552,6 +16479,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;1;2;	};
        };
        int_Data @["X_Rel"] {
+	user_data_=NULL;
 	name="X_Rel";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16572,6 +16500,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Y_Rel"] {
+	user_data_=NULL;
 	name="Y_Rel";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16592,6 +16521,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Z_Rel"] {
+	user_data_=NULL;
 	name="Z_Rel";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16641,6 +16571,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
      DataTable @["LayerLayout_previous"] {
+      user_data_=NULL;
       name="LayerLayout_previous";
       desc=;
       data {
@@ -16649,6 +16580,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=int_Data;
        el_def=0;
        String_Data @["LayerName"] {
+	user_data_=NULL;
 	name="LayerName";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16669,6 +16601,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] "Input";"Hidden";"Output";	};
        };
        String_Data @["LayerGroup"] {
+	user_data_=NULL;
 	name="LayerGroup";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16689,6 +16622,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] ;;;	};
        };
        String_Data @["LayoutGroup"] {
+	user_data_=NULL;
 	name="LayoutGroup";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16709,6 +16643,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] ;;;	};
        };
        int_Data @["X_Abs"] {
+	user_data_=NULL;
 	name="X_Abs";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16729,6 +16664,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Y_Abs"] {
+	user_data_=NULL;
 	name="Y_Abs";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16749,6 +16685,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Z_Abs"] {
+	user_data_=NULL;
 	name="Z_Abs";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16769,6 +16706,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;1;2;	};
        };
        int_Data @["X_Rel"] {
+	user_data_=NULL;
 	name="X_Rel";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16789,6 +16727,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Y_Rel"] {
+	user_data_=NULL;
 	name="Y_Rel";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -16809,6 +16748,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	[3] 0;0;0;	};
        };
        int_Data @["Z_Rel"] {
+	user_data_=NULL;
 	name="Z_Rel";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -21181,17 +21121,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
    };
    Program @["SaveWeights"] {
-    UserDataItem_List @*(.user_data_) {
-     user_data_=NULL;
-     name=;
-     el_typ=UserData_DocLink;
-     el_def=0;
-     UserData_DocLink @["DocLink"] {
-      user_data_=NULL;
-      name="DocLink";
-      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].doc$$;
-     };
-    };
     name="SaveWeights";
     short_nm="SWghts";
     tags="Weights, Specs";
@@ -21580,17 +21509,6 @@ also save specs.";
     desc=;
     debug_mode=0;
     Program @["SaveLogFiles"] {
-     UserDataItem_List @*(.user_data_) {
-      user_data_=NULL;
-      name=;
-      el_typ=UserData_DocLink;
-      el_def=0;
-      UserData_DocLink @["DocLink"] {
-       user_data_=NULL;
-       name="DocLink";
-       doc=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].doc$$;
-      };
-     };
      name="SaveLogFiles";
      short_nm="SLFls";
      tags="Leabra, Startup";
@@ -25214,7 +25132,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      name="Application";
      m_data=NULL;
      cur_font_size=12;
-     visible=0;
+     visible=1;
      lft=0;
      top=0;
      o=Horizontal;
@@ -25879,31 +25797,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
-	   GraphColView @["Hidden_Fm_Input_netrel"] {
+	   GraphColView @["Hidden_netrel"] {
 	    user_data_=NULL;
-	    name="Hidden_Fm_Input_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Input_netrel"]$$;
-	    cur_font_size=12;
+	    name="Hidden_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_netrel"]$$;
+	    cur_font_size=14;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
-	   GraphColView @["Hidden_Fm_Output_netrel"] {
+	   GraphColView @["Output_netrel"] {
 	    user_data_=NULL;
-	    name="Hidden_Fm_Output_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Output_netrel"]$$;
-	    cur_font_size=12;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {user_data_=NULL: min=0: max=0: };
-	   };
-	   GraphColView @["Output_Fm_Hidden_netrel"] {
-	    user_data_=NULL;
-	    name="Output_Fm_Hidden_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_Fm_Hidden_netrel"]$$;
-	    cur_font_size=12;
+	    name="Output_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_netrel"]$$;
+	    cur_font_size=14;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -25961,8 +25869,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   flip=0;
 	   n_ticks=10;
 	   axis_length=1;
+	   labels_on=0;
+	   labels_col_name=;
 	   row_num=0;
 	  };
 	  z_axis {
@@ -25982,8 +25893,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   flip=0;
 	   n_ticks=10;
 	   axis_length=1;
+	   labels_on=0;
+	   labels_col_name=;
 	   row_num=0;
 	  };
 	  tot_plots=16;
@@ -26009,6 +25923,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26032,6 +25947,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26055,6 +25971,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26078,6 +25995,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26101,6 +26019,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26124,6 +26043,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26147,6 +26067,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26170,6 +26091,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26193,6 +26115,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26216,6 +26139,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26239,6 +26163,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26262,6 +26187,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26285,6 +26211,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26308,6 +26235,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26331,6 +26259,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26354,6 +26283,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
@@ -26383,6 +26313,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26406,6 +26337,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26429,6 +26361,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26452,6 +26385,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26475,6 +26409,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26498,6 +26433,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26521,6 +26457,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26544,6 +26481,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26567,6 +26505,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26590,6 +26529,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26613,6 +26553,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26636,6 +26577,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26659,6 +26601,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26682,6 +26625,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26705,6 +26649,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26728,6 +26673,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	    flip=0;
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -26755,8 +26701,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   flip=0;
 	   n_ticks=10;
 	   axis_length=1;
+	   labels_on=0;
+	   labels_col_name=;
 	   row_num=0;
 	  };
 	  colorscale {
@@ -26789,8 +26738,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
+	   flip=0;
 	   n_ticks=10;
 	   axis_length=1;
+	   labels_on=0;
+	   labels_col_name=;
 	   row_num=0;
 	  };
 	  thresh=0.5;
@@ -26941,7 +26893,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs[0];.programs[0].functions;.programs[0].functions[0];.programs[0].functions[0].fun_code;.programs[0].functions[0].fun_code[0];.programs.gp[0];.programs.gp[1];.programs.gp[1][2];.programs.gp[1][2].functions;.programs.gp[1][2].functions[0];.programs.gp[1][2].functions[0].fun_code;.programs.gp[1][2].functions[0].fun_code[1];.programs.gp[1][2].functions[0].fun_code[1].cases[0];.programs.gp[1][2].functions[0].fun_code[1].cases[1];.programs.gp[1][2].functions[0].fun_code[1].cases[2];.programs.gp[1][2].functions[0].fun_code[1].cases[3];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[1].gp[1][0];.programs.gp[1].gp[1][0].prog_code;.programs.gp[1].gp[1][0].prog_code[5];.programs.gp[1].gp[1][0].prog_code[5].true_code[2];.programs.gp[2];.programs.gp[3];.programs.gp[3][0];.programs.gp[3][0].functions;.programs.gp[4];.programs.gp[4][2];.programs.gp[4][2].functions;.programs.gp[4][3];.programs.gp[4][3].functions;.programs.gp[4][16];.programs.gp[4][16].prog_code;.programs.gp[4][16].prog_code[0];.programs.gp[4].gp[0];.programs.gp[4].gp[0][0];.programs.gp[4].gp[0][0].prog_code;.programs.gp[4].gp[0][0].prog_code[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";

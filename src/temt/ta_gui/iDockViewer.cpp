@@ -75,6 +75,13 @@ void iDockViewer::hideEvent(QHideEvent* e) {
 
 void iDockViewer::showEvent(QShowEvent* e) {
   inherited::showEvent(e);
+  if(taMisc::is_post_loading) {
+    DockViewer* vw = viewer();
+    if(vw && !vw->visible) {
+      hide();                   // now hide me!
+      return;
+    }
+  }
   Showing(true);
 }
 
@@ -87,7 +94,7 @@ void iDockViewer::Showing(bool showing) {
   if (!dv) return;
   iAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
-  if(showing && vw->InheritsFrom(&TA_ToolBoxDockViewer)) {
+  if(taMisc::is_post_loading && showing && vw->InheritsFrom(&TA_ToolBoxDockViewer)) {
     if(taMisc::viewer_options & taMisc::VO_NO_TOOLBOX) {
       me->setChecked(false);
       hide();

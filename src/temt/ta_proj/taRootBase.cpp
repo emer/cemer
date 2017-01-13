@@ -1010,10 +1010,17 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 static CoinImageReaderCB* coin_image_reader_cb_obj = NULL;
 #endif // TA_QT3D
 
+#if defined(__APPLE__) 
+extern void TemtMacDefaultSettings();
+#endif
+
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
+#if defined(__APPLE__) 
+    TemtMacDefaultSettings();
+#endif    
     new taApplication(argc, (char**)argv); // accessed as qApp
 #ifdef TA_QT3D
     milestone |= SM_QAPP_OBJ;

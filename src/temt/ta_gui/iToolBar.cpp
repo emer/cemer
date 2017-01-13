@@ -52,6 +52,13 @@ void iToolBar::hideEvent(QHideEvent* e) {
 
 void iToolBar::showEvent(QShowEvent* e) {
   inherited::showEvent(e);
+  if(taMisc::is_post_loading) {
+    ToolBar* vw = viewer();
+    if(vw && !vw->visible) {
+      hide();                   // now hide me!
+      return;
+    }
+  }
   Showing(true);
 }
 
@@ -60,7 +67,7 @@ void iToolBar::Showing(bool showing) {
   if (!dv) return;
   iAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
-  if(showing && taMisc::viewer_options & taMisc::VO_NO_TOOLBAR) {
+  if(taMisc::is_post_loading && showing && taMisc::viewer_options & taMisc::VO_NO_TOOLBAR) {
     me->setChecked(false); //note: triggers event
     hide();
     return;
