@@ -626,21 +626,8 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     
     if (c == '.') {
-      // to do - distinguish legal C names from numerics like 5.7
-//      if (i > 0) {
-//        c_previous = txt[i-1];
-//        if (isdigit(c_previous)) {
-//          continue;
-//        }
-//        else {
-//          delim_pos.Add(i);
-//          continue;
-//        }
-//      }
-//      else {
         delim_pos.Add(i);
         continue;
-//      }
     }
     
     if(c == ']' || c == '[' || c == '>' || c == '-' || c == ':') {
@@ -738,14 +725,16 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       base_path = txt.at(expr_start_pos, delim_pos[0]-expr_start_pos);
       int length = base_path.length();
       base_path = triml(base_path);
-      int shift = length - base_path.length(); // shift to compensate for trim
-      expr_start_pos += shift;
-      prepend_txt = txt.before(expr_start_pos);
-      lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = ProgExprBase::OBJ_MEMB_METH;
-      delims_used = 1;
-      if (delim_pos.size > 1 && txt[delim_pos[1]] == ']') {
-        lookup_group_default = true;
+      if (!base_path.isFloat()) {  // don't proceed if it is a floating point number
+        int shift = length - base_path.length(); // shift to compensate for trim
+        expr_start_pos += shift;
+        prepend_txt = txt.before(expr_start_pos);
+        lookup_seed = txt.after(delim_pos[0]);
+        lookup_type = ProgExprBase::OBJ_MEMB_METH;
+        delims_used = 1;
+        if (delim_pos.size > 1 && txt[delim_pos[1]] == ']') {
+          lookup_group_default = true;
+        }
       }
     }
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == '=' && (txt[delim_pos[1]] == '=' || txt[delim_pos[1]] == '!')
