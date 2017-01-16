@@ -438,7 +438,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, e);
   QPersistentModelIndex newCurrent = currentIndex();
 
-  bool sub_edit = false;
+  bool no_inherited = false;
   bool accepted = false;
   
   switch (action) {
@@ -508,10 +508,13 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         e->accept();
         accepted = true;
 #if !defined(TA_OS_MAC)
+#ifndef TA_OS_WIN
         // stuff a ctrl-b -- this will prevent a subsequent ctrl-d from deleting object
+        // only works on linux -- on windows it jumps up the tree -- just let windows be..
         QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_B,
                                                         Qt::ControlModifier));
-        sub_edit = true;// mac doesn't do select-all on ctrl-a (its command-a)
+#endif
+        no_inherited = true;// mac doesn't do select-all on ctrl-a (it is command-a)
         // linux and windows require the return to prevent select-all from inherited call
 #endif
       }
@@ -569,7 +572,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     return;
   }
 
-  if(!sub_edit) {
+  if(!no_inherited) {
     inherited::keyPressEvent( e );
   }
 }
