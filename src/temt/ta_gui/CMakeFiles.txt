@@ -382,6 +382,7 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iDialogObjDiffFilter.h
   iDialogObjDiffBrowser.h
   iDialogKeyBindings.h
+  iDialogList.h
   iPanelSetButton.h
 
   iMainWindowViewer.h
@@ -881,6 +882,7 @@ set(ta_gui_SRCS_NOMAKETA
   iDialogObjDiffFilter.cpp
   iDialogObjDiffBrowser.cpp
   iDialogKeyBindings.cpp
+  iDialogList.cpp
 
   iPanelSetButton.cpp
 

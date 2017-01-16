@@ -255,7 +255,9 @@ void Function::ListCallers() {
   if(!prog)
     return;
   
- prog->GuiFindFromMe("\"" + name + "(\"");    // find all refs to me
+  taBase_PtrList callers;
+  GetCallers(callers);
+  taMisc::DisplayList(callers, "Callers of function " + name);
 }
 
 void Function::UpdateCallers() {
@@ -277,7 +279,7 @@ void Function::UpdateCallers() {
   }
 }
 
-void Function::UpdateCallerArgs() {
+void Function::UpdateCallerArgs() {  
   UpdateCallers();
   ListCallers();
 }

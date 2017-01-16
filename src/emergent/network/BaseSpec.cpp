@@ -20,6 +20,7 @@
 #include <SpecPtr>
 
 #include <taMisc>
+#include <taBase_PtrList>
 #include <taiWidgetTypeDefChooser>
 #include <Network>
 
@@ -341,6 +342,11 @@ String BaseSpec::WhereUsed(bool child) {
   if(!dl) return rval;
   taSmartRef* sref;
   taSigLinkItr i;
+   
+  taBase_PtrList spec_list;
+  String_Array mbr_list;
+  
+  
   FOR_DLC_EL_OF_TYPE(taSmartRef, sref, dl, i) {
     taBase* sown = sref->GetOwner();
     if(!sown)
@@ -349,22 +355,16 @@ String BaseSpec::WhereUsed(bool child) {
       continue;
     taBase* ownown = sown->GetOwner();
     if(ownown) {
-      SpecPtr_impl* sptr = dynamic_cast<SpecPtr_impl*>(sown);
-      if (child) {
-        rval += "[Child  " + sptr->GetSpec()->GetName() + "]  ";
-      }
-      else {
-        rval += "[" + sptr->GetSpec()->GetName() + "]  ";
-      }
-      rval += ownown->GetPathNames() + " \n\n";
-      taMisc::Info(ownown->GetPathNames());
-
+      spec_list.Add(ownown);
     }
   }
   
   for (int i=0; i<children.size; i++) {
     rval += children.SafeEl(i)->WhereUsed(true);
   }
+  
+  String title = "Who uses " + name + " or one of its children?";
+  taMisc::DisplayList(spec_list, title);
   return rval;
 }
 

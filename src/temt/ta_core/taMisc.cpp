@@ -18,6 +18,7 @@
 #include <TypeDef> 
 #include <MemberDef> 
 #include <MethodDef>
+#include <taBase_PtrList>
 #include <BuiltinTypeDefs>
 taTypeDef_Of(PropertyDef);
 taTypeDef_Of(EnumDef);
@@ -42,6 +43,7 @@ taTypeDef_Of(EnumDef);
 #include <taRootBase>
 #include <taStringDiff>
 #include <iDialogChoice>
+#include <iDialogList>
 #include <iDialogLineEdit>
 
 #include <taiMisc>
@@ -1122,6 +1124,18 @@ bool taMisc::StringPrompt(String& str_val, const String& prompt,
   bool rval = iDialogLineEdit::LineEditDialog(qval, prompt, ok_txt, cancel_txt);
   str_val = qval;
   return rval;
+}
+
+void taMisc::DisplayList(taBase_PtrList& base_list, String title) {
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0) return false;
+#endif
+  iDialogList* dlg = iDialogList::New(0, taiMisc::main_window);
+  dlg->setAttribute(Qt::WA_DeleteOnClose);
+  dlg->show();
+  dlg->raise();
+  dlg->activateWindow();
+  dlg->SetList(base_list, title);
 }
 
 #endif // NO_TA_BASE

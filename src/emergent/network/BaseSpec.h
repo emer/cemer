@@ -114,7 +114,7 @@ public:
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
   virtual String  WhereUsed(bool child = false);
-  // #BUTTON #USE_RVAL #ARGC_0 returns a list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
+  // #BUTTON #ARGC_0 returns a list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
 
   virtual bool    UpdtIsUsed();
   // update the is_used flag 
