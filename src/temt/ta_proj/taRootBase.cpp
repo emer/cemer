@@ -1185,7 +1185,7 @@ namespace { // anon
     // {app_dir}\bin (normal release, nmake build)
     String bin_dir = taMisc::exe_path; // tmp to work on..
     bin_dir.gsub("/", "\\");
-    if (bin_dir.contains("\\bin\\")) {
+    if (bin_dir.contains("\\bin")) {
       if (bin_dir.contains("\\build")) {
         app_dir = bin_dir.before("\\build");
         if (IsAppDir(app_dir, &app_plugin_dir)) {
@@ -1196,7 +1196,7 @@ namespace { // anon
         }
       }
 
-      app_dir = bin_dir.before("\\bin\\");
+      app_dir = bin_dir.before("\\bin");
       if (IsAppDir(app_dir, &app_plugin_dir)) {
         return true;
       }
