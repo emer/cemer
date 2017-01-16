@@ -497,7 +497,9 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         editItem(cur_item);     // todo: get column
       }
       e->accept();
+#if !defined(TA_OS_MAC) && !defined(TA_OS_WIN)
       return;
+#endif
     case taiMisc::TREE_EDIT_END:
     case taiMisc::TREE_EDIT_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -506,7 +508,6 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         editItem(cur_item);     // todo: get column
       }
       e->accept();
-      return;
     case taiMisc::TREE_EDIT_DELETE_TO_END:
     case taiMisc::TREE_EDIT_DELETE_TO_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
@@ -515,7 +516,6 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         editItem(cur_item);     // todo: get column
       }
       e->accept();
-      return;
     default:
       ;
   }
