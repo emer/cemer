@@ -1007,11 +1007,31 @@ void Program::ExitShell() {
   ExitShellScript();
 }
 
+void Program::GetCallers(taBase_PtrList& callers) {
+  taProject* proj = GetMyProj();
+  if(!proj)
+    return;
+  
+  proj->programs.Search(this->name + "(", callers, NULL,
+                      true,  // text_only
+                      true,  // contains
+                      true,   // case_sensitive
+                      false,  // obj_name
+                      false,   // obj_type
+                      false,  // obj_desc
+                      false,  // obj_val
+                      false,  // mbr_name
+                      false); // type_desc
+}
+
 void Program::ListCallers() {
   taProject* proj = GetMyProj();
   if(!proj)
     return;
-  proj->programs.GuiFindFromMe("\"" + name + "(\"");   // find all refs to me in programs
+  
+  taBase_PtrList callers;
+  GetCallers(callers);
+  taMisc::DisplayList(callers, "Callers of Program " + name);
 }
 
 void Program::RenameVarsToObj() {
