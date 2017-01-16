@@ -437,21 +437,25 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, e);
   QPersistentModelIndex newCurrent = currentIndex();
+
+  bool sub_edit = false;
+  bool accepted = false;
   
   switch (action) {
     case taiMisc::TREE_FORWARD:
     case taiMisc::TREE_FORWARD_II:
       e->accept();
+      accepted = true;
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
       return;
     case taiMisc::TREE_BACKWARD:
     case taiMisc::TREE_BACKWARD_II:
       e->accept();
+      accepted = true;
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
       return;
     case taiMisc::TREE_START_EXTENDED_SELECTION:
     case taiMisc::TREE_START_EXTENDED_SELECTION_II:		// s works too
-      //      case Qt::Key_Space:
       clearSelection();
       // select this guy
       selectionModel()->setCurrentIndex(currentIndex(),
@@ -463,31 +467,37 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       ext_select_on = true;
       // }
       e->accept();
+      accepted = true;
       return;			// don't continue
     case taiMisc::TREE_CLEAR_SELECTION:
     case taiMisc::TREE_CLEAR_SELECTION_II:
       clearExtSelection();
       e->accept();
+      accepted = true;
       break;
     case taiMisc::TREE_MOVE_SELECTION_UP:
     case taiMisc::TREE_MOVE_SELECTION_UP_II:
       newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
       e->accept();
+      accepted = true;
       break;
     case taiMisc::TREE_MOVE_SELECTION_DOWN:
     case taiMisc::TREE_MOVE_SELECTION_DOWN_II:
       newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
       e->accept();
+      accepted = true;
       break;
     case taiMisc::TREE_PAGE_UP:
     case taiMisc::TREE_PAGE_UP_II:
       newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
       e->accept();
+      accepted = true;
       break;
     case taiMisc::TREE_PAGE_DOWN:
     case taiMisc::TREE_PAGE_DOWN_II:
       newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       e->accept();
+      accepted = true;
       break;
     case taiMisc::TREE_EDIT_HOME:
     case taiMisc::TREE_EDIT_HOME_II:
@@ -495,27 +505,31 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         edit_start_pos = 0;
         edit_start_kill = false;
         editItem(cur_item);     // todo: get column
-      }
-      e->accept();
-#if !defined(TA_OS_MAC) && !defined(TA_OS_WIN)
-      return;
+        e->accept();
+        accepted = true;
+#if !defined(TA_OS_MAC)
+        sub_edit = true;// mac doesn't do select-all on ctrl-a (its command-a)
+        // linux and windows require the return to prevent select-all from inherited call
 #endif
+      }
     case taiMisc::TREE_EDIT_END:
     case taiMisc::TREE_EDIT_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = -1;
         edit_start_kill = false;
         editItem(cur_item);     // todo: get column
+        e->accept();
+        accepted = true;
       }
-      e->accept();
     case taiMisc::TREE_EDIT_DELETE_TO_END:
     case taiMisc::TREE_EDIT_DELETE_TO_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = 0;
         edit_start_kill = true;
         editItem(cur_item);     // todo: get column
+        e->accept();
+        accepted = true;
       }
-      e->accept();
     default:
       ;
   }
@@ -537,8 +551,9 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
             old_item->setSelected(false);
           }
         }
-        else
+        else {
           command = QItemSelectionModel::Current;
+        }
       }
       else {
         command = QItemSelectionModel::Select;
@@ -550,7 +565,10 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     selectionModel()->setCurrentIndex(newCurrent, command);
     return;
   }
-  inherited::keyPressEvent( e );
+
+  if(!sub_edit) {
+    inherited::keyPressEvent( e );
+  }
 }
 
 void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
