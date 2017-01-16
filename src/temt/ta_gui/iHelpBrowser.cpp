@@ -425,8 +425,8 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
   connect(brow, SIGNAL(linkClicked(const QUrl&)),
     this, SLOT(brow_linkClicked(const QUrl&)) );
   connect(brow, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
-    iWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
-    iWebView*&)) );
+    QWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
+    QWebView*&)) );
 
   wp->setNetworkAccessManager(taiMisc::net_access_mgr);
   connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
@@ -488,7 +488,7 @@ void iHelpBrowser::brow_createWindow(QWebEnginePage::WebWindowType type, QWebEng
 #else // USE_QT_WEBENGINE
 
 void iHelpBrowser::brow_createWindow(QWebPage::WebWindowType type,
-    iWebView*& window)
+    QWebView*& window)
 {
   // if (type == QWebPage::WebBrowserWindow) {
     window = AddWebView(_nilString);

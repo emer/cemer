@@ -508,6 +508,9 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         e->accept();
         accepted = true;
 #if !defined(TA_OS_MAC)
+        // stuff a ctrl-b -- this will prevent a subsequent ctrl-d from deleting object
+        QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_B,
+                                                        Qt::ControlModifier));
         sub_edit = true;// mac doesn't do select-all on ctrl-a (its command-a)
         // linux and windows require the return to prevent select-all from inherited call
 #endif

@@ -161,8 +161,8 @@ iPanelOfDocView::iPanelOfDocView()
   connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
           this, SLOT(doc_linkClicked(const QUrl&)) );
   connect(webview, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
-    iWebView*&)), this, SLOT(doc_createWindow(QWebPage::WebWindowType,
-    iWebView*&)) );
+    QWebView*&)), this, SLOT(doc_createWindow(QWebPage::WebWindowType,
+    QWebView*&)) );
 #endif // USE_QT_WEBENGINE
 
 
@@ -193,7 +193,7 @@ void iPanelOfDocView::doc_createWindow(QWebEnginePage::WebWindowType type, QWebE
 
 #else // USE_QT_WEBENGINE
 
-void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, iWebView*& window) {
+void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, QWebView*& window) {
   // fork to browser
   if (type == QWebPage::WebBrowserWindow) {
     iHelpBrowser* hbrow = iHelpBrowser::instance();

@@ -34,6 +34,11 @@ class taDoc; //
 class QToolBar; //
 class QLabel; //
 
+#ifndef USE_QT_WEBENGINE
+class QWebView; //
+#endif
+
+
 taTypeDef_Of(iPanelOfDocView);
 
 class TA_API iPanelOfDocView: public iPanel {
@@ -93,7 +98,7 @@ protected slots:
 #ifdef USE_QT_WEBENGINE
   void                  doc_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window);
 #else // USE_QT_WEBENGINE
-  void                  doc_createWindow(QWebPage::WebWindowType type, iWebView*& window);
+  void                  doc_createWindow(QWebPage::WebWindowType type, QWebView*& window);
   void                  doc_linkClicked(const QUrl& url);
 #endif // USE_QT_WEBENGINE
   void                  doc_goPressed();

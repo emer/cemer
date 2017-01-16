@@ -34,6 +34,7 @@ class QWebEngineView;
 #else // USE_QT_WEBENGINE
 
 #include <QWebPage>
+class QWebView; //
 
 #endif // USE_QT_WEBENGINE
 
@@ -146,7 +147,7 @@ protected slots:
 #ifdef USE_QT_WEBENGINE
   void                  brow_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window);
 #else // USE_QT_WEBENGINE
-  void                  brow_createWindow(QWebPage::WebWindowType type, iWebView*& window);
+  void                  brow_createWindow(QWebPage::WebWindowType type, QWebView*& window);
 #endif // USE_QT_WEBENGINE
   void                  brow_linkClicked(const QUrl& url);
   void                  brow_urlChanged(const QUrl& url);
