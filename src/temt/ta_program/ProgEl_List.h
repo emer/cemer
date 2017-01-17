@@ -24,8 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 class Program; // 
-class ProgVar; // 
-
+class ProgVar; //
+class Function; //
+class taBase_PtrList; //
 
 taTypeDef_Of(ProgEl_List);
 
@@ -73,7 +74,9 @@ public:
   virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
   // #IGNORE update prog el vars after scope change (move, copy)
   
-
+  virtual void GetProgramCallFuns(taBase_PtrList& callers, const Function* callee);
+  // adds to the callers list any ProgramCallFuns that call the callee (must match name and program)
+    
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 protected:

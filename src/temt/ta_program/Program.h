@@ -355,17 +355,19 @@ public:
   // #CAT_Find find program of given name, first looking within the group that this program belongs in, and then looking for all programs within the project.  if warn_not_found, then issue a warning if not found
   virtual Program*      FindProgramNameContains(const String& prog_nm, bool warn_not_found=false) const;
   // #CAT_Find find program whose name contains given name, first looking within the group that this program belongs in, and then looking for all programs within the project.  if warn_not_found, then issue a warning if not found
-  virtual ProgramCallBase*      FindSubProgTarget(Program* prg);
+  virtual ProgramCallBase*  FindSubProgTarget(Program* prg);
   // #IGNORE find sub_prog_calls ProgramCallBase that calls given target program
-
-  virtual ProgVar* FindMakeLocalVarName(const String& var_nm, bool& made_new,
+  virtual void          GetProgramCallFuns(taBase_PtrList& callers, const Function* callee);
+  // #IGNORE find calls on the function "callee" (i.e. ProgramCallFun objects for the function callee
+  
+  virtual ProgVar*      FindMakeLocalVarName(const String& var_nm, bool& made_new,
                                         bool in_prog_code = true);
   // find or make local variable of given name, in prog_code local vars, or init_code local vars if in_prog_code = false
-  virtual ProgVar* FindMakeArgName(const String& var_nm, bool& made_new);
+  virtual ProgVar*      FindMakeArgName(const String& var_nm, bool& made_new);
   // find or make args variable of given name
-  virtual ProgVar* FindMakeVarName(const String& var_nm, bool& made_new);
+  virtual ProgVar*      FindMakeVarName(const String& var_nm, bool& made_new);
   // find or make vars variable of given name
-  virtual LocalVars* FindMakeLocalVars(bool in_prog_code = true);
+  virtual LocalVars*    FindMakeLocalVars(bool in_prog_code = true);
   // find or make the main LocalVars for this program, in program element 0 of prog_code, or in init_code if in_prog_code = false
 
   virtual void          EditProgram();

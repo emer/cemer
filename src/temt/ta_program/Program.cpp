@@ -19,6 +19,7 @@
 #include <taProject>
 #include <ControlPanel>
 #include <ProgramCallBase>
+#include <ProgramCallFun>
 #include <ProgEl>
 #include <Loop>
 #include <CondBase>
@@ -1292,6 +1293,15 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
     }
   }
   return NULL;
+}
+
+void Program::GetProgramCallFuns(taBase_PtrList& callers, const Function* callee) {
+  taProject* proj = GetMyProj();
+  if(!proj) return;
+  
+  FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
+    pg->prog_code.GetProgramCallFuns(callers, callee);
+  }
 }
 
 ProgVar* Program::FindMakeLocalVarName(const String& var_nm, bool& made_new,

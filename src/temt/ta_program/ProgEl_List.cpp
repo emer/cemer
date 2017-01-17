@@ -15,7 +15,15 @@
 
 #include "ProgEl_List.h"
 #include <Program>
+#include <Function>
 #include <ProgBrkPt_List>
+#include <ProgramCallFun>
+#include <Loop>
+#include <CondBase>
+#include <Else>
+#include <If>
+#include <Switch>
+#include <CodeBlock>
 
 taTypeDef_Of(ProgCode);
 
@@ -249,5 +257,48 @@ void ProgEl_List::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
   for(int ei=0; ei<size; ei++) {
     ProgEl* pe = FastEl(ei);
     pe->UpdateProgElVars(old_scope, new_scope);
+  }
+}
+
+void ProgEl_List::GetProgramCallFuns(taBase_PtrList& callers, const Function* callee) {
+  for (int i=0; i<this->size; i++) {
+    ProgEl* el = this->SafeEl(i);
+    if (el->GetTypeDef() == &TA_ProgramCallFun) {
+      ProgramCallFun* pgrm_call_fun = (ProgramCallFun*)el;
+      if (pgrm_call_fun->function == callee->GetName() &&
+          callee->GetOwner(&TA_Program) == pgrm_call_fun->GetTarget()) {
+        callers.Add(pgrm_call_fun);
+      }
+    }
+    else if (el->DerivesFromName("Loop")) {
+      Loop* loop_el = (Loop*)el;
+      ProgEl_List* list = &loop_el->loop_code;
+      list->GetProgramCallFuns(callers, callee);
+    }
+    else if (el->DerivesFromName("CondBase")) {
+      CondBase* cond_base_el = (CondBase*)el;
+      ProgEl_List* list = &cond_base_el->true_code;
+      list->GetProgramCallFuns(callers, callee);
+    }
+    else if (el->DerivesFromName("Else")) {
+      Else* else_el = (Else*)el;
+      ProgEl_List* list = &else_el->true_code;
+      list->GetProgramCallFuns(callers, callee);
+    }
+    else if (el->DerivesFromName("If")) {
+      If* if_el = (If*)el;
+      ProgEl_List* list = &if_el->true_code;
+      list->GetProgramCallFuns(callers, callee);
+    }
+    else if (el->DerivesFromName("Switch")) {
+      Switch* switch_el = (Switch*)el;
+      ProgEl_List* list = &switch_el->cases;
+      list->GetProgramCallFuns(callers, callee);
+    }
+    else if (el->DerivesFromName("CodeBlock")) {
+      CodeBlock* CodeBlock_el = (CodeBlock*)el;
+      ProgEl_List* list = &CodeBlock_el->prog_code;
+      list->GetProgramCallFuns(callers, callee);
+    }
   }
 }

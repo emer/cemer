@@ -211,6 +211,7 @@ void Function::GetCallers(taBase_PtrList& callers) {
   Program* our_program = program();
   if(!our_program) return;
   
+  // get the callers in our home program
   our_program->Search(this->name, callers, NULL,
                true,  // text_only
                true,  // contains
@@ -222,32 +223,25 @@ void Function::GetCallers(taBase_PtrList& callers) {
                false,  // mbr_name
                false); // type_desc
   
+  // the search will also find the function itself - remove it
   for (int i = callers.size - 1; i >= 0; i--) {
     taBase* foo = callers.SafeEl(i);
     if (foo->InheritsFrom(&TA_Function)) {
       callers.RemoveEl(foo);
       continue;
     }
-    else if (foo->InheritsFrom(&TA_FunctionCall)) {
-      // make sure it is this function and not another with same name
-      FunctionCall* fun_call = (FunctionCall*)foo;
-      if (fun_call->fun.ptr() != this) {
-        callers.RemoveEl(foo); // some other guy
-        continue;
-      }
-    }
-//    else if (foo->InheritsFrom(&TA_ProgramCallFun)) {  // only sensible when we start search other programs
+//    else if (foo->InheritsFrom(&TA_FunctionCall)) {
 //      // make sure it is this function and not another with same name
-//      ProgramCallFun* prog_call_fun = (ProgramCallFun*)foo;
-//      if (prog_call_fun->target != our_program) {
+//      FunctionCall* fun_call = (FunctionCall*)foo;
+//      if (fun_call->fun.ptr() != this) {
 //        callers.RemoveEl(foo); // some other guy
 //        continue;
 //      }
 //    }
-    else {
-      // calls within conditionals and while loops
-    }
   }
+  
+  // add callers from other programs to our callers list
+  our_program->GetProgramCallFuns(callers, this);
 }
 
 void Function::ListCallers() {
