@@ -56,7 +56,8 @@ String_Array                ProgExprBase::completion_statics_list;
 String_Array                ProgExprBase::completion_bool_list;
 String_Array                ProgExprBase::completion_null_list;
 String_Array                ProgExprBase::completion_type_list;
-taBase_List                 ProgExprBase::completion_progvar_list;
+taBase_List                 ProgExprBase::completion_progvar_global_list;
+taBase_List                 ProgExprBase::completion_progvar_local_list;
 taBase_List                 ProgExprBase::completion_dynenum_list;
 taBase_List                 ProgExprBase::completion_function_list;
 taBase_List                 ProgExprBase::completion_program_list;
@@ -1359,7 +1360,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   include_types = false;
   include_css_functions = false;
   completion_lookup_type = lookup_type;
-  completion_progvar_list.RemoveAll();
+  completion_progvar_local_list.RemoveAll();
+  completion_progvar_global_list.RemoveAll();
   completion_dynenum_list.RemoveAll();
   completion_function_list.RemoveAll();
   completion_program_list.RemoveAll();
@@ -1370,7 +1372,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
-      GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program);
+      GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program);
+      GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       if (expr_start == LINE_START) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
@@ -1383,7 +1386,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
         include_statics = true;
-     }
+      }
       else if (expr_start == LEFT_PARENS) {
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
         include_statics = true;
@@ -1408,7 +1411,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_bools = true;
       }
       include_statics = true;
-      GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
+      GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program, var_type);
+      GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       include_css_functions = true;
@@ -1440,7 +1444,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_bools = true;
       }
       include_statics = true;
-      GetTokensOfType(&TA_ProgVar, &completion_progvar_list, own_prg, &TA_Program, var_type);
+      GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program, var_type);
+      GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       expr_lookup_cur_base = NULL;
@@ -1645,8 +1650,13 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
   completion_choice_list.Reset();
   
-  for (int i=0; i<completion_progvar_list.size; i++) {
-    taBase* base = completion_progvar_list.FastEl(i);
+  for (int i=0; i<completion_progvar_local_list.size; i++) {
+    taBase* base = completion_progvar_local_list.FastEl(i);
+    completion_choice_list.Add(base->GetName());
+  }
+
+  for (int i=0; i<completion_progvar_global_list.size; i++) {
+    taBase* base = completion_progvar_global_list.FastEl(i);
     completion_choice_list.Add(base->GetName());
   }
   
@@ -1855,7 +1865,7 @@ String ProgExprBase::FinishCompletion(const String& cur_completion, int& new_pos
 
 void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
   if (td == NULL || tokens == NULL) return;
-  
+    
   for(int i=0; i<td->tokens.size; i++) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp)
@@ -1883,6 +1893,42 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
         continue;
     }
     tokens->Link(btmp);
+  }
+  tokens->Sort();
+}
+
+void ProgExprBase::GetProgramVars(GlobalLocal local_global, taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
+  if (tokens == NULL) return;
+  
+  TypeDef* td = &TA_ProgVar;
+  for(int i=0; i<td->tokens.size; i++) {
+    ProgVar* prog_var = (ProgVar*)td->tokens.FastEl(i);
+    if(!prog_var) continue;
+    
+    if(local_global == PROGVAR_LOCAL && !prog_var->IsLocal()) {
+      continue;
+    }
+    if(local_global == PROGVAR_GLOBAL && prog_var->IsLocal()) {
+      continue;
+    }
+    
+    taBase* parent = prog_var->GetParent();
+    // keeps templates out of the list of actual instances
+    if (prog_var->GetPath().startsWith(".templates")) {  // maybe SameScope handles this
+      continue;
+    }
+    if (scope && scope_type) {
+      if (!prog_var->SameScope(scope, scope_type)) continue;
+    }
+    
+    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
+    taBase* owner = prog_var->GetOwner();
+    if (owner) {
+      MemberDef* md = owner->FindMemberName(prog_var->GetName());
+      if (md && md->HasOption("HIDDEN_CHOOSER"))
+        continue;
+    }
+    tokens->Link(prog_var);
   }
   tokens->Sort();
 }

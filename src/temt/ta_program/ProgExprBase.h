@@ -73,6 +73,11 @@ public:
     LEFT_PARENS,                // following a left parens
   };
   
+  enum GlobalLocal {
+    PROGVAR_LOCAL,
+    PROGVAR_GLOBAL,
+  };
+  
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
   ExprFlags     flags;          // #HIDDEN #NO_SAVE Flags for controlling expression behavior -- should not be saved because they are set by the owning program every time
@@ -88,7 +93,8 @@ public:
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
   
   // these are for the code completer
-  static taBase_List            completion_progvar_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_progvar_global_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_progvar_local_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_dynenum_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_function_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_program_list;  // #READ_ONLY #HIDDEN #NO_SAVE
@@ -193,7 +199,9 @@ public:
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
-  static void           GetMembersForType(TypeDef* td, MemberSpace* members, bool just_static = false);
+  static void           GetProgramVars(GlobalLocal global_local, taBase_List* tokens, taBase* scope = NULL,
+                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
+ static void            GetMembersForType(TypeDef* td, MemberSpace* members, bool just_static = false);
   static void           GetMethodsForType(TypeDef* td, MethodSpace* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);
   static void           GetProgEls(String_Array* progels);
