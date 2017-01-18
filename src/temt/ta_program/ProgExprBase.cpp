@@ -1372,7 +1372,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
-      GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program);
+      if (own_fun) {
+        GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_fun, &TA_Function);
+      }
+      else {
+        GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program);
+      }
       GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       if (expr_start == LINE_START) {  // program calls must be at beginning of line
