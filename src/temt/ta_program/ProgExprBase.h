@@ -199,8 +199,10 @@ public:
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
-  static void           GetProgramVars(GlobalLocal global_local, taBase_List* tokens, taBase* scope = NULL,
-                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
+  static void           GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope = NULL,
+                                       TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
+  static void           GetGlobalVars(taBase_List* tokens, taBase* scope = NULL,
+                                       TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
  static void            GetMembersForType(TypeDef* td, MemberSpace* members, bool just_static = false);
   static void           GetMethodsForType(TypeDef* td, MethodSpace* methods, bool just_static = false);
   static void           GetEnumsForType(TypeDef* td, EnumSpace* enums);

@@ -1372,13 +1372,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
-      if (own_fun) {
-        GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_fun, &TA_Function);
-      }
-      else {
-        GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program);
-      }
-      GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program);
+      GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program);
+      GetGlobalVars(&completion_progvar_global_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       if (expr_start == LINE_START) {  // program calls must be at beginning of line
         GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
@@ -1399,7 +1394,7 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       expr_lookup_cur_base = NULL;
       break;
     }
-    
+      
     case ProgExprBase::ASSIGN: {  // multiple possibilities
       String lhs = prepend_txt;
       lhs = lhs.before('=', -1);
@@ -1416,8 +1411,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_bools = true;
       }
       include_statics = true;
-      GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program, var_type);
-      GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program, var_type);
+      GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program, var_type);
+      GetGlobalVars(&completion_progvar_global_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       include_css_functions = true;
@@ -1449,8 +1444,8 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_bools = true;
       }
       include_statics = true;
-      GetProgramVars(PROGVAR_LOCAL, &completion_progvar_local_list, own_prg, &TA_Program, var_type);
-      GetProgramVars(PROGVAR_GLOBAL, &completion_progvar_global_list, own_prg, &TA_Program, var_type);
+      GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program, var_type);
+      GetGlobalVars(&completion_progvar_global_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
       expr_lookup_cur_base = NULL;
@@ -1902,7 +1897,54 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
   tokens->Sort();
 }
 
-void ProgExprBase::GetProgramVars(GlobalLocal local_global, taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
+void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
+  if (tokens == NULL) return;
+  
+  ProgEl_List* prog_el_owner_list = (ProgEl_List*)prog_el->GetOwner(&TA_ProgEl_List);
+  if (!prog_el_owner_list) return; // should always have a list owner
+  
+  String prog_el_owner_list_name = prog_el_owner_list->name; // prog_code, init_code or un-named ProgEl_List
+  
+  TypeDef* td = &TA_ProgVar;
+  for(int i=0; i<td->tokens.size; i++) {
+    ProgVar* prog_var = (ProgVar*)td->tokens.FastEl(i);
+    if(!prog_var) continue;
+    
+    if(!prog_var->IsLocal()) continue;
+    
+    ProgEl_List* var_owner_list = (ProgEl_List*)prog_var->GetOwner(&TA_ProgEl_List);
+    if (!var_owner_list) continue;
+    if (var_owner_list->GetName() != prog_el_owner_list_name) continue;
+    
+    taBase* parent = prog_var->GetParent();
+    // keeps templates out of the list of actual instances
+    if (prog_var->GetPath().startsWith(".templates")) {  // maybe SameScope handles this
+      continue;
+    }
+    
+    taBase* prog_var_scope = prog_var->GetScopeObj(scope_type);
+    
+    if (!prog_var_scope) continue;
+    
+    if (scope && scope_type) {
+      if (!prog_var->SameScope(scope, scope_type)) {
+        continue;
+      }
+    }
+    
+    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
+    taBase* owner = prog_var->GetOwner();
+    if (owner) {
+      MemberDef* md = owner->FindMemberName(prog_var->GetName());
+      if (md && md->HasOption("HIDDEN_CHOOSER"))
+        continue;
+    }
+    tokens->Link(prog_var);
+  }
+  tokens->Sort();
+}
+
+void ProgExprBase::GetGlobalVars(taBase_List* tokens, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
   if (tokens == NULL) return;
   
   TypeDef* td = &TA_ProgVar;
@@ -1910,12 +1952,7 @@ void ProgExprBase::GetProgramVars(GlobalLocal local_global, taBase_List* tokens,
     ProgVar* prog_var = (ProgVar*)td->tokens.FastEl(i);
     if(!prog_var) continue;
     
-    if(local_global == PROGVAR_LOCAL && !prog_var->IsLocal()) {
-      continue;
-    }
-    if(local_global == PROGVAR_GLOBAL && prog_var->IsLocal()) {
-      continue;
-    }
+    if(prog_var->IsLocal()) continue;
     
     taBase* parent = prog_var->GetParent();
     // keeps templates out of the list of actual instances
