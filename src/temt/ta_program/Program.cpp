@@ -2352,25 +2352,15 @@ iPanelOfProgramBase* Program::FindMyProgramPanel() {
 
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
-
-  BrowserSelectMe();        // select my program
-
+  
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
-
+  
   iPanelOfProgramBase* mwv = FindMyProgramPanel();
-  if(!mwv || !mwv->pe) return itm->taBase::BrowserSelectMe();
-
+  itm->taBase::BrowserSelectMe();
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
-    itv->setFocus();
-    itv->clearExtSelection();
-    // clear the selection first: makes sure that the select of actual item is 
-    // novel and triggers whatever we want it to trigger!
-    itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
-    itv->scrollTo(iti);
-    itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
     // make sure our operations are finished
     taMisc::ProcessEvents();
     // edit ProgCode but not other ProgEls, and tab into all other items
@@ -2398,15 +2388,9 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
         }
       }
     }
-
+    
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
-
-    // else {
-    //   // auto edit in editor non prog-els -- though this might be dangerous
-    //   QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab,
-    //                                                  Qt::NoModifier));
-    // }
   }
   return (bool)iti;
 }
