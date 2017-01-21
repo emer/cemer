@@ -542,6 +542,8 @@ public:
   virtual void ResetData();
   // #CAT_Rows deletes all the data (rows), but keeps the column structure -- this cannot be undone!
 
+  inline int   ItemCount() const { return rows; }
+  // #CAT_Rows number of items (rows) of data in the table
   inline int   ReadIndex() const { return read_idx; }
   // #CAT_Rows index of current row to read from by GetData routines (which use read_idx for their row number)
   inline bool  ReadAvailable() const 
