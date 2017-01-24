@@ -74,6 +74,10 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
   }
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
   if (key_event->key() == Qt::Key_Tab) {
+    if (is_dialog_field && GetText() == last_epression_text) {
+      return inherited::eventFilter(obj, event);
+    }
+    last_epression_text = GetText();
     QCoreApplication* app = QCoreApplication::instance();
     if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
       app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
@@ -138,6 +142,11 @@ String iCodeCompleter::GetPretext() {
   pretext = pretext.before(pretext.length() - ProgExprBase::completion_lookup_seed.length());
   return pretext;
 }
+
+String iCodeCompleter::GetText() {
+  return ProgExprBase::completion_text_before;
+}
+
 
 bool iCompleterPopupView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::ShortcutOverride) {

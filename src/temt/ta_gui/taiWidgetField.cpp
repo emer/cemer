@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -19,13 +20,12 @@
 #include <MemberDef>
 #include <iTextEdit>
 #include <BuiltinTypeDefs>
+#include <taMisc>
 
 
-taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
+taiWidgetField::taiWidgetField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
-            "Edit this field in a multi-line dialog.")
-  , lookupfun_md(0)
-  , lookupfun_base(0)
+            "Edit this field in a multi-line dialog.", md)
   , edit_dialog(0)
 {
   // min width for some popular types

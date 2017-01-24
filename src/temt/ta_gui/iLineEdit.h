@@ -28,13 +28,19 @@ class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
 public:
+  enum CompleterType {		//
+    NO_COMPLETER,			//
+    INLINE_CODE_COMPLETER,		//
+    DIALOG_FIELD_CODE_COMPLETER,		//
+  };
+
   int           init_start_pos;            // initial starting position for editing -- -1 = end, 0 = start
   bool          init_start_kill;           // at start of editing, kill contents
   bool          completion_enabled;
   int           cursor_position_from_end;  // cursor position for start of completion - only set during completion
 
-  iLineEdit(QWidget* parent = 0, bool add_completer = false);
-  iLineEdit(const char* text, QWidget* parent, bool add_completer = false); //note: can't have defaults, ambiguity
+  iLineEdit(QWidget* parent = 0, CompleterType completer_type = NO_COMPLETER);
+  iLineEdit(const char* text, QWidget* parent, CompleterType completer_type = NO_COMPLETER); //note: can't have defaults, ambiguity
 
   inline int	  charWidth() {return mchar_width;}
   void		      setCharWidth(int num); // sets width to accommodate num chars of
@@ -78,7 +84,7 @@ protected:
   virtual bool      IsDelimter(char a_char);
 
 private:
-  void		      init(bool add_completer = false);
+  void		      init(CompleterType completer_type = NO_COMPLETER);
 };
 
 #endif // iLineEdit_h

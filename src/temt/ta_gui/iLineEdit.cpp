@@ -36,19 +36,31 @@
 
 #include <iCodeCompleter>
 
-iLineEdit::iLineEdit(QWidget* parent, bool add_completer)
+//iLineEdit::iLineEdit(QWidget* parent, bool add_completer)
+//: QLineEdit(parent)
+//{
+//  init(add_completer);
+//}
+//
+//iLineEdit::iLineEdit(const char* text, QWidget* parent, bool add_completer)
+//: QLineEdit(QString(text), parent)
+//{
+//  init(add_completer);
+//}
+
+iLineEdit::iLineEdit(QWidget* parent, CompleterType completer_type)
 : QLineEdit(parent)
 {
-  init(add_completer);
+  init(completer_type);
 }
 
-iLineEdit::iLineEdit(const char* text, QWidget* parent, bool add_completer)
+iLineEdit::iLineEdit(const char* text, QWidget* parent, CompleterType completer_type)
 : QLineEdit(QString(text), parent)
 {
-  init(add_completer);
+  init(completer_type);
 }
 
-void iLineEdit::init(bool add_completer) {
+void iLineEdit::init(CompleterType completer_type) {
   // none of these did anything for the mac trackpad hypersensitivity:
   // see iMainWindowViewer for soln involving turning off touch events
   // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
@@ -68,9 +80,12 @@ void iLineEdit::init(bool add_completer) {
   completer = NULL;
   completion_enabled = false;
   cursor_position_from_end = 0;
-  if (add_completer) {
+  if (completer_type != NO_COMPLETER) {
     completer = new iCodeCompleter(parent());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
+    if (completer_type == DIALOG_FIELD_CODE_COMPLETER) {
+      completer->SetIsDialogField(true);
+    }
     this->setCompleter(completer);
     completion_enabled = taMisc::code_completion.auto_complete;
   }

@@ -25,6 +25,8 @@
 class iLineEdit; //
 class QToolButton; //
 
+class MemberDef; //
+
 
 class TA_API taiWidgetText : public taiWidget {
   // Base class for string edit controls that might have a "..." button to bring up an editor dialog or somesuch.
@@ -32,7 +34,7 @@ class TA_API taiWidgetText : public taiWidget {
   INHERITED(taiWidget)
 public:
   taiWidgetText(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_,
-          int flags, bool needs_edit_button, const char *tooltip);
+          int flags, bool needs_edit_button, const char *tooltip, MemberDef* md = NULL);
 
   iLineEdit*            rep() const;
   bool         fillHor() override { return true; }
@@ -40,6 +42,9 @@ public:
 
   void                  GetImage(const String& val);
   String                GetValue() const;
+  
+  MemberDef*            lookupfun_md;   // for lookup function, member def
+  void*                 lookupfun_base; // for lookup function, base of owner
 
 protected slots:
   void                  selectionChanged();

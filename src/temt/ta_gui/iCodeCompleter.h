@@ -53,6 +53,7 @@ public:
   iCodeCompleter(QAbstractItemModel *model, QObject *parent = 0);
 
   iCodeCompleterModel*    list_model;
+  String                  last_epression_text;  // hold onto for comparison on next tab
 
   void                    SetModelList(String_Array* list);
   QStringList*            GetList() { return &string_list; }
@@ -60,11 +61,15 @@ public:
   void                    ClearList();              // clear the model list
   void                    FilterList(String seed);  // pair down based on seed
   void                    ExtendSeed(String& seed); // extend the seed if possible -- called prefix in QCompleter terminology
+  void                    SetIsDialogField(bool dialog_field) { is_dialog_field = dialog_field; }
   
 protected:
   QStringList             string_list;
   bool                    eventFilter(QObject* obj, QEvent* event) override;
+  bool                    is_dialog_field; // is the widget using this completer in a dialog - if so special tab handling
+
   String                  GetPretext();  // get the pretext from the expression parser
+  String                  GetText();     // get the text before cursor from the expression parser
 
 private:
   void                    Init();

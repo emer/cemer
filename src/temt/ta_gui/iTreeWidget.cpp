@@ -669,7 +669,7 @@ QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
   QWidget* widg = inherited::createEditor(parent, option, index);
   QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
   if(le) {
-    iLineEdit* il = new iLineEdit(parent, true);
+    iLineEdit* il = new iLineEdit(parent, iLineEdit::INLINE_CODE_COMPLETER);
     if(own_tree_widg) {
       QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
                        own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );

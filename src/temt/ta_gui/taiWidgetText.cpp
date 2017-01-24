@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -19,6 +20,7 @@
 
 #include <taMisc>
 #include <taiMisc>
+#include <MemberDef>
 
 
 #include <QHBoxLayout>
@@ -26,10 +28,13 @@
 #include <QFont>
 
 taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_,
-                 bool needs_edit_button, const char *tooltip)
+                 bool needs_edit_button, const char *tooltip, MemberDef* md)
   : taiWidget(typ_, host_, par, gui_parent_, flags_)
+  , lookupfun_md(md)
+  , lookupfun_base(0)
   , leText()
   , btnEdit()
+
 {
   if (needs_edit_button) {
     QWidget* act_par = MakeLayoutWidget(gui_parent_);
@@ -37,7 +42,14 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     lay->setMargin(0);
     lay->setSpacing(1);
 
-    leText = new iLineEdit(act_par, false); // false - no code completer
+//    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
+    bool add_completer = (lookupfun_md && md->name == "expr");
+    if (add_completer) {
+      leText = new iLineEdit(act_par, iLineEdit::DIALOG_FIELD_CODE_COMPLETER); // if false - no code completer
+    }
+    else {
+      leText = new iLineEdit(act_par, iLineEdit::NO_COMPLETER); // if false - no code completer
+    }
     lay->addWidget(leText, 1);
 
     btnEdit = new QToolButton(act_par);
@@ -51,7 +63,14 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
       this, SLOT(btnEdit_clicked(bool)) );
   }
   else {
-    leText = new iLineEdit(gui_parent_, false); // false - no code completer
+//    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
+    bool add_completer = (lookupfun_md && md->name == "expr");
+    if (add_completer) {
+      leText = new iLineEdit(gui_parent_, iLineEdit::DIALOG_FIELD_CODE_COMPLETER); // false - no code completer
+    }
+    else {
+      leText = new iLineEdit(gui_parent_, iLineEdit::NO_COMPLETER); // false - no code completer
+    }
     SetRep(leText);
   }
 

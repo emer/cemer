@@ -25,7 +25,7 @@ int taiTypeOfString::BidForType(TypeDef* td){
 }
 
 taiWidget* taiTypeOfString::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
-  taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_);
+  taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_, md);
   rval->lookupfun_md = md;              // for lookup function
   if(md) {
     String ew = md->OptionAfter("EDIT_WIDTH_");

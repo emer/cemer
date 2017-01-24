@@ -29,7 +29,7 @@ class TA_API taiWidgetField : public taiWidgetText {
   INHERITED(taiWidgetText)
   friend class iDialogWidgetField;
 public:
-  taiWidgetField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
+  taiWidgetField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0, MemberDef* md = NULL);
   ~taiWidgetField();
 
 protected slots:
@@ -39,8 +39,6 @@ protected slots:
   void                  characterEntered() override;
 
 public:
-  MemberDef*            lookupfun_md;   // for lookup function, member def
-  void*                 lookupfun_base; // for lookup function, base of owner
 
 protected:
   iDialogWidgetField*     edit_dialog;    // an edit dialog, if created
