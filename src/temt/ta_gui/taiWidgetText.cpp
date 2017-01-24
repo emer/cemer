@@ -42,8 +42,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
     lay->setMargin(0);
     lay->setSpacing(1);
 
-//    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
-    bool add_completer = (lookupfun_md && md->name == "expr");
+    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
     if (add_completer) {
       leText = new iLineEdit(act_par, iLineEdit::DIALOG_FIELD_CODE_COMPLETER); // if false - no code completer
     }
@@ -63,8 +62,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
       this, SLOT(btnEdit_clicked(bool)) );
   }
   else {
-//    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
-    bool add_completer = (lookupfun_md && md->name == "expr");
+    bool add_completer = (lookupfun_md && md->HasOption("ADD_COMPLETER"));
     if (add_completer) {
       leText = new iLineEdit(gui_parent_, iLineEdit::DIALOG_FIELD_CODE_COMPLETER); // false - no code completer
     }
