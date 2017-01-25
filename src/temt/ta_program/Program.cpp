@@ -2307,7 +2307,7 @@ bool Program::ViewScriptEl(taBase* pel) {
 }
 
 bool Program::EditProgramEl(taBase* pel) {
-  return this->BrowserSelectMe_ProgItem(dynamic_cast<taOBase*>(pel));
+  return this->BrowserSelectMe_ProgItemForEdit(dynamic_cast<taOBase*>(pel));
 }
 
 
@@ -2358,6 +2358,7 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   
   iPanelOfProgramBase* mwv = FindMyProgramPanel();
   itm->taBase::BrowserSelectMe();
+
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
@@ -2388,7 +2389,58 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
         }
       }
     }
-    
+    scroll_to_itm = itm;
+    tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
+  }
+  return (bool)iti;
+}
+
+bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+
+  BrowserSelectMe();        // select my program
+  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
+  if(!link) return false;
+  
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->setFocus();
+    itv->clearExtSelection();
+    // clear the selection first: makes sure that the select of actual item is
+    // novel and triggers whatever we want it to trigger!
+    itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
+    itv->scrollTo(iti);
+    itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
+
+    // make sure our operations are finished
+    taMisc::ProcessEvents();
+    // edit ProgCode but not other ProgEls, and tab into all other items
+    if(itm->InheritsFrom(&TA_ProgEl)) {
+      ProgEl* pel = (ProgEl*)itm;
+      if(pel->edit_move_after > 0) {
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+                                                       Qt::NoModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
+        pel->edit_move_after = 0;
+      }
+      else if(pel->edit_move_after < 0) {
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
+                                                       Qt::NoModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
+        pel->edit_move_after = 0;
+      }
+      else {
+        if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
+          // auto edit prog code
+          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                         Qt::MetaModifier));
+        }
+      }
+    }
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
   }

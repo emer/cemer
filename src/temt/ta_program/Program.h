@@ -408,6 +408,8 @@ public: // XxxGui versions provide feedback to the user
 
   virtual bool          BrowserSelectMe_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserSelectMe function for program sub-item (prog el, etc)
+  virtual bool          BrowserSelectMe_ProgItemForEdit(taOBase* itm);
+  // #IGNORE perform BrowserSelectMe function for program sub-item (prog el, etc) when you also want to open the program editor
   virtual bool          BrowserExpandAll_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserExpandAll function for program sub-item (prog el, etc)
   virtual bool          BrowserCollapseAll_ProgItem(taOBase* itm);
