@@ -1372,7 +1372,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   switch(lookup_type) {
     case ProgExprBase::VARIOUS: {  // multiple possibilities
-      GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program);
+      if (own_fun) {
+        GetLocalVars(&completion_progvar_local_list, own_pel, own_fun, &TA_Function);
+      }
+      else {
+        GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program);
+      }
       GetGlobalVars(&completion_progvar_global_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       if (expr_start == LINE_START) {  // program calls must be at beginning of line
@@ -1411,7 +1416,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_bools = true;
       }
       include_statics = true;
-      GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program, var_type);
+      if (own_fun) {
+        GetLocalVars(&completion_progvar_local_list, own_pel, own_fun, &TA_Function, var_type);
+      }
+      else {
+        GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program, var_type);
+      }
       GetGlobalVars(&completion_progvar_global_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
@@ -1444,7 +1454,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_bools = true;
       }
       include_statics = true;
-      GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program, var_type);
+      if (own_fun) {
+        GetLocalVars(&completion_progvar_local_list, own_pel, own_fun, &TA_Function, var_type);
+      }
+      else {
+        GetLocalVars(&completion_progvar_local_list, own_pel, own_prg, &TA_Program, var_type);
+      }
       GetGlobalVars(&completion_progvar_global_list, own_prg, &TA_Program, var_type);
       GetTokensOfType(&TA_DynEnumItem, &completion_dynenum_list, own_prg, &TA_Program);
       GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
@@ -1912,9 +1927,15 @@ void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* sc
     
     if(!prog_var->IsLocal()) continue;
     
-    ProgEl_List* var_owner_list = (ProgEl_List*)prog_var->GetOwner(&TA_ProgEl_List);
-    if (!var_owner_list) continue;
-    if (var_owner_list->GetName() != prog_el_owner_list_name) continue;
+    if (prog_var->HasVarFlag(ProgVar::FUN_ARG) && !(scope_type == &TA_Function)) {
+      continue;
+    }
+    
+    if (!prog_var->HasVarFlag(ProgVar::FUN_ARG)) {
+      ProgEl_List* var_owner_list = (ProgEl_List*)prog_var->GetOwner(&TA_ProgEl_List);
+      if (!var_owner_list) continue;
+      if (var_owner_list->GetName() != prog_el_owner_list_name) continue;
+    }
     
     taBase* parent = prog_var->GetParent();
     // keeps templates out of the list of actual instances
