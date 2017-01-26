@@ -179,8 +179,8 @@ function installHomeBrewAPR {
     echo '/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"'
     echo "brew install apr"
     echo "brew install apr-util"
-    echo "brew link apr"
-    echo "brew link apr-util"
+    echo "brew --force --overwrite link apr"
+    echo "brew --force --overwrite link apr-util"
     echo " "
     echo "IMPORTANT: if any of these commands fail, you may already have this installed, or may need to intervene manually.."
     echo " "
@@ -188,8 +188,8 @@ function installHomeBrewAPR {
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     brew install apr
     brew install apr-util
-    brew link apr
-    brew link apr-util
+    brew --force --overwrite link apr
+    brew --force --overwrite link apr-util
 }
 
 echo " "
