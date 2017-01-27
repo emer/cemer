@@ -2359,6 +2359,8 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   iPanelOfProgramBase* mwv = FindMyProgramPanel();
   itm->taBase::BrowserSelectMe();
 
+  if (!mwv) return false;
+  
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
