@@ -1657,6 +1657,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
       if (scope_program != NULL) {
         GetTokensOfType(&TA_Function, &completion_function_list, scope_program, &TA_Program);
+        for (int i=completion_function_list.size - 1; i >= 0; i--) {
+          Function* function = (Function*)completion_function_list.SafeEl(i);
+          if (function->args.size > 0) {
+            completion_function_list.RemoveIdx(i);
+          }
+        }
       }
       break;
     }
