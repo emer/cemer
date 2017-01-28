@@ -563,7 +563,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
             }
             else {
               expr_start_pos = i+1;
-              break;
+              continue;
             }
           }
           else { // i equals 1
@@ -571,10 +571,14 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
             break;
           }
         }
+        else {
+          expr_start_pos = i+1;
+          continue;
+        }
       }
       else {
         expr_start_pos = i+1;
-        break;
+        continue;
       }
     }
     
@@ -868,7 +872,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start_pos = txt.length();
       prepend_txt = txt.before(expr_start_pos);
     }
-    else if (prog_el_start_pos == -1 && ExprIsType(prog_el_txt)) { // line starts with type (int, bool, float, etc)
+    else if (prog_el_start_pos == 0 && ExprIsType(prog_el_txt)) { // line starts with type (int, bool, float, etc)
       lookup_type = ProgExprBase::NOT_SET;
       expr_start_pos = txt.length();
       prepend_txt = txt.before(expr_start_pos);
@@ -1388,7 +1392,6 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
         include_progels = true;
       }
       else if (expr_start == LINE_MID) {
-        GetTokensOfType(&TA_Program, &completion_program_list, own_prg->GetMyProj(), &TA_taProject);
         GetTokensOfType(&TA_Function, &completion_function_list, own_prg, &TA_Program);
         include_statics = true;
       }
