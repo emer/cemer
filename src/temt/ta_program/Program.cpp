@@ -29,6 +29,7 @@
 #include <CodeBlock>
 #include <taiEditorOfString>
 #include <iDialogChoice>
+#include <taiWidgetTokenChooser>
 
 #include <iPanelOfProgramScript>
 #include <iNumberedTextView>
@@ -801,7 +802,23 @@ void Program::Step(Program* step_prg) {
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
-void Program::RunFunction(Function* fun) {
+void Program::RunFunction() {
+  Function* chosen_function = NULL;
+  taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0, "");
+  Program* scope_program = this;
+  func_look_up->item_filter = (item_filter_fun)ProgExprBase::ExprLookupNoArgFuncFilter;
+  func_look_up->GetImageScoped(NULL, &TA_Function, scope_program, &TA_Program); // scope to this guy
+  bool okc = func_look_up->OpenChooser();
+  if(okc && func_look_up->token()) {
+    chosen_function = (Function*)func_look_up->token();
+  }
+  delete func_look_up;
+  if (chosen_function) {
+    RunNoArgFunction(chosen_function);
+  }
+}
+
+void Program::RunNoArgFunction(Function* fun) {
   if(TestError(fun == NULL, "RunFunction",
                "function is NULL -- must pass afunction!")) {
     return;
@@ -2639,3 +2656,4 @@ ProgVar* Program::FindMakeProgVarInNewScope
 
   return NULL;                  // nothing new made
 }
+

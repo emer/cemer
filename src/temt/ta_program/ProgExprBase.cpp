@@ -497,6 +497,20 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   return true;
 }
 
+bool ProgExprBase::ExprLookupNoArgFuncFilter(void* base_, void* function_) {
+  if(!base_)
+    return true;
+
+  Function* function = dynamic_cast<Function*>(static_cast<taBase*>(function_));
+  if (!function) {
+    return true;
+  }
+  if (function->args.size > 0) {
+    return false;
+  }
+  return true;
+}
+
 bool ProgExprBase::FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards) {
   int dot_pos = path.index('.', -1);
   int arrow_tip_pos = path.index('>', -1);
@@ -1301,6 +1315,7 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
       String scoped_prog_name = trim(prepend_txt);
       Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
       if (scope_program != NULL) {
+        func_look_up->item_filter = (item_filter_fun)ProgExprBase::ExprLookupNoArgFuncFilter;
         func_look_up->GetImageScoped(NULL, &TA_Function, scope_program, &TA_Program); // scope to this guy
         bool okc = func_look_up->OpenChooser();
         if(okc && func_look_up->token()) {

@@ -204,7 +204,7 @@ ProgVar* Function::FindMakeVarName(const String& var_nm, bool& made_new) {
 void Function::RunFunction() {
   Program* prog = program();
   if(!prog) return;
-  prog->RunFunction(this);
+  prog->RunNoArgFunction(this);
 }
 
 void Function::GetCallers(taBase_PtrList& callers) {
