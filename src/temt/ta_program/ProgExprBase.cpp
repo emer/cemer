@@ -86,7 +86,7 @@ void ProgExprBase::Initialize() {
   GetStatics(&completion_statics_list); // get the list of statics - no need to do for every parse
   GetBools(&completion_bool_list); // create the bools list
   GetNull(&completion_null_list); // create the bools list
-  GetTypes(&completion_type_list); // create the bools list
+  GetTypes(&completion_type_list); // create the types list
 }
 
 void ProgExprBase::Destroy() {
@@ -1833,7 +1833,7 @@ bool ProgExprBase::ExprIsType(const String& txt) {
     return false;
   }
   
-  if (completion_type_list.FindEl(first_word)) {
+  if (completion_type_list.FindEl(first_word) != -1) {
     return true;
   }
   return false;
