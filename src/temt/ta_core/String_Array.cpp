@@ -16,6 +16,9 @@
 #include "String_Array.h"
 
 #include <QStringList>
+#include <int_Matrix>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(String_Array);
 SMARTREF_OF_CPP(String_Array)
@@ -64,4 +67,41 @@ void String_Array::FmDelimString(const String& str, const String& delim, bool re
 
 void String_Array::Split(const String& str, const String& delim) {
   FmDelimString(str, delim);
+}
+
+String String_Array::MostFrequent() {
+  if (size == 0) return _nilString;
+  
+  if (size == 1) return FastEl(0);
+  
+  String winning_string;  // most frequent string
+  int_Matrix    counts;
+  String        last_string;
+  int           index = -1;
+  
+  Sort();
+  counts.SetGeom(1, this->size); // can't be bigger than the string array
+  for (int i = 0; i < size; ++i) {
+    if (!(FastEl(i) == last_string)) {
+      index++;
+      last_string = FastEl(i);
+    }
+    counts[index]++;
+ }
+  
+  int max = counts.Max().toInt(); // highest count (not position)
+  int sum = 0;
+  for (int i = 0; i < counts.size; ++i) {
+    if (counts[i] == 0) {
+      break;
+    }
+    else if (counts[i] == max) { // this is our guy
+      winning_string = FastEl(sum);  // most frequent string
+      break;
+    }
+    else { // keep summing
+      sum += counts[i];
+    }
+  }
+  return winning_string;
 }

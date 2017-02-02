@@ -47,6 +47,9 @@ public:
 
   void          Split(const String& str, const String& delim = "");
   // Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.
+  String        MostFrequent();
+  // Returns the string most often found in the array - if tie the first is returned
+  
 
 
   TA_BASEFUNS(String_Array);
