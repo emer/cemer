@@ -534,16 +534,11 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   String extra_txt = cur_txt.from(cur_pos);
   
   // if we are in comment code don't parse
-  if (txt.startsWith("//") || (txt.length() == 1 && txt.startsWith('/'))) return NOT_SET;
+  if (txt.contains("//") || (txt.length() == 1 && txt.startsWith('/'))) return NOT_SET;
   
-//  if (txt.length() > 2) {
-//    if (txt.contains("//", -1)) return NOT_SET;
-//  }
-
   int       expr_start_pos = 0;
   int       prog_el_start_pos = -1;
   int       c = '\0';
-  int       c_next = '\0';
   int       c_previous = '\0';
   int       left_parens_cnt = 0;
   int       right_parens_cnt = 0;
@@ -557,83 +552,33 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     if(isdigit(c) || (c == '_')) {
       continue;
     }
+    
     if(c == ' ') {
-      if (i != txt.length()-1) {  // not the last char
-        c_next = txt[i+1];
-        if (c_next == '(' || c_next == ',' || c_next == ' ' || c_next == ')') {
-          continue;
-        }
-      }
-      if (i > 0) {
-        c_previous = txt[i-1];
-        if (c_previous == '(' || c_previous == ',' || c_previous == ' ' || c_previous == ')') {
-          continue;
-        }
-        else if (c_previous == '=') {
-          if (i > 1) {
-            c_previous = txt[i-2];
-            if (c_previous == '=' || c_previous == '!') {
-              continue;
-            }
-            else {
-              expr_start_pos = i+1;
-              continue;
-            }
-          }
-          else { // i equals 1
-            expr_start_pos = i+1;
-            break;
-          }
-        }
-        else {
-          expr_start_pos = i+1;
-          continue;
-        }
-      }
-      else {
-        expr_start_pos = i+1;
-        continue;
-      }
+      continue;
     }
     
     if(c == '=') {
-      if (i != txt.length()-1) {  // not the last char
-        c_next = txt[i+1];
-        if (c_next == '=') {
+      if (i > 2) {
+        c_previous = txt[i-1];
+        if (c_previous == '=' || c_previous == '!') {
+          expr_start_pos = i+1;
           delim_pos.Add(i);
+          delim_pos.Add(i-1);
           break;
         }
         else {
           expr_start_pos = i+1;
           delim_pos.Add(i);
-          continue;
+          break;
         }
       }
       else {
         expr_start_pos = i+1;
         delim_pos.Add(i);
-        continue;
-      }
-    }
-
-    if(c == '!') {
-      if (i != txt.length()-1) {  // not the last char
-        c_next = txt[i+1];
-        if (c_next == '=') {
-          delim_pos.Add(i);
-          break;
-        }
-        else {
-          expr_start_pos = i+1;
-          break;
-        }
-      }
-      else {
-        expr_start_pos = i+1;
         break;
       }
     }
-
+    
     if(isalpha(c)) {
       if (delim_pos.size > 0) {  // we only collect chars just before the preceeding position
         continue;
