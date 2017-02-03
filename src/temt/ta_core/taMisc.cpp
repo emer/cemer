@@ -1128,7 +1128,7 @@ bool taMisc::StringPrompt(String& str_val, const String& prompt,
 
 void taMisc::DisplayList(taBase_PtrList& base_list, String title) {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-  if(taMisc::dmem_proc > 0) return false;
+  if(taMisc::dmem_proc > 0) return;
 #endif
   iDialogList* dlg = iDialogList::New(0, taiMisc::main_window);
   dlg->setAttribute(Qt::WA_DeleteOnClose);
