@@ -377,7 +377,7 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
 
 void PFCUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::ClearDeepActs(u, net, thr_no);
-  u->thal_cnt = 0.0f;
+  u->thal_cnt = -1.0f; // -1.0 is no gating, 0.0 is beginning of gating, so need to initialize to -1
   u->misc_1 = 0.0f;
 }
 
