@@ -262,11 +262,19 @@ public:
   virtual void          BgRunKilled() { };
   // #IGNORE called when program is quitting prematurely and is not in an interactive mode -- override to save relevant state information
   
-  void         Dump_Load_post() override;
-  void         OpenViewers(); // open any yet unopen viewers
-  void         CloseLater() override;
-
-  void  UpdateAfterEdit() override;
+  void                  Dump_Load_post() override;
+  void                  OpenViewers(); // open any yet unopen viewers
+  void                  CloseLater() override;
+  
+  virtual void          ParamSetComparePeers(ParamSet* key_set, ParamSet* peer_set);
+  // creates a table with a column of values for key_paramam_set and column for peer_set - values for peer_set are shown if different from key_spec - if table with key_spec exists a call with a new peer adds a column to the table
+  virtual void          WriteParamMbrNamesToTable(DataTable* param_table, ParamSet* param_set);
+  // #IGNORE writes ParamSet member names to a param_set compare table
+  virtual void          WriteParamSavedValsToTable(DataTable* param_table, ParamSet* param_set);
+  // #IGNORE writes param member values to a param_set compare table
+  virtual void          AddPeerToParamCompareTable(DataTable* param_table, ParamSet* param_set);
+  // #IGNORE called to add a column for a single param_set to param compare data table -- this table is not automatically updated -- call again if you change params!
+  void                  UpdateAfterEdit() override;
   virtual void          InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
   virtual void          CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff
   TA_BASEFUNS(taProject);
@@ -275,9 +283,9 @@ protected:
   TimeUsed              auto_save_timer; // #IGNORE timer used for auto saving
 
   virtual void          InitLinks_post(); // #IGNORE called after all _impls (not called for undo_loading): assert things like default wizards in here
-  void  CutLinks() override; // don't override this -- use _impl instead
+  void                  CutLinks() override; // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
-  int          GetOwnerEditableState_impl(int mask) const override
+  int                   GetOwnerEditableState_impl(int mask) const override
     {return 0;} // the readonly stops here!
   void                  DoView();
 

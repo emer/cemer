@@ -30,6 +30,8 @@
 #include <iSvnFileListModel>
 #include <iDialogChoice>
 #include <ctime>
+#include <ParamSet>
+#include <ParamSetItem>
 
 taTypeDef_Of(taDataProc);
 SMARTREF_OF_CPP(taProject);
@@ -1310,5 +1312,87 @@ String taProject::ProgGlobalStatus() {
     rval = "No Program Initialized";
   }
   return rval;
+}
+
+void taProject::ParamSetComparePeers(ParamSet* key_set, ParamSet* peer_set) {
+  if (!key_set || !peer_set) return;
+  
+  DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("ParamData");
+
+  String table_name = "param_table";
+  DataTable* param_table = (DataTable*)dgp->FindLeafName_(table_name);
+  
+  if (!param_table) {  // create new table, add member column and key_spec column
+    param_table = dgp->NewEl(1, NULL);   // add a new data table to the group
+    param_table->SetName(table_name);
+    param_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
+    param_table->StructUpdate(true);
+
+    DataCol* dc_member = (DataCol*)param_table->FindMakeCol("Member", taBase::VT_STRING);
+    dc_member->SetColFlag(DataCol::READ_ONLY);
+    
+    DataCol* dc_spec = (DataCol*)param_table->FindMakeCol(key_set->name, taBase::VT_STRING);
+    dc_spec->SetColFlag(DataCol::READ_ONLY);
+    param_table->StructUpdate(false);
+    param_table->RefreshViews();
+  }
+  
+  WriteParamMbrNamesToTable(param_table, key_set);
+  WriteParamSavedValsToTable(param_table, key_set);
+
+  param_table->StructUpdate(true);
+  AddPeerToParamCompareTable(param_table, peer_set);
+  param_table->StructUpdate(false);
+  tabMisc::DelayedFunCall_gui(param_table, "BrowserSelectMe");
+}
+
+void taProject::WriteParamMbrNamesToTable(DataTable* param_table, ParamSet* param_set) {
+  if (!param_table || !param_set) return;
+
+  DataCol* mbr_name_column = param_table->data.FindName("Member");
+  if (!mbr_name_column) return;
+  
+  int index = param_table->rows; // we are appending
+  for (int m=0; m<param_set->mbrs.size; m++) {
+    EditMbrItem* item = param_set->mbrs.FastEl(m);
+    String name = item->GetName();
+    if (!mbr_name_column) break;
+    if (mbr_name_column->FindVal(name) == -1) {
+      param_table->AddBlankRow();
+      param_table->SetValAsVar(name, 0, index);
+      index++;
+    }
+  }
+}
+
+void taProject::WriteParamSavedValsToTable(DataTable* param_table, ParamSet* param_set) {
+  if (!param_table || !param_set) return;
+  
+  DataCol* mbr_name_column = param_table->data.FindName("Member");
+  if (!mbr_name_column) return;
+
+  DataCol* param_column = param_table->data.FindName(param_set->name);
+  if (!param_column) return;
+
+  for (int m=0; m<param_set->mbrs.size; m++) {
+    EditMbrItem* item = param_set->mbrs.FastEl(m);
+    int row = mbr_name_column->FindVal(item->GetName());
+    String value = item->param_set_value.saved_value;
+    param_table->SetValAsVar(value, param_column->GetName(), row);
+  }
+}
+
+void taProject::AddPeerToParamCompareTable(DataTable* param_table, ParamSet* peer_set) {
+  if (!param_table->FindColName(peer_set->name)) {
+    param_table->StructUpdate(true);
+    DataCol* dc = (DataCol*)param_table->FindMakeCol(peer_set->name, taBase::VT_STRING);
+    if (dc) {
+      dc->SetColFlag(DataCol::READ_ONLY);
+    }
+    param_table->StructUpdate(false);
+  }
+  // regardless update values
+  WriteParamMbrNamesToTable(param_table, peer_set);  // and any members not in first peer
+  WriteParamSavedValsToTable(param_table, peer_set); // not child, is peer
 }
 

@@ -18,6 +18,7 @@
 #include <taMisc>
 #include <EditMbrItem>
 #include <ParamSetItem>
+#include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(ParamSet);
 
@@ -66,3 +67,9 @@ bool ParamSet::ActiveEqualsSaved(String member_name) {
   }
   return rval;
 }
+
+void ParamSet::ComparePeers(ParamSet* param_set) {
+  taProject* project = GetMyProj();
+  project->ParamSetComparePeers(this, param_set);
+}
+

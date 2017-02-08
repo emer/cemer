@@ -44,6 +44,9 @@ public:
   virtual void          CopySavedToActive_item(int itm_idx);
   // #IGNORE copy the previously-saved values to be active (live) values on the objects
 
+  virtual void          ComparePeers(ParamSet* param_set);
+  // #DYN12N calls taProject::ParamSetComparePeers to populate a table that compares this param_sets member values with its peers values - this data does not update - call again if you edit any of the param_sets!
+
   
 protected:
   void                  UpdateAfterEdit_impl() override;
