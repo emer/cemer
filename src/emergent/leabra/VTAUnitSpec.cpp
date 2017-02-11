@@ -219,8 +219,12 @@ bool VTAUnitSpec::GetRecvLayers_P
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
     if(cs->IsMarkerCon()) {
-      if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_p = fmlay;
-      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
+      if(us->InheritsFrom(TA_PPTgUnitSpec)) {
+        pptg_lay_p = fmlay;
+      }
+      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) {
+        lhb_lay = fmlay;
+      }
       else if(fmlay->name.contains("PV")) {
         pospv_lay = fmlay;
       }
@@ -261,9 +265,15 @@ bool VTAUnitSpec::GetRecvLayers_N
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
     if(cs->IsMarkerCon()) {
-      if(us->InheritsFrom(TA_PPTgUnitSpec)) { pptg_lay_n = fmlay; }
-      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) { lhb_lay = fmlay; }
-      else if(fmlay->name.contains("PV")) { negpv_lay = fmlay; }
+      if(us->InheritsFrom(TA_PPTgUnitSpec)) {
+        pptg_lay_n = fmlay;
+      }
+      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) {
+        lhb_lay = fmlay;
+      }
+      else if(fmlay->name.contains("PV")) {
+        negpv_lay = fmlay;
+      }
       else if(us->InheritsFrom(TA_MSNUnitSpec)) {
         MSNUnitSpec* msus = (MSNUnitSpec*)us;
         if(msus->valence == MSNUnitSpec::AVERSIVE && msus->dar == MSNUnitSpec::D2R) {
