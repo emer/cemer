@@ -119,8 +119,8 @@ public:
   virtual bool    UpdtIsUsed();
   // update the is_used flag 
 
-  String          GetStateDecoKey() const override { return (is_used ? "" : "NotEnabled"); }
- 
+  String          GetStateDecoKey() const override;
+  
   void            SetMember(const String& member, const String& value) override;
   // #DYN1 . This also automatically sets the spec unique flag to 'On' so that this value is unique to this spec, and updates all the children of this spec so they can inherit this change (or not depending on their unique flags).
 

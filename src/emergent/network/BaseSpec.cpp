@@ -391,6 +391,10 @@ bool BaseSpec::UpdtIsUsed() {
   return is_used;
 }
 
+String BaseSpec::GetStateDecoKey() const {
+  return (is_used ? "" : "NotEnabled");
+}
+
 void BaseSpec::SetMember(const String& member, const String& value) {
   String mbr_eff = member;
   if(mbr_eff.contains('.'))

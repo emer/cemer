@@ -1622,6 +1622,12 @@ bool taRootBase::Startup_InitViewColors() {
 
   taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
                                          false, _nilString, true, "grey86");
+  taMisc::view_colors->FindMakeViewColor("SpecNotUsed", "State: This  spec is not used",
+                                         false, _nilString, true, "grey86");
+  taMisc::view_colors->FindMakeViewColor("ChildSpecIsUsed", "State: This spec not used by a child is used",
+                                         false, _nilString, true, "grey86");
+  taMisc::view_colors->FindMakeViewColor("ChildSpecNotUsed", "State: This spec is used by a child is not used",
+                                         false, _nilString, true, "grey86");
   taMisc::view_colors->FindMakeViewColor("NotCalled", "State: function has no callers",
                                          false, _nilString, true, "grey86");
   taMisc::view_colors->FindMakeViewColor("debug_mode", "State: all programs in group are in debug_mode",
@@ -1701,7 +1707,11 @@ bool taRootBase::Startup_InitViewBackgrounds() {
       "State: program element is set for an enabled breakpoint", Qt::SolidPattern);
   taMisc::view_backgrounds->FindMakeViewBackground("PrintDebugDisabled",
       "State: program element is set for a disabled breakpoint", Qt::Dense5Pattern);
-  
+  taMisc::view_backgrounds->FindMakeViewBackground("ChildSpecNotUsed",
+      "State: parent spec is used but not one of child specs", Qt::Dense5Pattern);
+  taMisc::view_backgrounds->FindMakeViewBackground("ChildSpecIsUsed",
+      "State: parent spec is not used but at least one child spec is used", Qt::Dense5Pattern);
+
  return true;
 }
 
