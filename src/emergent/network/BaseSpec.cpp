@@ -32,6 +32,7 @@ bool BaseSpec::nw_itm_def_arg = false;
 void BaseSpec::Initialize() {
   min_obj_type = &TA_taBase;
   is_used = false;
+  used_status = UNUSED;
   is_new = false;
 }
 
@@ -334,18 +335,21 @@ void BaseSpec::SpecUnSet(taBase* obj) {
   SigEmitUpdated();
 }
 
-String BaseSpec::WhereUsed(bool child) {
+void BaseSpec::WhereUsed() {
+  taBase_PtrList spec__user_list;
+  WhereUsed_impl(spec__user_list, false);
+
+  String title = "Who uses " + name + " or one of its children?";
+  taMisc::DisplayList(spec__user_list, title);
+}
+
+void BaseSpec::WhereUsed_impl(taBase_PtrList& spec__user_list, bool child) {
   UpdtIsUsed();
   SigEmitUpdated();
-  String rval;
   taSigLink* dl = sig_link();
-  if(!dl) return rval;
+  if(!dl) return;
   taSmartRef* sref;
   taSigLinkItr i;
-   
-  taBase_PtrList spec_list;
-  String_Array mbr_list;
-  
   
   FOR_DLC_EL_OF_TYPE(taSmartRef, sref, dl, i) {
     taBase* sown = sref->GetOwner();
@@ -355,17 +359,14 @@ String BaseSpec::WhereUsed(bool child) {
       continue;
     taBase* ownown = sown->GetOwner();
     if(ownown) {
-      spec_list.Add(ownown);
+      spec__user_list.Add(ownown);
+      is_used = true;
     }
   }
   
   for (int i=0; i<children.size; i++) {
-    rval += children.SafeEl(i)->WhereUsed(true);
+    children.SafeEl(i)->WhereUsed_impl(spec__user_list, true);
   }
-  
-  String title = "Who uses " + name + " or one of its children?";
-  taMisc::DisplayList(spec_list, title);
-  return rval;
 }
 
 bool BaseSpec::UpdtIsUsed() {
@@ -385,14 +386,63 @@ bool BaseSpec::UpdtIsUsed() {
     taBase* ownown = sown->GetOwner();
     if(ownown) {
       is_used = true;
-      return is_used;
     }
   }
+  
+  for (int i=0; i<children.size; i++) {
+    children.SafeEl(i)->UpdtIsUsed();
+  }
+
+  UpdateUsedStatus();
+  SigEmitUpdated();
+  
   return is_used;
 }
 
+void BaseSpec::UpdateUsedStatus() {
+  if (is_used && children.size == 0) {
+    used_status = USED;
+  }
+  else if (!is_used && children.size == 0) {
+    used_status = UNUSED;
+  }
+  
+  for (int i=0; i<children.size; i++) {
+    bool child_used = children.SafeEl(i)->UpdtIsUsed();
+    if (is_used && !child_used) {
+      used_status = PARENT_USED;
+      return;
+    }
+    if (!is_used && child_used) {
+      used_status = CHILD_USED;
+      return;
+    }
+    children.SafeEl(i)->UpdateUsedStatus();
+  }
+  
+  if (is_used) {
+    used_status = USED;
+    return;
+  }
+  else {
+    used_status = UNUSED;
+    return;
+  }
+}
+
 String BaseSpec::GetStateDecoKey() const {
-  return (is_used ? "" : "NotEnabled");
+  if (used_status == UNUSED) {
+    return "SpecNotUsed";
+  }
+  else if (used_status == PARENT_USED) {
+    return "ChildSpecNotUsed";
+  }
+  else if (used_status == CHILD_USED) {
+    return "ChildSpecIsUsed";
+  }
+  else {
+    return "";
+  }
 }
 
 void BaseSpec::SetMember(const String& member, const String& value) {
@@ -402,7 +452,6 @@ void BaseSpec::SetMember(const String& member, const String& value) {
   SetUnique(mbr_eff, true);
   inherited::SetMember(member, value);
 }
-
 
 taBase* BaseSpec::ChooseNew(taBase* origin) {
   BaseSpec* newSpec = NULL;

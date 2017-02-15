@@ -49,9 +49,17 @@ friend class BaseSpec_Group;
 friend class SpecMemberBase;
 INHERITED(taNBase)
 public:
+  enum UsedStatus {
+    UNUSED,         // this spec has no children and is unused OR this spec and none of its children are used by any objects
+    USED,           // this spec has no children and is used OR this spec and all of its children are used
+    PARENT_USED,    // this spec is used but one or more of its child specs are unused
+    CHILD_USED,     // this spec is not used but one or more of its child specs are used
+  };
   static bool       nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
-  bool              is_used;    // #READ_ONLY #HIDDEN #NO_INHERIT is this spec used anywhere?
+  bool              is_used;      // #READ_ONLY #HIDDEN #NO_INHERIT is THIS spec used - ignore usage of children
+  UsedStatus        used_status;  // #HIDDEN #NO_INHERIT for gui use only to indicate to user the usage of this spec and child specs
+  
   bool              is_new;     // #READ_ONLY #HIDDEN #NO_INHERIT #NO_SAVE is this spec newly created?  if so, prompt user to apply it to some objects..
   String            desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
   String_Array      unique; // #HIDDEN string list of unique members
@@ -113,11 +121,14 @@ public:
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
-  virtual String  WhereUsed(bool child = false);
-  // #BUTTON #ARGC_0 returns a list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
-
+  virtual void    WhereUsed();
+  // #BUTTON #ARGC_0 display a clickable list of objects that use this spec
+  virtual void    WhereUsed_impl(taBase_PtrList& spec_list, bool child = false);
+  // fill the list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
   virtual bool    UpdtIsUsed();
-  // update the is_used flag 
+  // update the is_used flag
+  virtual void    UpdateUsedStatus();
+  // update used_status variable 
 
   String          GetStateDecoKey() const override;
   
