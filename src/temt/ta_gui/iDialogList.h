@@ -37,8 +37,9 @@ INHERITED(QDialog)
 
 public:
   static iDialogList*   New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
-  void                  SetList(taBase_PtrList& base_list, String title = "");
-  // a list of items to display in a non-modal dialog - shows item and path for each object in table
+  void                  SetList(taBase_PtrList& base_list, String title,
+                                const String_Array* strings, const String& info_title);
+  // a list of items to display in a non-modal dialog - shows item and path for each object in table - optional extra info string
 
 protected:
   iDialogList(iMainWindowViewer* par_window_);

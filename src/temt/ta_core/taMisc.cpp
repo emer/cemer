@@ -1126,7 +1126,7 @@ bool taMisc::StringPrompt(String& str_val, const String& prompt,
   return rval;
 }
 
-void taMisc::DisplayList(taBase_PtrList& base_list, String title) {
+void taMisc::DisplayList(taBase_PtrList& base_list, const String& title, const String_Array* addl_info, const String& info_title) {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return;
 #endif
@@ -1135,7 +1135,7 @@ void taMisc::DisplayList(taBase_PtrList& base_list, String title) {
   dlg->show();
   dlg->raise();
   dlg->activateWindow();
-  dlg->SetList(base_list, title);
+  dlg->SetList(base_list, title, addl_info, info_title);
 }
 
 #endif // NO_TA_BASE

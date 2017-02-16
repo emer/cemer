@@ -63,7 +63,8 @@ void iDialogList::Constr() {
           this, SLOT(results_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
 }
 
-void iDialogList::SetList(taBase_PtrList& base_list, String title) {
+void iDialogList::SetList(taBase_PtrList& base_list, String title,
+                          const String_Array* info_strings, const String& info_title) {
   item_list.Duplicate(base_list);
   
   setWindowTitle(title);
@@ -71,10 +72,15 @@ void iDialogList::SetList(taBase_PtrList& base_list, String title) {
   // display "item" and path - plus any additional members requested
   src = "<table border=1 cellpadding=10>";
   src += "<tr><th>";
-  src += "item";
+  src += "Item";
   src += "</th><th>";
-  src += "path";
+  src += "Path";
   src += "</th>";
+  if (info_strings && info_strings->size > 0) {  // optional info column
+    src += "</th><th>";
+    src += info_title;
+    src += "</th>";
+  }
   for (int i=0; i<item_list.size; i++) {
     src += "<tr><td>";
     taBase* base = item_list.SafeEl(i);
@@ -87,7 +93,12 @@ void iDialogList::SetList(taBase_PtrList& base_list, String title) {
       // path
       src += base->GetPathNames();
       src += "</td>";
-      src += "</tr>";
+      if (info_strings && info_strings->size > 0) {
+        src += "</td><td>";
+        src += info_strings->SafeEl(i);
+        src += "</td>";
+      }
+     src += "</tr>";
     }
   }
   src += "</table>";
@@ -101,5 +112,3 @@ void iDialogList::results_setSourceRequest(iTextBrowser* src, const QUrl& url, b
   //NOTE: we never let results call its own setSource because we don't want
   // link clicking to cause us to change our source page
 }
-
-

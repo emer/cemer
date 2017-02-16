@@ -336,14 +336,16 @@ void BaseSpec::SpecUnSet(taBase* obj) {
 }
 
 void BaseSpec::WhereUsed() {
-  taBase_PtrList spec__user_list;
-  WhereUsed_impl(spec__user_list, false);
+  taBase_PtrList spec_user_list;
+  String_Array spec_name_list;
+  WhereUsed_impl(spec_user_list, spec_name_list, false); // false - not a child spec
 
   String title = "Who uses " + name + " or one of its children?";
-  taMisc::DisplayList(spec__user_list, title);
+  String_Array addl_info;
+  taMisc::DisplayList(spec_user_list, title, &spec_name_list, "Spec Name");
 }
 
-void BaseSpec::WhereUsed_impl(taBase_PtrList& spec__user_list, bool child) {
+void BaseSpec::WhereUsed_impl(taBase_PtrList& spec_user_list, String_Array& spec_name_list, bool child) {
   UpdtIsUsed();
   SigEmitUpdated();
   taSigLink* dl = sig_link();
@@ -359,13 +361,14 @@ void BaseSpec::WhereUsed_impl(taBase_PtrList& spec__user_list, bool child) {
       continue;
     taBase* ownown = sown->GetOwner();
     if(ownown) {
-      spec__user_list.Add(ownown);
+      spec_user_list.Add(ownown);
+      spec_name_list.Add(GetName());
       is_used = true;
     }
   }
   
   for (int i=0; i<children.size; i++) {
-    children.SafeEl(i)->WhereUsed_impl(spec__user_list, true);
+    children.SafeEl(i)->WhereUsed_impl(spec_user_list, spec_name_list, true);
   }
 }
 

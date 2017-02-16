@@ -123,7 +123,7 @@ public:
 
   virtual void    WhereUsed();
   // #BUTTON #ARGC_0 display a clickable list of objects that use this spec
-  virtual void    WhereUsed_impl(taBase_PtrList& spec_list, bool child = false);
+  virtual void    WhereUsed_impl(taBase_PtrList& spec_user_list, String_Array& spec_name_list, bool child);
   // fill the list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
   virtual bool    UpdtIsUsed();
   // update the is_used flag
