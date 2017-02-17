@@ -89,6 +89,7 @@ set(virt_env_HEADS_NOMAKETA_NOMOC
   BandpassFilter.h
   Throat.h
   FIRFilter.h
+  ImageNetUtils.h
 )
 
 # 3D headers -- do diff things depending on QT3D vs COIN
@@ -223,6 +224,7 @@ set(virt_env_SRCS
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
+  ImageNetUtils.cpp
 )
 
 set(virt_env_QRC
