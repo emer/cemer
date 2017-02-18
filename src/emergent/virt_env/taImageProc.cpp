@@ -22,6 +22,7 @@
 #include <float_Array>
 #include <Random>
 #include <int_Matrix>
+#include <ImageNetUtils>
 
 #include <taMisc>
 
@@ -1827,4 +1828,18 @@ bool taImageProc::OverlayImages(float_Matrix& img1, const float_Matrix& img2) {
     }
   }
   return true;
+}
+
+void taImageProc::GetBoundingBox(const taString &filename, taVector2i &top_left, taVector2i &bottom_right, taImageProc::ImageSource source) {
+  if (source == IMAGENET) {
+    taVector2i top_left;
+    taVector2i bottom_right;
+    
+    ImageNetUtils net_utils;
+    net_utils.GetBoundingBox(filename, top_left, bottom_right);
+    taMisc::DebugInfo(top_left.x);
+    taMisc::DebugInfo(top_left.y);
+    taMisc::DebugInfo(bottom_right.x);
+    taMisc::DebugInfo(bottom_right.y);
+  }
 }

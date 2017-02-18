@@ -20,14 +20,20 @@
 #include "network_def.h"
 
 // member includes:
+#include <taString>
+#include <taVector2i>
+#include <taVector3i>
+
 #include <QXmlStreamReader>
 
 // declare all other types mentioned but not required to include:
 
 class E_API ImageNetUtils {
   // methods to parse ImageNet annotation files that accompany ImageNet images
-  
+
 public:
+  virtual void          GetSize(const String& filename, taVector3i& width_height_depth);
+  virtual void          GetBoundingBox(const String& filename, taVector2i& top_left, taVector2i& bottom_right);
 
 };
 

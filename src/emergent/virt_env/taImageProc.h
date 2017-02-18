@@ -27,7 +27,6 @@ class float_Matrix; //
 class int_Matrix; // 
 class taVector2i; //
 
-
 eTypeDef_Of(taImageProc);
 
 class E_API taImageProc : public taNBase {
@@ -39,6 +38,10 @@ public:
     CLIP,			// just hard clip edges, nothing fancy
     BORDER,			// render/preserve a 1 pixel border around everything
     WRAP,			// wrap the image around to the other side: no edges!
+  };
+  
+  enum ImageSource {  // different sources will have different formats and different xml element names
+    IMAGENET,
   };
   
   static bool   CheckValidRGBMatrix(const float_Matrix& img_data);
@@ -182,6 +185,9 @@ public:
   static bool	OverlayImages(float_Matrix& img1, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
 
+  static void GetBoundingBox(const String& filename, taVector2i &top_left, taVector2i &bottom_right, ImageSource source);
+  // #CAT_ImageProc get the bounding box coordinates from the file
+  
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
 private:
