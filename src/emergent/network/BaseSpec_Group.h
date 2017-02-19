@@ -73,6 +73,10 @@ public:
   void	Initialize();
   void 	Destroy()		{ }
   TA_BASEFUNS_NOCOPY(BaseSpec_Group);
+  
+protected:
+  void*         El_CopyN_(void* to, void* fm) override; // wrap in an update bracket
+
 };
 
 TA_SMART_PTRS(E_API, BaseSpec_Group)

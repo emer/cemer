@@ -204,3 +204,13 @@ void BaseSpec_Group::RestorePanels() {
   }
 }
 
+void* BaseSpec_Group::El_CopyN_(void* to_, void* fm) {
+  taBase* to = (taBase*)to_;
+  to->StructUpdate(true);
+  void* rval = El_Copy_(to_, fm);
+//  El_SetName_(to_, El_GetName_(fm));  // don't do for specs - keep the "_copy" added in the copy step
+  to->StructUpdate(false);
+  return rval;
+}
+
+
