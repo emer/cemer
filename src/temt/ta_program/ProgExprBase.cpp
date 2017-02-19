@@ -1903,7 +1903,7 @@ void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* sc
     if (!prog_var->HasVarFlag(ProgVar::FUN_ARG)) {
       ProgEl_List* var_owner_list = (ProgEl_List*)prog_var->GetOwner(&TA_ProgEl_List);
       if (!var_owner_list) continue;
-      if (var_owner_list->GetName() != prog_el_owner_list_name) continue;
+//      if (var_owner_list->GetName() != prog_el_owner_list_name) continue;
     }
     
     taBase* parent = prog_var->GetParent();
