@@ -733,7 +733,8 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, const float_Matri
 }
 
 bool taImageProc::CropImage_float(float_Matrix& crop_img, const float_Matrix& orig_img,
-                                  int crop_width, int crop_height, EdgeMode edge, bool random_origin) {
+                                  int crop_width, int crop_height, EdgeMode edge, bool random_origin,
+                                  int origin_x, int origin_y) {
   int nclrs = GetImageMatrixNColors(orig_img);
   if(nclrs == 0) return false;
 
@@ -750,10 +751,16 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, const float_Matrix& or
     img_off.x = Random::IntZeroN(img_size.x - crop_size.x);
     img_off.y = Random::IntZeroN(img_size.y - crop_size.y);
   }
-  else { // crop from center
-    img_ctr = img_size / 2;
-    crop_ctr = crop_size / 2;
-    img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
+  else {
+    if (origin_x == -1 && origin_y == -1) { // crop from center
+      img_ctr = img_size / 2;
+      crop_ctr = crop_size / 2;
+      img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
+    }
+    else {  // bounding box specified
+      img_off.x = origin_x;
+      img_off.y = origin_y;
+    }
   }
   
   if(nclrs > 1) { // rgb
@@ -1832,14 +1839,7 @@ bool taImageProc::OverlayImages(float_Matrix& img1, const float_Matrix& img2) {
 
 void taImageProc::GetBoundingBox(const taString &filename, taVector2i &top_left, taVector2i &bottom_right, taImageProc::ImageSource source) {
   if (source == IMAGENET) {
-    taVector2i top_left;
-    taVector2i bottom_right;
-    
     ImageNetUtils net_utils;
     net_utils.GetBoundingBox(filename, top_left, bottom_right);
-    taMisc::DebugInfo(top_left.x);
-    taMisc::DebugInfo(top_left.y);
-    taMisc::DebugInfo(bottom_right.x);
-    taMisc::DebugInfo(bottom_right.y);
   }
 }

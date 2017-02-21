@@ -110,7 +110,8 @@ public:
 				 EdgeMode edge=BORDER);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform change the size of the image by normalized scaling factor (either rgb=3 dim or grey=2 dim)
   static bool   CropImage_float(float_Matrix& crop_img, const float_Matrix& orig_img, 
-				int crop_width, int crop_height, EdgeMode edge=BORDER, bool random_origin = false);
+                                int crop_width, int crop_height, EdgeMode edge=BORDER,
+                                bool random_origin = false, int origin_x = -1, int origin_y = -1);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform crop image to given size (-1 = use original image size), centered if random_origin == false; border color of original image is used to fill in missing values
 
   static bool	TransformImage_float(float_Matrix& xformed_img, const float_Matrix& orig_img,
