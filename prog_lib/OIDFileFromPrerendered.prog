@@ -1,27 +1,13 @@
-// ta_Dump File v3.0 -- code v8.0.4.0 rev10285
+// ta_Dump File v3.0 -- code v8.0.5.0 rev10496
 Program .projects[0].programs[2] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
  };
 
- ProgObjList @.objs = [3] {
+ ProgObjList @.objs = [5] {
   DataTable @[0] { 
-   DataTableCols @.data = [3] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    bool_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+   DataTableCols @.data = [1] {
+    String_Data @[0] { };
    };
 
    DataOpList @.last_sort_spec.ops = [0] {
@@ -31,27 +17,10 @@ Program .projects[0].programs[2] {
    };
   };
   DataTable @[1] { 
-   DataTableCols @.data = [4] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[3] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+   DataTableCols @.data = [3] {
+    String_Data @[0] { };
+    String_Data @[1] { };
+    bool_Data @[2] { };
    };
 
    DataOpList @.last_sort_spec.ops = [0] {
@@ -61,12 +30,39 @@ Program .projects[0].programs[2] {
    };
   };
   DataTable @[2] { 
-   DataTableCols @.data = [1] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+   DataTableCols @.data = [4] {
+    String_Data @[0] { };
+    String_Data @[1] { };
+    String_Data @[2] { };
+    String_Data @[3] { };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[3] { 
+   DataTableCols @.data = [4] {
+    String_Data @[0] { };
+    String_Data @[1] { };
+    String_Data @[2] { };
+    String_Data @[3] { };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[4] { 
+   DataTableCols @.data = [4] {
+    String_Data @[0] { };
+    String_Data @[1] { };
+    String_Data @[2] { };
+    String_Data @[3] { };
    };
 
    DataOpList @.last_sort_spec.ops = [0] {
@@ -83,7 +79,7 @@ Program .projects[0].programs[2] {
  ProgVar_List @.args = [0] {
  };
 
- ProgVar_List @.vars = [8] {
+ ProgVar_List @.vars = [16] {
   ProgVar @[0] { };
   ProgVar @[1] { };
   ProgVar @[2] { };
@@ -92,6 +88,14 @@ Program .projects[0].programs[2] {
   ProgVar @[5] { };
   ProgVar @[6] { };
   ProgVar @[7] { };
+  ProgVar @[8] { };
+  ProgVar @[9] { };
+  ProgVar @[10] { };
+  ProgVar @[11] { };
+  ProgVar @[12] { };
+  ProgVar @[13] { };
+  ProgVar @[14] { };
+  ProgVar @[15] { };
  };
 
  Function_List @.functions = [3] {
@@ -152,12 +156,11 @@ Program .projects[0].programs[2] {
      };
     };
     ForLoop @[3] { 
-     ProgEl_List @.loop_code = [5] {
+     ProgEl_List @.loop_code = [4] {
       AssignExpr @[0] { };
       AssignExpr @[1] { };
-      PrintVar @[2] { };
-      AssignExpr @[3] { };
-      If @[4] { 
+      AssignExpr @[2] { };
+      If @[3] { 
        ProgEl_List @.true_code = [14] {
 	Comment @[0] { };
 	AssignExpr @[1] { };
@@ -242,12 +245,15 @@ Program .projects[0].programs[2] {
    };
   };
   Function @[2] { 
-   ProgVar_List @.args = [0] {
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
    };
 
-   ProgEl_List @.fun_code = [4] {
+   ProgEl_List @.fun_code = [5] {
     LocalVars @[0] { 
-     ProgVar_List @.local_vars = [0] {
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
      };
     };
     If @[1] { 
@@ -273,12 +279,81 @@ Program .projects[0].programs[2] {
       AssignExpr @[0] { };
      };
     };
-    MethodCall @[3] { 
-     ProgArg_List @.meth_args = [4] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-      ProgArg @[3] { };
+    If @[3] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
+     };
+    };
+    Else @[4] { 
+     ProgEl_List @.true_code = [10] {
+      Comment @[0] { };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+      MethodCall @[2] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+      DataLoop @[3] { 
+       ProgEl_List @.loop_code = [2] {
+	DataVarRead @[0] { };
+	If @[1] { 
+	 ProgEl_List @.true_code = [3] {
+	  AddNewDataRow @[0] { };
+	  DataVarWrite @[1] { };
+	  AssignExpr @[2] { };
+	 };
+	};
+       };
+      };
+      Comment @[4] { };
+      AssignExpr @[5] { };
+      ForLoop @[6] { 
+       ProgEl_List @.loop_code = [1] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      Comment @[7] { };
+      DataLoop @[8] { 
+       ProgEl_List @.loop_code = [3] {
+	DataVarRead @[0] { };
+	DataSelectRowsProg @[1] { 
+	 DataOpList @.select_spec.ops = [1] {
+	  DataSelectEl @[0] { };
+	 };
+	};
+	MethodCall @[2] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+      MethodCall @[9] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
      };
     };
    };
@@ -302,17 +377,20 @@ Program .projects[0].programs[2] {
    };
   };
   FunctionCall @[3] { 
-   ProgArg_List @.fun_args = [0] {
+   ProgArg_List @.fun_args = [1] {
+    ProgArg @[0] { };
    };
   };
  };
 };
 Program .projects[0].programs[2] {
  UserDataItem_List @*(.user_data_) {
+  user_data_=NULL;
   name="UserDataItem_List_201";
   el_typ=UserData_DocLink;
   el_def=0;
   UserData_DocLink @[0] {
+   user_data_=NULL;
    name="DocLink";
    doc=.projects[0].programs[2].doc$$;
   };
@@ -322,6 +400,7 @@ Program .projects[0].programs[2] {
  tags=;
  desc="Takes a directory of image files with names having the form category_001_00004.png where 001, 002, etc is the exemplar number and 00001, 00002, etc. is the render of the exemplar";
  version {
+  user_data_=NULL;
   major=0;
   minor=0;
   step=0;
@@ -330,268 +409,36 @@ Program .projects[0].programs[2] {
  email="john.rohrlich@colorado.edu";
  flags=NO_STOP_STEP;
  stop_step_cond {
+  user_data_=NULL;
   expr=;
  };
  objs {
+  user_data_=NULL;
   name="objs";
   el_typ=DataTable;
   el_def=0;
   DataTable @[0] {
-   name="ImageFiles";
-   desc=;
+   user_data_=NULL;
+   name="Categories";
+   desc="All categories";
    data {
+    user_data_=NULL;
     name="data";
     el_typ=String_Data;
     el_def=0;
     String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.2595326;
-       val_type_fixed=0;
-      };
-     };
-     name="FileName";
-     col_flags=SAVE_DATA|AUTO_WIDTH;
-     is_matrix=0;
-     cell_geom{      };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=16;
-     matrix_col_width=10;
-    };
-    String_Data @[1] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.4391144;
-       val_type_fixed=0;
-      };
-     };
-     name="FilePath";
-     col_flags=SAVE_DATA;
-     is_matrix=0;
-     cell_geom{      };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=75;
-     matrix_col_width=10;
-    };
-    bool_Data @[2] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_145";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.1488315;
-       val_type_fixed=0;
-      };
-     };
-     name="Include";
-     col_flags=SAVE_DATA|AUTO_WIDTH;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=7;
-     matrix_col_width=10;
-    };
-   };
-   data_flags=AUTO_CALC;
-   auto_load=NO_AUTO_LOAD;
-   auto_load_file=;
-   row_height=1;
-   max_col_width=75;
-   keygen 4 0=0;
-   last_sort_spec {
-    name="last_sort_spec";
-    ops {
-     name="ops";
-     el_typ=DataSortEl;
-     el_def=0;
-    };
-   };
-   row_with_hilite=-1;
-   control_panel_cells {
-    name="control_panel_cells";
-    el_typ=DataTableCell;
-    el_def=0;
-   };
-  };
-  DataTable @[1] {
-   name="ImageData";
-   desc="oia data for use in simulation";
-   data {
-    name="data";
-    el_typ=String_Data;
-    el_def=0;
-    String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.2042553;
-       val_type_fixed=0;
-      };
-     };
+     user_data_=NULL;
      name="category";
      desc="basic level category";
      col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
+      user_data_=NULL;
       expr=;
      };
      dim_names {
-      name="dim_names";
-     [0]      };
-     width=16;
-     matrix_col_width=10;
-    };
-    String_Data @[1] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.2042553;
-       val_type_fixed=0;
-      };
-     };
-     name="individual";
-     desc="label for single individual unique object";
-     col_flags=SAVE_DATA|AUTO_WIDTH;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr="filename.before(\"_\",-1).after(\"_\",-1)";
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=16;
-     matrix_col_width=10;
-    };
-    String_Data @[2] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.2042553;
-       val_type_fixed=0;
-      };
-     };
-     name="ctrlflags";
-     desc="special control flag information to determine how this image is processed: TEST means only use for testing";
-     col_flags=SAVE_DATA|AUTO_WIDTH;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr="\"\"";
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=16;
-     matrix_col_width=10;
-    };
-    String_Data @[3] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.3310638;
-       val_type_fixed=0;
-      };
-     };
-     name="filename";
-     col_flags=SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=70;
-     matrix_col_width=10;
-    };
-   };
-   data_flags=AUTO_CALC;
-   auto_load=NO_AUTO_LOAD;
-   auto_load_file=;
-   row_height=1;
-   max_col_width=70;
-   keygen 4 0=0;
-   last_sort_spec {
-    name="last_sort_spec";
-    ops {
-     name="ops";
-     el_typ=DataSortEl;
-     el_def=0;
-    };
-   };
-   row_with_hilite=-1;
-   control_panel_cells {
-    name="control_panel_cells";
-    el_typ=DataTableCell;
-    el_def=0;
-   };
-  };
-  DataTable @[2] {
-   name="Categories";
-   desc="All categories";
-   data {
-    name="data";
-    el_typ=String_Data;
-    el_def=0;
-    String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.2042553;
-       val_type_fixed=0;
-      };
-     };
-     name="Category";
-     desc="basic level category";
-     col_flags=SAVE_DATA|AUTO_WIDTH;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
+      user_data_=NULL;
       name="dim_names";
      [0]      };
      width=16;
@@ -605,8 +452,10 @@ Program .projects[0].programs[2] {
    max_col_width=50;
    keygen 4 0=0;
    last_sort_spec {
-    name="DataSortSpec_70";
+    user_data_=NULL;
+    name="last_sort_spec";
     ops {
+     user_data_=NULL;
      name="ops";
      el_typ=DataSortEl;
      el_def=0;
@@ -614,57 +463,433 @@ Program .projects[0].programs[2] {
    };
    row_with_hilite=-1;
    control_panel_cells {
-    name="DataTableCell_List_68";
+    user_data_=NULL;
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[1] {
+   user_data_=NULL;
+   name="ImageFiles";
+   desc=;
+   data {
+    user_data_=NULL;
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     user_data_=NULL;
+     name="FileName";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[1] {
+     user_data_=NULL;
+     name="FilePath";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=75;
+     matrix_col_width=10;
+    };
+    bool_Data @[2] {
+     user_data_=NULL;
+     name="Include";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=7;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=75;
+   keygen 4 0=0;
+   last_sort_spec {
+    user_data_=NULL;
+    name="last_sort_spec";
+    ops {
+     user_data_=NULL;
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+   control_panel_cells {
+    user_data_=NULL;
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[2] {
+   user_data_=NULL;
+   name="ImageData";
+   desc="oia data for use in simulation";
+   data {
+    user_data_=NULL;
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     user_data_=NULL;
+     name="category";
+     desc="basic level category";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[1] {
+     user_data_=NULL;
+     name="individual";
+     desc="label for single individual unique object";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr="filename.before(\"_\",-1).after(\"_\",-1)";
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[2] {
+     user_data_=NULL;
+     name="ctrlflags";
+     desc="special control flag information to determine how this image is processed: TEST means only use for testing";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr="\"\"";
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[3] {
+     user_data_=NULL;
+     name="filename";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=70;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=70;
+   keygen 4 0=0;
+   last_sort_spec {
+    user_data_=NULL;
+    name="last_sort_spec";
+    ops {
+     user_data_=NULL;
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+   control_panel_cells {
+    user_data_=NULL;
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[3] {
+   user_data_=NULL;
+   name="ImageDataSubset";
+   desc="oia data for use in simulation";
+   data {
+    user_data_=NULL;
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     user_data_=NULL;
+     name="category";
+     desc="basic level category";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[1] {
+     user_data_=NULL;
+     name="individual";
+     desc="label for single individual unique object";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr="filename.before(\"_\",-1).after(\"_\",-1)";
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[2] {
+     user_data_=NULL;
+     name="ctrlflags";
+     desc="special control flag information to determine how this image is processed: TEST means only use for testing";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr="\"\"";
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[3] {
+     user_data_=NULL;
+     name="filename";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=50;
+   keygen 4 0=0;
+   last_sort_spec {
+    user_data_=NULL;
+    name="last_sort_spec";
+    ops {
+     user_data_=NULL;
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+   control_panel_cells {
+    user_data_=NULL;
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[4] {
+   user_data_=NULL;
+   name="ImageDataTemp";
+   desc="oia data for use in simulation";
+   data {
+    user_data_=NULL;
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     user_data_=NULL;
+     name="category";
+     desc="basic level category";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[1] {
+     user_data_=NULL;
+     name="individual";
+     desc="label for single individual unique object";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr="filename.before(\"_\",-1).after(\"_\",-1)";
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[2] {
+     user_data_=NULL;
+     name="ctrlflags";
+     desc="special control flag information to determine how this image is processed: TEST means only use for testing";
+     col_flags=SAVE_DATA|AUTO_WIDTH;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr="\"\"";
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=16;
+     matrix_col_width=10;
+    };
+    String_Data @[3] {
+     user_data_=NULL;
+     name="filename";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      user_data_=NULL;
+      expr=;
+     };
+     dim_names {
+      user_data_=NULL;
+      name="dim_names";
+     [0]      };
+     width=70;
+     matrix_col_width=10;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   row_height=1;
+   max_col_width=50;
+   keygen 4 0=0;
+   last_sort_spec {
+    user_data_=NULL;
+    name="last_sort_spec";
+    ops {
+     user_data_=NULL;
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
+   control_panel_cells {
+    user_data_=NULL;
+    name="control_panel_cells";
     el_typ=DataTableCell;
     el_def=0;
    };
   };
  };
  types {
+  user_data_=NULL;
   name="types";
   el_typ=DynEnumType;
   el_def=0;
  };
  args {
+  user_data_=NULL;
   name="args";
   el_typ=ProgVar;
   el_def=0;
  };
  vars {
+  user_data_=NULL;
   name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
+   user_data_=NULL;
    name="image_files";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].programs[2].objs[0]$$;
-   objs_ptr=1;
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[1] {
-   name="image_dir";
-   var_type=T_String;
-   string_val=;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc="note - don't add '/' to end of path";
-   init_from=NULL;
-  };
-  ProgVar @[2] {
-   name="file_filter";
-   var_type=T_String;
-   string_val="png";
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[3] {
-   name="image_data";
    var_type=T_Object;
    object_type=DataTable;
    object_val=.projects[0].programs[2].objs[1]$$;
@@ -674,26 +899,29 @@ Program .projects[0].programs[2] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[4] {
-   name="filepath";
+  ProgVar @[1] {
+   user_data_=NULL;
+   name="image_dir";
    var_type=T_String;
-   string_val="/Users/rohrlich/Desktop/GenOID_Test/autogun_001_00010.png";
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   string_val="/Users/rohrlich/ccn_images/CU3D_100_plus_renders";
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc="use column name";
+   desc="note - don't add '/' to end of path";
    init_from=NULL;
   };
-  ProgVar @[5] {
-   name="filename";
+  ProgVar @[2] {
+   user_data_=NULL;
+   name="file_filter";
    var_type=T_String;
-   string_val="autogun_001_00010.png";
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   string_val="png";
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc="use column name";
+   desc=;
    init_from=NULL;
   };
-  ProgVar @[6] {
-   name="categories";
+  ProgVar @[3] {
+   user_data_=NULL;
+   name="image_data";
    var_type=T_Object;
    object_type=DataTable;
    object_val=.projects[0].programs[2].objs[2]$$;
@@ -703,21 +931,143 @@ Program .projects[0].programs[2] {
    desc=;
    init_from=NULL;
   };
+  ProgVar @[4] {
+   user_data_=NULL;
+   name="image_data_subset";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   user_data_=NULL;
+   name="image_data_temp";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[4]$$;
+   objs_ptr=1;
+   flags=SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   user_data_=NULL;
+   name="filepath";
+   var_type=T_String;
+   string_val="/Users/rohrlich/ccn_images/CU3D_100_plus_renders/yacht_015_00020.png";
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="use column name";
+   init_from=NULL;
+  };
   ProgVar @[7] {
+   user_data_=NULL;
+   name="filename";
+   var_type=T_String;
+   string_val="yacht_015_00020.png";
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="use column name";
+   init_from=NULL;
+  };
+  ProgVar @[8] {
+   user_data_=NULL;
+   name="categories";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[9] {
+   user_data_=NULL;
    name="save_to_dir";
    var_type=T_String;
-   string_val=;
+   string_val="/Users/rohrlich";
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="where to save the images - default is the image directory";
    init_from=NULL;
   };
+  ProgVar @[10] {
+   user_data_=NULL;
+   name="data_subset_percent";
+   var_type=T_Int;
+   int_val=5;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[11] {
+   user_data_=NULL;
+   name="category";
+   var_type=T_String;
+   string_val="submarine";
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="current object category";
+   init_from=NULL;
+  };
+  ProgVar @[12] {
+   user_data_=NULL;
+   name="data_loop_index";
+   var_type=T_Int;
+   int_val=5;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[13] {
+   user_data_=NULL;
+   name="data_loop_order";
+   var_type=T_HardEnum;
+   int_val=0;
+   hard_enum_type=DataLoop::Order;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[14] {
+   user_data_=NULL;
+   name="i";
+   var_type=T_Int;
+   int_val=-1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[15] {
+   user_data_=NULL;
+   name="image_data_temp_15";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$.projects[0].programs[2].objs[4]$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
  };
  functions {
+  user_data_=NULL;
   name="functions";
   el_typ=Function;
   el_def=0;
   Function @[0] {
+   user_data_=NULL;
    desc=;
    flags=0;
    code_string=;
@@ -725,25 +1075,30 @@ Program .projects[0].programs[2] {
    return_type=T_Int;
    object_type=taOBase;
    args {
+    user_data_=NULL;
     name="ProgVar_List_1";
     el_typ=ProgVar;
     el_def=0;
    };
    fun_code {
+    user_data_=NULL;
     name="ProgEl_List_229";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
+     user_data_=NULL;
      desc=;
      flags=0;
      code_string=;
      local_vars {
+      user_data_=NULL;
       name="local_vars";
       el_typ=ProgVar;
       el_def=0;
      };
     };
     MethodCall @[1] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="image_files.RemoveAllRows()";
@@ -751,6 +1106,7 @@ Program .projects[0].programs[2] {
      obj=.projects[0].programs[2].vars[0]$$;
      method=DataTable::RemoveAllRows;
      meth_args {
+      user_data_=NULL;
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
@@ -759,6 +1115,7 @@ Program .projects[0].programs[2] {
      meth_desc=" remove all of the rows of data, but keep the column structure";
     };
     DataGenCall @[2] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="taDataGen::GetDirFiles(Objects, obj_file_path, obj_file_filter, true, , , )";
@@ -766,10 +1123,12 @@ Program .projects[0].programs[2] {
      object_type=taDataGen;
      method=taDataGen::GetDirFiles;
      meth_args {
+      user_data_=NULL;
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
+       user_data_=NULL;
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="dest";
@@ -777,10 +1136,12 @@ Program .projects[0].programs[2] {
        def_val=;
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr="image_files";
        };
       };
       ProgArg @[1] {
+       user_data_=NULL;
        arg_type=const_taString_ref;
        type="taString&";
        name="dir_path";
@@ -788,10 +1149,12 @@ Program .projects[0].programs[2] {
        def_val=;
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr="image_dir";
        };
       };
       ProgArg @[2] {
+       user_data_=NULL;
        arg_type=const_taString_ref;
        type="taString&";
        name="filter";
@@ -799,10 +1162,12 @@ Program .projects[0].programs[2] {
        def_val="\"\"";
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr="file_filter";
        };
       };
       ProgArg @[3] {
+       user_data_=NULL;
        arg_type=bool;
        type="bool";
        name="recursive";
@@ -810,10 +1175,12 @@ Program .projects[0].programs[2] {
        def_val="false";
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr="true";
        };
       };
       ProgArg @[4] {
+       user_data_=NULL;
        arg_type=const_taString_ref;
        type="taString&";
        name="fname_col_nm";
@@ -821,10 +1188,12 @@ Program .projects[0].programs[2] {
        def_val="FileName";
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr=;
        };
       };
       ProgArg @[5] {
+       user_data_=NULL;
        arg_type=const_taString_ref;
        type="taString&";
        name="path_col_nm";
@@ -832,10 +1201,12 @@ Program .projects[0].programs[2] {
        def_val="FilePath";
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr=;
        };
       };
       ProgArg @[6] {
+       user_data_=NULL;
        arg_type=bool;
        type="bool";
        name="reset_first";
@@ -843,12 +1214,14 @@ Program .projects[0].programs[2] {
        def_val="true";
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr=;
        };
       };
      };
     };
     MethodCall @[3] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Objects->InitVals(true, \"Include\")";
@@ -856,10 +1229,12 @@ Program .projects[0].programs[2] {
      obj=$.projects[0].programs[2].vars[0]$;
      method=DataTable::InitVals;
      meth_args {
+      user_data_=NULL;
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
+       user_data_=NULL;
        arg_type=const_Variant_ref;
        type="Variant&";
        name="init_val";
@@ -867,10 +1242,12 @@ Program .projects[0].programs[2] {
        def_val=;
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr="true";
        };
       };
       ProgArg @[1] {
+       user_data_=NULL;
        arg_type=const_Variant_ref;
        type="Variant&";
        name="col";
@@ -878,6 +1255,7 @@ Program .projects[0].programs[2] {
        def_val=;
        prev_expr=;
        expr {
+	user_data_=NULL;
 	expr="\"Include\"";
        };
       };
@@ -888,6 +1266,7 @@ Program .projects[0].programs[2] {
    };
   };
   Function @[1] {
+   user_data_=NULL;
    desc=;
    flags=0;
    code_string=;
@@ -895,23 +1274,28 @@ Program .projects[0].programs[2] {
    return_type=T_Int;
    object_type=taOBase;
    args {
+    user_data_=NULL;
     name="ProgVar_List_1";
     el_typ=ProgVar;
     el_def=0;
    };
    fun_code {
+    user_data_=NULL;
     name="ProgEl_List_230";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
+     user_data_=NULL;
      desc=;
      flags=0;
      code_string=;
      local_vars {
+      user_data_=NULL;
       name="local_vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @[0] {
+       user_data_=NULL;
        name="category";
        var_type=T_String;
        string_val="airplane";
@@ -921,6 +1305,7 @@ Program .projects[0].programs[2] {
        init_from=NULL;
       };
       ProgVar @[1] {
+       user_data_=NULL;
        name="last_category";
        var_type=T_String;
        string_val=;
@@ -930,6 +1315,7 @@ Program .projects[0].programs[2] {
        init_from=NULL;
       };
       ProgVar @[2] {
+       user_data_=NULL;
        name="individual";
        var_type=T_String;
        string_val="010";
@@ -939,6 +1325,7 @@ Program .projects[0].programs[2] {
        init_from=NULL;
       };
       ProgVar @[3] {
+       user_data_=NULL;
        name="cur_filename";
        var_type=T_String;
        string_val="blade_016_00006.png";
@@ -948,6 +1335,7 @@ Program .projects[0].programs[2] {
        init_from=NULL;
       };
       ProgVar @[4] {
+       user_data_=NULL;
        name="ctrl_flags";
        var_type=T_String;
        string_val=;
@@ -957,6 +1345,7 @@ Program .projects[0].programs[2] {
        init_from=NULL;
       };
       ProgVar @[5] {
+       user_data_=NULL;
        name="include";
        var_type=T_Bool;
        bool_val=0;
@@ -966,6 +1355,7 @@ Program .projects[0].programs[2] {
        init_from=NULL;
       };
       ProgVar @[6] {
+       user_data_=NULL;
        name="row";
        var_type=T_Int;
        int_val=0;
@@ -977,6 +1367,7 @@ Program .projects[0].programs[2] {
      };
     };
     MethodCall @[1] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="image_data.RemoveAllRows()";
@@ -984,6 +1375,7 @@ Program .projects[0].programs[2] {
      obj=.projects[0].programs[2].vars[3]$$;
      method=DataTable::RemoveAllRows;
      meth_args {
+      user_data_=NULL;
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
@@ -992,13 +1384,15 @@ Program .projects[0].programs[2] {
      meth_desc=" remove all of the rows of data, but keep the column structure";
     };
     MethodCall @[2] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="categories->RemoveAllRows()";
      result_var=NULL;
-     obj=.projects[0].programs[2].vars[6]$$;
+     obj=.projects[0].programs[2].vars[8]$$;
      method=DataTable::RemoveAllRows;
      meth_args {
+      user_data_=NULL;
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
@@ -1007,106 +1401,114 @@ Program .projects[0].programs[2] {
      meth_desc=" remove all of the rows of data, but keep the column structure";
     };
     ForLoop @[3] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="for (i=0; i<image_data.rows; i++)";
      loop_code {
+      user_data_=NULL;
       name="loop_code";
       el_typ=ProgCode;
       el_def=0;
       AssignExpr @[0] {
+       user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="filepath = image_data[\"FilePath\"][i]";
-       result_var=.projects[0].programs[2].vars[4]$$;
+       result_var=.projects[0].programs[2].vars[6]$$;
        expr {
+	user_data_=NULL;
 	expr="image_files[\"FilePath\"][row]";
        };
       };
       AssignExpr @[1] {
+       user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="filename = image_data[\"FileName\"][row]";
-       result_var=.projects[0].programs[2].vars[5]$$;
+       result_var=.projects[0].programs[2].vars[7]$$;
        expr {
+	user_data_=NULL;
 	expr="image_files[\"FileName\"][row]";
        };
       };
-      PrintVar @[2] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="printvar filename";
-       message=;
-       print_var=$.projects[0].programs[2].vars[5]$;
-       print_var2=NULL;
-       print_var3=NULL;
-       print_var4=NULL;
-       print_var5=NULL;
-       print_var6=NULL;
-       debug=0;
-      };
-      AssignExpr @[3] {
+      AssignExpr @[2] {
+       user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="filename = image_data[\"FileName\"][row]";
        result_var=.projects[0].programs[2].functions[1].fun_code[0].local_vars[5]$$;
        expr {
+	user_data_=NULL;
 	expr="image_files[\"Include\"][row]";
        };
       };
-      If @[4] {
+      If @[3] {
+       user_data_=NULL;
        desc="all files included by default but there is a boolean column called \"Include\" so you can create an OID file of a subset";
        flags=CAN_REVERT_TO_CODE;
        code_string="if (!Include)";
        cond {
+	user_data_=NULL;
 	expr="include";
        };
        true_code {
+	user_data_=NULL;
 	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	Comment @[0] {
+	 user_data_=NULL;
 	 desc="the next several lines of code can be modified to work with your filename convention";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="//";
 	};
 	AssignExpr @[1] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="category = FileName.before(\"_\")";
 	 result_var=.projects[0].programs[2].functions[1].fun_code[0].local_vars[0]$$;
 	 expr {
+	  user_data_=NULL;
 	  expr="filename.before(\"_\")";
 	 };
 	};
 	If @[2] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="if (category != last_category)";
 	 cond {
+	  user_data_=NULL;
 	  expr="category != last_category";
 	 };
 	 true_code {
+	  user_data_=NULL;
 	  name="true_code";
 	  el_typ=ProgCode;
 	  el_def=0;
 	  AssignExpr @[0] {
+	   user_data_=NULL;
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="last_category = category";
 	   result_var=.projects[0].programs[2].functions[1].fun_code[0].local_vars[1]$$;
 	   expr {
+	    user_data_=NULL;
 	    expr="category";
 	   };
 	  };
 	  MethodCall @[1] {
+	   user_data_=NULL;
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="categories->AddBlankRow()";
 	   result_var=NULL;
-	   obj=$.projects[0].programs[2].vars[6]$;
+	   obj=$.projects[0].programs[2].vars[8]$;
 	   method=DataTable::AddBlankRow;
 	   meth_args {
+	    user_data_=NULL;
 	    name="meth_args";
 	    el_typ=ProgArg;
 	    el_def=0;
@@ -1115,17 +1517,20 @@ Program .projects[0].programs[2] {
 	   meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
 	  };
 	  MethodCall @[2] {
+	   user_data_=NULL;
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="categories->setval()";
 	   result_var=NULL;
-	   obj=$.projects[0].programs[2].vars[6]$;
+	   obj=$.projects[0].programs[2].vars[8]$;
 	   method=DataTable::SetVal;
 	   meth_args {
+	    user_data_=NULL;
 	    name="meth_args";
 	    el_typ=ProgArg;
 	    el_def=0;
 	    ProgArg @[0] {
+	     user_data_=NULL;
 	     arg_type=const_Variant_ref;
 	     type="Variant&";
 	     name="val";
@@ -1133,10 +1538,12 @@ Program .projects[0].programs[2] {
 	     def_val=;
 	     prev_expr=;
 	     expr {
+	      user_data_=NULL;
 	      expr="category";
 	     };
 	    };
 	    ProgArg @[1] {
+	     user_data_=NULL;
 	     arg_type=const_Variant_ref;
 	     type="Variant&";
 	     name="col";
@@ -1144,10 +1551,12 @@ Program .projects[0].programs[2] {
 	     def_val=;
 	     prev_expr=;
 	     expr {
-	      expr="\"Category\"";
+	      user_data_=NULL;
+	      expr="\"category\"";
 	     };
 	    };
 	    ProgArg @[2] {
+	     user_data_=NULL;
 	     arg_type=int;
 	     type="int";
 	     name="row";
@@ -1155,6 +1564,7 @@ Program .projects[0].programs[2] {
 	     def_val=;
 	     prev_expr=;
 	     expr {
+	      user_data_=NULL;
 	      expr="-1";
 	     };
 	    };
@@ -1165,17 +1575,20 @@ Program .projects[0].programs[2] {
 	 };
 	};
 	MethodCall @[3] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="individual = FileName.before(\"_\",-1).after(\"_\")";
 	 result_var=.projects[0].programs[2].functions[1].fun_code[0].local_vars[2]$$;
-	 obj=$.projects[0].programs[2].vars[5]$;
+	 obj=$.projects[0].programs[2].vars[7]$;
 	 method=taString::before;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_taString_ref;
 	   type="taString&";
 	   name="x";
@@ -1183,10 +1596,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"_\"";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="startpos";
@@ -1194,6 +1609,7 @@ Program .projects[0].programs[2] {
 	   def_val="0";
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="-1";
 	   };
 	  };
@@ -1202,6 +1618,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" get substring before (not including) target string. startpos = starting position (- = search from end forward)";
 	};
 	MethodCall @[4] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="individual = individual.after(\"_\")";
@@ -1209,10 +1626,12 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].functions[1].fun_code[0].local_vars[2]$;
 	 method=taString::after;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_taString_ref;
 	   type="taString&";
 	   name="x";
@@ -1220,10 +1639,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"_\"";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="startpos";
@@ -1231,6 +1652,7 @@ Program .projects[0].programs[2] {
 	   def_val="0";
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr=;
 	   };
 	  };
@@ -1239,26 +1661,31 @@ Program .projects[0].programs[2] {
 	 meth_desc=" get substring after (not including) target string. startpos = starting position (- = search from end forward)";
 	};
 	AssignExpr @[5] {
+	 user_data_=NULL;
 	 desc="must have globally-unique individual in case of later reconfiguration etc";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="individual = taMisc::LeadingZeros(obj_index,5)";
 	 result_var=$.projects[0].programs[2].functions[1].fun_code[0].local_vars[2]$;
 	 expr {
+	  user_data_=NULL;
 	  expr="taMisc::LeadingZeros(individual,5)";
 	 };
 	};
 	MethodCall @[6] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="temp = FilePath.after(obj_file_path)";
 	 result_var=.projects[0].programs[2].functions[1].fun_code[0].local_vars[3]$$;
-	 obj=$.projects[0].programs[2].vars[4]$;
+	 obj=$.projects[0].programs[2].vars[6]$;
 	 method=taString::after;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_taString_ref;
 	   type="taString&";
 	   name="x";
@@ -1266,10 +1693,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="image_dir";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="startpos";
@@ -1277,6 +1706,7 @@ Program .projects[0].programs[2] {
 	   def_val="0";
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr=;
 	   };
 	  };
@@ -1285,6 +1715,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" get substring after (not including) target string. startpos = starting position (- = search from end forward)";
 	};
 	MethodCall @[7] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="filename = filename->after('/')";
@@ -1292,10 +1723,12 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].functions[1].fun_code[0].local_vars[3]$;
 	 method=taString::after;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_taString_ref;
 	   type="taString&";
 	   name="x";
@@ -1303,10 +1736,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"/\"";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="startpos";
@@ -1314,6 +1749,7 @@ Program .projects[0].programs[2] {
 	   def_val="0";
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="0";
 	   };
 	  };
@@ -1322,6 +1758,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" get substring after (not including) target string. startpos = starting position (- = search from end forward)";
 	};
 	MethodCall @[8] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="image_data->AddBlankRow()";
@@ -1329,6 +1766,7 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].vars[3]$;
 	 method=DataTable::AddBlankRow;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
@@ -1337,6 +1775,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
 	};
 	MethodCall @[9] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="image_data->SetVal()";
@@ -1344,10 +1783,12 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].vars[3]$;
 	 method=DataTable::SetVal;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="val";
@@ -1355,10 +1796,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="category";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="col";
@@ -1366,10 +1809,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"category\"";
 	   };
 	  };
 	  ProgArg @[2] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="row";
@@ -1377,6 +1822,7 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="row";
 	   };
 	  };
@@ -1385,6 +1831,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
 	};
 	MethodCall @[10] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="image_data->SetVal()";
@@ -1392,10 +1839,12 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].vars[3]$;
 	 method=DataTable::SetVal;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="val";
@@ -1403,10 +1852,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="cur_filename";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="col";
@@ -1414,10 +1865,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"filename\"";
 	   };
 	  };
 	  ProgArg @[2] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="row";
@@ -1425,6 +1878,7 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="row";
 	   };
 	  };
@@ -1433,6 +1887,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
 	};
 	MethodCall @[11] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="image_data->SetVal()";
@@ -1440,10 +1895,12 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].vars[3]$;
 	 method=DataTable::SetVal;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="val";
@@ -1451,10 +1908,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="individual";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="col";
@@ -1462,10 +1921,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"individual\"";
 	   };
 	  };
 	  ProgArg @[2] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="row";
@@ -1473,6 +1934,7 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="row";
 	   };
 	  };
@@ -1481,6 +1943,7 @@ Program .projects[0].programs[2] {
 	 meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
 	};
 	MethodCall @[12] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="image_data->SetVal()";
@@ -1488,10 +1951,12 @@ Program .projects[0].programs[2] {
 	 obj=$.projects[0].programs[2].vars[3]$;
 	 method=DataTable::SetVal;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="val";
@@ -1499,10 +1964,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="ctrl_flags";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=const_Variant_ref;
 	   type="Variant&";
 	   name="col";
@@ -1510,10 +1977,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="\"ctrlflags\"";
 	   };
 	  };
 	  ProgArg @[2] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="row";
@@ -1521,6 +1990,7 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="row";
 	   };
 	  };
@@ -1529,10 +1999,12 @@ Program .projects[0].programs[2] {
 	 meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
 	};
 	StopStepPoint @[13] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Stop_Step Point";
 	 cond {
+	  user_data_=NULL;
 	  expr=;
 	 };
 	};
@@ -1540,18 +2012,22 @@ Program .projects[0].programs[2] {
       };
      };
      init {
+      user_data_=NULL;
       expr="row=0";
      };
      test {
+      user_data_=NULL;
       expr="row<image_files.rows";
      };
      iter {
+      user_data_=NULL;
       expr="row++";
      };
     };
    };
   };
   Function @[2] {
+   user_data_=NULL;
    desc=;
    flags=0;
    code_string=;
@@ -1559,43 +2035,82 @@ Program .projects[0].programs[2] {
    return_type=T_Int;
    object_type=taOBase;
    args {
+    user_data_=NULL;
     name="ProgVar_List_1";
     el_typ=ProgVar;
     el_def=0;
+    ProgVar @[0] {
+     user_data_=NULL;
+     name="percent";
+     var_type=T_Int;
+     int_val=0;
+     flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    fun_code {
+    user_data_=NULL;
     name="ProgEl_List_236";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
+     user_data_=NULL;
      desc=;
      flags=0;
      code_string=;
      local_vars {
+      user_data_=NULL;
       name="local_vars";
       el_typ=ProgVar;
       el_def=0;
+      ProgVar @[0] {
+       user_data_=NULL;
+       name="old_category";
+       var_type=T_String;
+       string_val=;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       user_data_=NULL;
+       name="modulus";
+       var_type=T_Int;
+       int_val=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
      };
     };
     If @[1] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (save_to_dir.nonempty())";
      cond {
+      user_data_=NULL;
       expr="save_to_dir.nonempty()";
      };
      true_code {
+      user_data_=NULL;
       name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
+       user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="save_to_dir = save_to_dir.trimr()";
-       result_var=.projects[0].programs[2].vars[7]$$;
-       obj=$.projects[0].programs[2].vars[7]$;
+       result_var=.projects[0].programs[2].vars[9]$$;
+       obj=$.projects[0].programs[2].vars[9]$;
        method=taString::trimr;
        meth_args {
+	user_data_=NULL;
 	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
@@ -1604,28 +2119,34 @@ Program .projects[0].programs[2] {
        meth_desc=" trims trailing spaces (NOTE: modifies this string, and also returns the resulting string value)";
       };
       If @[1] {
+       user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (save_to_dir.lastchar() == '/')";
        cond {
+	user_data_=NULL;
 	expr="save_to_dir.lastchar() == '/'";
        };
        true_code {
+	user_data_=NULL;
 	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
+	 user_data_=NULL;
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="save_to_dir = save_to_dir.before('/', -1)";
-	 result_var=$.projects[0].programs[2].vars[7]$;
-	 obj=$.projects[0].programs[2].vars[7]$;
+	 result_var=$.projects[0].programs[2].vars[9]$;
+	 obj=$.projects[0].programs[2].vars[9]$;
 	 method=taString::before;
 	 meth_args {
+	  user_data_=NULL;
 	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
+	   user_data_=NULL;
 	   arg_type=const_taString_ref;
 	   type="taString&";
 	   name="x";
@@ -1633,10 +2154,12 @@ Program .projects[0].programs[2] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="'/'";
 	   };
 	  };
 	  ProgArg @[1] {
+	   user_data_=NULL;
 	   arg_type=int;
 	   type="int";
 	   name="startpos";
@@ -1644,6 +2167,7 @@ Program .projects[0].programs[2] {
 	   def_val="0";
 	   prev_expr=;
 	   expr {
+	    user_data_=NULL;
 	    expr="-1";
 	   };
 	  };
@@ -1656,148 +2180,593 @@ Program .projects[0].programs[2] {
      };
     };
     Else @[2] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="else(save_to_dir.empty())";
      cond {
+      user_data_=NULL;
       expr=;
      };
      true_code {
+      user_data_=NULL;
       name="true_code";
       el_typ=ProgCode;
       el_def=0;
       AssignExpr @[0] {
+       user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="save_to_dir = \".\"";
-       result_var=$.projects[0].programs[2].vars[7]$;
+       result_var=$.projects[0].programs[2].vars[9]$;
        expr {
+	user_data_=NULL;
 	expr="image_dir";
        };
       };
      };
     };
-    MethodCall @[3] {
+    If @[3] {
+     user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="ObjectImageData->SaveData(save_image_path + \"/ObjectImageData.dat\", DataTable::TAB, true, true)";
-     result_var=NULL;
-     obj=$.projects[0].programs[2].vars[3]$;
-     method=DataTable::SaveData;
-     meth_args {
-      name="meth_args";
-      el_typ=ProgArg;
+     code_string="if (percent == 100)";
+     cond {
+      user_data_=NULL;
+      expr="percent == 100 || percent == 0";
+     };
+     true_code {
+      user_data_=NULL;
+      name="true_code";
+      el_typ=ProgCode;
       el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="taString&";
-       name="fname";
-       required=0;
-       def_val="\"\"";
-       prev_expr=;
-       expr {
-	expr="save_to_dir + \"/\" + \"OID_data_\" + String(categories.rows) + \".dat\"";
+      MethodCall @[0] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ObjectImageData->SaveData(save_image_path + \"/ObjectImageData.dat\", DataTable::TAB, true, true)";
+       result_var=NULL;
+       obj=$.projects[0].programs[2].vars[3]$;
+       method=DataTable::SaveData;
+       meth_args {
+	user_data_=NULL;
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 user_data_=NULL;
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="save_to_dir + \"/\" + \"OID_data_\" + String(categories.rows) + \".dat\"";
+	 };
+	};
+	ProgArg @[1] {
+	 user_data_=NULL;
+	 arg_type=DataTable::Delimiters;
+	 type="DataTable::Delimiters";
+	 name="delim";
+	 required=0;
+	 def_val="DataTable::TAB";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="DataTable::TAB";
+	 };
+	};
+	ProgArg @[2] {
+	 user_data_=NULL;
+	 arg_type=bool;
+	 type="bool";
+	 name="quote_str";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="true";
+	 };
+	};
+	ProgArg @[3] {
+	 user_data_=NULL;
+	 arg_type=bool;
+	 type="bool";
+	 name="save_headers";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="true";
+	 };
+	};
        };
-      };
-      ProgArg @[1] {
-       arg_type=DataTable::Delimiters;
-       type="DataTable::Delimiters";
-       name="delim";
-       required=0;
-       def_val="DataTable::TAB";
-       prev_expr=;
-       expr {
-	expr="DataTable::TAB";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=bool;
-       type="bool";
-       name="quote_str";
-       required=0;
-       def_val="true";
-       prev_expr=;
-       expr {
-	expr="true";
-       };
-      };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="save_headers";
-       required=0;
-       def_val="true";
-       prev_expr=;
-       expr {
-	expr="true";
-       };
+       meth_sig="void SaveData(taString& fname, DataTable::Delimiters delim = TAB, bool quote_str = true, bool save_headers = true)";
+       meth_desc=" saves data, one line per rec, with delimiter between columns, and optionally quoting strings; if save_headers then the _H: header line is saved and data lines have _D:, else they are bare";
       };
      };
-     meth_sig="void SaveData(taString& fname, DataTable::Delimiters delim = TAB, bool quote_str = true, bool save_headers = true)";
-     meth_desc=" saves data, one line per rec, with delimiter between columns, and optionally quoting strings; if save_headers then the _H: header line is saved and data lines have _D:, else they are bare";
+    };
+    Else @[4] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="else";
+     cond {
+      user_data_=NULL;
+      expr=;
+     };
+     true_code {
+      user_data_=NULL;
+      name="else_code";
+      el_typ=ProgCode;
+      el_def=0;
+      Comment @[0] {
+       user_data_=NULL;
+       desc="get a list of the categories and select some";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="// get a list of the categories and select some";
+      };
+      MethodCall @[1] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ObjectImageData->ResetData()";
+       result_var=NULL;
+       obj=.projects[0].programs[2].vars[4]$$;
+       method=DataTable::ResetData;
+       meth_args {
+	user_data_=NULL;
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void ResetData()";
+       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+      };
+      MethodCall @[2] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Categories.RemoveAllRows()";
+       result_var=NULL;
+       obj=$.projects[0].programs[2].vars[8]$;
+       method=DataTable::RemoveAllRows;
+       meth_args {
+	user_data_=NULL;
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void RemoveAllRows()";
+       meth_desc=" remove all of the rows of data, but keep the column structure";
+      };
+      DataLoop @[3] {
+       user_data_=NULL;
+       desc=;
+       flags=0;
+       code_string=;
+       loop_code {
+	user_data_=NULL;
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	DataVarRead @[0] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=0;
+	 code_string=;
+	 data_var=$.projects[0].programs[2].vars[3]$;
+	 row_spec=CUR_ROW;
+	 row_var=NULL;
+	 var=.projects[0].programs[2].vars[11]$$;
+	 column_name="category";
+	};
+	If @[1] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (category != old_category)";
+	 cond {
+	  user_data_=NULL;
+	  expr="category != old_category";
+	 };
+	 true_code {
+	  user_data_=NULL;
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AddNewDataRow @[0] {
+	   user_data_=NULL;
+	   desc=;
+	   flags=0;
+	   code_string=;
+	   data_var=$.projects[0].programs[2].vars[8]$;
+	  };
+	  DataVarWrite @[1] {
+	   user_data_=NULL;
+	   desc=;
+	   flags=0;
+	   code_string=;
+	   data_var=$.projects[0].programs[2].vars[8]$;
+	   row_spec=CUR_ROW;
+	   row_var=NULL;
+	   var=$.projects[0].programs[2].vars[11]$;
+	   column_name="category";
+	  };
+	  AssignExpr @[2] {
+	   user_data_=NULL;
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="old_category = category";
+	   result_var=.projects[0].programs[2].functions[2].fun_code[0].local_vars[0]$$;
+	   expr {
+	    user_data_=NULL;
+	    expr="category";
+	   };
+	  };
+	 };
+	};
+       };
+       data_var=$.projects[0].programs[2].vars[3]$;
+       index_var=.projects[0].programs[2].vars[12]$$;
+       order_var=.projects[0].programs[2].vars[13]$$;
+       order=SEQUENTIAL;
+      };
+      Comment @[4] {
+       user_data_=NULL;
+       desc="turn percent into modulus";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="// turn percent into modulus";
+      };
+      AssignExpr @[5] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="modulus = n_categories / percent";
+       result_var=.projects[0].programs[2].functions[2].fun_code[0].local_vars[1]$$;
+       expr {
+	user_data_=NULL;
+	expr="categories.rows / (.01 * percent * categories.rows)";
+       };
+      };
+      ForLoop @[6] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (i=0; i<Categories.size; i++)";
+       loop_code {
+	user_data_=NULL;
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (i % modulus != 0";
+	 cond {
+	  user_data_=NULL;
+	  expr="(i % modulus) != 0";
+	 };
+	 true_code {
+	  user_data_=NULL;
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   user_data_=NULL;
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="Categories.RemoveRows()";
+	   result_var=NULL;
+	   obj=$.projects[0].programs[2].vars[8]$;
+	   method=DataTable::RemoveRows;
+	   meth_args {
+	    user_data_=NULL;
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     user_data_=NULL;
+	     arg_type=int;
+	     type="int";
+	     name="st_row";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      user_data_=NULL;
+	      expr="i";
+	     };
+	    };
+	    ProgArg @[1] {
+	     user_data_=NULL;
+	     arg_type=int;
+	     type="int";
+	     name="n_rows";
+	     required=0;
+	     def_val="1";
+	     prev_expr=;
+	     expr {
+	      user_data_=NULL;
+	      expr="1";
+	     };
+	    };
+	   };
+	   meth_sig="bool RemoveRows(int st_row, int n_rows = 1)";
+	   meth_desc=" Remove n rows of data, starting at st_row. st_row = -1 means last row, and n_rows = -1 means remove from starting row to end, n_rows = -2 means remove upto and including the next to last row, etc.";
+	  };
+	 };
+	};
+       };
+       init {
+	user_data_=NULL;
+	expr="i=categories.rows -1";
+       };
+       test {
+	user_data_=NULL;
+	expr="i >= 0";
+       };
+       iter {
+	user_data_=NULL;
+	expr="i--";
+       };
+      };
+      Comment @[7] {
+       user_data_=NULL;
+       desc="now copy rows with matching category";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="// now copy rows with matching category";
+      };
+      DataLoop @[8] {
+       user_data_=NULL;
+       desc=;
+       flags=0;
+       code_string=;
+       loop_code {
+	user_data_=NULL;
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	DataVarRead @[0] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=0;
+	 code_string=;
+	 data_var=$.projects[0].programs[2].vars[8]$;
+	 row_spec=CUR_ROW;
+	 row_var=NULL;
+	 var=$.projects[0].programs[2].vars[11]$;
+	 column_name="category";
+	};
+	DataSelectRowsProg @[1] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=0;
+	 code_string=;
+	 src_data_var=$.projects[0].programs[2].vars[3]$;
+	 dest_data_var=.projects[0].programs[2].vars[5]$$;
+	 select_spec {
+	  user_data_=NULL;
+	  name="select_spec";
+	  ops {
+	   user_data_=NULL;
+	   name="ops";
+	   el_typ=DataSelectEl;
+	   el_def=0;
+	   DataSelectEl @[0] {
+	    user_data_=NULL;
+	    col_name="category";
+	    name="category_EQUAL_category_0";
+	    on=1;
+	    rel=EQUAL;
+	    use_var=1;
+	    cmp 9 0="submarine";
+	    var=$.projects[0].programs[2].vars[11]$;
+	    enable_var=NULL;
+	   };
+	  };
+	  comb_op=OR;
+	 };
+	};
+	MethodCall @[2] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="object_image_data_subset.AppendRows()";
+	 result_var=NULL;
+	 obj=$.projects[0].programs[2].vars[4]$;
+	 method=DataTable::AppendRows;
+	 meth_args {
+	  user_data_=NULL;
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   user_data_=NULL;
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="append_from";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    user_data_=NULL;
+	    expr="image_data_temp";
+	   };
+	  };
+	 };
+	 meth_sig="bool AppendRows(DataTable* append_from)";
+	 meth_desc=" append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)";
+	};
+       };
+       data_var=$.projects[0].programs[2].vars[8]$;
+       index_var=$.projects[0].programs[2].vars[12]$;
+       order_var=$.projects[0].programs[2].vars[13]$;
+       order=SEQUENTIAL;
+      };
+      MethodCall @[9] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ObjectImageData->SaveData(save_image_path + \"/ObjectImageData.dat\", DataTable::TAB, true, true)";
+       result_var=NULL;
+       obj=$.projects[0].programs[2].vars[4]$;
+       method=DataTable::SaveData;
+       meth_args {
+	user_data_=NULL;
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 user_data_=NULL;
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="save_to_dir + \"/\" + \"OID_data_\" + String(categories.rows) + \".dat\"";
+	 };
+	};
+	ProgArg @[1] {
+	 user_data_=NULL;
+	 arg_type=DataTable::Delimiters;
+	 type="DataTable::Delimiters";
+	 name="delim";
+	 required=0;
+	 def_val="DataTable::TAB";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="DataTable::TAB";
+	 };
+	};
+	ProgArg @[2] {
+	 user_data_=NULL;
+	 arg_type=bool;
+	 type="bool";
+	 name="quote_str";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="true";
+	 };
+	};
+	ProgArg @[3] {
+	 user_data_=NULL;
+	 arg_type=bool;
+	 type="bool";
+	 name="save_headers";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="true";
+	 };
+	};
+       };
+       meth_sig="void SaveData(taString& fname, DataTable::Delimiters delim = TAB, bool quote_str = true, bool save_headers = true)";
+       meth_desc=" saves data, one line per rec, with delimiter between columns, and optionally quoting strings; if save_headers then the _H: header line is saved and data lines have _D:, else they are bare";
+      };
+     };
     };
    };
   };
  };
  init_code {
+  user_data_=NULL;
   name="init_code";
   el_typ=ProgCode;
   el_def=0;
  };
  prog_code {
+  user_data_=NULL;
   name="prog_code";
   el_typ=ProgCode;
   el_def=0;
   LocalVars @[0] {
+   user_data_=NULL;
    desc=;
    flags=0;
    code_string=;
    local_vars {
+    user_data_=NULL;
     name="local_vars";
     el_typ=ProgVar;
     el_def=0;
    };
   };
   FunctionCall @[1] {
+   user_data_=NULL;
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="GetFileNamesAndPaths()";
    result_var=NULL;
    fun=.projects[0].programs[2].functions[0]$$;
    fun_args {
+    user_data_=NULL;
     name="fun_args";
     el_typ=ProgArg;
     el_def=0;
    };
   };
   FunctionCall @[2] {
+   user_data_=NULL;
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="GenOIDTable()";
    result_var=NULL;
    fun=.projects[0].programs[2].functions[1]$$;
    fun_args {
+    user_data_=NULL;
     name="fun_args";
     el_typ=ProgArg;
     el_def=0;
    };
   };
   FunctionCall @[3] {
+   user_data_=NULL;
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string="WriteOIDFile()";
    result_var=NULL;
    fun=.projects[0].programs[2].functions[2]$$;
    fun_args {
+    user_data_=NULL;
     name="fun_args";
     el_typ=ProgArg;
     el_def=0;
+    ProgArg @[0] {
+     user_data_=NULL;
+     arg_type=int;
+     type="int";
+     name="percent";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      user_data_=NULL;
+      expr="data_subset_percent";
+     };
+    };
    };
   };
  };
  step_prog=.projects[0].programs[2]$$;
  step_n=1;
  doc {
+  user_data_=NULL;
   name="doc";
   desc=;
   web_doc=0;
