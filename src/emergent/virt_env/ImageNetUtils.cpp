@@ -85,10 +85,10 @@ void ImageNetUtils::GetBoundingBox(const String& filename, taVector2i& top_left,
   
   QXmlStreamReader reader(&file);
   
-  int x_min = 0;
-  int y_min = 0;
-  int x_max = 0;
-  int y_max = 0;
+  int x_min = -1;
+  int y_min = -1;
+  int x_max = -1;
+  int y_max = -1;
   bool ok;
   
   if (reader.readNextStartElement()) {
@@ -118,6 +118,12 @@ void ImageNetUtils::GetBoundingBox(const String& filename, taVector2i& top_left,
                   reader.skipCurrentElement();
                 }
               }
+              // We only return the first bounding box
+              if (x_min > -1 && x_max > -1 && y_min > -1 && y_max > -1) {
+                top_left.SetXY(x_min, y_min);
+                bottom_right.SetXY(x_max, y_max);
+                return;
+              }
             }
             else {
               reader.skipCurrentElement();
@@ -133,8 +139,8 @@ void ImageNetUtils::GetBoundingBox(const String& filename, taVector2i& top_left,
       taMisc::Error("ImageNetUtils::GetSize -- start element is not \"annotation\" " );
       return;
     }
-    top_left.SetXY(x_min, y_min);
-    bottom_right.SetXY(x_max, y_max);
+//    top_left.SetXY(x_min, y_min);
+//    bottom_right.SetXY(x_max, y_max);
   }
 #endif
 }
