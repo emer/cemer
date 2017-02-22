@@ -23,6 +23,8 @@
 #include <QString>
 
 void ImageNetUtils::GetSize(const String& filename, taVector3i& width_height_depth) {
+
+#if (QT_VERSION >= 0x040600)
   QFile file(filename);
   if(!file.open(QFile::ReadOnly | QFile::Text)){
     String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
@@ -69,9 +71,12 @@ void ImageNetUtils::GetSize(const String& filename, taVector3i& width_height_dep
     }
     width_height_depth.SetXYZ(width, height, depth);
   }
+#endif
 }
 
 void ImageNetUtils::GetBoundingBox(const String& filename, taVector2i& top_left, taVector2i& bottom_right) {
+
+#if (QT_VERSION >= 0x040600)
   QFile file(filename);
   if(!file.open(QFile::ReadOnly | QFile::Text)){
     String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
@@ -131,4 +136,5 @@ void ImageNetUtils::GetBoundingBox(const String& filename, taVector2i& top_left,
     top_left.SetXY(x_min, y_min);
     bottom_right.SetXY(x_max, y_max);
   }
+#endif
 }
