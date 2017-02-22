@@ -541,8 +541,10 @@ void taiEditor::Apply_Async() {
 void taiEditor::ReShow_Async(bool forced) {
   if(last_font_size != taMisc::GetCurrentFontSize("labels")) {
     row_height = taiM->max_control_height(ctrl_size);
-    widget()->setFont(taiM->dialogFont(ctrl_size));
-    last_font_size = taMisc::GetCurrentFontSize("labels");
+    if (widget()) {
+      widget()->setFont(taiM->dialogFont(ctrl_size));
+      last_font_size = taMisc::GetCurrentFontSize("labels");
+    }
   }
 
   if (reshow_req) return; // already waiting

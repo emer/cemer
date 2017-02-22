@@ -287,6 +287,9 @@ public:
   // for job running on cluster, load the local jobs_running_cmd.dat table into jobs_running_cmd -- returns true if NEW rows added to this table
   virtual bool      SaveMyRunningCmdTable();
   // for job running on cluster, save current jobs_running_cmd table to the local jobs_running_cmd.dat file -- should do this after removing any commands that were processed
+  virtual bool      ShowCallFunDialog(const String& method_name) override;
+  // #CAT_ObjectMgmt there are cases when you want to call the function but skip the parameter dialog - this allows you to test those conditions
+
   
   virtual void      FormatFileListTable(DataTable& dt);
   // for file_list table

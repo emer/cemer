@@ -146,6 +146,12 @@ bool taiWidgetMethod::CallFun_impl() {
     use_argc = (int)argc_str;
   use_argc = MIN(use_argc, meth->arg_types.size);
   use_argc = MIN(use_argc, meth->arg_names.size);
+  if (use_argc > 0 && typ->IsActualTaBase()) {
+    taBase* tab = (taBase*)base;
+    if (!tab->ShowCallFunDialog(meth_name)) {
+      use_argc = 0; // don't show dialog
+    }
+  }
   if ((use_argc == 0) && !meth->HasOption("CONFIRM")) {
     GenerateScript();
 #ifdef DMEM_COMPILE

@@ -2430,3 +2430,17 @@ void ClusterRun::FillInElapsedTime(DataTable* table) {
     }
   }
 }
+
+bool ClusterRun::ShowCallFunDialog(const String& method_name) {
+  taProject* proj = GetMyProj();
+  if(!proj) return true;
+  
+  if (method_name == "LoadData") {
+    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
+    if (dgp->size == 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
