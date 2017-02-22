@@ -42,9 +42,9 @@ public:
   // #READ_ONLY #SHOW describes the line of code where the breakpoint is set
 
   void          Enable();
-  // #MENU #DYN1 #GHOST_OFF_enabled enable existing disabled breakpoint
+  // #MENU #DYN1 #GHOST_ON_enabled enable existing disabled breakpoint
   void          Disable();
-  // #MENU #DYN1 #GHOST_ON_enabled disable existing breakpoint but don't delete the breakpoint
+  // #MENU #DYN1 #GHOST_OFF_enabled disable existing breakpoint but don't delete the breakpoint
 
   String       GetDesc() const override {return desc;}
   String       GetStateDecoKey() const override;
