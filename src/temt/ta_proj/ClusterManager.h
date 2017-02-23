@@ -142,6 +142,7 @@ public:
   SubversionClient* m_svn_other; // other user or cluster svn client
   taProject* m_proj;
 
+  bool   m_do_svn_update;
   int    m_cur_svn_rev;
   String m_username;
   String m_wc_path;

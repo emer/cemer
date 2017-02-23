@@ -1235,6 +1235,20 @@ ClusterManager::ChooseCluster(const String& prompt) {
   dlg.AddStretch(row);
   dlg.AddSpace(space, vbox);
   
+  row = "SvnRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  QCheckBox *checkbox = new QCheckBox("Update repository");
+  checkbox->setChecked(true);
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+    hbox->addWidget(checkbox);
+  }
+  
   bool modal = true;
   int drval = dlg.PostDialog(modal);
   if (drval == 0) {
@@ -1244,6 +1258,7 @@ ClusterManager::ChooseCluster(const String& prompt) {
   String rval = combo1->itemText(combo1->currentIndex());
   m_cluster_run.svn_repo = combo2->itemText(combo2->currentIndex());
   m_cluster_run.UpdateAfterEdit();
+  m_do_svn_update = checkbox->checkState();
   return rval;
 }
 

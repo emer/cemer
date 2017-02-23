@@ -598,16 +598,16 @@ void ClusterRun::CheckBackendRunning() {
   }
 }
 
-void ClusterRun::SelectCluster(bool do_svn_update) {
+void ClusterRun::SelectCluster() {
   if(!InitClusterManager())
     return;
   String clust = m_cm->ChooseCluster("Select a cluster to use for this project:");
   if(clust.empty()) return;
   cluster = clust;
-  Update_impl(do_svn_update);
+  Update_impl(m_cm->m_do_svn_update);
   
   
-  if (do_svn_update) {
+  if (m_cm->m_do_svn_update) {
     jobs_submit.ResetData();
     int dst_row = jobs_submit.AddBlankRow();
     jobs_submit.SetVal("PROBE", "status", dst_row);

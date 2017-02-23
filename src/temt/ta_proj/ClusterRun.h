@@ -127,8 +127,8 @@ public:
   ////////////////////////////////////////////
   // main user GUI
 
-  virtual void  SelectCluster(bool do_svn_update = true);
-  // #BUTTON select a cluster system to use, and, if do_svn_update is selected, update the current status of the cluster and of all the jobs for this project (set to false if running without an internet connection to the svn server) -- this is the best way to switch between clusters, and it is a good idea to run this when opening a project before submitting jobs
+  virtual void  SelectCluster();
+  // #BUTTON select a cluster system to use, and update the current status of the cluster and of all the jobs for this project (if running without an internet connection to the svn server, de-select "update repository" in the dialog) -- this is the best way to switch between clusters, and it is a good idea to run this when opening a project before submitting jobs
   virtual void  Run();
   // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository -- if cur_search_algo is selected then this will launch a parameter search process -- otherwise it will just run with current parameters
   virtual bool  Update();
