@@ -594,8 +594,20 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         continue;
     }
     
-    if(c == ']' || c == '[' || c == '>' || c == '-' || c == ':') {
+    if(c == ']' || c == '[' || c == ':') {
       delim_pos.Add(i);
+      continue;
+    }
+    
+    if(c == '>') {
+      if (i > 2) {
+        c_previous = txt[i-1];
+        if (c_previous == '-') {
+          delim_pos.Add(i);
+          delim_pos.Add(i-1);
+          break;
+        }
+      }
       continue;
     }
     
@@ -626,6 +638,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     expr_start_pos = i+1;           // anything else is a bust
     break;
   }
+  
   if (quote_count % 2 != 0) {  // we're inside quotes no lookup
     return NOT_SET;
   }
