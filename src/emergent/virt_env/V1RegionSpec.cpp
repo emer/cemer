@@ -144,7 +144,7 @@ void V1GaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool r
 void V1sNeighInhib::Initialize() {
   on = true;
   inhib_d = 1;
-  inhib_g = 0.8f;
+  inhib_g = 0.6f;
 
   tot_ni_len = 2 * inhib_d + 1;
 }

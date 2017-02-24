@@ -42,7 +42,7 @@ bool ParamSeq::SetParamsAtEpoch(int epoch) {
     if(ps->epoch == epoch) {
       got_some = true;
       if(verbose) {
-        FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, ps->mbrs) {
+        FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, ps->mbrs) {
           String cur_val = sei->CurValAsString();
           sei->CopySavedToActive();
           String new_val = sei->CurValAsString();
@@ -88,19 +88,19 @@ void ParamSeq::LinearInterp() {
   for(int i=1; i<steps.size-1; i++) {
     ParamStep* ps = steps[i];
     for(int lfi = 0; lfi < ps->mbrs.leaves; lfi++) {
-      EditMbrItem* psi = ps->mbrs.Leaf(lfi);
-      if(!(psi->is_numeric && psi->is_single)) continue;
-      EditMbrItem* fsi = fs->mbrs.Leaf(lfi);
-      EditMbrItem* lsi = ls->mbrs.Leaf(lfi);
+      ControlPanelMember* psi = ps->mbrs.Leaf(lfi);
+      if(!(psi->data.is_numeric && psi->data.is_single)) continue;
+      ControlPanelMember* fsi = fs->mbrs.Leaf(lfi);
+      ControlPanelMember* lsi = ls->mbrs.Leaf(lfi);
       if(TestError(!fsi || !lsi, "LinearInterp",
                    "corresponding first and/or last step items not found for item:",
                    psi->label, "aborting")) {
         return;
       }
-      double fval = fsi->param_set_value.saved_value.toDouble();
-      double lval = lsi->param_set_value.saved_value.toDouble();
+      double fval = fsi->data.saved_value.toDouble();
+      double lval = lsi->data.saved_value.toDouble();
       double ival = fval + (double)i * ((lval - fval) / (double)(steps.size-1));
-      psi->param_set_value.saved_value = (String)ival;
+      psi->data.saved_value = (String)ival;
     }
   }
   SigEmitUpdated();

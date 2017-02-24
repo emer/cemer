@@ -17,7 +17,7 @@
 #include <Program>
 #include <ProgVar>
 #include <ControlPanel>
-#include <EditMbrItem>
+#include <ControlPanelMember>
 #include <NameVar_PArray>
 #include <taMisc>
 
@@ -103,7 +103,7 @@ void ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "String sefma_lbl, sefma_argval;");
   prog->AddLine(this, "for(int j=0;j<" + ctrl_panel_var->name + ".mbrs.leaves;j++) {");
   prog->IncIndent();
-  prog->AddLine(this, "EditMbrItem* sei = " + ctrl_panel_var->name + ".mbrs.Leaf(j);");
+  prog->AddLine(this, "ControlPanelMember* sei = " + ctrl_panel_var->name + ".mbrs.Leaf(j);");
   prog->AddLine(this, "if(!sei->is_single) continue;");
   prog->AddLine(this, "sefma_lbl = sei->label;");
   prog->AddLine(this, "sefma_argval = taMisc::FindArgByName(sefma_lbl);");
@@ -123,8 +123,8 @@ void ControlPanelsFmArgs::GenRegArgs(Program* prog) {
   ControlPanel* se = GetControlPanel();
   if(se) {
     for(int j=0;j<se->mbrs.leaves;j++) {
-      EditMbrItem* sei = se->mbrs.Leaf(j);
-      if(!sei->is_numeric) continue;
+      ControlPanelMember* sei = se->mbrs.Leaf(j);
+      if(!sei->data.is_numeric) continue;
       prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + sei->label + "\");");
       prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + sei->label
                     + "\", \"ControlPanelsFmArgs: ctrl_panel = " + se->name + "\");");

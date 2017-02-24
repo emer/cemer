@@ -34,8 +34,8 @@ public:
 
 #ifdef __MAKETA__
   String                name;  // #READ_ONLY #SHOW name is automatically computed based on sequence name and the epoch
-  EditMbrItem_Group     mbrs;   // the members of the control panel
-  EditMthItem_Group     mths; // #HIDDEN
+  ControlPanelMember_Group     mbrs;   // the members of the control panel
+  ControlPanelMethod_Group     mths; // #HIDDEN
 #endif
 
   int             GetEnabled() const override;

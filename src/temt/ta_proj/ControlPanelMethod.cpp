@@ -13,23 +13,23 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "EditMthItem.h"
+#include "ControlPanelMethod.h"
 
-TA_BASEFUNS_CTORS_DEFN(EditMthItem);
+TA_BASEFUNS_CTORS_DEFN(ControlPanelMethod);
 
 
-void EditMthItem::Initialize() {
+void ControlPanelMethod::Initialize() {
   mth = NULL;
 }
 
-void EditMthItem::Destroy() {
+void ControlPanelMethod::Destroy() {
 }
 
-void EditMthItem::Copy_(const EditMthItem& cp) {
+void ControlPanelMethod::Copy_(const ControlPanelMethod& cp) {
   mth = cp.mth;
 }
 
-void EditMthItem::UpdateAfterEdit_impl() {
+void ControlPanelMethod::UpdateAfterEdit_impl() {
   // version 5.0.2 -- update to new Gui buttons for Run and Step
   if(mth) {
     if(((mth->name == "Run") || (mth->name == "Step")) && !mth->im) {

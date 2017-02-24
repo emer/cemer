@@ -25,8 +25,8 @@
 #include <taSmartPtrT>
 
 // member includes:
-#include <EditMbrItem_Group>
-#include <EditMthItem_Group>
+#include <ControlPanelMember_Group>
+#include <ControlPanelMethod_Group>
 #include <ControlPanelConfig>
 #include <taBase_List>
 #include <String_Array>
@@ -34,8 +34,8 @@
 
 // declare all other types mentioned but not required to include:
 class taGroup_impl; // 
-class EditMbrItem; // 
-class EditMthItem; // 
+class ControlPanelMember; // 
+class ControlPanelMethod; // 
 class DataTable; // 
 
 
@@ -49,14 +49,14 @@ public:
 
   bool                  updt_while_running; // #AKA_running_updt update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
-  EditMbrItem_Group     mbrs;   // the members of the control panel
-  EditMthItem_Group     mths;   // the methods of the control panel
+  ControlPanelMember_Group     mbrs;   // the members of the control panel
+  ControlPanelMethod_Group     mths;   // the methods of the control panel
 
   bool                  auto_edit; // #HIDDEN #NO_SAVE #OBSOLETE automatically activate control panel upon loading -- replaced with user data user_pinned 
 
-  EditMbrItem*          mbr(int i) const; // convenience accessor for flat access
+  ControlPanelMember*          mbr(int i) const; // convenience accessor for flat access
   int                   mbrSize(int i) const {return mbrs.leaves;} // flat size
-  EditMthItem*          mth(int i) const; // convenience accessor for flat access
+  ControlPanelMethod*          mth(int i) const; // convenience accessor for flat access
   int                   mthSize(int i) const {return mths.leaves;} // flat size
 
   virtual bool          autoEdit() const {return auto_edit;}
@@ -99,7 +99,7 @@ public: // public API
   virtual int   FindMbrBase(taBase* base, MemberDef* md);
   // find a given base and member, returns index
 
-  virtual EditMbrItem*  FindMbrName(const String& mbr_nm, const String& label = "")
+  virtual ControlPanelMember*  FindMbrName(const String& mbr_nm, const String& label = "")
   { return mbrs.FindMbrName(mbr_nm, label); }
   // #CAT_Access find an item based on member name and, optionally if non-empty, the associated label
 

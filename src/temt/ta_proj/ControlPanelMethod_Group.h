@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef EditMthItem_Group_h
-#define EditMthItem_Group_h 1
+#ifndef ControlPanelMethod_Group_h
+#define ControlPanelMethod_Group_h 1
 
 // parent includes:
-#include <EditMthItem>
+#include <ControlPanelMethod>
 #include <taGroup>
 
 // member includes:
@@ -27,11 +27,11 @@ class taBase; //
 class TypeDef; // 
 
 
-taTypeDef_Of(EditMthItem_Group);
+taTypeDef_Of(ControlPanelMethod_Group);
 
-class TA_API EditMthItem_Group : public taGroup<EditMthItem> {
-  // ##CAT_Display group of control panel dialog objects
-INHERITED(taGroup<EditMthItem>)
+class TA_API ControlPanelMethod_Group : public taGroup<ControlPanelMethod> {
+  // #AKA_EditMthItem_Group ##CAT_Display group of control panel methods 
+INHERITED(taGroup<ControlPanelMethod>)
 public:
   enum MthGroupType {
     GT_BUTTONS,         // make a buttons in the dialog for aach method
@@ -39,7 +39,7 @@ public:
     GT_MENU             // make a menu for the methods (subgroups only)
   };
 
-  bool                  is_root; // #NO_SHOW #READ_ONLY #NO_SAVE
+  bool                  is_root; // #NO_SHOW #READ_ONLY #NO_SAVE is this the first group within the ControlPanel?
   MthGroupType          group_type; // #GHOST_ON_is_root how to organize and display the methods in this group
 
   void                  SetGroupType(MthGroupType group_type);
@@ -56,14 +56,14 @@ public:
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   void  InitLinks() override;
-  TA_BASEFUNS(EditMthItem_Group);
+  TA_BASEFUNS(ControlPanelMethod_Group);
 #ifdef __MAKETA__ // dummy to supress New
   taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
 #endif
 private:
   void  Initialize();
   void  Destroy() { };
-  void  Copy_(const EditMthItem_Group& cp);
+  void  Copy_(const ControlPanelMethod_Group& cp);
 };
 
-#endif // EditMthItem_Group_h
+#endif // ControlPanelMethod_Group_h

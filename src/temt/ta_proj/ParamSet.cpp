@@ -16,8 +16,7 @@
 #include "ParamSet.h"
 
 #include <taMisc>
-#include <EditMbrItem>
-#include <ParamSetItem>
+#include <ControlPanelMember>
 #include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(ParamSet);
@@ -27,21 +26,21 @@ void ParamSet::UpdateAfterEdit_impl() {
 }
 
 void ParamSet::CopyActiveToSaved() {
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     sei->CopyActiveToSaved();
   }
   ReShowEdit(true);
 }
 
 void ParamSet::CopySavedToActive() {
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     sei->CopySavedToActive();
   }
   ReShowEdit(true);
 }
 
 void ParamSet::CopyActiveToSaved_item(int idx) {
-  EditMbrItem* item = mbrs.Leaf(idx);
+  ControlPanelMember* item = mbrs.Leaf(idx);
   if(item && item->base) {
     item->CopyActiveToSaved();
     ReShowEdit(true);
@@ -49,7 +48,7 @@ void ParamSet::CopyActiveToSaved_item(int idx) {
 }
 
 void ParamSet::CopySavedToActive_item(int idx) {
-  EditMbrItem* item = mbrs.Leaf(idx);
+  ControlPanelMember* item = mbrs.Leaf(idx);
   if(item && item->base) {
     item->CopySavedToActive();
     ReShowEdit(true);
@@ -58,10 +57,10 @@ void ParamSet::CopySavedToActive_item(int idx) {
 
 bool ParamSet::ActiveEqualsSaved(String member_name) {
   bool rval = false;
-  EditMbrItem* emi = mbrs.FindLeafName(member_name);
+  ControlPanelMember* emi = mbrs.FindLeafName(member_name);
   if (emi) {
     String active_value = emi->mbr->GetValStr(emi->base);
-    String saved_value = emi->param_set_value.saved_value;
+    String saved_value = emi->data.saved_value;
     if (active_value == saved_value)
       rval = true;
   }

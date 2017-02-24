@@ -13,45 +13,45 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "EditMthItem_Group.h"
+#include "ControlPanelMethod_Group.h"
 #include <ControlPanel>
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(EditMthItem_Group);
+TA_BASEFUNS_CTORS_DEFN(ControlPanelMethod_Group);
 
 
-void EditMthItem_Group::Initialize() {
-  SetBaseType(&TA_EditMthItem);
+void ControlPanelMethod_Group::Initialize() {
+  SetBaseType(&TA_ControlPanelMethod);
   is_root = true;
   group_type = GT_BUTTONS; // for root only
 }
 
-void EditMthItem_Group::Copy_(const EditMthItem_Group& cp) {
+void ControlPanelMethod_Group::Copy_(const ControlPanelMethod_Group& cp) {
   group_type = cp.group_type;
 }
 
-void EditMthItem_Group::InitLinks() {
+void ControlPanelMethod_Group::InitLinks() {
   inherited::InitLinks();
   is_root = IsRoot();
   if (!is_root)
     group_type = GT_MENU_BUTTON;
 }
 
-void EditMthItem_Group::SigEmit(int sls, void* op1, void* op2)
+void ControlPanelMethod_Group::SigEmit(int sls, void* op1, void* op2)
 {
   inherited::SigEmit(sls, op1, op2);
   ControlPanel::StatSigEmit_Group(this, sls, op1, op2);
 }
 
 
-taBase* EditMthItem_Group::GetBase_Flat(int idx) const {
+taBase* ControlPanelMethod_Group::GetBase_Flat(int idx) const {
   taBase* rval = NULL;
   ControlPanelItem::StatGetBase_Flat(this, idx, rval);
   return rval;
 }
 
-String EditMthItem_Group::GetColHeading(const KeyString& key) const {
+String ControlPanelMethod_Group::GetColHeading(const KeyString& key) const {
   if (key == "base_name") return "Base Name";
   else if (key == "base_type") return "Base Type";
   else if (key == "item_name") return "Method Name";
@@ -59,7 +59,7 @@ String EditMthItem_Group::GetColHeading(const KeyString& key) const {
   else return inherited::GetColHeading(key);
 }
 
-const KeyString EditMthItem_Group::GetListColKey(int col) const {
+const KeyString ControlPanelMethod_Group::GetListColKey(int col) const {
   switch (col) {
   case 0: return "base_name";
   case 1: return "base_type";
@@ -70,7 +70,7 @@ const KeyString EditMthItem_Group::GetListColKey(int col) const {
   return inherited::GetListColKey(col);
 }
 
-void EditMthItem_Group::SetGroupType(MthGroupType group_type_) {
+void ControlPanelMethod_Group::SetGroupType(MthGroupType group_type_) {
   if (is_root && (group_type_ != GT_BUTTONS))
     taMisc::Error("The root group may only show buttons -- create a subgroup for menus or button groups");
   group_type = group_type_;

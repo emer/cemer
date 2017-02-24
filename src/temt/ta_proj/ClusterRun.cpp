@@ -1072,18 +1072,18 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
     String val = nm.after("=");
     nm = nm.before("=");
 
-    EditMbrItem* itmMain = mbrs.FindLeafName(nm);
+    ControlPanelMember* itmMain = mbrs.FindLeafName(nm);
     if (!itmMain) {
       taMisc::Info("Could not find control panel entry for parameter " + nm);
       continue;
     }
-    EditMbrItem* itm = (EditMbrItem*)itmMain->Clone();
+    ControlPanelMember* itm = (ControlPanelMember*)itmMain->Clone();
     ps->mbrs.Add(itm);
     if(itm->mbr && itm->mbr->type->IsBool()) {
       if(val == "0") val = "false"; // translate bools..
       if(val == "1") val = "true";
     }
-    itm->param_set_value.saved_value = val;
+    itm->data.saved_value = val;
   }
   ps->UpdateAfterEdit();
   ps->BrowserSelectMe();        // sure..
@@ -1854,14 +1854,14 @@ String ClusterRun::ReplaceVars(const String& str) {
     }
                          
     //Search over all parameters in cluster run to find the variable by name
-    FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
+    FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
       if (var_name == mbr->GetName()) {
         String variable_value;
-        const EditParamSearch &ps = mbr->param_search;
+        const ControlPanelMemberData &ps = mbr->data;
 
         //If we are in a search algorithm, then we need to use the value
         //set in the search parameters
-        if (!use_search_algo || !cur_search_algo || !mbr->is_numeric || !ps.search) {
+        if (!use_search_algo || !cur_search_algo || !mbr->data.is_numeric || !ps.search) {
           variable_value = mbr->CurValAsString();
         }
         else {
@@ -2173,15 +2173,15 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   params="";
   // Add a name=val term for each parameter in the search.
   bool first = true;
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
-    const EditParamSearch &ps = mbr->param_search;
-    if (mbr->is_single && ps.record) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    const ControlPanelMemberData &ps = mbr->data;
+    if (mbr->data.is_single && ps.record) {
       if(!first)
         params.cat(" "); // sep
       else
         first = false;
       params.cat(mbr->GetName()).cat("=");
-      if(use_cur_vals || !mbr->is_numeric || !ps.search) {
+      if(use_cur_vals || !mbr->data.is_numeric || !ps.search) {
         params.cat(mbr->CurValAsString());
       }
       else {

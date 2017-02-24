@@ -71,7 +71,7 @@ void ControlPanel::UpdateAfterEdit_impl() {
     
     // check that this item is still supported - types are occassionally removed
     for (int i=mbrs.leaves-1; i>=0; i--) {
-      EditMbrItem* item = mbrs.Leaf(i);
+      ControlPanelMember* item = mbrs.Leaf(i);
       if (item == NULL || item->base == NULL || item->mbr == NULL) {
         taMisc::DebugInfo("ControlPanel::UpdateAfterEdit_impl: could not find item: ", item->label, "in control panel:", name);
         mbrs.RemoveLeafIdx(i);
@@ -99,7 +99,7 @@ void ControlPanel::BaseAdded(ControlPanelItem* sei) {
   // this is crazy!  absolutely must add for methods otherwise you get a crash
   // when that object is deleted!
   // bool add_base = true;
-  // if(sei->InheritsFrom(&TA_EditMthItem)) {
+  // if(sei->InheritsFrom(&TA_ControlPanelMethod)) {
   //   add_base = false;         // in general don't add for meths
   //   if(sei->base->InheritsFrom(&TA_Program))
   //     add_base = true;       // except for programs
@@ -151,7 +151,7 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
   }
 
   if(on_membs) {
-    FOREACH_ELEM_IN_GROUP_REV(EditMbrItem, item, mbrs) {
+    FOREACH_ELEM_IN_GROUP_REV(ControlPanelMember, item, mbrs) {
       if (!item->cust_label && ControlPanelItem::StatCheckBase(item, ta)) {
         // regenerate label as spec name or program name etc might have changed
         String new_label;
@@ -189,7 +189,7 @@ void ControlPanel::RemoveField(int idx) {
 
 void ControlPanel::RemoveField_impl(int idx) {
   taBase* base_owner = NULL;
-  EditMbrItem* item = mbrs.Leaf(idx);
+  ControlPanelMember* item = mbrs.Leaf(idx);
   
   taBase* mbrown = NULL;
   if(item && item->base) {
@@ -210,7 +210,7 @@ void ControlPanel::RemoveField_impl(int idx) {
 }
 
 void ControlPanel::GoToObject(int idx) {
-  EditMbrItem* item = mbrs.Leaf(idx);
+  ControlPanelMember* item = mbrs.Leaf(idx);
   if(item && item->base) {
     taBase* mbrown = item->base->GetMemberOwner(true);
     if(!mbrown) 
@@ -221,7 +221,7 @@ void ControlPanel::GoToObject(int idx) {
 }
 
 void ControlPanel::EditLabel(int idx) {
-  EditMbrItem* item = mbrs.Leaf(idx);
+  ControlPanelMember* item = mbrs.Leaf(idx);
   if(item && item->base) {
     String new_label = item->label;
     taGuiDialog dlg;
@@ -267,7 +267,7 @@ void ControlPanel::RemoveFun(int idx) {
 }
 
 void ControlPanel::RemoveFun_impl(int idx) {
-  EditMthItem* item = mths.Leaf(idx);
+  ControlPanelMethod* item = mths.Leaf(idx);
   if (item)
     item->Close();
 }
@@ -412,10 +412,10 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
 {
   int bidx = -1;
   // this looks at the leaves:
-  EditMbrItem* item = (EditMbrItem*)ControlPanelItem::StatFindItemBase(&mbrs, base, md, bidx);
+  ControlPanelMember* item = (ControlPanelMember*)ControlPanelItem::StatFindItemBase(&mbrs, base, md, bidx);
   bool rval = false;
   if (bidx < 0) {
-    item = new EditMbrItem;
+    item = new ControlPanelMember;
     item->base = base;
     item->mbr = md;
     item->item_nm = md->name;
@@ -427,7 +427,7 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
     else
       item->cust_desc = false;
     if(sub_gp_nm.nonempty()) {
-      EditMbrItem_Group* egp = (EditMbrItem_Group*)mbrs.FindMakeGpName(sub_gp_nm);
+      ControlPanelMember_Group* egp = (ControlPanelMember_Group*)mbrs.FindMakeGpName(sub_gp_nm);
       egp->Add(item);
     }
     else {
@@ -436,9 +436,9 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
     rval = true;
   }
   else if(sub_gp_nm.nonempty()) {
-    EditMbrItem_Group* egp = (EditMbrItem_Group*)item->owner;
+    ControlPanelMember_Group* egp = (ControlPanelMember_Group*)item->owner;
     if(egp == &mbrs || egp->name != sub_gp_nm) {
-      EditMbrItem_Group* negp = (EditMbrItem_Group*)mbrs.FindMakeGpName(sub_gp_nm);
+      ControlPanelMember_Group* negp = (ControlPanelMember_Group*)mbrs.FindMakeGpName(sub_gp_nm);
       negp->Transfer(item);     // grab it
     }
   }
@@ -465,10 +465,10 @@ bool ControlPanel::SelectMethod_impl(taBase* base, MethodDef* mth, const String&
 {
   int bidx = -1;
   // this looks at the leaves:
-  EditMthItem* item = (EditMthItem*)ControlPanelItem::StatFindItemBase(&mths, base, mth, bidx);
+  ControlPanelMethod* item = (ControlPanelMethod*)ControlPanelItem::StatFindItemBase(&mths, base, mth, bidx);
   bool rval = false;
   if (bidx < 0) {
-    item = new EditMthItem;
+    item = new ControlPanelMethod;
     item->base = base;
     item->mth = mth;
     item->item_nm = mth->name;
@@ -486,11 +486,11 @@ bool ControlPanel::SelectMethod_impl(taBase* base, MethodDef* mth, const String&
 }
 
 
-EditMbrItem* ControlPanel::mbr(int i) const {
+ControlPanelMember* ControlPanel::mbr(int i) const {
   return mbrs.Leaf(i);
 }
 
-EditMthItem* ControlPanel::mth(int i) const {
+ControlPanelMethod* ControlPanel::mth(int i) const {
   return mths.Leaf(i);
 }
 
@@ -511,10 +511,10 @@ String ControlPanel::ToWikiTable() {
 |-\n\
 ! Parameter !! Value  !! Notes \n";
   
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     rval << "|-\n";
     rval << "| " << sei->label << " || " << sei->CurValAsString()
-    << " || " << sei->notes.notes << "\n";
+    << " || " << sei->data.notes << "\n";
   }
   
   rval << "|}\n";
@@ -526,7 +526,7 @@ void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
   int idx = FindMbrBase(base, mbr);
   if (idx < 0) return;
   
-  EditMbrItem* item = (EditMbrItem*)mbrs.FastEl(idx);
+  ControlPanelMember* item = (ControlPanelMember*)mbrs.FastEl(idx);
   if (!item->cust_label) {
     // regenerate label as spec name or program name etc might have changed
     String new_label;

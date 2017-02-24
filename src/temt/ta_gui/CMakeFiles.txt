@@ -331,10 +331,8 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   taiEditorOfUserData.h
   taiEditorOfControlPanelBase.h
   taiEditorOfControlPanelFull.h
-  taiEditorOfControlPanelFast.h
 
   taiWidgetDelegate.h
-  taiWidgetDelegateControlPanel.h
   taiWidgetDelegateUserData.h
 
   taiWidgetActions.h
@@ -830,10 +828,8 @@ set(ta_gui_SRCS_NOMAKETA
   taiEditorOfUserData.cpp
   taiEditorOfControlPanelBase.cpp
   taiEditorOfControlPanelFull.cpp
-  taiEditorOfControlPanelFast.cpp
 
   taiWidgetDelegate.cpp
-  taiWidgetDelegateControlPanel.cpp
   taiWidgetDelegateUserData.cpp
 
   taiWidgetActions.cpp

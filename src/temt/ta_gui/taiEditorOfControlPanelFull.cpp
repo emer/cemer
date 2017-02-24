@@ -78,6 +78,8 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   String name;
   String help_text;
     
+  MemberDef* data_md = TA_ControlPanelMember.members.FindName("data");
+      
   dat_cnt = 0;  // keeps track of control count
   if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
     MemberSpace& ms = sele->GetTypeDef()->members;
@@ -109,7 +111,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   taiMemberWidgets* memb_set = NULL;
   
   // note: iterates non-empty groups only
-  FOREACH_SUBGROUP(EditMbrItem_Group, grp, sele->mbrs) {
+  FOREACH_SUBGROUP(ControlPanelMember_Group, grp, sele->mbrs) {
     bool def_grp = (grp == &(sele->mbrs));// root group
     membs.SetMinSize(set_idx + 1);
     memb_set = membs.FastEl(set_idx);
@@ -120,7 +122,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       dat_cnt++;                // these count toward rows!!
     }
     for (int i = 0; i < grp->size; ++i) {
-      EditMbrItem* item = grp->FastEl(i);
+      ControlPanelMember* item = grp->FastEl(i);
       
 //      if (!item->cust_label) {  // if not custom - update
 //        String extra_label;
@@ -136,98 +138,30 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
       memb_set->memb_el.Add(md);
-      bool added_search = false;
-      if(item->is_single && sele->InheritsFrom(&TA_ClusterRun)) {
-        // if this item is a param search item
-        MemberDef* ps_md = TA_EditMbrItem.members.FindName("param_search");
-        if (ps_md) {
-          added_search = true;
-          taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
-          mash_widg->SetMemberDef(md);
-          mash_widg->add_labels = false;
-          mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
-          mash_widg->InitLayout();
-          mash_widg->AddChildMember(md, 1);
-          mash_widg->AddChildMember(ps_md, 2);
-          MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
-          if (note_md) {
-            mash_widg->AddChildMember(note_md, 3);
-          }
-          mash_widg->EndLayout();
-          
-          memb_set->widget_el.Add(mash_widg);
-          QWidget* data = mash_widg->GetRep();
-          if (disable) {
-            data->setEnabled(false);
-          }
-          help_text = item->GetDesc();
-          String new_lbl = item->caption();
-          AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
-          ++dat_cnt;
-        }
+
+      taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+      mash_widg->SetMemberDef(md);
+      mash_widg->add_labels = false;
+      mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
+      mash_widg->InitLayout();
+      mash_widg->AddChildMember(md, 1);
+      mash_widg->AddChildMember(data_md, 2);
+      mash_widg->EndLayout();
+ 
+      //          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
+      memb_set->widget_el.Add(mash_widg);
+      QWidget* data = mash_widg->GetRep();
+      if (disable) {
+        data->setEnabled(false);
       }
-      
-      // if this panel is a param set panel
-      bool added_param_set = false;
-      if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
-        MemberDef* psv_md = TA_EditMbrItem.members.FindName("param_set_value");
-        if (psv_md) {
-          added_param_set = true;
-          taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
-          mash_widg->SetMemberDef(md);
-          mash_widg->add_labels = false;
-          mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
-          mash_widg->InitLayout();
-          mash_widg->AddChildMember(md, 1);
-          mash_widg->AddChildMember(psv_md, 2);
-          MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
-          if (note_md) {
-            mash_widg->AddChildMember(note_md, 3);
-          }
-         mash_widg->EndLayout();
-          
-          memb_set->widget_el.Add(mash_widg);
-          QWidget* data = mash_widg->GetRep();
-          if (disable) {
-            data->setEnabled(false);
-          }
-          help_text = item->GetDesc();
-          String new_lbl = item->caption();
-          AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
-          ++dat_cnt;
-          
-          // highlight the rows where active and saved values are different
-          if (!((ParamSet*)sele)->ActiveEqualsSaved(item->GetName())) {
-            MarkRowException(dat_cnt);
-          }
-        }
-      }
-      
-      // standard control panel or on cluster panel but not searchable (i.e. not single)
-      if (!added_search && !added_param_set){
-        MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
-        if (note_md) {
-          taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
-          mash_widg->SetMemberDef(md);
-          mash_widg->add_labels = false;
-          mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
-          mash_widg->InitLayout();
-          mash_widg->AddChildMember(md, 1);
-          if (note_md) {
-            mash_widg->AddChildMember(note_md, 2);
-          }
-          mash_widg->EndLayout();
-          
-          //          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
-          memb_set->widget_el.Add(mash_widg);
-          QWidget* data = mash_widg->GetRep();
-          if (disable) {
-            data->setEnabled(false);
-          }
-          help_text = item->GetDesc();
-          String new_lbl = item->caption();
-          AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
-          ++dat_cnt;
+      help_text = item->GetDesc();
+      String new_lbl = item->caption();
+      AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
+      ++dat_cnt;
+
+      if(sele->InheritsFrom(&TA_ParamSet)) {
+        if(!((ParamSet*)sele)->ActiveEqualsSaved(item->GetName())) {
+          MarkRowException(dat_cnt);
         }
       }
     }
@@ -325,7 +259,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
     for (int i = 0; i < ms->widget_el.size; ++i) {
       taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
-      EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
+      ControlPanelMember* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }
@@ -369,7 +303,7 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
     for (int i = 0; i < ms->widget_el.size; ++i) {
       taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
-      EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
+      ControlPanelMember* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetValue_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }

@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef EditMbrItem_Group_h
-#define EditMbrItem_Group_h 1
+#ifndef ControlPanelMember_Group_h
+#define ControlPanelMember_Group_h 1
 
 // parent includes:
-#include <EditMbrItem>
+#include <ControlPanelMember>
 #include <taGroup>
 
 // member includes:
@@ -29,18 +29,18 @@ class MemberDef; //
 class DataTable; // 
 
 
-taTypeDef_Of(EditMbrItem_Group);
+taTypeDef_Of(ControlPanelMember_Group);
 
-class TA_API EditMbrItem_Group : public taGroup<EditMbrItem> {
-  // ##CAT_Display group of control panel dialog objects
-INHERITED(taGroup<EditMbrItem>)
+class TA_API ControlPanelMember_Group : public taGroup<ControlPanelMember> {
+  // #AKA_EditMbrItem_Group ##CAT_Display group of control panel dialog members
+INHERITED(taGroup<ControlPanelMember>)
 public:
   taBase*               GetBase_Flat(int idx) const;
 // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
-  EditMbrItem*          FindItemBase(taBase* base, MemberDef* md, int& idx) const
-  { return (EditMbrItem*)ControlPanelItem::StatFindItemBase(this, base, md, idx); }
+  ControlPanelMember*          FindItemBase(taBase* base, MemberDef* md, int& idx) const
+  { return (ControlPanelMember*)ControlPanelItem::StatFindItemBase(this, base, md, idx); }
   // find a given base and member, returns index
-  EditMbrItem*          FindMbrName(const String& mbr_nm, const String& label);
+  ControlPanelMember*          FindMbrName(const String& mbr_nm, const String& label);
   // #CAT_Access find an item based on member name and, optionally if non-empty, the associated label
 
   int          NumListCols() const override {return 5;}
@@ -50,14 +50,16 @@ public:
   const KeyString GetListColKey(int col) const override;
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  TA_BASEFUNS_NOCOPY(EditMbrItem_Group);
+  TA_BASEFUNS_NOCOPY(ControlPanelMember_Group);
 #ifdef __MAKETA__ // dummy to supress New
   taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
 #endif
 
+  void  InitLinks() override;
+  
 private:
-  void  Initialize() { SetBaseType(&TA_EditMbrItem);}
+  void  Initialize() { SetBaseType(&TA_ControlPanelMember);}
   void  Destroy()               { };
 };
 
-#endif // EditMbrItem_Group_h
+#endif // ControlPanelMember_Group_h

@@ -13,18 +13,15 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   taWikiSpec.h
 
   ControlPanelItem.h
-  EditParamSearch.h
-  EditMbrItem.h
-  EditMthItem.h
-  EditMbrItem_Group.h
-  EditMthItem_Group.h
+    ControlPanelMember.h
+  ControlPanelMethod.h
+  ControlPanelMember_Group.h
+  ControlPanelMethod_Group.h
   ControlPanelConfig.h
   ControlPanel_Group.h
-  ControlItemNote.h
-
+  
   ParamSet.h
-  ParamSetItem.h
-  ParamSet_Group.h
+    ParamSet_Group.h
 
   ParamSearchAlgo.h
   ParamSearchAlgo_List.h
@@ -116,19 +113,16 @@ set(ta_proj_SRCS
   taWikiSpec.cpp
 
   ControlPanelItem.cpp
-  EditParamSearch.cpp
-  EditMbrItem.cpp
-  EditMthItem.cpp
-  EditMbrItem_Group.cpp
-  EditMthItem_Group.cpp
+    ControlPanelMember.cpp
+  ControlPanelMethod.cpp
+  ControlPanelMember_Group.cpp
+  ControlPanelMethod_Group.cpp
   ControlPanelConfig.cpp
   ControlPanel.cpp
   ControlPanel_Group.cpp
-  ControlItemNote.cpp
-
+  
   ParamSet.cpp
-  ParamSetItem.cpp
-  ParamSet_Group.cpp
+    ParamSet_Group.cpp
 
   ParamSearchAlgo.cpp
   ParamSearchAlgo_List.cpp

@@ -13,31 +13,37 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ParamSetItem_h
-#define ParamSetItem_h 1
+#ifndef ControlPanelMethod_h
+#define ControlPanelMethod_h 1
 
 // parent includes:
-#include <taOBase>
+#include <ControlPanelItem>
 
 // member includes:
+#include <MethodDef>
+
+// rename to ControlPanelMethod
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(ParamSetItem);
+taTypeDef_Of(ControlPanelMethod);
 
-class TA_API ParamSetItem : public taOBase {
-// #INLINE a saved value for a control panel item
-  INHERITED(taOBase)
+class TA_API ControlPanelMethod: public ControlPanelItem {
+  // #AKA_EditMthItem a method control panel item -- allows access via menu or button to just one method from a class
+  INHERITED(ControlPanelItem)
 public:
-  String            saved_value;  // #READ_ONLY #SHOW the value for this parameter when this param set is invoked
-  
-  TA_SIMPLE_BASEFUNS(ParamSetItem);
-protected:
-  void              UpdateAfterEdit_impl() override;
+  MethodDef*            mth; // #READ_ONLY #SHOW the mbr type
 
+  TypeItem*    typeItem() const override {return mth;} // the mbr or mth
+
+//  String     GetColText(const KeyString& key, int itm_idx = -1) const override;
+  TA_BASEFUNS(ControlPanelMethod);
+protected:
+  void                  UpdateAfterEdit_impl() override;
 private:
-  void  Initialize()  { };
-  void  Destroy()     { };
+  void  Initialize();
+  void  Destroy();
+  void  Copy_(const ControlPanelMethod& cp);
 };
 
-#endif // ParamSetItem_h
+#endif // ControlPanelMethod_h

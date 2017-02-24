@@ -59,17 +59,17 @@ void taiEditorOfControlPanelBase::Constr_Methods_impl() {
   inherited::Constr_Methods_impl();
   Insert_Methods();
 
-  FOREACH_SUBGROUP(EditMthItem_Group, grp, sele->mths) {
+  FOREACH_SUBGROUP(ControlPanelMethod_Group, grp, sele->mths) {
     //note: root group uses only buttons (hard wired)
-    EditMthItem_Group::MthGroupType group_type = grp->group_type;
+    ControlPanelMethod_Group::MthGroupType group_type = grp->group_type;
 
     // make a menu or button group if needed
     String men_nm = grp->GetDisplayName(); // blank for default
     switch (group_type) {
-    case EditMthItem_Group::GT_MENU: {
+    case ControlPanelMethod_Group::GT_MENU: {
       SetCurMenu_Name(men_nm); // default is "Actions"
     } break;
-    case EditMthItem_Group::GT_MENU_BUTTON: {
+    case ControlPanelMethod_Group::GT_MENU_BUTTON: {
       if (men_nm.empty()) // shouldn't happen
         men_nm = "Actions";
       cur_menu_but = ta_menu_buttons.FindName(men_nm);
@@ -86,7 +86,7 @@ void taiEditorOfControlPanelBase::Constr_Methods_impl() {
     } // switch group_type
 
     for (int i = 0; i < grp->size; ++i) {
-      EditMthItem* item = grp->FastEl(i);
+      ControlPanelMethod* item = grp->FastEl(i);
       MethodDef* md = item->mth;
       taBase* base = item->base;
       if (!md || (md->im == NULL) || (base == NULL)) continue;
@@ -99,11 +99,11 @@ void taiEditorOfControlPanelBase::Constr_Methods_impl() {
       String statustip = item->desc;
       taiWidgetMethod* mth_rep = NULL;
       switch (group_type) {
-      case EditMthItem_Group::GT_BUTTONS:  {
+      case ControlPanelMethod_Group::GT_BUTTONS:  {
         mth_rep = im->GetButtonMethodRep(base, this, NULL, frmMethButtons);
         AddMethButton(mth_rep, mth_cap);
       } break;
-      case EditMthItem_Group::GT_MENU: {
+      case ControlPanelMethod_Group::GT_MENU: {
         mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu);
         iAction* act = cur_menu->AddItem(mth_cap, taiWidgetMenu::use_default,
@@ -111,7 +111,7 @@ void taiEditorOfControlPanelBase::Constr_Methods_impl() {
         if (statustip.nonempty())
           act->setStatusTip(statustip);
       } break;
-      case EditMthItem_Group::GT_MENU_BUTTON: {
+      case ControlPanelMethod_Group::GT_MENU_BUTTON: {
         mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu_but);
         iAction* act = cur_menu_but->AddItem(mth_cap, taiWidgetMenu::use_default,

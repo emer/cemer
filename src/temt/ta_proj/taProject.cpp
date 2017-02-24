@@ -31,7 +31,6 @@
 #include <iDialogChoice>
 #include <ctime>
 #include <ParamSet>
-#include <ParamSetItem>
 
 taTypeDef_Of(taDataProc);
 SMARTREF_OF_CPP(taProject);
@@ -1354,7 +1353,7 @@ void taProject::WriteParamMbrNamesToTable(DataTable* param_table, ParamSet* para
   
   int index = param_table->rows; // we are appending
   for (int m=0; m<param_set->mbrs.size; m++) {
-    EditMbrItem* item = param_set->mbrs.FastEl(m);
+    ControlPanelMember* item = param_set->mbrs.FastEl(m);
     String name = item->GetName();
     if (!mbr_name_column) break;
     if (mbr_name_column->FindVal(name) == -1) {
@@ -1375,9 +1374,9 @@ void taProject::WriteParamSavedValsToTable(DataTable* param_table, ParamSet* par
   if (!param_column) return;
 
   for (int m=0; m<param_set->mbrs.size; m++) {
-    EditMbrItem* item = param_set->mbrs.FastEl(m);
+    ControlPanelMember* item = param_set->mbrs.FastEl(m);
     int row = mbr_name_column->FindVal(item->GetName());
-    String value = item->param_set_value.saved_value;
+    String value = item->data.saved_value;
     param_table->SetValAsVar(value, param_column->GetName(), row);
   }
 }

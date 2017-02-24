@@ -15,7 +15,6 @@
 
 #include "iPanelOfControlPanel.h"
 #include <taiEditorOfControlPanelFull>
-#include <taiEditorOfControlPanelFast>
 #include <iPanelSet>
 
 #include <taMisc>
@@ -28,15 +27,6 @@ iPanelOfControlPanel::iPanelOfControlPanel(taiSigLink* dl_)
   ControlPanel* se_ = sele();
   se = NULL;
   if (se_) {
-    /* switch (taMisc::select_edit_style) {
-    case taMisc::ES_ALL_CONTROLS:
-      se = new taiEditorOfControlPanelFull(se_, se_->GetTypeDef());
-      break;
-    case taMisc::ES_ACTIVE_CONTROL:
-      se = new taiEditorOfControlPanelFast(se_, se_->GetTypeDef());
-      break;
-    }
-    */
     se = new taiEditorOfControlPanelFull(se_, se_->GetTypeDef());
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bool ok;

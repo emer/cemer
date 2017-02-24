@@ -13,28 +13,33 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "EditMbrItem_Group.h"
+#include "ControlPanelMember_Group.h"
 #include <ControlPanel>
 #include <DataTable>
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(EditMbrItem_Group);
+TA_BASEFUNS_CTORS_DEFN(ControlPanelMember_Group);
 
 
-void EditMbrItem_Group::SigEmit(int sls, void* op1, void* op2)
+void ControlPanelMember_Group::InitLinks() {
+  inherited::InitLinks();
+  gp.SetBaseType(GetTypeDef()->parents[0]); // allow parent type!
+}
+
+void ControlPanelMember_Group::SigEmit(int sls, void* op1, void* op2)
 {
   inherited::SigEmit(sls, op1, op2);
   ControlPanel::StatSigEmit_Group(this, sls, op1, op2);
 }
 
-taBase* EditMbrItem_Group::GetBase_Flat(int idx) const {
+taBase* ControlPanelMember_Group::GetBase_Flat(int idx) const {
   taBase* rval = NULL;
   ControlPanelItem::StatGetBase_Flat(this, idx, rval);
   return rval;
 }
 
-String EditMbrItem_Group::GetColHeading(const KeyString& key) const {
+String ControlPanelMember_Group::GetColHeading(const KeyString& key) const {
   if (key == "base_name") return "Base Name";
   else if (key == "base_type") return "Base Type";
   else if (key == "item_name") return "Member Name";
@@ -43,7 +48,7 @@ String EditMbrItem_Group::GetColHeading(const KeyString& key) const {
   else return inherited::GetColHeading(key);
 }
 
-const KeyString EditMbrItem_Group::GetListColKey(int col) const {
+const KeyString ControlPanelMember_Group::GetListColKey(int col) const {
   switch (col) {
   case 0: return "base_name";
   case 1: return "base_type";
@@ -55,8 +60,8 @@ const KeyString EditMbrItem_Group::GetListColKey(int col) const {
   return inherited::GetListColKey(col);
 }
 
-EditMbrItem* EditMbrItem_Group::FindMbrName(const String& mbr_nm, const String& label) {
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
+ControlPanelMember* ControlPanelMember_Group::FindMbrName(const String& mbr_nm, const String& label) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, *this) {
     if(!sei->mbr) continue;
     if(sei->mbr->name == mbr_nm) {
       if(label.nonempty()) {

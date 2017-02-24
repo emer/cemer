@@ -26,7 +26,7 @@ void GridSearch::Initialize() {
 
 int GridSearch::FindParamNameIdx(const String& nm) {
   for(int i=0;i<m_params.size; i++) {
-    EditMbrItem* it = m_params[i];
+    ControlPanelMember* it = m_params[i];
     if(it->label == nm) {
       return i;
     }
@@ -40,8 +40,8 @@ bool GridSearch::StartSearch() {
   m_yoked.Reset(); 
 
   bool has_yoked = false;
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
-    EditParamSearch &ps = mbr->param_search;
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, m_cluster_run->mbrs) {
+    ControlPanelMemberData &ps = mbr->data;
     if (ps.search) {
       bool ok = ps.ParseRange();          // just to be sure
       if(ok) {
@@ -56,12 +56,12 @@ bool GridSearch::StartSearch() {
   }
 
   if(has_yoked) {
-    FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
-      EditParamSearch &ps = mbr->param_search;
+    FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, m_cluster_run->mbrs) {
+      ControlPanelMemberData &ps = mbr->data;
       if (ps.search) {
         if(!ps.range.startsWith('%')) continue; // only yoked
         String prnm = ps.range.after('%');
-        // EditMbrItem* src = m_params.FindName(prnm); // FindName only works for owned
+        // ControlPanelMember* src = m_params.FindName(prnm); // FindName only works for owned
         int idx = FindParamNameIdx(prnm);
         if(TestError(idx < 0, "StartSearch",
                      "search parameter:", mbr->label,
@@ -112,19 +112,19 @@ bool GridSearch::CreateJobs() {
     // taMisc::Info("----");
     for(int p=0;p<m_counts.size; p++) {
       int val_idx = m_iter[p];
-      EditMbrItem* mbr = m_params[p];
-      EditParamSearch& ps = mbr->param_search;
+      ControlPanelMember* mbr = m_params[p];
+      ControlPanelMemberData& ps = mbr->data;
       double value = ps.srch_vals[val_idx];
       ps.next_val = value;
       // taMisc::Info("param:", String(p), "idx:", String(val_idx), "val:", String(value));
     }
     for(int p=0;p<m_yoked.size; p++) {
-      EditMbrItem* mbr = m_yoked[p];
-      EditParamSearch& ps = mbr->param_search;
+      ControlPanelMember* mbr = m_yoked[p];
+      ControlPanelMemberData& ps = mbr->data;
       String prnm = ps.range.after('%');
       int src_idx = FindParamNameIdx(prnm);
-      EditMbrItem* src = m_params[src_idx];
-      EditParamSearch& sps = src->param_search;
+      ControlPanelMember* src = m_params[src_idx];
+      ControlPanelMemberData& sps = src->data;
       int sval_idx = m_iter[src_idx];
       double value = sps.srch_vals[sval_idx];
       ps.next_val = value;
