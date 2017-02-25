@@ -91,6 +91,18 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
             rmv_act->setEnabled(false);
           }
         }
+        else {
+          ControlPanel_Group* gp = (ControlPanel_Group*)cp;
+          if(gp->leaves > 0) {
+            ControlPanel* cpr = gp->Leaf(0);
+            if (cpr->FindMbrBase(rbase, md) >= 0) {
+              add_act->setText(nm + " [on first already]");
+            }
+            else {
+              rmv_act->setText(nm + " [not on first]");
+            }
+          }
+        }
       }
     }
   }
