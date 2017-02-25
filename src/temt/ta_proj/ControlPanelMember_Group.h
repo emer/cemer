@@ -55,11 +55,9 @@ public:
   taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
 #endif
 
-  void  InitLinks() override;
-  
 private:
   void  Initialize() { SetBaseType(&TA_ControlPanelMember);}
-  void  Destroy()               { };
+  void  Destroy()    { };
 };
 
 #endif // ControlPanelMember_Group_h

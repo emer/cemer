@@ -22,11 +22,6 @@
 TA_BASEFUNS_CTORS_DEFN(ControlPanelMember_Group);
 
 
-void ControlPanelMember_Group::InitLinks() {
-  inherited::InitLinks();
-  gp.SetBaseType(GetTypeDef()->parents[0]); // allow parent type!
-}
-
 void ControlPanelMember_Group::SigEmit(int sls, void* op1, void* op2)
 {
   inherited::SigEmit(sls, op1, op2);

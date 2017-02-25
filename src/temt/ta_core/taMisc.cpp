@@ -1258,6 +1258,7 @@ TypeDef* taMisc::FindTypeName(const String& nm, bool err_not_found) {
     TypeDef* aka = taMisc::aka_types.FastEl(i);
     String aka_nm = aka->OptionAfter("AKA_");
     if(aka_nm == use_nm) {
+      // taMisc::Info("loading using aka type:", aka_nm, "from actual type:", aka->name);
       return aka;
     }
   }
@@ -1972,7 +1973,8 @@ void taMisc::Init_Types() {
   for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
     TypeDef* typ = types.FastEl(i);
     String aka = typ->OptionAfter("AKA_");
-    if(aka.nonempty()) {
+    if(aka.nonempty() && !(typ->IsTemplInst() && typ->children.size >= 1)) {
+      // don't use template instances as they will be duplicated by an inherited type
       // taMisc::Info("aka type: ", typ->name, "aka:", aka);
       aka_types.Link(typ);
     }
