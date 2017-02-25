@@ -1084,6 +1084,7 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
       if(val == "1") val = "true";
     }
     itm->data.saved_value = val;
+    itm->SetCtrlType();
   }
   ps->UpdateAfterEdit();
   ps->BrowserSelectMe();        // sure..

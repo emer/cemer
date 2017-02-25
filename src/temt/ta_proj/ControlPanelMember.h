@@ -135,6 +135,9 @@ public:
   virtual void          CopySavedToActive();
   // #BUTTON for ParamSet elements: copy the previously-saved values to be active (live) values on the objects
 
+  inline void           SetCtrlType()   { data.SetCtrlType(); }
+  // update the ctrl_type based on owner type
+
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMember);
   void  InitLinks() override;

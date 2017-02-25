@@ -184,6 +184,7 @@ void ControlPanelMember::InitLinks() {
 void ControlPanelMember::Copy_(const ControlPanelMember& cp) {
   mbr = cp.mbr;
   data = cp.data;
+  data.SetCtrlType();
 }
 
 void ControlPanelMember::UpdateAfterEdit_impl() {

@@ -54,9 +54,9 @@ public:
 
   bool                  auto_edit; // #HIDDEN #NO_SAVE #OBSOLETE automatically activate control panel upon loading -- replaced with user data user_pinned 
 
-  ControlPanelMember*          mbr(int i) const; // convenience accessor for flat access
+  ControlPanelMember*   mbr(int i) const; // convenience accessor for flat access
   int                   mbrSize(int i) const {return mbrs.leaves;} // flat size
-  ControlPanelMethod*          mth(int i) const; // convenience accessor for flat access
+  ControlPanelMethod*   mth(int i) const; // convenience accessor for flat access
   int                   mthSize(int i) const {return mths.leaves;} // flat size
 
   virtual bool          autoEdit() const {return auto_edit;}
@@ -111,33 +111,33 @@ public: // public API
   
   virtual void  Reset();
   // #MENU #CONFIRM reset (remove all) current members and methods
-  virtual String  ToWikiTable();
+  virtual String ToWikiTable();
   // #MENU #CONFIRM #USE_RVAL save current parameters and notes to a mediawiki-formatted table, suitable for pasting into a wiki for recording params and notes
 
-  bool                  ReShowEdit(bool force = false); // #IGNORE this is just really a synonym for doing a SigEmit
+  bool         ReShowEdit(bool force = false); // #IGNORE this is just really a synonym for doing a SigEmit
 
  public: // IRefListClient i/f
   void*        This() override {return this;}
   void         SigDestroying_Ref(taBase_RefList* src, taBase* ta) override;
-    // note: item will already have been removed from list
+  // note: item will already have been removed from list
   void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int sls, void* op1, void* op2) override;
+                           int sls, void* op1, void* op2) override;
 
 protected:
-  int                   m_changing; // flag so we don't recursively delete bases
-  taBase_RefList        base_refs; // all bases notify us via this list
+  int            m_changing; // flag so we don't recursively delete bases
+  taBase_RefList base_refs; // all bases notify us via this list
 
-  void         UpdateAfterEdit_impl() override;
+  void           UpdateAfterEdit_impl() override;
 
-  virtual void          SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
+  virtual void   SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
-  virtual void          BaseAdded(ControlPanelItem* sei);
-  virtual void          BaseRemoved(ControlPanelItem* sei);
-  virtual void          RemoveField_impl(int idx);
-  virtual void          RemoveFun_impl(int idx);
-  virtual bool          SelectMember_impl(taBase* base, MemberDef* md,
+  virtual void   BaseAdded(ControlPanelItem* sei);
+  virtual void   BaseRemoved(ControlPanelItem* sei);
+  virtual void   RemoveField_impl(int idx);
+  virtual void   RemoveFun_impl(int idx);
+  virtual bool   SelectMember_impl(taBase* base, MemberDef* md,
                   const String& lbl, const String& desc, const String& sub_gp_nm = _nilString, bool custom_label = false);
-  virtual bool          SelectMethod_impl(taBase* base, MethodDef* md, const String& desc);
+  virtual bool   SelectMethod_impl(taBase* base, MethodDef* md, const String& desc);
 
 private:
   void  Initialize();
