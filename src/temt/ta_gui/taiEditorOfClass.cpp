@@ -24,7 +24,6 @@
 #include <iFlowLayout>
 #include <taProject>
 #include <ControlPanel>
-#include <ParamSet>
 #include <iDialogEditor>
 #include <iFormLayout>
 #include <taiWidgetToolBar>
@@ -419,19 +418,39 @@ void taiEditorOfClass::DoAddToControlPanel(QAction* act){
   
   void* vval = act->data().value<void*>();
   if(!vval) return;
-  ControlPanel* se = (ControlPanel*)vval;
-  if (!sel_item_base) return; // shouldn't happen!
-  taBase* rbase = sel_item_base;
-  MemberDef* md = sel_item_mbr;
-  if (!md || !se || !rbase) return; //shouldn't happen...
-  
-  //NOTE: this handler adds if not on, or removes if already on
-  int idx = se->FindMbrBase(rbase, md);
-  if (idx >= 0) {
-    se->RemoveField(idx);
+  taBase* rbase = ctrl_panel_base;
+  MemberDef* md = ctrl_panel_mbr;
+  if (!md || !rbase) return; //shouldn't happen...
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    cp->AddMemberPrompt(rbase, md, rbase->GetDesc());
   }
-  else {
-    se->SelectMemberPrompt(rbase, md, rbase->GetDesc());
+  else {                        // must be a group
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    cp->AddMember(rbase, md, rbase->GetDesc());
+  }
+}
+
+void taiEditorOfClass::DoRmvFmControlPanel(QAction* act){
+  //note: this routine is duplicated in the ProgramEditor
+  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
+  if (!proj)
+    return;
+  
+  void* vval = act->data().value<void*>();
+  if(!vval) return;
+  taBase* rbase = ctrl_panel_base;
+  MemberDef* md = ctrl_panel_mbr;
+  if (!md || !rbase) return; //shouldn't happen...
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    cp->RemoveMember(rbase, md);
+  }
+  else {                        // must be a group
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    cp->RemoveMember(rbase, md);
   }
 }
 
@@ -495,15 +514,16 @@ void taiEditor::ConstrEditControl() {
 
 void taiEditorOfClass::FillLabelContextMenu(QMenu* menu, int& last_id) {
   inherited::FillLabelContextMenu(menu, last_id);
-  if (sel_edit_mbrs) {
-    FillLabelContextMenu_SelEdit(menu, last_id);
+  if (ctrl_panel_mbrs) {
+    FillLabelContextMenu_CtrlPanel(menu, last_id);
   }
 }
 
-void taiEditorOfClass::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
+void taiEditorOfClass::FillLabelContextMenu_CtrlPanel(QMenu* menu, int& last_id)
 {
-  DoFillLabelContextMenu_SelEdit(menu, last_id, sel_item_base, sel_item_mbr, body,
-  this, SLOT(DoAddToControlPanel(QAction*)));
+  DoFillLabelContextMenu_CtrlPanel
+    (menu, last_id, ctrl_panel_base, ctrl_panel_mbr, body,
+     this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)));
 }
 
 void taiEditorOfClass::GetButtonImage(bool force) {

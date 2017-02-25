@@ -34,7 +34,7 @@ public:
   String          desc;           // description of what this parameter sequence does
   bool            on;             // #DEF_true is this parameter sequence active?
   bool            verbose;        // print out a message whenever parameters are changed -- shows up in job output, project log, and console
-  ParamStep_List  steps;          // parameter steps to take
+  ParamStep_Group steps;          // parameter steps to take
 
 
   virtual bool    SetParamsAtEpoch(int epoch);

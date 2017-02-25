@@ -48,7 +48,7 @@ public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
   bool                  updt_while_running; // #AKA_running_updt update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
-  String                desc;   // #EDIT_DIALOG description of what this edit contains
+  String                desc;   // #EDIT_DIALOG description of what this control panel contains
   ControlPanelMember_Group     mbrs;   // the members of the control panel
   ControlPanelMethod_Group     mths;   // the methods of the control panel
 
@@ -59,8 +59,6 @@ public:
   ControlPanelMethod*   mth(int i) const; // convenience accessor for flat access
   int                   mthSize(int i) const {return mths.leaves;} // flat size
 
-  virtual bool          autoEdit() const {return auto_edit;}
-
   String                GetTypeDecoKey() const override { return "ControlPanel"; }
   String                GetDesc() const override { return desc; } //
   int                   UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
@@ -70,10 +68,12 @@ public:
   TA_BASEFUNS(ControlPanel);
 
 public: // public API
-  virtual void  RemoveField(int idx);
-  //  remove edit data item at given index and update dialog
-  virtual void  RemoveFun(int idx);
-  //  remove function at given index
+  virtual void  RemoveMemberIdx(int idx);
+  //  remove control panel member at given index and update dialog
+  virtual void  RemoveMember(taBase* base, MemberDef* md);
+  //  remove control panel member and update dialog
+  virtual void  RemoveMethod(int idx);
+  //  remove method at given index
   virtual void  GoToObject(int idx);
   // select object for given member field for editing in the gui
   virtual void  EditLabel(int idx);
@@ -82,19 +82,19 @@ public: // public API
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
   // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
 
-  virtual bool  SelectMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString,
-                             const String& desc = _nilString, const String& sub_gp_nm = _nilString);
-  // add new member to edit if it isn't already here (returns true), optionally in a sub group
-  virtual bool  SelectMemberPrompt(taBase* base, MemberDef* md, const String& desc = _nilString);
-  // add new member to edit, prompting for exact label to us
-  virtual bool  SelectMemberNm(taBase* base, const String& md_nm,
+  virtual bool  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString,
+                          const String& desc = _nilString, const String& sub_gp_nm = _nilString);
+  // add new member to control panel if it isn't already here (returns true), optionally in a sub group
+  virtual bool  AddMemberPrompt(taBase* base, MemberDef* md, const String& desc = _nilString);
+  // add new member to control panel, prompting for exact label to use
+  virtual bool  AddMemberNm(taBase* base, const String& md_nm,
                                const String& xtra_lbl, const String& desc = _nilString,
                                const String& sub_gp_nm = _nilString);
-  // add new member to edit if it isn't already here (returns true), optionally in a sub group
-  virtual bool  SelectMethod(taBase* base, MethodDef* md, const String& desc = _nilString);
-  // add new method to edit if it isn't already here (returns true), optionally in a sub group
-  virtual bool  SelectMethodNm(taBase* base, const String& md, const String& desc = _nilString);
-  // add new method to edit if it isn't already here (returns true), optionally in a sub group
+  // add new member to control panel if it isn't already here (returns true), optionally in a sub group
+  virtual bool  AddMethod(taBase* base, MethodDef* md, const String& desc = _nilString);
+  // add new method to control panel if it isn't already here (returns true), optionally in a sub group
+  virtual bool  AddMethodNm(taBase* base, const String& md, const String& desc = _nilString);
+  // add new method to control panel if it isn't already here (returns true), optionally in a sub group
 
   virtual int   FindMbrBase(taBase* base, MemberDef* md);
   // find a given base and member, returns index
@@ -133,11 +133,11 @@ protected:
     // mostly for detecting asynchronous deletes
   virtual void   BaseAdded(ControlPanelItem* sei);
   virtual void   BaseRemoved(ControlPanelItem* sei);
-  virtual void   RemoveField_impl(int idx);
-  virtual void   RemoveFun_impl(int idx);
-  virtual bool   SelectMember_impl(taBase* base, MemberDef* md,
+  virtual void   RemoveMember_impl(int idx);
+  virtual void   RemoveMethod_impl(int idx);
+  virtual bool   AddMember_impl(taBase* base, MemberDef* md,
                   const String& lbl, const String& desc, const String& sub_gp_nm = _nilString, bool custom_label = false);
-  virtual bool   SelectMethod_impl(taBase* base, MethodDef* md, const String& desc);
+  virtual bool   AddMethod_impl(taBase* base, MethodDef* md, const String& desc);
 
 private:
   void  Initialize();

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.5.0 rev10487
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10506
 LeabraProject .projects["LeabraFlexParamSetExperiment"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -23,12 +23,12 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [2] {
-    EditMbrItem @[0] { };
-    EditMbrItem @[1] { };
+   ControlPanelMember_Group @.mbrs = [2] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
    };
 
-   EditMthItem_Group @.mths = [0] {
+   ControlPanelMethod_Group @.mths = [0] {
    };
 
    DataTableCols @.jobs_running.data = [33] {
@@ -399,16 +399,16 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [2] {
-    EditMbrItem @[0] { };
-    EditMbrItem @[1] { };
+   ControlPanelMember_Group @.mbrs = [2] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
    };
 
-   EditMthItem_Group @.mths = [4] {
-    EditMthItem @[0] { };
-    EditMthItem @[1] { };
-    EditMthItem @[2] { };
-    EditMthItem @[3] { };
+   ControlPanelMethod_Group @.mths = [4] {
+    ControlPanelMethod @[0] { };
+    ControlPanelMethod @[1] { };
+    ControlPanelMethod @[2] { };
+    ControlPanelMethod @[3] { };
    };
   };
  };
@@ -416,62 +416,75 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
  ParamSet_Group @.param_sets = [0] {
   ParamSet_Group @.gp["RunParams"] = [2] { 
    ParamSet @["BasicTrain"] { 
-    EditMbrItem_Group @.mbrs = [16] {
-     EditMbrItem @[0] { };
-     EditMbrItem @[1] { };
-     EditMbrItem @[2] { };
-     EditMbrItem @[3] { };
-     EditMbrItem @[4] { };
-     EditMbrItem @[5] { };
-     EditMbrItem @[6] { };
-     EditMbrItem @[7] { };
-     EditMbrItem @[8] { };
-     EditMbrItem @[9] { };
-     EditMbrItem @[10] { };
-     EditMbrItem @[11] { };
-     EditMbrItem @[12] { };
-     EditMbrItem @[13] { };
-     EditMbrItem @[14] { };
-     EditMbrItem @[15] { };
+    ControlPanelMember_Group @.mbrs = [16] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+     ControlPanelMember @[4] { };
+     ControlPanelMember @[5] { };
+     ControlPanelMember @[6] { };
+     ControlPanelMember @[7] { };
+     ControlPanelMember @[8] { };
+     ControlPanelMember @[9] { };
+     ControlPanelMember @[10] { };
+     ControlPanelMember @[11] { };
+     ControlPanelMember @[12] { };
+     ControlPanelMember @[13] { };
+     ControlPanelMember @[14] { };
+     ControlPanelMember @[15] { };
     };
 
-    EditMthItem_Group @.mths = [0] {
+    ControlPanelMethod_Group @.mths = [0] {
     };
    };
    ParamSet @["SpecialTrain"] { 
-    EditMbrItem_Group @.mbrs = [16] {
-     EditMbrItem @[0] { };
-     EditMbrItem @[1] { };
-     EditMbrItem @[2] { };
-     EditMbrItem @[3] { };
-     EditMbrItem @[4] { };
-     EditMbrItem @[5] { };
-     EditMbrItem @[6] { };
-     EditMbrItem @[7] { };
-     EditMbrItem @[8] { };
-     EditMbrItem @[9] { };
-     EditMbrItem @[10] { };
-     EditMbrItem @[11] { };
-     EditMbrItem @[12] { };
-     EditMbrItem @[13] { };
-     EditMbrItem @[14] { };
-     EditMbrItem @[15] { };
+    ControlPanelMember_Group @.mbrs = [16] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+     ControlPanelMember @[4] { };
+     ControlPanelMember @[5] { };
+     ControlPanelMember @[6] { };
+     ControlPanelMember @[7] { };
+     ControlPanelMember @[8] { };
+     ControlPanelMember @[9] { };
+     ControlPanelMember @[10] { };
+     ControlPanelMember @[11] { };
+     ControlPanelMember @[12] { };
+     ControlPanelMember @[13] { };
+     ControlPanelMember @[14] { };
+     ControlPanelMember @[15] { };
     };
 
-    EditMthItem_Group @.mths = [0] {
+    ControlPanelMethod_Group @.mths = [0] {
     };
    };
   };
-  ParamSet_Group @.gp["MiscParams"] = [1] { 
+  ParamSet_Group @.gp["MiscParams"] = [2] { 
    ParamSet @["MiscOne"] { 
-    EditMbrItem_Group @.mbrs = [4] {
-     EditMbrItem @[0] { };
-     EditMbrItem @[1] { };
-     EditMbrItem @[2] { };
-     EditMbrItem @[3] { };
+    ControlPanelMember_Group @.mbrs = [5] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+     ControlPanelMember @[4] { };
     };
 
-    EditMthItem_Group @.mths = [0] {
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
+   ParamSet @["MiscTwo"] { 
+    ControlPanelMember_Group @.mbrs = [5] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+     ControlPanelMember @[4] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
     };
    };
   };
@@ -3990,7 +4003,47 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
     };
    };
 
-   ParamSeq_Group @.param_seqs = [0] {
+   ParamSeq_Group @.param_seqs = [1] {
+    ParamSeq @["GainSeq"] { 
+     ParamStep_Group @.steps = [4] {
+      ParamStep @["GainSeq_000"] { 
+       ControlPanelMember_Group @.mbrs = [2] {
+	ControlPanelMember @[0] { };
+	ControlPanelMember @[1] { };
+       };
+
+       ControlPanelMethod_Group @.mths = [0] {
+       };
+      };
+      ParamStep @["GainSeq_005"] { 
+       ControlPanelMember_Group @.mbrs = [2] {
+	ControlPanelMember @[0] { };
+	ControlPanelMember @[1] { };
+       };
+
+       ControlPanelMethod_Group @.mths = [0] {
+       };
+      };
+      ParamStep @["GainSeq_010"] { 
+       ControlPanelMember_Group @.mbrs = [2] {
+	ControlPanelMember @[0] { };
+	ControlPanelMember @[1] { };
+       };
+
+       ControlPanelMethod_Group @.mths = [0] {
+       };
+      };
+      ParamStep @["GainSeq_020"] { 
+       ControlPanelMember_Group @.mbrs = [2] {
+	ControlPanelMember @[0] { };
+	ControlPanelMember @[1] { };
+       };
+
+       ControlPanelMethod_Group @.mths = [0] {
+       };
+      };
+     };
+    };
    };
 
    Layer_Group @.layers = [3] {
@@ -4397,53 +4450,43 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
-    EditMbrItem @[0] {
+    ControlPanelMember @[0] {
      user_data_=NULL;
      label="master_startup_run_params";
      desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
      base=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["run_params"]$$;
      mbr=ProgVar::object_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
+      ctrl_type=CLUSTER_RUN;
+      is_numeric=0;
+      is_single=1;
+      saved_value=;
       record=1;
       search=0;
       range=;
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=;
-     };
-     notes {
-      user_data_=NULL;
       notes=;
      };
     };
-    EditMbrItem @[1] {
+    ControlPanelMember @[1] {
      user_data_=NULL;
      label="master_startup_misc_params";
      desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
      base=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["misc_params"]$$;
      mbr=ProgVar::object_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
+      ctrl_type=CLUSTER_RUN;
+      is_numeric=0;
+      is_single=1;
+      saved_value=;
       record=1;
       search=0;
       range=;
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=;
-     };
-     notes {
-      user_data_=NULL;
       notes=;
      };
     };
@@ -4451,7 +4494,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
    };
@@ -7966,53 +8009,43 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
-    EditMbrItem @[0] {
+    ControlPanelMember @[0] {
      user_data_=NULL;
      label="master_startup_run_params";
      desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["run_params"]$;
      mbr=ProgVar::object_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"RunParams\"][\"SpecialTrain\"]";
       record=1;
       search=0;
       range=;
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"RunParams\"][\"SpecialTrain\"]";
-     };
-     notes {
-      user_data_=NULL;
       notes=;
      };
     };
-    EditMbrItem @[1] {
+    ControlPanelMember @[1] {
      user_data_=NULL;
      label="master_startup_misc_params";
      desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["misc_params"]$;
      mbr=ProgVar::object_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"MiscParams\"][\"MiscOne\"]";
       record=1;
       search=0;
       range=;
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"MiscParams\"][\"MiscOne\"]";
-     };
-     notes {
-      user_data_=NULL;
       notes=;
      };
     };
@@ -8020,10 +8053,10 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
-    EditMthItem @[0] {
+    ControlPanelMethod @[0] {
      user_data_=NULL;
      label="Init";
      desc=" run init_code, global variables retain current values unless reset in the init_code";
@@ -8031,7 +8064,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
      mth=Program::Init;
     };
-    EditMthItem @[1] {
+    ControlPanelMethod @[1] {
      user_data_=NULL;
      label="Run";
      desc=" run the program -- if not yet Init, will run Init first";
@@ -8039,7 +8072,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      mth=Program::Run_Gui;
     };
-    EditMthItem @[2] {
+    ControlPanelMethod @[2] {
      user_data_=NULL;
      label="Step";
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
@@ -8047,7 +8080,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      mth=Program::Step_Gui;
     };
-    EditMthItem @[3] {
+    ControlPanelMethod @[3] {
      user_data_=NULL;
      label="Stop";
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
@@ -8076,389 +8109,309 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     mbrs {
      user_data_=NULL;
      name="mbrs";
-     el_typ=EditMbrItem;
+     el_typ=ControlPanelMember;
      el_def=0;
-     EditMbrItem @[0] {
+     ControlPanelMember @[0] {
       user_data_=NULL;
       label="run_prog";
       desc="name of run program to run -- must exist in the RunProgs group";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicRun";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="BasicRun";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[1] {
+     ControlPanelMember @[1] {
       user_data_=NULL;
       label="init_prog";
       desc="name of init program -- must exist in the InitProgs group";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicInit";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="BasicInit";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[2] {
+     ControlPanelMember @[2] {
       user_data_=NULL;
       label="startup_prog";
       desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["startup_prog"]$$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicStartup";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="BasicStartup";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[3] {
+     ControlPanelMember @[3] {
       user_data_=NULL;
       label="train_epochs";
       desc="number of epochs to train network for";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="50";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[4] {
+     ControlPanelMember @[4] {
       user_data_=NULL;
       label="trials_per_epoch";
       desc="number of trials per epoch";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="50";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[5] {
+     ControlPanelMember @[5] {
       user_data_=NULL;
       label="save_final_wts";
       desc="should final weights after training is complete be saved?";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainEnd"].vars["save_final_wts"]$$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="true";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[6] {
+     ControlPanelMember @[6] {
       user_data_=NULL;
       label="save_wts_interval";
       desc="how frequently (epochs) to save weights during training";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["EpochEnd"].vars["save_wts_interval"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="200";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="200";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[7] {
+     ControlPanelMember @[7] {
       user_data_=NULL;
       label="test_run";
       desc="is this a testing-only run, no training?";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_run"]$$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="false";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[8] {
+     ControlPanelMember @[8] {
       user_data_=NULL;
       label="test_interval";
       desc="how frequently (epochs) to run a test during training";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="1";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[9] {
+     ControlPanelMember @[9] {
       user_data_=NULL;
       label="log_trials";
       desc="should trial-level data be saved to log files?";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_trials"]$$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="false";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[10] {
+     ControlPanelMember @[10] {
       user_data_=NULL;
       label="load_weights";
       desc="load initial weights from a file (specified in weights_file)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_weights"]$$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="false";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[11] {
+     ControlPanelMember @[11] {
       user_data_=NULL;
       label="weights_file";
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value=;
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value=;
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[12] {
+     ControlPanelMember @[12] {
       user_data_=NULL;
       label="train_start_load_st_epc";
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_st_epc"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="1";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[13] {
+     ControlPanelMember @[13] {
       user_data_=NULL;
       label="lrs_step_epochs";
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_step_epochs"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="50";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[14] {
+     ControlPanelMember @[14] {
       user_data_=NULL;
       label="lrs_n_steps";
       desc="number of steps in the learning rate schedule";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_n_steps"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="7";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="7";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[15] {
+     ControlPanelMember @[15] {
       user_data_=NULL;
       label="lrs_bump_step";
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_bump_step"]$$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="-1";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="-1";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
@@ -8466,7 +8419,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     mths {
      user_data_=NULL;
      name="mths";
-     el_typ=EditMthItem;
+     el_typ=ControlPanelMethod;
      el_def=0;
      group_type=GT_BUTTONS;
     };
@@ -8479,389 +8432,309 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     mbrs {
      user_data_=NULL;
      name="mbrs";
-     el_typ=EditMbrItem;
+     el_typ=ControlPanelMember;
      el_def=0;
-     EditMbrItem @[0] {
+     ControlPanelMember @[0] {
       user_data_=NULL;
       label="run_prog";
       desc="name of run program to run -- must exist in the RunProgs group";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicRun";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="BasicRun";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[1] {
+     ControlPanelMember @[1] {
       user_data_=NULL;
       label="init_prog";
       desc="name of init program -- must exist in the InitProgs group";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicInit";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="BasicInit";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[2] {
+     ControlPanelMember @[2] {
       user_data_=NULL;
       label="startup_prog";
       desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["startup_prog"]$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicStartup";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="BasicStartup";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[3] {
+     ControlPanelMember @[3] {
       user_data_=NULL;
       label="train_epochs";
       desc="number of epochs to train network for";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="5";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="5";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[4] {
+     ControlPanelMember @[4] {
       user_data_=NULL;
       label="trials_per_epoch";
       desc="number of trials per epoch";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="25";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="25";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[5] {
+     ControlPanelMember @[5] {
       user_data_=NULL;
       label="save_final_wts";
       desc="should final weights after training is complete be saved?";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainEnd"].vars["save_final_wts"]$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="true";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[6] {
+     ControlPanelMember @[6] {
       user_data_=NULL;
       label="save_wts_interval";
       desc="how frequently (epochs) to save weights during training";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["EpochEnd"].vars["save_wts_interval"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="200";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="200";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[7] {
+     ControlPanelMember @[7] {
       user_data_=NULL;
       label="test_run";
       desc="is this a testing-only run, no training?";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_run"]$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="true";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[8] {
+     ControlPanelMember @[8] {
       user_data_=NULL;
       label="test_interval";
       desc="how frequently (epochs) to run a test during training";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="1";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[9] {
+     ControlPanelMember @[9] {
       user_data_=NULL;
       label="log_trials";
       desc="should trial-level data be saved to log files?";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_trials"]$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="false";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[10] {
+     ControlPanelMember @[10] {
       user_data_=NULL;
       label="load_weights";
       desc="load initial weights from a file (specified in weights_file)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_weights"]$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="false";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[11] {
+     ControlPanelMember @[11] {
       user_data_=NULL;
       label="weights_file";
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$;
       mbr=ProgVar::string_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value=;
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value=;
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[12] {
+     ControlPanelMember @[12] {
       user_data_=NULL;
       label="train_start_load_st_epc";
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_st_epc"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="1";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[13] {
+     ControlPanelMember @[13] {
       user_data_=NULL;
       label="lrs_step_epochs";
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_step_epochs"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="25";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="25";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[14] {
+     ControlPanelMember @[14] {
       user_data_=NULL;
       label="lrs_n_steps";
       desc="number of steps in the learning rate schedule";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_n_steps"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="7";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="7";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[15] {
+     ControlPanelMember @[15] {
       user_data_=NULL;
       label="lrs_bump_step";
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_bump_step"]$;
       mbr=ProgVar::int_val;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="-1";
        record=1;
        search=0;
        range=;
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="-1";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
@@ -8869,7 +8742,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     mths {
      user_data_=NULL;
      name="mths";
-     el_typ=EditMthItem;
+     el_typ=ControlPanelMethod;
      el_def=0;
      group_type=GT_BUTTONS;
     };
@@ -8888,101 +8761,100 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     mbrs {
      user_data_=NULL;
      name="mbrs";
-     el_typ=EditMbrItem;
+     el_typ=ControlPanelMember;
      el_def=0;
-     EditMbrItem @[0] {
+     ControlPanelMember @[0] {
       user_data_=NULL;
       label="mstr_run_stop_step_grain";
       desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
       mbr=DynEnum::value;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="0";
        record=0;
        search=0;
        range="0:1:0.1";
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="0";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[1] {
+     ControlPanelMember @[1] {
       user_data_=NULL;
       label="Cycle_update_net_view";
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
       mbr=ProgVar::bool_val;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
        record=0;
        search=0;
        range="0:1:0.1";
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="true";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[2] {
+     ControlPanelMember @[2] {
       user_data_=NULL;
       label="cycle_qtr";
       desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
       cust_desc=0;
       base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].times$$;
       mbr=LeabraTimes::cycle_qtr;
-      is_numeric=0;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
        record=0;
        search=0;
        range="0:1:0.1";
-      };
-      param_set_value {
-       user_data_=NULL;
-       saved_value="true";
-      };
-      notes {
-       user_data_=NULL;
        notes=;
       };
      };
-     EditMbrItem @[3] {
+     ControlPanelMember @[3] {
       user_data_=NULL;
       label="leabra_con_spec_0_lrate";
       desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
       cust_desc=0;
       base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
       mbr=LeabraConSpec::lrate;
-      is_numeric=1;
-      is_single=1;
-      param_search {
+      data {
        user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0.04";
        record=0;
        search=0;
        range="0:1:0.1";
+       notes=;
       };
-      param_set_value {
+     };
+     ControlPanelMember @[4] {
+      user_data_=NULL;
+      label="leabra_con_spec_0_wt_scale_abs";
+      desc="[Default: 1]  absolute scaling (not subject to normalization: directly multiplies weight values)";
+      cust_desc=0;
+      base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"].wt_scale$$;
+      mbr=WtScaleSpec::abs;
+      data {
        user_data_=NULL;
-       saved_value="0.04";
-      };
-      notes {
-       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
        notes=;
       };
      };
@@ -8990,7 +8862,121 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     mths {
      user_data_=NULL;
      name="mths";
-     el_typ=EditMthItem;
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+   };
+   ParamSet @["MiscTwo"] {
+    user_data_=NULL;
+    name="MiscTwo";
+    updt_while_running=0;
+    desc=;
+    mbrs {
+     user_data_=NULL;
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
+      user_data_=NULL;
+      label="mstr_run_stop_step_grain";
+      desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
+      cust_desc=1;
+      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$;
+      mbr=DynEnum::value;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="0";
+       record=0;
+       search=0;
+       range="0:1:0.1";
+       notes=;
+      };
+     };
+     ControlPanelMember @[1] {
+      user_data_=NULL;
+      label="Cycle_update_net_view";
+      desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+      cust_desc=1;
+      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
+       record=0;
+       search=0;
+       range="0:1:0.1";
+       notes=;
+      };
+     };
+     ControlPanelMember @[2] {
+      user_data_=NULL;
+      label="cycle_qtr";
+      desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
+      cust_desc=0;
+      base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].times$;
+      mbr=LeabraTimes::cycle_qtr;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
+       record=0;
+       search=0;
+       range="0:1:0.1";
+       notes=;
+      };
+     };
+     ControlPanelMember @[3] {
+      user_data_=NULL;
+      label="leabra_con_spec_0_lrate";
+      desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
+      cust_desc=0;
+      base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"]$;
+      mbr=LeabraConSpec::lrate;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0.02";
+       record=0;
+       search=0;
+       range="0:1:0.1";
+       notes=;
+      };
+     };
+     ControlPanelMember @[4] {
+      user_data_=NULL;
+      label="leabra_con_spec_0_wt_scale_abs";
+      desc="[Default: 1]  absolute scaling (not subject to normalization: directly multiplies weight values)";
+      cust_desc=0;
+      base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"].wt_scale$;
+      mbr=WtScaleSpec::abs;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value=".5";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+    };
+    mths {
+     user_data_=NULL;
+     name="mths";
+     el_typ=ControlPanelMethod;
      el_def=0;
      group_type=GT_BUTTONS;
     };
@@ -11754,7 +11740,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="misc_params";
      var_type=T_Object;
      object_type=ParamSet;
-     object_val=.projects["LeabraFlexParamSetExperiment"].param_sets.gp["MiscParams"]["MiscOne"]$$;
+     object_val=.projects["LeabraFlexParamSetExperiment"].param_sets.gp["MiscParams"]["MiscTwo"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -12784,7 +12770,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="stop_train";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="set this var from any other program to stop training";
@@ -13444,7 +13430,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        user_data_=NULL;
        name="test_run";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc="is this a testing-only run, no training?";
@@ -13752,7 +13738,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        user_data_=NULL;
        name="trials_per_epoch_eff";
        var_type=T_Int;
-       int_val=25;
+       int_val=50;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -13762,7 +13748,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        user_data_=NULL;
        name="train_epochs";
        var_type=T_Int;
-       int_val=5;
+       int_val=50;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -14148,7 +14134,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=28443: sys=9405: tot=148726200554: }: end={usr=28414: sys=9403: tot=148726200496: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=7371: sys=285: tot=148804494733: }: end={usr=7373: sys=285: tot=148804494735: }: used={usr=89: sys=2: tot=85: }: s_used=0.85: n_used=50: };
     };
     types {
      user_data_=NULL;
@@ -14708,7 +14694,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=28438: sys=9405: tot=148726200544: }: end={usr=28442: sys=9405: tot=148726200552: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=7382: sys=285: tot=148804494744: }: end={usr=7384: sys=285: tot=148804494746: }: used={usr=606: sys=13: tot=616: }: s_used=6.16: n_used=300: };
     };
     types {
      user_data_=NULL;
@@ -15326,7 +15312,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=5;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -15770,7 +15756,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=4;
+      int_val=3;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -17096,7 +17082,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="train_epochs";
       var_type=T_Int;
-      int_val=5;
+      int_val=50;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="number of epochs to train network for";
@@ -17106,7 +17092,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="trials_per_epoch";
       var_type=T_Int;
-      int_val=25;
+      int_val=50;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of trials per epoch";
@@ -17116,7 +17102,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="trials_per_epoch_eff";
       var_type=T_Int;
-      int_val=25;
+      int_val=50;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="effective value, taking into account number of MPI processors";
@@ -17126,7 +17112,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="test_run";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="is this a testing-only run, no training?";
@@ -22240,7 +22226,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="lrs_step_epochs";
       var_type=T_Int;
-      int_val=25;
+      int_val=50;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="learning rate schedule epochs per step of decrease in learning rate";
@@ -24304,7 +24290,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=100;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -24759,7 +24745,7 @@ also save specs.";
       user_data_=NULL;
       name="fname";
       var_type=T_String;
-      string_val="/Users/rohrlich/Desktop/LeabraFlexParamSetExperiment_basic_train.00_0003.wts.gz";
+      string_val="/Users/oreilly/emergent/test/LeabraFlexParamSetExperiment_basic_train.00_0050.wts.gz";
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -24769,7 +24755,7 @@ also save specs.";
       user_data_=NULL;
       name="epoch_str";
       var_type=T_String;
-      string_val="0003";
+      string_val="0050";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -24789,7 +24775,7 @@ also save specs.";
       user_data_=NULL;
       name="final_tag";
       var_type=T_String;
-      string_val="_basic_train.00_0003";
+      string_val="_basic_train.00_0050";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -26629,7 +26615,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -28204,7 +28190,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -29764,7 +29750,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31142,7 +31128,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -32269,7 +32255,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=37: };
+	  view_range {min=0: max=49: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -32302,7 +32288,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=37: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=49: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32356,7 +32342,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.775555: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=3.974752: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32380,7 +32366,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.632: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.562: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -33358,7 +33344,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10489 actually remove the config table finally";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1][1].prog_code;.programs.gp[1][1].prog_code[2];.programs.gp[1][1].prog_code[2].loop_code[0];.programs.gp[1][2].prog_code;.programs.gp[1].gp[0];.programs.gp[1].gp[0][0].prog_code;.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4][0].prog_code;.programs.gp[4][5].objs;.programs.gp[4][5].vars;.programs.gp[4][5].vars[1];.programs.gp[4][5].vars[3];.programs.gp[4][5].vars[5];.programs.gp[4][6].vars;.programs.gp[4][8].vars;.programs.gp[4].gp[0];.programs.gp[4].gp[0][0].vars;.programs.gp[4].gp[0][0].vars[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].param_seqs;.networks[0].param_seqs[0];.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";
@@ -33742,47 +33728,47 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 user_data_=NULL;
 	 start_ctr=0;
 	 start_val=1;
-	 duration=25;
-	 step=-0.02;
+	 duration=50;
+	 step=-0.01;
 	};
 	SchedItem @[1] {
 	 user_data_=NULL;
-	 start_ctr=25;
+	 start_ctr=50;
 	 start_val=0.5;
-	 duration=25;
-	 step=-0.012;
+	 duration=50;
+	 step=-0.006;
 	};
 	SchedItem @[2] {
 	 user_data_=NULL;
-	 start_ctr=50;
+	 start_ctr=100;
 	 start_val=0.2;
-	 duration=25;
-	 step=-0.004;
+	 duration=50;
+	 step=-0.002;
 	};
 	SchedItem @[3] {
 	 user_data_=NULL;
-	 start_ctr=75;
+	 start_ctr=150;
 	 start_val=0.1;
-	 duration=25;
-	 step=-0.002;
+	 duration=50;
+	 step=-0.001;
 	};
 	SchedItem @[4] {
 	 user_data_=NULL;
-	 start_ctr=100;
+	 start_ctr=200;
 	 start_val=0.05;
-	 duration=25;
-	 step=-0.0012;
+	 duration=50;
+	 step=-0.0006;
 	};
 	SchedItem @[5] {
 	 user_data_=NULL;
-	 start_ctr=125;
+	 start_ctr=250;
 	 start_val=0.02;
-	 duration=25;
-	 step=-0.0004000001;
+	 duration=50;
+	 step=-0.0002;
 	};
 	SchedItem @[6] {
 	 user_data_=NULL;
-	 start_ctr=150;
+	 start_ctr=300;
 	 start_val=0.01;
 	 duration=1;
 	 step=1;
@@ -33839,47 +33825,47 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 user_data_=NULL;
 	 start_ctr=0;
 	 start_val=1;
-	 duration=25;
-	 step=-0.02;
+	 duration=50;
+	 step=-0.01;
 	};
 	SchedItem @[1] {
 	 user_data_=NULL;
-	 start_ctr=25;
+	 start_ctr=50;
 	 start_val=0.5;
-	 duration=25;
-	 step=-0.012;
+	 duration=50;
+	 step=-0.006;
 	};
 	SchedItem @[2] {
 	 user_data_=NULL;
-	 start_ctr=50;
+	 start_ctr=100;
 	 start_val=0.2;
-	 duration=25;
-	 step=-0.004;
+	 duration=50;
+	 step=-0.002;
 	};
 	SchedItem @[3] {
 	 user_data_=NULL;
-	 start_ctr=75;
+	 start_ctr=150;
 	 start_val=0.1;
-	 duration=25;
-	 step=-0.002;
+	 duration=50;
+	 step=-0.001;
 	};
 	SchedItem @[4] {
 	 user_data_=NULL;
-	 start_ctr=100;
+	 start_ctr=200;
 	 start_val=0.05;
-	 duration=25;
-	 step=-0.0012;
+	 duration=50;
+	 step=-0.0006;
 	};
 	SchedItem @[5] {
 	 user_data_=NULL;
-	 start_ctr=125;
+	 start_ctr=250;
 	 start_val=0.02;
-	 duration=25;
-	 step=-0.0004000001;
+	 duration=50;
+	 step=-0.0002;
 	};
 	SchedItem @[6] {
 	 user_data_=NULL;
-	 start_ctr=150;
+	 start_ctr=300;
 	 start_val=0.01;
 	 duration=1;
 	 step=1;
@@ -33923,47 +33909,47 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        start_ctr=0;
        start_val=1;
-       duration=25;
-       step=-0.02;
+       duration=50;
+       step=-0.01;
       };
       SchedItem @[1] {
        user_data_=NULL;
-       start_ctr=25;
+       start_ctr=50;
        start_val=0.5;
-       duration=25;
-       step=-0.012;
+       duration=50;
+       step=-0.006;
       };
       SchedItem @[2] {
        user_data_=NULL;
-       start_ctr=50;
+       start_ctr=100;
        start_val=0.2;
-       duration=25;
-       step=-0.004;
+       duration=50;
+       step=-0.002;
       };
       SchedItem @[3] {
        user_data_=NULL;
-       start_ctr=75;
+       start_ctr=150;
        start_val=0.1;
-       duration=25;
-       step=-0.002;
+       duration=50;
+       step=-0.001;
       };
       SchedItem @[4] {
        user_data_=NULL;
-       start_ctr=100;
+       start_ctr=200;
        start_val=0.05;
-       duration=25;
-       step=-0.0012;
+       duration=50;
+       step=-0.0006;
       };
       SchedItem @[5] {
        user_data_=NULL;
-       start_ctr=125;
+       start_ctr=250;
        start_val=0.02;
-       duration=25;
-       step=-0.0004000001;
+       duration=50;
+       step=-0.0002;
       };
       SchedItem @[6] {
        user_data_=NULL;
-       start_ctr=150;
+       start_ctr=300;
        start_val=0.01;
        duration=1;
        step=1;
@@ -34011,6 +33997,251 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="param_seqs";
     el_typ=ParamSeq;
     el_def=0;
+    ParamSeq @["GainSeq"] {
+     user_data_=NULL;
+     name="GainSeq";
+     desc=;
+     on=1;
+     verbose=1;
+     steps {
+      user_data_=NULL;
+      name="GainSeq_steps";
+      el_typ=ParamStep;
+      el_def=0;
+      ParamStep @["GainSeq_000"] {
+       user_data_=NULL;
+       name="GainSeq_000";
+       updt_while_running=0;
+       desc=;
+       mbrs {
+	user_data_=NULL;
+	name="mbrs";
+	el_typ=ControlPanelMember;
+	el_def=0;
+	ControlPanelMember @[0] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_gain";
+	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
+	 cust_desc=0;
+	 base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$$;
+	 mbr=LeabraActFunSpec::gain;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="20";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+	ControlPanelMember @[1] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_nvar";
+	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::nvar;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="0.01";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+       };
+       mths {
+	user_data_=NULL;
+	name="mths";
+	el_typ=ControlPanelMethod;
+	el_def=0;
+	group_type=GT_BUTTONS;
+       };
+       epoch=0;
+      };
+      ParamStep @["GainSeq_005"] {
+       user_data_=NULL;
+       name="GainSeq_005";
+       updt_while_running=0;
+       desc=;
+       mbrs {
+	user_data_=NULL;
+	name="mbrs";
+	el_typ=ControlPanelMember;
+	el_def=0;
+	ControlPanelMember @[0] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_gain";
+	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::gain;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="40";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+	ControlPanelMember @[1] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_nvar";
+	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::nvar;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="0.008";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+       };
+       mths {
+	user_data_=NULL;
+	name="mths";
+	el_typ=ControlPanelMethod;
+	el_def=0;
+	group_type=GT_BUTTONS;
+       };
+       epoch=5;
+      };
+      ParamStep @["GainSeq_010"] {
+       user_data_=NULL;
+       name="GainSeq_010";
+       updt_while_running=0;
+       desc=;
+       mbrs {
+	user_data_=NULL;
+	name="mbrs";
+	el_typ=ControlPanelMember;
+	el_def=0;
+	ControlPanelMember @[0] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_gain";
+	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::gain;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="80";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+	ControlPanelMember @[1] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_nvar";
+	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::nvar;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="0.005";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+       };
+       mths {
+	user_data_=NULL;
+	name="mths";
+	el_typ=ControlPanelMethod;
+	el_def=0;
+	group_type=GT_BUTTONS;
+       };
+       epoch=10;
+      };
+      ParamStep @["GainSeq_020"] {
+       user_data_=NULL;
+       name="GainSeq_020";
+       updt_while_running=0;
+       desc=;
+       mbrs {
+	user_data_=NULL;
+	name="mbrs";
+	el_typ=ControlPanelMember;
+	el_def=0;
+	ControlPanelMember @[0] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_gain";
+	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::gain;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="100";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+	ControlPanelMember @[1] {
+	 user_data_=NULL;
+	 label="leabra_unit_spec_0_act_nvar";
+	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
+	 cust_desc=0;
+	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
+	 mbr=LeabraActFunSpec::nvar;
+	 data {
+	  user_data_=NULL;
+	  ctrl_type=PARAM_SET;
+	  is_numeric=1;
+	  is_single=1;
+	  saved_value="0.005";
+	  record=1;
+	  search=0;
+	  range=;
+	  notes=;
+	 };
+	};
+       };
+       mths {
+	user_data_=NULL;
+	name="mths";
+	el_typ=ControlPanelMethod;
+	el_def=0;
+	group_type=GT_BUTTONS;
+       };
+       epoch=20;
+      };
+     };
+    };
    };
    layers {
     user_data_=NULL;
@@ -34073,9 +34304,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.15;
-     acts_p_avg=0.15;
-     acts_p_avg_eff=0.15;
+     acts_m_avg=0.1899993;
+     acts_p_avg=0.1899993;
+     acts_p_avg_eff=0.1899993;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -34169,9 +34400,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.15;
-     acts_p_avg=0.15;
-     acts_p_avg_eff=0.15;
+     acts_m_avg=0.1634393;
+     acts_p_avg=0.1640308;
+     acts_p_avg_eff=0.1640308;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
@@ -34246,9 +34477,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.15;
-     acts_p_avg=0.15;
-     acts_p_avg_eff=0.15;
+     acts_m_avg=0.1860717;
+     acts_p_avg=0.1899993;
+     acts_p_avg_eff=0.1899993;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
     };
@@ -34266,7 +34497,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    auto_load_wts=NO_AUTO_LOAD;
    auto_load_file=;
    brain_atlas_name=;
-   train_mode=TEST;
+   train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=10;
    stats {

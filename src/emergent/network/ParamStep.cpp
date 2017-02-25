@@ -18,7 +18,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ParamStep);
-TA_BASEFUNS_CTORS_DEFN(ParamStep_List);
+TA_BASEFUNS_CTORS_DEFN(ParamStep_Group);
 
 void ParamStep::Initialize() {
   epoch = 0;

@@ -30,7 +30,7 @@ taiEditorOfControlPanelBase::taiEditorOfControlPanelBase(void* base, TypeDef* td
 :inherited(base, td, read_only_, false, parent)
 {
   Initialize();
-  sele = (ControlPanel*)base;
+  ctrlpan = (ControlPanel*)base;
 }
 
 taiEditorOfControlPanelBase::~taiEditorOfControlPanelBase() {
@@ -39,8 +39,8 @@ taiEditorOfControlPanelBase::~taiEditorOfControlPanelBase() {
 void taiEditorOfControlPanelBase::Initialize()
 {
   no_meth_menu = true; // only show them on outer menu, by way of Propertiesguy
-  sele = NULL;
-  sel_edit_mbrs = true; // note: we don't actually select members, just for removal
+  ctrlpan = NULL;
+  ctrl_panel_mbrs = true; // note: we don't actually add members, just for removal
 }
 
 void taiEditorOfControlPanelBase::Constr_Body() {
@@ -59,7 +59,7 @@ void taiEditorOfControlPanelBase::Constr_Methods_impl() {
   inherited::Constr_Methods_impl();
   Insert_Methods();
 
-  FOREACH_SUBGROUP(ControlPanelMethod_Group, grp, sele->mths) {
+  FOREACH_SUBGROUP(ControlPanelMethod_Group, grp, ctrlpan->mths) {
     //note: root group uses only buttons (hard wired)
     ControlPanelMethod_Group::MthGroupType group_type = grp->group_type;
 
@@ -127,20 +127,20 @@ void taiEditorOfControlPanelBase::Constr_Methods_impl() {
 }
 
 taBase* taiEditorOfControlPanelBase::GetMembBase_Flat(int idx) {
-  return sele->mbrs.GetBase_Flat(idx);
+  return ctrlpan->mbrs.GetBase_Flat(idx);
 }
 
 taBase* taiEditorOfControlPanelBase::GetMethBase_Flat(int idx) {
-  return sele->mths.GetBase_Flat(idx);
+  return ctrlpan->mths.GetBase_Flat(idx);
 }
 
 
-void taiEditorOfControlPanelBase::mnuRemoveMember_select(int idx) {
-  sele->RemoveField(idx);
+void taiEditorOfControlPanelBase::mnuRemoveMember_ctrlpanel(int idx) {
+  ctrlpan->RemoveMemberIdx(idx);
 }
 
-void taiEditorOfControlPanelBase::mnuRemoveMethod_select(int idx) {
-  sele->RemoveFun(idx);
+void taiEditorOfControlPanelBase::mnuRemoveMethod_ctrlpanel(int idx) {
+  ctrlpan->RemoveMethod(idx);
 }
 
 

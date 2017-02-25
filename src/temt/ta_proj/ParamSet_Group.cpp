@@ -18,16 +18,8 @@
 
 TA_BASEFUNS_CTORS_DEFN(ParamSet_Group);
 
-void ParamSet_Group::RestorePanels() {
-  FOREACH_ELEM_IN_GROUP(ParamSet, cp, *this) {
-    if(cp->GetUserDataAsBool("user_pinned")) {
-      cp->EditPanel(true, true); // true,true = new tab, pinned in place
-    }
-  }
-}
-
 bool ParamSet_Group::LoadParamSet(const String& set_name) {
-  ParamSet* set = FindName(set_name);
+  ParamSet* set = (ParamSet*)FindName(set_name);
   if (!set)
     return false;
   

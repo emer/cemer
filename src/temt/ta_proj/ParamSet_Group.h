@@ -17,7 +17,7 @@
 #define ParamSet_Group_h 1
 
 // parent includes:
-#include <taGroup>
+#include <ControlPanel_Group>
 
 // member includes:
 
@@ -27,21 +27,19 @@ class ParamSet; //
 taTypeDef_Of(ParamSet);
 taTypeDef_Of(ParamSet_Group);
 
-class TA_API ParamSet_Group : public taGroup<ParamSet> {
-  // ##CAT_Display ##EXPAND_DEF_1 a group of param sets
-  INHERITED(taGroup<ParamSet>)
+class TA_API ParamSet_Group : public ControlPanel_Group {
+  // a group of param sets
+  INHERITED(ControlPanel_Group)
 public:
-  virtual void  RestorePanels();
-  // if the panel was pinned when the program was saved redisplay it on project open
   virtual bool  LoadParamSet(const String& set_name);
 
-  String       GetTypeDecoKey() const override { return "ParamSet"; }
+  String        GetTypeDecoKey() const override { return "ParamSet"; }
 
-TA_BASEFUNS(ParamSet_Group);
+  TA_BASEFUNS(ParamSet_Group);
 private:
-NOCOPY(ParamSet_Group)
-void  Initialize() { SetBaseType(&TA_ParamSet);}
-void  Destroy()               { };
+  NOCOPY(ParamSet_Group)
+  void  Initialize() { SetBaseType(&TA_ParamSet);}
+  void  Destroy()               { };
 };
 
 #endif // ParamSet_Group_h

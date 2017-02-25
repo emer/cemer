@@ -40,9 +40,9 @@ INHERITED(taiEditor)
   Q_OBJECT
 friend class iDialogEditor;
 public:
-  static void           DoFillLabelContextMenu_SelEdit(QMenu* menu,
-    int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
-    QObject* slot_obj, const char* slot);
+  static void           DoFillLabelContextMenu_CtrlPanel
+    (QMenu* menu, int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
+     QObject* slot_obj, const char* add_slot, const char* rmv_slot);
     // helper used here and in ProgEditor and elsewhere to handle Seledit context menus
   static void           GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
 
@@ -60,24 +60,24 @@ public:
   taiEditorWidgets(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   virtual ~taiEditorWidgets();
 
-  void                  ClearBody(bool waitproc = true);
+  void          ClearBody(bool waitproc = true);
    // prepare dialog for rebuilding Body to show new contents
 
-  virtual void          Iconify(bool value);    // for dialogs: iconify/deiconify
-  void                  ReConstr_Body() override; // called when show has changed and body should be reconstructed -- this is a deferred call
+  virtual void  Iconify(bool value);    // for dialogs: iconify/deiconify
+  void          ReConstr_Body() override; // called when show has changed and body should be reconstructed -- this is a deferred call
 
-  virtual void          SetRevert();    // set the revert button on
-  virtual void          UnSetRevert();  // set the revert button off
-  bool                  ReShow(bool force = false) override; // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
-  virtual void          Raise() {if (isDialog()) DoRaise_Dialog();}     // bring dialog or panel (in new tab) to the front
-  void                  GetImage(bool force) override {inherited::GetImage(force);} // scope ugh
+  virtual void  SetRevert();    // set the revert button on
+  virtual void  UnSetRevert();  // set the revert button off
+  bool          ReShow(bool force = false) override; // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  virtual void  Raise() {if (isDialog()) DoRaise_Dialog();}     // bring dialog or panel (in new tab) to the front
+  void          GetImage(bool force) override {inherited::GetImage(force);} // scope ugh
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() override {return this;}
   TypeDef*      GetTypeDef() const override {return &TA_taiEditorWidgets;}
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
-//  void                SigLinkDestroying(taSigLink* dl);
+//  void         SigLinkDestroying(taSigLink* dl);
   void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 public: // IWidgetHost i/f
@@ -99,29 +99,28 @@ public slots:
   void          Apply_Async() override {inherited::Apply_Async(); }
 
 protected:
-  bool                  show_meth_buttons; // true if any are created
-  bool                  sel_edit_mbrs; // support right-click for seledit of mbrs
-  taiWidget*              sel_item_dat; // ONLY used/valid in handling of context menu for control panels
-  MemberDef*            sel_item_mbr; // ONLY used/valid in handling of context menu for control panels
-  taBase*               sel_item_base; // ONLY used/valid in handling of context menu for control panels
-  bool                  rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
+  bool         show_meth_buttons; // true if any are created
+  bool         ctrl_panel_mbrs; // support right-click for control panel of mbrs
+  taiWidget*   ctrl_panel_dat; // ONLY used/valid in handling of context menu for control panels
+  MemberDef*   ctrl_panel_mbr; // ONLY used/valid in handling of context menu for control panels
+  taBase*      ctrl_panel_base; // ONLY used/valid in handling of context menu for control panels
+  bool         rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
-  virtual void          ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
+  virtual void ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
   void         Constr_Methods() override; // creates the box for buttons
-  virtual void          Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
+  virtual void Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
   void         Insert_Methods() override; // insert the menu and methods, if made, and not owned elsewise
   //void       Constr_Final() override;
-  virtual void          FillLabelContextMenu(QMenu* menu, int& last_id); // last_id enables access menu items
+  virtual void FillLabelContextMenu(QMenu* menu, int& last_id); // last_id enables access menu items
   void         Cancel_impl() override;
   void         Ok_impl() override;
-
 
 protected:
   void         InitGuiFields(bool virt = true) override; // NULL the gui fields -- virt used for ctor
   void         Refresh_impl(bool reshow) override;
 protected slots:
-  virtual void  label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
-  virtual void          helpMenu_triggered();
+  virtual void label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
+  virtual void helpMenu_triggered();
 };
 
 

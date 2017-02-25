@@ -179,6 +179,8 @@ void ControlPanelMember::InitLinks() {
   taBase::Own(obs_param_srch, this);
   taBase::Own(obs_ps_value, this);
   taBase::Own(obs_notes, this);
+
+  SetCtrlType();
 }
 
 void ControlPanelMember::Copy_(const ControlPanelMember& cp) {

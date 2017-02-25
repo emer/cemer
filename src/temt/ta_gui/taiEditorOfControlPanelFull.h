@@ -36,7 +36,7 @@ public:
   taiMemberWidgets    prop_membs;  // the true properties of the control panel not the added param mbrs
   
 protected slots:
-  void          DoRemoveSelEdit() override;
+  void          DoRemoveFmCtrlPanel() override;
   void          DoGoToObject();
   void          DoEditLabel();
   void          DoCopyActiveToSaved();
@@ -45,7 +45,7 @@ protected slots:
 protected:
   void          ClearBody_impl() override;       // we also clear all the methods, and then rebuild them
   void          Constr_Widget_Labels() override;
-  void          FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) override;
+  void          FillLabelContextMenu_CtrlPanel(QMenu* menu, int& last_id) override;
   void          GetImage_Membs_def() override;
   void          GetValue_Membs_def() override;
   

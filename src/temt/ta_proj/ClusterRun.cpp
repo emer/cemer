@@ -1055,7 +1055,7 @@ void ClusterRun::SaveJobParams() {
 void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
   taProject* proj = GetMyProj();
   if(!proj) return;
-  ParamSet* ps = proj->param_sets.NewEl(1);
+  ParamSet* ps = (ParamSet*)proj->param_sets.NewEl(1);
 
   String tag = table.GetValAsString("tag", row);
   String params = table.GetValAsString("params", row);

@@ -49,7 +49,7 @@ public: // ISigLinkClient i/f
   void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 protected:
-  int                   sel_item_row;
+  int                   ctrl_panel_row;
   taiWidgetDelegateUserData*     udd;
 
   UserDataItemBase*     GetUserDataItem(int row);
@@ -59,7 +59,7 @@ protected:
   void         ClearBody_impl() override;       // we also clear all the methods, and then rebuild them
 
   void         Constr_Widget_Labels() override;
-  void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) override;
+  void         FillLabelContextMenu_CtrlPanel(QMenu* menu, int& last_id) override;
   void         GetImage_Membs_def() override;
   void         GetValue_Membs_def() override;
   void         Constr_Methods_impl() override;

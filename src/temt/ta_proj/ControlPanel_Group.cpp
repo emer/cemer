@@ -18,11 +18,16 @@
 
 TA_BASEFUNS_CTORS_DEFN(ControlPanel_Group);
 
-void ControlPanel_Group::AutoEdit() { // Obsolete - see RestorePanels()
-  FOREACH_ELEM_IN_GROUP(ControlPanel, se, *this) {
-    if(se->autoEdit()) {
-      se->EditPanel(true, true);        // true,true = new tab, pinned in place
-    }
+void ControlPanel_Group::AddMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
+                                   const String& dscr, const String& sub_gp_nm) {
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    cp->AddMember(base, mbr, xtra_lbl, dscr, sub_gp_nm);
+  }
+}
+
+void ControlPanel_Group::RemoveMember(taBase* base, MemberDef* mbr) {
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    cp->RemoveMember(base, mbr);
   }
 }
 

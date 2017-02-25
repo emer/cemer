@@ -51,7 +51,7 @@ taiEditorOfProgramCtrl::taiEditorOfProgramCtrl(Program* prog, bool read_only_,
   if (pg) { // better exist!
     refs_struct.Add(pg);
   }
-  sel_edit_mbrs = true;
+  ctrl_panel_mbrs = true;
 }
 
 taiEditorOfProgramCtrl::~taiEditorOfProgramCtrl() {

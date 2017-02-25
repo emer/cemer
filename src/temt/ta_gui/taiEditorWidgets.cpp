@@ -16,7 +16,6 @@
 #include "taiEditorWidgets.h"
 #include <taProject>
 #include <ControlPanel>
-#include <ParamSet>
 #include <iLabel>
 #include <taiWidget>
 #include <iFlowLayout>
@@ -36,108 +35,69 @@
 #include <QContextMenuEvent>
 
 
-void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
-  int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
-  QObject* slot_obj, const char* slot)
+void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
+(QMenu* menu, int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
+ QObject* slot_obj, const char* add_slot, const char* rmv_slot)
 {
-// have to be a taBase to use SelEdit
+  // have to be a taBase to use ControlPanel
   if (!rbase || !md) return;
   // get list of control panels
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
 
-  // if any edits, populate menu for adding, for all seledits not already on
-  QMenu* sub = menu->addMenu("Add to ControlPanel");
-  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
-  sub->setFont(menu->font());
-  QAction* act = NULL; // we need to track last one
-  for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
-    ControlPanel* se = proj->ctrl_panels.Leaf(i);
-    act = sub->addAction(se->GetName()/*, slot_obj, slot*/); //
-    act->setData(QVariant::fromValue((void*)se));
-    if (se->FindMbrBase(rbase, md) >= 0)
-      act->setEnabled(false);
-  }
-  if (sub->actions().count() == 0)
-    sub->setEnabled(false); // show item for usability, but disable
+  // if any edits, populate menu for adding, for all ctrl panels not already on
+  QMenu* add_sub = menu->addMenu("Add to ControlPanel");
+  connect(add_sub, SIGNAL(triggered(QAction*)), slot_obj, add_slot);
+  add_sub->setFont(menu->font());
+  QAction* add_act = NULL; // we need to track last one
 
-  // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = menu->addMenu("Remove from ControlPanel");
-  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
-  sub->setFont(menu->font());
-  for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
-    ControlPanel* se = proj->ctrl_panels.Leaf(i);
-    act = sub->addAction(se->GetName()/*, slot_obj, slot*/);
-    act->setData(QVariant::fromValue((void*)se));
-    if (se->FindMbrBase(rbase, md) < 0)
-      act->setEnabled(false);
-  }
-  if (sub->actions().count() == 0)
-    sub->setEnabled(false); // show item for usability, but disable
+  QMenu* rmv_sub = menu->addMenu("Remove from ControlPanel");
+  connect(rmv_sub, SIGNAL(triggered(QAction*)), slot_obj, rmv_slot);
+  rmv_sub->setFont(menu->font());
+  QAction* rmv_act = NULL; // we need to track last one
 
-  sub = menu->addMenu("Add to ParamSet");
-  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
-  sub->setFont(menu->font());
-  act = NULL; // we need to track last one
-  for (int i = 0; i < proj->param_sets.leaves; ++i) {
-    ParamSet* ps = proj->param_sets.Leaf(i);
-    act = sub->addAction(ps->GetName()/*, slot_obj, slot*/); //
-    act->setData(QVariant::fromValue((void*)ps));
-    if (ps->FindMbrBase(rbase, md) >= 0)
-      act->setEnabled(false);
-  }
-  if (sub->actions().count() == 0)
-    sub->setEnabled(false); // show item for usability, but disable
+  const int n_types = 7;
+  const char* type_names[n_types] = {"ControlPanel", "ClusterRun", "ParamSet",
+                                     "ParamStep", "ControlPanel_Group", "ParamSet_Group",
+                                     "ParamStep_Group"
+  };
 
-  // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = menu->addMenu("Remove from ParamSet");
-  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
-  sub->setFont(menu->font());
-  for (int i = 0; i < proj->param_sets.leaves; ++i) {
-    ParamSet* ps = proj->param_sets.Leaf(i);
-    act = sub->addAction(ps->GetName()/*, slot_obj, slot*/);
-    act->setData(QVariant::fromValue((void*)ps));
-    if (ps->FindMbrBase(rbase, md) < 0)
-      act->setEnabled(false);
-  }
-  if (sub->actions().count() == 0)
-    sub->setEnabled(false); // show item for usability, but disable
-
-  TypeDef* pstd = taMisc::FindTypeName("ParamStep", false);
-  if(pstd) {
-    sub = menu->addMenu("Add to ParamStep");
-    connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
-    sub->setFont(menu->font());
-    act = NULL; // we need to track last one
-    for (int i = 0; i < pstd->tokens.size; ++i) {
-      void* tok = pstd->tokens[i];
-      if(!tok) continue;
-      ControlPanel* ps = (ControlPanel*)tok;
-      if(!ps->SameScope(proj, &TA_taProject)) continue;
-      act = sub->addAction(ps->GetName()/*, slot_obj, slot*/); //
-      act->setData(QVariant::fromValue((void*)ps));
-      if (ps->FindMbrBase(rbase, md) >= 0)
-        act->setEnabled(false);
+  for(int ti=0; ti<n_types; ti++) {
+    TypeDef* cptd = taMisc::FindTypeName(type_names[ti], false);
+    if(cptd) {
+      for (int i = 0; i < cptd->tokens.size; ++i) {
+        void* tok = cptd->tokens[i];
+        if(!tok) continue;
+        taBase* cp = (taBase*)tok;
+        if(!cp->SameScope(proj, &TA_taProject)) continue;
+        String nm = cp->GetName();
+        bool is_cp = false;
+        if(cp->InheritsFrom(&TA_ControlPanel)) {
+          is_cp = true;
+        }
+        else {                  // group
+          nm += " (Group)";
+        }
+        add_act = add_sub->addAction(nm);
+        add_act->setData(QVariant::fromValue((void*)cp));
+        rmv_act = rmv_sub->addAction(nm);
+        rmv_act->setData(QVariant::fromValue((void*)cp));
+        if(is_cp) {
+          ControlPanel* cpr = (ControlPanel*)cp;
+          if (cpr->FindMbrBase(rbase, md) >= 0) {
+            add_act->setEnabled(false);
+          }
+          else {
+            rmv_act->setEnabled(false);
+          }
+        }
+      }
     }
-    if (sub->actions().count() == 0)
-      sub->setEnabled(false); // show item for usability, but disable
-
-    sub = menu->addMenu("Remove from ParamStep");
-    connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
-    sub->setFont(menu->font());
-    for (int i = 0; i < pstd->tokens.size; ++i) {
-      void* tok = pstd->tokens[i];
-      if(!tok) continue;
-      ControlPanel* ps = (ControlPanel*)tok;
-      if(!ps->SameScope(proj, &TA_taProject)) continue;
-      act = sub->addAction(ps->GetName()/*, slot_obj, slot*/);
-      act->setData(QVariant::fromValue((void*)ps));
-      if (ps->FindMbrBase(rbase, md) < 0)
-        act->setEnabled(false);
-    }
-    if (sub->actions().count() == 0)
-      sub->setEnabled(false); // show item for usability, but disable
   }
+  if (add_sub->actions().count() == 0)
+    add_sub->setEnabled(false); // show item for usability, but disable
+  if (rmv_sub->actions().count() == 0)
+    rmv_sub->setEnabled(false); // show item for usability, but disable
 }
 
 void taiEditorWidgets::GetName(MemberDef* md, String& name, String& help_text) {
@@ -151,11 +111,11 @@ taiEditorWidgets::taiEditorWidgets(TypeDef* typ_, bool read_only_, bool modal_, 
 {
   InitGuiFields(false);
 
-  sel_item_dat = NULL;
-  sel_item_mbr = NULL;
-  sel_item_base = NULL;
+  ctrl_panel_dat = NULL;
+  ctrl_panel_mbr = NULL;
+  ctrl_panel_base = NULL;
   rebuild_body = false;
-  sel_edit_mbrs = true; // inherited guys can turn off
+  ctrl_panel_mbrs = true; // inherited guys can turn off
 }
 
 taiEditorWidgets::~taiEditorWidgets() {
@@ -288,13 +248,13 @@ void taiEditorWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEven
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
   int last_id = -1;
-  sel_item_dat = (taiWidget*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
-  if (sel_item_dat) {
-    sel_item_mbr = sel_item_dat->mbr;
-    sel_item_base = sel_item_dat->Base();
+  ctrl_panel_dat = (taiWidget*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+  if (ctrl_panel_dat) {
+    ctrl_panel_mbr = ctrl_panel_dat->mbr;
+    ctrl_panel_base = ctrl_panel_dat->Base();
   } else {
-    sel_item_mbr = NULL;
-    sel_item_base = NULL;
+    ctrl_panel_mbr = NULL;
+    ctrl_panel_base = NULL;
   }
   FillLabelContextMenu(menu, last_id);
   if (menu->actions().count() > 0) {
@@ -307,13 +267,13 @@ void taiEditorWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEven
 
 void taiEditorWidgets::FillLabelContextMenu(QMenu* menu, int& last_id) {
   // only add member help if exists
-  if (sel_item_mbr) {
+  if (ctrl_panel_mbr) {
     menu->addAction("&Help", this, SLOT(helpMenu_triggered()));
   }
 }
 
 void taiEditorWidgets::helpMenu_triggered() {
-  iHelpBrowser::StatLoadMember(sel_item_mbr);
+  iHelpBrowser::StatLoadMember(ctrl_panel_mbr);
 }
 
 void taiEditorWidgets::Iconify(bool value) {

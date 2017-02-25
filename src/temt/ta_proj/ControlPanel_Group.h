@@ -31,7 +31,12 @@ class TA_API ControlPanel_Group : public taGroup<ControlPanel> {
   // #AKA_SelectEdit_Group  ##CAT_Display ##EXPAND_DEF_1  group of control panel dialog objects
 INHERITED(taGroup<ControlPanel>)
 public:
-  virtual void  AutoEdit();
+  virtual void  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString,
+                          const String& desc = _nilString, const String& sub_gp_nm = _nilString);
+  // add new member to all control panels in group if it isn't already there, optionally in a sub group
+  virtual void  RemoveMember(taBase* base, MemberDef* md);
+  //  remove member from all control panels in group and update dialogs
+
   virtual void  RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open
 

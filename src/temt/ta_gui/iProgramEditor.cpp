@@ -28,7 +28,6 @@
 #include <taiWidgetPoly>
 #include <taProject>
 #include <ControlPanel>
-#include <ParamSet>
 #include <BuiltinTypeDefs>
 #include <PanelViewer>
 
@@ -699,9 +698,9 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   if (sel_item_dat) {
     sel_item_mbr = sel_item_dat->mbr;
     sel_item_base = sel_item_dat->Base();
-    taiEditorWidgetsMain::DoFillLabelContextMenu_SelEdit(menu, last_id,
-      sel_item_base, sel_item_mbr, body,
-    this, SLOT(DoAddToControlPanel(QAction*)));
+    taiEditorWidgetsMain::DoFillLabelContextMenu_CtrlPanel
+      (menu, last_id,sel_item_base, sel_item_mbr, body,
+       this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)) );
   }
 
   if (menu->actions().count() > 0) {
@@ -713,25 +712,44 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
 }
 
 void iProgramEditor::DoAddToControlPanel(QAction* act) {
-//note: this routine is duplicated in the taiEditorOfClass
-
+  //note: this routine is duplicated in the taiEditorOfClass
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
 
   void* vval = act->data().value<void*>();
   if(!vval) return;
-  ControlPanel* se = (ControlPanel*)vval;
   taBase* rbase = sel_item_base;
   MemberDef* md = sel_item_mbr;
-  if (!md || !se || !rbase) return; //shouldn't happen...
+  if (!md || !rbase) return; //shouldn't happen...
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    cp->AddMember(rbase, md);
+  }
+  else {                        // must be a group
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    cp->AddMember(rbase, md);
+  }
+}
 
-  //NOTE: this handler adds if not on, or removes if already on
-  int idx = se->FindMbrBase(rbase, md);
-  if (idx >= 0) {
-    se->RemoveField(idx);
+void iProgramEditor::DoRmvFmControlPanel(QAction* act) {
+  //note: this routine is duplicated in the taiEditorOfClass
+  taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
+  if (!proj) return;
+
+  void* vval = act->data().value<void*>();
+  if(!vval) return;
+  taBase* rbase = sel_item_base;
+  MemberDef* md = sel_item_mbr;
+  if (!md || !rbase) return; //shouldn't happen...
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    cp->RemoveMember(rbase, md);
   }
   else {
-    se->SelectMember(rbase, md);
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    cp->RemoveMember(rbase, md);
   }
 }
 

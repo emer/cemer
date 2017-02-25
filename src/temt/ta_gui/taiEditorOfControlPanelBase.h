@@ -28,10 +28,10 @@ class TA_API taiEditorOfControlPanelBase : public taiEditorOfClass {
 INHERITED(taiEditorOfClass)
   Q_OBJECT
 public:
-  ControlPanel*   sele;
+  ControlPanel*   ctrlpan;
 
   void         Constr_Body() override;
-  taBase*      GetMembBase_Flat(int idx) override; // these are overridden by seledit
+  taBase*      GetMembBase_Flat(int idx) override; // these are overridden by ctrlpanel
   taBase*      GetMethBase_Flat(int idx) override;
 
   taiEditorOfControlPanelBase(void* base, TypeDef* td, bool read_only_ = false,
@@ -43,9 +43,9 @@ protected:
   void         Constr_Methods_impl() override;
 
 protected slots:
-  virtual void          DoRemoveSelEdit() = 0;
-  virtual void          mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
-  virtual void          mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
+  virtual void          DoRemoveFmCtrlPanel() = 0;
+  virtual void          mnuRemoveMember_ctrlpanel(int idx); // #IGNORE removes the indicated member
+  virtual void          mnuRemoveMethod_ctrlpanel(int idx); // #IGNORE removes the indicated method
 private:
   void  Initialize();
 };

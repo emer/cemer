@@ -27,18 +27,19 @@ void ParamSeq::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(prev_name.nonempty() && prev_name != name) {
     for(int i=0; i<steps.size; i++) {
-      ParamStep* ps = steps[i];
+      ParamStep* ps = (ParamStep*)steps[i];
       ps->AutoName();
     }
   }
   prev_name = name;
+  steps.SetName(name + "_steps");
   steps.Sort();                 // should sort by name!
 }
 
 bool ParamSeq::SetParamsAtEpoch(int epoch) {
   bool got_some = false;
   for(int i=0; i<steps.size; i++) {
-    ParamStep* ps = steps[i];
+    ParamStep* ps = (ParamStep*)steps[i];
     if(ps->epoch == epoch) {
       got_some = true;
       if(verbose) {
@@ -46,8 +47,8 @@ bool ParamSeq::SetParamsAtEpoch(int epoch) {
           String cur_val = sei->CurValAsString();
           sei->CopySavedToActive();
           String new_val = sei->CurValAsString();
-          taMisc::Info("ParamStep:", ps->name, "set:", sei->label,
-                       "to:", new_val, "was:", cur_val);
+          taMisc::Info("ParamStep:", ps->name, "at epoch: " + String(epoch), "set:",
+                       sei->label, "to:", new_val, "was:", cur_val);
         }
         ps->ReShowEdit(true);
       }
@@ -66,9 +67,9 @@ void ParamSeq::MakeEpochSteps(int epcs_per_step, int n_steps, bool copy_first) {
   }
   int epc = 0;
   steps.SetSize(n_steps);
-  ParamStep* fs = steps[0];
+  ParamStep* fs = (ParamStep*)steps[0];
   for(int i=0; i<steps.size; i++) {
-    ParamStep* ps = steps[i];
+    ParamStep* ps = (ParamStep*)steps[i];
     if(copy_first && i >= 1) {
       ps->CopyFrom(fs);
     }      
@@ -83,10 +84,10 @@ void ParamSeq::LinearInterp() {
                "requires at least 3 steps to perform linear interpolation")) {
     return;
   }
-  ParamStep* fs = steps[0];
-  ParamStep* ls = steps.Peek();
+  ParamStep* fs = (ParamStep*)steps[0];
+  ParamStep* ls = (ParamStep*)steps.Peek();
   for(int i=1; i<steps.size-1; i++) {
-    ParamStep* ps = steps[i];
+    ParamStep* ps = (ParamStep*)steps[i];
     for(int lfi = 0; lfi < ps->mbrs.leaves; lfi++) {
       ControlPanelMember* psi = ps->mbrs.Leaf(lfi);
       if(!(psi->data.is_numeric && psi->data.is_single)) continue;

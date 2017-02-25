@@ -1199,7 +1199,7 @@ bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMemberPrompt(base, mbr, base->GetDesc());
+  return ctrl_panel->AddMemberPrompt(base, mbr, base->GetDesc());
 }
 
 void ProgVar::RenameToObj() {

@@ -95,11 +95,10 @@ public:
   taiEditorOfClass();
   ~taiEditorOfClass();
 
-
-  int          Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
+  int                   Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // for dialogs -- add to list of active_edit dialogs too
-  iPanelOfEditor*        EditPanel(taiSigLink* link); // for panels
-  iPanelOfEditor*        EditPanelDeferred(taiSigLink* link); // for panels
+  iPanelOfEditor*       EditPanel(taiSigLink* link); // for panels
+  iPanelOfEditor*       EditPanelDeferred(taiSigLink* link); // for panels
   using inherited::GetImage;
   void                  GetImage(bool force) override;
   void                  GetValue() override;
@@ -107,45 +106,45 @@ public:
   void                  SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void          SetCurMenu_Name(String men_nm); // sets or creates the cur_menu -- leave blank for implicit ("Actions")
   virtual void          SetCurMenuButton(MethodDef* md);
-  void         Raise() override {if (isPanel()) DoRaise_Panel(); else taiEditorWidgetsMain::Raise();}
-  void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) override;
+  void                  Raise() override {if (isPanel()) DoRaise_Panel(); else taiEditorWidgetsMain::Raise();}
+  void                  ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) override;
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
-  void         Cancel_impl() override;
+  void                  Cancel_impl() override;
   virtual void          GetButtonImage(bool force = true);
 
 public: // routines for the taiDelegate style of edit host
   virtual void          GetImage_Item(int row) {} // called from GetImage and ed->GetValue
 
 public: // ITypedObject i/f (common to IDLC and IDH)
-  TypeDef*     GetTypeDef() const override {return &TA_taiEditorOfClass;}
+  TypeDef*              GetTypeDef() const override {return &TA_taiEditorOfClass;}
 public slots:
 // IWidgetHost i/f
   iMainWindowViewer* viewerWindow() const override;
 
 protected:
-  iPanelOfEditor* panel; //NOTE: not used when invoked by Edit()
+  iPanelOfEditor*       panel; //NOTE: not used when invoked by Edit()
   bool                  inline_mode; // true when doing inline, set early in constr
   bool                  no_meth_menu; // for Seledit guys, don't use meth menus
 
-  void         InitGuiFields(bool virt = true) override;
-  void         Constr_impl() override;
+  void                  InitGuiFields(bool virt = true) override;
+  void                  Constr_impl() override;
   virtual void          Enum_Members(); // called by Constr_impl to fill memb_el[]
-  void         Constr_Methods_impl() override;
-  void         ClearBody_impl() override;
-  void         Constr_Strings() override;
-  void         Constr_Body() override;    // construct the data of the dialog
+  void                  Constr_Methods_impl() override;
+  void                  ClearBody_impl() override;
+  void                  Constr_Strings() override;
+  void                  Constr_Body() override;    // construct the data of the dialog
   virtual void          Constr_Widget_Labels(); // calls Widget then Labels -- override to do your own
   virtual void          Constr_Inline(); // called instead of Widget/Labels when typ->requiresInline true
   virtual void          Constr_Widget_Labels_impl(int& idx, Member_List* ms,
      taiWidget_List* dl);
   void                  Constr_MethButtons();
-  void         Constr_RegNotifies() override;
-  void         Constr_Final() override;
+  void                  Constr_RegNotifies() override;
+  void                  Constr_Final() override;
   virtual MemberDef*    GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play
 
-  void         FillLabelContextMenu(QMenu* menu, int& last_id) override;
-  virtual void          FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
+  void                  FillLabelContextMenu(QMenu* menu, int& last_id) override;
+  virtual void          FillLabelContextMenu_CtrlPanel(QMenu* menu, int& last_id);
   virtual void          GetImage_Membs(); // for overridding
   virtual void          GetImage_Membs_def(); // calls GetImage_impl for all our lists
   virtual void          GetValue_Membs();
@@ -158,18 +157,19 @@ protected:
     // uses mth's label, if no label passed
   void                  DoAddMethButton(QWidget* but);
   void                  DoRaise_Panel(); // what Raise() calls for panels
-  void         DoConstr_Dialog(iDialogEditor*& dlg) override;
+  void                  DoConstr_Dialog(iDialogEditor*& dlg) override;
   
   virtual void          Constr_Methbox_Labels();
   // construct #METHBOX_LABELS items
   virtual void          Update_Methbox_Labels();
   // update #METHBOX_LABELS items
 
-  bool         eventFilter(QObject *obj, QEvent *event) override;
+  bool                  eventFilter(QObject *obj, QEvent *event) override;
   // event filter to trigger apply button on Ctrl+Return
 
 protected slots:
   virtual void          DoAddToControlPanel(QAction* act); // act.data will be index of the ControlPanel; sel_data_index will hold the index of the data item
+  void                  DoRmvFmControlPanel(QAction* act);
   virtual void          bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 

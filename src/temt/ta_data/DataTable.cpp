@@ -2360,7 +2360,7 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   MemberDef* md = cell->FindMemberName("value");
   if (!md) return;
   
-  cp->SelectMemberPrompt(cell, md);
+  cp->AddMemberPrompt(cell, md);
 }
 
 void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // this is the column used for choosing a row - e.g. config_id column
@@ -2396,7 +2396,7 @@ void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // 
   MemberDef* md = cell->FindMemberName("value");
   if (!md) return;
   
-  cp->SelectMemberPrompt(cell, md);
+  cp->AddMemberPrompt(cell, md);
 }
 
 void DataTable::RemoveCellFromControlPanel(ControlPanel* cp, DataCol* column, int row) {
@@ -2410,10 +2410,7 @@ void DataTable::RemoveCellFromControlPanel(ControlPanel* cp, DataCol* column, in
   if (dtc) {
     MemberDef* md = dtc->FindMemberName("value");
     if (!md) return;
-    int idx =  cp->FindMbrBase(dtc, md);
-    if (idx > -1) {
-      cp->RemoveField(idx);
-    }
+    cp->RemoveMember(dtc, md);
   }
 }
 
@@ -2428,10 +2425,7 @@ void DataTable::RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* column) 
   if (dtc) {
     MemberDef* md = dtc->FindMemberName("value");
     if (!md) return;
-    int idx =  cp->FindMbrBase(dtc, md);
-    if (idx > -1) {
-      cp->RemoveField(idx);
-    }
+    cp->RemoveMember(dtc, md);
   }
 }
 

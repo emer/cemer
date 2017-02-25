@@ -74,15 +74,15 @@ void taiEditorOfControlPanelFull::ClearBody_impl() {
 }
 
 void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
-  // delete all previous sele members (sele presumably stands for "SelectEdit" the old name for ControlPanel)
+  // delete all previous ctrlpan members 
   String name;
   String help_text;
     
   MemberDef* data_md = TA_ControlPanelMember.members.FindName("data");
       
   dat_cnt = 0;  // keeps track of control count
-  if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
-    MemberSpace& ms = sele->GetTypeDef()->members;
+  if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+    MemberSpace& ms = ctrlpan->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
       if ((md->name == "name") || (md->name == "desc") ||
@@ -111,8 +111,8 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   taiMemberWidgets* memb_set = NULL;
   
   // note: iterates non-empty groups only
-  FOREACH_SUBGROUP(ControlPanelMember_Group, grp, sele->mbrs) {
-    bool def_grp = (grp == &(sele->mbrs));// root group
+  FOREACH_SUBGROUP(ControlPanelMember_Group, grp, ctrlpan->mbrs) {
+    bool def_grp = (grp == &(ctrlpan->mbrs));// root group
     membs.SetMinSize(set_idx + 1);
     memb_set = membs.FastEl(set_idx);
     // make a group header
@@ -159,8 +159,8 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
       ++dat_cnt;
 
-      if(sele->InheritsFrom(&TA_ParamSet)) {
-        if(!((ParamSet*)sele)->ActiveEqualsSaved(item->GetName())) {
+      if(ctrlpan->InheritsFrom(&TA_ParamSet)) {
+        if(!((ParamSet*)ctrlpan)->ActiveEqualsSaved(item->GetName())) {
           MarkRowException(dat_cnt);
         }
       }
@@ -170,21 +170,21 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   }
 }
 
-void taiEditorOfControlPanelFull::DoRemoveSelEdit() {
-   // removes the sel_item_index item
-  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    sele->RemoveField(sel_item_index);
+void taiEditorOfControlPanelFull::DoRemoveFmCtrlPanel() {
+   // removes the ctrl_panel_index item
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    ctrlpan->RemoveMemberIdx(ctrl_panel_index);
   }
   else {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoRemoveSelEdit: could not find item");
+    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoRemoveFmCtrlPanel: could not find item");
   }
 }
 
 void taiEditorOfControlPanelFull::DoGoToObject() {
-  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    sele->GoToObject(sel_item_index);
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    ctrlpan->GoToObject(ctrl_panel_index);
   }
   else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoGoToObject: could not find item");
@@ -192,9 +192,9 @@ void taiEditorOfControlPanelFull::DoGoToObject() {
 }
 
 void taiEditorOfControlPanelFull::DoCopyActiveToSaved() {
-  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    ((ParamSet*)sele)->CopyActiveToSaved_item(sel_item_index);
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    ((ParamSet*)ctrlpan)->CopyActiveToSaved_item(ctrl_panel_index);
   }
   else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoCopyActiveToSaved: could not find item");
@@ -202,9 +202,9 @@ void taiEditorOfControlPanelFull::DoCopyActiveToSaved() {
 }
 
 void taiEditorOfControlPanelFull::DoCopySavedToActive() {
-  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    ((ParamSet*)sele)->CopySavedToActive_item(sel_item_index);
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    ((ParamSet*)ctrlpan)->CopySavedToActive_item(ctrl_panel_index);
   }
   else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoCopySavedToActive: could not find item");
@@ -212,41 +212,41 @@ void taiEditorOfControlPanelFull::DoCopySavedToActive() {
 }
 
 void taiEditorOfControlPanelFull::DoEditLabel() {
-  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    sele->EditLabel(sel_item_index);
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    ctrlpan->EditLabel(ctrl_panel_index);
   }
   else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::EditLabel: could not find item");
   }
 }
 
-void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
+void taiEditorOfControlPanelFull::FillLabelContextMenu_CtrlPanel(QMenu* menu,
   int& last_id)
 {
-  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_mbr, sel_item_base);
-  if (sel_item_index < 0)
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_mbr, ctrl_panel_base);
+  if (ctrl_panel_index < 0)
     return;
-  if (sele->InheritsFrom(&TA_ParamSet)) {
-    menu->addAction("Remove from ParamSet", this, SLOT(DoRemoveSelEdit()));
+  if (ctrlpan->InheritsFrom(&TA_ParamSet)) {
+    menu->addAction("Remove from ParamSet", this, SLOT(DoRemoveFmCtrlPanel()));
     menu->addAction("Copy Active To Saved", this, SLOT(DoCopyActiveToSaved()));
     menu->addAction("Copy Saved To Active", this, SLOT(DoCopySavedToActive()));
   }
   else {
-    menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveSelEdit()));
+    menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveFmCtrlPanel()));
   }
   menu->addAction("Go To Object", this, SLOT(DoGoToObject()));
   menu->addAction("Edit Label", this, SLOT(DoEditLabel()));
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {
-  if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+  if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
     taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
       MemberDef* md = prop_membs.memb_el.SafeEl(i);
       if (md) {
-        mb_dat->SetBase(rbase); // used for things like Seledit context menu
+        mb_dat->SetBase(rbase); // used for things like Ctrlpandit context menu
         md->im->GetImage(mb_dat, rbase);
       }
     }
@@ -259,7 +259,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
     for (int i = 0; i < ms->widget_el.size; ++i) {
       taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
-      ControlPanelMember* item = sele->mbrs.Leaf(itm_idx);
+      ControlPanelMember* item = ctrlpan->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }
@@ -284,7 +284,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
 }
 
 void taiEditorOfControlPanelFull::GetValue_Membs_def() {
-  if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+  if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
     taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
@@ -303,7 +303,7 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
     for (int i = 0; i < ms->widget_el.size; ++i) {
       taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
-      ControlPanelMember* item = sele->mbrs.Leaf(itm_idx);
+      ControlPanelMember* item = ctrlpan->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetValue_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }

@@ -19,6 +19,7 @@
 // parent includes:
 #include "network_def.h"
 #include <ParamSet>
+#include <ParamSet_Group>
 
 // member includes:
 
@@ -60,15 +61,15 @@ private:
 };
 
 
-eTypeDef_Of(ParamStep_List);
+eTypeDef_Of(ParamStep_Group);
 
-class E_API ParamStep_List : public taList<ParamStep> {
-  // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_2 list of parameter steps
-INHERITED(taList<ParamStep>)
+class E_API ParamStep_Group : public ParamSet_Group {
+  // ##EXPAND_DEF_2 list of parameter steps
+INHERITED(ParamSet_Group)
 public:
-  TA_BASEFUNS(ParamStep_List);
+  TA_BASEFUNS(ParamStep_Group);
 private:
-  NOCOPY(ParamStep_List)
+  NOCOPY(ParamStep_Group)
   void  Initialize()            { SetBaseType(&TA_ParamStep); }
   void  Destroy()               { };
 };

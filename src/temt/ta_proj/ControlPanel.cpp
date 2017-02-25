@@ -96,15 +96,6 @@ int ControlPanel::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
 
 void ControlPanel::BaseAdded(ControlPanelItem* sei) {
   if(!sei->base) return;
-  // this is crazy!  absolutely must add for methods otherwise you get a crash
-  // when that object is deleted!
-  // bool add_base = true;
-  // if(sei->InheritsFrom(&TA_ControlPanelMethod)) {
-  //   add_base = false;         // in general don't add for meths
-  //   if(sei->base->InheritsFrom(&TA_Program))
-  //     add_base = true;       // except for programs
-  // }
-  // if(add_base)
   base_refs.AddUnique(sei->base);
 }
 
@@ -182,12 +173,19 @@ void ControlPanel::SigEmit_Group(taGroup_impl* grp,
   ReShowEdit(true);
 }
 
-void ControlPanel::RemoveField(int idx) {
-  RemoveField_impl(idx);
+void ControlPanel::RemoveMember(taBase* base, MemberDef* md) {
+  int idx = FindMbrBase(base, md);
+  if(idx >= 0) {
+    RemoveMemberIdx(idx);
+  }
+}
+
+void ControlPanel::RemoveMemberIdx(int idx) {
+  RemoveMember_impl(idx);
   ReShowEdit(true); //forced
 }
 
-void ControlPanel::RemoveField_impl(int idx) {
+void ControlPanel::RemoveMember_impl(int idx) {
   taBase* base_owner = NULL;
   ControlPanelMember* item = mbrs.Leaf(idx);
   
@@ -261,12 +259,12 @@ void ControlPanel::EditLabel(int idx) {
   }
 }
 
-void ControlPanel::RemoveFun(int idx) {
-  RemoveFun_impl(idx);
+void ControlPanel::RemoveMethod(int idx) {
+  RemoveMethod_impl(idx);
   ReShowEdit(true); //forced
 }
 
-void ControlPanel::RemoveFun_impl(int idx) {
+void ControlPanel::RemoveMethod_impl(int idx) {
   ControlPanelMethod* item = mths.Leaf(idx);
   if (item)
     item->Close();
@@ -298,7 +296,7 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
   if(!param_set) {
     taProject* proj = GetMyProj();
     if(!proj) return NULL;
-    param_set = proj->param_sets.NewEl(1);
+    param_set = (ParamSet*)proj->param_sets.NewEl(1);
     param_set->SetName(name + "_" +
                        (String)QDateTime::currentDateTime().toString("MM_dd_yy"));
   }
@@ -307,19 +305,19 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
   return param_set;
 }
 
-bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
+bool ControlPanel::AddMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
                                 const String& dscr, const String& sub_gp_nm)
 {
   if (!base) return false;
   String eff_desc = dscr; // non-const
   String full_lbl;
   base->GetControlPanelText(mbr, xtra_lbl, full_lbl, eff_desc);
-  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
+  bool rval = AddMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr, const String& desc) {
+bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, const String& desc) {
   if (!base) return false;
   
   // for "inline" objects with multiple parameters offer option to add as individual control panel items
@@ -388,26 +386,26 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr, const String
       else {                    // sometimes you just want the members, if they have distinctive names..
         complete_lbl = mbr_td->members.SafeEl(i)->name;
       }
-      rval = SelectMember_impl(mbr_base, mbr_md, complete_lbl, desc, sub_grp_name, custom_label);
+      rval = AddMember_impl(mbr_base, mbr_md, complete_lbl, desc, sub_grp_name, custom_label);
     }
   }
   else {
-    rval = SelectMember_impl(base, mbr, full_lbl, desc, sub_grp_name, custom_label);
+    rval = AddMember_impl(base, mbr, full_lbl, desc, sub_grp_name, custom_label);
   }
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::SelectMemberNm(taBase* base, const String& md_nm,
+bool ControlPanel::AddMemberNm(taBase* base, const String& md_nm,
   const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MemberDef* md = (MemberDef*)base->FindMemberName(md_nm);
   if (md == NULL) return false;
-  return SelectMember(base, md, xtra_lbl, dscr, sub_gp_nm);
+  return AddMember(base, md, xtra_lbl, dscr, sub_gp_nm);
 }
 
-bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
+bool ControlPanel::AddMember_impl(taBase* base, MemberDef* md,
             const String& full_lbl, const String& dscr, const String& sub_gp_nm, bool custom_label)
 {
   int bidx = -1;
@@ -434,6 +432,7 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
       mbrs.Add(item); // will trigger BaseAdded
     }
     rval = true;
+    item->CopyActiveToSaved();
   }
   else if(sub_gp_nm.nonempty()) {
     ControlPanelMember_Group* egp = (ControlPanelMember_Group*)item->owner;
@@ -446,22 +445,22 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
   return rval;
 }
 
-bool ControlPanel::SelectMethod(taBase* base, MethodDef* md, const String& dscr)
+bool ControlPanel::AddMethod(taBase* base, MethodDef* md, const String& dscr)
 {
-  bool rval = SelectMethod_impl(base, md, dscr);
+  bool rval = AddMethod_impl(base, md, dscr);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::SelectMethodNm(taBase* base, const String& md_nm, const String& dscr)
+bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& dscr)
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
   if (md == NULL) return false;
-  return SelectMethod(base, md, dscr);
+  return AddMethod(base, md, dscr);
 }
 
-bool ControlPanel::SelectMethod_impl(taBase* base, MethodDef* mth, const String& dscr)
+bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& dscr)
 {
   int bidx = -1;
   // this looks at the leaves:

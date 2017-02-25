@@ -46,10 +46,10 @@ void taiEditorOfUserData::Initialize()
 {
 //  no_meth_menu = true; // only show them on outer menu, by way of Propertiesguy
   udil = NULL;
-  sel_edit_mbrs = true; // note: we don't actually select members, just for removal
+  ctrl_panel_mbrs = true; // note: we don't actually add members, just for removal
   tw = NULL;
   udd = new taiWidgetDelegateUserData(udil, this);
-  sel_item_row = -1;
+  ctrl_panel_row = -1;
 }
 
 void taiEditorOfUserData::Constr_impl() {
@@ -276,28 +276,28 @@ void taiEditorOfUserData::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* o
 }
 
 void taiEditorOfUserData::DoDeleteUserDataItem() {
-   // removes the sel_item_index item
-  if (udil->RemoveLeafEl(sel_item_base)) {
+   // removes the ctrl_panel_index item
+  if (udil->RemoveLeafEl(ctrl_panel_base)) {
   }
   else
     taMisc::DebugInfo("taiEditorOfUserData::DoDeleteUserDataItem: could not find item");
 }
 
 void taiEditorOfUserData::DoRenameUserDataItem() {
-//TODO: start edit of sel_item_row
-  if (sel_item_row < 0) return;
-  QTableWidgetItem* item = tw->item(sel_item_row, 0);
+//TODO: start edit of ctrl_panel_row
+  if (ctrl_panel_row < 0) return;
+  QTableWidgetItem* item = tw->item(ctrl_panel_row, 0);
   if (item) tw->editItem(item);
 }
 
-void taiEditorOfUserData::FillLabelContextMenu_SelEdit(QMenu* menu,
+void taiEditorOfUserData::FillLabelContextMenu_CtrlPanel(QMenu* menu,
   int& last_id)
 {
-  UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(sel_item_base);
+  UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(ctrl_panel_base);
   if (item == NULL) return;
 
-  int sel_item_index = udil->FindLeafEl(item);
-  if (sel_item_index < 0) return;  //huh?
+  int ctrl_panel_index = udil->FindLeafEl(item);
+  if (ctrl_panel_index < 0) return;  //huh?
   if (item->canDelete())
     //QAction* act =
     menu->addAction("Delete UserDataItem", this, SLOT(DoDeleteUserDataItem()));
@@ -341,9 +341,9 @@ void taiEditorOfUserData::tw_customContextMenuRequested(const QPoint& pos)
   UserDataItemBase* item = GetUserDataItem(row);
   if (item == NULL) return;
 
-  //na sel_item_mbr = item->mbr;
-  sel_item_row = row;
-  sel_item_base = item;
+  //na ctrl_panel_mbr = item->mbr;
+  ctrl_panel_row = row;
+  ctrl_panel_base = item;
   QMenu* menu = new QMenu(widget());
   int last_id = -1;
   FillLabelContextMenu(menu, last_id);

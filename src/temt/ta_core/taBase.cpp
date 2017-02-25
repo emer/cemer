@@ -3624,7 +3624,7 @@ bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMemberPrompt(this, member);
+  return ctrl_panel->AddMemberPrompt(this, member);
 }
 
 bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
@@ -3636,7 +3636,7 @@ bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
     if(TestError(!proj, "AddToControlPanelNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMemberNm(this, member, extra_label, desc, sub_gp_nm);
+  return ctrl_panel->AddMemberNm(this, member, extra_label, desc, sub_gp_nm);
 }
 
 bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel) {
@@ -3646,7 +3646,7 @@ bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel)
     if(TestError(!proj, "AddControlFunForEdit", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMethod(this, function);
+  return ctrl_panel->AddMethod(this, function);
 }
 
 bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_panel,
@@ -3656,7 +3656,7 @@ bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_p
     if(TestError(!proj, "AddControlFunForEditNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMethodNm(this, function, desc);
+  return ctrl_panel->AddMethodNm(this, function, desc);
 }
 
 bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
@@ -3666,7 +3666,7 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
     if(TestError(!proj, "AddToParamSet", "cannot find project")) return false;
     param_set = (ParamSet*)proj->param_sets.New(1);
   }
-  return param_set->SelectMemberPrompt(this, member);
+  return param_set->AddMemberPrompt(this, member);
 }
 
 void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const {
