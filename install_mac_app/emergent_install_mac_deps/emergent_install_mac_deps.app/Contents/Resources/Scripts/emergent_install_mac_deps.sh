@@ -40,8 +40,11 @@ if [[ "$OS_VERS" == "10.12" ]]; then
     NEEDS_BREW_APR=true
 fi
 
-FTP_REPO=ftp://grey.colorado.edu/pub/emergent
-FTP_CMD="/usr/bin/ftp -ai"
+#FTP_REPO=ftp://grey.colorado.edu/pub/emergent
+#FTP_CMD="/usr/bin/ftp -ai"
+
+FTP_REPO=https://grey.colorado.edu/emergent_ftp
+FTP_CMD="/usr/bin/curl --progress-bar -O"
 
 DOWNLOAD_DIR=$HOME/Downloads
  
