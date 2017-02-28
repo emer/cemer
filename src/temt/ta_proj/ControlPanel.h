@@ -27,7 +27,6 @@
 // member includes:
 #include <ControlPanelMember_Group>
 #include <ControlPanelMethod_Group>
-#include <ControlPanelConfig>
 #include <taBase_List>
 #include <String_Array>
 #include <taBase_RefList>
@@ -81,19 +80,21 @@ public: // public API
 
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
   // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
+  virtual void CopyFromDataTable(DataTable* table, int row_num = -1);
+  // #MENU #MENU_ON_ControlPanel copy member values into this control panel from same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values
+  virtual void CopyToDataTable(DataTable* table, int row_num = -1);
+  // #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table -- a new row is added if not already present -- this is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
 
-  virtual bool  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString,
-                          const String& desc = _nilString, const String& sub_gp_nm = _nilString);
+  virtual bool  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
+  // add new member to control panel if it isn't already here (returns true), optionally in a sub group, and optionally with an extra custom label, custom desc, or short label
+  virtual bool  AddMemberNm
+    (taBase* base, const String& md_nm, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
   // add new member to control panel if it isn't already here (returns true), optionally in a sub group
-  virtual bool  AddMemberPrompt(taBase* base, MemberDef* md, const String& desc = _nilString);
+  virtual bool  AddMemberPrompt(taBase* base, MemberDef* md, bool short_label = false);
   // add new member to control panel, prompting for exact label to use
-  virtual bool  AddMemberNm(taBase* base, const String& md_nm,
-                               const String& xtra_lbl, const String& desc = _nilString,
-                               const String& sub_gp_nm = _nilString);
-  // add new member to control panel if it isn't already here (returns true), optionally in a sub group
-  virtual bool  AddMethod(taBase* base, MethodDef* md, const String& desc = _nilString);
+  virtual bool  AddMethod(taBase* base, MethodDef* md, const String& xtra_lbl = _nilString, const String& sub_gp_nm = _nilString);
   // add new method to control panel if it isn't already here (returns true), optionally in a sub group
-  virtual bool  AddMethodNm(taBase* base, const String& md, const String& desc = _nilString);
+  virtual bool  AddMethodNm(taBase* base, const String& md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString);
   // add new method to control panel if it isn't already here (returns true), optionally in a sub group
 
   virtual int   FindMbrBase(taBase* base, MemberDef* md);
@@ -135,9 +136,12 @@ protected:
   virtual void   BaseRemoved(ControlPanelItem* sei);
   virtual void   RemoveMember_impl(int idx);
   virtual void   RemoveMethod_impl(int idx);
-  virtual bool   AddMember_impl(taBase* base, MemberDef* md,
-                  const String& lbl, const String& desc, const String& sub_gp_nm = _nilString, bool custom_label = false);
-  virtual bool   AddMethod_impl(taBase* base, MethodDef* md, const String& desc);
+  virtual bool   AddMember_impl
+    (taBase* base, MemberDef* md, const String& lbl, const String& desc, const String&
+     sub_gp_nm = _nilString, bool custom_label = false, bool custom_desc = false);
+  virtual bool   AddMethod_impl
+    (taBase* base, MethodDef* md, const String& lbl, const String& desc, const String&
+     sub_gp_nm = _nilString, bool custom_label = false, bool custom_desc = false);
 
 private:
   void  Initialize();

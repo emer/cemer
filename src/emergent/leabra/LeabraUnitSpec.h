@@ -69,6 +69,7 @@ INHERITED(SpecMemberBase)
 public:
   bool          rec_nd;         // record the act_nd non-depressed activation variable (instead of act_eq) for the act_q* quarter-trial and phase (act_m, act_p) activation state variables -- these are used primarily for statistics, or possibly for specialized learning mechanisms
   bool          avg_nd;         // use the act_nd non-depressed activation variable (instead of act_eq) for the time-average activation values (avg_ss, avg_s, avg_m, avg_l) used in the XCAL learning mechanism -- this is appropriate for action-potential driven learning dynamics, as compared to synaptic efficacy, when short term plasticity is present
+  bool          dif_avg;        // compute act_dif as avg_s_eff - avg_m (difference of average values that actually drive learning) -- otherwise it is act_p - act_m (difference of final activation states in plus phase minus minus phase -- the typical error signal)
   float         net_gain;       // #DEF_1 #MIN_0 multiplier on total synaptic net input -- this multiplies the net_raw, but AFTER the net_raw variable is saved (upon which the netin_raw statistics are computed)
 
   float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking (only used for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
@@ -76,7 +77,7 @@ public:
   float         lambda;         // #CONDSHOW_ON_avg_trace determines how much of the prior trace carries over into the new trace (act_avg = lambda * act_avg + new_act)
   float         avg_tau;        // #CONDSHOW_OFF_avg_trace #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
   float         avg_init;        // #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
-  float         avg_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
+  float         avg_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
   inline int    ActToInterval(const float time_inc, const float integ, const float act)
   { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }

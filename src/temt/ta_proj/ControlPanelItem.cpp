@@ -93,17 +93,35 @@ void ControlPanelItem::Copy_(const ControlPanelItem& cp) {
   desc = cp.desc;
   cust_desc = cp.cust_desc;
   prv_desc = desc;             // no change here
+  prv_label = label;
   base = cp.base;
-  item_nm = cp.item_nm;
 }
 
 void ControlPanelItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(!cust_desc && !taMisc::is_loading && desc != prv_desc) {
-    cust_desc = true;
+  if(!taMisc::is_loading) {
+    if(!cust_desc && desc != prv_desc) {
+      cust_desc = true;
+    }
+    if(!cust_label && label != prv_label) {
+      cust_label = true;
+    }
   }
   prv_desc = desc;
   label = taMisc::StringCVar(label); // keep as safe c variables at all times..
+  prv_label = label;
+}
+
+void ControlPanelItem::SetLabel(const String& new_label, bool custom_lbl) {
+  label = new_label;
+  cust_label = custom_lbl;
+  prv_label = label;
+}
+
+void ControlPanelItem::SetDesc(const String& new_desc, bool custom_desc) {
+  desc = new_desc;
+  cust_desc = custom_desc;
+  prv_desc = desc;
 }
 
 String ControlPanelItem::caption() const {

@@ -39,7 +39,7 @@ public:
 //  String     GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMethod);
 protected:
-  void                  UpdateAfterEdit_impl() override;
+  void         UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy();

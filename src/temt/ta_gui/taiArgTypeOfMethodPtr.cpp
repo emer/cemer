@@ -46,14 +46,18 @@ taiWidget* taiArgTypeOfMethodPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidge
   return rval;
 }
 
-void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void*) {
+void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void* base) {
   if(arg_base == NULL)
     return;
   taiWidgetMethodDefMenu* rval = (taiWidgetMethodDefMenu*)dat;
   rval->md = (MethodDef*)*((void**)arg_base);
-  rval->menubase = typ;
+  TypeDef* eff_td = typ;
+  if(base && typ->IsTaBase()) {
+    eff_td = ((taBase*)base)->GetTypeDef();
+  }
+  rval->menubase = eff_td;
   rval->ta_actions->Reset();
-  MethodSpace* mbs = &(typ->methods);
+  MethodSpace* mbs = &(eff_td->methods);
   for (int i = 0; i < mbs->size; ++i){
     MethodDef* mbd = mbs->FastEl(i);
     if (mbd->im == NULL) continue;
@@ -64,7 +68,7 @@ void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void*) {
     rval->ta_actions->AddItem(mbd->GetLabel(), mbd);
   }
   MethodDef* initmd = (MethodDef*)*((void**)arg_base);
-  if ((initmd != NULL) && typ->InheritsFrom(initmd->GetOwnerType()))
+  if ((initmd != NULL) && eff_td->InheritsFrom(initmd->GetOwnerType()))
     rval->ta_actions->GetImageByData(Variant((void*)initmd));
   else
     rval->ta_actions->GetImageByIndex(0);       // just get first on list

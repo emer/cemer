@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 class TA_API taiWidgetMethodDefMenu : public taiWidgetTypeItemMenu {
-  // Menu for memberdefs of a typedef in the object with a MDTYPE_xxx option
+  // Menu for memberdefs of a typedef in the object with a TYPE_ON_xxx option
   INHERITED(taiWidgetTypeItemMenu)
 public:
   MethodDef*    md;

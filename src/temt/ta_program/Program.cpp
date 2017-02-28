@@ -2229,14 +2229,10 @@ bool Program::AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel, const String& 
   }
   TypeDef* td = GetTypeDef();
   bool rval = true;
-  MethodDef* md = td->methods.FindName("Init"); // "" = desc field
-  if(md) rval = ctrl_panel->AddMethod(this, md, "");
-  md = td->methods.FindName("Run_Gui");
-  if(md) rval |= ctrl_panel->AddMethod(this, md, "");
-  md = td->methods.FindName("Step_Gui");
-  if(md) rval |= ctrl_panel->AddMethod(this, md, "");
-  md = td->methods.FindName("Stop");
-  if(md) rval |= ctrl_panel->AddMethod(this, md, "");
+  rval = ctrl_panel->AddMethodNm(this, "Init", extra_label, "", sub_gp_nm);
+  rval = ctrl_panel->AddMethodNm(this, "Run_Gui", extra_label, "", sub_gp_nm);
+  rval = ctrl_panel->AddMethodNm(this, "Step_Gui", extra_label, "", sub_gp_nm);
+  rval = ctrl_panel->AddMethodNm(this, "Stop", extra_label, "", sub_gp_nm);
   return rval;
 }
 

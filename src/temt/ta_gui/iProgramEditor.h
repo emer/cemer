@@ -196,6 +196,7 @@ protected slots:
   void                  label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
   void                  items_Notify(ISelectableHost* src, int op); // note: NULL if none
   void                  DoAddToControlPanel(QAction* act);
+  void                  DoAddToControlPanel_Short(QAction* act);
   void                  DoRmvFmControlPanel(QAction* act);
   void                  BackMenuAboutToShow();
   void                  ForwardMenuAboutToShow();

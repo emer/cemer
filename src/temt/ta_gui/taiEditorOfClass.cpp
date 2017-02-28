@@ -424,11 +424,33 @@ void taiEditorOfClass::DoAddToControlPanel(QAction* act){
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
-    cp->AddMemberPrompt(rbase, md, rbase->GetDesc());
+    cp->AddMemberPrompt(rbase, md);
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
-    cp->AddMember(rbase, md, rbase->GetDesc());
+    cp->AddMember(rbase, md);
+  }
+}
+
+void taiEditorOfClass::DoAddToControlPanel_Short(QAction* act){
+  //note: this routine is duplicated in the ProgramEditor
+  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
+  if (!proj)
+    return;
+  
+  void* vval = act->data().value<void*>();
+  if(!vval) return;
+  taBase* rbase = ctrl_panel_base;
+  MemberDef* md = ctrl_panel_mbr;
+  if (!md || !rbase) return; //shouldn't happen...
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    cp->AddMemberPrompt(rbase, md, true); // true = short label
+  }
+  else {                        // must be a group
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    cp->AddMember(rbase, md, "", "", "", true); // true = short label
   }
 }
 
@@ -523,7 +545,8 @@ void taiEditorOfClass::FillLabelContextMenu_CtrlPanel(QMenu* menu, int& last_id)
 {
   DoFillLabelContextMenu_CtrlPanel
     (menu, last_id, ctrl_panel_base, ctrl_panel_mbr, body,
-     this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)));
+     this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)),
+     SLOT(DoAddToControlPanel_Short(QAction*)));
 }
 
 void taiEditorOfClass::GetButtonImage(bool force) {

@@ -15,13 +15,14 @@
 
 #include <ControlPanel>
 #include "ControlPanel_Group.h"
+#include <DataTable>
 
 TA_BASEFUNS_CTORS_DEFN(ControlPanel_Group);
 
-void ControlPanel_Group::AddMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
-                                   const String& dscr, const String& sub_gp_nm) {
+void ControlPanel_Group::AddMember
+(taBase* base, MemberDef* mbr, const String& xtra_lbl, const String& dscr, const String& sub_gp_nm, bool short_label) {
   FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
-    cp->AddMember(base, mbr, xtra_lbl, dscr, sub_gp_nm);
+    cp->AddMember(base, mbr, xtra_lbl, dscr, sub_gp_nm, short_label);
   }
 }
 
@@ -36,5 +37,44 @@ void ControlPanel_Group::RestorePanels() {
     if(cp->GetUserDataAsBool("user_pinned")) {
       cp->EditPanel(true, true); // true,true = new tab, pinned in place
     }
+  }
+}
+
+void ControlPanel_Group::CopyFromDataTable(DataTable* table) {
+  if(TestError(!table, "CopyFromDataTable",
+               "table is NULL")) {
+    return;
+  }
+  if(TestError(table->rows == 0, "CopyFromDataTable",
+               "table has no rows")) {
+    return;
+  }
+  if(TestError(table->cols() == 0, "CopyFromDataTable",
+               "table has no columns")) {
+    return;
+  }
+  if(TestError(leaves == 0, "CopyFromDataTable",
+               "group has no existing control panels -- must have at least one -- first one is used as a template for any new ones that are needed")) {
+    return;
+  }
+  ControlPanel* templ = Leaf(0);
+  for(int i=0; i<table->rows; i++) {
+    String nm = table->GetValAsString(0, i);
+    ControlPanel* cp = FindLeafName(nm);
+    if(cp) {
+      cp->CopyFromDataTable(table, i);
+    }
+    else {
+      cp = (ControlPanel*)templ->Clone();
+      cp->name = nm;
+      Add(cp);
+      cp->CopyFromDataTable(table, i);
+    }
+  }
+}
+
+void ControlPanel_Group::CopyToDataTable(DataTable* table) {
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    cp->CopyToDataTable(table);
   }
 }

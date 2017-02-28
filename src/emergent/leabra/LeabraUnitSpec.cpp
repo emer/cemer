@@ -72,6 +72,7 @@ void LeabraActMiscSpec::Initialize() {
 void LeabraActMiscSpec::Defaults_init() {
   rec_nd = true;
   avg_nd = true;
+  dif_avg = false;
   net_gain = 1.0f;
   act_max_hz = 100.0f;
   avg_trace = false;
@@ -1988,8 +1989,12 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
   case 3:
     u->act_q4 = use_act;
     u->act_p = use_act;
-    //    u->act_dif = u->act_p - u->act_m;
-    u->act_dif = u->avg_s_eff - u->avg_m;
+    if(act_misc.dif_avg) {
+      u->act_dif = u->avg_s_eff - u->avg_m;
+    }
+    else {
+      u->act_dif = u->act_p - u->act_m;
+    }
     Compute_ActTimeAvg(u, net, thr_no);
     break;
   }

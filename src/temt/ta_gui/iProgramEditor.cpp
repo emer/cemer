@@ -689,6 +689,8 @@ void iProgramEditor::items_Notify(ISelectableHost* src, int op) {
   }
 }
 
+// NOTE: this is only invoked for the mini editor at top of program:
+
 void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
   QMenu* menu = new QMenu(this);
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
@@ -700,7 +702,8 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
     sel_item_base = sel_item_dat->Base();
     taiEditorWidgetsMain::DoFillLabelContextMenu_CtrlPanel
       (menu, last_id,sel_item_base, sel_item_mbr, body,
-       this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)) );
+       this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)),
+       SLOT(DoAddToControlPanel_Short(QAction*)));
   }
 
   if (menu->actions().count() > 0) {
@@ -724,11 +727,31 @@ void iProgramEditor::DoAddToControlPanel(QAction* act) {
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
-    cp->AddMember(rbase, md);
+    cp->AddMemberPrompt(rbase, md);
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
     cp->AddMember(rbase, md);
+  }
+}
+
+void iProgramEditor::DoAddToControlPanel_Short(QAction* act) {
+  taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
+  if (!proj) return;
+
+  void* vval = act->data().value<void*>();
+  if(!vval) return;
+  taBase* rbase = sel_item_base;
+  MemberDef* md = sel_item_mbr;
+  if (!md || !rbase) return; //shouldn't happen...
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    cp->AddMember(rbase, md, "", "", "", true); // true = short label
+  }
+  else {                        // must be a group
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    cp->AddMember(rbase, md, "", "", "", true); // true = short label
   }
 }
 

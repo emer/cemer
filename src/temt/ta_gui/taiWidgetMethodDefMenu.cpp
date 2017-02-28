@@ -17,63 +17,8 @@
 #include <MethodDef>
 #include <taiWidgetMenu>
 
-
-
-/*
 //////////////////////////////////
-//      taiMemberDefMenu        //
-//////////////////////////////////
-
-taiMemberDefMenu::taiMemberDefMenu(taiWidgetActions::RepType rt, int ft, MemberDef* md_,
-  MemberDef* memb_md_, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
-  QWidget* gui_parent_, int flags_)
-: inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
-{
-  md = md_;
-}
-
-MemberDef* taiMemberDefMenu::GetValue() {
-  iAction* cur = ta_actions->curSel();
-  if (cur == NULL)
-    return NULL;
-  else
-    return (MemberDef*)(cur->usr_data.toPtr());
-}
-
-void taiMemberDefMenu::GetMenu() {
-  ta_actions->Reset();
-  //always get target, because it could be dynamic
-  GetTarget();
-
-  if (targ_typ == NULL) {
-    ta_actions->AddItem("!!!TypeSpace Error!!!");
-    return;
-  }
-
-  // determine list filter
-  taMisc::ShowMembs show = taMisc::NO_HID_DET;
-
-  // if the target type is member-containing type, then optionally filter members by visibility of its host
-  if (targ_typ == typ) {
-    if ((md != NULL)  && (md->HasOption("TYPESHOW_VISIBLE"))) {
-      taiEditorOfClass* dlg = taiM->FindEdit(menubase, typ); //NOTE: finds any, in any window or viewer
-      if (dlg != NULL) {
-        show = dlg->show;
-      }
-    }
-  }
-
-  MemberSpace& mbs = targ_typ->members;
-  for (int i = 0; i < mbs.size; ++i) {
-    MemberDef* mbd = mbs.FastEl(i);
-    if (!mbd->ShowMember(show)) continue;
-    ta_actions->AddItem(mbd->GetLabel(), mbd);
-  }
-}
-*/
-
-//////////////////////////////////
-//      taiWidgetMethodDefMenu        //
+//   taiWidgetMethodDefMenu     //
 //////////////////////////////////
 
 taiWidgetMethodDefMenu::taiWidgetMethodDefMenu(taiWidgetActions::RepType rt, int ft, MethodDef* md_,

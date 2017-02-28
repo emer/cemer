@@ -39,10 +39,16 @@ void ControlPanelMethod::UpdateAfterEdit_impl() {
       }
     }
   }
-  if(!cust_desc && mth) {
-    desc = mth->desc;
-    prv_desc = desc;
-  }
   inherited::UpdateAfterEdit_impl();
+  if(mth) {
+    if(!cust_label) {
+      label = mth->GetLabel();
+      prv_label = label;
+    }
+    if (!cust_desc) {
+      desc = mth->desc; // regenerate
+      prv_desc = desc;
+    }
+  }
 }
 

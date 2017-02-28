@@ -82,10 +82,10 @@ void  DynEnum::NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names)
   enum_type->NameToNumber_Matrix(vals, names);
 }
 
-void  DynEnum::GetControlPanelLabel(MemberDef* mbr, String& label) const {
+void  DynEnum::GetControlPanelLabel(MemberDef* mbr, String& label, const String& xtra_lbl, bool short_label) const {
   ProgVar* prog_var = (ProgVar*)GetOwner(&TA_ProgVar);
   if (prog_var) {
-    prog_var->GetControlPanelLabel(mbr, label);
+    prog_var->GetControlPanelLabel(mbr, label, xtra_lbl, short_label);
   }
 }
 

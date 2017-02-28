@@ -27,7 +27,7 @@
 
 
 class TA_API taiWidgetTypeItemMenu : public taiWidget {
-  // common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a MDTYPE_xxx option
+  // common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a TYPE_xxx or TYPE_ON_xxx option
   INHERITED(taiWidget)
 public:
   MemberDef*    memb_md; // MemberDef of the member that will get the target pointer

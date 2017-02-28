@@ -365,50 +365,44 @@ void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
 //   }
 }
 
-void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
-                                  String& full_lbl, String& eff_desc) const
+void ProgVar::GetControlPanelLabel(MemberDef* mbr, String& label, const String& xtra_lbl, bool short_label) const
 {
-  // when do seledit of the data member, use our var name, and desc
   const String& mn = mbr->name;
-  String lbl = xtra_lbl;
   if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
-      //      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
-      (mn == "bool_val") || (mn == "object_val") || (mn == "value"))  // value is the dyn_enum case
+      (mn == "bool_val") || (mn == "object_val") || (mn == "value")) // value is the dyn_enum case
   {
-    if (lbl.empty()) { //note: typically is empty
+    if(xtra_lbl.nonempty()) {
+      label = xtra_lbl + "_";
+    }
+    else if(short_label) {
+      label = "";
+    }
+    else {
       Program* prog = GET_MY_OWNER(Program);
-      if (prog)
-        lbl = prog->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+      if (prog) {
+        label = prog->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+      }
+      if (label.nonempty()) {
+        label += "_";
+      }
     }
-    if (lbl.nonempty()) lbl += "_";
-    lbl += GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
-    full_lbl = taMisc::StringCVar(lbl);
-    eff_desc = GetDesc();		// always use our desc, not default
-  }
-  else { // something else, just do default
-    inherited::GetControlPanelText(mbr, xtra_lbl, full_lbl, eff_desc);
-  }
-}
-
-void ProgVar::GetControlPanelLabel(MemberDef* mbr, String& label) const
-{
-  const String& mn = mbr->name;
-  if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
-      //      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
-      (mn == "bool_val") || (mn == "object_val") || (mn == "value"))
-  {
-    Program* prog = GET_MY_OWNER(Program);
-    if (prog) {
-      label = prog->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
-    }
-    if (label.nonempty()) {
-      label += "_";
-    }
-    label += GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
+    label += GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); // var name, not the member name
     label = taMisc::StringCVar(label);
   }
   else { // something else, just do default
-    inherited::GetControlPanelLabel(mbr, label);
+    inherited::GetControlPanelLabel(mbr, label, xtra_lbl, short_label);
+  }
+}
+
+void ProgVar::GetControlPanelDesc(MemberDef* mbr, String& eff_desc) const {
+  const String& mn = mbr->name;
+  if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
+      (mn == "bool_val") || (mn == "object_val") || (mn == "value")) // value is the dyn_enum case
+  {
+    eff_desc = GetDesc();       // always use our desc, not default
+  }
+  else { // something else, just do default
+    inherited::GetControlPanelDesc(mbr, eff_desc);
   }
 }
 
@@ -1199,7 +1193,7 @@ bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->AddMemberPrompt(base, mbr, base->GetDesc());
+  return ctrl_panel->AddMemberPrompt(base, mbr);
 }
 
 void ProgVar::RenameToObj() {

@@ -169,7 +169,8 @@ protected:
 
 protected slots:
   virtual void          DoAddToControlPanel(QAction* act); // act.data will be index of the ControlPanel; sel_data_index will hold the index of the data item
-  void                  DoRmvFmControlPanel(QAction* act);
+  virtual void          DoAddToControlPanel_Short(QAction* act); // short option
+  virtual void          DoRmvFmControlPanel(QAction* act);
   virtual void          bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 

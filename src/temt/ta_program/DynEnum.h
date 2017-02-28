@@ -67,7 +67,7 @@ public:
   // #CAT_DynEnum translate an matrix of enum names into corresponding enum numbers in matrix -- if the vals matrix does not have enough room to hold all the names, SetSize is called on it to set it to size of names
 
   String        GetDisplayName() const override;
-  void          GetControlPanelLabel(MemberDef* mbr, String& label) const override; // #IGNORE get label only
+  void          GetControlPanelLabel(MemberDef* mbr, String& label, const String& extra_label = _nilString, bool short_label = false) const override;
 
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 

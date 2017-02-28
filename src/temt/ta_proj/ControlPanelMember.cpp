@@ -229,19 +229,17 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
     data.record = true;
   }
 
-  if (taMisc::is_loading && base && mbr) {
-    // get default label - if not equal to current label mark as custom
-    String generated_label;
-    base->GetControlPanelLabel(mbr, generated_label);
-    if (this->label != generated_label) {
-      cust_label = true;
+  if(base && mbr) {
+    if(!cust_label) {
+      label = "";
+      base->GetControlPanelLabel(mbr, label); // regenerate
+      prv_label = label;
     }
-  }
-
-  if (!cust_desc && mbr) {
-    desc = _nilString;
-    MemberDef::GetMembDesc(mbr, desc, "");
-    prv_desc = desc;
+    if (!cust_desc) {
+      desc = "";
+      base->GetControlPanelDesc(mbr, desc); // regenerate
+      prv_desc = desc;
+    }
   }
 }
 

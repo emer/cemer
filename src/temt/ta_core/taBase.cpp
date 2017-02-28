@@ -3627,36 +3627,35 @@ bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
   return ctrl_panel->AddMemberPrompt(this, member);
 }
 
-bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
-                             const String& extra_label, const String& sub_gp_nm,
-                             const String& desc) {
+bool taBase::AddToControlPanelNm
+(const String& member, ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm, const String& desc, bool short_label) {
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();  StructUpdate(true);
 
     if(TestError(!proj, "AddToControlPanelNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->AddMemberNm(this, member, extra_label, desc, sub_gp_nm);
+  return ctrl_panel->AddMemberNm(this, member, extra_label, desc, sub_gp_nm, short_label);
 }
 
-bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel) {
+bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel, const String& extra_label) {
   if(TestError(!function, "AddControlFunForEdit", "function is null")) return false;
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddControlFunForEdit", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->AddMethod(this, function);
+  return ctrl_panel->AddMethod(this, function, extra_label);
 }
 
-bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_panel,
-                                const String& desc) {
+bool taBase::AddFunToControlPanelNm
+(const String& function, ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm,  const String& desc) {
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddControlFunForEditNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->AddMethodNm(this, function, desc);
+  return ctrl_panel->AddMethodNm(this, function, extra_label, desc, sub_gp_nm);
 }
 
 bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
@@ -3669,33 +3668,32 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
   return param_set->AddMemberPrompt(this, member);
 }
 
-void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const {
-  String lbl = xtra_lbl;
-  if (lbl.empty()) {
-    lbl = GetDisplayName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+void taBase::GetControlPanelLabel(MemberDef* mbr, String& label, const String& xtra_lbl, bool short_label) const {
+  if(xtra_lbl.nonempty()) {
+    label = xtra_lbl + "_";
   }
-  if (lbl.nonempty()) lbl += "_";
-  lbl += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
-  full_lbl = taMisc::StringCVar(lbl);
-  // desc is the member description
-//   if (desc.empty())
-//     MemberDef::GetMembDesc(mbr, desc, "");
-}
-
-void taBase::GetControlPanelLabel(MemberDef* mbr, String& label) const {
-  taBase* mo = GetMemberOwner(true); // highest
-  if(mo) {
-    label = mo->GetName() + GetPath(NULL, mo);
+  else if(short_label) {
+    label = "";                 // nothing
   }
   else {
-    label = GetDisplayName();
-  }
-  if (label.nonempty()) {
-    label = label.CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
-    label += "_";
+    taBase* mo = GetMemberOwner(true); // highest
+    if(mo) {
+      label = mo->GetName() + GetPath(NULL, mo);
+    }
+    else {
+      label = GetDisplayName();
+    }
+    if (label.nonempty()) {
+      label = label.CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
+      label += "_";
+    }
   }
   label += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   label = taMisc::StringCVar(label);
+}
+
+void taBase::GetControlPanelDesc(MemberDef* mbr, String& desc) const {
+  MemberDef::GetMembDesc(mbr, desc, "");
 }
 
 ///////////////////////////////////////////////////////////////////////////

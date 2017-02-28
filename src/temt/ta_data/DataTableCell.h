@@ -42,11 +42,8 @@ public:
   ControlPanel*       control_panel;    // #READ_ONLY #SHOW the control panel that includes this cell in its member list
   bool                enabled;          // #READ_ONLY if a DTC is in a row that is currently deleted or filtered and thus not visible the enabled flag is set to false so that the control panel can disable the item but keep it visible
   
-  void                GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const override;
-  // #IGNORE provides the canonical full label and (if empty) desc for control panel item
-  void                GetControlPanelLabel(MemberDef* mbr, String& full_lbl) const override;
-  // #IGNORE generate the label for the control panel item based on column and row
-  void                SetControlPanelEnabled(bool do_enable);     // #IGNORE set for control panel to show enabled/disabled -- sets the taBase::BF_GUI_READ_ONLY so the control panel item will be disabled -- used when rows are hidden
+  void   GetControlPanelLabel(MemberDef* mbr, String& label, const String& extra_label = _nilString, bool short_label = false) const override;
+  void   SetControlPanelEnabled(bool do_enable);     // #IGNORE set for control panel to show enabled/disabled -- sets the taBase::BF_GUI_READ_ONLY so the control panel item will be disabled -- used when rows are hidden
   
   TA_BASEFUNS_NOCOPY(DataTableCell);
   

@@ -34,16 +34,16 @@ void  DataTableCell::Initialize() {
 //  row_lookup_value = "";
 }
 
-void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
-  if (!value_column) return;
+void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label, const String& xtra_lbl, bool short_label) const {
 
-  GetControlPanelLabel(mbr, full_lbl);
-}
-
-void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
-  if (!value_column) return;
+  // xtral_lbl, short label don't apply here!
   
   String table_str = value_column->dataTable()->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+  if (!value_column) {
+    label = table_str + "_?col?";
+    return;
+  }
+  
   String column_str = value_column->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   if (dtc_is_column_type) {
     label = table_str + "_" + column_str + "_lookup";

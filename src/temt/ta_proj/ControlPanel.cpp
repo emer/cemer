@@ -19,6 +19,7 @@
 #include <Program>
 #include <ParamSet>
 #include <taProject>
+#include <DataTable>
 
 #include <QDateTime>
 
@@ -305,19 +306,119 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
   return param_set;
 }
 
+void ControlPanel::CopyFromDataTable(DataTable* table, int row_num) {
+  if(TestError(!table, "CopyFromDataTable",
+               "table is NULL")) {
+    return;
+  }
+  if(TestError(table->rows == 0, "CopyFromDataTable",
+               "table has no rows")) {
+    return;
+  }
+  if(TestError(table->cols() == 0, "CopyFromDataTable",
+               "table has no columns")) {
+    return;
+  }
+  if(row_num < 0) {
+    row_num = table->FindVal(name, 0, 0, true); // true = err msg
+    if(row_num < 0) return;
+  }
+  if(table->cols() > 1 && table->data[1]->name.contains_ci("desc")) {
+    desc = table->GetValAsString(1, row_num);
+  }
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
+    Variant val = table->GetVal(item->label, row_num);
+    if(val.isValid()) {
+      if(item->data.ctrl_type == ControlPanelMemberData::PARAM_SET) {
+        item->data.saved_value = val.toString();
+      }
+      else {
+        item->SetCurVal(val);
+      }
+    }
+  }
+  SigEmitUpdated();
+}
+
+void ControlPanel::CopyToDataTable(DataTable* table, int row_num) {
+  if(TestError(!table, "CopyFromDataTable",
+               "table is NULL")) {
+    return;
+  }
+  table->StructUpdate(true);
+  bool blank_table = false;
+  if(table->cols() == 0) {      // new table: initialize name column
+    table->NewCol(VT_STRING, "name");
+    table->NewCol(VT_STRING, "desc");
+    blank_table = true;
+  }
+  if(row_num < 0) {
+    row_num = table->FindVal(name, 0, 0, false); // false = no err msg
+    if(row_num < 0) {
+      table->AddBlankRow();
+      row_num = table->rows - 1;
+      table->SetVal(name, 0, row_num); // save name in first col
+      if(table->cols() > 1 && table->data[1]->name.contains_ci("desc")) {
+        table->SetVal(desc, 1, row_num);
+      }
+    }
+  }
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
+    String val;
+    if(item->data.ctrl_type == ControlPanelMemberData::PARAM_SET) {
+      val = item->data.saved_value;
+    }
+    else {
+      val = item->CurValAsString();
+    }
+    DataCol* dc = table->FindColName(item->label, false); // no err
+    if(!dc) {
+      ValType vt = taBase::ValTypeForType(item->mbr->type);
+      if(vt == VT_VARIANT) vt = VT_STRING;
+      dc = table->NewCol(vt, item->label);
+    }
+    dc->SetValAsString(val, row_num);
+  }
+  table->StructUpdate(false);
+}
+
+// todo: move ClusterRun param string over to here -- can use either saved_value or cur
+// enable recursive functionality??
+
+
 bool ControlPanel::AddMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
-                                const String& dscr, const String& sub_gp_nm)
+                             const String& dscr, const String& sub_gp_nm, bool short_label)
 {
   if (!base) return false;
-  String eff_desc = dscr; // non-const
-  String full_lbl;
-  base->GetControlPanelText(mbr, xtra_lbl, full_lbl, eff_desc);
-  bool rval = AddMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
+  bool cust_desc = false;
+  String eff_desc;
+  if(dscr.nonempty()) {
+    eff_desc = dscr;
+    cust_desc = true;
+  }
+  else {
+    base->GetControlPanelDesc(mbr, eff_desc);
+  }
+  bool cust_lbl = false;
+  String eff_lbl;
+  if(xtra_lbl.nonempty() || short_label) // each of these = custom
+    cust_lbl = true;
+  base->GetControlPanelLabel(mbr, eff_lbl, xtra_lbl, short_label);
+  bool rval = AddMember_impl(base, mbr, eff_lbl, eff_desc, sub_gp_nm, cust_lbl, cust_desc);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, const String& desc) {
+bool ControlPanel::AddMemberNm
+(taBase* base, const String& md_nm, const String& xtra_lbl, const String& dscr, const String& sub_gp_nm, bool short_name)
+{
+  if(base == NULL) return false;
+  MemberDef* md = (MemberDef*)base->FindMemberName(md_nm);
+  if (md == NULL) return false;
+  return AddMember(base, md, xtra_lbl, dscr, sub_gp_nm, short_name);
+}
+
+bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, bool short_label) {
   if (!base) return false;
   
   // for "inline" objects with multiple parameters offer option to add as individual control panel items
@@ -325,7 +426,7 @@ bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, const String& d
   bool add_individually = false;  // default is to add inline
 
   String full_lbl;
-  base->GetControlPanelLabel(mbr, full_lbl);
+  base->GetControlPanelLabel(mbr, full_lbl, "", short_label);
   String full_lbl_copy = full_lbl;
   String sub_grp_name;
   
@@ -349,18 +450,21 @@ bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, const String& d
   if (show_individual_option) {
     curow = "add_individual";
     dlg.AddHBoxLayout(curow, "mainv","","");
-    dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Add Individually: ;");
+    dlg.AddLabel("add_indiv_lbl", "main", curow, "label=Add Individually: ;");
     dlg.AddBoolCheckbox(&add_individually, "add_individually", "main", curow, "tooltip=checking will cause each submember to be added as a separate control panel item that will appear on its own line. Doing this allows the item to be used in parameter searches. If checked the label will be used as a prefix for all items;");
   }
   int drval = dlg.PostDialog(true);
   if(drval == 0) {
     return false;
   }
-  bool custom_label = false;
+  bool custom_label = short_label;
   if (full_lbl != full_lbl_copy) {
     custom_label = true;
   }
   
+  String eff_desc;
+  base->GetControlPanelDesc(mbr, eff_desc);
+
   bool rval = false;
   full_lbl = taMisc::StringCVar(full_lbl);
   if (add_individually) {
@@ -380,33 +484,33 @@ bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, const String& d
         continue;
       }
       String complete_lbl;
-      if(full_lbl.nonempty()) {
-        complete_lbl = full_lbl + "_" + mbr_td->members.SafeEl(i)->name;
+      if(custom_label) {
+        if(full_lbl.nonempty()) {
+          complete_lbl = full_lbl + "_" + mbr_td->members.SafeEl(i)->name;
+        }
+        else {                    // sometimes you just want the members, if they have distinctive names..
+          complete_lbl = mbr_td->members.SafeEl(i)->name;
+        }
       }
-      else {                    // sometimes you just want the members, if they have distinctive names..
-        complete_lbl = mbr_td->members.SafeEl(i)->name;
+      else {
+        base->GetControlPanelLabel(mbr_md, complete_lbl, "", short_label);
       }
-      rval = AddMember_impl(mbr_base, mbr_md, complete_lbl, desc, sub_grp_name, custom_label);
+      String sub_desc;
+      mbr_base->GetControlPanelDesc(mbr_md, sub_desc);
+
+      rval = AddMember_impl(mbr_base, mbr_md, complete_lbl, sub_desc, sub_grp_name,
+                            custom_label || short_label, false);
     }
   }
   else {
-    rval = AddMember_impl(base, mbr, full_lbl, desc, sub_grp_name, custom_label);
+    rval = AddMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label, false);
   }
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::AddMemberNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
-{
-  if(base == NULL) return false;
-  MemberDef* md = (MemberDef*)base->FindMemberName(md_nm);
-  if (md == NULL) return false;
-  return AddMember(base, md, xtra_lbl, dscr, sub_gp_nm);
-}
-
-bool ControlPanel::AddMember_impl(taBase* base, MemberDef* md,
-            const String& full_lbl, const String& dscr, const String& sub_gp_nm, bool custom_label)
+bool ControlPanel::AddMember_impl
+(taBase* base, MemberDef* md, const String& full_lbl, const String& dscr, const String& sub_gp_nm, bool custom_label, bool custom_desc)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -416,14 +520,8 @@ bool ControlPanel::AddMember_impl(taBase* base, MemberDef* md,
     item = new ControlPanelMember;
     item->base = base;
     item->mbr = md;
-    item->item_nm = md->name;
-    item->label = full_lbl;
-    item->cust_label = custom_label;
-    item->desc = dscr; // even if empty
-    if(dscr.nonempty())
-      item->cust_desc = true;
-    else
-      item->cust_desc = false;
+    item->SetLabel(full_lbl, custom_label);
+    item->SetDesc(desc, custom_desc);
     if(sub_gp_nm.nonempty()) {
       ControlPanelMember_Group* egp = (ControlPanelMember_Group*)mbrs.FindMakeGpName(sub_gp_nm);
       egp->Add(item);
@@ -445,22 +543,57 @@ bool ControlPanel::AddMember_impl(taBase* base, MemberDef* md,
   return rval;
 }
 
-bool ControlPanel::AddMethod(taBase* base, MethodDef* md, const String& dscr)
+bool ControlPanel::AddMethod(taBase* base, MethodDef* md, const String& xtra_lbl, const String& sub_gp_nm)
 {
-  bool rval = AddMethod_impl(base, md, dscr);
+  String lbl;
+  bool cust_lbl = false;
+  if(xtra_lbl.nonempty()) {
+    lbl = xtra_lbl;
+    if(!lbl.endsWith("_"))
+      lbl += "_";
+    lbl += md->GetLabel();
+    cust_lbl = true;
+  }
+  else {
+    lbl = md->GetLabel();
+  }
+  bool rval = AddMethod_impl(base, md, lbl, md->desc, sub_gp_nm, cust_lbl, false);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& dscr)
+bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
   if (md == NULL) return false;
-  return AddMethod(base, md, dscr);
+  String lbl;
+  bool cust_lbl = false;
+  if(xtra_lbl.nonempty()) {
+    lbl = xtra_lbl;
+    if(!lbl.endsWith("_"))
+      lbl += "_";
+    lbl += md->GetLabel();
+    cust_lbl = true;
+  }
+  else {
+    lbl = md->GetLabel();
+  }
+  bool cust_desc = false;
+  String desc_eff;
+  if(desc.nonempty()) {
+    cust_desc = true;
+    desc_eff = desc;
+  }
+  else {
+    desc_eff = md->desc;
+  }
+  bool rval = AddMethod_impl(base, md, lbl, desc_eff, sub_gp_nm, cust_lbl, cust_desc);
+  ReShowEdit(true); //forced
+  return rval;
 }
 
-bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& dscr)
+bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& lbl, const String& desc, const String& sub_gp_nm, bool custom_label, bool custom_desc)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -470,15 +603,23 @@ bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& ds
     item = new ControlPanelMethod;
     item->base = base;
     item->mth = mth;
-    item->item_nm = mth->name;
-    item->desc = dscr;
-    if(dscr.nonempty())
-      item->cust_desc = true;
-    else
-      item->cust_desc = false;
-    item->label = mth->GetLabel();
-    mths.Add(item); // will call BaseAdded
+    item->SetLabel(lbl, custom_label);
+    item->SetDesc(desc, custom_desc);
+    if(sub_gp_nm.nonempty()) {
+      ControlPanelMethod_Group* egp = (ControlPanelMethod_Group*)mths.FindMakeGpName(sub_gp_nm);
+      egp->Add(item);
+    }
+    else {
+      mths.Add(item); // will trigger BaseAdded
+    }
     rval = true;
+  }
+  else if(sub_gp_nm.nonempty()) {
+    ControlPanelMethod_Group* egp = (ControlPanelMethod_Group*)item->owner;
+    if(egp == &mths || egp->name != sub_gp_nm) {
+      ControlPanelMethod_Group* negp = (ControlPanelMethod_Group*)mths.FindMakeGpName(sub_gp_nm);
+      negp->Transfer(item);     // grab it
+    }
   }
   item->UpdateAfterEdit();
   return rval;

@@ -37,7 +37,7 @@
 
 void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
 (QMenu* menu, int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
- QObject* slot_obj, const char* add_slot, const char* rmv_slot)
+ QObject* slot_obj, const char* add_slot, const char* rmv_slot, const char* add_short_slot)
 {
   // have to be a taBase to use ControlPanel
   if (!rbase || !md) return;
@@ -50,6 +50,14 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
   connect(add_sub, SIGNAL(triggered(QAction*)), slot_obj, add_slot);
   add_sub->setFont(menu->font());
   QAction* add_act = NULL; // we need to track last one
+
+  QMenu* add_short_sub = NULL;
+  QAction* add_short_act = NULL; // we need to track last one
+  if(add_short_slot) {
+    add_short_sub = menu->addMenu("Add to ControlPanel (short label)");
+    connect(add_short_sub, SIGNAL(triggered(QAction*)), slot_obj, add_short_slot);
+    add_short_sub->setFont(menu->font());
+  }
 
   QMenu* rmv_sub = menu->addMenu("Remove from ControlPanel");
   connect(rmv_sub, SIGNAL(triggered(QAction*)), slot_obj, rmv_slot);
@@ -80,12 +88,19 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
         }
         add_act = add_sub->addAction(nm);
         add_act->setData(QVariant::fromValue((void*)cp));
+        if(add_short_sub) {
+          add_short_act = add_short_sub->addAction(nm);
+          add_short_act->setData(QVariant::fromValue((void*)cp));
+        }
         rmv_act = rmv_sub->addAction(nm);
         rmv_act->setData(QVariant::fromValue((void*)cp));
         if(is_cp) {
           ControlPanel* cpr = (ControlPanel*)cp;
           if (cpr->FindMbrBase(rbase, md) >= 0) {
             add_act->setEnabled(false);
+            if(add_short_act) {
+              add_short_act->setEnabled(false);
+            }
           }
           else {
             rmv_act->setEnabled(false);
@@ -97,6 +112,9 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
             ControlPanel* cpr = gp->Leaf(0);
             if (cpr->FindMbrBase(rbase, md) >= 0) {
               add_act->setText(nm + " [on first already]");
+              if(add_short_act) {
+                add_short_act->setText(nm + " [on first already]");
+              }
             }
             else {
               rmv_act->setText(nm + " [not on first]");
@@ -108,6 +126,10 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
   }
   if (add_sub->actions().count() == 0)
     add_sub->setEnabled(false); // show item for usability, but disable
+  if(add_short_sub) {
+    if (add_short_sub->actions().count() == 0)
+      add_short_sub->setEnabled(false); // show item for usability, but disable
+  }
   if (rmv_sub->actions().count() == 0)
     rmv_sub->setEnabled(false); // show item for usability, but disable
 }

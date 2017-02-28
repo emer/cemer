@@ -82,7 +82,8 @@ public:
   bool            isAtomic() const {return (m_type <= T_String);} 
     // 'true' for non-ptr types (includes Invalid)
   bool            isDefault() const; // returns 'true' if contains the default value for the type (null is ignored)
-  bool            isInvalid() const {return (m_type == T_Invalid);} 
+  bool            isInvalid() const { return (m_type == T_Invalid); } 
+  bool            isValid() const { return !isInvalid(); } 
   bool            isNull() const; // 'true' if the value is null
   bool            isNumeric() const; 
     // 'true' if NumericStrict, or valid numeric string

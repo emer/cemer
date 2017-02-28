@@ -37,8 +37,8 @@ public:
     
   static bool           StatCheckBase(ControlPanelItem* itm, taBase* base);
   // #IGNORE check if either itm->base == base or itm->mbr->GetOff(itm->base) == base
-  static ControlPanelItem*        StatFindItemBase(const taGroup_impl* grp,
-    taBase* base, TypeItem* ti, int& idx);
+  static ControlPanelItem* StatFindItemBase(const taGroup_impl* grp,
+                                            taBase* base, TypeItem* ti, int& idx);
   // #IGNORE find the item with indicated base and mth/mbr in the group
   static bool           StatGetBase_Flat(const taGroup_impl* grp, int idx, taBase*& base);
   // #IGNORE gets the flat (leaf) base
@@ -48,15 +48,19 @@ public:
   // #IGNORE remove any items with this base
 
   String                label;          // full display label for item in edit dialog
-  bool                  cust_label;     // #NO_SAVE the label is customized over the default and thus protected from automatic updates -- this flag is automatically set by editing, but can also be set manually if desired
+  bool                  cust_label;     // the label is customized over the default and thus protected from automatic updates -- this flag is automatically set by editing, but can also be set manually if desired
   String                desc;           // #EDIT_DIALOG description (appears as tooltip for item)
   bool                  cust_desc;      // the description (desc) is customized over the default and thus protected from automatic updates -- otherwise desc is obtained from the member or method type information -- this flag is automatically set by editing, but can also be set manually if desired
   taBase*               base;           // #READ_ONLY #SHOW #NO_SET_POINTER #UPDATE_POINTER the mbr/mth base (not ref'ed)
-  String                item_nm;        // #READ_ONLY #NO_SHOW #NO_SAVE #OBSOLETE name of the member or method
 
   String                caption() const; // the string used in the editor
   virtual TypeItem*     typeItem() const {return NULL;} // the mbr or mth
 
+  virtual void  SetLabel(const String& new_label, bool custom_lbl = false);
+  // use this method to set a new label, cust label flag, and also set the prv_label
+  virtual void  SetDesc(const String& new_desc, bool custom_desc = false);
+  // use this method to set a new desc, cust desc flag, and also set the prv_desc
+  
   String       GetName() const override;
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   String       GetDesc() const override;
@@ -64,6 +68,7 @@ public:
 protected:
   void         UpdateAfterEdit_impl() override;
   String       prv_desc; // previous description -- for checking for changes
+  String       prv_label;  // previous label -- for checking changes
 
 private:
 
