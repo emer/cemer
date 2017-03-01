@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ControlPanelMethod.h"
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ControlPanelMethod);
 
@@ -40,6 +41,22 @@ void ControlPanelMethod::UpdateAfterEdit_impl() {
     }
   }
   inherited::UpdateAfterEdit_impl();
+
+  if(taMisc::is_loading) {
+    taVersion v806(8, 0, 6);
+    if (taMisc::loading_version < v806) {
+      if(mth) {
+        String def_label = mth->GetLabel();
+        if(label == def_label) {
+          cust_label = false;
+        }
+        else {
+          cust_label = true;
+        }
+      }
+    }
+  }
+
   if(mth) {
     if(!cust_label) {
       label = mth->GetLabel();

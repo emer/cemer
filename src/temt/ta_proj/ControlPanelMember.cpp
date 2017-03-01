@@ -204,6 +204,16 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       data.range = obs_param_srch.range;
       data.saved_value = obs_ps_value.saved_value;
       data.notes = obs_notes.notes;
+      if(base && mbr) {
+        String def_label;
+        base->GetControlPanelLabel(mbr, def_label);
+        if(label == def_label) {
+          cust_label = false;
+        }
+        else {
+          cust_label = true;
+        }
+      }
     }
   }
 
