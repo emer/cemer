@@ -416,7 +416,7 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
  ParamSet_Group @.param_sets = [0] {
   ParamSet_Group @.gp["RunParams"] = [2] { 
    ParamSet @["BasicTrain"] { 
-    ControlPanelMember_Group @.mbrs = [17] {
+    ControlPanelMember_Group @.mbrs = [18] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -434,13 +434,14 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
      ControlPanelMember @[14] { };
      ControlPanelMember @[15] { };
      ControlPanelMember @[16] { };
+     ControlPanelMember @[17] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
     };
    };
    ParamSet @["SpecialTrain"] { 
-    ControlPanelMember_Group @.mbrs = [17] {
+    ControlPanelMember_Group @.mbrs = [18] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -458,6 +459,7 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
      ControlPanelMember @[14] { };
      ControlPanelMember @[15] { };
      ControlPanelMember @[16] { };
+     ControlPanelMember @[17] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
@@ -704,18 +706,16 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
     ProgVar @["network"] { };
    };
 
-   ProgVar_List @.vars = [13] {
+   ProgVar_List @.vars = [11] {
     ProgVar @["batch_prog"] { };
     ProgVar @["tag"] { };
     ProgVar @["log_dir"] { };
     ProgVar @["log_file_nm"] { };
     ProgVar @["EpochOutputData"] { };
-    ProgVar @["Config"] { };
     ProgVar @["batch_str"] { };
     ProgVar @["batch_start"] { };
     ProgVar @["startup_prog"] { };
     ProgVar @["MyClusterRun"] { };
-    ProgVar @["param_sets"] { };
     ProgVar @["run_params"] { };
     ProgVar @["misc_params"] { };
    };
@@ -726,25 +726,30 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [24] {
+   ProgEl_List @.prog_code = [23] {
     RegisterArgs @[0] { };
     PrintExpr @[1] { };
     Comment @[2] { };
     ProgVarFmArg @[3] { };
     ProgVarFmArg @[4] { };
     ProgVarFmArg @[5] { };
-    ProgVarFmArg @[6] { };
-    ProgVarFmArg @[7] { };
-    Comment @[8] { };
-    ProgVarFmArg @[9] { };
+    Comment @[6] { };
+    ControlPanelsFmArgs @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[9] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
     ControlPanelsFmArgs @[10] { };
     ControlPanelsFmArgs @[11] { };
-    ControlPanelsFmArgs @[12] { };
+    Comment @[12] { };
     Comment @[13] { };
-    Comment @[14] { };
-    AssignExpr @[15] { };
-    Comment @[16] { };
-    If @[17] { 
+    AssignExpr @[14] { };
+    Comment @[15] { };
+    If @[16] { 
      ProgEl_List @.true_code = [4] {
       ProgVarFmArg @[0] { };
       MiscCall @[1] { 
@@ -773,7 +778,7 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
       };
      };
     };
-    Else @[18] { 
+    Else @[17] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -790,15 +795,15 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
       };
      };
     };
-    OtherProgramVar @[19] { };
-    Comment @[20] { };
-    ProgramCallVar @[21] { 
+    OtherProgramVar @[18] { };
+    Comment @[19] { };
+    ProgramCallVar @[20] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[22] { };
-    ProgramCall @[23] { 
+    PrintExpr @[21] { };
+    ProgramCall @[22] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -4089,7 +4094,7 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
   user_data_=NULL;
   major=8;
   minor=0;
-  step=2;
+  step=3;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -4378,6 +4383,11 @@ mw.config.set({\"wgBackendResponseTime\":192});
 <ul>
 
 
+<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10514 update startup program
+
+
+
 <li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
 svn rev: 10489 actually remove the config table finally
 
@@ -4393,6 +4403,11 @@ leabra flex using param sets experiment project -- updated by randy from John's 
 <body>
 <h1>ChangeLog</h1>
 <ul>
+<P>
+<P>
+<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10514 update startup program
+<P>
 <P>
 <P>
 <li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
@@ -8461,6 +8476,26 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        notes=;
       };
      };
+     ControlPanelMember @[17] {
+      user_data_=NULL;
+      label="batch_start";
+      cust_label=1;
+      desc="batch number to start on";
+      cust_desc=0;
+      base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch_start"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
     };
     mths {
      user_data_=NULL;
@@ -8814,6 +8849,26 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        is_numeric=1;
        is_single=1;
        saved_value="2";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[17] {
+      user_data_=NULL;
+      label="batch_start";
+      cust_label=1;
+      desc="batch number to start on";
+      cust_desc=0;
+      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch_start"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0";
        record=1;
        search=0;
        range=;
@@ -11711,7 +11766,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="tag";
      var_type=T_String;
-     string_val="_basic_train";
+     string_val="_BasicTrain_basic_train";
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -11731,7 +11786,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="log_file_nm";
      var_type=T_String;
-     string_val="/Users/rohrlich/Desktop/LeabraFlexParamSetExperiment_basic_train.args";
+     string_val="/Users/oreilly/emergent/test/LeabraFlexParamSetExperiment_BasicTrain_basic_train.args";
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -11745,18 +11800,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      object_val=.projects["LeabraFlexParamSetExperiment"].data.gp["OutputData"]["EpochOutputData"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @["Config"] {
-     user_data_=NULL;
-     name="Config";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=NULL;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -11797,18 +11840,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=ClusterRun;
      object_val=.projects["LeabraFlexParamSetExperiment"].ctrl_panels["ClusterRun"]$$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @["param_sets"] {
-     user_data_=NULL;
-     name="param_sets";
-     var_type=T_Object;
-     object_type=ParamSet_Group;
-     object_val=.projects["LeabraFlexParamSetExperiment"].param_sets$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11900,15 +11931,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     ProgVarFmArg @[5] {
      user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:param_set in Program:MasterStartup from Arg:param_set";
-     prog=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"]$;
-     var_name="param_set";
-     arg_name="param_set";
-    };
-    ProgVarFmArg @[6] {
-     user_data_=NULL;
      desc="starting batch -- replaces b_start";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:batch_start in Program:MasterBatch from Arg:batch_start";
@@ -11916,64 +11938,80 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="batch_start";
      arg_name="batch_start";
     };
-    ProgVarFmArg @[7] {
-     user_data_=NULL;
-     desc="number of batches to run";
-     flags=NEW_EL|CAN_REVERT_TO_CODE;
-     code_string="Set Var:n_batches in Program:MasterBatch from Arg:n_batches";
-     prog=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterBatch"]$;
-     var_name="n_batches";
-     arg_name="n_batches";
-    };
-    Comment @[8] {
+    Comment @[6] {
      user_data_=NULL;
      desc="add our special args from command line";
      flags=CAN_REVERT_TO_CODE;
      code_string="// add our special args from command line";
     };
-    ProgVarFmArg @[9] {
-     user_data_=NULL;
-     desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:cur_config in Program:MasterTrain from Arg:config";
-     prog=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     var_name="cur_config";
-     arg_name="config";
-    };
-    ControlPanelsFmArgs @[10] {
+    ControlPanelsFmArgs @[7] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
-    ControlPanelsFmArgs @[11] {
+    MethodCall @[8] {
+     user_data_=NULL;
+     desc="set saved values first, before processing args";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="run_params.CopySavedToActive()";
+     result_var=NULL;
+     obj=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["run_params"]$;
+     method=ParamSet::CopySavedToActive;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void CopySavedToActive()";
+     meth_desc=" copy the previously-saved values to be active (live) values on the objects";
+    };
+    MethodCall @[9] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="run_params.CopySavedToActive()";
+     result_var=NULL;
+     obj=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["misc_params"]$;
+     method=ParamSet::CopySavedToActive;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void CopySavedToActive()";
+     meth_desc=" copy the previously-saved values to be active (live) values on the objects";
+    };
+    ControlPanelsFmArgs @[10] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["run_params"]$;
     };
-    ControlPanelsFmArgs @[12] {
+    ControlPanelsFmArgs @[11] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["misc_params"]$;
     };
-    Comment @[13] {
+    Comment @[12] {
      user_data_=NULL;
      desc="TODO: Add your program comment here (multi-lines ok).";
      flags=CAN_REVERT_TO_CODE;
      code_string="// TODO: Add your program comment here (multi-lines ok).";
     };
-    Comment @[14] {
+    Comment @[13] {
      user_data_=NULL;
      desc="= Add args to tag name =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Add args to tag name =";
     };
-    AssignExpr @[15] {
+    AssignExpr @[14] {
      user_data_=NULL;
      desc="NOTE: using run_params name as config id";
      flags=CAN_REVERT_TO_CODE;
@@ -11984,13 +12022,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr="\"_\" +  run_params->name + tag";
      };
     };
-    Comment @[16] {
+    Comment @[15] {
      user_data_=NULL;
      desc="Set log files";
      flags=CAN_REVERT_TO_CODE;
      code_string="// Set log files";
     };
-    If @[17] {
+    If @[16] {
      user_data_=NULL;
      desc="set tag for starting batch (new code in v 8.0)";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
@@ -12180,7 +12218,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    Else @[18] {
+    Else @[17] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12293,7 +12331,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    OtherProgramVar @[19] {
+    OtherProgramVar @[18] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12305,13 +12343,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[20] {
+    Comment @[19] {
      user_data_=NULL;
      desc="= Call sub-startup programs =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Call sub-startup programs =";
     };
-    ProgramCallVar @[21] {
+    ProgramCallVar @[20] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12338,7 +12376,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlexParamSetExperiment"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[22] {
+    PrintExpr @[21] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12349,7 +12387,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      debug=0;
     };
-    ProgramCall @[23] {
+    ProgramCall @[22] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12468,7 +12506,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_basic_train";
+      string_val="_BasicTrain_basic_train";
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
       desc=;
@@ -12597,7 +12635,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="batch";
       var_type=T_Int;
-      int_val=4;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
@@ -12617,7 +12655,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="n_batches";
       var_type=T_Int;
-      int_val=2;
+      int_val=1;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -12862,7 +12900,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="stop_train";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="set this var from any other program to stop training";
@@ -14226,7 +14264,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=7371: sys=285: tot=148804494733: }: end={usr=7373: sys=285: tot=148804494735: }: used={usr=89: sys=2: tot=85: }: s_used=0.85: n_used=50: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=5271: sys=490: tot=148856145638: }: end={usr=5271: sys=490: tot=148856145638: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -14786,7 +14824,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=7382: sys=285: tot=148804494744: }: end={usr=7384: sys=285: tot=148804494746: }: used={usr=606: sys=13: tot=616: }: s_used=6.16: n_used=300: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=5252: sys=488: tot=148856145624: }: end={usr=5255: sys=489: tot=148856145625: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -15404,7 +15442,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="trial";
       var_type=T_Int;
-      int_val=5;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -15848,7 +15886,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=3;
+      int_val=1;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -24382,7 +24420,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cycle";
       var_type=T_Int;
-      int_val=100;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -24817,7 +24855,7 @@ also save specs.";
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_basic_train";
+      string_val="_BasicTrain_basic_train";
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user defined tag (set by startup script)";
@@ -25214,7 +25252,7 @@ also save specs.";
        user_data_=NULL;
        name="tag";
        var_type=T_String;
-       string_val="_basic_train";
+       string_val="_BasicTrain_basic_train";
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -26707,7 +26745,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -28282,7 +28320,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -29842,7 +29880,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31220,7 +31258,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31582,7 +31620,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9989384;
+     value 8 0=0.9989378;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33399,7 +33437,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04352441;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -33435,7 +33473,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 10489 actually remove the config table finally";
+ last_change_desc="svn rev: 10514 update startup program";
  tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].param_seqs;.networks[0].param_seqs[0];.networks[0].layers; };
  networks {
   user_data_=NULL;
@@ -33805,7 +33843,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale {user_data_=NULL: abs=1: rel=1: no_plus_net=0: };
        learn=0;
        learn_qtr=Q4;
-       lrate=0.04;
+       lrate=0.02;
        use_lrate_sched=1;
        cur_lrate=0.04;
        lrs_mult=1;
@@ -33902,9 +33940,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale {user_data_=NULL: abs=1: rel=0.2: no_plus_net=0: };
        learn=1;
        learn_qtr=Q4;
-       lrate=0.04;
+       lrate=0.02;
        use_lrate_sched=1;
-       cur_lrate=0.04;
+       cur_lrate=0.02;
        lrs_mult=1;
        lrate_sched {
 	user_data_=NULL;
@@ -33983,12 +34021,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      rnd {user_data_=NULL: name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {user_data_=NULL: type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {user_data_=NULL: abs=1: rel=1: no_plus_net=0: };
+     wt_scale {user_data_=NULL: abs=0.5: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
-     lrate=0.04;
+     lrate=0.02;
      use_lrate_sched=1;
-     cur_lrate=0.04;
+     cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
       user_data_=NULL;
