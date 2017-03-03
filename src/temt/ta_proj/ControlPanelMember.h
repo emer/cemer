@@ -126,18 +126,37 @@ public:
   TypeItem*    typeItem() const override {return mbr;} // the mbr or mth
 
   virtual String        CurValAsString();
-  // #CAT_ControlPanel get current value of item, as a string -- not subject to validity for parameter searching
+  // #CAT_CtrlPanel get current value of item, as a string -- not subject to validity for parameter searching
   virtual bool          SetCurVal(const Variant& cur_val);
-  // #CAT_ControlPanel set current value of item from a variant
+  // #CAT_CtrlPanel set current value of item from a variant
 
   virtual void          CopyActiveToSaved();
-  // #BUTTON for ParamSet elements: copy the current active (live) values on the objects to the saved values
+  // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the current active (live) values on the objects to the saved values
   virtual void          CopySavedToActive();
-  // #BUTTON for ParamSet elements: copy the previously-saved values to be active (live) values on the objects
+  // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the previously-saved values to be active (live) values on the objects
+
+  virtual bool          RecordValue();
+  // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued members are so recorded
 
   inline void           SetCtrlType()   { data.SetCtrlType(); }
-  // update the ctrl_type based on owner type
+  // #CAT_CtrlPanel update the ctrl_type based on owner type
 
+  inline bool           IsControl()
+  { return data.ctrl_type == ControlPanelMemberData::CONTROL; }
+  // #CAT_CtrlPanel is this a member of a ControlPanel
+  inline bool           IsParamSet()
+  { return data.ctrl_type == ControlPanelMemberData::PARAM_SET; }
+  // #CAT_CtrlPanel is this a member of a ParamSet
+  inline bool           IsClusterRun()
+  { return data.ctrl_type == ControlPanelMemberData::CLUSTER_RUN; }
+  // #CAT_CtrlPanel is this a member of a ClusterRun
+
+  virtual bool          IsControlPanelPointer();
+  // #CAT_CtrlPanel is this member a pointer to another control panel?
+  virtual ControlPanel* GetControlPanelPointer();
+  // #CAT_CtrlPanel if this is a control panel pointer, return the current control panel we point to
+
+  
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMember);
   void  InitLinks() override;

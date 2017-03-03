@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10506
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10511
 LeabraProject .projects["LeabraFlexParamSetExperiment"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -416,7 +416,7 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
  ParamSet_Group @.param_sets = [0] {
   ParamSet_Group @.gp["RunParams"] = [2] { 
    ParamSet @["BasicTrain"] { 
-    ControlPanelMember_Group @.mbrs = [16] {
+    ControlPanelMember_Group @.mbrs = [17] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -433,13 +433,14 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
      ControlPanelMember @[13] { };
      ControlPanelMember @[14] { };
      ControlPanelMember @[15] { };
+     ControlPanelMember @[16] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
     };
    };
    ParamSet @["SpecialTrain"] { 
-    ControlPanelMember_Group @.mbrs = [16] {
+    ControlPanelMember_Group @.mbrs = [17] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -456,6 +457,7 @@ LeabraProject .projects["LeabraFlexParamSetExperiment"] {
      ControlPanelMember @[13] { };
      ControlPanelMember @[14] { };
      ControlPanelMember @[15] { };
+     ControlPanelMember @[16] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
@@ -4455,7 +4457,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMember @[0] {
      user_data_=NULL;
      label="master_startup_run_params";
-     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
+     cust_label=0;
+     desc=;
      cust_desc=0;
      base=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["run_params"]$$;
      mbr=ProgVar::object_val;
@@ -4474,7 +4477,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMember @[1] {
      user_data_=NULL;
      label="master_startup_misc_params";
-     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
+     cust_label=0;
+     desc=;
      cust_desc=0;
      base=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["misc_params"]$$;
      mbr=ProgVar::object_val;
@@ -7961,13 +7965,13 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    };
    use_search_algo=0;
    cur_search_algo=NULL;
-   set_proj_name=0;
-   proj_name=;
+   set_proj_name=1;
+   proj_name="param_search";
    auto_updt_interval=10;
    auto_updt_timeout=30;
-   cluster="blanca_ccn";
-   clusters="dream blanca_ccn";
-   users="rohrlich";
+   cluster="dream";
+   clusters="dream";
+   users="oreilly";
    last_submit_time="2017_02_08_21_14_24";
    notes="testing param_set config idea";
    label=;
@@ -8014,7 +8018,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMember @[0] {
      user_data_=NULL;
      label="master_startup_run_params";
-     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
+     cust_label=0;
+     desc=;
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["run_params"]$;
      mbr=ProgVar::object_val;
@@ -8033,7 +8038,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMember @[1] {
      user_data_=NULL;
      label="master_startup_misc_params";
-     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
+     cust_label=0;
+     desc=;
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["misc_params"]$;
      mbr=ProgVar::object_val;
@@ -8059,6 +8065,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMethod @[0] {
      user_data_=NULL;
      label="Init";
+     cust_label=0;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
      base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
@@ -8067,6 +8074,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMethod @[1] {
      user_data_=NULL;
      label="Run";
+     cust_label=0;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$;
@@ -8075,6 +8083,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMethod @[2] {
      user_data_=NULL;
      label="Step";
+     cust_label=0;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$;
@@ -8083,6 +8092,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMethod @[3] {
      user_data_=NULL;
      label="Stop";
+     cust_label=0;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"]$;
@@ -8114,6 +8124,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[0] {
       user_data_=NULL;
       label="run_prog";
+      cust_label=1;
       desc="name of run program to run -- must exist in the RunProgs group";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$$;
@@ -8133,6 +8144,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[1] {
       user_data_=NULL;
       label="init_prog";
+      cust_label=1;
       desc="name of init program -- must exist in the InitProgs group";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$$;
@@ -8152,6 +8164,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[2] {
       user_data_=NULL;
       label="startup_prog";
+      cust_label=1;
       desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["startup_prog"]$$;
@@ -8171,6 +8184,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[3] {
       user_data_=NULL;
       label="train_epochs";
+      cust_label=1;
       desc="number of epochs to train network for";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$$;
@@ -8190,6 +8204,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[4] {
       user_data_=NULL;
       label="trials_per_epoch";
+      cust_label=1;
       desc="number of trials per epoch";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
@@ -8209,6 +8224,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[5] {
       user_data_=NULL;
       label="save_final_wts";
+      cust_label=1;
       desc="should final weights after training is complete be saved?";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainEnd"].vars["save_final_wts"]$$;
@@ -8228,6 +8244,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[6] {
       user_data_=NULL;
       label="save_wts_interval";
+      cust_label=1;
       desc="how frequently (epochs) to save weights during training";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["EpochEnd"].vars["save_wts_interval"]$$;
@@ -8247,6 +8264,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[7] {
       user_data_=NULL;
       label="test_run";
+      cust_label=1;
       desc="is this a testing-only run, no training?";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_run"]$$;
@@ -8266,6 +8284,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[8] {
       user_data_=NULL;
       label="test_interval";
+      cust_label=1;
       desc="how frequently (epochs) to run a test during training";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$$;
@@ -8285,6 +8304,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[9] {
       user_data_=NULL;
       label="log_trials";
+      cust_label=1;
       desc="should trial-level data be saved to log files?";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_trials"]$$;
@@ -8304,6 +8324,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[10] {
       user_data_=NULL;
       label="load_weights";
+      cust_label=1;
       desc="load initial weights from a file (specified in weights_file)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_weights"]$$;
@@ -8323,6 +8344,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[11] {
       user_data_=NULL;
       label="weights_file";
+      cust_label=1;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$$;
@@ -8341,7 +8363,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
      ControlPanelMember @[12] {
       user_data_=NULL;
-      label="train_start_load_st_epc";
+      label="load_st_epc";
+      cust_label=1;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_st_epc"]$$;
@@ -8361,6 +8384,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[13] {
       user_data_=NULL;
       label="lrs_step_epochs";
+      cust_label=1;
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_step_epochs"]$$;
@@ -8380,6 +8404,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[14] {
       user_data_=NULL;
       label="lrs_n_steps";
+      cust_label=1;
       desc="number of steps in the learning rate schedule";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_n_steps"]$$;
@@ -8399,6 +8424,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[15] {
       user_data_=NULL;
       label="lrs_bump_step";
+      cust_label=1;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_bump_step"]$$;
@@ -8409,6 +8435,26 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        is_numeric=1;
        is_single=1;
        saved_value="-1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[16] {
+      user_data_=NULL;
+      label="n_batches";
+      cust_label=1;
+      desc="number of batches to run";
+      cust_desc=0;
+      base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterBatch"].vars["n_batches"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
        record=1;
        search=0;
        range=;
@@ -8437,6 +8483,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[0] {
       user_data_=NULL;
       label="run_prog";
+      cust_label=1;
       desc="name of run program to run -- must exist in the RunProgs group";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$;
@@ -8456,6 +8503,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[1] {
       user_data_=NULL;
       label="init_prog";
+      cust_label=1;
       desc="name of init program -- must exist in the InitProgs group";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$;
@@ -8475,6 +8523,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[2] {
       user_data_=NULL;
       label="startup_prog";
+      cust_label=1;
       desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs["MasterStartup"].vars["startup_prog"]$;
@@ -8494,6 +8543,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[3] {
       user_data_=NULL;
       label="train_epochs";
+      cust_label=1;
       desc="number of epochs to train network for";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$;
@@ -8513,6 +8563,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[4] {
       user_data_=NULL;
       label="trials_per_epoch";
+      cust_label=1;
       desc="number of trials per epoch";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$;
@@ -8532,6 +8583,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[5] {
       user_data_=NULL;
       label="save_final_wts";
+      cust_label=1;
       desc="should final weights after training is complete be saved?";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainEnd"].vars["save_final_wts"]$;
@@ -8551,6 +8603,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[6] {
       user_data_=NULL;
       label="save_wts_interval";
+      cust_label=1;
       desc="how frequently (epochs) to save weights during training";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["EpochEnd"].vars["save_wts_interval"]$;
@@ -8570,6 +8623,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[7] {
       user_data_=NULL;
       label="test_run";
+      cust_label=1;
       desc="is this a testing-only run, no training?";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_run"]$;
@@ -8589,6 +8643,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[8] {
       user_data_=NULL;
       label="test_interval";
+      cust_label=1;
       desc="how frequently (epochs) to run a test during training";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$;
@@ -8608,6 +8663,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[9] {
       user_data_=NULL;
       label="log_trials";
+      cust_label=1;
       desc="should trial-level data be saved to log files?";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_trials"]$;
@@ -8627,6 +8683,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[10] {
       user_data_=NULL;
       label="load_weights";
+      cust_label=1;
       desc="load initial weights from a file (specified in weights_file)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_weights"]$;
@@ -8646,6 +8703,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[11] {
       user_data_=NULL;
       label="weights_file";
+      cust_label=1;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$;
@@ -8664,7 +8722,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
      ControlPanelMember @[12] {
       user_data_=NULL;
-      label="train_start_load_st_epc";
+      label="load_st_epc";
+      cust_label=1;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["load_st_epc"]$;
@@ -8684,6 +8743,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[13] {
       user_data_=NULL;
       label="lrs_step_epochs";
+      cust_label=1;
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_step_epochs"]$;
@@ -8703,6 +8763,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[14] {
       user_data_=NULL;
       label="lrs_n_steps";
+      cust_label=1;
       desc="number of steps in the learning rate schedule";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_n_steps"]$;
@@ -8722,6 +8783,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[15] {
       user_data_=NULL;
       label="lrs_bump_step";
+      cust_label=1;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_bump_step"]$;
@@ -8732,6 +8794,26 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        is_numeric=1;
        is_single=1;
        saved_value="-1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[16] {
+      user_data_=NULL;
+      label="n_batches";
+      cust_label=1;
+      desc="number of batches to run";
+      cust_desc=0;
+      base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterBatch"].vars["n_batches"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="2";
        record=1;
        search=0;
        range=;
@@ -8766,6 +8848,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[0] {
       user_data_=NULL;
       label="mstr_run_stop_step_grain";
+      cust_label=1;
       desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
@@ -8784,7 +8867,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
      ControlPanelMember @[1] {
       user_data_=NULL;
-      label="Cycle_update_net_view";
+      label="cycle_update_net_view";
+      cust_label=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
       cust_desc=1;
       base=.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
@@ -8804,6 +8888,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[2] {
       user_data_=NULL;
       label="cycle_qtr";
+      cust_label=1;
       desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
       cust_desc=0;
       base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].times$$;
@@ -8823,6 +8908,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[3] {
       user_data_=NULL;
       label="leabra_con_spec_0_lrate";
+      cust_label=0;
       desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
       cust_desc=0;
       base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
@@ -8842,6 +8928,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[4] {
       user_data_=NULL;
       label="leabra_con_spec_0_wt_scale_abs";
+      cust_label=0;
       desc="[Default: 1]  absolute scaling (not subject to normalization: directly multiplies weight values)";
       cust_desc=0;
       base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"].wt_scale$$;
@@ -8880,6 +8967,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[0] {
       user_data_=NULL;
       label="mstr_run_stop_step_grain";
+      cust_label=1;
       desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$;
@@ -8898,7 +8986,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
      ControlPanelMember @[1] {
       user_data_=NULL;
-      label="Cycle_update_net_view";
+      label="cycle_update_net_view";
+      cust_label=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
       cust_desc=1;
       base=$.projects["LeabraFlexParamSetExperiment"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$;
@@ -8918,6 +9007,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[2] {
       user_data_=NULL;
       label="cycle_qtr";
+      cust_label=1;
       desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
       cust_desc=0;
       base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].times$;
@@ -8937,6 +9027,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[3] {
       user_data_=NULL;
       label="leabra_con_spec_0_lrate";
+      cust_label=0;
       desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
       cust_desc=0;
       base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"]$;
@@ -8956,6 +9047,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      ControlPanelMember @[4] {
       user_data_=NULL;
       label="leabra_con_spec_0_wt_scale_abs";
+      cust_label=0;
       desc="[Default: 1]  absolute scaling (not subject to normalization: directly multiplies weight values)";
       cust_desc=0;
       base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"].wt_scale$;
@@ -12525,7 +12617,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="n_batches";
       var_type=T_Int;
-      int_val=10;
+      int_val=2;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -31490,7 +31582,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9994689;
+     value 8 0=0.9989384;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -32255,7 +32347,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=49: };
+	  view_range {min=0: max=-1: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -32288,7 +32380,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=49: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32342,7 +32434,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=3.974752: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32366,7 +32458,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.562: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -32390,7 +32482,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -33307,7 +33399,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04352441;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -33625,8 +33717,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {user_data_=NULL: type=LeabraBiasSpec: spec=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {user_data_=NULL: thr=0.5: gain=100: nvar=0.005: };
-     act_misc {user_data_=NULL: rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act {user_data_=NULL: thr=0.5: gain=20: nvar=0.01: };
+     act_misc {user_data_=NULL: rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {user_data_=NULL: rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       user_data_=NULL;
@@ -34021,6 +34113,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[0] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_gain";
+	 cust_label=0;
 	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
 	 cust_desc=0;
 	 base=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$$;
@@ -34040,6 +34133,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[1] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_nvar";
+	 cust_label=0;
 	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34079,6 +34173,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[0] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_gain";
+	 cust_label=0;
 	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34098,6 +34193,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[1] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_nvar";
+	 cust_label=0;
 	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34137,6 +34233,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[0] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_gain";
+	 cust_label=0;
 	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34156,6 +34253,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[1] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_nvar";
+	 cust_label=0;
 	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34195,6 +34293,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[0] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_gain";
+	 cust_label=0;
 	 desc="[Default: 80;100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default, 80 works better for larger models, and 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generally in lower input/sensory layers of the network";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34214,6 +34313,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ControlPanelMember @[1] {
 	 user_data_=NULL;
 	 label="leabra_unit_spec_0_act_nvar";
+	 cust_label=0;
 	 desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
 	 cust_desc=0;
 	 base=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$;
@@ -34304,9 +34404,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1899993;
-     acts_p_avg=0.1899993;
-     acts_p_avg_eff=0.1899993;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -34400,9 +34500,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1634393;
-     acts_p_avg=0.1640308;
-     acts_p_avg_eff=0.1640308;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
@@ -34477,9 +34577,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1860717;
-     acts_p_avg=0.1899993;
-     acts_p_avg_eff=0.1899993;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=$.projects["LeabraFlexParamSetExperiment"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
     };

@@ -329,7 +329,7 @@ void ControlPanel::CopyFromDataTable(DataTable* table, int row_num) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
     Variant val = table->GetVal(item->label, row_num);
     if(val.isValid()) {
-      if(item->data.ctrl_type == ControlPanelMemberData::PARAM_SET) {
+      if(item->IsParamSet()) {
         item->data.saved_value = val.toString();
       }
       else {
@@ -365,7 +365,7 @@ void ControlPanel::CopyToDataTable(DataTable* table, int row_num) {
   }
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
     String val;
-    if(item->data.ctrl_type == ControlPanelMemberData::PARAM_SET) {
+    if(item->IsParamSet()) {
       val = item->data.saved_value;
     }
     else {
@@ -659,6 +659,50 @@ String ControlPanel::ToWikiTable() {
   
   rval << "|}\n";
   return rval;
+}
+
+String ControlPanel::MembersToString(bool use_search_vals) {
+  String params;
+  bool first = true;
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    if(mbr->IsControlPanelPointer()) {
+      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+      if(sub_panel) {
+        if(!first)
+          params.cat(" "); // sep
+        else
+          first = false;
+        String oparams = sub_panel->MembersToString(use_search_vals);
+        params.cat(oparams);
+      }
+    }
+    else {
+      if(!mbr->RecordValue()) continue;
+      if(!first)
+        params.cat(" "); // sep
+      else
+        first = false;
+      params.cat(mbr->GetName()).cat("=");
+      if(mbr->IsClusterRun()) {
+        if(!use_search_vals) {
+          params.cat(mbr->CurValAsString());
+        }
+        else {
+          if(mbr->data.search) {
+            params.cat(String(mbr->data.next_val));
+          }
+          else {
+            params.cat(mbr->CurValAsString());
+          }
+        }
+      }
+      else {
+        params.cat(mbr->CurValAsString());
+      }
+    }
+  }
+  return params;
 }
 
 void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {

@@ -297,3 +297,46 @@ void ControlPanelMember::CopySavedToActive() {
   mbr->SetValStr(data.saved_value, base);
   base->UpdateAfterEdit();
 }
+
+bool ControlPanelMember::RecordValue() {
+  if(!data.is_single) return false;
+  if(IsClusterRun()) {
+    return (data.record || data.search);
+  }
+  else {
+    return true;
+  }
+}
+
+bool ControlPanelMember::IsControlPanelPointer() {
+  if(!base) return false;
+  TypeDef* mbr_td = mbr->type;
+  if(mbr_td->IsBasePointerType()) {
+    void* addr = mbr->GetOff(base);
+    taBase* rbase = NULL;
+    if((mbr_td->IsPointer()) && mbr_td->IsTaBase()) rbase = *((taBase**)addr);
+    else if(mbr_td->InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)addr)->ptr();
+    else if(mbr_td->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
+    if(rbase && rbase->InheritsFrom(&TA_ControlPanel)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+ControlPanel* ControlPanelMember::GetControlPanelPointer() {
+  if(!base) return NULL;
+  TypeDef* mbr_td = mbr->type;
+  if(mbr_td->IsBasePointerType()) {
+    void* addr = mbr->GetOff(base);
+    taBase* rbase = NULL;
+    if((mbr_td->IsPointer()) && mbr_td->IsTaBase()) rbase = *((taBase**)addr);
+    else if(mbr_td->InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)addr)->ptr();
+    else if(mbr_td->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
+    if(rbase && rbase->InheritsFrom(&TA_ControlPanel)) {
+      return (ControlPanel*)rbase;
+    }
+  }
+  return NULL;
+}
+

@@ -2171,25 +2171,7 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
     cmd.cat(" n_threads=").cat(String(n_threads));
   }
 
-  params="";
-  // Add a name=val term for each parameter in the search.
-  bool first = true;
-  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
-    const ControlPanelMemberData &ps = mbr->data;
-    if (mbr->data.is_single && ps.record) {
-      if(!first)
-        params.cat(" "); // sep
-      else
-        first = false;
-      params.cat(mbr->GetName()).cat("=");
-      if(use_cur_vals || !mbr->data.is_numeric || !ps.search) {
-        params.cat(mbr->CurValAsString());
-      }
-      else {
-        params.cat(String(ps.next_val));
-      }
-    }
-  }
+  params=MembersToString(!use_cur_vals);
 }
 
 void ClusterRun::CreateCurJob(int cmd_id) {

@@ -68,54 +68,58 @@ public:
 
 public: // public API
   virtual void  RemoveMemberIdx(int idx);
-  //  remove control panel member at given index and update dialog
+  // #CAT_CtrlPanel remove control panel member at given index and update dialog
   virtual void  RemoveMember(taBase* base, MemberDef* md);
-  //  remove control panel member and update dialog
+  // #CAT_CtrlPanel  remove control panel member and update dialog
   virtual void  RemoveMethod(int idx);
-  //  remove method at given index
+  // #CAT_CtrlPanel  remove method at given index
   virtual void  GoToObject(int idx);
-  // select object for given member field for editing in the gui
+  // #CAT_CtrlPanel select object for given member field for editing in the gui
   virtual void  EditLabel(int idx);
-  // edit the current label - use_default will generate the label
+  // #CAT_CtrlPanel edit the current label - use_default will generate the label
 
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
-  // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
   virtual void CopyFromDataTable(DataTable* table, int row_num = -1);
-  // #MENU #MENU_ON_ControlPanel copy member values into this control panel from same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel copy member values into this control panel from same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values
   virtual void CopyToDataTable(DataTable* table, int row_num = -1);
-  // #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table -- a new row is added if not already present -- this is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table -- a new row is added if not already present -- this is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
 
   virtual bool  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
-  // add new member to control panel if it isn't already here (returns true), optionally in a sub group, and optionally with an extra custom label, custom desc, or short label
+  // #CAT_CtrlPanel add new member to control panel if it isn't already here (returns true), optionally in a sub group, and optionally with an extra custom label, custom desc, or short label
   virtual bool  AddMemberNm
     (taBase* base, const String& md_nm, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
-  // add new member to control panel if it isn't already here (returns true), optionally in a sub group
+  // #CAT_CtrlPanel add new member to control panel if it isn't already here (returns true), optionally in a sub group
   virtual bool  AddMemberPrompt(taBase* base, MemberDef* md, bool short_label = false);
-  // add new member to control panel, prompting for exact label to use
+  // #CAT_CtrlPanel add new member to control panel, prompting for exact label to use
   virtual bool  AddMethod(taBase* base, MethodDef* md, const String& xtra_lbl = _nilString, const String& sub_gp_nm = _nilString);
-  // add new method to control panel if it isn't already here (returns true), optionally in a sub group
+  // #CAT_CtrlPanel add new method to control panel if it isn't already here (returns true), optionally in a sub group
   virtual bool  AddMethodNm(taBase* base, const String& md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString);
-  // add new method to control panel if it isn't already here (returns true), optionally in a sub group
+  // #CAT_CtrlPanel add new method to control panel if it isn't already here (returns true), optionally in a sub group
 
   virtual int   FindMbrBase(taBase* base, MemberDef* md);
-  // find a given base and member, returns index
+  // #CAT_CtrlPanel find a given base and member, returns index
 
   virtual ControlPanelMember*  FindMbrName(const String& mbr_nm, const String& label = "")
   { return mbrs.FindMbrName(mbr_nm, label); }
-  // #CAT_Access find an item based on member name and, optionally if non-empty, the associated label
+  // #CAT_CtrlPanel find an item based on member name and, optionally if non-empty, the associated label
 
   virtual int   FindMethBase(taBase* base, MethodDef* md);
-  // find a given base and method, returns index
+  // #CAT_CtrlPanel find a given base and method, returns index
 
   virtual void  MbrUpdated(taBase* base, MemberDef* mbr);
-  // let the panel know that a mbr has been updated
+  // #CAT_CtrlPanel let the panel know that a mbr has been updated
   
   virtual void  Reset();
-  // #MENU #CONFIRM reset (remove all) current members and methods
+  // #CAT_CtrlPanel #MENU #CONFIRM reset (remove all) current members and methods
   virtual String ToWikiTable();
-  // #MENU #CONFIRM #USE_RVAL save current parameters and notes to a mediawiki-formatted table, suitable for pasting into a wiki for recording params and notes
+  // #CAT_CtrlPanel #MENU #CONFIRM #USE_RVAL save current parameters and notes to a mediawiki-formatted table, suitable for pasting into a wiki for recording params and notes
 
-  bool         ReShowEdit(bool force = false); // #IGNORE this is just really a synonym for doing a SigEmit
+  virtual String MembersToString(bool use_search_vals = false);
+  // #CAT_CtrlPanel return a String with a list of space-separated name=value pairs for the members in this control panel -- if this is a ClusterRun control panel, then only the members marked as search or record are saved (and if use_search_vals, search records current search value) -- any ControlPanel's that are linked within this one are recursively processed as well (but its members are not scoped in any way, so for this to be useful, names in general must be unique across the different control panels)
+  
+  bool         ReShowEdit(bool force = false);
+  // #IGNORE this is just really a synonym for doing a SigEmit
 
  public: // IRefListClient i/f
   void*        This() override {return this;}
