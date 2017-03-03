@@ -27,11 +27,11 @@
 #include <String_PArray>
 #include <DumpFileCvtList>
 #include <ContextFlag>
-#include <String_Array>
 
 #ifndef NO_TA_BASE
 #include <taLicense>
 #include <ClusterSpecs>
+#include <String_Array>
 #endif
 
 #ifndef __MAKETA__
@@ -744,8 +744,10 @@ public:
      const String& ok_txt = "Ok", const String cancel_txt = "Cancel");
   // #CAT_Dialog prompt user for a string value -- returns in str_val, and false = cancel -- supply any current value in str_val as well
 
+#ifndef NO_TA_BASE
   static void DisplayList(taBase_PtrList& base_list, const String& title, const String_Array* addl_info = NULL, const String& info_title = "");
   // #CAT_Dialog displays non-modal dialog of base objects with clickable links - like find but is for display only of list generated independent of the UI
+#endif
 
   static void   LogEvent(const String& log_data);
   // #CAT_Log record data to current log stream file -- log all significant data using this (errors and warnings above are logged for example)

@@ -18,7 +18,6 @@
 #include <TypeDef> 
 #include <MemberDef> 
 #include <MethodDef>
-#include <taBase_PtrList>
 #include <BuiltinTypeDefs>
 taTypeDef_Of(PropertyDef);
 taTypeDef_Of(EnumDef);
@@ -32,6 +31,7 @@ taTypeDef_Of(EnumDef);
 # undef CMAKE_DEPENDENCY_HACK
 
 #include <taBase> 
+#include <taBase_PtrList>
 #include <UserDataItemBase> 
 #include <taFiler>
 #include <css_machine.h>
