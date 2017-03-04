@@ -32,10 +32,10 @@ class TA_API ParamSet : public ControlPanel {
 public:
   TA_SIMPLE_BASEFUNS(ParamSet);
 
-  virtual void          CopyActiveToSaved();
-  // #BUTTON copy the current active (live) values on the objects to the saved values
-  virtual void          CopySavedToActive();
-  // #BUTTON copy the previously-saved values to be active (live) values on the objects
+  virtual void          CopyActiveToSaved(bool info_msg = false);
+  // #BUTTON #ARGC_0 copy the current active (live) values on the objects to the saved values
+  virtual void          CopySavedToActive(bool info_msg = false);
+  // #BUTTON #ARGC_0 copy the saved_value values to be active (live) values on the objects
   virtual bool          ActiveEqualsSaved(String member_name); 
   // test whether active and saved versions of a member are the same or different
 
@@ -45,7 +45,7 @@ public:
   // #IGNORE copy the previously-saved values to be active (live) values on the objects
 
   virtual void          ComparePeers(ParamSet* param_set);
-  // #DYN12N calls taProject::ParamSetComparePeers to populate a table that compares this param_sets member values with its peers values - this data does not update - call again if you edit any of the param_sets!
+  // #BUTTON #DYN12N calls taProject::ParamSetComparePeers to populate a table that compares this param_sets member values with its peers values - this data does not update - call again if you edit any of the param_sets!
 
   
 protected:

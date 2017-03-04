@@ -1,11 +1,12 @@
-// ta_Dump File v3.0 -- code v8.0.5.0 rev10460
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10515
 LeabraProject .projects["LeabraFlex"] { 
- Doc_Group @.docs = [1] {
+ Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["user_pinned"] { };
    };
   };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -22,10 +23,12 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [0] {
+   ControlPanelMember_Group @.mbrs = [2] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
    };
 
-   EditMthItem_Group @.mths = [0] {
+   ControlPanelMethod_Group @.mths = [0] {
    };
 
    DataTableCols @.jobs_running.data = [33] {
@@ -92,7 +95,13 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["last_svn"] { };
    };
 
-   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [6] {
+    DataSortEl @["tag_up_0"] { };
+    DataSortEl @["last_svn_up_1"] { };
+    DataSortEl @["last_svn_up_2"] { };
+    DataSortEl @["last_svn_up_3"] { };
+    DataSortEl @["last_svn_up_4"] { };
+    DataSortEl @["last_svn_up_5"] { };
    };
 
    DataTableCell_List @.jobs_running.control_panel_cells = [0] {
@@ -162,7 +171,13 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["last_svn"] { };
    };
 
-   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [6] {
+    DataSortEl @["tag_up_0"] { };
+    DataSortEl @["last_svn_up_1"] { };
+    DataSortEl @["last_svn_up_2"] { };
+    DataSortEl @["last_svn_up_3"] { };
+    DataSortEl @["last_svn_up_4"] { };
+    DataSortEl @["last_svn_up_5"] { };
    };
 
    DataTableCell_List @.jobs_done.control_panel_cells = [0] {
@@ -232,7 +247,13 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["last_svn"] { };
    };
 
-   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [6] {
+    DataSortEl @["tag_up_0"] { };
+    DataSortEl @["last_svn_up_1"] { };
+    DataSortEl @["last_svn_up_2"] { };
+    DataSortEl @["last_svn_up_3"] { };
+    DataSortEl @["last_svn_up_4"] { };
+    DataSortEl @["last_svn_up_5"] { };
    };
 
    DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
@@ -302,7 +323,13 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["last_svn"] { };
    };
 
-   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   DataOpList @.jobs_archive.last_sort_spec.ops = [6] {
+    DataSortEl @["tag_up_0"] { };
+    DataSortEl @["last_svn_up_1"] { };
+    DataSortEl @["last_svn_up_2"] { };
+    DataSortEl @["last_svn_up_3"] { };
+    DataSortEl @["last_svn_up_4"] { };
+    DataSortEl @["last_svn_up_5"] { };
    };
 
    DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
@@ -337,7 +364,13 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["start_time"] { };
    };
 
-   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
+   DataOpList @.cluster_info.last_sort_spec.ops = [6] {
+    DataSortEl @["state_up_0"] { };
+    DataSortEl @["start_time_up_1"] { };
+    DataSortEl @["start_time_up_2"] { };
+    DataSortEl @["start_time_up_3"] { };
+    DataSortEl @["start_time_up_4"] { };
+    DataSortEl @["start_time_up_5"] { };
    };
 
    DataTableCell_List @.cluster_info.control_panel_cells = [0] {
@@ -366,24 +399,63 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [5] {
-    EditMbrItem @[0] { };
-    EditMbrItem @[1] { };
-    EditMbrItem @[2] { };
-    EditMbrItem @[3] { };
-    EditMbrItem @[4] { };
+   ControlPanelMember_Group @.mbrs = [7] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
+    ControlPanelMember @[2] { };
+    ControlPanelMember @[3] { };
+    ControlPanelMember @[4] { };
+    ControlPanelMember @[5] { };
+    ControlPanelMember @[6] { };
    };
 
-   EditMthItem_Group @.mths = [4] {
-    EditMthItem @[0] { };
-    EditMthItem @[1] { };
-    EditMthItem @[2] { };
-    EditMthItem @[3] { };
+   ControlPanelMethod_Group @.mths = [4] {
+    ControlPanelMethod @[0] { };
+    ControlPanelMethod @[1] { };
+    ControlPanelMethod @[2] { };
+    ControlPanelMethod @[3] { };
    };
   };
  };
 
  ParamSet_Group @.param_sets = [0] {
+  ParamSet_Group @.gp["RunParams"] = [1] { 
+   ParamSet @["BasicTrain"] { 
+    ControlPanelMember_Group @.mbrs = [18] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+     ControlPanelMember @[4] { };
+     ControlPanelMember @[5] { };
+     ControlPanelMember @[6] { };
+     ControlPanelMember @[7] { };
+     ControlPanelMember @[8] { };
+     ControlPanelMember @[9] { };
+     ControlPanelMember @[10] { };
+     ControlPanelMember @[11] { };
+     ControlPanelMember @[12] { };
+     ControlPanelMember @[13] { };
+     ControlPanelMember @[14] { };
+     ControlPanelMember @[15] { };
+     ControlPanelMember @[16] { };
+     ControlPanelMember @[17] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
+  };
+  ParamSet_Group @.gp["MiscParams"] = [1] { 
+   ParamSet @["MiscDefaults"] { 
+    ControlPanelMember_Group @.mbrs = [1] {
+     ControlPanelMember @[0] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
+  };
  };
 
  DataTable_Group @.data = [0] {
@@ -578,33 +650,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["AnalysisData"] { 
   };
-  DataTable_Group @.gp["ConfigData"] = [1] { 
-   DataTable @["ConfigTable"] { 
-    DataTableCols @.data = [16] {
-     String_Data @["config_id"] { };
-     String_Data @["config_desc"] { };
-     String_Data @["init_prog"] { };
-     String_Data @["run_prog"] { };
-     String_Data @["startup_prog"] { };
-     int_Data @["train_epochs"] { };
-     int_Data @["trials_per_epoch"] { };
-     bool_Data @["save_final_wts"] { };
-     int_Data @["save_wts_interval"] { };
-     int_Data @["test_interval"] { };
-     bool_Data @["log_trials"] { };
-     bool_Data @["load_weights"] { };
-     String_Data @["weights_file"] { };
-     int_Data @["load_st_epc"] { };
-     int_Data @["lrs_step_epochs"] { };
-     int_Data @["lrs_bump_step"] { };
-    };
-
-    DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
-   };
+  DataTable_Group @.gp["ClusterRun"] { 
   };
  };
 
@@ -624,102 +670,52 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["network"] { };
    };
 
-   ProgVar_List @.vars = [13] {
+   ProgVar_List @.vars = [11] {
     ProgVar @["batch_prog"] { };
     ProgVar @["tag"] { };
-    ProgVar @["config_id"] { };
-    ProgVar @["param_set"] { };
     ProgVar @["log_dir"] { };
     ProgVar @["log_file_nm"] { };
     ProgVar @["EpochOutputData"] { };
-    ProgVar @["Config"] { };
     ProgVar @["batch_str"] { };
     ProgVar @["batch_start"] { };
     ProgVar @["startup_prog"] { };
     ProgVar @["MyClusterRun"] { };
-    ProgVar @["param_sets"] { };
+    ProgVar @["run_params"] { };
+    ProgVar @["misc_params"] { };
    };
 
-   Function_List @.functions = [1] {
-    Function @["set_n_units"] { 
-     ProgVar_List @.args = [2] {
-      ProgVar @["lay"] { };
-      ProgVar @["n_units"] { };
-     };
-
-     ProgEl_List @.fun_code = [4] {
-      If @[0] { 
-       ProgEl_List @.true_code = [1] {
-	ReturnExpr @[0] { };
-       };
-      };
-      MethodCall @[1] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      PrintExpr @[2] { };
-      ReturnExpr @[3] { };
-     };
-    };
+   Function_List @.functions = [0] {
    };
 
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [30] {
+   ProgEl_List @.prog_code = [23] {
     RegisterArgs @[0] { };
     PrintExpr @[1] { };
     Comment @[2] { };
     ProgVarFmArg @[3] { };
     ProgVarFmArg @[4] { };
     ProgVarFmArg @[5] { };
-    ProgVarFmArg @[6] { };
-    ProgVarFmArg @[7] { };
-    Comment @[8] { };
-    ProgVarFmArg @[9] { };
-    ProgVarFmArg @[10] { };
-    OtherProgramVar @[11] { };
-    MethodCall @[12] { 
-     ProgArg_List @.meth_args = [2] {
+    Comment @[6] { };
+    ControlPanelsFmArgs @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
-      ProgArg @[1] { };
      };
     };
-    ControlPanelsFmArgs @[13] { };
-    If @[14] { 
-     ProgEl_List @.true_code = [1] {
-      MethodCall @[0] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
+    MethodCall @[9] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
      };
     };
+    ControlPanelsFmArgs @[10] { };
+    ControlPanelsFmArgs @[11] { };
+    Comment @[12] { };
+    Comment @[13] { };
+    AssignExpr @[14] { };
     Comment @[15] { };
-    Comment @[16] { };
-    If @[17] { 
-     ProgEl_List @.true_code = [1] {
-      MiscCall @[0] { 
-       ProgArg_List @.meth_args = [9] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
-	ProgArg @[4] { };
-	ProgArg @[5] { };
-	ProgArg @[6] { };
-	ProgArg @[7] { };
-	ProgArg @[8] { };
-       };
-      };
-     };
-    };
-    AssignExpr @[18] { };
-    Comment @[19] { };
-    DataColsFmArgs @[20] { };
-    Comment @[21] { };
-    If @[22] { 
+    If @[16] { 
      ProgEl_List @.true_code = [4] {
       ProgVarFmArg @[0] { };
       MiscCall @[1] { 
@@ -748,7 +744,7 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    Else @[23] { 
+    Else @[17] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -765,16 +761,15 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    OtherProgramVar @[24] { };
-    Comment @[25] { };
-    DataVarProg @[26] { };
-    ProgramCallVar @[27] { 
+    OtherProgramVar @[18] { };
+    Comment @[19] { };
+    ProgramCallVar @[20] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[28] { };
-    ProgramCall @[29] { 
+    PrintExpr @[21] { };
+    ProgramCall @[22] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -870,34 +865,27 @@ LeabraProject .projects["LeabraFlex"] {
     ProgObjList @.objs = [0] {
     };
 
-    ProgType_List @.types = [1] {
-     DynEnumTableCol @["ConfigOptions"] { 
-      DynEnumItem_List @.enums = [1] {
-       DynEnumItem @["basic_train"] { };
-      };
-     };
+    ProgType_List @.types = [0] {
     };
 
     ProgVar_List @.args = [1] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [6] {
-     ProgVar @["Config"] { };
-     ProgVar @["cur_config"] { };
-     ProgVar @["config_id"] { };
+    ProgVar_List @.vars = [5] {
      ProgVar @["run_prog"] { };
      ProgVar @["init_prog"] { };
      ProgVar @["stop_train"] { };
+     ProgVar @["run_params"] { };
+     ProgVar @["misc_params"] { };
     };
 
     Function_List @.functions = [0] {
     };
 
-    ProgEl_List @.init_code = [3] {
+    ProgEl_List @.init_code = [2] {
      AssignExpr @[0] { };
-     AssignExpr @[1] { };
-     WtInitPrompt @[2] { 
+     WtInitPrompt @[1] { 
       ProgEl_List @.yes_code = [3] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -912,29 +900,33 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgEl_List @.prog_code = [6] {
+    ProgEl_List @.prog_code = [4] {
      AssignExpr @[0] { };
-     AssignExpr @[1] { };
-     DataVarProg @[2] { };
-     MethodCall @[3] { 
-      ProgArg_List @.meth_args = [2] {
-       ProgArg @[0] { };
-       ProgArg @[1] { };
+     If @[1] { 
+      ProgEl_List @.true_code = [2] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
       };
      };
-     ProgramCallVar @[4] { 
-      ProgArg_List @.prog_args = [2] {
+     ProgramCallVar @[2] { 
+      ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
-       ProgArg @[1] { };
       };
      };
-     WhileLoop @[5] { 
+     WhileLoop @[3] { 
       ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
-	ProgArg_List @.prog_args = [3] {
+	ProgArg_List @.prog_args = [2] {
 	 ProgArg @[0] { };
 	 ProgArg @[1] { };
-	 ProgArg @[2] { };
 	};
        };
       };
@@ -960,14 +952,12 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgVar_List @.args = [3] {
+    ProgVar_List @.args = [2] {
      ProgVar @["network"] { };
-     ProgVar @["config_id"] { };
      ProgVar @["run_prog"] { };
     };
 
-    ProgVar_List @.vars = [2] {
-     ProgVar @["Config"] { };
+    ProgVar_List @.vars = [1] {
      ProgVar @["stop_step_grain"] { };
     };
 
@@ -1014,9 +1004,8 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgEl_List @.prog_code = [1] {
      ProgramCallVar @[0] { 
-      ProgArg_List @.prog_args = [2] {
+      ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
-       ProgArg @[1] { };
       };
      };
     };
@@ -1033,16 +1022,16 @@ LeabraProject .projects["LeabraFlex"] {
      ProgType_List @.types = [0] {
      };
 
-     ProgVar_List @.args = [2] {
+     ProgVar_List @.args = [1] {
       ProgVar @["network"] { };
-      ProgVar @["config_id"] { };
      };
 
-     ProgVar_List @.vars = [4] {
+     ProgVar_List @.vars = [5] {
       ProgVar @["layer_group_lesion_list"] { };
       ProgVar @["layer_lesion_list"] { };
       ProgVar @["prjn_lesion_list"] { };
       ProgVar @["prjn_unlesion_list"] { };
+      ProgVar @["test_run"] { };
      };
 
      Function_List @.functions = [0] {
@@ -1053,9 +1042,8 @@ LeabraProject .projects["LeabraFlex"] {
 
      ProgEl_List @.prog_code = [5] {
       ProgramCall @[0] { 
-       ProgArg_List @.prog_args = [2] {
+       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
-	ProgArg @[1] { };
        };
       };
       ProgramCall @[1] { 
@@ -1097,13 +1085,12 @@ LeabraProject .projects["LeabraFlex"] {
      ProgType_List @.types = [0] {
      };
 
-     ProgVar_List @.args = [2] {
+     ProgVar_List @.args = [1] {
       ProgVar @["network"] { };
-      ProgVar @["config_id"] { };
      };
 
      ProgVar_List @.vars = [5] {
-      ProgVar @["trials_per_epoch"] { };
+      ProgVar @["trials_per_epoch_eff"] { };
       ProgVar @["train_epochs"] { };
       ProgVar @["test_interval"] { };
       ProgVar @["update_net_view"] { };
@@ -1751,25 +1738,16 @@ LeabraProject .projects["LeabraFlex"] {
     ProgType_List @.types = [0] {
     };
 
-    ProgVar_List @.args = [2] {
+    ProgVar_List @.args = [1] {
      ProgVar @["network"] { };
-     ProgVar @["config_id"] { };
     };
 
-    ProgVar_List @.vars = [13] {
-     ProgVar @["Config"] { };
-     ProgVar @["trials_per_epoch"] { };
-     ProgVar @["trials_per_epoch_orig"] { };
+    ProgVar_List @.vars = [5] {
      ProgVar @["train_epochs"] { };
-     ProgVar @["save_final_wts"] { };
-     ProgVar @["save_wts_interval"] { };
+     ProgVar @["trials_per_epoch"] { };
+     ProgVar @["trials_per_epoch_eff"] { };
+     ProgVar @["test_run"] { };
      ProgVar @["test_interval"] { };
-     ProgVar @["log_trials"] { };
-     ProgVar @["load_weights"] { };
-     ProgVar @["weights_file"] { };
-     ProgVar @["load_st_epc"] { };
-     ProgVar @["lrs_step_epochs"] { };
-     ProgVar @["lrs_bump_step"] { };
     };
 
     Function_List @.functions = [0] {
@@ -1778,11 +1756,9 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [4] {
-     Comment @[0] { };
-     DataVarProg @[1] { };
-     AssignExpr @[2] { };
-     If @[3] { 
+    ProgEl_List @.prog_code = [2] {
+     AssignExpr @[0] { };
+     If @[1] { 
       ProgEl_List @.true_code = [2] {
        AssignExpr @[0] { };
        If @[1] { 
@@ -2599,11 +2575,12 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [8] {
-     ProgVar @["weights_file"] { };
+    ProgVar_List @.vars = [9] {
      ProgVar @["load_weights"] { };
+     ProgVar @["weights_file"] { };
      ProgVar @["load_st_epc"] { };
      ProgVar @["lrs_step_epochs"] { };
+     ProgVar @["lrs_n_steps"] { };
      ProgVar @["lrs_bump_step"] { };
      ProgVar @["LRSConSpec"] { };
      ProgVar @["dmem_rnd_seed"] { };
@@ -2653,7 +2630,11 @@ LeabraProject .projects["LeabraFlex"] {
 	};
        };
        PrintVar @[1] { };
-       MemberAssign @[2] { };
+       If @[2] { 
+	ProgEl_List @.true_code = [1] {
+	 MemberAssign @[0] { };
+	};
+       };
       };
      };
      MethodCall @[6] { 
@@ -3969,34 +3950,40 @@ LeabraProject .projects["LeabraFlex"] {
        BaseSpec_Group @.children = [0] {
        };
 
-       Schedule @.lrate_sched = [5] {
+       Schedule @.lrate_sched = [7] {
 	SchedItem @[0] { };
 	SchedItem @[1] { };
 	SchedItem @[2] { };
 	SchedItem @[3] { };
 	SchedItem @[4] { };
+	SchedItem @[5] { };
+	SchedItem @[6] { };
        };
       };
       LeabraConSpec @["TopDownCons"] { 
        BaseSpec_Group @.children = [0] {
        };
 
-       Schedule @.lrate_sched = [5] {
+       Schedule @.lrate_sched = [7] {
 	SchedItem @[0] { };
 	SchedItem @[1] { };
 	SchedItem @[2] { };
 	SchedItem @[3] { };
 	SchedItem @[4] { };
+	SchedItem @[5] { };
+	SchedItem @[6] { };
        };
       };
      };
 
-     Schedule @.lrate_sched = [5] {
+     Schedule @.lrate_sched = [7] {
       SchedItem @[0] { };
       SchedItem @[1] { };
       SchedItem @[2] { };
       SchedItem @[3] { };
       SchedItem @[4] { };
+      SchedItem @[5] { };
+      SchedItem @[6] { };
      };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] { 
@@ -4049,7 +4036,7 @@ LeabraProject .projects["LeabraFlex"] {
   user_data_=NULL;
   major=8;
   minor=0;
-  step=0;
+  step=3;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -4322,6 +4309,60 @@ mw.config.set({\"wgBackendResponseTime\":192});
 
 </body></html>";
   };
+  taDoc @["ChangeLog"] {
+   user_data_=NULL;
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10514 update startup program
+
+
+
+<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10489 actually remove the config table finally
+
+
+<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10514 update startup program
+<P>
+<P>
+<P>
+<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10489 actually remove the config table finally
+<P>
+<P>
+<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   user_data_=NULL;
@@ -4368,13 +4409,53 @@ mw.config.set({\"wgBackendResponseTime\":192});
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
+    ControlPanelMember @[0] {
+     user_data_=NULL;
+     label="run_params";
+     cust_label=1;
+     desc="select parameters for controlling how network is run";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$$;
+     mbr=ProgVar::object_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CLUSTER_RUN;
+      is_numeric=0;
+      is_single=1;
+      saved_value=;
+      record=0;
+      search=0;
+      range=;
+      notes=;
+     };
+    };
+    ControlPanelMember @[1] {
+     user_data_=NULL;
+     label="misc_params";
+     cust_label=1;
+     desc="select other parameters, typically network spec params -- independent of run params";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$$;
+     mbr=ProgVar::object_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CLUSTER_RUN;
+      is_numeric=0;
+      is_single=1;
+      saved_value=;
+      record=0;
+      search=0;
+      range=;
+      notes=;
+     };
+    };
    };
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
    };
@@ -5073,6 +5154,42 @@ mw.config.set({\"wgBackendResponseTime\":192});
       name="ops";
       el_typ=DataSortEl;
       el_def=0;
+      DataSortEl @["tag_up_0"] {
+       user_data_=NULL;
+       col_name="tag";
+       name="tag_up_0";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_1"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_1";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_2"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_2";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_3"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_3";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_4"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_4";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_5"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_5";
+       order=ASCENDING;
+      };
      };
     };
     row_with_hilite=-1;
@@ -5778,6 +5895,42 @@ mw.config.set({\"wgBackendResponseTime\":192});
       name="ops";
       el_typ=DataSortEl;
       el_def=0;
+      DataSortEl @["tag_up_0"] {
+       user_data_=NULL;
+       col_name="tag";
+       name="tag_up_0";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_1"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_1";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_2"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_2";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_3"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_3";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_4"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_4";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_5"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_5";
+       order=ASCENDING;
+      };
      };
     };
     row_with_hilite=-1;
@@ -6483,6 +6636,42 @@ mw.config.set({\"wgBackendResponseTime\":192});
       name="ops";
       el_typ=DataSortEl;
       el_def=0;
+      DataSortEl @["tag_up_0"] {
+       user_data_=NULL;
+       col_name="tag";
+       name="tag_up_0";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_1"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_1";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_2"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_2";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_3"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_3";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_4"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_4";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_5"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_5";
+       order=ASCENDING;
+      };
      };
     };
     row_with_hilite=-1;
@@ -7188,6 +7377,42 @@ mw.config.set({\"wgBackendResponseTime\":192});
       name="ops";
       el_typ=DataSortEl;
       el_def=0;
+      DataSortEl @["tag_up_0"] {
+       user_data_=NULL;
+       col_name="tag";
+       name="tag_up_0";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_1"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_1";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_2"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_2";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_3"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_3";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_4"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_4";
+       order=ASCENDING;
+      };
+      DataSortEl @["last_svn_up_5"] {
+       user_data_=NULL;
+       col_name="last_svn";
+       name="last_svn_up_5";
+       order=ASCENDING;
+      };
      };
     };
     row_with_hilite=-1;
@@ -7562,6 +7787,42 @@ mw.config.set({\"wgBackendResponseTime\":192});
       name="ops";
       el_typ=DataSortEl;
       el_def=0;
+      DataSortEl @["state_up_0"] {
+       user_data_=NULL;
+       col_name="state";
+       name="state_up_0";
+       order=ASCENDING;
+      };
+      DataSortEl @["start_time_up_1"] {
+       user_data_=NULL;
+       col_name="start_time";
+       name="start_time_up_1";
+       order=ASCENDING;
+      };
+      DataSortEl @["start_time_up_2"] {
+       user_data_=NULL;
+       col_name="start_time";
+       name="start_time_up_2";
+       order=ASCENDING;
+      };
+      DataSortEl @["start_time_up_3"] {
+       user_data_=NULL;
+       col_name="start_time";
+       name="start_time_up_3";
+       order=ASCENDING;
+      };
+      DataSortEl @["start_time_up_4"] {
+       user_data_=NULL;
+       col_name="start_time";
+       name="start_time_up_4";
+       order=ASCENDING;
+      };
+      DataSortEl @["start_time_up_5"] {
+       user_data_=NULL;
+       col_name="start_time";
+       name="start_time_up_5";
+       order=ASCENDING;
+      };
      };
     };
     row_with_hilite=-1;
@@ -7661,23 +7922,23 @@ mw.config.set({\"wgBackendResponseTime\":192});
    };
    use_search_algo=0;
    cur_search_algo=NULL;
-   set_proj_name=0;
-   proj_name=;
+   set_proj_name=1;
+   proj_name="param_search";
    auto_updt_interval=10;
    auto_updt_timeout=30;
-   cluster=;
-   clusters=;
-   users=;
-   last_submit_time=;
-   notes=;
+   cluster="dream";
+   clusters="dream";
+   users="oreilly";
+   last_submit_time="2017_02_08_21_14_24";
+   notes="testing param_set config idea";
    label=;
    extra_files=;
-   svn_repo=;
-   repo_url=;
+   svn_repo="grey_run";
+   repo_url="https://grey.colorado.edu/svn/clusterun";
    queue=;
-   run_time=;
+   run_time="1h";
    exe_cmd="emergent";
-   ram_gb=-1;
+   ram_gb=0;
    n_threads=2;
    use_mpi=0;
    mpi_nodes=10;
@@ -7687,7 +7948,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
    pb_n_batches_per=1;
    nowin_x=0;
    enable_kill=0;
-   enable_load=0;
+   enable_load=1;
    enable_notes=1;
   };
   ControlPanel @["ControlPanel"] {
@@ -7709,162 +7970,186 @@ mw.config.set({\"wgBackendResponseTime\":192});
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
-    EditMbrItem @[0] {
+    ControlPanelMember @[0] {
      user_data_=NULL;
-     label="cur_config";
-     desc="configuration to run -- selects from configs in the Config data table";
-     cust_desc=1;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cur_config"].dyn_enum_val$$;
-     mbr=DynEnum::value;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     label="run_params";
+     cust_label=1;
+     desc="select parameters for controlling how network is run";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$;
+     mbr=ProgVar::object_val;
+     data {
       user_data_=NULL;
-      record=0;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"RunParams\"][\"SpecialTrain\"]";
+      record=1;
       search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=;
-     };
-     notes {
-      user_data_=NULL;
+      range=;
       notes=;
      };
     };
-    EditMbrItem @[1] {
+    ControlPanelMember @[1] {
+     user_data_=NULL;
+     label="misc_params";
+     cust_label=1;
+     desc="select other parameters, typically network spec params -- independent of run params";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
+     mbr=ProgVar::object_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"MiscParams\"][\"MiscOne\"]";
+      record=1;
+      search=0;
+      range=;
+      notes=;
+     };
+    };
+    ControlPanelMember @[2] {
      user_data_=NULL;
      label="mstr_run_stop_step_grain";
-     desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
-     cust_desc=1;
+     cust_label=1;
+     desc=" current integer value";
+     cust_desc=0;
      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
      mbr=DynEnum::value;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="0";
       record=0;
       search=0;
       range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=;
-     };
-     notes {
-      user_data_=NULL;
       notes=;
      };
     };
-    EditMbrItem @[2] {
+    ControlPanelMember @[3] {
      user_data_=NULL;
-     label="Cycle_update_net_view";
-     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
-     cust_desc=1;
-     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
-     mbr=ProgVar::bool_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      user_data_=NULL;
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=;
-     };
-     notes {
-      user_data_=NULL;
-      notes=;
-     };
-    };
-    EditMbrItem @[3] {
-     user_data_=NULL;
-     label="cycle_qtr";
+     label="network_cycle_qtr";
+     cust_label=1;
      desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
      cust_desc=0;
      base=.projects["LeabraFlex"].networks["Network_0"].times$$;
      mbr=LeabraTimes::cycle_qtr;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="true";
       record=0;
       search=0;
       range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
-      saved_value=;
-     };
-     notes {
-      user_data_=NULL;
-      notes=;
+      notes="turn OFF to see individual cycles, ON for MUCH faster running";
      };
     };
-    EditMbrItem @[4] {
+    ControlPanelMember @[4] {
      user_data_=NULL;
-     label="leabra_con_spec_0_lrate";
-     desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
+     label="cycle_update_net_view";
+     cust_label=0;
+     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      cust_desc=0;
-     base=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
-     mbr=LeabraConSpec::lrate;
-     is_numeric=1;
-     is_single=1;
-     param_search {
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     data {
       user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="true";
       record=0;
       search=0;
       range="0:1:0.1";
+      notes="update network view at cycle level -- actual value depends on cycle_qtr";
      };
-     param_set_value {
+    };
+    ControlPanelMember @[5] {
+     user_data_=NULL;
+     label="quarter_update_net_view";
+     cust_label=0;
+     desc="if true, will update network views at end of settling";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     data {
       user_data_=NULL;
-      saved_value=;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="false";
+      record=1;
+      search=0;
+      range=;
+      notes="redundant with cycle for cycle_qtr = ON";
      };
-     notes {
+    };
+    ControlPanelMember @[6] {
+     user_data_=NULL;
+     label="trial_update_net_view";
+     cust_label=0;
+     desc="determines whether to update any network view displays after trial is completed";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     data {
       user_data_=NULL;
-      notes=;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="false";
+      record=1;
+      search=0;
+      range=;
+      notes="mostly redundant but some updates happen after trial";
      };
     };
    };
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
-    EditMthItem @[0] {
+    ControlPanelMethod @[0] {
      user_data_=NULL;
      label="Init";
+     cust_label=0;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
      mth=Program::Init;
     };
-    EditMthItem @[1] {
+    ControlPanelMethod @[1] {
      user_data_=NULL;
      label="Run";
+     cust_label=0;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      mth=Program::Run_Gui;
     };
-    EditMthItem @[2] {
+    ControlPanelMethod @[2] {
      user_data_=NULL;
      label="Step";
+     cust_label=0;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      mth=Program::Step_Gui;
     };
-    EditMthItem @[3] {
+    ControlPanelMethod @[3] {
      user_data_=NULL;
      label="Stop";
+     cust_label=0;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
@@ -7878,6 +8163,436 @@ mw.config.set({\"wgBackendResponseTime\":192});
   name="param_sets";
   el_typ=ParamSet;
   el_def=0;
+  ParamSet_Group @.gp["RunParams"] {
+   user_data_=NULL;
+   name="RunParams";
+   el_typ=ParamSet;
+   el_def=0;
+   ParamSet @["BasicTrain"] {
+    user_data_=NULL;
+    name="BasicTrain";
+    updt_while_running=0;
+    desc="basic training parameters";
+    mbrs {
+     user_data_=NULL;
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
+      user_data_=NULL;
+      label="run_prog";
+      cust_label=1;
+      desc="name of run program to run -- must exist in the RunProgs group";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicRun";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[1] {
+      user_data_=NULL;
+      label="init_prog";
+      cust_label=1;
+      desc="name of init program -- must exist in the InitProgs group";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicInit";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[2] {
+      user_data_=NULL;
+      label="startup_prog";
+      cust_label=1;
+      desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicStartup";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[3] {
+      user_data_=NULL;
+      label="train_epochs";
+      cust_label=1;
+      desc="number of epochs to train network for";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[4] {
+      user_data_=NULL;
+      label="trials_per_epoch";
+      cust_label=1;
+      desc="number of trials per epoch";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[5] {
+      user_data_=NULL;
+      label="save_final_wts";
+      cust_label=1;
+      desc="should final weights after training is complete be saved?";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainEnd"].vars["save_final_wts"]$$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="true";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[6] {
+      user_data_=NULL;
+      label="save_wts_interval";
+      cust_label=1;
+      desc="how frequently (epochs) to save weights during training";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].vars["save_wts_interval"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="200";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[7] {
+      user_data_=NULL;
+      label="test_run";
+      cust_label=1;
+      desc="is this a testing-only run, no training?";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_run"]$$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[8] {
+      user_data_=NULL;
+      label="test_interval";
+      cust_label=1;
+      desc="how frequently (epochs) to run a test during training";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[9] {
+      user_data_=NULL;
+      label="log_trials";
+      cust_label=1;
+      desc="should trial-level data be saved to log files?";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_trials"]$$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[10] {
+      user_data_=NULL;
+      label="load_weights";
+      cust_label=1;
+      desc="load initial weights from a file (specified in weights_file)";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["load_weights"]$$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[11] {
+      user_data_=NULL;
+      label="weights_file";
+      cust_label=1;
+      desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value=;
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[12] {
+      user_data_=NULL;
+      label="load_st_epc";
+      cust_label=1;
+      desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["load_st_epc"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[13] {
+      user_data_=NULL;
+      label="lrs_step_epochs";
+      cust_label=1;
+      desc="learning rate schedule epochs per step of decrease in learning rate";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_step_epochs"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[14] {
+      user_data_=NULL;
+      label="lrs_n_steps";
+      cust_label=1;
+      desc="number of steps in the learning rate schedule";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_n_steps"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="7";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[15] {
+      user_data_=NULL;
+      label="lrs_bump_step";
+      cust_label=1;
+      desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_bump_step"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="-1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[16] {
+      user_data_=NULL;
+      label="n_batches";
+      cust_label=1;
+      desc="number of batches to run";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["n_batches"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[17] {
+      user_data_=NULL;
+      label="batch_start";
+      cust_label=1;
+      desc="batch number to start on";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch_start"]$$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+    };
+    mths {
+     user_data_=NULL;
+     name="mths";
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+   };
+  };
+  ParamSet_Group @.gp["MiscParams"] {
+   user_data_=NULL;
+   name="MiscParams";
+   el_typ=ParamSet;
+   el_def=0;
+   ParamSet @["MiscDefaults"] {
+    user_data_=NULL;
+    name="MiscDefaults";
+    updt_while_running=0;
+    desc="default values for all params";
+    mbrs {
+     user_data_=NULL;
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
+      user_data_=NULL;
+      label="leabra_con_spec_0_lrate";
+      cust_label=0;
+      desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
+      cust_desc=0;
+      base=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
+      mbr=LeabraConSpec::lrate;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0.04";
+       record=0;
+       search=0;
+       range="0:1:0.1";
+       notes=;
+      };
+     };
+    };
+    mths {
+     user_data_=NULL;
+     name="mths";
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+   };
+  };
  };
  data {
   user_data_=NULL;
@@ -9815,7 +10530,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
     keygen 4 0=0;
     last_sort_spec {
      user_data_=NULL;
-     name="DataSortSpec_50";
+     name="last_sort_spec";
      ops {
       user_data_=NULL;
       name="ops";
@@ -9826,7 +10541,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
     row_with_hilite=-1;
     control_panel_cells {
      user_data_=NULL;
-     name="DataTableCell_List_48";
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -10393,410 +11108,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
     keygen 4 0=0;
     last_sort_spec {
      user_data_=NULL;
-     name="DataSortSpec_51";
-     ops {
-      user_data_=NULL;
-      name="ops";
-      el_typ=DataSortEl;
-      el_def=0;
-     };
-    };
-    row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="DataTableCell_List_49";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
-   };
-  };
-  DataTable_Group @.gp["AnalysisData"] {
-   user_data_=NULL;
-   name="AnalysisData";
-   el_typ=DataTable;
-   el_def=0;
-   save_tables=1;
-  };
-  DataTable_Group @.gp["ConfigData"] {
-   user_data_=NULL;
-   name="ConfigData";
-   el_typ=DataTable;
-   el_def=0;
-   save_tables=1;
-   DataTable @["ConfigTable"] {
-    user_data_=NULL;
-    name="ConfigTable";
-    desc="different configurations of the system";
-    data {
-     user_data_=NULL;
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @["config_id"] {
-      user_data_=NULL;
-      name="config_id";
-      desc="identifier for this type of configuration";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] "basic_train";      };
-     };
-     String_Data @["config_desc"] {
-      user_data_=NULL;
-      name="config_desc";
-      desc="description of this configuration";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] "default basic training";      };
-     };
-     String_Data @["init_prog"] {
-      user_data_=NULL;
-      name="init_prog";
-      desc="program to run to initialize at start of training";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] "BasicInit";      };
-     };
-     String_Data @["run_prog"] {
-      user_data_=NULL;
-      name="run_prog";
-      desc="program controlling each step of running";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] "BasicRun";      };
-     };
-     String_Data @["startup_prog"] {
-      user_data_=NULL;
-      name="startup_prog";
-      desc="program for handling startup args specific to this environment";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] "BasicStartup";      };
-     };
-     int_Data @["train_epochs"] {
-      user_data_=NULL;
-      name="train_epochs";
-      desc="number of total epochs to train for";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=12;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] 50;      };
-     };
-     int_Data @["trials_per_epoch"] {
-      user_data_=NULL;
-      name="trials_per_epoch";
-      desc="number of individual trials per epoch";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] 50;      };
-     };
-     bool_Data @["save_final_wts"] {
-      user_data_=NULL;
-      name="save_final_wts";
-      desc="save final weights after training (1 = yes, 0 = no)";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=14;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] true;      };
-     };
-     int_Data @["save_wts_interval"] {
-      user_data_=NULL;
-      name="save_wts_interval";
-      desc="how frequently to save weights during training (in epochs)";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=17;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] 200;      };
-     };
-     int_Data @["test_interval"] {
-      user_data_=NULL;
-      name="test_interval";
-      desc="how frequently to test performance without training -- only applicable to training cases";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=13;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] 1;      };
-     };
-     bool_Data @["log_trials"] {
-      user_data_=NULL;
-      name="log_trials";
-      desc="whether to log trial-level data or not (1 = yes, 0 = no)";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=10;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] false;      };
-     };
-     bool_Data @["load_weights"] {
-      user_data_=NULL;
-      name="load_weights";
-      desc="whether to load weights at start";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=12;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] false;      };
-     };
-     String_Data @["weights_file"] {
-      user_data_=NULL;
-      name="weights_file";
-      desc="full relative path (from project) to a weights file to load at start of training";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=16;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] ;      };
-     };
-     int_Data @["load_st_epc"] {
-      user_data_=NULL;
-      name="load_st_epc";
-      desc="if loading weights, what epoch does it start at?";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=11;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] 1;      };
-     };
-     int_Data @["lrs_step_epochs"] {
-      user_data_=NULL;
-      name="lrs_step_epochs";
-      desc="how many epochs per given step in the lrate schedule: each step drops the lrate roughly in half (log scale)";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=15;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] 50;      };
-     };
-     int_Data @["lrs_bump_step"] {
-      user_data_=NULL;
-      name="lrs_bump_step";
-      desc="what step to bump the lrate back up to 1 and then come back down -- 3 typical when used -- gets closer to global maximum, but requires 1.5x as many epochs";
-      col_flags=SAVE_DATA|AUTO_WIDTH;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       user_data_=NULL;
-       expr=;
-      };
-      dim_names {
-       user_data_=NULL;
-       name="dim_names";
-      [0]       };
-      width=15;
-      matrix_col_width=10;
-      ar {
-       user_data_=NULL;
-       name="ar";
-      [1] -1;      };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    row_height=1;
-    max_col_width=50;
-    keygen 4 0=0;
-    row_indexes {
-     user_data_=NULL;
-     name="row_indexes";
-    [1] 0;    };
-    last_sort_spec {
-     user_data_=NULL;
      name="last_sort_spec";
      ops {
       user_data_=NULL;
@@ -10813,6 +11124,20 @@ mw.config.set({\"wgBackendResponseTime\":192});
      el_def=0;
     };
    };
+  };
+  DataTable_Group @.gp["AnalysisData"] {
+   user_data_=NULL;
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp["ClusterRun"] {
+   user_data_=NULL;
+   name="ClusterRun";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=0;
   };
  };
  programs {
@@ -10847,8 +11172,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     minor=0;
     step=0;
    };
-   author=;
-   email=;
+   author="Randall C. O'Reilly";
+   email="emergent-users@grey.colorado.edu";
    flags=STARTUP_RUN;
    stop_step_cond {
     user_data_=NULL;
@@ -10905,30 +11230,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="tag";
      var_type=T_String;
-     string_val=;
+     string_val="_BasicTrain_BasicTrain_basic_train";
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
-     init_from=NULL;
-    };
-    ProgVar @["config_id"] {
-     user_data_=NULL;
-     name="config_id";
-     var_type=T_String;
-     string_val=;
-     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc="selector for config to use";
-     init_from=NULL;
-    };
-    ProgVar @["param_set"] {
-     user_data_=NULL;
-     name="param_set";
-     var_type=T_String;
-     string_val=;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc="name of saved parameter set to apply at startup";
      init_from=NULL;
     };
     ProgVar @["log_dir"] {
@@ -10945,7 +11250,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="log_file_nm";
      var_type=T_String;
-     string_val=;
+     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_BasicTrain_BasicTrain_basic_train.args";
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -10957,18 +11262,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"]$$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @["Config"] {
-     user_data_=NULL;
-     name="Config";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11002,7 +11295,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      string_val="BasicStartup";
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
-     desc=;
+     desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
      init_from=NULL;
     };
     ProgVar @["MyClusterRun"] {
@@ -11017,17 +11310,29 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      init_from=NULL;
     };
-    ProgVar @["param_sets"] {
+    ProgVar @["run_params"] {
      user_data_=NULL;
-     name="param_sets";
+     name="run_params";
      var_type=T_Object;
-     object_type=ParamSet_Group;
-     object_val=.projects["LeabraFlex"].param_sets$$;
+     object_type=ParamSet;
+     object_val=.projects["LeabraFlex"].param_sets.gp["RunParams"]["BasicTrain"]$$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
      reference=0;
-     desc=;
-     init_from=NULL;
+     desc="select parameters for controlling how network is run";
+     init_from=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+    };
+    ProgVar @["misc_params"] {
+     user_data_=NULL;
+     name="misc_params";
+     var_type=T_Object;
+     object_type=ParamSet;
+     object_val=.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscDefaults"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+     reference=0;
+     desc="select other parameters, typically network spec params -- independent of run params";
+     init_from=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
     };
    };
    functions {
@@ -11035,126 +11340,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     name="functions";
     el_typ=Function;
     el_def=0;
-    Function @["set_n_units"] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="set_n_units(Layer* lay, int n_units) returns: bool";
-     name="set_n_units";
-     return_type=T_Bool;
-     object_type=taOBase;
-     args {
-      user_data_=NULL;
-      name=;
-      el_typ=ProgVar;
-      el_def=0;
-      ProgVar @["lay"] {
-       user_data_=NULL;
-       name="lay";
-       var_type=T_Object;
-       object_type=Layer;
-       object_val=NULL;
-       objs_ptr=0;
-       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["n_units"] {
-       user_data_=NULL;
-       name="n_units";
-       var_type=T_Int;
-       int_val=0;
-       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-     };
-     fun_code {
-      user_data_=NULL;
-      name=;
-      el_typ=ProgCode;
-      el_def=0;
-      If @[0] {
-       user_data_=NULL;
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="if (lay->un_geom.n == n_units || n_units <= 0)";
-       cond {
-	user_data_=NULL;
-	expr="lay->un_geom.n == n_units || n_units <= 0";
-       };
-       true_code {
-	user_data_=NULL;
-	name=;
-	el_typ=ProgCode;
-	el_def=0;
-	ReturnExpr @[0] {
-	 user_data_=NULL;
-	 desc=;
-	 flags=CAN_REVERT_TO_CODE;
-	 code_string="return false";
-	 expr {
-	  user_data_=NULL;
-	  expr="false";
-	 };
-	};
-       };
-      };
-      MethodCall @[1] {
-       user_data_=NULL;
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="lay->SetNUnits(n_units)";
-       result_var=NULL;
-       obj=.projects["LeabraFlex"].programs["MasterStartup"].functions["set_n_units"].args["lay"]$$;
-       method=Layer::SetNUnits;
-       meth_args {
-	user_data_=NULL;
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 user_data_=NULL;
-	 arg_type=int;
-	 type="int";
-	 name="n_units";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr="n_units";
-	 };
-	};
-       };
-       meth_sig="void SetNUnits(int n_units)";
-       meth_desc=" set number of units in layer in the un_geom member -- attempts to lay out geometry in closest to a square that fits all the units evenly, if possible. note: does NOT rebuild the network. also does not make any changes if current number of units is same as arg, or arg <= 0 (e.g., for startup arg, just init n_units to -1 prior to getting arg val so it won't have any effect if arg not passed)";
-      };
-      PrintExpr @[2] {
-       user_data_=NULL;
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="Print \"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
-       expr {
-	user_data_=NULL;
-	expr="\"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
-       };
-       debug=0;
-      };
-      ReturnExpr @[3] {
-       user_data_=NULL;
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="return true";
-       expr {
-	user_data_=NULL;
-	expr="true";
-       };
-      };
-     };
-    };
    };
    init_code {
     user_data_=NULL;
@@ -11210,75 +11395,34 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     ProgVarFmArg @[5] {
      user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:param_set in Program:MasterStartup from Arg:param_set";
-     prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
-     var_name="param_set";
-     arg_name="param_set";
-    };
-    ProgVarFmArg @[6] {
-     user_data_=NULL;
      desc="starting batch -- replaces b_start";
-     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:batch_start in Program:MasterBatch from Arg:batch_start";
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="batch_start";
      arg_name="batch_start";
     };
-    ProgVarFmArg @[7] {
-     user_data_=NULL;
-     desc="number of batches to run";
-     flags=NEW_EL|CAN_REVERT_TO_CODE;
-     code_string="Set Var:n_batches in Program:MasterBatch from Arg:n_batches";
-     prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
-     var_name="n_batches";
-     arg_name="n_batches";
-    };
-    Comment @[8] {
+    Comment @[6] {
      user_data_=NULL;
      desc="add our special args from command line";
      flags=CAN_REVERT_TO_CODE;
      code_string="// add our special args from command line";
     };
-    ProgVarFmArg @[9] {
+    ControlPanelsFmArgs @[7] {
      user_data_=NULL;
-     desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
+     desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:cur_config in Program:MasterTrain from Arg:config";
-     prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     var_name="cur_config";
-     arg_name="config";
+     code_string="CtrlPanel Fm Args: var = MyClusterRun ";
+     ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
-    ProgVarFmArg @[10] {
+    MethodCall @[8] {
      user_data_=NULL;
-     desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
+     desc="set saved values first, before processing args";
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:config_id in Program:MasterTrain from Arg:config";
-     prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     var_name="config_id";
-     arg_name="config";
-    };
-    OtherProgramVar @[11] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Vars Fm:  program=MasterTrain set=from  var_1=config_id  var_2=?  var_3=?  var_4=? ";
-     other_prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     set_other=0;
-     var_1=.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$$;
-     var_2=NULL;
-     var_3=NULL;
-     var_4=NULL;
-    };
-    MethodCall @[12] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
+     code_string="run_params.CopySavedToActive()";
      result_var=NULL;
-     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$$;
-     method=DataTable::SetCellsFromRowLookup;
+     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$$;
+     method=ParamSet::CopySavedToActive;
      meth_args {
       user_data_=NULL;
       name="meth_args";
@@ -11286,248 +11430,78 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
       ProgArg @[0] {
        user_data_=NULL;
-       arg_type=taString;
-       type="taString";
-       name="column_name";
-       required=1;
-       def_val=;
+       arg_type=bool;
+       type="bool";
+       name="info_msg";
+       required=0;
+       def_val="false";
        prev_expr=;
        expr {
 	user_data_=NULL;
-	expr="\"config_id\"";
-       };
-      };
-      ProgArg @[1] {
-       user_data_=NULL;
-       arg_type=taString;
-       type="taString";
-       name="value";
-       required=1;
-       def_val=;
-       prev_expr=;
-       expr {
-	user_data_=NULL;
-	expr="config_id";
+	expr="true";
        };
       };
      };
-     meth_sig="void SetCellsFromRowLookup(taString column_name, taString value)";
-     meth_desc=" set the values of table cells in the row with value matching the 'value' arg of column matching 'column_name' arg";
+     meth_sig="void CopySavedToActive(bool info_msg = false)";
+     meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    ControlPanelsFmArgs @[13] {
+    MethodCall @[9] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="run_params.CopySavedToActive()";
+     result_var=NULL;
+     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$$;
+     method=ParamSet::CopySavedToActive;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       user_data_=NULL;
+       arg_type=bool;
+       type="bool";
+       name="info_msg";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="true";
+       };
+      };
+     };
+     meth_sig="void CopySavedToActive(bool info_msg = false)";
+     meth_desc=" copy the saved_value values to be active (live) values on the objects";
+    };
+    ControlPanelsFmArgs @[10] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
-     flags=NEW_EL|CAN_REVERT_TO_CODE;
-     code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
-    };
-    If @[14] {
-     user_data_=NULL;
-     desc="set variables to values stored in a param set";
      flags=CAN_REVERT_TO_CODE;
-     code_string="if (param_set.nonempty())";
-     cond {
-      user_data_=NULL;
-      expr="param_set.nonempty()";
-     };
-     true_code {
-      user_data_=NULL;
-      name="true_code";
-      el_typ=ProgCode;
-      el_def=0;
-      MethodCall @[0] {
-       user_data_=NULL;
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="param_sets->LoadParamSet(param_set)";
-       result_var=NULL;
-       obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["param_sets"]$$;
-       method=ParamSet_Group::LoadParamSet;
-       meth_args {
-	user_data_=NULL;
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="set_name";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr="param_set";
-	 };
-	};
-       };
-       meth_sig="bool LoadParamSet(taString& set_name)";
-       meth_desc=;
-      };
-     };
+     code_string="CtrlPanel Fm Args: var = MyClusterRun ";
+     ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$;
     };
-    Comment @[15] {
+    ControlPanelsFmArgs @[11] {
+     user_data_=NULL;
+     desc="sets any arg listed in the control panel";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="CtrlPanel Fm Args: var = MyClusterRun ";
+     ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$;
+    };
+    Comment @[12] {
      user_data_=NULL;
      desc="TODO: Add your program comment here (multi-lines ok).";
      flags=CAN_REVERT_TO_CODE;
      code_string="// TODO: Add your program comment here (multi-lines ok).";
     };
-    Comment @[16] {
+    Comment @[13] {
      user_data_=NULL;
      desc="= Add args to tag name =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Add args to tag name =";
     };
-    If @[17] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="if (config_id.empty())";
-     cond {
-      user_data_=NULL;
-      expr="config_id.empty()";
-     };
-     true_code {
-      user_data_=NULL;
-      name=;
-      el_typ=ProgCode;
-      el_def=0;
-      MiscCall @[0] {
-       user_data_=NULL;
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="taMisc::Error(\"lesson_id is empty -- must specify!  bailing\", , , , , , , , )";
-       result_var=NULL;
-       object_type=taMisc;
-       method=taMisc::Error;
-       meth_args {
-	user_data_=NULL;
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="a";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr="\"lesson_id is empty -- must specify!  bailing\"";
-	 };
-	};
-	ProgArg @[1] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="b";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[2] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="c";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[3] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="d";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[4] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="e";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[5] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="f";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[6] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="g";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[7] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="h";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-	ProgArg @[8] {
-	 user_data_=NULL;
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="i";
-	 required=0;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr=;
-	 };
-	};
-       };
-      };
-     };
-    };
-    AssignExpr @[18] {
+    AssignExpr @[14] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11535,34 +11509,19 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$$;
      expr {
       user_data_=NULL;
-      expr="\"_\" +  config_id + tag";
+      expr="\"_\" +  run_params->name + \"_\" + misc_params->name";
      };
     };
-    Comment @[19] {
-     user_data_=NULL;
-     desc="set any params from Config";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="// set any params from Config";
-    };
-    DataColsFmArgs @[20] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Data Cols Fm Args:  table=Config  row_spec=row_val  row_var=config_id ";
-     data_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$;
-     row_spec=ROW_VAL;
-     row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
-    };
-    Comment @[21] {
+    Comment @[15] {
      user_data_=NULL;
      desc="Set log files";
      flags=CAN_REVERT_TO_CODE;
      code_string="// Set log files";
     };
-    If @[22] {
+    If @[16] {
      user_data_=NULL;
      desc="set tag for starting batch (new code in v 8.0)";
-     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     flags=CAN_REVERT_TO_CODE;
      code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
      cond {
       user_data_=NULL;
@@ -11749,7 +11708,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    Else @[23] {
+    Else @[17] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11862,7 +11821,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    OtherProgramVar @[24] {
+    OtherProgramVar @[18] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11874,29 +11833,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[25] {
+    Comment @[19] {
      user_data_=NULL;
      desc="= Call sub-startup programs =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Call sub-startup programs =";
     };
-    DataVarProg @[26] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=startup_prog  var_2=?  var_3=?  var_4=? ";
-     data_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$;
-     row_spec=ROW_VAL;
-     row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
-     set_data=0;
-     all_matches=0;
-     quiet=0;
-     var_1=.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$$;
-     var_2=NULL;
-     var_3=NULL;
-     var_4=NULL;
-    };
-    ProgramCallVar @[27] {
+    ProgramCallVar @[20] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11923,7 +11866,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlex"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[28] {
+    PrintExpr @[21] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11934,7 +11877,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      debug=0;
     };
-    ProgramCall @[29] {
+    ProgramCall @[22] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12053,7 +11996,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val=;
+      string_val="_BasicTrain_BasicTrain_basic_train";
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
       desc=;
@@ -12202,7 +12145,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="n_batches";
       var_type=T_Int;
-      int_val=10;
+      int_val=1;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -12381,8 +12324,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      user_data_=NULL;
@@ -12399,26 +12342,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="types";
      el_typ=DynEnumType;
      el_def=0;
-     DynEnumTableCol @["ConfigOptions"] {
-      user_data_=NULL;
-      name="ConfigOptions";
-      desc=;
-      enums {
-       user_data_=NULL;
-       name="enums";
-       el_typ=DynEnumItem;
-       el_def=0;
-       DynEnumItem @["basic_train"] {
-	user_data_=NULL;
-	name="basic_train";
-	value=0;
-	desc=;
-       };
-      };
-      bits=0;
-      src_table=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
-      src_column="config_id";
-     };
     };
     args {
      user_data_=NULL;
@@ -12443,50 +12366,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["Config"] {
-      user_data_=NULL;
-      name="Config";
-      var_type=T_Object;
-      object_type=DataTable;
-      object_val=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
-      objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["cur_config"] {
-      user_data_=NULL;
-      name="cur_config";
-      var_type=T_DynEnum;
-      dyn_enum_val {
-       user_data_=NULL;
-       enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].types["ConfigOptions"]$$;
-       value=0;
-      };
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["config_id"] {
-      user_data_=NULL;
-      name="config_id";
-      var_type=T_String;
-      string_val="basic_train";
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="configuration to use -- auto set from cur_config -- lookup in Config table";
-      init_from=NULL;
-     };
      ProgVar @["run_prog"] {
       user_data_=NULL;
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="name of run program from the Config table";
+      desc="name of run program to run -- must exist in the RunProgs group";
       init_from=NULL;
      };
      ProgVar @["init_prog"] {
@@ -12494,9 +12381,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="init_prog";
       var_type=T_String;
       string_val="BasicInit";
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="name of init program from the Config table";
+      desc="name of init program -- must exist in the InitProgs group";
       init_from=NULL;
      };
      ProgVar @["stop_train"] {
@@ -12507,6 +12394,30 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="set this var from any other program to stop training";
+      init_from=NULL;
+     };
+     ProgVar @["run_params"] {
+      user_data_=NULL;
+      name="run_params";
+      var_type=T_Object;
+      object_type=ParamSet;
+      object_val=$.projects["LeabraFlex"].param_sets.gp["RunParams"]["BasicTrain"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="select parameters for controlling how network is run";
+      init_from=NULL;
+     };
+     ProgVar @["misc_params"] {
+      user_data_=NULL;
+      name="misc_params";
+      var_type=T_Object;
+      object_type=ParamSet;
+      object_val=$.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscDefaults"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="select other parameters, typically network spec params -- independent of run params";
       init_from=NULL;
      };
     };
@@ -12532,18 +12443,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr="false";
       };
      };
-     AssignExpr @[1] {
-      user_data_=NULL;
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="config_id = cur_config";
-      result_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$$;
-      expr {
-       user_data_=NULL;
-       expr="cur_config";
-      };
-     };
-     WtInitPrompt @[2] {
+     WtInitPrompt @[1] {
       user_data_=NULL;
       desc="don't initialize weights without checking";
       flags=CAN_REVERT_TO_CODE;
@@ -12620,77 +12520,83 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr="false";
       };
      };
-     AssignExpr @[1] {
+     If @[1] {
       user_data_=NULL;
-      desc=;
+      desc="only if running interactively -- otherwise set in MasterStartup!";
       flags=CAN_REVERT_TO_CODE;
-      code_string="config_id = cur_config";
-      result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$;
-      expr {
+      code_string="if(taMisc::interactive)";
+      cond {
        user_data_=NULL;
-       expr="cur_config";
+       expr="taMisc::interactive";
       };
-     };
-     DataVarProg @[2] {
-      user_data_=NULL;
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=init_prog  var_2=run_prog  var_3=?  var_4=? ";
-      data_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["Config"]$$;
-      row_spec=ROW_VAL;
-      row_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$;
-      set_data=0;
-      all_matches=0;
-      quiet=0;
-      var_1=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$$;
-      var_2=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$$;
-      var_3=NULL;
-      var_4=NULL;
-     };
-     MethodCall @[3] {
-      user_data_=NULL;
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["Config"]$;
-      method=DataTable::SetCellsFromRowLookup;
-      meth_args {
+      true_code {
        user_data_=NULL;
-       name="meth_args";
-       el_typ=ProgArg;
+       name="true_code";
+       el_typ=ProgCode;
        el_def=0;
-       ProgArg @[0] {
+       MethodCall @[0] {
 	user_data_=NULL;
-	arg_type=taString;
-	type="taString";
-	name="column_name";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
+	desc="activate config values";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="run_params.CopySavedToActive()";
+	result_var=NULL;
+	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$;
+	method=ParamSet::CopySavedToActive;
+	meth_args {
 	 user_data_=NULL;
-	 expr="\"config_id\"";
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  user_data_=NULL;
+	  arg_type=bool;
+	  type="bool";
+	  name="info_msg";
+	  required=0;
+	  def_val="false";
+	  prev_expr=;
+	  expr {
+	   user_data_=NULL;
+	   expr="true";
+	  };
+	 };
 	};
+	meth_sig="void CopySavedToActive(bool info_msg = false)";
+	meth_desc=" copy the saved_value values to be active (live) values on the objects";
        };
-       ProgArg @[1] {
+       MethodCall @[1] {
 	user_data_=NULL;
-	arg_type=taString;
-	type="taString";
-	name="value";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="run_params.CopySavedToActive()";
+	result_var=NULL;
+	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
+	method=ParamSet::CopySavedToActive;
+	meth_args {
 	 user_data_=NULL;
-	 expr="config_id";
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  user_data_=NULL;
+	  arg_type=bool;
+	  type="bool";
+	  name="info_msg";
+	  required=0;
+	  def_val="false";
+	  prev_expr=;
+	  expr {
+	   user_data_=NULL;
+	   expr="true";
+	  };
+	 };
 	};
+	meth_sig="void CopySavedToActive(bool info_msg = false)";
+	meth_desc=" copy the saved_value values to be active (live) values on the objects";
        };
       };
-      meth_sig="void SetCellsFromRowLookup(taString column_name, taString value)";
-      meth_desc=" set the values of table cells in the row with value matching the 'value' arg of column matching 'column_name' arg";
      };
-     ProgramCallVar @[4] {
+     ProgramCallVar @[2] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -12713,24 +12619,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 expr="network";
 	};
        };
-       ProgArg @[1] {
-	user_data_=NULL;
-	arg_type=taString;
-	type="String";
-	name="config_id";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
-	 user_data_=NULL;
-	 expr="config_id";
-	};
-       };
       };
       prog_group=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]$$;
       prog_name_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$;
      };
-     WhileLoop @[5] {
+     WhileLoop @[3] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -12757,7 +12650,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="network";
 	  expr {
 	   user_data_=NULL;
 	   expr="network";
@@ -12767,23 +12660,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  user_data_=NULL;
 	  arg_type=taString;
 	  type="String";
-	  name="config_id";
-	  required=1;
-	  def_val=;
-	  prev_expr=;
-	  expr {
-	   user_data_=NULL;
-	   expr="config_id";
-	  };
-	 };
-	 ProgArg @[2] {
-	  user_data_=NULL;
-	  arg_type=taString;
-	  type="String";
 	  name="run_prog";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="config_id";
 	  expr {
 	   user_data_=NULL;
 	   expr="run_prog";
@@ -12837,8 +12717,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      user_data_=NULL;
@@ -12909,16 +12789,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="network to operate on";
       init_from=NULL;
      };
-     ProgVar @["config_id"] {
-      user_data_=NULL;
-      name="config_id";
-      var_type=T_String;
-      string_val="basic_train";
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
-      reference=0;
-      desc="configuration to use -- lookup in Config table";
-      init_from=NULL;
-     };
      ProgVar @["run_prog"] {
       user_data_=NULL;
       name="run_prog";
@@ -12935,18 +12805,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["Config"] {
-      user_data_=NULL;
-      name="Config";
-      var_type=T_Object;
-      object_type=DataTable;
-      object_val=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
      ProgVar @["stop_step_grain"] {
       user_data_=NULL;
       name="stop_step_grain";
@@ -12954,11 +12812,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
-       value=0;
+       value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc=;
+      desc="select grain size for Step function on MasterRun program ";
       init_from=NULL;
      };
     };
@@ -13150,23 +13008,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="network";
 	expr {
 	 user_data_=NULL;
 	 expr="network";
-	};
-       };
-       ProgArg @[1] {
-	user_data_=NULL;
-	arg_type=taString;
-	type="String";
-	name="config_id";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
-	 user_data_=NULL;
-	 expr="config_id";
 	};
        };
       };
@@ -13219,8 +13064,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       minor=0;
       step=0;
      };
-     author=;
-     email=;
+     author="Randall C. O'Reilly";
+     email="emergent-users@grey.colorado.edu";
      flags=NO_STOP_STEP;
      stop_step_cond {
       user_data_=NULL;
@@ -13253,16 +13098,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="network to operate on -- updates batch counter on network and passes it to train program";
-       init_from=NULL;
-      };
-      ProgVar @["config_id"] {
-       user_data_=NULL;
-       name="config_id";
-       var_type=T_String;
-       string_val="basic_train";
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
-       reference=0;
-       desc="configuration to use -- lookup in Config table";
        init_from=NULL;
       };
      };
@@ -13311,6 +13146,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="space-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
        init_from=NULL;
       };
+      ProgVar @["test_run"] {
+       user_data_=NULL;
+       name="test_run";
+       var_type=T_Bool;
+       bool_val=0;
+       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+       reference=0;
+       desc="is this a testing-only run, no training?";
+       init_from=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$$;
+      };
      };
      functions {
       user_data_=NULL;
@@ -13352,21 +13197,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  expr="network";
 	 };
 	};
-	ProgArg @[1] {
-	 user_data_=NULL;
-	 arg_type=taString;
-	 type="String";
-	 name="config_id";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr="config_id";
-	 };
-	};
        };
-       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$$;
+       target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
        targ_ld_init="*StdGlobalsInit*";
       };
       ProgramCall @[1] {
@@ -13482,7 +13314,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        code_string="if (config_id.contains(\"_test\"))";
        cond {
 	user_data_=NULL;
-	expr="config_id.contains(\"_test\")";
+	expr="test_run";
        };
        true_code {
 	user_data_=NULL;
@@ -13616,25 +13448,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="network to operate on -- updates batch counter on network and passes it to train program";
        init_from=NULL;
       };
-      ProgVar @["config_id"] {
-       user_data_=NULL;
-       name="config_id";
-       var_type=T_String;
-       string_val="basic_train";
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
-       reference=0;
-       desc="configuration to use -- lookup in Config table";
-       init_from=NULL;
-      };
      };
      vars {
       user_data_=NULL;
       name="vars";
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @["trials_per_epoch"] {
+      ProgVar @["trials_per_epoch_eff"] {
        user_data_=NULL;
-       name="trials_per_epoch";
+       name="trials_per_epoch_eff";
        var_type=T_Int;
        int_val=50;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
@@ -13800,7 +13622,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        code_string="if (network.trial >= trials_per_epoch)";
        cond {
 	user_data_=NULL;
-	expr="network.trial >= trials_per_epoch";
+	expr="network.trial >= trials_per_epoch_eff";
        };
        true_code {
 	user_data_=NULL;
@@ -14032,7 +13854,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=7059: sys=1537: tot=148470241688: }: end={usr=7063: sys=1537: tot=148470241697: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3119: sys=400: tot=148864523882: }: end={usr=3125: sys=400: tot=148864523891: }: used={usr=332: sys=16: tot=441: }: s_used=4.41: n_used=50: };
     };
     types {
      user_data_=NULL;
@@ -14592,7 +14414,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=7184: sys=1544: tot=148470242059: }: end={usr=7204: sys=1545: tot=148470242092: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3141: sys=401: tot=148864523913: }: end={usr=3141: sys=401: tot=148864523912: }: used={usr=56: sys=4: tot=71: }: s_used=0.71: n_used=8: };
     };
     types {
      user_data_=NULL;
@@ -15210,7 +15032,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -15242,7 +15064,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="data_loop_index";
       var_type=T_Int;
-      int_val=4;
+      int_val=2;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -15644,7 +15466,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cur_idx";
       var_type=T_Int;
-      int_val=0;
+      int_val=4;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -15654,7 +15476,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=1;
+      int_val=5;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -16970,32 +16792,20 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
      };
-     ProgVar @["config_id"] {
-      user_data_=NULL;
-      name="config_id";
-      var_type=T_String;
-      string_val="basic_train";
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
-      reference=0;
-      desc="configuration to use -- lookup in Config table";
-      init_from=NULL;
-     };
     };
     vars {
      user_data_=NULL;
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["Config"] {
+     ProgVar @["train_epochs"] {
       user_data_=NULL;
-      name="Config";
-      var_type=T_Object;
-      object_type=DataTable;
-      object_val=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      name="train_epochs";
+      var_type=T_Int;
+      int_val=50;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
-      desc=;
+      desc="number of epochs to train network for";
       init_from=NULL;
      };
      ProgVar @["trials_per_epoch"] {
@@ -17005,47 +16815,27 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       int_val=50;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc=;
+      desc="number of trials per epoch";
       init_from=NULL;
      };
-     ProgVar @["trials_per_epoch_orig"] {
+     ProgVar @["trials_per_epoch_eff"] {
       user_data_=NULL;
-      name="trials_per_epoch_orig";
+      name="trials_per_epoch_eff";
       var_type=T_Int;
       int_val=50;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="original specification from Config";
+      desc="effective value, taking into account number of MPI processors";
       init_from=NULL;
      };
-     ProgVar @["train_epochs"] {
+     ProgVar @["test_run"] {
       user_data_=NULL;
-      name="train_epochs";
-      var_type=T_Int;
-      int_val=50;
+      name="test_run";
+      var_type=T_Bool;
+      bool_val=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["save_final_wts"] {
-      user_data_=NULL;
-      name="save_final_wts";
-      var_type=T_Int;
-      int_val=1;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["save_wts_interval"] {
-      user_data_=NULL;
-      name="save_wts_interval";
-      var_type=T_Int;
-      int_val=200;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
+      desc="is this a testing-only run, no training?";
       init_from=NULL;
      };
      ProgVar @["test_interval"] {
@@ -17055,67 +16845,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       int_val=1;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["log_trials"] {
-      user_data_=NULL;
-      name="log_trials";
-      var_type=T_Int;
-      int_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["load_weights"] {
-      user_data_=NULL;
-      name="load_weights";
-      var_type=T_Bool;
-      bool_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["weights_file"] {
-      user_data_=NULL;
-      name="weights_file";
-      var_type=T_String;
-      string_val=;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["load_st_epc"] {
-      user_data_=NULL;
-      name="load_st_epc";
-      var_type=T_Int;
-      int_val=1;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["lrs_step_epochs"] {
-      user_data_=NULL;
-      name="lrs_step_epochs";
-      var_type=T_Int;
-      int_val=50;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["lrs_bump_step"] {
-      user_data_=NULL;
-      name="lrs_bump_step";
-      var_type=T_Int;
-      int_val=-1;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
+      desc="how frequently (epochs) to run a test during training";
       init_from=NULL;
      };
     };
@@ -17136,40 +16866,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     Comment @[0] {
-      user_data_=NULL;
-      desc="== Grab Global Params from Config Table for current config_id ==";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="// == Grab Global Params from Config Table for current config_id ==";
-     };
-     DataVarProg @[1] {
-      user_data_=NULL;
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=true ";
-      data_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["Config"]$$;
-      row_spec=ROW_VAL;
-      row_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].args["config_id"]$$;
-      set_data=0;
-      all_matches=1;
-      quiet=0;
-      var_1=NULL;
-      var_2=NULL;
-      var_3=NULL;
-      var_4=NULL;
-     };
-     AssignExpr @[2] {
+     AssignExpr @[0] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="trials_per_epoch_orig = trials_per_epoch";
-      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_orig"]$$;
+      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_eff"]$$;
       expr {
        user_data_=NULL;
        expr="trials_per_epoch";
       };
      };
-     If @[3] {
+     If @[1] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -17188,7 +16896,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trials_per_epoch = trials_per_epoch / taMisc::dmem_nprocs";
-	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
+	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_eff"]$;
 	expr {
 	 user_data_=NULL;
 	 expr="trials_per_epoch / taMisc::dmem_nprocs";
@@ -17201,7 +16909,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="if (trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig)";
 	cond {
 	 user_data_=NULL;
-	 expr="trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig";
+	 expr="trials_per_epoch_eff * taMisc::dmem_nprocs < trials_per_epoch";
 	};
 	true_code {
 	 user_data_=NULL;
@@ -17213,7 +16921,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc="round up..";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="trials_per_epoch += 1";
-	  var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$;
+	  var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_eff"]$;
 	  expr {
 	   user_data_=NULL;
 	   expr="1";
@@ -22204,55 +21912,65 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["weights_file"] {
-      user_data_=NULL;
-      name="weights_file";
-      var_type=T_String;
-      string_val=;
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
-      reference=0;
-      desc="fm enviro";
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
-     };
      ProgVar @["load_weights"] {
       user_data_=NULL;
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="fm enviro";
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+      desc="load initial weights from a file (specified in weights_file)";
+      init_from=NULL;
+     };
+     ProgVar @["weights_file"] {
+      user_data_=NULL;
+      name="weights_file";
+      var_type=T_String;
+      string_val=;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
+      init_from=NULL;
      };
      ProgVar @["load_st_epc"] {
       user_data_=NULL;
       name="load_st_epc";
       var_type=T_Int;
       int_val=1;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="fm enviro";
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+      desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
+      init_from=NULL;
      };
      ProgVar @["lrs_step_epochs"] {
       user_data_=NULL;
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="fm enviro";
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+      desc="learning rate schedule epochs per step of decrease in learning rate";
+      init_from=NULL;
+     };
+     ProgVar @["lrs_n_steps"] {
+      user_data_=NULL;
+      name="lrs_n_steps";
+      var_type=T_Int;
+      int_val=7;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of steps in the learning rate schedule";
+      init_from=NULL;
      };
      ProgVar @["lrs_bump_step"] {
       user_data_=NULL;
       name="lrs_bump_step";
       var_type=T_Int;
       int_val=-1;
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="fm enviro";
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+      desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
+      init_from=NULL;
      };
      ProgVar @["LRSConSpec"] {
       user_data_=NULL;
@@ -22500,7 +22218,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"loaded weights file:\" weights_file";
 	message="loaded weights file:";
-	print_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$$;
+	print_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -22508,18 +22226,34 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	print_var6=NULL;
 	debug=0;
        };
-       MemberAssign @[2] {
+       If @[2] {
 	user_data_=NULL;
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="network.epoch = load_st_epc";
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
-	path="epoch";
-	expr {
+	code_string="if(load_st_epc >= 0)";
+	cond {
 	 user_data_=NULL;
-	 expr="load_st_epc";
+	 expr="load_st_epc >= 0";
 	};
-	update_after=1;
+	true_code {
+	 user_data_=NULL;
+	 name="true_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 MemberAssign @[0] {
+	  user_data_=NULL;
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="network.epoch = load_st_epc";
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
+	  path="epoch";
+	  expr {
+	   user_data_=NULL;
+	   expr="load_st_epc";
+	  };
+	  update_after=1;
+	 };
+	};
        };
       };
      };
@@ -22559,7 +22293,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	prev_expr="7";
 	expr {
 	 user_data_=NULL;
-	 expr="5";
+	 expr="lrs_n_steps";
 	};
        };
        ProgArg @[2] {
@@ -22724,10 +22458,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=1;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc=;
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+      desc="should final weights after training is complete be saved?";
+      init_from=NULL;
      };
      ProgVar @["Train"] {
       user_data_=NULL;
@@ -23147,10 +22881,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_wts_interval";
       var_type=T_Int;
       int_val=200;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc=;
-      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+      desc="how frequently (epochs) to save weights during training";
+      init_from=NULL;
      };
     };
     functions {
@@ -24014,7 +23748,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -24190,7 +23924,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
-      update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$$;
+      update_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$;
      };
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
@@ -24230,8 +23964,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      user_data_=NULL;
@@ -24276,7 +24010,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=50;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -24286,7 +24020,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -24477,7 +24211,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
-      update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$$;
+      update_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$;
      };
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
@@ -24711,7 +24445,7 @@ also save specs.";
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_gui";
+      string_val="_BasicTrain_BasicTrain_basic_train";
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user defined tag (set by startup script)";
@@ -24731,7 +24465,7 @@ also save specs.";
       user_data_=NULL;
       name="fname";
       var_type=T_String;
-      string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_gui.00_0050.wts.gz";
+      string_val="/Users/oreilly/emergent/test/LeabraFlexParamSetExperiment_basic_train.00_0050.wts.gz";
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -24761,7 +24495,7 @@ also save specs.";
       user_data_=NULL;
       name="final_tag";
       var_type=T_String;
-      string_val="_gui.00_0050";
+      string_val="_basic_train.00_0050";
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -25108,7 +24842,7 @@ also save specs.";
        user_data_=NULL;
        name="tag";
        var_type=T_String;
-       string_val=;
+       string_val="_BasicTrain_BasicTrain_basic_train";
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -25119,10 +24853,10 @@ also save specs.";
        name="log_trials";
        var_type=T_Bool;
        bool_val=0;
-       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc=;
-       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+       desc="should trial-level data be saved to log files?";
+       init_from=NULL;
       };
       ProgVar @["log_dir"] {
        user_data_=NULL;
@@ -26601,7 +26335,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -28176,7 +27910,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -29736,7 +29470,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31114,7 +30848,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31464,25 +31198,25 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_lft"] {
      user_data_=NULL;
      name="view_win_lft";
-     value 8 0=0.001061571;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      user_data_=NULL;
      name="view_win_top";
-     value 8 0=0.008496176;
+     value 8 0=0.04842821;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=1;
+     value 8 0=0.9978758;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      user_data_=NULL;
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.7986406;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -31843,7 +31577,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=29: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=15: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -31853,7 +31587,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.52558: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.77555: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -31893,7 +31627,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.586: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.632: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["avg_cos_err"] {
@@ -32043,7 +31777,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0.962046: fix_max=0: max=0.999009: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["Output_avg_cos_diff"] {
@@ -32103,7 +31837,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["Output_avg_net_sd"] {
@@ -32241,7 +31975,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -32249,7 +31983,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  plot_style=LINE;
 	  negative_draw=0;
 	  negative_draw_z=1;
-	  line_width=2;
+	  line_width=1;
 	  point_size=0.01;
 	  point_spacing=1;
 	  solid_lines=0;
@@ -32274,7 +32008,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32328,7 +32062,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.974817: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32352,7 +32086,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0.6560001: fix_max=0: max=0.6560001: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -32376,7 +32110,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=50: fix_max=0: max=50: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -33293,13 +33027,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04352442;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        user_data_=NULL;
        name="view_win_ht";
-       value 8 0=0.7357689;
+       value 8 0=0.7349193;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -33329,22 +33063,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="* everything is now in Layer_Groups and spec groups, for portability between projects
-
-* integrated highvis model for objrec, with separate img filtering pathways, etc
-
-* two 'ticks' per trial: fixate, then recognize -- RobotTrial coordinates -- other progs conditionalize on network.tick
-
-* objs_per_epc in lesson -- only present a limited # of objects per epoch repeatedly over the lesson -- makes the carousel much more efficient
-
-  this is all impl in the new Build_Presentation_Robot
-
-* need to change camera fov for objrec -- not enough resolution for fovea otherwise
-
-* added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
-
-";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ last_change_desc="svn rev: 10514 update startup program";
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].param_seqs;.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";
@@ -33530,6 +33250,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="HiddenLayer";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -33541,6 +33262,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="Input_Output";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{        };
        children {
@@ -33610,6 +33332,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="LeabraUnitSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -33622,8 +33345,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {user_data_=NULL: type=LeabraBiasSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {user_data_=NULL: thr=0.5: gain=100: nvar=0.005: };
-     act_misc {user_data_=NULL: rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act {user_data_=NULL: thr=0.5: gain=20: nvar=0.01: };
+     act_misc {user_data_=NULL: rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {user_data_=NULL: rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       user_data_=NULL;
@@ -33683,6 +33406,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="LeabraConSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -33694,6 +33418,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="LeabraBiasSpec_0";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
        children {
@@ -33751,6 +33476,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 user_data_=NULL;
 	 start_ctr=200;
 	 start_val=0.05;
+	 duration=50;
+	 step=-0.0006;
+	};
+	SchedItem @[5] {
+	 user_data_=NULL;
+	 start_ctr=250;
+	 start_val=0.02;
+	 duration=50;
+	 step=-0.0002;
+	};
+	SchedItem @[6] {
+	 user_data_=NULL;
+	 start_ctr=300;
+	 start_val=0.01;
 	 duration=1;
 	 step=1;
 	};
@@ -33776,6 +33515,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="TopDownCons";
        is_used=1;
+       used_status=USED;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;       };
        children {
@@ -33833,6 +33573,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 user_data_=NULL;
 	 start_ctr=200;
 	 start_val=0.05;
+	 duration=50;
+	 step=-0.0006;
+	};
+	SchedItem @[5] {
+	 user_data_=NULL;
+	 start_ctr=250;
+	 start_val=0.02;
+	 duration=50;
+	 step=-0.0002;
+	};
+	SchedItem @[6] {
+	 user_data_=NULL;
+	 start_ctr=300;
+	 start_val=0.01;
 	 duration=1;
 	 step=1;
 	};
@@ -33903,6 +33657,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        start_ctr=200;
        start_val=0.05;
+       duration=50;
+       step=-0.0006;
+      };
+      SchedItem @[5] {
+       user_data_=NULL;
+       start_ctr=250;
+       start_val=0.02;
+       duration=50;
+       step=-0.0002;
+      };
+      SchedItem @[6] {
+       user_data_=NULL;
+       start_ctr=300;
+       start_val=0.01;
        duration=1;
        step=1;
       };
@@ -33927,6 +33695,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="FullPrjnSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {

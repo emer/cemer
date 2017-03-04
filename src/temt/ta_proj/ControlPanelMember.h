@@ -129,11 +129,14 @@ public:
   // #CAT_CtrlPanel get current value of item, as a string -- not subject to validity for parameter searching
   virtual bool          SetCurVal(const Variant& cur_val);
   // #CAT_CtrlPanel set current value of item from a variant
+  virtual bool          SetCurValFmString(const String& cur_val, bool warn_no_match = true,
+                                          bool info_msg = false);
+  // #CAT_CtrlPanel set current value of item from a string, optionally warning if string rep of value does not match the value passed in (possibly indicating an error in the string, such as a bad enum value) -- if info_msg is true, then an message is emitted about this value being set
 
   virtual void          CopyActiveToSaved();
   // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the current active (live) values on the objects to the saved values
   virtual void          CopySavedToActive();
-  // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the previously-saved values to be active (live) values on the objects
+  // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the save_value to be active (live) values on the objects
 
   virtual bool          RecordValue();
   // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued members are so recorded

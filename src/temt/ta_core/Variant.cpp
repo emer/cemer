@@ -623,18 +623,10 @@ bool Variant::isNumeric() const {
   if (((m_type >= T_Int) && (m_type <= T_Double)) || m_type == T_Float)  // T_Char between T_Double and T_Float!! - don't change
     return true;
   else if (m_type == T_String) {
-    if (!m_is_numeric_valid) {
-#ifdef TA_USE_QT
-      // we check if a valid number by using QString's converter
-      QString tmp(getString().chars());
-      bool ok;
-      tmp.toDouble(&ok);
-      m_is_numeric = ok;
+    if (1 != m_is_numeric_valid) {
+      const String& tstr = getString();
+      m_is_numeric = (tstr.isHex() || tstr.isFloat());
       m_is_numeric_valid = true;
-#else
-      // note: should reallysupport, but not needed for maketa
-      error("isNumeric() routine without Qt");
-#endif
     }
     return 0 != m_is_numeric;
   } else return false;

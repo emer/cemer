@@ -25,18 +25,24 @@ void ParamSet::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void ParamSet::CopyActiveToSaved() {
+void ParamSet::CopyActiveToSaved(bool info_msg) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     sei->CopyActiveToSaved();
   }
   ReShowEdit(true);
+  if(info_msg) {
+    taMisc::Info("Copied current active values of parameters to saved_value strings for all members in ParamSet:", name);
+  }
 }
 
-void ParamSet::CopySavedToActive() {
+void ParamSet::CopySavedToActive(bool info_msg) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     sei->CopySavedToActive();
   }
   ReShowEdit(true);
+  if(info_msg) {
+    taMisc::Info("Copied saved_value strings to active (live) values for all members in ParamSet:", name);
+  }
 }
 
 void ParamSet::CopyActiveToSaved_item(int idx) {
@@ -59,7 +65,7 @@ bool ParamSet::ActiveEqualsSaved(String member_name) {
   bool rval = false;
   ControlPanelMember* emi = mbrs.FindLeafName(member_name);
   if (emi) {
-    String active_value = emi->mbr->GetValStr(emi->base);
+    String active_value = emi->CurValAsString();
     String saved_value = emi->data.saved_value;
     if (active_value == saved_value)
       rval = true;

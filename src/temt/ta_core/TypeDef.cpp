@@ -2480,12 +2480,18 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
         }
       }
       else if(IsEnum()) {
-        // if it is a number, assume direct value, otherwise it is a string
+        // attempt to set as numeric first -- this is important b/c a string may in fact just be a number so we need to check for numbers first -- this USED to not work b/c isNumeric() was broken!  but now fixed..
         if (val.isNumeric()) {
           *((int*)base) = val.toInt();
           return;
         }
-        SetValStr_enum(val.toString(), base, par, memb_def);
+        else if(val.isStringType()) {
+          SetValStr_enum(val.toString(), base, par, memb_def);
+          return;
+        }
+        taMisc::Warning("Cannot set enum type from variant because variant is not either a string or numeric, type name:", this->name, "variant value as a string:",
+                        val.toString(), "type:", val.getTypeAsString());
+        return;
       }
     }
     else if(IsAtomicEff()) {

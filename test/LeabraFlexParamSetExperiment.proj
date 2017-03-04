@@ -9112,7 +9112,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
-       saved_value=".5";
+       saved_value="0.5";
        record=1;
        search=0;
        range=;

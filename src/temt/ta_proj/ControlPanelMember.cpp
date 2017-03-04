@@ -267,17 +267,18 @@ String ControlPanelMember::CurValAsString() {
     if(nmval.nonempty())
       return nmval;             // special case for program enum -- use string
   }
-  return mbr->GetValStr(base, TypeDef::SC_STREAMING, true);
+  return mbr->GetValStr(base, TypeDef::SC_VALUE, true);
 }
 
 bool ControlPanelMember::SetCurVal(const Variant& cur_val) {
-  if(TestError(!mbr, "SetCurVal", "item does not have member def set -- not valid control panel item"))
+  ControlPanel* panel = GET_MY_OWNER(ControlPanel);
+  if(!panel) return false;
+  if(TestError(!mbr, "SetCurVal", "item does not have member def set -- not valid control panel item", "label:", label, "in panel:", panel->name))
     return false;
   if(TestError(!data.is_single, "SetCurVal", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label))
     return false;
-  // rohrlich - 1/25/16 - special case to handle setting value when it comes
-  // in as string as for instance as a command line arg
-  if (base && (base->GetTypeDef()->DerivesFromName("DynEnum")) && (mbr->name == "value") && (cur_val.isStringType())) {
+  if (base && (base->GetTypeDef()->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value") &&
+      (cur_val.isStringType())) {
     ((DynEnum*)base)->SetNameVal(cur_val.toString());
   }
   else {
@@ -287,15 +288,43 @@ bool ControlPanelMember::SetCurVal(const Variant& cur_val) {
   return true;
 }
 
+bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_match,
+                                           bool info_msg) {
+  ControlPanel* panel = GET_MY_OWNER(ControlPanel);
+  if(!panel) return false;
+  if(TestError(!mbr, "SetCurValFmString", "item does not have member def set -- not valid control panel item", "label:", label, "in panel:", panel->name))
+    return false;
+  if(TestError(!data.is_single, "SetCurValFmString", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label, "in panel:", panel->name))
+    return false;
+  if (base && (base->GetTypeDef()->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value")) {
+    ((DynEnum*)base)->SetNameVal(cur_val);
+  }
+  else {
+    mbr->SetValStr(cur_val, base);
+  }
+  base->UpdateAfterEdit();
+  if((taMisc::dmem_proc > 0) || (!info_msg && !warn_no_match))
+    return true;
+  String act_val = CurValAsString();
+  if(info_msg) {
+    taMisc::Info("Set Control Panel Member:",label,"in Panel:", panel->name, "to value:",
+                 act_val, "from string:", cur_val);
+  }
+  if(warn_no_match && act_val != cur_val) {
+    taMisc::Warning("Control Panel Member:",label, "in Panel:", panel->name,
+                    "DOES NOT MATCH the string value used to set its value in SetCurValFmString, actual value:", act_val, "set from string:", cur_val);
+  }
+  return true;
+}
+
 void ControlPanelMember::CopyActiveToSaved() {
   if(!mbr || !base) return;
-  data.saved_value = mbr->GetValStr(base);
+  data.saved_value = CurValAsString();
 }
 
 void ControlPanelMember::CopySavedToActive() {
   if(!mbr || !base) return;
-  mbr->SetValStr(data.saved_value, base);
-  base->UpdateAfterEdit();
+  SetCurValFmString(data.saved_value, true, false);
 }
 
 bool ControlPanelMember::RecordValue() {
