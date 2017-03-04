@@ -46,8 +46,6 @@ protected:
   void GetImage_impl(taiWidget* dat, const void* base) override;
   void GetMbrValue_impl(taiWidget* dat, void* base) override;
 
-  bool          isBit; // true if a bits type enum
-
 private:
   void          Initialize();
   void          Destroy() {};

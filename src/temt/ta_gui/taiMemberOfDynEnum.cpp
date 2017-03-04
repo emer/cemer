@@ -28,7 +28,6 @@
 
 
 void taiMemberOfDynEnum::Initialize() {
-  isBit = false;
 }
 
 int taiMemberOfDynEnum::BidForMember(MemberDef* md, TypeDef* td){
@@ -42,7 +41,6 @@ int taiMemberOfDynEnum::BidForMember(MemberDef* md, TypeDef* td){
 taiWidget* taiMemberOfDynEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   flags_ |= taiWidget::flgAutoApply; // always auto-apply
-  isBit = false;                // oops -- we don't have base and can't find out!
   taiWidgetDeck* rval = new taiWidgetDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
@@ -85,7 +83,9 @@ void taiMemberOfDynEnum::UpdateDynEnumBits(taiWidgetBitBox* cb, DynEnum& de) {
 void taiMemberOfDynEnum::GetImage_impl(taiWidget* dat, const void* base) {
   DynEnum* dye = (DynEnum*)base;
   taiWidgetDeck* rval = (taiWidgetDeck*)dat;
-  if(!isBit && dye->enum_type && dye->enum_type->bits) {
+
+  bool isBit = false;
+  if(dye->enum_type && dye->enum_type->bits) {
     isBit = true;
   }
   if(isBit) {
