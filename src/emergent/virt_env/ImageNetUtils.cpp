@@ -22,7 +22,7 @@
 #include <QFile>
 #include <QString>
 
-void ImageNetUtils::GetSize(const String& filename, taVector3i& width_height_depth) {
+void ImageNetUtils::GetImageSize(const String& filename, taVector3i& width_height_depth) {
 
 #if (QT_VERSION >= 0x040600)
   QFile file(filename);
@@ -139,8 +139,48 @@ void ImageNetUtils::GetBoundingBox(const String& filename, taVector2i& top_left,
       taMisc::Error("ImageNetUtils::GetSize -- start element is not \"annotation\" " );
       return;
     }
-//    top_left.SetXY(x_min, y_min);
-//    bottom_right.SetXY(x_max, y_max);
   }
 #endif
+}
+
+String ImageNetUtils::GetPrimaryCategory(const String& filename) {  
+  String category;
+  
+#if (QT_VERSION >= 0x040600)
+  QFile file(filename);
+  if(!file.open(QFile::ReadOnly | QFile::Text)){
+    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
+    taMisc::Error(msg);
+  }
+  
+  QXmlStreamReader reader(&file);
+  
+  bool ok;
+  
+  if (reader.readNextStartElement()) {
+    if (reader.name() == "annotation") {
+      while(reader.readNextStartElement()) {
+        if(reader.name() == "object") {
+          while(reader.readNextStartElement()) {
+            if(reader.name() == "name") {
+              QString s = reader.readElementText();
+              category = s;
+              return category;
+            }
+            else {
+              reader.skipCurrentElement();
+            }
+          }
+        }
+        else {
+          reader.skipCurrentElement();
+        }
+      }
+    }
+    else {
+      taMisc::Error("ImageNetUtils::GetSize -- start element is not \"annotation\" " );
+    }
+  }
+#endif
+  return category;
 }

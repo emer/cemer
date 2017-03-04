@@ -26,6 +26,7 @@
 class float_Matrix; // 
 class int_Matrix; // 
 class taVector2i; //
+class taVector3i; //
 
 eTypeDef_Of(taImageProc);
 
@@ -186,9 +187,13 @@ public:
   static bool	OverlayImages(float_Matrix& img1, const float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
 
-  static void GetBoundingBox(const String& filename, taVector2i &top_left, taVector2i &bottom_right, ImageSource source);
+  static void GetSourceBoundingBox(const String& filename, taVector2i &top_left, taVector2i &bottom_right, ImageSource source);
   // #CAT_ImageProc get the bounding box coordinates from the file
-  
+  static void GetSourceImageSize(const String& filename, taVector3i& width_height_depth, ImageSource source);
+  // #CAT_ImageProc get the image size from the annotation file
+  static String GetSourcePrimaryCategory(const String& filename, ImageSource source);
+  // #CAT_ImageProc get the first category for the image described in file filename
+
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
 private:

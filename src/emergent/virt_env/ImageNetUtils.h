@@ -32,8 +32,10 @@ class E_API ImageNetUtils {
   // methods to parse ImageNet annotation files that accompany ImageNet images
 
 public:
-  virtual void          GetSize(const String& filename, taVector3i& width_height_depth);
+  virtual void          GetImageSize(const String& filename, taVector3i& width_height_depth);
   virtual void          GetBoundingBox(const String& filename, taVector2i& top_left, taVector2i& bottom_right);
+  virtual String        GetPrimaryCategory(const String& filename);
+  // returns the first category (i.e. name)
 
 };
 

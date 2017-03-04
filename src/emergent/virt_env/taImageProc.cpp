@@ -1837,9 +1837,24 @@ bool taImageProc::OverlayImages(float_Matrix& img1, const float_Matrix& img2) {
   return true;
 }
 
-void taImageProc::GetBoundingBox(const taString &filename, taVector2i &top_left, taVector2i &bottom_right, taImageProc::ImageSource source) {
-  if (source == IMAGENET) {
+void taImageProc::GetSourceBoundingBox(const taString &filename, taVector2i &top_left, taVector2i &bottom_right, taImageProc::ImageSource source) {
+  if (source == taImageProc::IMAGENET) {
     ImageNetUtils net_utils;
     net_utils.GetBoundingBox(filename, top_left, bottom_right);
   }
+}
+
+void taImageProc::GetSourceImageSize(const String& filename, taVector3i& width_height_depth, taImageProc::ImageSource source) {
+  if (source == taImageProc::IMAGENET) {
+    ImageNetUtils net_utils;
+    net_utils.GetImageSize(filename, width_height_depth);
+  }
+}
+
+String taImageProc::GetSourcePrimaryCategory(const String& filename, taImageProc::ImageSource source) {
+  if (source == taImageProc::IMAGENET) {
+    ImageNetUtils net_utils;
+    return net_utils.GetPrimaryCategory(filename);
+  }
+  return "";
 }
