@@ -167,6 +167,8 @@ int DynEnumBase::NameToNumber(const String& nm) const {
   int rval = 0;
   if(bits) {
     String strval = nm;
+    if(strval.contains("\\|")) // quoted bits!
+      strval.gsub("\\|","|");
     while(strval.nonempty()) {
       String curstr = strval;
       if(strval.contains('|')) {

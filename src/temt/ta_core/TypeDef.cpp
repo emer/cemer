@@ -1797,6 +1797,8 @@ void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef
     return;
   }
   if(strval.contains('|')) { // bits
+    if(strval.contains("\\|")) // quoted bits!
+      strval.gsub("\\|","|");
     int bits = 0;
     while(strval.nonempty()) {
       String curstr = strval;

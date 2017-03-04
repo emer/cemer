@@ -1204,6 +1204,10 @@ class SubversionPoller(object):
         submit_job = str(row).zfill(3)  # up to 999 rows per job -- should cover it
         tag = '_'.join((submit_svn, submit_job))
 
+        eff_params = params
+        if '|' in eff_params:
+            eff_params.replace("|", "\\|")
+        
         self._get_tag_proj_file(tag)
 
         shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
@@ -1257,9 +1261,9 @@ class SubversionPoller(object):
             else:
                 args_eff = ["-j",job_launcher]
             if len(args_eff) > 0:
-                cmdsub = [sp_qsub_cmd] + args_eff + [str(n_threads), run_time, cmd, params]
+                cmdsub = [sp_qsub_cmd] + args_eff + [str(n_threads), run_time, cmd, eff_params]
             else:
-                cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd, params]
+                cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd, eff_params]
         else:
             args_eff = dm_qsub_args.split()
             if ram_gb > 0:
@@ -1304,9 +1308,9 @@ class SubversionPoller(object):
             else:
                 args_eff = ["-j", job_launcher]
             if len(args_eff) > 0:
-                cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
+                cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, eff_params]
             else:
-                cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
+                cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, eff_params]
 
         status = 'SUBMITTED'
 
