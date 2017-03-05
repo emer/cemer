@@ -1205,8 +1205,8 @@ class SubversionPoller(object):
         tag = '_'.join((submit_svn, submit_job))
 
         eff_params = params
-        if '|' in eff_params:
-            eff_params.replace("|", "\\|")
+        if eff_params.find("|") != -1:
+            eff_params = eff_params.replace("|", "\\|")
         
         self._get_tag_proj_file(tag)
 
