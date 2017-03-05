@@ -85,7 +85,8 @@ public:
   virtual const String  GenCssInitVal() const; // intial value
 
   virtual const String  GenCss(bool is_arg = false); // css code (terminated if Var);
-  virtual const String  GenListing(bool is_arg = false, int indent_level = 0); // generate listing of program
+  virtual const String  GenListing(bool is_arg = false, int indent_level = 0) const;
+  // generate listing of program
   virtual void          GenCssInitFrom(Program* prog);
   // generate css code to initialize from other variable
   virtual Program*      GetInitFromProg(); // get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
@@ -191,6 +192,11 @@ public:
   virtual ProgVar*      GetInitFromVar(bool warn = true);
   // get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
 
+  taObjDiffRec*  GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
+    const override;
   int          GetEnabled() const override;
   int          GetSpecialState() const override;
   bool         BrowserSelectMe() override;
@@ -216,8 +222,8 @@ protected:
   // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
   void                  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void                  CheckChildConfig_impl(bool quiet, bool& rval) override; //object, if any
-  virtual const String  GenCssArg_impl();
-  virtual const String  GenCssVar_impl();
+  virtual const String  GenCssArg_impl() const;
+  virtual const String  GenCssVar_impl() const;
 
 private:
   void  Copy_(const ProgVar& cp);

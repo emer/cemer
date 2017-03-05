@@ -274,7 +274,7 @@ void DataCalcLoop::GenCssPost_impl(Program* prog) {
   prog->AddLine(this, "} // DataCalcLoop dcl");
 }
 
-const String DataCalcLoop::GenListing_children(int indent_level) {
+const String DataCalcLoop::GenListing_children(int indent_level) const {
   return loop_code.GenListing(indent_level + 1);
 }
 

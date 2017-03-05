@@ -75,7 +75,7 @@ void If::GenCssPost_impl(Program* prog) {
   prog->AddLine(this, "}");
 }
 
-const String If::GenListing_children(int indent_level) {
+const String If::GenListing_children(int indent_level) const {
   String rval = true_code.GenListing(indent_level + 1);
   return rval;
 }

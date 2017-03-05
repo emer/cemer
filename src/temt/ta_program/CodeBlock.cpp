@@ -45,7 +45,7 @@ void CodeBlock::GenCssPost_impl(Program* prog) {
   prog->AddLine(this, "}");
 }
 
-const String CodeBlock::GenListing_children(int indent_level) {
+const String CodeBlock::GenListing_children(int indent_level) const {
   return prog_code.GenListing(indent_level + 1);
 }
 

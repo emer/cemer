@@ -3301,14 +3301,14 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
 #include <taObjDiffRec>
 #include <taObjDiff_List>
 
-void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
+void TypeDef::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,
                             TypeDef* par_typ, taObjDiffRec* par_od) const {
   if(IsTaBase()) {
     if (!IsPointer() || (IsPointer() && size > 0)) {
       taBase* rbase = (taBase*)base;
       if(rbase) {
-        rbase->GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+        rbase->GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
       }
     }
     return;
@@ -3324,11 +3324,11 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 
   // then check for classes
   if(IsActualClassNoEff()) {
-    GetObjDiffVal_class(odl, nest_lev, base, memb_def, par, par_typ, odr);
+    GetObjDiffRec_class(odl, nest_lev, base, memb_def, par, par_typ, odr);
   }
 }
 
-void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
+void TypeDef::GetObjDiffRec_class(taObjDiff_List& odl, int nest_lev, const void* base,
                                   MemberDef* memb_def, const void* par, TypeDef* par_typ,
                                   taObjDiffRec* par_od) const {
   MemberDef* last_md = NULL;
@@ -3352,13 +3352,44 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..
     }
-    md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, const_cast<TypeDef*>(this), par_od);
+    md->type->GetObjDiffRec(odl, nest_lev+1, md->GetOff(base), md, base,
+                            const_cast<TypeDef*>(this), par_od);
   }
   if(last_md) {
-    last_md->type->GetObjDiffVal(odl, nest_lev+1, last_md->GetOff(base), last_md, base,
+    last_md->type->GetObjDiffRec(odl, nest_lev+1, last_md->GetOff(base), last_md, base,
                                  const_cast<TypeDef*>(this), par_od);
   }
 }
+
+
+void TypeDef::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl) const {
+  // this is called in the constructor of the taObjDiffRec when created by GetObjDiffRec
+  if(rec->mdef) {
+    rec->name = rec->mdef->name;
+  }
+  else {
+    rec->name = name;
+  }
+#ifndef NO_TA_BASE
+  if(IsActualTaBase()) {
+    ((taBase*)rec->addr)->GetObjDiffValue(rec, odl, false); // not pointer
+  }
+  else if(IsBasePointerType()) {
+    taBase* rbase = NULL;
+    if((IsPointer()) && IsTaBase()) rbase = *((taBase**)rec->addr);
+    else if(InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)rec->addr)->ptr();
+    else if(InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)rec->addr)->ptr();
+    if(rbase) {
+      rbase->GetObjDiffValue(rec, odl, true); // pointer
+    }
+  }
+  else
+#endif
+    {
+      rec->value = GetValStr(rec->addr, rec->par_addr, rec->mdef, TypeDef::SC_VALUE);
+    }
+}
+
 
 #endif // NO_TA_BASE
 

@@ -45,7 +45,7 @@ void Function_List::GenCss(Program* prog) {
   }
 }
 
-const String Function_List::GenListing(int indent_level) {
+const String Function_List::GenListing(int indent_level) const {
   String rval;
   for (int i = 0; i < size; ++i) {
     Function* el = FastEl(i);

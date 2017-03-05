@@ -40,7 +40,8 @@ public:
 
   virtual const String  GenCssType() const; // type name
   virtual void          GenCss(Program* prog); // generate css code to program
-  virtual const String  GenListing(int indent_level); // generate listing of program
+  virtual const String  GenListing(int indent_level) const;
+  // generate listing of program
 
   virtual taBase*       FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on variable

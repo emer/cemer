@@ -112,9 +112,9 @@ taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
           void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
           TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
-  taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                         MemberDef* memb_def=NULL, const void* par=NULL,
-                         TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  taObjDiffRec* GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
 #ifndef __MAKETA__
   void Dump_Save_GetPluginDeps() override;

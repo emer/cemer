@@ -698,9 +698,8 @@ int taList_impl::ReplaceValStr(const String& srch, const String& repl, const Str
   return rval;
 }
 
-taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
-          const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-
+taObjDiffRec* taList_impl::GetObjDiffRec
+(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // do NOT do the basic members on the list -- just a bunch of clutter
   // taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 
@@ -714,14 +713,10 @@ taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  Mem
 
   odl.Add(lsodr);
 
-  // lsodr->name = odr->name;
-  // lsodr->value = odr->value + "_list";
-  // lsodr->ComputeHashCode();
-
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) {
-      itm->GetObjDiffVal(odl, nest_lev+1, NULL, this, GetTypeDef(), lsodr);
+      itm->GetObjDiffRec(odl, nest_lev+1, NULL, this, GetTypeDef(), lsodr);
     }
   }
   return lsodr;

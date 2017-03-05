@@ -33,7 +33,7 @@ void Loop::GenCssBody_impl(Program* prog) {
   loop_code.GenCss(prog);
 }
 
-const String Loop::GenListing_children(int indent_level) {
+const String Loop::GenListing_children(int indent_level) const {
   return loop_code.GenListing(indent_level + 1);
 }
 

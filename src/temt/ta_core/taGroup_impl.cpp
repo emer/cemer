@@ -299,12 +299,12 @@ int taGroup_impl::ReplaceValStr(const String& srch, const String& repl, const St
   return rval;
 }
 
-taObjDiffRec* taGroup_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-  MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+taObjDiffRec* taGroup_impl::GetObjDiffRec
+(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
-  taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+  taObjDiffRec* odr = inherited::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
   MemberDef* gpmd = FindMemberName("gp");
-  taObjDiffRec* gpodr = gp.GetObjDiffVal(odl, nest_lev+1, gpmd, this, GetTypeDef(), odr);
+  taObjDiffRec* gpodr = gp.GetObjDiffRec(odl, nest_lev+1, gpmd, this, GetTypeDef(), odr);
   gpodr->name = odr->name + "_gp";
   gpodr->value = odr->value + "_gp";
   gpodr->ComputeHashCode();

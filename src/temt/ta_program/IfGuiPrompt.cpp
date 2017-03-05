@@ -65,7 +65,7 @@ void IfGuiPrompt::GenCssPost_impl(Program* prog) {
   }
 }
 
-const String IfGuiPrompt::GenListing_children(int indent_level) {
+const String IfGuiPrompt::GenListing_children(int indent_level) const {
   String rval = yes_code.GenListing(indent_level + 1 + (int)taMisc::gui_active);
   return rval;
 }

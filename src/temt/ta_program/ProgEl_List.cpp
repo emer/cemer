@@ -63,7 +63,7 @@ void ProgEl_List::GenCss(Program* prog) {
   }
 }
 
-const String ProgEl_List::GenListing(int indent_level) {
+const String ProgEl_List::GenListing(int indent_level) const {
   String rval;
   for (int i = 0; i < size; ++i) {
     ProgEl* el = FastEl(i);

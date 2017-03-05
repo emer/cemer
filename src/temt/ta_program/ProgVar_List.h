@@ -45,7 +45,8 @@ public:
   virtual void          GenCss_ProgVars(Program* prog) const; // generate css script code for prog vars
   virtual void          GenCssInitFrom(Program* prog) const;
   // init_from code for all vars in list
-  virtual const String  GenListing(int indent_level) const; // generate listing of program
+  virtual const String  GenListing(int indent_level) const;
+  // generate listing of program
 
   virtual void  AddVarTo(taNBase* src);
   // #DROPN #EXCLUDE_METHOD_FOR_ProgVar add a var to the given object

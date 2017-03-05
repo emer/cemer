@@ -40,7 +40,8 @@ public:
   
   virtual void          PreGen(int& item_id); // iterates over all items
   virtual void          GenCss(Program* prog); // generate the Css code for this object
-  virtual const String  GenListing(int indent_level = 0); // generate the listing of this program
+  virtual const String  GenListing(int indent_level = 0) const;
+  // generate the listing of this program
 
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // find given variable within this progel list -- NULL if not found

@@ -58,7 +58,7 @@ void Switch::GenCssPost_impl(Program* prog) {
   prog->AddLine(this, "}");
 }
 
-const String Switch::GenListing_children(int indent_level) {
+const String Switch::GenListing_children(int indent_level) const {
   return cases.GenListing(indent_level+1);
 }
 

@@ -28,6 +28,8 @@ taTypeDef_Of(taProject);
 #include <ProgElChoiceDlg>
 #include <ControlPanel>
 #include <taProject>
+#include <taObjDiffRec>
+#include <taObjDiff_List>
 
 #include <taMisc>
 #include <tabMisc>
@@ -845,7 +847,7 @@ const String ProgVar::GenCss(bool is_arg) {
   return GenCssVar_impl() ;
 }
 
-const String ProgVar::GenListing(bool is_arg, int indent_level) {
+const String ProgVar::GenListing(bool is_arg, int indent_level) const {
   if(is_arg) {
     return GenCssArg_impl();
   }
@@ -937,7 +939,7 @@ const String ProgVar::GenCssInitVal() const {
 
 // note: *never* initialize variables because they are cptrs to actual current
 // value in object..
-const String ProgVar::GenCssArg_impl() {
+const String ProgVar::GenCssArg_impl() const {
   String rval;
   rval += GenCssType();
   if(reference)
@@ -947,7 +949,7 @@ const String ProgVar::GenCssArg_impl() {
   return rval;
 }
 
-const String ProgVar::GenCssVar_impl() {
+const String ProgVar::GenCssVar_impl() const {
   String rval;
   rval += GenCssType() + " ";
   rval += name;
@@ -1081,6 +1083,35 @@ bool ProgVar::SetTypeAndName(const String& ty_nm) {
     SigEmitUpdated();
   }
   return true;
+}
+
+taObjDiffRec* ProgVar::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+                                    const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
+                                       (void*)par, par_typ, par_od);
+  odl.Add(odr);
+  if(GetOwner()) {
+    odr->tabref = new taBaseRef;
+    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+  }
+  // do NOT do sub-classes -- only the main obj -- uses listing text!
+  // GetTypeDef()->GetObjDiffRec_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+  return odr;
+}
+
+void ProgVar::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) const {
+  if(ptr) {
+    inherited::GetObjDiffValue(rec, odl, ptr);
+    return;
+  }
+  else {
+    rec->value = (const_cast<ProgVar*>(this))->BrowserEditString();
+    // if(!rec->mdef && rec->nest_level > 0)
+    //   rec->value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
+    // else
+    //   rec->value = type->name;
+  }
 }
 
 bool ProgVar::BrowserEditSet(const String& code, int move_after) {

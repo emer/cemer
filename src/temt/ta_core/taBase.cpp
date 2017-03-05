@@ -1991,7 +1991,7 @@ int taBase::ReplaceValStr(const String& srch, const String& repl, const String& 
   return rval;
 }
 
-taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+taObjDiffRec* taBase::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
                            const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
   taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
@@ -2002,9 +2002,32 @@ taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef
     ((taBaseRef*)odr->tabref)->set((taBase*)this);
   }
 
-  GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+  GetTypeDef()->GetObjDiffRec_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
   return odr;
 }
+
+
+void taBase::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) const {
+  if(ptr) {
+    if(GetOwner() || (this == tabMisc::root)) {
+      if(IsChildOf(odl.tab_obj_a)) {
+        rec->value = GetPathNames(NULL, odl.tab_obj_a); // scope by tab obj
+        rec->SetDiffFlag(taObjDiffRec::VAL_PATH_REL);
+      }
+      else {
+        // otherwise, always do it relative to project
+        rec->value = GetPathNames(NULL, GetOwner(&TA_taProject));
+      }
+    }
+  }
+  else {
+    if(!rec->mdef && rec->nest_level > 0)
+      rec->value = rec->type->name + ": " + ((taBase*)rec->addr)->GetDisplayName();
+    else
+      rec->value = rec->type->name;
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 //      Updating of object properties
@@ -3275,8 +3298,8 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
   diffs->tab_obj_a = this;
   diffs->tab_obj_b = cmp_obj;
 
-  GetObjDiffVal(*(diffs->src_a), 0);
-  cmp_obj->GetObjDiffVal(*(diffs->src_b), 0);
+  GetObjDiffRec(*(diffs->src_a), 0);
+  cmp_obj->GetObjDiffRec(*(diffs->src_b), 0);
 
   diffs->Diff();
 
@@ -3325,7 +3348,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
   taProject* proj_a = (taProject*)diffs.tab_obj_a->GetOwner(&TA_taProject);
   taProject* proj_b = (taProject*)diffs.tab_obj_b->GetOwner(&TA_taProject);
 
-  for(int i=0; i<diffs.size; i++) {
+  //  for(int i=diffs.size-1; i>= 0; i--) { // go backwards to minimize knock-on effects
+  for(int i=0; i < diffs.size; i++) { // forwards usually better actually
     taObjDiffRec* rec = diffs[i];
     if(!rec->HasDiffFlag(taObjDiffRec::ACT_MASK)) continue;
     if(!rec->addr || !rec->type) continue; // sanity checks..

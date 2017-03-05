@@ -67,7 +67,7 @@ protected:
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssBody_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) override;
+  const String	GenListing_children(int indent_level) const override;
 
   virtual void	    CasesFmEnum_hard(); // switch_var is a hard enum
   virtual void	    CasesFmEnum_dyn();	// switch_var is a dynamic enum

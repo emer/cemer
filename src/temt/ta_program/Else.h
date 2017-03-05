@@ -54,7 +54,7 @@ protected:
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssBody_impl(Program* prog) override; //replaces If
   void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) override;
+  const String	GenListing_children(int indent_level) const override;
 
 private:
   void	Initialize();

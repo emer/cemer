@@ -111,37 +111,7 @@ void taObjDiffRec::Copy(const taObjDiffRec& cp) {
 
 void taObjDiffRec::GetValue(taObjDiff_List& odl) {
   if(!type || !addr) return;            // not set!
-  value = type->GetValStr(addr, par_addr, mdef, TypeDef::SC_VALUE);
-  if(mdef) {
-    name = mdef->name;
-  }
-  else {
-    name = type->name;
-  }
-#ifndef NO_TA_BASE
-  if(type->IsActualTaBase()) {
-    if(!mdef && nest_level > 0)
-      value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
-    else
-      value = type->name;               // this is the relevant info at this level for diffing
-  }
-  else if(type->IsBasePointerType()) {
-    taBase* rbase = NULL;
-    if((type->IsPointer()) && type->IsTaBase()) rbase = *((taBase**)addr);
-    else if(type->InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)addr)->ptr();
-    else if(type->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
-    if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {
-      if(rbase->IsChildOf(odl.tab_obj_a)) {
-        value = rbase->GetPathNames(NULL, odl.tab_obj_a); // scope by tab obj
-        SetDiffFlag(VAL_PATH_REL);
-      }
-      else {
-        // otherwise, always do it relative to project
-        value = rbase->GetPathNames(NULL, rbase->GetOwner(&TA_taProject));
-      }
-    }
-  }
-#endif
+  type->GetObjDiffValue(this, odl);
   ComputeHashCode();
 }
 
@@ -153,7 +123,7 @@ void taObjDiffRec::ComputeHashCode() {
 String taObjDiffRec::GetDisplayName() {
 #ifndef NO_TA_BASE
   if(!mdef && addr && type->IsActualTaBase()) {
-    return name + ": " + ((taBase*)addr)->GetDisplayName();
+    return name + ": " + ((taBase*)addr)->GetName();
   }
 #endif
   return name;

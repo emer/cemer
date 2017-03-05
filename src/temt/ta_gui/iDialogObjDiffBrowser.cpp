@@ -466,6 +466,7 @@ void iDialogObjDiffBrowser::AddItems() {
 }
 
 void iDialogObjDiffBrowser::ViewItem(taObjDiffRec* rec) {
+  if(!rec) return;
   taBase* tab = rec->GetOwnTaBase();
   if(!tab) return;
   tab->BrowserSelectMe();

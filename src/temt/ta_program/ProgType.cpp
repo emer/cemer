@@ -58,7 +58,7 @@ void ProgType::GenCss(Program* prog) {
   GenCssPost_impl(prog);
 }
 
-const String ProgType::GenListing(int indent_level) {
+const String ProgType::GenListing(int indent_level) const {
   String rval = Program::GetDescString(desc, indent_level);
   rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
   return rval;

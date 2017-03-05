@@ -441,9 +441,10 @@ bool Unit_Group::Dump_QuerySaveChildren() {
   return false;                 //  we NEVER save units anymore..
 }
 
-taObjDiffRec* Unit_Group::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
-                           const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+taObjDiffRec* Unit_Group::GetObjDiffRec
+(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+ const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // do NOT go below unit group in diffing!
-  return taBase::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+  return taBase::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
 }
 

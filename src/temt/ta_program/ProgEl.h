@@ -95,7 +95,10 @@ public:
 
   void                  PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual void          GenCss(Program* prog); // generate the Css code for this object (usually override _impl's)
-  virtual const String  GenListing(int indent_level = 0); // generate a listing of the program
+  virtual const String  GenListing(int indent_level = 0) const;
+  // generate a listing (text representation of program elements) of the program element -- includes this element and any children under it
+  virtual const String  GenListing_this(int indent_level = 0) const;
+  // generate listing of just this one program element, excluding any children
 
   inline void           SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // set flag state on
@@ -182,6 +185,11 @@ public:
   virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
   // update our progvar elements after change in scope (move, copy)
   
+  taObjDiffRec*  GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
+    const override;
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
@@ -249,7 +257,7 @@ protected:
   // #IGNORE generate the Css body code for this object
   virtual void          GenCssPost_impl(Program* prog) {};
   // #IGNORE generate the Css postfix code (if any) for this object
-  virtual const String  GenListing_children(int indent_level) {return _nilString;}
+  virtual const String  GenListing_children(int indent_level) const { return _nilString; }
   // generate listing of any children of this progel
 
 private:

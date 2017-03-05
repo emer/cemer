@@ -251,9 +251,9 @@ public:
                               MemberDef* md = NULL,
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
-  taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                              MemberDef* memb_def=NULL, const void* par=NULL,
-                              TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  taObjDiffRec* GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
   void Dump_Save_GetPluginDeps() override; // note: in ta_dump.cpp
 #ifndef __MAKETA__

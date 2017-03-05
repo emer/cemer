@@ -36,7 +36,8 @@ class TA_API ProgType_List : public taList<ProgType> {
 INHERITED(taList<ProgType>)
 public:
   virtual void          GenCss(Program* prog) const; // generate css script code for the context
-  virtual const String  GenListing(int indent_level) const; // generate the listing of program
+  virtual const String  GenListing(int indent_level) const;
+  // generate the listing of program
 
   virtual DynEnumType* NewDynEnum();
   // #BUTTON #MENU_CONTEXT create a new DynEnumType (shortcut)

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10515
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10517
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -690,32 +690,33 @@ LeabraProject .projects["LeabraFlex"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [23] {
+   ProgEl_List @.prog_code = [24] {
     RegisterArgs @[0] { };
     PrintExpr @[1] { };
     Comment @[2] { };
-    ProgVarFmArg @[3] { };
+    AssignExpr @[3] { };
     ProgVarFmArg @[4] { };
     ProgVarFmArg @[5] { };
-    Comment @[6] { };
-    ControlPanelsFmArgs @[7] { };
-    MethodCall @[8] { 
-     ProgArg_List @.meth_args = [1] {
-      ProgArg @[0] { };
-     };
-    };
+    ProgVarFmArg @[6] { };
+    Comment @[7] { };
+    ControlPanelsFmArgs @[8] { };
     MethodCall @[9] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    ControlPanelsFmArgs @[10] { };
+    MethodCall @[10] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
     ControlPanelsFmArgs @[11] { };
-    Comment @[12] { };
+    ControlPanelsFmArgs @[12] { };
     Comment @[13] { };
-    AssignExpr @[14] { };
-    Comment @[15] { };
-    If @[16] { 
+    Comment @[14] { };
+    AssignExpr @[15] { };
+    Comment @[16] { };
+    If @[17] { 
      ProgEl_List @.true_code = [4] {
       ProgVarFmArg @[0] { };
       MiscCall @[1] { 
@@ -744,7 +745,7 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    Else @[17] { 
+    Else @[18] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -761,15 +762,15 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    OtherProgramVar @[18] { };
-    Comment @[19] { };
-    ProgramCallVar @[20] { 
+    OtherProgramVar @[19] { };
+    Comment @[20] { };
+    ProgramCallVar @[21] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[21] { };
-    ProgramCall @[22] { 
+    PrintExpr @[22] { };
+    ProgramCall @[23] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -11375,7 +11376,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Std variables in startup program itself =";
     };
-    ProgVarFmArg @[3] {
+    AssignExpr @[3] {
+     user_data_=NULL;
+     desc="start with empty tag in all cases";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="tag = \"\"";
+     result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$$;
+     expr {
+      user_data_=NULL;
+      expr="\"\"";
+     };
+    };
+    ProgVarFmArg @[4] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11384,7 +11396,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="tag";
      arg_name="tag";
     };
-    ProgVarFmArg @[4] {
+    ProgVarFmArg @[5] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11393,7 +11405,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="log_dir";
      arg_name="log_dir";
     };
-    ProgVarFmArg @[5] {
+    ProgVarFmArg @[6] {
      user_data_=NULL;
      desc="starting batch -- replaces b_start";
      flags=CAN_REVERT_TO_CODE;
@@ -11402,20 +11414,20 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="batch_start";
      arg_name="batch_start";
     };
-    Comment @[6] {
+    Comment @[7] {
      user_data_=NULL;
      desc="add our special args from command line";
      flags=CAN_REVERT_TO_CODE;
      code_string="// add our special args from command line";
     };
-    ControlPanelsFmArgs @[7] {
+    ControlPanelsFmArgs @[8] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
-    MethodCall @[8] {
+    MethodCall @[9] {
      user_data_=NULL;
      desc="set saved values first, before processing args";
      flags=CAN_REVERT_TO_CODE;
@@ -11445,7 +11457,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="void CopySavedToActive(bool info_msg = false)";
      meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    MethodCall @[9] {
+    MethodCall @[10] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11475,50 +11487,50 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="void CopySavedToActive(bool info_msg = false)";
      meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    ControlPanelsFmArgs @[10] {
+    ControlPanelsFmArgs @[11] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$;
     };
-    ControlPanelsFmArgs @[11] {
+    ControlPanelsFmArgs @[12] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$;
     };
-    Comment @[12] {
+    Comment @[13] {
      user_data_=NULL;
      desc="TODO: Add your program comment here (multi-lines ok).";
      flags=CAN_REVERT_TO_CODE;
      code_string="// TODO: Add your program comment here (multi-lines ok).";
     };
-    Comment @[13] {
+    Comment @[14] {
      user_data_=NULL;
      desc="= Add args to tag name =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Add args to tag name =";
     };
-    AssignExpr @[14] {
+    AssignExpr @[15] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tag = \"_\" +  config_id + tag";
-     result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$$;
+     result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
      expr {
       user_data_=NULL;
-      expr="\"_\" +  run_params->name + \"_\" + misc_params->name";
+      expr="\"_\" +  run_params->name + \"_\" + misc_params->name + tag";
      };
     };
-    Comment @[15] {
+    Comment @[16] {
      user_data_=NULL;
      desc="Set log files";
      flags=CAN_REVERT_TO_CODE;
      code_string="// Set log files";
     };
-    If @[16] {
+    If @[17] {
      user_data_=NULL;
      desc="set tag for starting batch (new code in v 8.0)";
      flags=CAN_REVERT_TO_CODE;
@@ -11708,7 +11720,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    Else @[17] {
+    Else @[18] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11821,7 +11833,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    OtherProgramVar @[18] {
+    OtherProgramVar @[19] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11833,13 +11845,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[19] {
+    Comment @[20] {
      user_data_=NULL;
      desc="= Call sub-startup programs =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Call sub-startup programs =";
     };
-    ProgramCallVar @[20] {
+    ProgramCallVar @[21] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11866,7 +11878,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlex"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[21] {
+    PrintExpr @[22] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11877,7 +11889,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      debug=0;
     };
-    ProgramCall @[22] {
+    ProgramCall @[23] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -31210,7 +31222,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9978758;
+     value 8 0=0.9978746;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33027,7 +33039,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

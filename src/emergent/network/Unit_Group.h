@@ -124,9 +124,9 @@ public:
 
   // implement save_rmv_units:
   bool Dump_QuerySaveChildren() override;
-  taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                                       MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  taObjDiffRec* GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
   // we maintain our index in any owning list
   int  GetIndex() const override { return idx; }

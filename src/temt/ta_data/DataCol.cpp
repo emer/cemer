@@ -972,10 +972,10 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   base_nm = nm;
 }
 
-taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+taObjDiffRec* DataCol::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
     const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // this is same as base objdiff but puts children last to make more sense for user
-  taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+  taObjDiffRec* odr = inherited::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
 
   for(int i=0;i<rows();i++) {
     if(isMatrix()) {

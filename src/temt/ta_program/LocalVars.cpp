@@ -45,7 +45,7 @@ void LocalVars::GenCssBody_impl(Program* prog) {
   }
 }
 
-const String LocalVars::GenListing_children(int indent_level) {
+const String LocalVars::GenListing_children(int indent_level) const {
   return local_vars.GenListing(indent_level + 1);
 }
 

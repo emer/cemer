@@ -30,6 +30,8 @@
 #include <ProgCode>
 #include <ProgElChoiceDlg>
 #include <SigLinkSignal>
+#include <taObjDiffRec>
+#include <taObjDiff_List>
 
 #include <taMisc>
 
@@ -282,10 +284,15 @@ void ProgEl::GenCss(Program* prog) {
   GenCssPost_impl(prog);
 }
 
-const String ProgEl::GenListing(int indent_level) {
+const String ProgEl::GenListing(int indent_level) const {
+  String rval = GenListing_this(indent_level);
+  rval += GenListing_children(indent_level);
+  return rval;
+}
+
+const String ProgEl::GenListing_this(int indent_level) const {
   String rval = Program::GetDescString(desc, indent_level);
   rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
-  rval += GenListing_children(indent_level);
   return rval;
 }
 
@@ -633,6 +640,47 @@ bool ProgEl::CvtFmSavedCode() {
   SigEmitUpdated();
   return rval;
 }
+
+taObjDiffRec* ProgEl::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+                                    const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
+                                       (void*)par, par_typ, par_od);
+  odl.Add(odr);
+  if(GetOwner()) {
+    odr->tabref = new taBaseRef;
+    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+  }
+  // do NOT do sub-classes -- only the main obj -- uses listing text!
+  // GetTypeDef()->GetObjDiffRec_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+  // except: get any children lists..
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members.FastEl(i);
+    if(!md->type->IsActualTaBase()) continue;
+    if(md->type->InheritsFrom(&TA_taList_impl)) { // container!
+      md->type->GetObjDiffRec(odl, nest_lev+1, md->GetOff(this), md, this,
+                              const_cast<TypeDef*>(td), odr);
+    }
+  }
+  return odr;
+}
+
+void ProgEl::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) const {
+  if(ptr) {
+    inherited::GetObjDiffValue(rec, odl, ptr);
+    return;
+  }
+  else {
+    // rec->value = GenListing_this(0); // no indent!
+    rec->value = (const_cast<ProgEl*>(this))->BrowserEditString();
+    // if(!rec->mdef && rec->nest_level > 0)
+    //   rec->value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
+    // else
+    //   rec->value = type->name;
+  }
+}
+
 
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   if(move_after != -11) {

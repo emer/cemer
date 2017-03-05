@@ -81,7 +81,7 @@ void ElseIf::GenCssPost_impl(Program* prog) {
   prog->AddLine(this, "}");
 }
 
-const String ElseIf::GenListing_children(int indent_level) {
+const String ElseIf::GenListing_children(int indent_level) const {
   String rval = true_code.GenListing(indent_level + 1);
   return rval;
 }

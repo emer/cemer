@@ -150,7 +150,7 @@ void Function::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "}");
 }
 
-const String Function::GenListing_children(int indent_level) {
+const String Function::GenListing_children(int indent_level) const {
   return fun_code.GenListing(indent_level + 1);
 }
 

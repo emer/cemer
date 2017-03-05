@@ -952,10 +952,12 @@ public:
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true);
   // #IGNORE replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none) -- mbr_filt = filter for members to replace in -- if non-empty, member name for terminal value members where replace actually occurs (as opposed to owner class objects) must contain this string - if deep is false changing a string will not be recursive nor will members of list or groups be changed
 
-  virtual taObjDiffRec*  GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                               MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
-  // #IGNORE add this object and all its members and sub-objects to the object diff list
+  virtual taObjDiffRec*  GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+  // #IGNORE add this object and all its members and sub-objects to the object diff list, for diff compare function
+  virtual void          GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false) const;
+  // #IGNORE get the string representation of the value of this object for diff compare -- if ptr is true, then this is a pointer to an object of this type -- otherwise it is the actual object itself -- by default it is just the display name or path for pointers, but subtypes can represent entire object as a string if desired (in which case, do not call GetObjDiffRec on members!) -- called in the constructor of the taObjDiffRec when created by GetObjDiffRec, via TypeDef::GetObjDiffValue
 
   //////////////////////////////////////////////////////////////////////
   //    Low-level dump load/save

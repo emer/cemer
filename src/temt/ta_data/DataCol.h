@@ -440,17 +440,17 @@ public:
   void          ChangeColMatToScalar_gui();
   // #CAT_ObjectMgmt #MENU #DYN1 #CONFIRM #LABEL_ChangeColMatToScalar change from a mat col to a scalar col
 
-  String       GetTypeDecoKey() const override { return "DataTable"; }
+  String        GetTypeDecoKey() const override { return "DataTable"; }
 
-  virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
-  int  GetSpecialState() const override;
-  int  GetIndex() const override {return col_idx;}
-  void SetIndex(int value) override {col_idx = (short)value;}
-  String GetDesc() const override {return desc;}
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                                       MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  virtual void  Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  int           GetSpecialState() const override;
+  int           GetIndex() const override {return col_idx;}
+  void          SetIndex(int value) override {col_idx = (short)value;}
+  String        GetDesc() const override {return desc;}
+  void          SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  taObjDiffRec* GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
   virtual void GetUniqueColumnValues(String_Array& groups);
   // make a list of the unique values of the column
