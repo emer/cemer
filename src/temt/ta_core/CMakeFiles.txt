@@ -173,6 +173,7 @@ set(ta_core_HEADS_MAKETA_NOMOC
   TimeUsed.h
   TimeUsedHR.h
   taDateTime.h
+  taXmlStreamReader.h
 
   taTask.h
   taTask_List.h
@@ -438,6 +439,7 @@ set(ta_core_SRCS_MAKETA
   TimeUsed.cpp
   TimeUsedHR.cpp
   taDateTime.cpp
+  taXmlStreamReader.cpp
 
   taTask.cpp
   taTask_List.cpp
