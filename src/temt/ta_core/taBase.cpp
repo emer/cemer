@@ -3769,27 +3769,12 @@ taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, 
   }
   taBase* new_guy = new_par->FindFromPath(old_path, md);
   String old_nm = old_guy->GetName();
-  if(old_guy->GetOwner() && (!new_guy || (old_nm != new_guy->GetName()))) {
-    // path-based guy is NULL or not right -- try to lookup by name
-    taBase* old_guy_owner = old_guy->GetOwner();
-    // if the old_guy parent is a subgroup we want to get the root group so we can look by name
-    // in all the leaves of the tree
-    if (old_guy_owner && old_guy_owner->InheritsFrom(&TA_taGroup_impl)) {
-      String old_own_path = dynamic_cast<taGroup_impl*>(old_guy->GetOwner())->GetGroupPath(NULL, old_par);
-      taBase* new_own = new_par->FindFromPath(old_own_path, md);
-      if(new_own && new_own->InheritsFrom(&TA_taGroup_impl)) {
-        taGroup_impl* lst = (taGroup_impl*)new_own;
-        new_guy = (taBase*)lst->FindLeafName_(old_nm);
-      }
-    }
-    else {
-      String old_own_path = old_guy->GetOwner()->GetPathNames(NULL, old_par);
-      taBase* new_own = new_par->FindFromPath(old_own_path, md);
-      if(new_own && new_own->InheritsFrom(&TA_taList_impl)) {
-        taList_impl* lst = (taList_impl*)new_own;
-        new_guy = (taBase*)lst->FindName_(old_nm);
-      }
-    }
+  bool not_found = !new_guy || (old_nm != new_guy->GetName()) ||
+    (old_guy->GetTypeDef() != new_guy->GetTypeDef());
+  if(not_found) {
+    // try without names, just using indexes, to see if a name change threw us off
+    old_path = old_guy->GetPath(NULL, old_par);
+    new_guy = new_par->FindFromPath(old_path, md);
   }
   return new_guy;
 }
@@ -3998,9 +3983,6 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       taBase** ptr = (taBase**)md->GetOff(this);
       if(md->HasOption("NO_SET_POINTER")) {
         int chg = UpdatePointers_NewPar_PtrNoSet(ptr, old_par, new_par);
-        if (chg == 0 && this->GetName().nonempty()) {
-          WarnSettingToNull(old_par, new_par);
-        }
         nchg += chg; mychg += chg;
       }
       else {
