@@ -41,11 +41,16 @@ class DataTable; //
 taTypeDef_Of(ControlPanel);
 
 class TA_API ControlPanel: public taNBase, public virtual IRefListClient {
-  // #AKA_SelectEdit #STEM_BASE ##EXT_edit ##CAT_Display A user-customizable panel of parameters and functions from anywhere in the project, that are most important for controlling the simulation
+  // #AKA_SelectEdit #STEM_BASE ##EXT_ctrl ##CAT_Display A user-customizable panel of parameters and functions from anywhere in the project, that are most important for controlling the simulation
   INHERITED(taNBase)
 public:
-  static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
+  enum CPState {
+    REGULAR,                 // just a regular control panel, not part of a master-and-clone setup
+    MASTER,                  // master control panel: used as a template for other panels in the same group -- the first panel in the group, as orchestrated by ControlPanel_Group
+    CLONE,                   // clone control panel: is updated from master panel in the same group, which is the first panel in the group, as orchestrated by ControlPanel_Group
+  };
 
+  CPState               cp_state; // #READ_ONLY #SHOW control panel state -- is this a master, clone, or regular control panel?  controlled by the owner control panel group
   bool                  updt_while_running; // #AKA_running_updt update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this control panel contains
   ControlPanelMember_Group     mbrs;   // the members of the control panel
@@ -62,11 +67,22 @@ public:
   String                GetDesc() const override { return desc; } //
   int                   UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   String                GetToolbarName() const override { return "cntrl panel"; }
+  int                   GetEnabled() const override;
   
+  static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
+
   SIMPLE_LINKS(ControlPanel);
   TA_BASEFUNS(ControlPanel);
 
 public: // public API
+
+  inline bool   IsRegular() const { return cp_state == REGULAR; }
+  // #CAT_CtrlPanel is this a regular (non-master-clone) control panel?
+  inline bool   IsMaster() const  { return cp_state == MASTER; }
+  // #CAT_CtrlPanel is this a master
+  inline bool   IsClone() const  { return cp_state == CLONE; }
+  // #CAT_CtrlPanel is this a clone
+
   virtual void  RemoveMemberIdx(int idx);
   // #CAT_CtrlPanel remove control panel member at given index and update dialog
   virtual void  RemoveMember(taBase* base, MemberDef* md);
@@ -99,16 +115,27 @@ public: // public API
 
   virtual int   FindMbrBase(taBase* base, MemberDef* md);
   // #CAT_CtrlPanel find a given base and member, returns index
-
   virtual ControlPanelMember*  FindMbrName(const String& mbr_nm, const String& label = "")
   { return mbrs.FindMbrName(mbr_nm, label); }
   // #CAT_CtrlPanel find an item based on member name and, optionally if non-empty, the associated label
-
   virtual int   FindMethBase(taBase* base, MethodDef* md);
   // #CAT_CtrlPanel find a given base and method, returns index
-
   virtual void  MbrUpdated(taBase* base, MemberDef* mbr);
   // #CAT_CtrlPanel let the panel know that a mbr has been updated
+
+  virtual void  RemoveNullItems();
+  // #IGNORE remove any null items (null bases or type info) in the control panel -- called automatically in UAE and UAM
+  virtual void  MasterTriggerUpdate();
+  // #IGNORE trigger an update of the clones because this master item has been updated
+  virtual bool  UpdateCloneFromMaster(ControlPanel* master);
+  // update this clone control panel from given master control panel -- ensures that the same structure and names of members are present
+  static bool  UpdateCloneFromMaster_mbrlist
+    (ControlPanelMember_Group* clone, ControlPanelMember_Group* master);
+  // #IGNORE update items in given list (not subgroups)
+  static bool  UpdateCloneFromMaster_mbrgps
+    (ControlPanelMember_Group* clone, ControlPanelMember_Group* master);
+  // #IGNORE update items in given subgroups
+ 
   
   virtual void  Reset();
   // #CAT_CtrlPanel #MENU #CONFIRM reset (remove all) current members and methods
@@ -133,6 +160,7 @@ protected:
   taBase_RefList base_refs; // all bases notify us via this list
 
   void           UpdateAfterEdit_impl() override;
+  void           UpdateAfterMove_impl(taBase* old_owner) override;
 
   virtual void   SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
@@ -146,7 +174,7 @@ protected:
   virtual bool   AddMethod_impl
     (taBase* base, MethodDef* md, const String& lbl, const String& desc, const String&
      sub_gp_nm = _nilString, bool custom_label = false, bool custom_desc = false);
-
+ 
 private:
   void  Initialize();
   void  Destroy();

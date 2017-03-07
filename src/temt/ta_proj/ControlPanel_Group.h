@@ -29,9 +29,12 @@ taTypeDef_Of(ControlPanel);
 taTypeDef_Of(ControlPanel_Group);
 
 class TA_API ControlPanel_Group : public taGroup<ControlPanel> {
-  // #AKA_SelectEdit_Group  ##CAT_Display ##EXPAND_DEF_1  group of control panel dialog objects
+  // #AKA_SelectEdit_Group  ##CAT_Display ##EXPAND_DEF_1 group of control panels 
 INHERITED(taGroup<ControlPanel>)
 public:
+  bool          master_and_clones;
+  // if true, the first control panel serves as a master control panel for the rest of the panels in the group, which are updated from the master whenever any items are added, removed, renamed, etc
+  
   virtual void  AddMember
   (taBase* base, MemberDef* md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
   // add new member to all control panels in group if it isn't already there, optionally in a sub group
@@ -45,13 +48,22 @@ public:
   // #MENU #MENU_ON_ControlPanel copy member values into control panels within this group of panels from same-named columns in a row of given data table -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values -- at least one control panel must exist within the group already, with members set to appropriate variables -- the first panel is cloned in creating new panels for each row of the data table if they don't exist yet
   virtual void CopyToDataTable(DataTable* table);
   // #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- a new row is added if not already present -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
+  virtual void SetMasterAndClones(bool use_master_and_clones);
+  // #MENU #MENU_ON_ControlPanel configure this group to use the master-and-clones setup or not -- sets the master_and_clones flag and, if true, updates all the clones based on the current configuration of the first control panel in the group, which becomes the master
 
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
 
-  TA_BASEFUNS(ControlPanel_Group);
+  virtual void  MasterClonesUpdate();
+  // update all the control panels for the master-and-clones configuration
+  virtual ControlPanel* GetMaster();
+  // get the first control panel in group
+  
+  TA_SIMPLE_BASEFUNS(ControlPanel_Group);
+protected:
+  void  UpdateAfterEdit_impl() override;
+  
 private:
-  NOCOPY(ControlPanel_Group)
-  void  Initialize() { SetBaseType(&TA_ControlPanel);}
+  void  Initialize();
   void  Destroy()               { };
 };
 

@@ -41,6 +41,7 @@ void ControlPanel::StatSigEmit_Group(taGroup_impl* grp, int sls,
 
 
 void ControlPanel::Initialize() {
+  cp_state = REGULAR;
   updt_while_running = false;
   m_changing = 0;
   base_refs.setOwner(this);
@@ -56,6 +57,8 @@ void ControlPanel::Destroy() {
 }
 
 void ControlPanel::Copy_(const ControlPanel& cp) {
+  cp_state = cp.cp_state;
+  updt_while_running = cp.updt_while_running;
   desc = cp.desc;
   base_refs.Reset(); // should get added by copies below
   mbrs = cp.mbrs;
@@ -64,21 +67,14 @@ void ControlPanel::Copy_(const ControlPanel& cp) {
 
 void ControlPanel::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  RemoveNullItems();
+
   if (taMisc::is_loading) {
     if (auto_edit) { // obsolete - convert
       SetUserData("user_pinned", true);
       auto_edit = false;
     }
-    
-    // check that this item is still supported - types are occassionally removed
-    for (int i=mbrs.leaves-1; i>=0; i--) {
-      ControlPanelMember* item = mbrs.Leaf(i);
-      if (item == NULL || item->base == NULL || item->mbr == NULL) {
-        taMisc::DebugInfo("ControlPanel::UpdateAfterEdit_impl: could not find item: ", item->label, "in control panel:", name);
-        mbrs.RemoveLeafIdx(i);
-      }
-    }
-    
+
     // add all the bases, since they weren't available during load
     FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
       BaseAdded(sei);
@@ -89,10 +85,128 @@ void ControlPanel::UpdateAfterEdit_impl() {
   }
 }
 
+void ControlPanel::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+  RemoveNullItems();
+}
+
+void ControlPanel::RemoveNullItems() {
+  for (int i=mbrs.leaves-1; i>=0; i--) {
+    ControlPanelMember* item = mbrs.Leaf(i);
+    if (item == NULL || item->base == NULL || item->mbr == NULL) {
+      taMisc::Info("ControlPanel::RemoveNullItems: removing member with NULL info:",
+                   item->label, "in control panel:", name,
+                   "(if loading, likely gone in new version, if copying, not found in new project)");
+      mbrs.RemoveLeafIdx(i);
+    }
+  }
+  for (int i=mths.leaves-1; i>=0; i--) {
+    ControlPanelMethod* item = mths.Leaf(i);
+    if (item == NULL || item->base == NULL || item->mth == NULL) {
+      taMisc::Info("ControlPanel::RemoveNullItems: removing method with NULL info:",
+                   item->label, "in control panel:", name,
+                   "(if loading, likely gone in new version, if copying, not found in new project)");
+      mths.RemoveLeafIdx(i);
+    }
+  }
+}
+
 int ControlPanel::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int rval = base_refs.UpdatePointers_NewPar(old_par, new_par);
   rval += inherited::UpdatePointers_NewPar(old_par, new_par);
   return rval;
+}
+
+void ControlPanel::MasterTriggerUpdate() {
+  if(isDestroying() || !owner) return;
+  if(!IsMaster()) return;
+  ControlPanel_Group* gp = GET_MY_OWNER(ControlPanel_Group);
+  if(!gp) return;
+  if(gp->isDestroying()) return;
+  gp->MasterClonesUpdate();
+}
+
+
+bool ControlPanel::UpdateCloneFromMaster(ControlPanel* master) {
+  bool itm_chgs = UpdateCloneFromMaster_mbrlist(&(this->mbrs), &(master->mbrs));
+  bool gp_chgs = UpdateCloneFromMaster_mbrgps(&(this->mbrs), &(master->mbrs));
+  return itm_chgs || gp_chgs;
+}
+
+bool ControlPanel::UpdateCloneFromMaster_mbrlist
+(ControlPanelMember_Group* clone, ControlPanelMember_Group* master)
+{
+  bool any_changes = false;
+  int i;  int ti;
+  ControlPanelMember* cln;
+  ControlPanelMember* mst;
+  // delete not in master; freshen those that are
+  for (i = clone->size - 1; i >= 0; --i) {
+    cln = clone->FastEl(i);
+    mst = (ControlPanelMember*)ControlPanelItem::StatFindItemBase_List(master, cln->base, cln->typeItem(), ti);
+    if(mst) {
+      cln->cust_label = mst->cust_label;
+      cln->cust_desc = mst->cust_desc;
+      cln->label = mst->label;
+      cln->desc = mst->desc;
+    }
+    else {
+      clone->RemoveIdx(i);
+      any_changes = true;
+    }
+  }
+  // add in master not in us, and put in the right order
+  for (ti = 0; ti < master->size; ++ti) {
+    mst = master->FastEl(ti);
+    cln = (ControlPanelMember*)ControlPanelItem::StatFindItemBase_List(clone, mst->base, mst->typeItem(), i);
+    if (i < 0) {
+      cln = (ControlPanelMember*)mst->Clone();
+      clone->Insert(cln, ti);
+      any_changes = true;
+    }
+    else if (i != ti) {
+      clone->MoveIdx(i, ti);
+      any_changes = true;
+    }
+  }
+  return any_changes;
+}
+
+bool ControlPanel::UpdateCloneFromMaster_mbrgps
+(ControlPanelMember_Group* clone, ControlPanelMember_Group* master) {
+  bool any_changes = false;
+  int i;  int ti;
+  ControlPanelMember_Group* cln;
+  ControlPanelMember_Group* mst;
+  // delete not in master; freshen those that are
+  for (i = clone->gp.size - 1; i >= 0; --i) {
+    cln = (ControlPanelMember_Group*)clone->gp.FastEl(i);
+    mst = (ControlPanelMember_Group*)master->gp.FindName(cln->name);
+    if(mst) {
+      any_changes |= UpdateCloneFromMaster_mbrlist(cln, mst);
+    }
+    else {
+      clone->gp.RemoveIdx(i);
+      any_changes = true;
+    }
+  }
+  // add in master not in us, and put in the right order
+  for (ti = 0; ti < master->gp.size; ++ti) {
+    mst = (ControlPanelMember_Group*)master->gp.FastEl(ti);
+    i = clone->gp.FindNameIdx(mst->name);
+    if (i < 0) {
+      cln = (ControlPanelMember_Group*)mst->Clone();
+      cln->name = mst->name;    // not otherwise copied!
+      clone->gp.Insert(cln, ti);
+      any_changes = true;
+    }
+    else if (i != ti) {
+      clone->gp.MoveIdx(i, ti);
+      UpdateCloneFromMaster_mbrlist((ControlPanelMember_Group*)clone->gp.FastEl(i), mst);
+      any_changes = true;
+    }
+  }
+  return any_changes;
 }
 
 void ControlPanel::BaseAdded(ControlPanelItem* sei) {
@@ -118,6 +232,7 @@ void ControlPanel::SigDestroying_Ref(taBase_RefList* src, taBase* base) {
   ControlPanelItem::StatRemoveItemBase(&mbrs, base);
   ControlPanelItem::StatRemoveItemBase(&mths, base);
   m_changing--;
+  MasterTriggerUpdate();
 }
 
 void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
@@ -142,15 +257,24 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
     return;
   }
 
+  bool updated_something = false;
+
   if(on_membs) {
     FOREACH_ELEM_IN_GROUP_REV(ControlPanelMember, item, mbrs) {
       if (!item->cust_label && ControlPanelItem::StatCheckBase(item, ta)) {
         // regenerate label as spec name or program name etc might have changed
         String new_label;
         ta->GetControlPanelLabel(item->mbr, new_label);
-        item->label = new_label;
+        if(item->label != new_label) {
+          item->label = new_label;
+          updated_something = true;
+        }
       }
     }
+  }
+
+  if(updated_something) {
+    MasterTriggerUpdate();
   }
   
   SigEmitUpdated();             // trigger an update of us -- this is expensive!
@@ -171,6 +295,7 @@ void ControlPanel::SigEmit_Group(taGroup_impl* grp,
   }
   //pretty much everything else as well, need to reshow
   //note: this is asynch, so multiple events (ex Compare, etc.) will only cause 1 reshow
+  MasterTriggerUpdate();        // should be one-stop update!?
   ReShowEdit(true);
 }
 
@@ -717,4 +842,9 @@ void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
     base->GetControlPanelLabel(item->mbr, new_label);
     item->label = new_label;
   }
+}
+
+int ControlPanel::GetEnabled() const {
+  if(IsClone()) return 0;       // signal for clone..
+  return 1;
 }

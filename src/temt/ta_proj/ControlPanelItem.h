@@ -37,9 +37,12 @@ public:
     
   static bool           StatCheckBase(ControlPanelItem* itm, taBase* base);
   // #IGNORE check if either itm->base == base or itm->mbr->GetOff(itm->base) == base
-  static ControlPanelItem* StatFindItemBase(const taGroup_impl* grp,
-                                            taBase* base, TypeItem* ti, int& idx);
+  static ControlPanelItem* StatFindItemBase
+    (const taGroup_impl* grp, taBase* base, TypeItem* ti, int& idx);
   // #IGNORE find the item with indicated base and mth/mbr in the group
+  static ControlPanelItem* StatFindItemBase_List
+    (const taGroup_impl* grp, taBase* base, TypeItem* ti, int& idx);
+  // #IGNORE find the item with indicated base and mth/mbr in the main list elements ONLY (not in any subgroups)
   static bool           StatGetBase_Flat(const taGroup_impl* grp, int idx, taBase*& base);
   // #IGNORE gets the flat (leaf) base
   static bool           StatHasBase(taGroup_impl* grp, taBase* base);
@@ -60,8 +63,12 @@ public:
   // use this method to set a new label, cust label flag, and also set the prv_label
   virtual void  SetDesc(const String& new_desc, bool custom_desc = false);
   // use this method to set a new desc, cust desc flag, and also set the prv_desc
+
+  virtual bool  IsSameItem(const ControlPanelItem* itm) const
+  { return (base == itm->base) && (typeItem() == itm->typeItem()); }
+  // is this pointing to the same item as the other guy?
   
-  String       GetName() const override;
+  String       GetName() const override { return label; }
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   String       GetDesc() const override;
   TA_BASEFUNS(ControlPanelItem);

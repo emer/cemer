@@ -80,10 +80,16 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
         if(!cp->SameScope(proj, &TA_taProject)) continue;
         String nm = cp->GetName();
         bool is_cp = false;
+        ControlPanel* cpr = NULL;
+        ControlPanel_Group* gp = NULL;
         if(cp->InheritsFrom(&TA_ControlPanel)) {
           is_cp = true;
+          cpr = (ControlPanel*)cp;
+          if(cpr->IsClone()) continue; // don't clutter with clones!
         }
         else {                  // group
+          gp = (ControlPanel_Group*)cp; // could omit master/clone groups but may be easier
+          // to think in terms of group or master element, depending..
           nm += " (Group)";
         }
         add_act = add_sub->addAction(nm);
@@ -95,7 +101,6 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
         rmv_act = rmv_sub->addAction(nm);
         rmv_act->setData(QVariant::fromValue((void*)cp));
         if(is_cp) {
-          ControlPanel* cpr = (ControlPanel*)cp;
           if (cpr->FindMbrBase(rbase, md) >= 0) {
             add_act->setEnabled(false);
             if(add_short_act) {
@@ -107,7 +112,6 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
           }
         }
         else {
-          ControlPanel_Group* gp = (ControlPanel_Group*)cp;
           if(gp->leaves > 0) {
             ControlPanel* cpr = gp->Leaf(0);
             if (cpr->FindMbrBase(rbase, md) >= 0) {

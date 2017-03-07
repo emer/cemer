@@ -28,7 +28,7 @@ taTypeDef_Of(ParamSet);
 taTypeDef_Of(ParamSet_Group);
 
 class TA_API ParamSet_Group : public ControlPanel_Group {
-  // a group of param sets
+  // ##EXPAND_DEF_2 a group of param sets
   INHERITED(ControlPanel_Group)
 public:
   virtual bool  LoadParamSet(const String& set_name);

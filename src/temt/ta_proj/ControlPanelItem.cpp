@@ -48,6 +48,20 @@ ControlPanelItem* ControlPanelItem::StatFindItemBase(const taGroup_impl* grp,
   return NULL;
 }
 
+ControlPanelItem* ControlPanelItem::StatFindItemBase_List(const taGroup_impl* grp,
+   taBase* base, TypeItem* ti, int& idx)
+{
+  idx = -1;
+  for(int i=0; i<grp->size; i++) {
+    ControlPanelItem* rval = (ControlPanelItem*)grp->FastEl_(i);
+    if ((rval->base == base) && (rval->typeItem() == ti)) {
+      idx = i;
+      return rval;
+    }
+  }
+  return NULL;
+}
+
 bool ControlPanelItem::StatGetBase_Flat(const taGroup_impl* grp, int idx,
   taBase*& base)
 {
@@ -131,10 +145,6 @@ String ControlPanelItem::caption() const {
 String ControlPanelItem::GetDesc() const {
   if (desc.nonempty()) return desc;
   return (typeItem()) ? typeItem()->desc : _nilString;
-}
-
-String ControlPanelItem::GetName() const {
-  return label;
 }
 
 String ControlPanelItem::GetColText(const KeyString& key, int itm_idx) const {

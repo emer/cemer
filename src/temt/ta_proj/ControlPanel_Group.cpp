@@ -17,18 +17,79 @@
 #include "ControlPanel_Group.h"
 #include <DataTable>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(ControlPanel_Group);
+
+void ControlPanel_Group::Initialize() {
+  master_and_clones = false;
+}
+
+void ControlPanel_Group::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(!taMisc::is_loading) {
+    MasterClonesUpdate();
+  }
+}
+
+void ControlPanel_Group::MasterClonesUpdate() {
+  ControlPanel* master = NULL;
+  if(master_and_clones) {
+    if(TestWarning(size == 0, "MasterClonesUpdate",
+                   "no items in top-level of the group -- master must be first top-level item -- turning off master_and_clones")) {
+      master_and_clones = false;
+    }
+    master = FastEl(0);
+    master->cp_state = ControlPanel::MASTER;
+  }
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    if(cp == master) continue;
+    if(master_and_clones && master) {
+      cp->cp_state = ControlPanel::CLONE;
+      cp->UpdateCloneFromMaster(master);
+    }
+    else {
+      cp->cp_state = ControlPanel::REGULAR;
+    }
+  }
+}
+
+void ControlPanel_Group::SetMasterAndClones(bool use_master_and_clones) {
+  master_and_clones = use_master_and_clones;
+  MasterClonesUpdate();
+}
+
+ControlPanel* ControlPanel_Group::GetMaster() {
+  if(leaves == 0) return NULL;
+  return Leaf(0);
+}
 
 void ControlPanel_Group::AddMember
 (taBase* base, MemberDef* mbr, const String& xtra_lbl, const String& dscr, const String& sub_gp_nm, bool short_label) {
-  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
-    cp->AddMember(base, mbr, xtra_lbl, dscr, sub_gp_nm, short_label);
+  if(master_and_clones) {
+    ControlPanel* master = GetMaster();
+    if(master) {
+      master->AddMember(base, mbr, xtra_lbl, dscr, sub_gp_nm, short_label);
+    }
+  }
+  else {
+    FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+      cp->AddMember(base, mbr, xtra_lbl, dscr, sub_gp_nm, short_label);
+    }
   }
 }
 
 void ControlPanel_Group::RemoveMember(taBase* base, MemberDef* mbr) {
-  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
-    cp->RemoveMember(base, mbr);
+  if(master_and_clones) {
+    ControlPanel* master = GetMaster();
+    if(master) {
+      master->RemoveMember(base, mbr);
+    }
+  }
+  else {
+    FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+      cp->RemoveMember(base, mbr);
+    }
   }
 }
 
