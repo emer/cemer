@@ -3762,7 +3762,7 @@ void taBase::Help() {
 //      Updating pointers (when objects change type or are copied)
 
 taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, taBase* new_par) {
-  String old_path = old_guy->GetPath(NULL, old_par);
+  String old_path = old_guy->GetPathNames(NULL, old_par);
   MemberDef* md;
   if (!new_par) {
     return NULL;
@@ -3783,7 +3783,7 @@ taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, 
       }
     }
     else {
-      String old_own_path = old_guy->GetOwner()->GetPath(NULL, old_par);
+      String old_own_path = old_guy->GetOwner()->GetPathNames(NULL, old_par);
       taBase* new_own = new_par->FindFromPath(old_own_path, md);
       if(new_own && new_own->InheritsFrom(&TA_taList_impl)) {
         taList_impl* lst = (taList_impl*)new_own;
@@ -3837,8 +3837,18 @@ bool taBase::UpdatePointers_NewPar_PtrNoSet(taBase** ptr, taBase* old_par, taBas
       // if different project we need to locate new par from path
       if (old_proj != new_proj) {
         taBase* new_guy = UpdatePointers_NewPar_FindNew(*ptr, old_proj, new_proj);
-        *ptr = new_guy;
-        return true;
+        if(new_guy) {
+          *ptr = new_guy;
+        }
+        else {
+          if(null_not_found) {
+            *ptr = NULL;
+            if (this->GetName().nonempty()) {
+              WarnSettingToNull(old_proj, new_proj);
+            }
+          }
+          return false;
+        }
       }
     }
   }
@@ -3847,11 +3857,16 @@ bool taBase::UpdatePointers_NewPar_PtrNoSet(taBase** ptr, taBase* old_par, taBas
     return false;
   
   taBase* new_guy = UpdatePointers_NewPar_FindNew(*ptr, old_par, new_par);
-  if(new_guy)
+  if(new_guy) {
     *ptr = new_guy;
+  }
   else {
-    if(null_not_found)
+    if(null_not_found) {
       *ptr = NULL;
+      if (this->GetName().nonempty()) {
+        WarnSettingToNull(old_par, new_par);
+      }
+    }
     return false;
   }
   // note: this does not call UAE: done later on owner
