@@ -37,26 +37,26 @@ public:
   
   virtual void  AddMember
   (taBase* base, MemberDef* md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
-  // add new member to all control panels in group if it isn't already there, optionally in a sub group
+  // #CAT_ControlPanel add new member to all control panels in group if it isn't already there, optionally in a sub group
   virtual void  RemoveMember(taBase* base, MemberDef* md);
-  //  remove member from all control panels in group and update dialogs
+  // #CAT_ControlPanel remove member from all control panels in group and update dialogs
 
   virtual void  RestorePanels();
-  // if the panel was pinned when the program was saved redisplay it on project open
+  // #CAT_ControlPanel ifthe panel was pinned when the program was saved redisplay it on project open
 
   virtual void CopyFromDataTable(DataTable* table);
-  // #MENU #MENU_ON_ControlPanel copy member values into control panels within this group of panels from same-named columns in a row of given data table -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values -- at least one control panel must exist within the group already, with members set to appropriate variables -- the first panel is cloned in creating new panels for each row of the data table if they don't exist yet
+  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel copy member values into control panels within this group of panels from same-named columns in a row of given data table -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values -- at least one control panel must exist within the group already, with members set to appropriate variables -- the first panel is cloned in creating new panels for each row of the data table if they don't exist yet
   virtual void CopyToDataTable(DataTable* table);
-  // #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- a new row is added if not already present -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
+  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- a new row is added if not already present -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
   virtual void SetMasterAndClones(bool use_master_and_clones);
-  // #MENU #MENU_ON_ControlPanel configure this group to use the master-and-clones setup or not -- sets the master_and_clones flag and, if true, updates all the clones based on the current configuration of the first control panel in the group, which becomes the master
+  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel configure this group to use the master-and-clones setup or not -- sets the master_and_clones flag and, if true, updates all the clones based on the current configuration of the first control panel in the group, which becomes the master
 
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
 
   virtual void  MasterClonesUpdate();
-  // update all the control panels for the master-and-clones configuration
+  // #CAT_ControlPanel update all the control panels for the master-and-clones configuration
   virtual ControlPanel* GetMaster();
-  // get the first control panel in group
+  // #CAT_ControlPanel get the first control panel in group
   
   TA_SIMPLE_BASEFUNS(ControlPanel_Group);
 protected:

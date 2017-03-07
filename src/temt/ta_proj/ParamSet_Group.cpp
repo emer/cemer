@@ -16,12 +16,19 @@
 #include "ParamSet_Group.h"
 #include <ParamSet>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(ParamSet_Group);
 
-bool ParamSet_Group::LoadParamSet(const String& set_name) {
-  ParamSet* set = (ParamSet*)FindName(set_name);
-  if (!set)
+bool ParamSet_Group::ActivateParamSet(const String& set_name, bool err_not_found) {
+  ParamSet* set = (ParamSet*)FindLeafName(set_name);
+  if (!set) {
+    if(err_not_found) {
+      taMisc::Error("Parameter set named:", set_name,
+                    "not found in group:", name, "in ActivateParamSet");
+    }
     return false;
-  
+  }
+  set->CopySavedToActive(true); // apply the set and emit a message
   return true;
 }
