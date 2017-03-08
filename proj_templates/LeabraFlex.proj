@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10522
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10529
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -419,7 +419,7 @@ LeabraProject .projects["LeabraFlex"] {
  };
 
  ParamSet_Group @.param_sets = [0] {
-  ParamSet_Group @.gp["RunParams"] = [1] { 
+  ParamSet_Group @.gp["RunParams"] = [2] { 
    ParamSet @["RunMaster"] { 
     ControlPanelMember_Group @.mbrs = [18] {
      ControlPanelMember @[0] { };
@@ -445,9 +445,42 @@ LeabraProject .projects["LeabraFlex"] {
     ControlPanelMethod_Group @.mths = [0] {
     };
    };
+   ParamSet @["RunConfig1"] { 
+    ControlPanelMember_Group @.mbrs = [18] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+     ControlPanelMember @[4] { };
+     ControlPanelMember @[5] { };
+     ControlPanelMember @[6] { };
+     ControlPanelMember @[7] { };
+     ControlPanelMember @[8] { };
+     ControlPanelMember @[9] { };
+     ControlPanelMember @[10] { };
+     ControlPanelMember @[11] { };
+     ControlPanelMember @[12] { };
+     ControlPanelMember @[13] { };
+     ControlPanelMember @[14] { };
+     ControlPanelMember @[15] { };
+     ControlPanelMember @[16] { };
+     ControlPanelMember @[17] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
   };
-  ParamSet_Group @.gp["MiscParams"] = [1] { 
+  ParamSet_Group @.gp["MiscParams"] = [2] { 
    ParamSet @["MiscMaster"] { 
+    ControlPanelMember_Group @.mbrs = [1] {
+     ControlPanelMember @[0] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
+   ParamSet @["MiscConfig1"] { 
     ControlPanelMember_Group @.mbrs = [1] {
      ControlPanelMember @[0] { };
     };
@@ -690,33 +723,30 @@ LeabraProject .projects["LeabraFlex"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [24] {
+   ProgEl_List @.prog_code = [21] {
     RegisterArgs @[0] { };
     PrintExpr @[1] { };
     Comment @[2] { };
     AssignExpr @[3] { };
     ProgVarFmArg @[4] { };
     ProgVarFmArg @[5] { };
-    ProgVarFmArg @[6] { };
-    Comment @[7] { };
-    ControlPanelsFmArgs @[8] { };
+    Comment @[6] { };
+    ControlPanelsFmArgs @[7] { };
+    MethodCall @[8] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
     MethodCall @[9] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    MethodCall @[10] { 
-     ProgArg_List @.meth_args = [1] {
-      ProgArg @[0] { };
-     };
-    };
+    ControlPanelsFmArgs @[10] { };
     ControlPanelsFmArgs @[11] { };
-    ControlPanelsFmArgs @[12] { };
+    AssignExpr @[12] { };
     Comment @[13] { };
-    Comment @[14] { };
-    AssignExpr @[15] { };
-    Comment @[16] { };
-    If @[17] { 
+    If @[14] { 
      ProgEl_List @.true_code = [4] {
       ProgVarFmArg @[0] { };
       MiscCall @[1] { 
@@ -745,7 +775,7 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    Else @[18] { 
+    Else @[15] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -762,15 +792,15 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    OtherProgramVar @[19] { };
-    Comment @[20] { };
-    ProgramCallVar @[21] { 
+    OtherProgramVar @[16] { };
+    Comment @[17] { };
+    ProgramCallVar @[18] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[22] { };
-    ProgramCall @[23] { 
+    PrintExpr @[19] { };
+    ProgramCall @[20] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -8162,7 +8192,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     name="RunMaster";
     cp_state=MASTER;
     updt_while_running=0;
-    desc="basic training parameters";
+    desc="default values for basic training parameters -- this is a 'master' param set -- make changes here and all others in group will auto-update";
     mbrs {
      user_data_=NULL;
      name="mbrs";
@@ -8537,6 +8567,386 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      group_type=GT_BUTTONS;
     };
    };
+   ParamSet @["RunConfig1"] {
+    user_data_=NULL;
+    name="RunConfig1";
+    cp_state=CLONE;
+    updt_while_running=0;
+    desc="another configuration of run parameters to choose from.. make as many as you need!  this is a 'clone' of the master and will auto-update for any additions or changes to members";
+    mbrs {
+     user_data_=NULL;
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
+      user_data_=NULL;
+      label="run_prog";
+      cust_label=1;
+      desc="name of run program to run -- must exist in the RunProgs group";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicRun";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[1] {
+      user_data_=NULL;
+      label="init_prog";
+      cust_label=1;
+      desc="name of init program -- must exist in the InitProgs group";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicInit";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[2] {
+      user_data_=NULL;
+      label="startup_prog";
+      cust_label=1;
+      desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="BasicStartup";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[3] {
+      user_data_=NULL;
+      label="train_epochs";
+      cust_label=1;
+      desc="number of epochs to train network for";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["train_epochs"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="5";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[4] {
+      user_data_=NULL;
+      label="trials_per_epoch";
+      cust_label=1;
+      desc="number of trials per epoch";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["trials_per_epoch"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="25";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[5] {
+      user_data_=NULL;
+      label="save_final_wts";
+      cust_label=1;
+      desc="should final weights after training is complete be saved?";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainEnd"].vars["save_final_wts"]$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[6] {
+      user_data_=NULL;
+      label="save_wts_interval";
+      cust_label=1;
+      desc="how frequently (epochs) to save weights during training";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].vars["save_wts_interval"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="200";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[7] {
+      user_data_=NULL;
+      label="test_run";
+      cust_label=1;
+      desc="is this a testing-only run, no training?";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["test_run"]$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[8] {
+      user_data_=NULL;
+      label="test_interval";
+      cust_label=1;
+      desc="how frequently (epochs) to run a test during training";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["test_interval"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[9] {
+      user_data_=NULL;
+      label="log_trials";
+      cust_label=1;
+      desc="should trial-level data be saved to log files?";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_trials"]$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[10] {
+      user_data_=NULL;
+      label="load_weights";
+      cust_label=1;
+      desc="load initial weights from a file (specified in weights_file)";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["load_weights"]$;
+      mbr=ProgVar::bool_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value="false";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[11] {
+      user_data_=NULL;
+      label="weights_file";
+      cust_label=1;
+      desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$;
+      mbr=ProgVar::string_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=0;
+       is_single=1;
+       saved_value=;
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[12] {
+      user_data_=NULL;
+      label="load_st_epc";
+      cust_label=1;
+      desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["load_st_epc"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[13] {
+      user_data_=NULL;
+      label="lrs_step_epochs";
+      cust_label=1;
+      desc="learning rate schedule epochs per step of decrease in learning rate";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_step_epochs"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="50";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[14] {
+      user_data_=NULL;
+      label="lrs_n_steps";
+      cust_label=1;
+      desc="number of steps in the learning rate schedule";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_n_steps"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="7";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[15] {
+      user_data_=NULL;
+      label="lrs_bump_step";
+      cust_label=1;
+      desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["lrs_bump_step"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="-1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[16] {
+      user_data_=NULL;
+      label="n_batches";
+      cust_label=1;
+      desc="number of batches to run";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["n_batches"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="1";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+     ControlPanelMember @[17] {
+      user_data_=NULL;
+      label="batch_start";
+      cust_label=1;
+      desc="batch number to start on";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch_start"]$;
+      mbr=ProgVar::int_val;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0";
+       record=1;
+       search=0;
+       range=;
+       notes=;
+      };
+     };
+    };
+    mths {
+     user_data_=NULL;
+     name="mths";
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+   };
   };
   ParamSet_Group @.gp["MiscParams"] {
    user_data_=NULL;
@@ -8549,7 +8959,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     name="MiscMaster";
     cp_state=MASTER;
     updt_while_running=0;
-    desc="default values for all params";
+    desc="default values for all params -- this is a 'master' param set -- make changes here and all others in group will auto-update";
     mbrs {
      user_data_=NULL;
      name="mbrs";
@@ -8569,6 +8979,46 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        is_numeric=1;
        is_single=1;
        saved_value="0.04";
+       record=0;
+       search=0;
+       range="0:1:0.1";
+       notes=;
+      };
+     };
+    };
+    mths {
+     user_data_=NULL;
+     name="mths";
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+   };
+   ParamSet @["MiscConfig1"] {
+    user_data_=NULL;
+    name="MiscConfig1";
+    cp_state=CLONE;
+    updt_while_running=0;
+    desc="another configuration of misc parameters to choose from.. make as many as you need!  this is a 'clone' of the master and will auto-update for any additions or changes to members";
+    mbrs {
+     user_data_=NULL;
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
+      user_data_=NULL;
+      label="leabra_con_spec_0_lrate";
+      cust_label=0;
+      desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
+      cust_desc=0;
+      base=$.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"]$;
+      mbr=LeabraConSpec::lrate;
+      data {
+       user_data_=NULL;
+       ctrl_type=PARAM_SET;
+       is_numeric=1;
+       is_single=1;
+       saved_value="0.02";
        record=0;
        search=0;
        range="0:1:0.1";
@@ -11396,36 +11846,27 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="log_dir";
      arg_name="log_dir";
     };
-    ProgVarFmArg @[6] {
-     user_data_=NULL;
-     desc="starting batch -- replaces b_start";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:batch_start in Program:MasterBatch from Arg:batch_start";
-     prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
-     var_name="batch_start";
-     arg_name="batch_start";
-    };
-    Comment @[7] {
+    Comment @[6] {
      user_data_=NULL;
      desc="add our special args from command line";
      flags=CAN_REVERT_TO_CODE;
      code_string="// add our special args from command line";
     };
-    ControlPanelsFmArgs @[8] {
+    ControlPanelsFmArgs @[7] {
      user_data_=NULL;
-     desc="sets any arg listed in the control panel";
+     desc="sets any arg listed in the control panel -- recursive for linked control panels";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
-    MethodCall @[9] {
+    MethodCall @[8] {
      user_data_=NULL;
      desc="set saved values first, before processing args";
      flags=CAN_REVERT_TO_CODE;
      code_string="run_params.CopySavedToActive()";
      result_var=NULL;
      obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$$;
-     method=ParamSet::CopySavedToActive;
+     method=ParamSet::Activate;
      meth_args {
       user_data_=NULL;
       name="meth_args";
@@ -11445,17 +11886,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     meth_sig="void CopySavedToActive(bool info_msg = false)";
+     meth_sig="void Activate(bool info_msg = false)";
      meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    MethodCall @[10] {
+    MethodCall @[9] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="run_params.CopySavedToActive()";
      result_var=NULL;
      obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$$;
-     method=ParamSet::CopySavedToActive;
+     method=ParamSet::Activate;
      meth_args {
       user_data_=NULL;
       name="meth_args";
@@ -11475,36 +11916,24 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     meth_sig="void CopySavedToActive(bool info_msg = false)";
+     meth_sig="void Activate(bool info_msg = false)";
      meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    ControlPanelsFmArgs @[11] {
+    ControlPanelsFmArgs @[10] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$;
     };
-    ControlPanelsFmArgs @[12] {
+    ControlPanelsFmArgs @[11] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$;
     };
-    Comment @[13] {
-     user_data_=NULL;
-     desc="TODO: Add your program comment here (multi-lines ok).";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="// TODO: Add your program comment here (multi-lines ok).";
-    };
-    Comment @[14] {
-     user_data_=NULL;
-     desc="= Add args to tag name =";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="// = Add args to tag name =";
-    };
-    AssignExpr @[15] {
+    AssignExpr @[12] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11515,13 +11944,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr="\"_\" +  run_params->name + \"_\" + misc_params->name + tag";
      };
     };
-    Comment @[16] {
+    Comment @[13] {
      user_data_=NULL;
      desc="Set log files";
      flags=CAN_REVERT_TO_CODE;
      code_string="// Set log files";
     };
-    If @[17] {
+    If @[14] {
      user_data_=NULL;
      desc="set tag for starting batch (new code in v 8.0)";
      flags=CAN_REVERT_TO_CODE;
@@ -11711,7 +12140,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    Else @[18] {
+    Else @[15] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11824,7 +12253,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    OtherProgramVar @[19] {
+    OtherProgramVar @[16] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11836,13 +12265,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[20] {
+    Comment @[17] {
      user_data_=NULL;
      desc="= Call sub-startup programs =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Call sub-startup programs =";
     };
-    ProgramCallVar @[21] {
+    ProgramCallVar @[18] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11869,7 +12298,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlex"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[22] {
+    PrintExpr @[19] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11880,7 +12309,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      debug=0;
     };
-    ProgramCall @[23] {
+    ProgramCall @[20] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12544,7 +12973,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="run_params.CopySavedToActive()";
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$;
-	method=ParamSet::CopySavedToActive;
+	method=ParamSet::Activate;
 	meth_args {
 	 user_data_=NULL;
 	 name="meth_args";
@@ -12564,7 +12993,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	meth_sig="void CopySavedToActive(bool info_msg = false)";
+	meth_sig="void Activate(bool info_msg = false)";
 	meth_desc=" copy the saved_value values to be active (live) values on the objects";
        };
        MethodCall @[1] {
@@ -12574,7 +13003,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="run_params.CopySavedToActive()";
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
-	method=ParamSet::CopySavedToActive;
+	method=ParamSet::Activate;
 	meth_args {
 	 user_data_=NULL;
 	 name="meth_args";
@@ -12594,7 +13023,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	meth_sig="void CopySavedToActive(bool info_msg = false)";
+	meth_sig="void Activate(bool info_msg = false)";
 	meth_desc=" copy the saved_value values to be active (live) values on the objects";
        };
       };
@@ -31135,7 +31564,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9973447;
+     value 8 0=0.9968119;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -32952,7 +33381,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
