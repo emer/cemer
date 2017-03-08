@@ -34,6 +34,7 @@ bool taXmlStreamReader::SetFile(const String& filename) {
   
   reader.setDevice(&file);
   return true;
-  
+#else
+  return false;
 #endif
 }
