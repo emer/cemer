@@ -77,19 +77,26 @@ public:
 
   cssEl*        parse_css_el;   // #IGNORE css el for parsing
 
-  bool                  schemaChanged(); // true if schema for most recent change differed from prev change
-  void                  Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
+  bool                  schemaChanged();
+  // #IGNORE true if schema for most recent change differed from prev change
+  void                  Cleanup();
+  // #IGNORE we call this after changing value, to cleanup unused
   Program*              program() {return GET_MY_OWNER(Program);}
+  // #IGNORE
 
-  virtual const String  GenCssType() const; // type name
-  virtual const String  GenCssInitVal() const; // intial value
+  virtual const String  GenCssType() const;
+  // #IGNORE type name
+  virtual const String  GenCssInitVal() const;
+  // #IGNORE intial value
 
-  virtual const String  GenCss(bool is_arg = false); // css code (terminated if Var);
+  virtual const String  GenCss(bool is_arg = false);
+  // #IGNORE css code (terminated if Var);
   virtual const String  GenListing(bool is_arg = false, int indent_level = 0) const;
-  // generate listing of program
+  // #IGNORE generate listing of program
   virtual void          GenCssInitFrom(Program* prog);
-  // generate css code to initialize from other variable
-  virtual Program*      GetInitFromProg(); // get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
+  // #IGNORE generate css code to initialize from other variable
+  virtual Program*      GetInitFromProg();
+  // #IGNORE get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
 
   virtual cssEl*        NewCssEl();
   // #IGNORE get a new cssEl of an appropriate type, name/value initialized
@@ -100,37 +107,46 @@ public:
   virtual void          ResetParseStuff();
   // #IGNORE reset all parsing stuff
 
-  virtual void  SetInt(int val); // set variable type to INT and set value
-  virtual void  SetReal(double val);  // set variable type to REAL and set value
-  virtual void  SetString(const String& val);  // set variable type to STRING and set value
-  virtual void  SetBool(bool val);  // set variable type to BOOL and set value
-  virtual void  SetObject(taBase* val); // #DROP1 set variable type to OBJECT and set value
-  virtual void  SetObjectType(TypeDef* obj_typ); // #DROP1 set variable type to OBJECT and set object_type to given value
-  virtual void  SetHardEnum(TypeDef* enum_type, int val); // set variable type to HARD_ENUM and set value
-  virtual void  SetDynEnum(int val);  // set variable type to DYN_ENUM and set value
-  virtual void  SetDynEnumName(const String& val); //  // set variable type to DYN_ENUM and set value
+  virtual void  SetInt(int val);
+  // #CAT_ProgVar set variable type to INT and set value
+  virtual void  SetReal(double val);
+  // #CAT_ProgVar set variable type to REAL and set value
+  virtual void  SetString(const String& val);
+  // #CAT_ProgVar set variable type to STRING and set value
+  virtual void  SetBool(bool val);
+  // #CAT_ProgVar set variable type to BOOL and set value
+  virtual void  SetObject(taBase* val);
+  // #CAT_ProgVar #DROP1 set variable type to OBJECT and set value
+  virtual void  SetObjectType(TypeDef* obj_typ);
+  // #CAT_ProgVar #DROP1 set variable type to OBJECT and set object_type to given value
+  virtual void  SetHardEnum(TypeDef* enum_type, int val);
+  // #CAT_ProgVar set variable type to HARD_ENUM and set value
+  virtual void  SetDynEnum(int val);
+  // #CAT_ProgVar set variable type to DYN_ENUM and set value
+  virtual void  SetDynEnumName(const String& val);
+  // #CAT_ProgVar set variable type to DYN_ENUM and set value
 
   virtual void  SetVar(const Variant& value);
-  // set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
+  // #CAT_ProgVar set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
   virtual Variant GetVar();
-  // get value as a variant value -- for hard-code use of the variable value
+  // #CAT_ProgVar get value as a variant value -- for hard-code use of the variable value
 
   virtual void   SetValFromString(const String& str_val);
-  // set variable value from string -- does not change the type of the variable
+  // #CAT_ProgVar set variable value from string -- does not change the type of the variable
   virtual String GetStringVal();
-  // get value of variable as a string
+  // #CAT_ProgVar get value of variable as a string
 
   static TypeDef* GetTypeDefFromString(const String& tstr, bool& ref);
-  // get a typedef from a type string -- also indicates if it is a reference arg
+  // #IGNORE get a typedef from a type string -- also indicates if it is a reference arg
   static VarType  GetTypeFromTypeDef(TypeDef* td);
-  // get appropriate variable type to hold given type, from typedef
+  // #IGNORE get appropriate variable type to hold given type, from typedef
   virtual bool    SetTypeFromTypeDef(TypeDef* td, bool ref = false);
-  // set the var type from a typedef (if a FUN_ARG, also sets reference from ref)
+  // #IGNORE set the var type from a typedef (if a FUN_ARG, also sets reference from ref)
   virtual bool    SetTypeAndName(const String& type_name);
-  // set the var type from and name from a combined 'type name' string
+  // #IGNORE set the var type from and name from a combined 'type name' string
   
   void            ToggleSaveVal();
-  // #CAT_ObjectMgmt #MENU_CONTEXT #DYN1 toggle the value of the SAVE_VAL flag
+  // #CAT_ProgVar #MENU_CONTEXT #DYN1 toggle the value of the SAVE_VAL flag
   
   ProgVar* operator=(const Variant& value);
 
@@ -145,40 +161,47 @@ public:
   String GetColText(const KeyString& key, int itm_idx = -1) const override;
   String GetToolbarName() const override { return "variable"; }
 
-  virtual TypeDef*      act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
+  virtual TypeDef*      act_object_type() const;
+  // #IGNORE the actual object type; never NULL (taBase min)
   virtual MemberDef*    GetValMemberDef();
   // #IGNORE get member def that represents the value for this type of variable
 
   inline void           SetVarFlag(VarFlags flg)   { flags = (VarFlags)(flags | flg); }
-  // set flag state on
+  // #CAT_ProgVar set flag state on
   inline void           ClearVarFlag(VarFlags flg) { flags = (VarFlags)(flags & ~flg); }
-  // clear flag state (set off)
+  // #CAT_ProgVar clear flag state (set off)
   inline bool           HasVarFlag(VarFlags flg) const { return (flags & flg); }
-  // check if flag is set
+  // #CAT_ProgVar check if flag is set
   inline void           SetVarFlagState(VarFlags flg, bool on)
   { if(on) SetVarFlag(flg); else ClearVarFlag(flg); }
-  // set flag state according to on bool (if true, set flag, if false, clear it)
+  // #CAT_ProgVar set flag state according to on bool (if true, set flag, if false, clear it)
 
   inline bool   IsLocal() const { return HasVarFlag(LOCAL_VAR); }
-  // is this a local variable (i.e., not in program args or vars)
+  // #IGNORE is this a local variable (i.e., not in program args or vars)
   
   inline void   CtrlPanel()     { SetVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY); }
+  // #IGNORE 
   inline void   NoCtrlPanel()   { ClearVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY);}
+  // #IGNORE 
   inline void   CtrlReadOnly()  { SetVarFlag(CTRL_PANEL); SetVarFlag(CTRL_READ_ONLY); }
+  // #IGNORE 
   inline void   NoCtrlReadOnly() { ClearVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY); }
+  // #IGNORE 
 
   // these are for the program control panel not a project level control panel
   inline void   ShowInCtrlPanelEditable()   { CtrlPanel(); }
-  // #MENU #DYN1 #CAT_Display show this variable in the program control panel - make editable
+  // #MENU #DYN1 #CAT_ProgVar show this variable in the program control panel - make editable
   inline void   ShowInCtrlPanelReadOnly()   { CtrlReadOnly(); }
-  // #MENU #DYN1 #CAT_Display #GHOST_ON_flags:CTRL_READ_ONLY show variable in the program control panel - make readonly
+  // #MENU #DYN1 #CAT_ProgVar #GHOST_ON_flags:CTRL_READ_ONLY show variable in the program control panel - make readonly
   inline void   HideInCtrlPanel()      { NoCtrlPanel(); }
-  // #MENU #DYN1 #CAT_Display #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY do not show this variable in the program the control panel
+  // #MENU #DYN1 #CAT_ProgVar #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY do not show this variable in the program the control panel
   virtual void  RenameToObj();
   // #MENU #DYN1 #CAT_ProgVar #GHOST_OFF_var_type:Object* rename variable based on the name of the object that this variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
 
+  virtual void  AddVarToControlPanel(ControlPanel* ctrl_panel, bool short_label = true);
+  // #MENU #DYN1 #CAT_ProgVar add variable to control panel -- can add multiple variables at once -- use this to automatically add the correct data for each variable type -- short_label just uses the name of the variable -- otherwise prepends name of program
   bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) override;
-  // Leave member as NULL for default
+  // select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use -- Leave member as NULL for default
   
   virtual void          SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
@@ -190,7 +213,7 @@ public:
   // #IGNORE update cssSmartRef if we are a non-local object pointer
 
   virtual ProgVar*      GetInitFromVar(bool warn = true);
-  // get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
+  // #CAT_ProgVar get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
 
   taObjDiffRec*  GetObjDiffRec
     (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
