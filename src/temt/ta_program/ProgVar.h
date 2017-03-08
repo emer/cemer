@@ -96,7 +96,7 @@ public:
   virtual void          GenCssInitFrom(Program* prog);
   // #IGNORE generate css code to initialize from other variable
   virtual Program*      GetInitFromProg();
-  // #IGNORE get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
+  // #CAT_ProgVar get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
 
   virtual cssEl*        NewCssEl();
   // #IGNORE get a new cssEl of an appropriate type, name/value initialized

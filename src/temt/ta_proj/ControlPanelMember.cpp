@@ -19,6 +19,8 @@
 #include <ControlPanel>
 #include <ParamSet>
 #include <ClusterRun>
+#include <taObjDiffRec>
+#include <taObjDiff_List>
 
 #include <taMisc>
 
@@ -259,7 +261,7 @@ String ControlPanelMember::GetColText(const KeyString& key, int itm_idx) const {
   else return inherited::GetColText(key, itm_idx);
 }
 
-String ControlPanelMember::CurValAsString() {
+String ControlPanelMember::CurValAsString() const {
   if(!mbr) return _nilString;
   
   if(base && base->InheritsFrom(&TA_DynEnum)) {
@@ -337,7 +339,7 @@ bool ControlPanelMember::RecordValue() {
   }
 }
 
-bool ControlPanelMember::IsControlPanelPointer() {
+bool ControlPanelMember::IsControlPanelPointer() const {
   if(!base) return false;
   TypeDef* mbr_td = mbr->type;
   if(mbr_td->IsBasePointerType()) {
@@ -353,7 +355,7 @@ bool ControlPanelMember::IsControlPanelPointer() {
   return false;
 }
 
-ControlPanel* ControlPanelMember::GetControlPanelPointer() {
+ControlPanel* ControlPanelMember::GetControlPanelPointer() const {
   if(!base) return NULL;
   TypeDef* mbr_td = mbr->type;
   if(mbr_td->IsBasePointerType()) {
@@ -367,5 +369,35 @@ ControlPanel* ControlPanelMember::GetControlPanelPointer() {
     }
   }
   return NULL;
+}
+
+taObjDiffRec* ControlPanelMember::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+                                    const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
+                                       (void*)par, par_typ, par_od);
+  odl.Add(odr);
+  if(GetOwner()) {
+    odr->tabref = new taBaseRef;
+    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+  }
+  // do NOT do sub-classes -- only the main obj -- uses listing text!
+  // GetTypeDef()->GetObjDiffRec_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+  return odr;
+}
+
+void ControlPanelMember::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) const {
+  if(ptr) {
+    inherited::GetObjDiffValue(rec, odl, ptr);
+    return;
+  }
+  else {
+    if(IsParamSet()) {
+      rec->value = data.saved_value;
+    }
+    else {
+      rec->value = CurValAsString();
+    }
+  }
 }
 

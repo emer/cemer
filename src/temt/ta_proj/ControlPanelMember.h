@@ -125,7 +125,7 @@ public:
   
   TypeItem*    typeItem() const override {return mbr;} // the mbr or mth
 
-  virtual String        CurValAsString();
+  virtual String        CurValAsString() const;
   // #CAT_CtrlPanel get current value of item, as a string -- not subject to validity for parameter searching
   virtual bool          SetCurVal(const Variant& cur_val);
   // #CAT_CtrlPanel set current value of item from a variant
@@ -133,10 +133,15 @@ public:
                                           bool info_msg = false);
   // #CAT_CtrlPanel set current value of item from a string, optionally warning if string rep of value does not match the value passed in (possibly indicating an error in the string, such as a bad enum value) -- if info_msg is true, then an message is emitted about this value being set
 
-  virtual void          CopyActiveToSaved();
+  void                  SaveActive() { CopyActiveToSaved(); }
   // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the current active (live) values on the objects to the saved values
-  virtual void          CopySavedToActive();
+  void                  Activate() { CopySavedToActive(); }
   // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the save_value to be active (live) values on the objects
+  
+  virtual void          CopyActiveToSaved();
+  // #CAT_CtrlPanel for ParamSet elements: copy the current active (live) values on the objects to the saved values
+  virtual void          CopySavedToActive();
+  // #CAT_CtrlPanel for ParamSet elements: copy the save_value to be active (live) values on the objects
 
   virtual bool          RecordValue();
   // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued members are so recorded
@@ -144,21 +149,26 @@ public:
   inline void           SetCtrlType()   { data.SetCtrlType(); }
   // #CAT_CtrlPanel update the ctrl_type based on owner type
 
-  inline bool           IsControl()
+  inline bool           IsControl() const
   { return data.ctrl_type == ControlPanelMemberData::CONTROL; }
   // #CAT_CtrlPanel is this a member of a ControlPanel
-  inline bool           IsParamSet()
+  inline bool           IsParamSet() const
   { return data.ctrl_type == ControlPanelMemberData::PARAM_SET; }
   // #CAT_CtrlPanel is this a member of a ParamSet
-  inline bool           IsClusterRun()
+  inline bool           IsClusterRun() const
   { return data.ctrl_type == ControlPanelMemberData::CLUSTER_RUN; }
   // #CAT_CtrlPanel is this a member of a ClusterRun
 
-  virtual bool          IsControlPanelPointer();
+  virtual bool          IsControlPanelPointer() const;
   // #CAT_CtrlPanel is this member a pointer to another control panel?
-  virtual ControlPanel* GetControlPanelPointer();
+  virtual ControlPanel* GetControlPanelPointer() const;
   // #CAT_CtrlPanel if this is a control panel pointer, return the current control panel we point to
 
+  taObjDiffRec*  GetObjDiffRec
+    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
+     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
+    const override;
   
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMember);

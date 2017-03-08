@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10517
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10522
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -420,7 +420,7 @@ LeabraProject .projects["LeabraFlex"] {
 
  ParamSet_Group @.param_sets = [0] {
   ParamSet_Group @.gp["RunParams"] = [1] { 
-   ParamSet @["BasicTrain"] { 
+   ParamSet @["RunMaster"] { 
     ControlPanelMember_Group @.mbrs = [18] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
@@ -447,7 +447,7 @@ LeabraProject .projects["LeabraFlex"] {
    };
   };
   ParamSet_Group @.gp["MiscParams"] = [1] { 
-   ParamSet @["MiscDefaults"] { 
+   ParamSet @["MiscMaster"] { 
     ControlPanelMember_Group @.mbrs = [1] {
      ControlPanelMember @[0] { };
     };
@@ -1041,13 +1041,8 @@ LeabraProject .projects["LeabraFlex"] {
      ProgEl_List @.init_code = [0] {
      };
 
-     ProgEl_List @.prog_code = [5] {
+     ProgEl_List @.prog_code = [4] {
       ProgramCall @[0] { 
-       ProgArg_List @.prog_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      ProgramCall @[1] { 
        ProgArg_List @.prog_args = [5] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -1056,17 +1051,17 @@ LeabraProject .projects["LeabraFlex"] {
 	ProgArg @[4] { };
        };
       };
-      ProgramCall @[2] { 
+      ProgramCall @[1] { 
        ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
        };
       };
-      If @[3] { 
+      If @[2] { 
        ProgEl_List @.true_code = [1] {
 	MemberAssign @[0] { };
        };
       };
-      Else @[4] { 
+      Else @[3] { 
        ProgEl_List @.true_code = [1] {
 	MemberAssign @[0] { };
        };
@@ -1091,8 +1086,8 @@ LeabraProject .projects["LeabraFlex"] {
      };
 
      ProgVar_List @.vars = [5] {
-      ProgVar @["trials_per_epoch_eff"] { };
       ProgVar @["train_epochs"] { };
+      ProgVar @["trials_per_epoch_eff"] { };
       ProgVar @["test_interval"] { };
       ProgVar @["update_net_view"] { };
       ProgVar @["StdInputData"] { };
@@ -1727,50 +1722,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
   };
-  Program_Group @.gp["UtilProgs"] = [17] { 
-   Program @["StdGlobalsInit"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @["DocLink"] { };
-    };
-
-    ProgObjList @.objs = [0] {
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [1] {
-     ProgVar @["network"] { };
-    };
-
-    ProgVar_List @.vars = [5] {
-     ProgVar @["train_epochs"] { };
-     ProgVar @["trials_per_epoch"] { };
-     ProgVar @["trials_per_epoch_eff"] { };
-     ProgVar @["test_run"] { };
-     ProgVar @["test_interval"] { };
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [2] {
-     AssignExpr @[0] { };
-     If @[1] { 
-      ProgEl_List @.true_code = [2] {
-       AssignExpr @[0] { };
-       If @[1] { 
-	ProgEl_List @.true_code = [1] {
-	 VarIncr @[0] { };
-	};
-       };
-      };
-     };
-    };
-   };
+  Program_Group @.gp["UtilProgs"] = [16] { 
    Program @["BatchRndSeed"] { 
     UserDataItem_List @*(.user_data_) {
      UserData_DocLink @["DocLink"] { };
@@ -2576,7 +2528,8 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [14] {
+     ProgVar @["dmem_rnd_seed"] { };
      ProgVar @["load_weights"] { };
      ProgVar @["weights_file"] { };
      ProgVar @["load_st_epc"] { };
@@ -2584,23 +2537,53 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["lrs_n_steps"] { };
      ProgVar @["lrs_bump_step"] { };
      ProgVar @["LRSConSpec"] { };
-     ProgVar @["dmem_rnd_seed"] { };
      ProgVar @["dmem_new_seed"] { };
+     ProgVar @["train_epochs"] { };
+     ProgVar @["trials_per_epoch"] { };
+     ProgVar @["trials_per_epoch_eff"] { };
+     ProgVar @["test_run"] { };
+     ProgVar @["test_interval"] { };
     };
 
-    Function_List @.functions = [0] {
+    Function_List @.functions = [1] {
+     Function @["DMemSafeTrialsPerEpoch"] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       AssignExpr @[1] { };
+       If @[2] { 
+	ProgEl_List @.true_code = [2] {
+	 AssignExpr @[0] { };
+	 If @[1] { 
+	  ProgEl_List @.true_code = [1] {
+	   VarIncr @[0] { };
+	  };
+	 };
+	};
+       };
+      };
+     };
     };
 
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [9] {
-     ProgramCall @[0] { 
+    ProgEl_List @.prog_code = [10] {
+     FunctionCall @[0] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+     };
+     ProgramCall @[1] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     If @[1] { 
+     If @[2] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -2608,7 +2591,7 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     If @[2] { 
+     If @[3] { 
       ProgEl_List @.true_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -2617,12 +2600,12 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     MethodCall @[3] { 
+     MethodCall @[4] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[4] { };
-     If @[5] { 
+     PrintExpr @[5] { };
+     If @[6] { 
       ProgEl_List @.true_code = [3] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [2] {
@@ -2638,14 +2621,14 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     MethodCall @[6] { 
+     MethodCall @[7] { 
       ProgArg_List @.meth_args = [3] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
       };
      };
-     If @[7] { 
+     If @[8] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -2653,7 +2636,7 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     ProgramCall @[8] { 
+     ProgramCall @[9] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
@@ -4391,6 +4374,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
   name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
+  master_and_clones=0;
   ClusterRun @["ClusterRun"] {
    UserDataItem_List @*(.user_data_) {
     user_data_=NULL;
@@ -4405,6 +4389,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     };
    };
    name="ClusterRun";
+   cp_state=REGULAR;
    updt_while_running=0;
    desc=;
    mbrs {
@@ -7966,6 +7951,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     };
    };
    name="ControlPanel";
+   cp_state=REGULAR;
    updt_while_running=0;
    desc="main control panel for the system";
    mbrs {
@@ -8164,14 +8150,17 @@ leabra flex using param sets experiment project -- updated by randy from John's 
   name="param_sets";
   el_typ=ParamSet;
   el_def=0;
+  master_and_clones=0;
   ParamSet_Group @.gp["RunParams"] {
    user_data_=NULL;
    name="RunParams";
    el_typ=ParamSet;
    el_def=0;
-   ParamSet @["BasicTrain"] {
+   master_and_clones=1;
+   ParamSet @["RunMaster"] {
     user_data_=NULL;
-    name="BasicTrain";
+    name="RunMaster";
+    cp_state=MASTER;
     updt_while_running=0;
     desc="basic training parameters";
     mbrs {
@@ -8245,7 +8234,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=1;
       desc="number of epochs to train network for";
       cust_desc=0;
-      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$$;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["train_epochs"]$$;
       mbr=ProgVar::int_val;
       data {
        user_data_=NULL;
@@ -8265,7 +8254,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=1;
       desc="number of trials per epoch";
       cust_desc=0;
-      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["trials_per_epoch"]$$;
       mbr=ProgVar::int_val;
       data {
        user_data_=NULL;
@@ -8325,7 +8314,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=1;
       desc="is this a testing-only run, no training?";
       cust_desc=0;
-      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_run"]$$;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["test_run"]$$;
       mbr=ProgVar::bool_val;
       data {
        user_data_=NULL;
@@ -8345,7 +8334,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=1;
       desc="how frequently (epochs) to run a test during training";
       cust_desc=0;
-      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$$;
+      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["test_interval"]$$;
       mbr=ProgVar::int_val;
       data {
        user_data_=NULL;
@@ -8554,9 +8543,11 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    name="MiscParams";
    el_typ=ParamSet;
    el_def=0;
-   ParamSet @["MiscDefaults"] {
+   master_and_clones=1;
+   ParamSet @["MiscMaster"] {
     user_data_=NULL;
-    name="MiscDefaults";
+    name="MiscMaster";
+    cp_state=MASTER;
     updt_while_running=0;
     desc="default values for all params";
     mbrs {
@@ -11316,7 +11307,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="run_params";
      var_type=T_Object;
      object_type=ParamSet;
-     object_val=.projects["LeabraFlex"].param_sets.gp["RunParams"]["BasicTrain"]$$;
+     object_val=.projects["LeabraFlex"].param_sets.gp["RunParams"]["RunMaster"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
      reference=0;
@@ -11328,7 +11319,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="misc_params";
      var_type=T_Object;
      object_type=ParamSet;
-     object_val=.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscDefaults"]$$;
+     object_val=.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscMaster"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
      reference=0;
@@ -12413,7 +12404,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].param_sets.gp["RunParams"]["BasicTrain"]$;
+      object_val=$.projects["LeabraFlex"].param_sets.gp["RunParams"]["RunMaster"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12425,7 +12416,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="misc_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscDefaults"]$;
+      object_val=$.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscMaster"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12806,9 +12797,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc="name of run program from the Config table";
+      desc="name of run program";
       init_from=NULL;
      };
     };
@@ -13166,7 +13157,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc="is this a testing-only run, no training?";
-       init_from=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$$;
+       init_from=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"]$$;
       };
      };
      functions {
@@ -13187,33 +13178,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_typ=ProgCode;
       el_def=0;
       ProgramCall @[0] {
-       user_data_=NULL;
-       desc="always do std globals init";
-       flags=CAN_REVERT_TO_CODE;
-       code_string="StdGlobalsInit(network, config_id)";
-       prog_args {
-	user_data_=NULL;
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 user_data_=NULL;
-	 arg_type=LeabraNetwork;
-	 type="LeabraNetwork*";
-	 name="network";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  user_data_=NULL;
-	  expr="network";
-	 };
-	};
-       };
-       target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
-       targ_ld_init="*StdGlobalsInit*";
-      };
-      ProgramCall @[1] {
        user_data_=NULL;
        desc="get rid of all non-essential layers";
        flags=CAN_REVERT_TO_CODE;
@@ -13292,7 +13256,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"]$$;
        targ_ld_init="*ConfigNetwork*";
       };
-      ProgramCall @[2] {
+      ProgramCall @[1] {
        user_data_=NULL;
        desc="standard init of training";
        flags=CAN_REVERT_TO_CODE;
@@ -13316,10 +13280,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
        };
-       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"]$$;
+       target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"]$;
        targ_ld_init="*TrainStart*";
       };
-      If @[3] {
+      If @[2] {
        user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
@@ -13348,7 +13312,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      Else @[4] {
+      Else @[3] {
        user_data_=NULL;
        desc=;
        flags=CAN_REVERT_TO_CODE;
@@ -13466,16 +13430,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="vars";
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @["trials_per_epoch_eff"] {
-       user_data_=NULL;
-       name="trials_per_epoch_eff";
-       var_type=T_Int;
-       int_val=50;
-       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
-       reference=0;
-       desc=;
-       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
-      };
       ProgVar @["train_epochs"] {
        user_data_=NULL;
        name="train_epochs";
@@ -13484,7 +13438,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
-       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"]$;
+      };
+      ProgVar @["trials_per_epoch_eff"] {
+       user_data_=NULL;
+       name="trials_per_epoch_eff";
+       var_type=T_Int;
+       int_val=50;
+       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+       reference=0;
+       desc=;
+       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"]$;
       };
       ProgVar @["test_interval"] {
        user_data_=NULL;
@@ -13494,7 +13458,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
-       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
+       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"]$;
       };
       ProgVar @["update_net_view"] {
        user_data_=NULL;
@@ -13866,7 +13830,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3119: sys=400: tot=148864523882: }: end={usr=3125: sys=400: tot=148864523891: }: used={usr=332: sys=16: tot=441: }: s_used=4.41: n_used=50: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=8592: sys=464: tot=148898725667: }: end={usr=8592: sys=464: tot=148898725667: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -14426,7 +14390,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3141: sys=401: tot=148864523913: }: end={usr=3141: sys=401: tot=148864523912: }: used={usr=56: sys=4: tot=71: }: s_used=0.71: n_used=8: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=8564: sys=463: tot=148898725636: }: end={usr=8566: sys=463: tot=148898725638: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -14976,7 +14940,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     author="Randall C. O'Reilly";
     email="emergent-users@grey.colorado.edu";
-    flags=2;
+    flags=NO_STOP_STEP;
     stop_step_cond {
      user_data_=NULL;
      expr=;
@@ -15044,7 +15008,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="trial";
       var_type=T_Int;
-      int_val=2;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -15076,7 +15040,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="data_loop_index";
       var_type=T_Int;
-      int_val=2;
+      int_val=6;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -15478,7 +15442,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cur_idx";
       var_type=T_Int;
-      int_val=4;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -15488,7 +15452,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=5;
+      int_val=2;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -16746,219 +16710,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    tags="basic utility programs for doing basic operations shared across multiple programs";
    desc=;
    debug_mode=0;
-   Program @["StdGlobalsInit"] {
-    UserDataItem_List @*(.user_data_) {
-     user_data_=NULL;
-     name=;
-     el_typ=UserData_DocLink;
-     el_def=0;
-     UserData_DocLink @["DocLink"] {
-      user_data_=NULL;
-      name="DocLink";
-      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].doc$$;
-     };
-    };
-    name="StdGlobalsInit";
-    short_nm="GlobInit";
-    tags=;
-    desc="initialize standard global params, which live here too -- set other programs to init_from these guys";
-    version {
-     user_data_=NULL;
-     major=0;
-     minor=0;
-     step=0;
-    };
-    author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
-    flags=NO_STOP_STEP;
-    stop_step_cond {
-     user_data_=NULL;
-     expr=;
-    };
-    objs {
-     user_data_=NULL;
-     name="objs";
-     el_typ=taNBase;
-     el_def=0;
-    };
-    types {
-     user_data_=NULL;
-     name="types";
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     user_data_=NULL;
-     name="args";
-     el_typ=ProgVar;
-     el_def=0;
-     ProgVar @["network"] {
-      user_data_=NULL;
-      name="network";
-      var_type=T_Object;
-      object_type=LeabraNetwork;
-      object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
-      reference=0;
-      desc="network to operate on -- updates batch counter on network and passes it to train program";
-      init_from=NULL;
-     };
-    };
-    vars {
-     user_data_=NULL;
-     name="vars";
-     el_typ=ProgVar;
-     el_def=0;
-     ProgVar @["train_epochs"] {
-      user_data_=NULL;
-      name="train_epochs";
-      var_type=T_Int;
-      int_val=50;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc="number of epochs to train network for";
-      init_from=NULL;
-     };
-     ProgVar @["trials_per_epoch"] {
-      user_data_=NULL;
-      name="trials_per_epoch";
-      var_type=T_Int;
-      int_val=50;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="number of trials per epoch";
-      init_from=NULL;
-     };
-     ProgVar @["trials_per_epoch_eff"] {
-      user_data_=NULL;
-      name="trials_per_epoch_eff";
-      var_type=T_Int;
-      int_val=50;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="effective value, taking into account number of MPI processors";
-      init_from=NULL;
-     };
-     ProgVar @["test_run"] {
-      user_data_=NULL;
-      name="test_run";
-      var_type=T_Bool;
-      bool_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc="is this a testing-only run, no training?";
-      init_from=NULL;
-     };
-     ProgVar @["test_interval"] {
-      user_data_=NULL;
-      name="test_interval";
-      var_type=T_Int;
-      int_val=1;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc="how frequently (epochs) to run a test during training";
-      init_from=NULL;
-     };
-    };
-    functions {
-     user_data_=NULL;
-     name="functions";
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     user_data_=NULL;
-     name="init_code";
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     user_data_=NULL;
-     name="prog_code";
-     el_typ=ProgCode;
-     el_def=0;
-     AssignExpr @[0] {
-      user_data_=NULL;
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="trials_per_epoch_orig = trials_per_epoch";
-      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_eff"]$$;
-      expr {
-       user_data_=NULL;
-       expr="trials_per_epoch";
-      };
-     };
-     If @[1] {
-      user_data_=NULL;
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="if (taMisc::dmem_nprocs > 1)";
-      cond {
-       user_data_=NULL;
-       expr="taMisc::dmem_nprocs > 1";
-      };
-      true_code {
-       user_data_=NULL;
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       AssignExpr @[0] {
-	user_data_=NULL;
-	desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
-	flags=CAN_REVERT_TO_CODE;
-	code_string="trials_per_epoch = trials_per_epoch / taMisc::dmem_nprocs";
-	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_eff"]$;
-	expr {
-	 user_data_=NULL;
-	 expr="trials_per_epoch / taMisc::dmem_nprocs";
-	};
-       };
-       If @[1] {
-	user_data_=NULL;
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="if (trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig)";
-	cond {
-	 user_data_=NULL;
-	 expr="trials_per_epoch_eff * taMisc::dmem_nprocs < trials_per_epoch";
-	};
-	true_code {
-	 user_data_=NULL;
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	 VarIncr @[0] {
-	  user_data_=NULL;
-	  desc="round up..";
-	  flags=CAN_REVERT_TO_CODE;
-	  code_string="trials_per_epoch += 1";
-	  var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_eff"]$;
-	  expr {
-	   user_data_=NULL;
-	   expr="1";
-	  };
-	 };
-	};
-       };
-      };
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-    doc {
-     user_data_=NULL;
-     name="doc";
-     desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
-     text_size=1;
-     text=;
-     html_text=;
-    };
-   };
    Program @["BatchRndSeed"] {
     UserDataItem_List @*(.user_data_) {
      user_data_=NULL;
@@ -21924,6 +21675,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @["dmem_rnd_seed"] {
+      user_data_=NULL;
+      name="dmem_rnd_seed";
+      var_type=T_Object;
+      object_type=RndSeed;
+      object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].objs["dmem_rnd_seed"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
      ProgVar @["load_weights"] {
       user_data_=NULL;
       name="load_weights";
@@ -21996,18 +21759,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-     ProgVar @["dmem_rnd_seed"] {
-      user_data_=NULL;
-      name="dmem_rnd_seed";
-      var_type=T_Object;
-      object_type=RndSeed;
-      object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].objs["dmem_rnd_seed"]$$;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
      ProgVar @["dmem_new_seed"] {
       user_data_=NULL;
       name="dmem_new_seed";
@@ -22018,12 +21769,160 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="when running under dmem (MPI), generate a new random seed for each node after common initialization, to cause each node to have different random events, etc.   It is now possible to add taMisc::dmem_proc to the thr_no args to any random functions, and achieve fully reproducible results without this randomization.";
       init_from=NULL;
      };
+     ProgVar @["train_epochs"] {
+      user_data_=NULL;
+      name="train_epochs";
+      var_type=T_Int;
+      int_val=50;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="number of epochs to train network for";
+      init_from=NULL;
+     };
+     ProgVar @["trials_per_epoch"] {
+      user_data_=NULL;
+      name="trials_per_epoch";
+      var_type=T_Int;
+      int_val=50;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of trials per epoch";
+      init_from=NULL;
+     };
+     ProgVar @["trials_per_epoch_eff"] {
+      user_data_=NULL;
+      name="trials_per_epoch_eff";
+      var_type=T_Int;
+      int_val=50;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="effective value, taking into account number of MPI processors";
+      init_from=NULL;
+     };
+     ProgVar @["test_run"] {
+      user_data_=NULL;
+      name="test_run";
+      var_type=T_Bool;
+      bool_val=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="is this a testing-only run, no training?";
+      init_from=NULL;
+     };
+     ProgVar @["test_interval"] {
+      user_data_=NULL;
+      name="test_interval";
+      var_type=T_Int;
+      int_val=1;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="how frequently (epochs) to run a test during training";
+      init_from=NULL;
+     };
     };
     functions {
      user_data_=NULL;
      name="functions";
      el_typ=Function;
      el_def=0;
+     Function @["DMemSafeTrialsPerEpoch"] {
+      user_data_=NULL;
+      desc=;
+      flags=NEW_EL;
+      code_string=;
+      name="DMemSafeTrialsPerEpoch";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       user_data_=NULL;
+       name="ProgVar_List_1";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       user_data_=NULL;
+       name="ProgEl_List_295";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	user_data_=NULL;
+	desc=;
+	flags=0;
+	code_string=;
+	local_vars {
+	 user_data_=NULL;
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       AssignExpr @[1] {
+	user_data_=NULL;
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="trials_per_epoch_orig = trials_per_epoch";
+	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["trials_per_epoch_eff"]$$;
+	expr {
+	 user_data_=NULL;
+	 expr="trials_per_epoch";
+	};
+       };
+       If @[2] {
+	user_data_=NULL;
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="if (taMisc::dmem_nprocs > 1)";
+	cond {
+	 user_data_=NULL;
+	 expr="taMisc::dmem_nprocs > 1";
+	};
+	true_code {
+	 user_data_=NULL;
+	 name=;
+	 el_typ=ProgCode;
+	 el_def=0;
+	 AssignExpr @[0] {
+	  user_data_=NULL;
+	  desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="trials_per_epoch = trials_per_epoch / taMisc::dmem_nprocs";
+	  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["trials_per_epoch_eff"]$;
+	  expr {
+	   user_data_=NULL;
+	   expr="trials_per_epoch / taMisc::dmem_nprocs";
+	  };
+	 };
+	 If @[1] {
+	  user_data_=NULL;
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig)";
+	  cond {
+	   user_data_=NULL;
+	   expr="trials_per_epoch_eff * taMisc::dmem_nprocs < trials_per_epoch";
+	  };
+	  true_code {
+	   user_data_=NULL;
+	   name=;
+	   el_typ=ProgCode;
+	   el_def=0;
+	   VarIncr @[0] {
+	    user_data_=NULL;
+	    desc="round up..";
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="trials_per_epoch += 1";
+	    var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["trials_per_epoch_eff"]$;
+	    expr {
+	     user_data_=NULL;
+	     expr="1";
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
     };
     init_code {
      user_data_=NULL;
@@ -22036,7 +21935,21 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     ProgramCall @[0] {
+     FunctionCall @[0] {
+      user_data_=NULL;
+      desc=;
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="DMemSafeTrialsPerEpoch()";
+      result_var=NULL;
+      fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].functions["DMemSafeTrialsPerEpoch"]$$;
+      fun_args {
+       user_data_=NULL;
+       name="fun_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     ProgramCall @[1] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -22063,7 +21976,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["BatchRndSeed"]$$;
       targ_ld_init="*BatchRndSeed*";
      };
-     If @[1] {
+     If @[2] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -22096,7 +22009,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     If @[2] {
+     If @[3] {
       user_data_=NULL;
       desc="save log files for background, non-interactive jobs -- after network is fully configured and built";
       flags=CAN_REVERT_TO_CODE;
@@ -22139,7 +22052,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       user_data_=NULL;
       desc="initialize network weights: could also load pre-set weights or something else here";
       flags=CAN_REVERT_TO_CODE;
@@ -22156,7 +22069,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void Init_Weights()";
       meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
-     PrintExpr @[4] {
+     PrintExpr @[5] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -22167,7 +22080,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       debug=0;
      };
-     If @[5] {
+     If @[6] {
       user_data_=NULL;
       desc="Load  weights if file is specified";
       flags=CAN_REVERT_TO_CODE;
@@ -22269,7 +22182,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -22325,7 +22238,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void LogLrateSched(int epcs_per_step = 50, int n_steps = 5, int bump_step = -1)";
       meth_desc=" establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks -- if bump_step > 0 (3 is a good default), the lrate bumps back up to 1 and back down to that step level, and then proceeds from there -- this can pop a model out of a local minimum and result in better final performance";
      };
-     If @[7] {
+     If @[8] {
       user_data_=NULL;
       desc="if dmem, then from here on out, processors diverge so that lists of objs per processor are different!";
       flags=CAN_REVERT_TO_CODE;
@@ -22358,7 +22271,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     ProgramCall @[8] {
+     ProgramCall @[9] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -24022,7 +23935,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cycle";
       var_type=T_Int;
-      int_val=50;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -26347,7 +26260,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -27922,7 +27835,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -29482,7 +29395,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -30860,7 +30773,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31222,7 +31135,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9978746;
+     value 8 0=0.9973447;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33039,7 +32952,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -33076,7 +32989,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].param_seqs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";
