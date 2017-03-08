@@ -311,8 +311,7 @@ class E_API LeabraLayStats : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         hog_thr;           // #MIN_0 #MAX_1 #DEF_0.3;0.2 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
-  float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
-
+  float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), below which the unit is considered to be inactive and not participating
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
