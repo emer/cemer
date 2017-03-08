@@ -22,7 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class DataTable; // 
+class DataTable; //
+class ParamSet_Group; //
 
 // Note: object operations per se don't affect Program::stale, but
 // they will indirectly to the extent that adding/removing them
@@ -37,6 +38,8 @@ public:
 
   virtual DataTable* NewDataTable(int n_tables = 1);
   // #BUTTON make new DataTable object(s) for local use in Program
+  virtual ParamSet_Group* NewParamSet_Group();
+  // #BUTTON #CONFIRM make new ParamSet_Group to hold ParamSet's to manage collections of different variables for this Program -- can call ActivateParamSet on the group to activate different collections of variable values by the name of the ParamSet -- makes it easier to manage complex configurations compared to setting parameters individually
   virtual DataTable* OneNewTable();
   // #EXPERT goofy callback for ChooseNew callback
 

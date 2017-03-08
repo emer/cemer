@@ -90,6 +90,16 @@ void ControlPanel::UpdateAfterMove_impl(taBase* old_owner) {
   RemoveNullItems();
 }
 
+void ControlPanel::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ControlPanel);
+  if(!taMisc::is_loading) {
+    ControlPanel_Group* gp = GET_MY_OWNER(ControlPanel_Group);
+    if(!gp) return;
+    gp->MasterClonesUpdate();
+  }
+}
+
 void ControlPanel::RemoveNullItems() {
   for (int i=mbrs.leaves-1; i>=0; i--) {
     ControlPanelMember* item = mbrs.Leaf(i);

@@ -57,8 +57,10 @@ public:
   // #CAT_ControlPanel update all the control panels for the master-and-clones configuration
   virtual ControlPanel* GetMaster();
   // #CAT_ControlPanel get the first control panel in group
-  
-  TA_SIMPLE_BASEFUNS(ControlPanel_Group);
+
+  void  InitLinks() override;
+  TA_BASEFUNS(ControlPanel_Group);
+  SIMPLE_COPY(ControlPanel_Group);
 protected:
   void  UpdateAfterEdit_impl() override;
   

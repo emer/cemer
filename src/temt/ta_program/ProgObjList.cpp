@@ -16,6 +16,8 @@
 #include "ProgObjList.h"
 #include <Program>
 #include <ProgVar>
+#include <ParamSet_Group>
+#include <ControlPanel>
 
 #include <taMisc>
 
@@ -30,6 +32,18 @@ DataTable* ProgObjList::OneNewTable() {
 
 DataTable* ProgObjList::NewDataTable(int n_tables) {
   return (DataTable*)New_gui(n_tables, &TA_DataTable); // this is a gui op
+}
+
+ParamSet_Group* ProgObjList::NewParamSet_Group() {
+  ParamSet_Group* gp = (ParamSet_Group*)New(1, &TA_ParamSet_Group);
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return gp;
+  gp->SetName(prog->name + "Params");
+  ControlPanel* pan = gp->GetMaster();
+  if(pan) {
+    pan->SetName(prog->name + "MasterParams");
+  }
+  return gp;
 }
 
 void ProgObjList::GetVarsForObjs() {

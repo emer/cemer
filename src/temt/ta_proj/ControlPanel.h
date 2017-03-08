@@ -71,7 +71,9 @@ public:
   
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
-  SIMPLE_LINKS(ControlPanel);
+  
+  SIMPLE_CUTLINKS(ControlPanel);
+  void InitLinks() override;
   TA_BASEFUNS(ControlPanel);
 
 public: // public API

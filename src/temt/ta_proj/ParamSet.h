@@ -26,9 +26,8 @@
 taTypeDef_Of(ParamSet);
 
 class TA_API ParamSet : public ControlPanel {
-  // ##EXT_prm ##CAT_Display A set of member/value pairs from one or more objects in a project. Sets are saved and can be recalled to set all members in the set to the saved values. You can modify the current values, test your model and then click "Copy Active To Saved" to store the values for later recall.
+  // ##EXT_prm ##CAT_Display A set of member/value pairs from one or more objects in a project, like a ControlPanel, but values can be saved (SaveCurrent) and re-activated (Activate) so you can easily swap in/out different sets of parameter values.  New groups of ParamSet's have a Master/Clone config: first ParamSet is Master, rest are Clones and members are auto-updated in Clones from changesin Master
   INHERITED(ControlPanel)
-  
 public:
   TA_SIMPLE_BASEFUNS(ParamSet);
 

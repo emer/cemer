@@ -16,6 +16,8 @@
 #include <ControlPanel>
 #include "ControlPanel_Group.h"
 #include <DataTable>
+#include <taProject>
+#include <ParamSet_Group>
 
 #include <taMisc>
 
@@ -23,6 +25,22 @@ TA_BASEFUNS_CTORS_DEFN(ControlPanel_Group);
 
 void ControlPanel_Group::Initialize() {
   master_and_clones = false;
+}
+
+void ControlPanel_Group::InitLinks() {
+  inherited::InitLinks();
+  if(!taMisc::is_loading) {
+    if(!owner) return;
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return;
+    if(InheritsFrom(&TA_ParamSet_Group) && leaves == 0 && owner != &proj->param_sets) {
+      // default for new groups outside of main project ones is master and clones -- make a new master by default
+      master_and_clones = true;
+      ControlPanel* pan = (ControlPanel*)NewEl(1);                 // our new master
+      pan->name = "NewMaster";
+      MasterClonesUpdate();
+    }
+  }
 }
 
 void ControlPanel_Group::UpdateAfterEdit_impl() {
@@ -39,8 +57,10 @@ void ControlPanel_Group::MasterClonesUpdate() {
                    "no items in top-level of the group -- master must be first top-level item -- turning off master_and_clones")) {
       master_and_clones = false;
     }
-    master = FastEl(0);
-    master->cp_state = ControlPanel::MASTER;
+    else {
+      master = FastEl(0);
+      master->cp_state = ControlPanel::MASTER;
+    }
   }
   FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
     if(cp == master) continue;
