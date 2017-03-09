@@ -56,7 +56,10 @@ void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, b
   }
   
   taiSigLink* dl = item->link();
-  int depth = taiMisc::GetEditorDefaultExpand(dl->GetName());  // get user's preference for top level proogram groups
+  String nm = dl->GetName();
+  if(nm == "fun_code")
+    nm = "functions";                                         // use the functions setting
+  int depth = taiMisc::GetEditorDefaultExpand(nm);  // get user's preference for top level proogram groups
   if (depth > -1) {  // must be one of the program groups (objs, types, vars, etc)
     cur_expand_depth = depth;
     if (depth == 0) {

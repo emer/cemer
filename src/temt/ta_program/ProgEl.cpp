@@ -138,6 +138,9 @@ void ProgEl::UpdateProgFlags() {
 
 void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {      // b/c we are a taOBase, this is not otherwise happening!
+    AutoNameMyMembers();
+  }
   UpdateProgFlags();
   SigEmitUpdated();
 

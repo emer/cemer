@@ -37,8 +37,7 @@ void Function::Initialize() {
 
 void Function::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(args, this);
-  taBase::Own(fun_code, this);
+  InitLinks_taAuto(&TA_Function);
 
   if(!taMisc::is_loading) {
     if(fun_code.size == 0) {

@@ -35,7 +35,6 @@ void Program_Group::Initialize() {
 
 void Program_Group::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(step_prog, this);
 }
 
 void Program_Group::CutLinks() {

@@ -129,22 +129,7 @@ void Program::Destroy() {
 
 void Program::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(version, this);
-  taBase::Own(stop_step_cond, this);
-  taBase::Own(objs, this);
-  taBase::Own(types, this);
-  taBase::Own(args, this);
-  taBase::Own(vars, this);
-  taBase::Own(functions, this);
-  taBase::Own(init_code, this);
-  taBase::Own(prog_code, this);
-  taBase::Own(sub_prog_calls, this);
-  taBase::Own(sub_progs_dir, this);
-  taBase::Own(sub_progs_all, this);
-  taBase::Own(sub_progs_step, this);
-  taBase::Own(step_prog, this);
-  taBase::Own(script_list, this);
-  taBase::Own(doc, this);
+  InitLinks_taAuto(&TA_Program); // get everything and auto-name members
   
   if(!taMisc::is_loading) {
     if(prog_code.size == 0) {
@@ -156,8 +141,6 @@ void Program::InitLinks() {
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
   
   prog_gp = GET_MY_OWNER(Program_Group);
-
-  AutoNameMyMembers();          // not clear when this is happening otherwise??
 }
 
 void Program::CutLinks() {
