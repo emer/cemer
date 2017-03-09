@@ -983,9 +983,9 @@ void NetView::InitPanel() {
 }
 
 void NetView::InitScaleRange(ScaleRange& sr) {
-  //TODO: initialize these from a master copy kept as defaults for the application
+  // TODO: initialize these from a master copy kept as defaults for the application
   // each type, leabra, bp, etc. can have customized defaults
-//TEMP: just set from -1 to 1, with no auto
+  // TEMP: just set from -1 to 1, with no auto
   sr.auto_scale = false;
   sr.min = -1.0f;
   sr.max =  1.0f;
@@ -1906,6 +1906,9 @@ void NetView::setUnitDispMd(MemberDef* md) {
     unit_scrng = (ScaleRange*)(scale_ranges.New(1,&TA_ScaleRange));
     unit_scrng->var_name = nm;
     InitScaleRange(*unit_scrng);
+    if(md->HasOption("AUTO_SCALE")) {
+      unit_scrng->auto_scale = true;
+    }
   }
   unit_scrng->SetFromScaleRange(scale);
 }

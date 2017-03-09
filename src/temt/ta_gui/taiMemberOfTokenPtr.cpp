@@ -153,21 +153,54 @@ void taiMemberOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
 
   taBase* scope = (taBase*)base;
   TypeDef* scope_type = NULL;
+  taBase* scope_on_obj = NULL;
+  String scope_on_str = mbr->OptionAfter("SCOPE_ON_");
+  if(base && scope_on_str.nonempty()) {
+    TypeDef* own_td = typ;
+    ta_memb_ptr net_mbr_off = 0;
+    int net_base_off = 0;
+    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+                                                  scope_on_str, false); // no warn
+    if (md) {
+      if(md->type->name == "TypeDef_ptr") {
+        scope_type = *((TypeDef**)(MemberDef::GetOff_static(base, net_base_off,
+                                                            net_mbr_off)));
+      }
+      else if(md->type->IsBasePointerType()) {
+        if (md->type->IsTaBase() || md->type->DerivesFrom(TA_taSmartPtr)) {
+          scope_on_obj = *((taBase**)(MemberDef::GetOff_static(base, net_base_off,
+                                                               net_mbr_off)));
+        }
+        else if(md->type->DerivesFrom(TA_taSmartRef)) {
+          taSmartRef& ref = *((taSmartRef*)(MemberDef::GetOff_static(base, net_base_off,
+                                                                     net_mbr_off)));
+          scope_on_obj = ref.ptr();
+        }
+      }
+    }
+  }
+  
   if(mbr->HasOption("NO_SCOPE")) {
     scope = NULL;
     scope_type = NULL;          // really no scope
   }
-  else if(mbr->HasOption("PROJ_SCOPE"))
+  else if(!scope_type && mbr->HasOption("PROJ_SCOPE")) {
     scope_type = taMisc::default_scope; // default is project
-  else {
+  }
+  else if(!scope_type) {
     String sctyp = mbr->OptionAfter("SCOPE_");
-    if(!sctyp.empty()) {
+    if(!sctyp.empty() && !sctyp.startsWith("ON_")) {
       scope_type = TypeDef::FindGlobalTypeName(sctyp);
     }
   }
 
   taiWidgetTokenChooser* tpb = (taiWidgetTokenChooser*)dat;
-  tpb->GetImageScoped(tok_ptr, targ_typ, scope, scope_type);
+  if(scope_on_obj) {
+    tpb->GetImageScopeObj(tok_ptr, targ_typ, scope_on_obj);
+  }
+  else {
+    tpb->GetImageScoped(tok_ptr, targ_typ, scope, scope_type);
+  }
   GetOrigVal(dat, base);
 }
 

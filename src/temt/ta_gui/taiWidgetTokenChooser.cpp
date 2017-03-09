@@ -86,6 +86,8 @@ bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& 
     if(!btmp) continue;
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
+    if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
+      continue;
     if (!ShowToken(btmp))
       continue;
     cnt++;
@@ -207,6 +209,8 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     }
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
+    if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
+      continue;
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
     
@@ -247,6 +251,13 @@ void taiWidgetTokenChooser::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
 {
   scope_ref = scope_;
   scope_typ = scope_type_;
+  inherited::GetImage((void*)ths, targ_typ_);
+}
+
+void taiWidgetTokenChooser::GetImageScopeObj(taBase* ths, TypeDef* targ_typ_,
+  taBase* scope_obj_)
+{
+  scope_obj = scope_obj_;
   inherited::GetImage((void*)ths, targ_typ_);
 }
 

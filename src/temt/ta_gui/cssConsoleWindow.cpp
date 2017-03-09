@@ -179,9 +179,19 @@ void cssConsoleWindow::SaveGeom() {
 
   // taMisc::Info("save console geom: wd:", String(wd), "ht:", String(ht),
   //              "raw w:", String(r.width()), "h:", String(r.height()));
-  
-  tabMisc::root->console_size.SetXY(wd, ht);
-  tabMisc::root->console_pos.SetXY(lft, top);
+
+  if(wd > 0.8f && ht > 0.8f) {
+    taMisc::Info
+      ("NOT saving css console size because wd > 0.8 && ht > 0.8, wd: " + String(wd),
+       "ht: " + String(ht), "raw w: " + String(r.width()),
+       "h: " + String(r.height()),
+       "srcn w:" + String(taiM->scrn_s.w), "srcn h: " + String(taiM->scrn_s.h)
+       );
+  }
+  else {
+    tabMisc::root->console_size.SetXY(wd, ht);
+    tabMisc::root->console_pos.SetXY(lft, top);
+  }
 }
 
 void cssConsoleWindow::LoadGeom() {

@@ -40,6 +40,8 @@ public:
   virtual void GetImageScoped(taBase* ths, TypeDef* targ_typ, taBase* scope = NULL,
                               TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
+  virtual void GetImageScopeObj(taBase* ths, TypeDef* targ_typ, taBase* scope_obj);
+  // get image, using the new type and direct object scoping
   virtual taBase* GetValue() {return token();}
 
   void         BuildChooser(iDialogItemChooser* ic, int view = 0) override;
@@ -54,6 +56,7 @@ public:
 protected:
   taSmartRef            scope_ref;      // reference object for scoping, default is none
   TypeDef*              scope_typ;      // type of scope to use (NULL = default)
+  taSmartRef            scope_obj;      // use this object directly for owner scoping
 
   const String          itemTag() const override {return "Token: ";}
   const String          labelNameNonNull() const override;

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10529
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10531
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -18,6 +18,28 @@ LeabraProject .projects["LeabraFlex"] {
  };
 
  ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @["ControlPanel"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [7] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
+    ControlPanelMember @[2] { };
+    ControlPanelMember @[3] { };
+    ControlPanelMember @[4] { };
+    ControlPanelMember @[5] { };
+    ControlPanelMember @[6] { };
+   };
+
+   ControlPanelMethod_Group @.mths = [4] {
+    ControlPanelMethod @[0] { };
+    ControlPanelMethod @[1] { };
+    ControlPanelMethod @[2] { };
+    ControlPanelMethod @[3] { };
+   };
+  };
   ClusterRun @["ClusterRun"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["user_pinned"] { };
@@ -392,28 +414,6 @@ LeabraProject .projects["LeabraFlex"] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
-   };
-  };
-  ControlPanel @["ControlPanel"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["user_pinned"] { };
-   };
-
-   ControlPanelMember_Group @.mbrs = [7] {
-    ControlPanelMember @[0] { };
-    ControlPanelMember @[1] { };
-    ControlPanelMember @[2] { };
-    ControlPanelMember @[3] { };
-    ControlPanelMember @[4] { };
-    ControlPanelMember @[5] { };
-    ControlPanelMember @[6] { };
-   };
-
-   ControlPanelMethod_Group @.mths = [4] {
-    ControlPanelMethod @[0] { };
-    ControlPanelMethod @[1] { };
-    ControlPanelMethod @[2] { };
-    ControlPanelMethod @[3] { };
    };
   };
  };
@@ -904,11 +904,11 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     ProgVar_List @.vars = [5] {
+     ProgVar @["run_params"] { };
+     ProgVar @["misc_params"] { };
      ProgVar @["run_prog"] { };
      ProgVar @["init_prog"] { };
      ProgVar @["stop_train"] { };
-     ProgVar @["run_params"] { };
-     ProgVar @["misc_params"] { };
     };
 
     Function_List @.functions = [0] {
@@ -4405,6 +4405,213 @@ leabra flex using param sets experiment project -- updated by randy from John's 
   el_typ=ControlPanel;
   el_def=0;
   master_and_clones=0;
+  ControlPanel @["ControlPanel"] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     user_data_=NULL;
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ControlPanel";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc="main control panel for the system";
+   mbrs {
+    user_data_=NULL;
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+    ControlPanelMember @[0] {
+     user_data_=NULL;
+     label="run_params";
+     cust_label=1;
+     desc="select parameters for controlling how network is run";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$$;
+     mbr=ProgVar::object_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"RunParams\"][\"SpecialTrain\"]";
+      record=1;
+      search=0;
+      range=;
+      notes="MasterTrain sets these params at start";
+     };
+    };
+    ControlPanelMember @[1] {
+     user_data_=NULL;
+     label="misc_params";
+     cust_label=1;
+     desc="select other parameters, typically network spec params -- independent of run params";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$$;
+     mbr=ProgVar::object_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"MiscParams\"][\"MiscOne\"]";
+      record=1;
+      search=0;
+      range=;
+      notes="add extra params as needed..";
+     };
+    };
+    ControlPanelMember @[2] {
+     user_data_=NULL;
+     label="master_run_stop_step_grain";
+     cust_label=0;
+     desc="select grain size for Step function on MasterRun program -- can extend this functionality -- very useful!";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
+     mbr=DynEnum::value;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="0";
+      record=0;
+      search=0;
+      range="0:1:0.1";
+      notes="MasterRun step can do many different things -- very useful!";
+     };
+    };
+    ControlPanelMember @[3] {
+     user_data_=NULL;
+     label="network_cycle_qtr";
+     cust_label=1;
+     desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].networks["Network_0"].times$$;
+     mbr=LeabraTimes::cycle_qtr;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="true";
+      record=0;
+      search=0;
+      range="0:1:0.1";
+      notes="turn OFF to see individual cycles, ON for MUCH faster running";
+     };
+    };
+    ControlPanelMember @[4] {
+     user_data_=NULL;
+     label="cycle_update_net_view";
+     cust_label=0;
+     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="true";
+      record=0;
+      search=0;
+      range="0:1:0.1";
+      notes="update network view at cycle level -- actual value depends on cycle_qtr";
+     };
+    };
+    ControlPanelMember @[5] {
+     user_data_=NULL;
+     label="quarter_update_net_view";
+     cust_label=0;
+     desc="if true, will update network views at end of settling";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="false";
+      record=1;
+      search=0;
+      range=;
+      notes="redundant with cycle for cycle_qtr = ON";
+     };
+    };
+    ControlPanelMember @[6] {
+     user_data_=NULL;
+     label="trial_update_net_view";
+     cust_label=0;
+     desc="determines whether to update any network view displays after trial is completed";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$$;
+     mbr=ProgVar::bool_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="false";
+      record=1;
+      search=0;
+      range=;
+      notes="mostly redundant but some updates happen after trial";
+     };
+    };
+   };
+   mths {
+    user_data_=NULL;
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+    ControlPanelMethod @[0] {
+     user_data_=NULL;
+     label="Init";
+     cust_label=0;
+     desc=" run init_code, global variables retain current values unless reset in the init_code";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
+     mth=Program::Init;
+    };
+    ControlPanelMethod @[1] {
+     user_data_=NULL;
+     label="Run";
+     cust_label=0;
+     desc=" run the program -- if not yet Init, will run Init first";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+     mth=Program::Run_Gui;
+    };
+    ControlPanelMethod @[2] {
+     user_data_=NULL;
+     label="Step";
+     cust_label=0;
+     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+     mth=Program::Step_Gui;
+    };
+    ControlPanelMethod @[3] {
+     user_data_=NULL;
+     label="Stop";
+     cust_label=0;
+     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     cust_desc=0;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+     mth=Program::Stop;
+    };
+   };
+  };
   ClusterRun @["ClusterRun"] {
    UserDataItem_List @*(.user_data_) {
     user_data_=NULL;
@@ -4433,7 +4640,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      cust_label=1;
      desc="select parameters for controlling how network is run";
      cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$$;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$;
      mbr=ProgVar::object_val;
      data {
       user_data_=NULL;
@@ -4453,7 +4660,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      cust_label=1;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$$;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
      mbr=ProgVar::object_val;
      data {
       user_data_=NULL;
@@ -7967,213 +8174,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    enable_load=1;
    enable_notes=1;
   };
-  ControlPanel @["ControlPanel"] {
-   UserDataItem_List @*(.user_data_) {
-    user_data_=NULL;
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["user_pinned"] {
-     user_data_=NULL;
-     name="user_pinned";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="ControlPanel";
-   cp_state=REGULAR;
-   updt_while_running=0;
-   desc="main control panel for the system";
-   mbrs {
-    user_data_=NULL;
-    name="mbrs";
-    el_typ=ControlPanelMember;
-    el_def=0;
-    ControlPanelMember @[0] {
-     user_data_=NULL;
-     label="run_params";
-     cust_label=1;
-     desc="select parameters for controlling how network is run";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_params"]$;
-     mbr=ProgVar::object_val;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"RunParams\"][\"SpecialTrain\"]";
-      record=1;
-      search=0;
-      range=;
-      notes=;
-     };
-    };
-    ControlPanelMember @[1] {
-     user_data_=NULL;
-     label="misc_params";
-     cust_label=1;
-     desc="select other parameters, typically network spec params -- independent of run params";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
-     mbr=ProgVar::object_val;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"MiscParams\"][\"MiscOne\"]";
-      record=1;
-      search=0;
-      range=;
-      notes=;
-     };
-    };
-    ControlPanelMember @[2] {
-     user_data_=NULL;
-     label="mstr_run_stop_step_grain";
-     cust_label=1;
-     desc=" current integer value";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
-     mbr=DynEnum::value;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value="0";
-      record=0;
-      search=0;
-      range="0:1:0.1";
-      notes=;
-     };
-    };
-    ControlPanelMember @[3] {
-     user_data_=NULL;
-     label="network_cycle_qtr";
-     cust_label=1;
-     desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].networks["Network_0"].times$$;
-     mbr=LeabraTimes::cycle_qtr;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value="true";
-      record=0;
-      search=0;
-      range="0:1:0.1";
-      notes="turn OFF to see individual cycles, ON for MUCH faster running";
-     };
-    };
-    ControlPanelMember @[4] {
-     user_data_=NULL;
-     label="cycle_update_net_view";
-     cust_label=0;
-     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
-     mbr=ProgVar::bool_val;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value="true";
-      record=0;
-      search=0;
-      range="0:1:0.1";
-      notes="update network view at cycle level -- actual value depends on cycle_qtr";
-     };
-    };
-    ControlPanelMember @[5] {
-     user_data_=NULL;
-     label="quarter_update_net_view";
-     cust_label=0;
-     desc="if true, will update network views at end of settling";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$$;
-     mbr=ProgVar::bool_val;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value="false";
-      record=1;
-      search=0;
-      range=;
-      notes="redundant with cycle for cycle_qtr = ON";
-     };
-    };
-    ControlPanelMember @[6] {
-     user_data_=NULL;
-     label="trial_update_net_view";
-     cust_label=0;
-     desc="determines whether to update any network view displays after trial is completed";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$$;
-     mbr=ProgVar::bool_val;
-     data {
-      user_data_=NULL;
-      ctrl_type=CONTROL;
-      is_numeric=0;
-      is_single=1;
-      saved_value="false";
-      record=1;
-      search=0;
-      range=;
-      notes="mostly redundant but some updates happen after trial";
-     };
-    };
-   };
-   mths {
-    user_data_=NULL;
-    name="mths";
-    el_typ=ControlPanelMethod;
-    el_def=0;
-    group_type=GT_BUTTONS;
-    ControlPanelMethod @[0] {
-     user_data_=NULL;
-     label="Init";
-     cust_label=0;
-     desc=" run init_code, global variables retain current values unless reset in the init_code";
-     cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$$;
-     mth=Program::Init;
-    };
-    ControlPanelMethod @[1] {
-     user_data_=NULL;
-     label="Run";
-     cust_label=0;
-     desc=" run the program -- if not yet Init, will run Init first";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     mth=Program::Run_Gui;
-    };
-    ControlPanelMethod @[2] {
-     user_data_=NULL;
-     label="Step";
-     cust_label=0;
-     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     mth=Program::Step_Gui;
-    };
-    ControlPanelMethod @[3] {
-     user_data_=NULL;
-     label="Stop";
-     cust_label=0;
-     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
-     cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-     mth=Program::Stop;
-    };
-   };
-  };
  };
  param_sets {
   user_data_=NULL;
@@ -8566,6 +8566,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    last_activated=0;
    };
    ParamSet @["RunConfig1"] {
     user_data_=NULL;
@@ -8946,6 +8947,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    last_activated=0;
    };
   };
   ParamSet_Group @.gp["MiscParams"] {
@@ -8993,6 +8995,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    last_activated=0;
    };
    ParamSet @["MiscConfig1"] {
     user_data_=NULL;
@@ -9033,6 +9036,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    last_activated=0;
    };
   };
  };
@@ -11644,6 +11648,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=LeabraNetwork;
      object_val=.projects["LeabraFlex"].networks["Network_0"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -11662,6 +11667,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=Program;
      object_val=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11673,6 +11679,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="tag";
      var_type=T_String;
      string_val="_BasicTrain_BasicTrain_basic_train";
+     object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -11683,6 +11690,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="log_dir";
      var_type=T_String;
      string_val=;
+     object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
@@ -11693,6 +11701,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="log_file_nm";
      var_type=T_String;
      string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_BasicTrain_BasicTrain_basic_train.args";
+     object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -11704,6 +11713,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11715,6 +11725,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_str";
      var_type=T_String;
      string_val="00";
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch number as a string (leading zeros)";
@@ -11725,6 +11736,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_start";
      var_type=T_Int;
      int_val=0;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch starting number";
@@ -11735,6 +11747,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="startup_prog";
      var_type=T_String;
      string_val="BasicStartup";
+     object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
@@ -11746,6 +11759,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=ClusterRun;
      object_val=.projects["LeabraFlex"].ctrl_panels["ClusterRun"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11758,6 +11772,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=ParamSet;
      object_val=.projects["LeabraFlex"].param_sets.gp["RunParams"]["RunMaster"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
      reference=0;
@@ -11770,6 +11785,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=ParamSet;
      object_val=.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscMaster"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
      reference=0;
@@ -12412,6 +12428,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12429,6 +12446,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="tag";
       var_type=T_String;
       string_val="_BasicTrain_BasicTrain_basic_train";
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
       desc=;
@@ -12541,6 +12559,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12558,6 +12577,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="batch";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
@@ -12568,6 +12588,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="batch_start";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch number to start on";
@@ -12578,6 +12599,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="n_batches";
       var_type=T_Int;
       int_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -12626,6 +12648,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="i";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -12786,6 +12809,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12798,42 +12822,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["run_prog"] {
-      user_data_=NULL;
-      name="run_prog";
-      var_type=T_String;
-      string_val="BasicRun";
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="name of run program to run -- must exist in the RunProgs group";
-      init_from=NULL;
-     };
-     ProgVar @["init_prog"] {
-      user_data_=NULL;
-      name="init_prog";
-      var_type=T_String;
-      string_val="BasicInit";
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="name of init program -- must exist in the InitProgs group";
-      init_from=NULL;
-     };
-     ProgVar @["stop_train"] {
-      user_data_=NULL;
-      name="stop_train";
-      var_type=T_Bool;
-      bool_val=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="set this var from any other program to stop training";
-      init_from=NULL;
-     };
      ProgVar @["run_params"] {
       user_data_=NULL;
       name="run_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].param_sets.gp["RunParams"]["RunMaster"]$;
+      object_val=NULL;
+      object_scope=.projects["LeabraFlex"].param_sets.gp["RunParams"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12846,10 +12841,44 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=ParamSet;
       object_val=$.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscMaster"]$;
+      object_scope=.projects["LeabraFlex"].param_sets.gp["MiscParams"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="select other parameters, typically network spec params -- independent of run params";
+      init_from=NULL;
+     };
+     ProgVar @["run_prog"] {
+      user_data_=NULL;
+      name="run_prog";
+      var_type=T_String;
+      string_val="BasicRun";
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="name of run program to run -- must exist in the RunProgs group";
+      init_from=NULL;
+     };
+     ProgVar @["init_prog"] {
+      user_data_=NULL;
+      name="init_prog";
+      var_type=T_String;
+      string_val="BasicInit";
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="name of init program -- must exist in the InitProgs group";
+      init_from=NULL;
+     };
+     ProgVar @["stop_train"] {
+      user_data_=NULL;
+      name="stop_train";
+      var_type=T_Bool;
+      bool_val=0;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set this var from any other program to stop training";
       init_from=NULL;
      };
     };
@@ -13215,6 +13244,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -13226,6 +13256,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="name of run program";
@@ -13241,6 +13272,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="stop_step_grain";
       var_type=T_DynEnum;
+      object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
@@ -13248,7 +13280,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="select grain size for Step function on MasterRun program ";
+      desc="select grain size for Step function on MasterRun program -- can extend this functionality -- very useful!";
       init_from=NULL;
      };
     };
@@ -13526,6 +13558,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_Object;
        object_type=LeabraNetwork;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -13543,6 +13576,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="layer_group_lesion_list";
        var_type=T_String;
        string_val=;
+       object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
@@ -13553,6 +13587,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="layer_lesion_list";
        var_type=T_String;
        string_val=;
+       object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="space-separated list of layers outside of groups to lesion for this run";
@@ -13563,6 +13598,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="prjn_lesion_list";
        var_type=T_String;
        string_val=;
+       object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="space-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list";
@@ -13573,6 +13609,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="prjn_unlesion_list";
        var_type=T_String;
        string_val=;
+       object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="space-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
@@ -13583,6 +13620,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="test_run";
        var_type=T_Bool;
        bool_val=0;
+       object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc="is this a testing-only run, no training?";
@@ -13847,6 +13885,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_Object;
        object_type=LeabraNetwork;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -13864,6 +13903,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="train_epochs";
        var_type=T_Int;
        int_val=50;
+       object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -13874,6 +13914,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="trials_per_epoch_eff";
        var_type=T_Int;
        int_val=50;
+       object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -13884,6 +13925,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="test_interval";
        var_type=T_Int;
        int_val=1;
+       object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -13894,6 +13936,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="update_net_view";
        var_type=T_Bool;
        bool_val=1;
+       object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="if true, will update network views at end of settling";
@@ -13905,6 +13948,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_Object;
        object_type=DataTable;
        object_val=.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -14278,6 +14322,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14290,6 +14335,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14301,6 +14347,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -14318,6 +14365,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].objs["BasicTrainTime"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14838,6 +14886,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14850,6 +14899,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14861,6 +14911,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -14878,6 +14929,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTest"].objs["BasicTrainTime"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15397,6 +15449,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -15415,6 +15468,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15426,6 +15480,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=0;
+      object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15438,6 +15493,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trial";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -15449,6 +15505,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["LeabraFlex"].data.gp["OutputData"]["TestTrialOutputData"]$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15460,6 +15517,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="step_on_err";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="when you step at the Epoch level, this will automatically step through to the next point at which an error was made -- you can use the netview history to replay what happend";
@@ -15470,6 +15528,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="data_loop_index";
       var_type=T_Int;
       int_val=6;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -15480,6 +15539,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="test_updt_view";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="update display when testing items?";
@@ -15833,6 +15893,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -15845,6 +15906,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -15856,6 +15918,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="permuted";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="present events in permuted order (otherwise use sequential order)";
@@ -15872,6 +15935,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cur_idx";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -15882,6 +15946,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_idx";
       var_type=T_Int;
       int_val=2;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -15892,6 +15957,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_rows";
       var_type=T_Int;
       int_val=6;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -15903,6 +15969,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].objs["PermIdxTable"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16670,6 +16737,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16687,6 +16755,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="event_idx";
       var_type=T_Int;
       int_val=2;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="event to present";
@@ -16897,6 +16966,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16909,6 +16979,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16927,6 +16998,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LayerWriter;
       object_val=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].objs["LayerWriter_0"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17326,6 +17398,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -17344,6 +17417,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=RndSeed_List;
       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["BatchRndSeed"].objs["rnd_seeds"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17466,6 +17540,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -17477,6 +17552,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layer_groups";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer group names to lesion";
@@ -17487,6 +17563,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layers";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer names to lesion";
@@ -17497,6 +17574,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_prjns";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of projections to lesion: synatx is recvlayer.Fm_sendlayer";
@@ -17507,6 +17585,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="un_lesion_prjns";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of projections to un-lesion: synatx is recvlayer.Fm_sendlayer";
@@ -17559,6 +17638,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer_Group;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -17571,6 +17651,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -17701,6 +17782,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="laygps";
 	var_type=T_String;
 	string_val=;
+	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -17711,6 +17793,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lay_gp_on";
 	var_type=T_Bool;
 	bool_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -17738,6 +17821,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=String_Matrix;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -17750,6 +17834,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer_Group;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -17761,6 +17846,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="laygp_nm";
 	  var_type=T_String;
 	  string_val=;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -18137,6 +18223,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lays";
 	var_type=T_String;
 	string_val=;
+	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18147,6 +18234,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lay_on";
 	var_type=T_Bool;
 	bool_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18174,6 +18262,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=String_Matrix;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -18186,6 +18275,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -18197,6 +18287,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay_nm";
 	  var_type=T_String;
 	  string_val=;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -18573,6 +18664,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjns";
 	var_type=T_String;
 	string_val=;
+	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18583,6 +18675,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjn_on";
 	var_type=T_Bool;
 	bool_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18610,6 +18703,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=String_Matrix;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -18622,6 +18716,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Projection;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -18633,6 +18728,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="prjn_nm";
 	  var_type=T_String;
 	  string_val=;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -18643,6 +18739,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay_nm";
 	  var_type=T_String;
 	  string_val=;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -18654,6 +18751,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -20156,6 +20254,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="action";
       var_type=T_DynEnum;
+      object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["ActionType"]$$;
@@ -20170,6 +20269,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="use_group";
       var_type=T_DynEnum;
+      object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["UseGroup"]$$;
@@ -20186,6 +20286,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -20204,6 +20305,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].objs["LayerLayout"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20216,6 +20318,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].objs["LayerLayout_previous"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -20262,6 +20365,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="leaf";
 	  var_type=T_Int;
 	  int_val=0;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20273,6 +20377,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -20285,6 +20390,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer_Group;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -20297,6 +20403,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer_Group;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -20627,6 +20734,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="row";
 	  var_type=T_Int;
 	  int_val=0;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20638,6 +20746,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
@@ -20649,6 +20758,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="layer_name";
 	  var_type=T_String;
 	  string_val=;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20660,6 +20770,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  var_type=T_Object;
 	  object_type=Layer_Group;
 	  object_val=NULL;
+	  object_scope=NULL;
 	  objs_ptr=0;
 	  flags=LOCAL_VAR|EDIT_VAL;
 	  reference=0;
@@ -20671,6 +20782,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="group_name";
 	  var_type=T_String;
 	  string_val=;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20681,6 +20793,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lgrow";
 	  var_type=T_Int;
 	  int_val=0;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20691,6 +20804,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_x";
 	  var_type=T_Int;
 	  int_val=0;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20701,6 +20815,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_y";
 	  var_type=T_Int;
 	  int_val=0;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -20711,6 +20826,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_z";
 	  var_type=T_Int;
 	  int_val=0;
+	  object_scope=NULL;
 	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -21556,6 +21672,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -21567,6 +21684,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layers";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer group names to lesion or unlesion";
@@ -21577,6 +21695,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, lesion the layer groups, otherwise unlesion them";
@@ -21594,6 +21713,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=String_Matrix;
       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].objs["les_lay_mat"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -21605,6 +21725,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="i";
       var_type=T_Int;
       int_val=4;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -21615,6 +21736,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="laygp_nm";
       var_type=T_String;
       string_val="Head";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -21626,6 +21748,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=Layer_Group;
       object_val=NULL;
+      object_scope=NULL;
       objs_ptr=0;
       flags=SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22092,6 +22215,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22110,6 +22234,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=RndSeed;
       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].objs["dmem_rnd_seed"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22121,6 +22246,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="load initial weights from a file (specified in weights_file)";
@@ -22131,6 +22257,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="weights_file";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
@@ -22141,6 +22268,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_st_epc";
       var_type=T_Int;
       int_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
@@ -22151,6 +22279,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="learning rate schedule epochs per step of decrease in learning rate";
@@ -22161,6 +22290,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_n_steps";
       var_type=T_Int;
       int_val=7;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of steps in the learning rate schedule";
@@ -22171,6 +22301,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_bump_step";
       var_type=T_Int;
       int_val=-1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
@@ -22182,6 +22313,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraConSpec;
       object_val=$.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22193,6 +22325,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_new_seed";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="when running under dmem (MPI), generate a new random seed for each node after common initialization, to cause each node to have different random events, etc.   It is now possible to add taMisc::dmem_proc to the thr_no args to any random functions, and achieve fully reproducible results without this randomization.";
@@ -22203,6 +22336,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="train_epochs";
       var_type=T_Int;
       int_val=50;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="number of epochs to train network for";
@@ -22213,6 +22347,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trials_per_epoch";
       var_type=T_Int;
       int_val=50;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of trials per epoch";
@@ -22223,6 +22358,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trials_per_epoch_eff";
       var_type=T_Int;
       int_val=50;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="effective value, taking into account number of MPI processors";
@@ -22233,6 +22369,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="test_run";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="is this a testing-only run, no training?";
@@ -22243,6 +22380,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="test_interval";
       var_type=T_Int;
       int_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="how frequently (epochs) to run a test during training";
@@ -22795,6 +22933,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -22812,6 +22951,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="should final weights after training is complete be saved?";
@@ -22823,6 +22963,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=Program;
       object_val=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23001,6 +23142,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -23019,6 +23161,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["LeabraFlex"].data.gp["OutputData"]["TrialOutputData"]$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23031,6 +23174,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].objs["BasicTrainTime"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -23218,6 +23362,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -23235,6 +23380,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_wts_interval";
       var_type=T_Int;
       int_val=200;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="how frequently (epochs) to save weights during training";
@@ -23431,6 +23577,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -23609,6 +23756,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -23626,6 +23774,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -23742,6 +23891,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -23759,6 +23909,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on settles";
@@ -23797,6 +23948,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=1;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -23931,6 +24083,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -23948,6 +24101,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on settles";
@@ -24086,6 +24240,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -24103,6 +24258,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -24141,6 +24297,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -24348,6 +24505,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -24365,6 +24523,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -24375,6 +24534,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -24423,6 +24583,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -24433,6 +24594,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -24635,6 +24797,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -24652,6 +24815,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
@@ -24783,6 +24947,7 @@ also save specs.";
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -24800,6 +24965,7 @@ also save specs.";
       name="tag";
       var_type=T_String;
       string_val="_BasicTrain_BasicTrain_basic_train";
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user defined tag (set by startup script)";
@@ -24810,6 +24976,7 @@ also save specs.";
       name="wts_subdir";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="subdirectory to save weights in";
@@ -24820,6 +24987,7 @@ also save specs.";
       name="fname";
       var_type=T_String;
       string_val="/Users/oreilly/emergent/test/LeabraFlexParamSetExperiment_basic_train.00_0050.wts.gz";
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -24830,6 +24998,7 @@ also save specs.";
       name="epoch_str";
       var_type=T_String;
       string_val="0050";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -24840,6 +25009,7 @@ also save specs.";
       name="batch_str";
       var_type=T_String;
       string_val="00";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
@@ -24850,6 +25020,7 @@ also save specs.";
       name="final_tag";
       var_type=T_String;
       string_val="_basic_train.00_0050";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -25180,6 +25351,7 @@ also save specs.";
        var_type=T_Object;
        object_type=LeabraNetwork;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -25197,6 +25369,7 @@ also save specs.";
        name="tag";
        var_type=T_String;
        string_val="_BasicTrain_BasicTrain_basic_train";
+       object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -25207,6 +25380,7 @@ also save specs.";
        name="log_trials";
        var_type=T_Bool;
        bool_val=0;
+       object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="should trial-level data be saved to log files?";
@@ -25217,6 +25391,7 @@ also save specs.";
        name="log_dir";
        var_type=T_String;
        string_val=;
+       object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="log file directory";
@@ -25227,6 +25402,7 @@ also save specs.";
        name="log_file_nm";
        var_type=T_String;
        string_val=;
+       object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="name of log file";
@@ -25238,6 +25414,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -25250,6 +25427,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.projects["LeabraFlex"].data.gp["OutputData"]["TrialOutputData"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -26649,6 +26827,7 @@ also save specs.";
        var_type=T_Object;
        object_type=Network;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -26667,6 +26846,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.projects["LeabraFlex"].data.gp["OutputData"]["TrialOutputData"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -26679,6 +26859,7 @@ also save specs.";
        var_type=T_Object;
        object_type=NetMonitor;
        object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
+       object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -26690,6 +26871,7 @@ also save specs.";
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -28212,6 +28394,7 @@ also save specs.";
        var_type=T_Object;
        object_type=Network;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -28230,6 +28413,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -28242,6 +28426,7 @@ also save specs.";
        var_type=T_Object;
        object_type=NetMonitor;
        object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
+       object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -28254,6 +28439,7 @@ also save specs.";
        var_type=T_Object;
        object_type=TimeUsed;
        object_val=.projects["LeabraFlex"].networks["Network_0"].epoch_time$$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -28265,6 +28451,7 @@ also save specs.";
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -29784,6 +29971,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=Network;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -29802,6 +29990,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.projects["LeabraFlex"].data.gp["OutputData"]["TestTrialOutputData"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -29814,6 +30003,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=NetMonitor;
        object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTestTrialMonitor"].objs["trial_netmon"]$$;
+       object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -29825,6 +30015,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31162,6 +31353,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=Network;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -31180,6 +31372,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.projects["LeabraFlex"].data.gp["OutputData"]["TestEpochOutputData"]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -31192,6 +31385,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=NetMonitor;
        object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTestEpochMonitor"].objs["epoch_netmon"]$$;
+       object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -31203,6 +31397,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        name="run_already";
        var_type=T_Bool;
        bool_val=0;
+       object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -31564,7 +31759,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9968119;
+     value 8 0=0.9962825;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33381,7 +33576,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

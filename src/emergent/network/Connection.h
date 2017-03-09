@@ -39,7 +39,7 @@ class E_API Connection {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
   float        wt;             // #VIEW_HOT #SAVE synaptic weight of connection (Alt + Mouse Click to see weight for any unit)
-  float        dwt;            // #VIEW_HOT #NO_SAVE change in synaptic weight as computed by learning mechanism
+  float        dwt;            // #VIEW_HOT #AUTO_SCALE #NO_SAVE change in synaptic weight as computed by learning mechanism
 
   Connection() { wt = dwt = 0.0f; }
 };

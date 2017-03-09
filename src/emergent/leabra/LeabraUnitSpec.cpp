@@ -1976,17 +1976,20 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
   }
 
   switch(net->quarter) {        // this has not advanced yet -- still 0-3
-  case 0:
+  case 0: {
     u->act_q1 = use_act;
     break;
-  case 1:
+  }
+  case 1: {
     u->act_q2 = use_act;
     break;
-  case 2:
+  }
+  case 2: {
     u->act_q3 = use_act;
     u->act_m = use_act;
     break;
-  case 3:
+  }
+  case 3: {
     u->act_q4 = use_act;
     u->act_p = use_act;
     if(act_misc.dif_avg) {
@@ -1997,6 +2000,7 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     }
     Compute_ActTimeAvg(u, net, thr_no);
     break;
+  }
   }
 }
 

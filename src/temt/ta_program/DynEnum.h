@@ -68,6 +68,7 @@ public:
 
   String        GetDisplayName() const override;
   void          GetControlPanelLabel(MemberDef* mbr, String& label, const String& extra_label = _nilString, bool short_label = false) const override;
+  void   GetControlPanelDesc(MemberDef* mbr, String& desc) const override;
 
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 

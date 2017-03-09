@@ -87,6 +87,19 @@ void  DynEnum::GetControlPanelLabel(MemberDef* mbr, String& label, const String&
   if (prog_var) {
     prog_var->GetControlPanelLabel(mbr, label, xtra_lbl, short_label);
   }
+  else {
+    inherited::GetControlPanelLabel(mbr, label, xtra_lbl, short_label);
+  }
+}
+
+void DynEnum::GetControlPanelDesc(MemberDef* mbr, String& eff_desc) const {
+  ProgVar* prog_var = (ProgVar*)GetOwner(&TA_ProgVar);
+  if (prog_var) {
+    prog_var->GetControlPanelDesc(mbr, eff_desc);
+  }
+  else {
+    inherited::GetControlPanelDesc(mbr, eff_desc);
+  }
 }
 
 taBase::DumpQueryResult DynEnum::Dump_QuerySaveMember(MemberDef* md) {

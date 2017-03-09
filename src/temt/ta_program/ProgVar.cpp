@@ -61,6 +61,7 @@ void ProgVar::Destroy() {
 
 void ProgVar::InitLinks() {
   taBase::Own(object_val, this);
+  taBase::Own(object_scope, this);
   taBase::Own(dyn_enum_val, this);
   inherited::InitLinks();
   if(!taMisc::is_loading) {
@@ -71,6 +72,7 @@ void ProgVar::InitLinks() {
 void ProgVar::CutLinks() {
   FreeParseCssEl();
   object_val.CutLinks();
+  object_scope.CutLinks();
   dyn_enum_val.CutLinks();
   inherited::CutLinks();
 }
@@ -185,6 +187,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   bool_val = cp.bool_val;
   object_type = cp.object_type;
   object_val = cp.object_val;
+  object_scope = cp.object_scope;
   hard_enum_type = cp.hard_enum_type;
   dyn_enum_val = cp.dyn_enum_val;
   objs_ptr = cp.objs_ptr;
@@ -700,6 +703,7 @@ void ProgVar::Cleanup() {
   if (var_type != T_Object) {
     //note: its ok to leave whatever type is there
     object_val.CutLinks();
+    object_scope.CutLinks();    // no dangling links to objs though
   }
   if (var_type != T_HardEnum) {
     hard_enum_type = NULL;
