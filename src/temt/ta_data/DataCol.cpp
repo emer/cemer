@@ -31,6 +31,7 @@
 #include <String_Array>
 #include <AnalysisRun>  // need for analysis type enum
 #include <Variant>
+#include <taBaseItr>
 
 #include <SigLinkSignal>
 #include <tabMisc>
@@ -408,14 +409,15 @@ int DataCol::FindVal(const Variant& val, int st_row) const {
   if(st_row == 0 && hash_table) {
     return hash_table->FindHashValString(val.toString());
   }
+  const int n_rows = rows();
   if(st_row >= 0) {
-    for(int i=st_row; i<rows(); i++) {
+    for(int i=st_row; i<n_rows; i++) {
       if(GetVal(i) == val) return i;
     }
     return -1;
   }
   else {
-    for(int i=rows()+st_row; i>=0; i--) {
+    for(int i=n_rows+st_row; i>=0; i--) {
       if(GetVal(i) == val) return i;
     }
     return -1;
@@ -425,8 +427,9 @@ int DataCol::FindVal(const Variant& val, int st_row) const {
 int DataCol::FindValPartial(const Variant& val, int st_row) const {
   if(TestError(isMatrix(), "FindValPartialCi", "column must be scalar, not matrix")) return -1;
   String val_str = val.toString();
+  const int n_rows = rows();
   if(st_row >= 0) {
-    for(int i=st_row; i<rows(); i++) {
+    for(int i=st_row; i<n_rows; i++) {
       String row_str = GetValAsString(i);
       if(row_str.contains(val_str))
         return i;
@@ -434,7 +437,7 @@ int DataCol::FindValPartial(const Variant& val, int st_row) const {
     return -1;
   }
   else {
-    for(int i=rows()+st_row; i>=0; i--) {
+    for(int i=n_rows+st_row; i>=0; i--) {
       String row_str = GetValAsString(i);
       if(row_str.contains(val_str))
         return i;
@@ -446,8 +449,9 @@ int DataCol::FindValPartial(const Variant& val, int st_row) const {
 int DataCol::FindValPartialCi(const Variant& val, int st_row) const {
   if(TestError(isMatrix(), "FindValPartialCi", "column must be scalar, not matrix")) return -1;
   String val_str = val.toString();
+  const int n_rows = rows();
   if(st_row >= 0) {
-    for(int i=st_row; i<rows(); i++) {
+    for(int i=st_row; i<n_rows; i++) {
       String row_str = GetValAsString(i);
       if(row_str.contains_ci(val_str))
         return i;
@@ -455,7 +459,7 @@ int DataCol::FindValPartialCi(const Variant& val, int st_row) const {
     return -1;
   }
   else {
-    for(int i=rows()+st_row; i>=0; i--) {
+    for(int i=n_rows+st_row; i>=0; i--) {
       String row_str = GetValAsString(i);
       if(row_str.contains_ci(val_str))
         return i;
@@ -469,8 +473,9 @@ void DataCol::BuildHashTable() {
   if(TestError(isMatrix(), "BuildHashTable", "column must be scalar, not matrix"))
     return;
   hash_table = new taHashTable;
-  if(!hash_table->Alloc(rows() + 10)) return;
-  for(int i=0; i<rows(); i++) {
+  const int n_rows = rows();
+  if(!hash_table->Alloc(n_rows + 10)) return;
+  for(int i=0; i<n_rows; i++) {
     String strval = GetVal(i).toString();
     hash_table->AddHash(taHashEl::HashCode_String(strval), i, strval);
   }
@@ -708,7 +713,8 @@ bool DataCol::InitVals(const Variant& init_val)  {
 
 bool DataCol::InitValsToRowNo()  {
   if(TestError(is_matrix, "InitValsToRowNo", "column is a matrix")) return false;
-  for(int i=0; i<rows(); i++) {
+  const int n_rows = rows();
+  for(int i=0; i<n_rows; i++) {
     SetValAsInt(i, i);
   }
   return true;
@@ -717,7 +723,8 @@ bool DataCol::InitValsToRowNo()  {
 bool DataCol::InitValsByIncrement(int first_value, int increment)  {
   if(TestError(is_matrix, "InitValsByIncrement", "column is a matrix")) return false;
   SetValAsInt(first_value, 0);
-  for(int i=1; i<rows(); i++) {
+  const int n_rows = rows();
+  for(int i=1; i<n_rows; i++) {
     SetValAsInt(first_value + i*increment, i);
   }
   return true;
@@ -872,6 +879,7 @@ void DataCol::ReadToSubMatrix(int row,
 
 bool DataCol::GetMinMaxScale(MinMax& mm) {
   if(!isNumeric()) return false;
+  if(rows() <= 0) return false;
   int idx;
   if(valType() == VT_FLOAT) {
     float_Matrix* fm = (float_Matrix*)AR();
@@ -885,11 +893,15 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
   }
   else if(valType() == VT_INT) {
     int_Matrix* fm = (int_Matrix*)AR();
-    if(fm->size > 0) {
-      mm.min = fm->FastEl_Flat(0);
-      mm.max = fm->FastEl_Flat(0);
-      for(int i=1;i<fm->size;i++) {
-        int val = fm->FastEl_Flat(i);
+    bool first = true;
+    TA_FOREACH_INDEX(i, *fm) {
+      const int val = fm->FastEl_Flat(i);
+      if(first) {
+        mm.min = val;
+        mm.max = val;
+        first = false;
+      }
+      else {
         if(val > mm.max) mm.max = val;
         if(val < mm.min) mm.min = val;
       }
@@ -975,9 +987,22 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
 taObjDiffRec* DataCol::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
     const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // this is same as base objdiff but puts children last to make more sense for user
-  taObjDiffRec* odr = inherited::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
+                                       (void*)par, par_typ, par_od);
+  odl.Add(odr);
+  if(GetOwner()) {
+    odr->tabref = new taBaseRef;
+    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+  }
 
-  for(int i=0;i<rows();i++) {
+  // don't include all the class member stuff -- nobody cares about that level and if
+  // they do, they can look at it manually..
+  
+  // taObjDiffRec* odr = inherited::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
+
+  const int n_rows = rows();
+  for(int i=0;i<n_rows;i++) {
     if(isMatrix()) {
       taMatrix* mat = ((DataCol*)this)->GetValAsMatrix(i);
       taBase::Ref(mat);
@@ -994,7 +1019,7 @@ taObjDiffRec* DataCol::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDe
     }
     else {
       taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
-          (void*)AR()->FastEl_Flat_(i),
+          (void*)AR()->FastEl_Flat_(IndexOfEl_Flat(i, 0)),
           (void*)this, GetTypeDef(), odr);
       clodr->name = String(i);  // row
       clodr->ComputeHashCode(); // need to update
@@ -1026,7 +1051,8 @@ void DataCol::RunLinearRegression() {
 
 void DataCol::GetUniqueColumnValues(String_Array& groups) {
   String_Array temp;
-  for (int i=0; i<this->rows(); i++) {
+  const int n_rows = rows();
+  for (int i=0; i<n_rows; i++) {
     temp.Add(this->GetValAsString(i));
   }
   temp.Sort();

@@ -229,8 +229,8 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_CtrlPanel(QMenu* menu,
     return;
   if (ctrlpan->InheritsFrom(&TA_ParamSet)) {
     menu->addAction("Remove from ParamSet", this, SLOT(DoRemoveFmCtrlPanel()));
-    menu->addAction("Copy Active To Saved", this, SLOT(DoCopyActiveToSaved()));
-    menu->addAction("Copy Saved To Active", this, SLOT(DoCopySavedToActive()));
+    menu->addAction("Save Current", this, SLOT(DoCopyActiveToSaved()));
+    menu->addAction("Activate", this, SLOT(DoCopySavedToActive()));
   }
   else {
     menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveFmCtrlPanel()));
