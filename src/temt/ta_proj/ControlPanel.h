@@ -68,6 +68,7 @@ public:
   int                   UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   String                GetToolbarName() const override { return "cntrl panel"; }
   int                   GetEnabled() const override;
+  int                   GetSpecialState() const override;
   
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 

@@ -855,6 +855,10 @@ void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
 }
 
 int ControlPanel::GetEnabled() const {
-  if(IsClone()) return 0;       // signal for clone..
   return 1;
+}
+
+int ControlPanel::GetSpecialState() const {
+  if(IsClone()) return 2;
+  return inherited::GetSpecialState();
 }

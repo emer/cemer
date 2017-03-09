@@ -21,6 +21,11 @@
 
 TA_BASEFUNS_CTORS_DEFN(ParamSet);
 
+
+void ParamSet::Initialize() {
+  last_activated = false;
+}
+
 void ParamSet::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
@@ -39,6 +44,8 @@ void ParamSet::CopySavedToActive(bool info_msg) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     sei->CopySavedToActive();
   }
+  ResetLastActivated();
+  last_activated = true;
   ReShowEdit(true);
   if(info_msg) {
     taMisc::Info("Copied saved_value strings to active (live) values for all members in ParamSet:", name);
@@ -78,3 +85,16 @@ void ParamSet::ComparePeers(ParamSet* param_set) {
   project->ParamSetComparePeers(this, param_set);
 }
 
+void ParamSet::ResetLastActivated() {
+  ParamSet_Group* gp = GET_MY_OWNER(ParamSet_Group);
+  if(!gp) return;
+  FOREACH_ELEM_IN_GROUP(ParamSet, ps, *gp) {
+    ps->last_activated = false;
+    ps->SigEmitUpdated();
+  }
+}
+
+int ParamSet::GetSpecialState() const {
+  if(last_activated) return 3;
+  return inherited::GetSpecialState();
+}
