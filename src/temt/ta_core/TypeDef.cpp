@@ -2065,10 +2065,19 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
         TypeDef* td = taMisc::FindTypeName(fqtypnm);
         if(td != NULL) {
           MethodDef* md = td->methods.FindName(mthnm);
-          if(md != NULL)
+          if(md != NULL) {
             *((MethodDef**)base) = md;
+          }
           else {
-            taMisc::Error("Could not find ", memb_def->TypeItem::GetPathName(), " ", mthnm, " in ", fqtypnm);
+            // use AKA name
+            MethodDef* md = td->methods.FindAKAMethod(mthnm);
+            if(md) {
+              *((MethodDef**)base) = md;
+            }
+            else {
+              taMisc::Error("Could not find:", memb_def->TypeItem::GetPathName(),
+                            mthnm, "in", fqtypnm);
+            }
           }
         }
         else {

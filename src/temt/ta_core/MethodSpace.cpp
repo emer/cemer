@@ -130,6 +130,19 @@ MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
   return NULL;
 }
 
+
+MethodDef* MethodSpace::FindAKAMethod(const String& meth_nm) {
+  for(int i=0; i<size; i++) {
+    MethodDef* md = FastEl(i);
+    String md_aka = md->OptionAfter("AKA_");
+    if(md_aka == meth_nm) {
+      return md;
+    }
+  }
+  return NULL;
+}
+
+
 String& MethodSpace::PrintType(String& strm, int indent) const {
   taMisc::IndentString(strm, indent) << "// methods\n";
   String_PArray col1;

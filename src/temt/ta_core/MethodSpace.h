@@ -67,6 +67,8 @@ public:
 
   MethodDef*    FindVirtualBase(MethodDef* it, int& idx);
   // find the virtual method with same name and signature
+  MethodDef*    FindAKAMethod(const String& meth_nm);
+  // find an AKA_ method of given name -- for renamed methods
 
   // IO
   virtual String&      PrintType(String& strm, int indent = 0) const;

@@ -32,7 +32,7 @@ class TA_API ParamSet_Group : public ControlPanel_Group {
   INHERITED(ControlPanel_Group)
 public:
   virtual bool  ActivateParamSet(const String& set_name, bool err_not_found = true);
-  // #CAT_ParamSet find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs
+  // #CAT_ParamSet #AKA_LoadParamSet find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs
 
   String        GetTypeDecoKey() const override { return "ParamSet"; }
 
