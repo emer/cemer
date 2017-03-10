@@ -38,10 +38,12 @@ INHERITED(taNBase)
 public:
 #ifndef __MAKETA__
   QXmlStreamReader    reader;
-  bool                qReadNextStartElement() { return reader.readNextStartElement(); }
-  void                qSkipCurrentElement() { reader.skipCurrentElement(); }
-  QString             qReadElementText() { return reader.readElementText(); }
-  QStringRef          qName() { return reader.name(); }
+  #if (QT_VERSION >= 0x040600)
+    bool                qReadNextStartElement() { return reader.readNextStartElement(); }
+    void                qSkipCurrentElement() { reader.skipCurrentElement(); }
+    QString             qReadElementText() { return reader.readElementText(); }
+    QStringRef          qName() { return reader.name(); }
+  #endif
 #endif
   
   String            filename;
