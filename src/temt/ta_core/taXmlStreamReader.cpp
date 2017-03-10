@@ -22,8 +22,11 @@
 
 TA_BASEFUNS_CTORS_DEFN(taXmlStreamReader);
 
-bool taXmlStreamReader::SetFile(const String& filename) {
-  
+void taXmlStreamReader::SetFile(const String& the_filename) {
+  filename = the_filename;
+}
+
+bool taXmlStreamReader::ReadNextStartElement() {
 #if (QT_VERSION >= 0x040600)
   QFile file(filename);
   if(!file.open(QFile::ReadOnly | QFile::Text)){
@@ -31,10 +34,55 @@ bool taXmlStreamReader::SetFile(const String& filename) {
     taMisc::Error(msg);
     return false;
   }
-  
   reader.setDevice(&file);
-  return true;
+  SetFile(this->filename);
+  return qReadNextStartElement();
 #else
   return false;
 #endif
 }
+
+String taXmlStreamReader::GetNameValue() {
+#if (QT_VERSION >= 0x040600)
+  QFile file(filename);
+  if(!file.open(QFile::ReadOnly | QFile::Text)){
+    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
+    taMisc::Error(msg);
+    return false;
+  }
+  reader.setDevice(&file);
+  return qName().toString();
+#else
+  return "";
+#endif
+}
+
+String taXmlStreamReader::ReadElementText() {
+#if (QT_VERSION >= 0x040600)
+  QFile file(filename);
+  if(!file.open(QFile::ReadOnly | QFile::Text)){
+    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
+    taMisc::Error(msg);
+    return false;
+  }
+  reader.setDevice(&file);
+  return qReadElementText();
+#else
+  return "";
+#endif
+}
+
+
+void taXmlStreamReader::SkipCurrentElement() {
+#if (QT_VERSION >= 0x040600)
+  QFile file(filename);
+  if(!file.open(QFile::ReadOnly | QFile::Text)){
+    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
+    taMisc::Error(msg);
+  }
+  reader.setDevice(&file);
+  qSkipCurrentElement();
+#endif
+}
+
+

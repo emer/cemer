@@ -22,7 +22,7 @@
 // member includes:
 
 // member includes:
-#if !defined(__MAKETA__)
+#ifndef __MAKETA__
 # include <QXmlStreamReader>
 #else
 class QXmlStreamReader; // #IGNORE
@@ -33,14 +33,24 @@ class QXmlStreamReader; // #IGNORE
 taTypeDef_Of(taXmlStreamReader);
 
 class TA_API taXmlStreamReader : public taNBase {
-  // <describe here in full detail in one extended line comment>
+  // wrapper for parsing xml files with Qt API
 INHERITED(taNBase)
 public:
 #ifndef __MAKETA__
-  QXmlStreamReader reader;
+  QXmlStreamReader    reader;
+  bool                qReadNextStartElement() { return reader.readNextStartElement(); }
+  void                qSkipCurrentElement() { reader.skipCurrentElement(); }
+  QString             qReadElementText() { return reader.readElementText(); }
+  QStringRef          qName() { return reader.name(); }
 #endif
   
-  bool SetFile(const String& filename);
+  String            filename;
+  
+  void              SetFile(const String& filename);
+  bool              ReadNextStartElement();
+  void              SkipCurrentElement();
+  String            ReadElementText();
+  String            GetNameValue();
   
   TA_SIMPLE_BASEFUNS(taXmlStreamReader);
 private:
