@@ -801,41 +801,42 @@ String ControlPanel::MembersToString(bool use_search_vals) {
   bool first = true;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
-    if(mbr->IsControlPanelPointer()) {
-      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
-      if(sub_panel) {
-        if(!first)
-          params.cat(" "); // sep
-        else
-          first = false;
-        String oparams = sub_panel->MembersToString(use_search_vals);
-        params.cat(oparams);
+    // for now: don't recursively collect params.. active params are on control panel.
+    // if(mbr->IsControlPanelPointer()) {
+    //   ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    //   if(sub_panel) {
+    //     if(!first)
+    //       params.cat(" "); // sep
+    //     else
+    //       first = false;
+    //     String oparams = sub_panel->MembersToString(use_search_vals);
+    //     params.cat(oparams);
+    //   }
+    // }
+    // else {
+    if(!mbr->RecordValue()) continue;
+    if(!first)
+      params.cat(" "); // sep
+    else
+      first = false;
+    params.cat(mbr->GetName()).cat("=");
+    if(mbr->IsClusterRun()) {
+      if(!use_search_vals) {
+        params.cat(mbr->CurValAsString());
+      }
+      else {
+        if(mbr->data.search) {
+          params.cat(String(mbr->data.next_val));
+        }
+        else {
+          params.cat(mbr->CurValAsString());
+        }
       }
     }
     else {
-      if(!mbr->RecordValue()) continue;
-      if(!first)
-        params.cat(" "); // sep
-      else
-        first = false;
-      params.cat(mbr->GetName()).cat("=");
-      if(mbr->IsClusterRun()) {
-        if(!use_search_vals) {
-          params.cat(mbr->CurValAsString());
-        }
-        else {
-          if(mbr->data.search) {
-            params.cat(String(mbr->data.next_val));
-          }
-          else {
-            params.cat(mbr->CurValAsString());
-          }
-        }
-      }
-      else {
-        params.cat(mbr->CurValAsString());
-      }
+      params.cat(mbr->CurValAsString());
     }
+    // }
   }
   return params;
 }
