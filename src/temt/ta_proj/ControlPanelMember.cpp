@@ -231,6 +231,9 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
         data.is_numeric = false;     // nix
       }
     }
+    else if(mbr->type->IsBasePointerType()) {
+      data.is_single = true;    // counts as single!
+    }
   }
   if(!data.is_single) {
     data.search = false;

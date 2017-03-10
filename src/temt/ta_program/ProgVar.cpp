@@ -391,7 +391,9 @@ void ProgVar::GetControlPanelLabel(MemberDef* mbr, String& label, const String& 
         label += "_";
       }
     }
-    label += GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); // var name, not the member name
+    label += GetName().CamelToSnake();
+    // always do the full variable name!
+    // .elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); // var name, not the member name
     label = taMisc::StringCVar(label);
   }
   else { // something else, just do default

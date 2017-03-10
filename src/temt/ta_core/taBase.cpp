@@ -3712,7 +3712,8 @@ void taBase::GetControlPanelLabel(MemberDef* mbr, String& label, const String& x
       label += "_";
     }
   }
-  label += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
+  label += mbr->GetLabel().CamelToSnake();
+  // always do the full member name itself! NOT .elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   label = taMisc::StringCVar(label);
 }
 
