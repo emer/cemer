@@ -194,7 +194,12 @@ void taiMemberOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
     }
   }
 
+  if(!scope_type) {             // no type, no scope!
+    scope = NULL;
+  }
+  
   taiWidgetTokenChooser* tpb = (taiWidgetTokenChooser*)dat;
+
   if(scope_on_obj) {
     tpb->GetImageScopeObj(tok_ptr, targ_typ, scope_on_obj);
   }

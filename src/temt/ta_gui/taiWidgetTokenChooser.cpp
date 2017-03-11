@@ -36,6 +36,8 @@ taiWidgetTokenChooser::taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,
   : inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   scope_typ = NULL;
+  scope_obj.set(NULL);
+  scope_ref.set(NULL);
 }
 
 void taiWidgetTokenChooser::btnHelp_clicked() {
@@ -84,7 +86,7 @@ bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& 
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp) continue;
-    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
+    if (scope_typ && (bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
       continue;
@@ -207,7 +209,7 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       if (md && md->HasOption("HIDDEN_CHOOSER"))
         continue;
     }
-    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
+    if (scope_typ && (bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
       continue;
@@ -243,12 +245,15 @@ int taiWidgetTokenChooser::columnCount(int view) const {
 
 void taiWidgetTokenChooser::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 {//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
+  scope_obj.set(NULL);
+  scope_ref.set(NULL);
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
 void taiWidgetTokenChooser::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
   taBase* scope_, TypeDef* scope_type_)
 {
+  scope_obj.set(NULL);
   scope_ref = scope_;
   scope_typ = scope_type_;
   inherited::GetImage((void*)ths, targ_typ_);
@@ -258,6 +263,8 @@ void taiWidgetTokenChooser::GetImageScopeObj(taBase* ths, TypeDef* targ_typ_,
   taBase* scope_obj_)
 {
   scope_obj = scope_obj_;
+  scope_ref.set(NULL);
+  scope_typ = NULL;
   inherited::GetImage((void*)ths, targ_typ_);
 }
 
