@@ -20,12 +20,12 @@
 #include <taNBase>
 
 // member includes:
-
-// member includes:
 #ifndef __MAKETA__
-# include <QXmlStreamReader>
+  #include <QXmlStreamReader>
+  #include <QFile>
 #else
-class QXmlStreamReader; // #IGNORE
+  class QXmlStreamReader; // #IGNORE
+  class QFile; // #IGNORE
 #endif
 
 // declare all other types mentioned but not required to include:
@@ -33,28 +33,36 @@ class QXmlStreamReader; // #IGNORE
 taTypeDef_Of(taXmlStreamReader);
 
 class TA_API taXmlStreamReader : public taNBase {
-  // wrapper for parsing xml files with Qt API
-INHERITED(taNBase)
+  // wrapper for parsing xml files with Qt API -- Must call SetFile first!
+  INHERITED(taNBase)
 public:
 #ifndef __MAKETA__
-  QXmlStreamReader    reader;
-  #if (QT_VERSION >= 0x040600)
-    bool                qReadNextStartElement() { return reader.readNextStartElement(); }
-    void                qSkipCurrentElement() { reader.skipCurrentElement(); }
-    QString             qReadElementText() { return reader.readElementText(); }
-    QStringRef          qName() { return reader.name(); }
-  #endif
-#endif
   
-  String            filename;
+#if (QT_VERSION >= 0x040600)
+  bool             qReadNextStartElement() { return reader.readNextStartElement(); }
+  void             qSkipCurrentElement() { reader.skipCurrentElement(); }
+  void             qReadNext() { reader.readNext(); }
+  QString          qReadElementText() { return reader.readElementText(); }
+  QString          qName() { return reader.name().toString(); }
+  void             qClear() { reader.clear(); }
+#endif  // QT_VERSION >= 0x040600
   
-  void              SetFile(const String& filename);
-  bool              ReadNextStartElement();
-  void              SkipCurrentElement();
-  String            ReadElementText();
-  String            GetNameValue();
+#endif // __MAKETA__
+  
+  bool              SetFile(const String& filename);  // Must call first!
+  bool              ReadNextStartElement();  // See Qt documentation for QXmlStreamReader
+  void              ReadNext();  // See Qt documentation for QXmlStreamReader
+  void              SkipCurrentElement();  // See Qt documentation for QXmlStreamReader
+  String            ReadElementText();  // See Qt documentation for QXmlStreamReader
+  String            GetNameValue();  // See Qt documentation for QXmlStreamReader
+  void              Clear() { qClear(); } // removes device associated with the reader and clears internal state
   
   TA_SIMPLE_BASEFUNS(taXmlStreamReader);
+  
+protected:
+  QXmlStreamReader             reader;
+  QFile                        file;
+  
 private:
   void Initialize()  { };
   void Destroy()     { };

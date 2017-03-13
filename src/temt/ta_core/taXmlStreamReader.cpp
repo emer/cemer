@@ -16,27 +16,31 @@
 #include "taXmlStreamReader.h"
 
 #include <QFile>
+#include <QIODevice>
 
 #include <taMisc>
 #include <taString>
 
 TA_BASEFUNS_CTORS_DEFN(taXmlStreamReader);
 
-void taXmlStreamReader::SetFile(const String& the_filename) {
-  filename = the_filename;
-}
-
-bool taXmlStreamReader::ReadNextStartElement() {
+bool taXmlStreamReader::SetFile(const String& filename) {
 #if (QT_VERSION >= 0x040600)
-  QFile file(filename);
+  file.setFileName(filename);
   if(!file.open(QFile::ReadOnly | QFile::Text)){
     String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
     taMisc::Error(msg);
     return false;
   }
   reader.setDevice(&file);
-  SetFile(this->filename);
-  return qReadNextStartElement();
+  return true;
+  #else
+    return false;
+  #endif
+}
+
+bool taXmlStreamReader::ReadNextStartElement() {
+#if (QT_VERSION >= 0x040600)
+   return qReadNextStartElement();
 #else
   return false;
 #endif
@@ -44,14 +48,7 @@ bool taXmlStreamReader::ReadNextStartElement() {
 
 String taXmlStreamReader::GetNameValue() {
 #if (QT_VERSION >= 0x040600)
-  QFile file(filename);
-  if(!file.open(QFile::ReadOnly | QFile::Text)){
-    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
-    taMisc::Error(msg);
-    return false;
-  }
-  reader.setDevice(&file);
-  return qName().toString();
+  return qName();
 #else
   return "";
 #endif
@@ -59,13 +56,6 @@ String taXmlStreamReader::GetNameValue() {
 
 String taXmlStreamReader::ReadElementText() {
 #if (QT_VERSION >= 0x040600)
-  QFile file(filename);
-  if(!file.open(QFile::ReadOnly | QFile::Text)){
-    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
-    taMisc::Error(msg);
-    return false;
-  }
-  reader.setDevice(&file);
   return qReadElementText();
 #else
   return "";
@@ -75,14 +65,13 @@ String taXmlStreamReader::ReadElementText() {
 
 void taXmlStreamReader::SkipCurrentElement() {
 #if (QT_VERSION >= 0x040600)
-  QFile file(filename);
-  if(!file.open(QFile::ReadOnly | QFile::Text)){
-    String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
-    taMisc::Error(msg);
-  }
-  reader.setDevice(&file);
   qSkipCurrentElement();
 #endif
 }
 
+void taXmlStreamReader::ReadNext() {
+#if (QT_VERSION >= 0x040600)
+  qReadNext();
+#endif
+}
 
