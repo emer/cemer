@@ -1762,9 +1762,9 @@ DataTable* Layer::VarToTable(DataTable* dt, const String& variable) {
 
   NetMonitor nm;
   taBase::Own(nm, this);
+  nm.SetDataNetwork(dt, net);
   nm.AddLayer(this, variable);
   nm.items[0]->max_name_len = 20; // allow long names
-  nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
   dt->AddBlankRow();
   nm.GetMonVals();
