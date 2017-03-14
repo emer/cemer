@@ -82,11 +82,15 @@ void taiWidgetTokenChooser::EditPanel() {
 bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm) {
   if(td->tokens.size == 0 && td->tokens.sub_tokens == 0)
     return false;
+
   // not gonna happen if it hasn't already
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp) continue;
-    if (scope_typ && (bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
+    // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
+    // is actually relevant for various choosers.  also scope_ref is assumed to be the base
+    // obj -- this should ideally be cleaner
+    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
       continue;
@@ -143,6 +147,7 @@ bool taiWidgetTokenChooser::hasOnlyOneItem() {
 }
 
 void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
+  // TODO: note that scope_ref here is being used as a 'this' pointer I'm pretty sure..
   if(cust_chooser)
     cust_chooser(scope_ref, this);
   inherited::BuildChooser(ic, view);
@@ -209,7 +214,10 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       if (md && md->HasOption("HIDDEN_CHOOSER"))
         continue;
     }
-    if (scope_typ && (bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
+    // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
+    // is actually relevant for various choosers.  also scope_ref is assumed to be the base
+    // obj -- this should ideally be cleaner
+    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
       continue;
