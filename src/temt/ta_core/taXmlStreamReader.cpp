@@ -75,3 +75,8 @@ void taXmlStreamReader::ReadNext() {
 #endif
 }
 
+void taXmlStreamReader::Clear() {
+#if (QT_VERSION >= 0x040600)
+  qClear();
+#endif
+}

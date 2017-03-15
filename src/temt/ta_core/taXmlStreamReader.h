@@ -55,7 +55,7 @@ public:
   void              SkipCurrentElement();  // See Qt documentation for QXmlStreamReader
   String            ReadElementText();  // See Qt documentation for QXmlStreamReader
   String            GetNameValue();  // See Qt documentation for QXmlStreamReader
-  void              Clear() { qClear(); } // removes device associated with the reader and clears internal state
+  void              Clear();  // removes device associated with the reader and clears internal state
   
   TA_SIMPLE_BASEFUNS(taXmlStreamReader);
   
