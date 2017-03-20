@@ -56,6 +56,7 @@ public:
   String            ReadElementText();  // See Qt documentation for QXmlStreamReader
   String            GetNameValue();  // See Qt documentation for QXmlStreamReader
   void              Clear();  // removes device associated with the reader and clears internal state
+  void              CloseFile(); // !! Do this when done
   
   TA_SIMPLE_BASEFUNS(taXmlStreamReader);
   

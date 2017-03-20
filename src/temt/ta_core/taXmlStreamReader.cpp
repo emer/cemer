@@ -80,3 +80,7 @@ void taXmlStreamReader::Clear() {
   qClear();
 #endif
 }
+
+void taXmlStreamReader::CloseFile() {
+  file.QIODevice::close();
+}
