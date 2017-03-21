@@ -566,6 +566,7 @@ public:
     NAME_READONLY       = 0x0100, // #EXPERT set to disable editing of name
     REGISTERED          = 0x0200, // #EXPERT set when registered (must unreg)
     TREE_EXPANDED       = 0x0400, // #EXPERT our tree is expanded (if not set, just follow the defaults)
+    SEARCH_MATCH        = 0x0800, // #EXPERT only set by tree searcher to mark item
     BF_MISC1            = 0x1000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
     BF_MISC2            = 0x2000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
     BF_MISC3            = 0x4000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)

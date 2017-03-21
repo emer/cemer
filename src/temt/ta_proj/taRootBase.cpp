@@ -1654,6 +1654,8 @@ bool taRootBase::Startup_InitViewColors() {
                                          false, _nilString, true, "pink");
   taMisc::view_colors->FindMakeViewColor("ProgElWarning", "State: program element has Warning",
                                          false, _nilString, true, "gold");
+  taMisc::view_colors->FindMakeViewColor("SearchMatch", "State: item matches last search",
+                                         false, _nilString, true, "yellow1");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpoint", "State: program element is set for a breakpoint",
                                          false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpointDisabled", "State: program element is set for a breakpoint",

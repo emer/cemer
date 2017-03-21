@@ -178,24 +178,29 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
     }
   }
   
+  srch_nfound->setText(String((int)found_items.size));
   highlightFound();
   cur_item = 0;
   selectCurrent();
 }
 
 void iTreeSearch::highlightFound() {
-  srch_nfound->setText(String((int)found_items.size));
-  for(int i=0; i< srch_found.count(); i++) {
-    iTreeViewItem* itm = srch_found.at(i);
-    itm->setBackgroundColor(Qt::yellow);
+  for(int i=0; i< found_items.size; i++) {
+    taBase* base = found_items.SafeEl(i);
+    if (base) {
+      base->SetBaseFlag(taBase::SEARCH_MATCH);
+    }
   }
 }
 
 void iTreeSearch::unHighlightFound() {
-  for(int i=0; i< srch_found.count(); i++) {
-    iTreeViewItem* itm = srch_found.at(i);
-    itm->resetBackgroundColor();
+  for(int i=0; i< found_items.size; i++) {
+    taBase* base = found_items.SafeEl(i);
+    if (base) {
+      base->ClearBaseFlag(taBase::SEARCH_MATCH);
+    }
   }
+  tree_view->Refresh();
 }
 
 void iTreeSearch::selectCurrent(bool replace) {
