@@ -65,6 +65,7 @@ public:
   int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
   int		plus;	        // #READ_ONLY computed total number of cycles per plus phase = quarter
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
+  bool  current_cycle_gate_cycle; // #READ_ONLY computed value indicating if the current cycle is a gating cycle. This is used to then record act_g.
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -657,6 +658,8 @@ public:
   void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;
+  void  Gating_RecVals_Thr(int thr_no);
+  // #CAT_Statistics store the activations of all layers at the time of gating;
   virtual void  Compute_EpochWeights();
   // #CAT_Learning perform any epoch-level weight updates or adjustments..
     virtual void  Compute_EpochWeights_Thr(int thr_no);

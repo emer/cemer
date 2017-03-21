@@ -827,6 +827,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Stats
 
+  void Gating_RecVals(LeabraUnitVars* u, LeabraNetwork* net);
+  // Record act values at the time of gating in act_g
   float Compute_SSE(UnitVars* uv, Network* net, int thr_no, bool& has_targ) override;
   bool  Compute_PRerr
     (UnitVars* uv, Network* net, int thr_no, float& true_pos, float& false_pos,

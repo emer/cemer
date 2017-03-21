@@ -89,6 +89,10 @@ public:
   inline float& act_q4()
   { return ((LeabraUnitVars*)GetUnitVars())->act_q4; }
   // #VIEW_HOT #CAT_UnitVar records the activation state after the fourth gamma-frequency (25 msec / 40Hz) quarter (end) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  inline float& act_g()
+  { return ((LeabraUnitVars*)GetUnitVars())->act_g; }
+  // #VIEW_HOT #CAT_UnitVar records the activation state at the time of when a gating decision is made, which is based on the gating cycle and quarter -- is either act_eq or act_nd depending on act_misc.rec_nd setting -- Used for debugging PBWM
+  
   inline float& act_m()
   { return ((LeabraUnitVars*)GetUnitVars())->act_m; }
   // #VIEW_HOT #CAT_UnitVar records the traditional posterior-cortical minus phase activation, as act_q3 activation after third quarter of current alpha cycle -- is either act_eq or act_nd depending on act_misc.rec_nd setting

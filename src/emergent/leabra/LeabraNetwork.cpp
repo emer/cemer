@@ -756,6 +756,8 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
   if(times.cycle_qtr)
     tot_cyc = times.quarter;
   for(int cyc = 0; cyc < tot_cyc; cyc++) {
+    if (thr_no == 0) //We only need to do this for the first thread.
+      this->times.current_cycle_gate_cycle = false; //reset this variable that is then set in GPiInvUnitSpec when the current cycle is a PBWM gating cycle.
     Send_Netin_Thr(thr_no);
     threads.SyncSpin(thr_no, 0);
 
@@ -800,6 +802,9 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
 
+    if (this->times.current_cycle_gate_cycle)
+      Gating_RecVals_Thr(thr_no);
+    
     Compute_CycleStats_Thr(thr_no);
     threads.SyncSpin(thr_no, 2);
     
@@ -1218,7 +1223,7 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_act->UpdtVals(uv->act, flat_idx); 
-      am_act_raw->UpdtVals(uv->act_raw, flat_idx); 
+      am_act_raw->UpdtVals(uv->act_raw, flat_idx);
     }
   }
 
@@ -2439,6 +2444,15 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
   Compute_HogDeadPcts();
+}
+
+void LeabraNetwork::Gating_RecVals_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Gating_RecVals(uv, this);
+  }
 }
 
 void LeabraNetwork::Compute_EpochWeights() {

@@ -151,6 +151,8 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   }
 
   if(gate_qtr && qtr_cyc == gate_cyc) {
+    if (thr_no == 0) // Only set this once in the primary thread
+      net->times.current_cycle_gate_cycle = true;
     if(gpi.thr_act) {
       if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
       snd_val = u->act_eq;

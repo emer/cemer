@@ -562,6 +562,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_q2 = 0.0f;
   u->act_q3 = 0.0f;
   u->act_q4 = 0.0f;
+  u->act_g = 0.0f;
   u->act_m = 0.0f;
   u->act_p = 0.0f;
   u->act_dif = 0.0f;
@@ -701,6 +702,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_q2 = 0.0f;
   u->act_q3 = 0.0f;
   u->act_q4 = 0.0f;
+  u->act_g = 0.0f;
   u->act_m = 0.0f;
   u->act_p = 0.0f;
   u->act_dif = 0.0f;
@@ -870,6 +872,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   // reset all the time vars so it isn't ambiguous as these update
   if(taMisc::gui_active) {
     u->act_q1 = u->act_q2 = u->act_q3 = u->act_q4 = 0.0f;
+    u->act_g = 0;
     u->act_m = u->act_p = u->act_dif = 0.0f;
   }
 }
@@ -1960,6 +1963,17 @@ void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int th
 ///////////////////////////////////////////////////////////////////////
 //      Phase and Trial Activation Updating
 
+void LeabraUnitSpec::Gating_RecVals(LeabraUnitVars* u, LeabraNetwork* net) {
+  float use_act;
+  if(act_misc.rec_nd) {
+    use_act = u->act_nd;
+  }
+  else {
+    use_act = u->act_eq;
+  }
+  u->act_g = use_act;
+}
+
 void LeabraUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Quarter_Final_RecVals(u, net, thr_no);
 }
@@ -2071,6 +2085,8 @@ float LeabraUnitSpec::Compute_NormErr(LeabraUnitVars* u, LeabraNetwork* net, int
   }
   return 0.0f;
 }
+
+
 
 //////////////////////////////////////////
 //       Misc Functions                 //
