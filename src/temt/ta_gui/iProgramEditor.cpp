@@ -150,6 +150,7 @@ void iProgramEditor::Init() {
   layout_code->addWidget(items, 1); // it gets the room
 
   search = new iTreeSearch(items, this);
+  items->tree_searcher = search;
   layout_code->addWidget(search);
 
   propsCodeSplitter->addWidget(propsWidget);

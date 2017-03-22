@@ -36,6 +36,8 @@
 class iMainWindowViewer; //
 class String_PArray; //
 class iTreeViewItem; //
+class iTreeSearch;  //
+
 class iLineEdit; //
 class bool_Array; //
 
@@ -101,6 +103,7 @@ public:
 #endif
   
   ParentType            parent_type; // the context for the tree - browse, edit, list*&
+  iTreeSearch*          tree_searcher;
   bool                  useEditorCustomExpand() const;
   bool                  useNavigatorCustomExpand() const;
   const KeyString       colKey(int col) const; // the key we set for data lookup
@@ -151,6 +154,7 @@ public:
   // emit signal that tree structure is about to be updated
   virtual void		      EmitTreeStructUpdated();
   // emit signal that tree structure was updated
+  bool                  IsSearchMatch(iTreeViewItem* item);
 
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management

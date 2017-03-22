@@ -113,7 +113,6 @@ iTreeSearch::~iTreeSearch() {
 void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
   unHighlightFound();
   srch_nfound->setText("0");
-  srch_found.clear();
   found_items.Reset();
   if(!tree_view) {
     return;
@@ -158,23 +157,19 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
       sub_srch.Reset();
     }
     else if(tab->SearchTestItem_impl(srch, text_only, true, case_sens, false, false, false, false, false, false)) {       // otherwise just test this one item
-      srch_found.append(item);
       found_items.Add(tab);
     }
     ++it;
   }
   
   // only highlight for small number of hits
-  if(found_items.size < 25 && found_items.size > srch_found.count()) {
+  if(found_items.size < 25) {
     for(int i=0;i<found_items.size; i++) {
       taBase* fnd = found_items.FastEl(i);
       taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
       if(!lnk) continue;
       iTreeViewItem* fitm = tree_view->AssertItem(lnk);
       if(!fitm) continue;
-      if(srch_found.indexOf(fitm) < 0) {
-        srch_found.append(fitm);
-      }
     }
   }
   
@@ -185,20 +180,25 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
 }
 
 void iTreeSearch::highlightFound() {
-  for(int i=0; i< found_items.size; i++) {
-    taBase* base = found_items.SafeEl(i);
-    if (base) {
-      base->SetBaseFlag(taBase::SEARCH_MATCH);
-    }
+  for(int i=0;i<found_items.size; i++) {
+    taBase* fnd = found_items.FastEl(i);
+    taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
+    if(!lnk) continue;
+    iTreeViewItem* fitm = tree_view->AssertItem(lnk);
+    if(!fitm) continue;
+    fitm->setBackgroundColor(Qt::yellow);
   }
 }
 
 void iTreeSearch::unHighlightFound() {
-  for(int i=0; i< found_items.size; i++) {
-    taBase* base = found_items.SafeEl(i);
-    if (base) {
-      base->ClearBaseFlag(taBase::SEARCH_MATCH);
-    }
+  for(int i=0;i<found_items.size; i++) {
+    taBase* fnd = found_items.FastEl(i);
+    // the item may have been removed!
+    taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
+    if(!lnk) continue;
+    iTreeViewItem* fitm = tree_view->AssertItem(lnk);
+    if(!fitm) continue;
+    fitm->resetBackgroundColor();
   }
   tree_view->Refresh();
 }
@@ -217,9 +217,6 @@ void iTreeSearch::selectCurrent(bool replace) {
   if(!lnk) return;
   iTreeViewItem* fitm = tree_view->AssertItem(lnk);
   if(!fitm) return;             // todo: do something more sensible?
-  if(srch_found.indexOf(fitm) < 0) {
-    srch_found.append(fitm);
-  }
   
   fitm->setBackgroundColor(Qt::yellow);
   tree_view->setFocus();
@@ -237,14 +234,13 @@ void iTreeSearch::srch_text_entered() {
 void iTreeSearch::srch_clear_clicked() {
   unHighlightFound();
   srch_nfound->setText("0");
-  srch_found.clear();
   found_items.Reset();
   srch_text->setText("");
   repl_text->setText("");
+  tree_view->Refresh();
 }
 
 void iTreeSearch::treeview_to_updt() {
-  srch_found.clear();           // keep found items, just clear the tree view guys
 }
 
 void iTreeSearch::srch_next_clicked() {
@@ -300,6 +296,14 @@ void iTreeSearch::TextReplaceSelected() {
   srch_bar->addAction(repl_next);
   srch_bar->insertAction(srch_nfound_action, repl_text_action);
   
+}
+
+bool iTreeSearch::IsMatch(iTreeViewItem* item) {
+  taBase* tab = item->link()->taData();
+  if (found_items.FindEl(tab) != -1) {
+    return true;
+  }
+  return false;
 }
 
 

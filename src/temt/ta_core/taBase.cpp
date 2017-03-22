@@ -556,8 +556,6 @@ String taBase::GetStateDecoKey() const {
     return "ThisInvalid";
   if(HasBaseFlag(taBase::CHILD_INVALID))
     return "ChildInvalid";
-  if(HasBaseFlag(taBase::SEARCH_MATCH))
-    return "SearchMatch";
   int spec_st = GetSpecialState();
   if(spec_st < 1)
     return _nilString;

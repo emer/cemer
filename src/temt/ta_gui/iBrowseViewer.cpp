@@ -28,11 +28,8 @@
 #include <taiMisc>
 #include <taRootBase>
 
-
 #include <QVBoxLayout>
 #include <QHeaderView>
-
-
 
 iBrowseViewer::iBrowseViewer(BrowseViewer* browser_, QWidget* parent)
   : inherited(browser_, parent)
@@ -57,6 +54,7 @@ void iBrowseViewer::Init() {
   lay->addWidget(lvwDataTree);
 
   lvwTreeSearch = new iTreeSearch(lvwDataTree, this);
+  lvwDataTree->tree_searcher = lvwTreeSearch;
   lay->addWidget(lvwTreeSearch);
 
   lvwDataTree->installEventFilter(mainWindowViewer()->widget()); // translate keys..

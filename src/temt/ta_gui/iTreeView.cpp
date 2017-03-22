@@ -30,6 +30,7 @@
 #include <iVec2i>
 #include <iBrowseViewer>
 #include <iProgramEditor>
+#include <iTreeSearch>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -96,6 +97,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   in_mouse_press = 0;
   m_saved_scroll_pos = 0;
   setIndentation(taMisc::tree_indent);
+  tree_searcher = NULL;
   
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1,
@@ -1376,4 +1378,11 @@ void iTreeView::dropEvent(QDropEvent* e) {
   expandedItemList.Reset();
 
   inherited::dropEvent(e);
+}
+
+bool iTreeView::IsSearchMatch(iTreeViewItem* item) {
+  if (tree_searcher && tree_searcher->IsMatch(item)) {
+    return true;
+  }
+  return false;
 }

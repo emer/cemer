@@ -70,12 +70,7 @@ public:
   
   enum SearchMode       search_mode;
   
-  
-  
   taBase_RefList        found_items; // full list of items found
-#ifndef __MAKETA__i
-  QList<iTreeViewItem*> srch_found; // list of items found
-#endif
   int                   cur_item; // currrent item
   
   void                  Search(iTreeSearch::SearchMode mode);
@@ -86,6 +81,8 @@ public:
   // highlight all found items
   void                  selectCurrent(bool replace = false);
   // select current search item
+  bool                  IsMatch(iTreeViewItem* item);
+  // is this item in the list of found items?
   
   iTreeSearch(QWidget* parent = NULL);
   iTreeSearch(iTreeView* tree_view_, QWidget* parent = NULL);
