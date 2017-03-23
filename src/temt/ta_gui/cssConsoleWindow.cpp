@@ -41,26 +41,39 @@
 #include <QClipboard>
 #include <QShowEvent>
 #include <QTimer>
+#include <QKeyEvent>
 
 cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   lock_to_proj = true;
 
   css_con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+  
+  setWindowTitle("css Console");
 
-  QWidget* bod = new QWidget(this);
-  setCentralWidget(bod);
-  QHBoxLayout* hb = new QHBoxLayout(bod);
-  hb->setMargin(0); hb->setSpacing(0);
-  QToolBar* tb = new QToolBar(bod);
-  tb->setOrientation(Qt::Vertical);
-  tb->setMovable(false);
-  tb->setFloatable(false);
-  tb->setIconSize(QSize(16,16));
+  QWidget* central_widget = new QWidget(this);
+  setCentralWidget(central_widget);
+  QVBoxLayout* outer_layout = new QVBoxLayout(central_widget); // overall layout is vertical
+  outer_layout->setMargin(0);
+  outer_layout->setSpacing(0);
 
-  hb->addWidget(tb);
-  hb->addWidget(css_con);
-
-  menu_bar = new taiWidgetMenuBar(bod, taiMisc::fonBig, menuBar());
+  // add a toolbar widget to the central widget
+  outer_layout->addWidget(&toolbar_widget);
+  
+  toolbar_layout.setMargin(0);
+  toolbar_layout.setSpacing(0);
+  toolbar_widget.setLayout(&toolbar_layout);
+  
+  // add a toolbar to the toolbar widget
+  toolbar.setOrientation(Qt::Vertical);
+  toolbar.setMovable(false);
+  toolbar.setFloatable(false);
+  toolbar.setIconSize(QSize(16,16));
+  toolbar_layout.addWidget(&toolbar);
+  
+  // add the console editor
+  toolbar_layout.addWidget(css_con);
+  
+  menu_bar = new taiWidgetMenuBar(central_widget, taiMisc::fonBig, menuBar());
   edit_menu = menu_bar->AddSubMenu("&Edit");
   window_menu = menu_bar->AddSubMenu("&Window");
 
@@ -68,51 +81,59 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   pinned = new QIcon(":/images/tab_locked.png");
   clear_icon = new QIcon(":/images/clear.png");
   select_all_icon = new QIcon(":/images/select_all.png");
+  search_icon = new QIcon(":/images/find_icon.png");
 
   pin_act = AddAction(new iAction("&pin", QKeySequence(), "pin"));
   pin_act->setIcon(*pinned);
   pin_act->setToolTip(taiMisc::ToolTipPreProcess("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)"));
-  tb->addAction(pin_act);
-    
-  tb->addSeparator();
+  toolbar.addAction(pin_act);
+  
+  toolbar.addSeparator();
 
   editCutAction = new iAction(iClipData::EA_CUT, "Cu&t",
                                        QKeySequence("Ctrl+X"), "editCutAction");
   editCutAction->setIcon(QIcon(":/images/editcut.png"));
-  tb->addAction(editCutAction);
+  toolbar.addAction(editCutAction);
   edit_menu->AddAction(editCutAction);
   connect(editCutAction, SIGNAL(Action()), css_con, SLOT(cut()));
 
   editCopyAction = new iAction(iClipData::EA_COPY, "&Copy",
                                         QKeySequence("Ctrl+C"), "editCopyAction");
   editCopyAction->setIcon(QIcon(":/images/editcopy.png"));
-  tb->addAction(editCopyAction);
+  toolbar.addAction(editCopyAction);
   edit_menu->AddAction(editCopyAction);
   connect(editCopyAction, SIGNAL(Action()), css_con, SLOT(copy()));
 
   editPasteAction = new iAction(iClipData::EA_PASTE, "&Paste",
                                          QKeySequence("Ctrl+V"), "editPasteAction");
   editPasteAction->setIcon(QIcon(":/images/editpaste.png"));
-  tb->addAction(editPasteAction);
+  toolbar.addAction(editPasteAction);
   edit_menu->AddAction(editPasteAction);
   connect(editPasteAction, SIGNAL(Action()), css_con, SLOT(paste()));
     
-  tb->addSeparator();
+  toolbar.addSeparator();
 
   clear_act = new iAction("&Clear", QKeySequence("Ctrl+."), "clear_act");
   clear_act->setIcon(*clear_icon);
   clear_act->setToolTip(taiMisc::ToolTipPreProcess("Clear the console window"));
-  tb->addAction(clear_act);
+  toolbar.addAction(clear_act);
   edit_menu->AddAction(clear_act);
   connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
     
   select_all_act = new iAction("&Select All", QKeySequence(), "select_all_act");
   select_all_act->setIcon(*select_all_icon);
   select_all_act->setToolTip(taiMisc::ToolTipPreProcess("Select all contents of console window"));
-  tb->addAction(select_all_act);
+  toolbar.addAction(select_all_act);
   edit_menu->AddAction(select_all_act);
   connect(select_all_act, SIGNAL(Action()), css_con, SLOT(selectAll()));
     
+  show_search_act = new iAction("&Find", QKeySequence("Ctrl+F"), "show_search_act");
+  show_search_act->setIcon(*search_icon);
+  show_search_act->setToolTip(taiMisc::ToolTipPreProcess("Find text in this window"));
+  toolbar.addAction(show_search_act);
+  edit_menu->AddAction(show_search_act);
+  connect(show_search_act, SIGNAL(Action()), this, SLOT(ShowSearchBar()));
+
   window_menu->AddAction(pin_act);
   window_menu->AddSep();
 
@@ -122,13 +143,42 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   window_zoom_action = AddAction(new iAction("&Zoom", QKeySequence(), "window_zoom_action"));
   window_menu->AddAction(window_min_action);
   window_menu->AddAction(window_zoom_action);
-    
   connect(window_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
   connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
   connect(window_min_action, SIGNAL(Action()), this, SLOT(showMinimized()));
   connect(window_zoom_action, SIGNAL(Action()), this, SLOT(showMaximized()));
 
-  setWindowTitle("css Console");
+  
+  // add a search widget to the central widget
+  outer_layout->addWidget(&search_widget);
+  search_layout.setContentsMargins(28, 0, 0, 0);
+  search_layout.setSpacing(0);
+  search_widget.setLayout(&search_layout);
+  
+  search_layout.addWidget(&search_text_field);
+  
+  QPushButton* find_next_button = new QPushButton("Find Next", this);
+  find_next_button->setToolTip(taiMisc::ToolTipPreProcess("Search all console text"));
+  search_layout.addWidget(find_next_button);
+  connect(find_next_button, SIGNAL(clicked()), this, SLOT(FindNext()));
+
+  QPushButton* find_previous_button = new QPushButton("Find Previous", this);
+  find_previous_button->setToolTip(taiMisc::ToolTipPreProcess("Search all console text"));
+  search_layout.addWidget(find_previous_button);
+  connect(find_previous_button, SIGNAL(clicked()), this, SLOT(FindPrevious()));
+
+  QPushButton* clear_search_button = new QPushButton("x", this);
+  clear_search_button->setToolTip(taiMisc::ToolTipPreProcess("Clear search text and highlighting"));
+  search_layout.addWidget(clear_search_button);
+  connect(clear_search_button, SIGNAL(clicked()), this, SLOT(ClearSearch()));
+
+  QPushButton* hide_search_button = new QPushButton("Done", this);
+  hide_search_button->setToolTip("Hide the search bar");
+  search_layout.addWidget(hide_search_button);
+  connect(hide_search_button, SIGNAL(clicked()), this, SLOT(HideSearchBar()));
+  
+  search_widget.hide();
+  
 }
 
 cssConsoleWindow::~cssConsoleWindow() {
@@ -136,6 +186,7 @@ cssConsoleWindow::~cssConsoleWindow() {
   delete unpinned;
   delete pin_act;
   delete clear_act;
+  delete show_search_act;
   delete select_all_act;
 }
 
@@ -331,9 +382,43 @@ void cssConsoleWindow::UpdateUi() {
 
 void cssConsoleWindow::showEvent(QShowEvent* e) {
   inherited::showEvent(e);
-  QTimer::singleShot(150, this, SLOT(Clear()));
+  QTimer::singleShot(150, css_con, SLOT(clear()));
 }
 
-void cssConsoleWindow::Clear() {
-  css_con->clear();
+void cssConsoleWindow::ShowSearchBar() {
+  search_widget.show();
 }
+
+void cssConsoleWindow::HideSearchBar() {
+  search_widget.hide();
+}
+
+void cssConsoleWindow::ClearSearch() {
+  search_text_field.clear();
+}
+
+void cssConsoleWindow::FindNext() {
+  if (search_text_field.text() != last_search_text) { // new search - move cursor to start
+    css_con->moveCursor(QTextCursor::Start);
+    last_search_text = search_text_field.text();
+  }
+  css_con->find(search_text_field.text());
+
+}
+
+void cssConsoleWindow::FindPrevious() {
+  css_con->find(search_text_field.text(), QTextDocument::FindBackward);
+}
+
+void cssConsoleWindow::keyPressEvent(QKeyEvent* key_event)
+{
+  if (key_event->key() == Qt::Key_Return) {
+    if (key_event->modifiers() & Qt::ShiftModifier) {
+      FindPrevious();
+    }
+    else {
+      FindNext();
+    }
+  }
+}
+
