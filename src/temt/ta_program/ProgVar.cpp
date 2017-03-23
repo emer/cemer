@@ -91,6 +91,11 @@ void ProgVar::SetFlagsByOwnership() {
     Program* myprg = (Program*)GetOwner(&TA_Program);
     if(this->owner == &(myprg->args)) {
       SetVarFlag(PGRM_ARG);
+      if(init_from) {
+        init_from.set(NULL);        // cannot have an init_from!
+        SetVarFlag(CTRL_PANEL);
+        ClearVarFlag(CTRL_READ_ONLY);
+      }
     }
     if(var_type == T_Object) {
       if(objs_ptr) {

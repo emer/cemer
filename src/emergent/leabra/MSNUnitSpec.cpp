@@ -113,12 +113,12 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
     }
     // must be SUPER units at this point
     else if(lay->am_deep_mod_net.max < 0.01f) { // not enough yet // was .1f
-      u->deep_lrn = 0.0f;    // default is 0!
-      u->deep_mod = 1.0f;    // TODO: hoping this is the magic guy that bootstraps, but doesn't make totally dependent
+      u->deep_lrn = 0.0f;    // no learning without enabling signal
+      u->deep_mod = 1.0f;    // always allow unit activations to flow normally
     }
     else {
-      u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max; // todo: could not normalize this..
-      u->deep_mod = 1.0f;                               // do not modulate with deep_mod!
+      u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
+      u->deep_mod = 1.0f;    // always allow unit activations to flow normally
     }
   }
   else { // must be VENTRAL, PATCH

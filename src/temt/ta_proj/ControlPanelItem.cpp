@@ -16,6 +16,8 @@
 #include "ControlPanelItem.h"
 #include <taGroup_impl>
 #include <MemberDef>
+#include <Program>
+#include <taProject>
 
 #include <taMisc>
 
@@ -148,11 +150,25 @@ String ControlPanelItem::GetDesc() const {
 }
 
 String ControlPanelItem::GetColText(const KeyString& key, int itm_idx) const {
-  if (key == "base_name") return (base) ? base->GetName() : String("NULL");
-  else if (key == "base_type") return (base) ? base->GetTypeDef()->name : String("NULL");
-  else if (key == "item_name")
+  if (key == "base_name") {
+    if(base) {
+      Program* prog_own = (Program*)base->GetOwner(&TA_Program);
+      if(prog_own) {
+        return prog_own->name + base->GetPathNames(NULL, prog_own);
+      }
+      return base->GetPathNames(NULL, base->GetOwner(&TA_taProject));
+    }
+    return String("NULL");
+  }
+  else if (key == "base_type") {
+    return (base) ? base->GetTypeDef()->name : String("NULL");
+  }
+  else if (key == "item_name") {
     return (typeItem()) ? typeItem()->name : String("NULL");
-  else if (key == "label") return label;
+  }
+  else if (key == "label") {
+    return label;
+  }
   else return inherited::GetColText(key, itm_idx);
 }
 

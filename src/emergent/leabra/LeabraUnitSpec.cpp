@@ -349,6 +349,7 @@ void DeepSpec::Defaults_init() {
   raw_thr_rel = 0.1f;
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
+  mod_thr = 0.1f;
   trc_p_only_m = false;
   trc_thal_gate = false;
   trc_deep_gain = 0.2f;
@@ -1472,11 +1473,11 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
     }
   }
   // must be SUPER units at this point
-  else if(lay->am_deep_mod_net.max < 0.1f) { // not enough yet 
+  else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet 
     u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100%
   }
   else {
-    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max; // todo: could not normalize this..
+    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
     u->deep_mod = deep.mod_min + deep.mod_range * u->deep_lrn;
   }
 }

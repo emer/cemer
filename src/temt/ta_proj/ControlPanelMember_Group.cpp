@@ -35,21 +35,21 @@ taBase* ControlPanelMember_Group::GetBase_Flat(int idx) const {
 }
 
 String ControlPanelMember_Group::GetColHeading(const KeyString& key) const {
-  if (key == "base_name") return "Base Name";
+  if (key == "label") return "Label";
+  else if (key == "base_name") return "Base Path";
   else if (key == "base_type") return "Base Type";
   else if (key == "item_name") return "Member Name";
   else if (key == "mbr_type") return "Member Type";
-  else if (key == "label") return "Label";
   else return inherited::GetColHeading(key);
 }
 
 const KeyString ControlPanelMember_Group::GetListColKey(int col) const {
   switch (col) {
-  case 0: return "base_name";
-  case 1: return "base_type";
-  case 2: return "item_name"; // mbr or mth
-  case 3: return "mbr_type";
-  case 4: return "label";
+  case 0: return "label";
+  case 1: return "base_name";
+  case 2: return "base_type";
+  case 3: return "item_name"; // mbr or mth
+  case 4: return "mbr_type";
   default: break;
   }
   return inherited::GetListColKey(col);
