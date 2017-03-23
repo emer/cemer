@@ -32,3 +32,10 @@ bool ParamSet_Group::ActivateParamSet(const String& set_name, bool err_not_found
   set->CopySavedToActive(true); // apply the set and emit a message
   return true;
 }
+
+void ParamSet_Group::ActivateSaveAll() {
+  FOREACH_ELEM_IN_GROUP(ParamSet, ps, *this) {
+    ps->Activate();
+    ps->SaveCurrent();
+  }
+}

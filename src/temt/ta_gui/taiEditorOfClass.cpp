@@ -301,7 +301,7 @@ void taiEditorOfClass::Constr_Widget_Labels_impl(int& idx, Member_List* ms,
 }
 
 void taiEditorOfClass::Constr_Strings() {
-//NOTE: this is INSANE!
+  // NOTE: this is INSANE!
   win_str = String(def_title());
   String desc;
   if (typ != NULL) {
@@ -310,13 +310,14 @@ void taiEditorOfClass::Constr_Strings() {
     if (rbase) {
       desc = rbase->GetDesc(); // often empty -- use td if so
       if(rbase->GetOwner() != NULL)
-        win_str += String(" ") + rbase->GetPathNames();
-      if(rbase->GetName() != "") {
+        win_str += String(" ") + rbase->DisplayPath();
+      else if(rbase->GetName() != "") {
         win_str += String(" (") + rbase->GetName() + ")";
         prompt_str = rbase->GetName() + " (" + typ->name + ")";
       }
-      else
+      else {
         win_str += String(" (") + typ->name + ")";
+      }
     }
     if (desc.empty()) desc = typ->desc;
   }

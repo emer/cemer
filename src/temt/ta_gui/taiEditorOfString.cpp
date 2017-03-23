@@ -94,7 +94,7 @@ void taiEditorOfString::Constr_Strings() {
 //NO  inherited::Constr_Strings(prompt_str_, win_str_); // for if non-empty
   taBase* rbase = Base_(); // cache
   if (rbase && mbr) {
-    win_str = "Editing " + rbase->GetPathNames() + ":" + mbr->GetLabel();
+    win_str = "Editing " + rbase->DisplayPath() + ":" + mbr->GetLabel();
   }
   if (mbr) {
     prompt_str = mbr->GetLabel() + ": " + mbr->desc;

@@ -444,7 +444,7 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
       if(taMisc::is_auto_saving) {
         if(dt_cells > taMisc::auto_save_data_max_cells) {
           taMisc::Info("auto save - not saving data for datatable -- too big:",
-                       GetPathNames(), "cells:", String(dt_cells));
+                       DisplayPath(), "cells:", String(dt_cells));
           return DQR_NO_SAVE;
         }
         else {
@@ -465,13 +465,13 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
     if(dt_cells > taMisc::undo_data_max_cells) {
       if(taMisc::undo_debug) {
         taMisc::Info("not undo saving directly affected datatable row_indexes -- too big:",
-                     GetPathNames(), "cells:", String(dt_cells));
+                     DisplayPath(), "cells:", String(dt_cells));
       }
       return DQR_NO_SAVE; // too big or no save!
     }
     if(taMisc::undo_debug) {
       taMisc::Info("YES undo saving directly affected datatable row_indexes:",
-                   GetPathNames(), "cells:", String(dt_cells));
+                   DisplayPath(), "cells:", String(dt_cells));
     }
     return DQR_SAVE;
   }
@@ -480,9 +480,9 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
     // no need to save b/c unaffected by changes elsewhere..
     if(taMisc::undo_debug) {
       // taMisc::Info("not undo saving datatable -- should be unaffected:",
-      //              GetPathNames());
+      //              DisplayPath());
       // if(tabMisc::cur_undo_save_owner) {
-      //   taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->GetPathNames());
+      //   taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->DisplayPath());
       // }
     }
     return DQR_NO_SAVE;
@@ -491,7 +491,7 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
   if(!HasDataFlag(DataTable::SAVE_ROWS)) {
     if(taMisc::undo_debug) {
       // taMisc::Info("not undo saving datatable -- SAVE_ROWS not set:",
-      //              GetPathNames(), "cells:", String(dt_cells));
+      //              DisplayPath(), "cells:", String(dt_cells));
     }
     return DQR_NO_SAVE;
   }
@@ -499,14 +499,14 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
   if(dt_cells > taMisc::undo_data_max_cells) {
     if(taMisc::undo_debug) {
       taMisc::Info("not undo saving datatable row_indexes -- affected, but too big:",
-                   GetPathNames(), "cells:", String(dt_cells));
+                   DisplayPath(), "cells:", String(dt_cells));
     }
     return DQR_NO_SAVE;   // too big!
   }
   
   if(taMisc::undo_debug) {
     // taMisc::Info("YES undo saving datatable -- affected, SAVE_ROWS on, not too big:",
-    //              GetPathNames(), "cells:", String(dt_cells));
+    //              DisplayPath(), "cells:", String(dt_cells));
   }
   return DQR_SAVE;
 }

@@ -1086,9 +1086,9 @@ void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& progn
   String fh;
   fh << "Program: " << name << " at: ";
   if(pl && pl->prog_el)
-    fh << pl->prog_el->GetPathNames();
+    fh << pl->prog_el->DisplayPath();
   else
-    fh << GetPathNames();
+    fh << DisplayPath();
   fh << "\nStopped on breakpoint number: " << bpno
      << " at css source line: " << src_ln_no << " in prog: "
      << prognm << " pc: " << pc << " css top: " << topnm << "\n"
@@ -1411,12 +1411,7 @@ void Program::VerboseOut(Program* prg, int code_line,
                          const char* d, const char* e, const char* f,
                          const char* g, const char* h, const char* i) {
   if(!prg) return;
-  String msg;
-  taProject* proj = prg->GetMyProj();
-  if(proj)
-    msg = prg->GetPathNames(NULL, &(proj->programs));
-  else
-    msg = prg->GetPathNames();
+  String msg = prg->DisplayPath();
   msg += ": \t";
   ProgLine* pl = prg->script_list.SafeEl(code_line);
   if(pl) {

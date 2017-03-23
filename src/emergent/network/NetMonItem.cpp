@@ -523,7 +523,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     taBase* mbr = obj->FindFromPath(path, md);
     if(TestError(!mbr,"ScanObject_InObject",
                  "path to variable not found in parent object, path:",
-                 path, "var: ", var, "parent:", obj->GetPathNames())) {
+                 path, "var: ", var, "parent:", obj->DisplayPath())) {
       return true; //no mon, but we did handle it
     }
 

@@ -859,6 +859,8 @@ public:
   // #CAT_ObjectMgmt get path without name information, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
   virtual String        GetPathNames(taBase* ta=NULL, taBase* par_stop=NULL) const;
   // #CAT_ObjectMgmt get paths using string names instead of indexes, which is good for portability, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
+  virtual String        DisplayPath() const;
+  // #CAT_ObjectMgmt get the path to this object for display purposes -- uses GetPathNames -- if under a program then that is used as starting point, otherwise returns a project relative path -- other special cases may optimize as needed
   virtual taBase*       FindFromPath(const String& path, MemberDef*& ret_md, int start=0) const;
   // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path -- ret_md is return member def: if NULL and return is !NULL, then it is a member of a list or group, not a member in object
   virtual Variant       GetValFromPath(const String& path, MemberDef*& ret_md, bool warn_not_found=false) const;

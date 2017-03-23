@@ -98,9 +98,9 @@ bool iDialogObjChooser::Choose() {
 
 void iDialogObjChooser::GetPathStr() {
   if(lst_par_obj != NULL)
-    path_str = lst_par_obj->GetPathNames();
+    path_str = lst_par_obj->DisplayPath();
   else if(reg_par_obj != NULL)
-    path_str = reg_par_obj->GetPathNames();
+    path_str = reg_par_obj->DisplayPath();
   else if(typ_par_obj != NULL)
     path_str = typ_par_obj->name;
 }
@@ -302,7 +302,7 @@ void iDialogObjChooser::browser_currentItemChanged(QListWidgetItem* itm, QListWi
   if (msel_obj == NULL)
     nw_txt = path_str;
   else
-    nw_txt = msel_obj->GetPathNames();
+    nw_txt = msel_obj->DisplayPath();
 
   editor->setText(nw_txt);
 }
@@ -326,7 +326,7 @@ void iDialogObjChooser::DescendBrowser() {
   UpdateFmSelStr();             // get the new selection based on that!
   if (msel_obj == NULL) return;
 
-  String nw_txt = msel_obj->GetPathNames();
+  String nw_txt = msel_obj->DisplayPath();
   editor->setText((const char*)nw_txt);
 
   if(msel_obj->InheritsFrom(&TA_taList_impl)) {

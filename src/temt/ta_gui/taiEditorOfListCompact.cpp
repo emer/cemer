@@ -51,8 +51,7 @@ void taiEditorOfListCompact::Constr_Strings() {
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(def_title())
-     + " " + cur_lst->GetPathNames();
+  win_str = String(def_title()) + " " + cur_lst->DisplayPath();
 }
 
 // don't check for null im ptr here

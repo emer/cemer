@@ -54,7 +54,7 @@ void taiEditorOfList::Constr_Strings() {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
   win_str = String(def_title())
-     + " " + cur_lst->GetPathNames();
+     + " " + cur_lst->DisplayPath();
 }
 
 void taiEditorOfList::Constr_Final() {

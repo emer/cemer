@@ -35,22 +35,22 @@ void OtherProgramVar::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(var_1) {
       pv = other_prog->FindVarName(var_1->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_1->name,
-          "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+          "in program:", other_prog->name, "path:", other_prog->DisplayPath());
     }
     if(var_2) {
       pv = other_prog->FindVarName(var_2->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_2->name,
-          "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+          "in program:", other_prog->name, "path:", other_prog->DisplayPath());
     }
     if(var_3) {
       pv = other_prog->FindVarName(var_3->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_3->name,
-          "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+          "in program:", other_prog->name, "path:", other_prog->DisplayPath());
     }
     if(var_4) {
       pv = other_prog->FindVarName(var_4->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_4->name,
-          "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+          "in program:", other_prog->name, "path:", other_prog->DisplayPath());
     }
   }
 }

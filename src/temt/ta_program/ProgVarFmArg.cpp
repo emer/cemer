@@ -41,7 +41,7 @@ void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   if((bool)prog && var_name.nonempty()) {
     ProgVar* pv = prog->FindVarName(var_name);
     CheckError(!pv, quiet, rval, "Could not find variable named:", var_name, "in program:",
-               prog->name, "path:", prog->GetPathNames());
+               prog->name, "path:", prog->DisplayPath());
   }
 }
 

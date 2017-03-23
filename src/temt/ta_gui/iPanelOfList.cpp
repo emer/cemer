@@ -46,6 +46,7 @@ iPanelOfList::iPanelOfList(taiSigLink* dl_, const String& custom_name_)
   list->sortItems(0, Qt::AscendingOrder);
   FillList();
   list->resizeColumnToContents(1);  // the second column is the key column - resize the first time - then user has control
+  list->resizeColumnToContents(2);  // the second column is the key column - resize the first time - then user has control
 
 }
 

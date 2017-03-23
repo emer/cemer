@@ -21,6 +21,7 @@
 #include <taObjDiff_List>
 #include <ProgEl_List>
 #include <taProject>
+#include <Program>
 #include <taDoc>
 #include <ControlPanel>
 #include <ParamSet>
@@ -1201,6 +1202,14 @@ String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
   return rval;
 }
 
+String taBase::DisplayPath() const {
+  Program* prog_own = (Program*)GetOwner(&TA_Program);
+  if(prog_own) {
+    return String(".") + prog_own->name + GetPathNames(NULL, prog_own);
+  }
+  return GetPathNames(NULL, GetOwner(&TA_taProject));
+}
+
 taBase* taBase::ElemPath(const String& path, TypeDef* expect_type, bool err_msg) const {
   MemberDef* md;
   taBase* rval = FindFromPath(path, md);
@@ -2015,8 +2024,7 @@ void taBase::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) c
         rec->SetDiffFlag(taObjDiffRec::VAL_PATH_REL);
       }
       else {
-        // otherwise, always do it relative to project
-        rec->value = GetPathNames(NULL, GetOwner(&TA_taProject));
+        rec->value = DisplayPath();
       }
     }
   }

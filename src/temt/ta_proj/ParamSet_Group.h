@@ -34,6 +34,9 @@ public:
   virtual bool  ActivateParamSet(const String& set_name, bool err_not_found = true);
   // #CAT_ParamSet #AKA_LoadParamSet find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs
 
+  virtual void  ActivateSaveAll();
+  // #CAT_ParamSet #MENU #MENU_ON_ControlPanel #CONFIRM for each param set in this group, first Activate the saved parameter settings, and then do SaveCurrent to save the current values -- this does a refresh of the saved values for each item, and can be useful if new members were added or their types were changed
+
   String        GetTypeDecoKey() const override { return "ParamSet"; }
 
   TA_BASEFUNS(ParamSet_Group);
