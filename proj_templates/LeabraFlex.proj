@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10533
+// ta_Dump File v3.0 -- code v8.0.6.0 rev10557
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -23,7 +23,7 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   ControlPanelMember_Group @.mbrs = [7] {
+   ControlPanelMember_Group @.mbrs = [8] {
     ControlPanelMember @[0] { };
     ControlPanelMember @[1] { };
     ControlPanelMember @[2] { };
@@ -31,6 +31,7 @@ LeabraProject .projects["LeabraFlex"] {
     ControlPanelMember @[4] { };
     ControlPanelMember @[5] { };
     ControlPanelMember @[6] { };
+    ControlPanelMember @[7] { };
    };
 
    ControlPanelMethod_Group @.mths = [4] {
@@ -731,17 +732,17 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVarFmArg @[4] { };
     ProgVarFmArg @[5] { };
     Comment @[6] { };
-    ControlPanelsFmArgs @[7] { };
+    MethodCall @[7] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
     MethodCall @[8] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    MethodCall @[9] { 
-     ProgArg_List @.meth_args = [1] {
-      ProgArg @[0] { };
-     };
-    };
+    ControlPanelsFmArgs @[9] { };
     ControlPanelsFmArgs @[10] { };
     ControlPanelsFmArgs @[11] { };
     AssignExpr @[12] { };
@@ -903,7 +904,8 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [5] {
+    ProgVar_List @.vars = [6] {
+     ProgVar @["activate_params"] { };
      ProgVar @["run_params"] { };
      ProgVar @["misc_params"] { };
      ProgVar @["run_prog"] { };
@@ -4429,6 +4431,26 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     el_def=0;
     ControlPanelMember @[0] {
      user_data_=NULL;
+     label="activate_params";
+     cust_label=1;
+     desc="whether to activate selected param sets at start of train -- otherwise just uses current values as-is";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["activate_params"]$$;
+     mbr=ProgVar::bool_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      saved_value="true";
+      record=1;
+      search=0;
+      range=;
+      notes="should MasterTrain activate param sets at start";
+     };
+    };
+    ControlPanelMember @[1] {
+     user_data_=NULL;
      label="run_params";
      cust_label=1;
      desc="select parameters for controlling how network is run";
@@ -4447,7 +4469,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       notes="MasterTrain sets these params at start";
      };
     };
-    ControlPanelMember @[1] {
+    ControlPanelMember @[2] {
      user_data_=NULL;
      label="misc_params";
      cust_label=1;
@@ -4467,7 +4489,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       notes="add extra params as needed..";
      };
     };
-    ControlPanelMember @[2] {
+    ControlPanelMember @[3] {
      user_data_=NULL;
      label="master_run_stop_step_grain";
      cust_label=0;
@@ -4487,7 +4509,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       notes="MasterRun step can do many different things -- very useful!";
      };
     };
-    ControlPanelMember @[3] {
+    ControlPanelMember @[4] {
      user_data_=NULL;
      label="network_cycle_qtr";
      cust_label=1;
@@ -4507,7 +4529,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       notes="turn OFF to see individual cycles, ON for MUCH faster running";
      };
     };
-    ControlPanelMember @[4] {
+    ControlPanelMember @[5] {
      user_data_=NULL;
      label="cycle_update_net_view";
      cust_label=0;
@@ -4527,7 +4549,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       notes="update network view at cycle level -- actual value depends on cycle_qtr";
      };
     };
-    ControlPanelMember @[5] {
+    ControlPanelMember @[6] {
      user_data_=NULL;
      label="quarter_update_net_view";
      cust_label=0;
@@ -4547,7 +4569,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       notes="redundant with cycle for cycle_qtr = ON";
      };
     };
-    ControlPanelMember @[6] {
+    ControlPanelMember @[7] {
      user_data_=NULL;
      label="trial_update_net_view";
      cust_label=0;
@@ -8566,6 +8588,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    active_editable=0;
     last_activated=1;
    };
    ParamSet @["RunConfig1"] {
@@ -8947,6 +8970,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    active_editable=0;
     last_activated=0;
    };
   };
@@ -8995,6 +9019,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    active_editable=0;
     last_activated=1;
    };
    ParamSet @["MiscConfig1"] {
@@ -9036,6 +9061,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
+    active_editable=0;
     last_activated=0;
    };
   };
@@ -11868,14 +11894,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      flags=CAN_REVERT_TO_CODE;
      code_string="// add our special args from command line";
     };
-    ControlPanelsFmArgs @[7] {
-     user_data_=NULL;
-     desc="sets any arg listed in the control panel -- recursive for linked control panels";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
-    };
-    MethodCall @[8] {
+    MethodCall @[7] {
      user_data_=NULL;
      desc="set saved values first, before processing args";
      flags=CAN_REVERT_TO_CODE;
@@ -11905,7 +11924,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="void Activate(bool info_msg = false)";
      meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    MethodCall @[9] {
+    MethodCall @[8] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11935,19 +11954,26 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="void Activate(bool info_msg = false)";
      meth_desc=" copy the saved_value values to be active (live) values on the objects";
     };
-    ControlPanelsFmArgs @[10] {
+    ControlPanelsFmArgs @[9] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$;
     };
-    ControlPanelsFmArgs @[11] {
+    ControlPanelsFmArgs @[10] {
      user_data_=NULL;
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$;
+    };
+    ControlPanelsFmArgs @[11] {
+     user_data_=NULL;
+     desc="cluster run settings override anything from param sets -- this must be last!";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="CtrlPanel Fm Args: var = MyClusterRun ";
+     ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
     AssignExpr @[12] {
      user_data_=NULL;
@@ -12167,7 +12193,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      true_code {
       user_data_=NULL;
-      name="else_code";
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
@@ -12294,7 +12320,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      code_string="Call Fm: prog_group=StartupProgs prog_name_var=startup_prog (network)";
      prog_args {
       user_data_=NULL;
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -12332,7 +12358,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      code_string="MasterBatch(network)";
      prog_args {
       user_data_=NULL;
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -12822,6 +12848,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @["activate_params"] {
+      user_data_=NULL;
+      name="activate_params";
+      var_type=T_Bool;
+      bool_val=1;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="whether to activate selected param sets at start of train -- otherwise just uses current values as-is";
+      init_from=NULL;
+     };
      ProgVar @["run_params"] {
       user_data_=NULL;
       name="run_params";
@@ -12914,7 +12951,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       no_label="No";
       yes_code {
        user_data_=NULL;
-       name=;
+       name="yes_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -12927,7 +12964,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=Network::Build;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -12944,7 +12981,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=Network::Init_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -12988,7 +13025,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="if(taMisc::interactive)";
       cond {
        user_data_=NULL;
-       expr="taMisc::interactive";
+       expr="taMisc::interactive && activate_params";
       };
       true_code {
        user_data_=NULL;
@@ -13064,7 +13101,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="Call Fm: prog_group=InitProgs prog_name_var=init_prog (network, config_id)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13091,7 +13128,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="while (!stop_train)";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -13101,7 +13138,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="MasterRun(network, config_id, run_prog)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -13299,13 +13336,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_1";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_248";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -13462,7 +13499,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="Call Fm: prog_group=RunProgs prog_name_var=run_prog (network, config_id)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13651,7 +13688,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        code_string="ConfigNetwork(network, layer_group_lesion_list, layer_lesion_list, prjn_lesion_list, prjn_unlesion_list)";
        prog_args {
 	user_data_=NULL;
-	name=;
+	name="prog_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -13730,7 +13767,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        code_string="TrainStart(network)";
        prog_args {
 	user_data_=NULL;
-	name=;
+	name="prog_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -13761,7 +13798,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        true_code {
 	user_data_=NULL;
-	name=;
+	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MemberAssign @[0] {
@@ -13790,7 +13827,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        true_code {
 	user_data_=NULL;
-	name=;
+	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MemberAssign @[0] {
@@ -13999,7 +14036,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        code_string="BasicTrain(network, StdInputData, update_net_view)";
        prog_args {
 	user_data_=NULL;
-	name=;
+	name="prog_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -14075,7 +14112,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        true_code {
 	user_data_=NULL;
-	name=;
+	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	ProgramCall @[0] {
@@ -14085,7 +14122,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 code_string="EpochEnd(network)";
 	 prog_args {
 	  user_data_=NULL;
-	  name=;
+	  name="prog_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -14172,7 +14209,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	 true_code {
 	  user_data_=NULL;
-	  name=;
+	  name="true_code";
 	  el_typ=ProgCode;
 	  el_def=0;
 	  ProgramCall @[0] {
@@ -14182,7 +14219,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   code_string="TrainEnd(network)";
 	   prog_args {
 	    user_data_=NULL;
-	    name=;
+	    name="prog_args";
 	    el_typ=ProgArg;
 	    el_def=0;
 	    ProgArg @[0] {
@@ -14221,7 +14258,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 code_string="EpochStart(network)";
 	 prog_args {
 	  user_data_=NULL;
-	  name=;
+	  name="prog_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -14394,7 +14431,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::ResetUsed;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -14417,7 +14454,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14450,7 +14487,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="TrialStart(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14477,7 +14514,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="ChooseNextEvent(network, input_data, true)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14530,7 +14567,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="ApplyInputs(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14576,7 +14613,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="SettleMinus(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14661,7 +14698,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="ApplyInputs(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14701,7 +14738,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="SettlePlus(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14753,7 +14790,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="TrialEnd(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14783,7 +14820,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -14958,7 +14995,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::ResetUsed;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -14981,7 +15018,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15014,7 +15051,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="TrialStart(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15041,7 +15078,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="ChooseNextEvent(network, input_data, true)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15094,7 +15131,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="ApplyInputs(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15140,7 +15177,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="SettleMinus(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15225,7 +15262,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="ApplyInputs(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15265,7 +15302,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="SettlePlus(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15317,7 +15354,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="TrialEnd(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15347,7 +15384,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15610,7 +15647,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=DataTable::ResetData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15624,7 +15661,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -15634,7 +15671,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="LeabraTrial(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -15691,7 +15728,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name="ProgEl_List_100";
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 StopStepPoint @[0] {
@@ -15731,7 +15768,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15745,7 +15782,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="LeabraEpochMonitor(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15992,13 +16029,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_0";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_1374";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -16008,7 +16045,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="LocalVars (0 vars)";
 	local_vars {
 	 user_data_=NULL;
-	 name="ProgVar_List_0";
+	 name="local_vars";
 	 el_typ=ProgVar;
 	 el_def=0;
 	};
@@ -16024,7 +16061,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name="ProgEl_List_1376";
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 AssignExpr @[0] {
@@ -16051,7 +16088,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 AssignExpr @[0] {
@@ -16072,7 +16109,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  code_string="while (dmem_rows * taMisc::dmem_nprocs < input_data.rows)";
 	  loop_code {
 	   user_data_=NULL;
-	   name="ProgEl_List_1382";
+	   name="loop_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   VarIncr @[0] {
@@ -16106,13 +16143,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_0";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_1375";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -16122,7 +16159,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="LocalVars (0 vars)";
 	local_vars {
 	 user_data_=NULL;
-	 name="ProgVar_List_0";
+	 name="local_vars";
 	 el_typ=ProgVar;
 	 el_def=0;
 	};
@@ -16149,7 +16186,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name="ProgEl_List_205";
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 DataProcCall @[0] {
@@ -16162,7 +16199,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  method=taDataProc::Permute;
 	  meth_args {
 	   user_data_=NULL;
-	   name="ProgArg_List_0";
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	   ProgArg @[0] {
@@ -16220,13 +16257,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_0";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_1370";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -16236,7 +16273,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="LocalVars (0 vars)";
 	local_vars {
 	 user_data_=NULL;
-	 name="ProgVar_List_0";
+	 name="local_vars";
 	 el_typ=ProgVar;
 	 el_def=0;
 	};
@@ -16250,7 +16287,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["ComputeDmemRows"]$$;
 	fun_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="fun_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -16265,7 +16302,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=DataTable::EnforceRows;
 	meth_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -16295,7 +16332,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=DataTable::InitValsToRowNo;
 	meth_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -16324,7 +16361,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["PermuteIndexes"]$$;
 	fun_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="fun_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -16346,7 +16383,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["InitIndexes"]$$;
       fun_args {
        user_data_=NULL;
-       name="ProgArg_List_0";
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16377,7 +16414,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["ComputeDmemRows"]$;
       fun_args {
        user_data_=NULL;
-       name="ProgArg_List_0";
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16393,7 +16430,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name="ProgEl_List_1372";
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        FunctionCall @[0] {
@@ -16405,7 +16442,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["InitIndexes"]$;
 	fun_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="fun_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -16423,7 +16460,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name="ProgEl_List_207";
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -16436,7 +16473,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=DataTable::GetVal;
 	meth_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -16482,7 +16519,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        AssignExpr @[0] {
@@ -16509,7 +16546,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name="ProgEl_List_1378";
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        AssignExpr @[0] {
@@ -16534,7 +16571,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name="ProgEl_List_1381";
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 RandomCall @[0] {
@@ -16547,7 +16584,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  method=Random::IntZeroN;
 	  meth_args {
 	   user_data_=NULL;
-	   name="ProgArg_List_0";
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	   ProgArg @[0] {
@@ -16592,7 +16629,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=DataTable::ReadItem;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -16623,7 +16660,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name="ProgEl_List_1374";
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        FunctionCall @[0] {
@@ -16635,7 +16672,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions["PermuteIndexes"]$;
 	fun_args {
 	 user_data_=NULL;
-	 name="ProgArg_List_0";
+	 name="fun_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -16653,7 +16690,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        VarIncr @[0] {
@@ -16789,7 +16826,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Random::IntZeroN;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -16830,7 +16867,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=DataTable::ReadItem;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17027,7 +17064,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17070,7 +17107,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LayerWriter::AutoConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17100,7 +17137,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=taList_impl::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17136,7 +17173,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17179,7 +17216,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LayerWriter::ApplyInputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -17452,7 +17489,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=RndSeed_List::UseSeed;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17613,13 +17650,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_1";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_1759";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -17774,7 +17811,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_1";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
        ProgVar @["laygps"] {
@@ -17802,7 +17839,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_1760";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -17962,7 +17999,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    method=taMisc::Error;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	     ProgArg @[0] {
@@ -18157,7 +18194,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	  true_code {
 	   user_data_=NULL;
-	   name="else_code";
+	   name="true_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -18215,7 +18252,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name=;
+       name="args";
        el_typ=ProgVar;
        el_def=0;
        ProgVar @["lays"] {
@@ -18243,7 +18280,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       fun_code {
        user_data_=NULL;
-       name=;
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -18598,7 +18635,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	  true_code {
 	   user_data_=NULL;
-	   name="else_code";
+	   name="true_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -18656,7 +18693,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name=;
+       name="args";
        el_typ=ProgVar;
        el_def=0;
        ProgVar @["prjns"] {
@@ -18684,7 +18721,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       fun_code {
        user_data_=NULL;
-       name=;
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -19645,7 +19682,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Network::Build;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -19662,7 +19699,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Network::UpdtAfterNetMod;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -20341,13 +20378,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_1";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_62";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -20710,13 +20747,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_1";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_66";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -21124,7 +21161,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		};
 		true_code {
 		 user_data_=NULL;
-		 name="else_code";
+		 name="true_code";
 		 el_typ=ProgCode;
 		 el_def=0;
 		 AssignExpr @[0] {
@@ -21375,7 +21412,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		};
 		true_code {
 		 user_data_=NULL;
-		 name="else_code";
+		 name="true_code";
 		 el_typ=ProgCode;
 		 el_def=0;
 		 AssignExpr @[0] {
@@ -21783,7 +21820,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=String_Matrix::FmDelimString;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -21823,7 +21860,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="for (i = 0; i < les_lay_mat.size; i++)";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -21836,7 +21873,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=taMatrixT_taString_::SafeEl_Flat;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -21867,7 +21904,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=taGroup_Layer_::FindName;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -21898,7 +21935,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 MiscCall @[0] {
@@ -21911,7 +21948,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  method=taMisc::Error;
 	  meth_args {
 	   user_data_=NULL;
-	   name=;
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	   ProgArg @[0] {
@@ -22056,7 +22093,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 MethodCall @[0] {
@@ -22069,7 +22106,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  method=Layer_Group::LesionLayers;
 	  meth_args {
 	   user_data_=NULL;
-	   name=;
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
@@ -22089,7 +22126,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 MethodCall @[0] {
@@ -22102,7 +22139,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  method=Layer_Group::UnLesionLayers;
 	  meth_args {
 	   user_data_=NULL;
-	   name=;
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
@@ -22135,7 +22172,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Network::UpdtAfterNetMod;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -22402,13 +22439,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name="ProgVar_List_1";
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name="ProgEl_List_295";
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -22445,7 +22482,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 AssignExpr @[0] {
@@ -22470,7 +22507,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	  true_code {
 	   user_data_=NULL;
-	   name=;
+	   name="true_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   VarIncr @[0] {
@@ -22523,7 +22560,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="BatchRndSeed(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -22629,7 +22666,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Network::Init_Weights;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -22658,7 +22695,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -22671,7 +22708,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=Network::LoadWeights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -22759,7 +22796,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraConSpec::LogLrateSched;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -22816,7 +22853,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -22829,7 +22866,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=RndSeed::NewSeed;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -22845,7 +22882,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="EpochStart(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -22999,7 +23036,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -23009,7 +23046,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="SaveWeights(network)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -23041,7 +23078,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Program::SetVar;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -23223,7 +23260,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -23253,7 +23290,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::ResetUsed;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23270,7 +23307,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=DataTable::ResetData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23414,7 +23451,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23432,7 +23469,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23446,7 +23483,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="LeabraEpochMonitor(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -23477,7 +23514,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -23487,7 +23524,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="SaveWeights(network)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -23618,7 +23655,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Trial_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23649,7 +23686,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -23668,7 +23705,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=Network::Init_InputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23808,7 +23845,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Trial_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -23963,7 +24000,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="for (qtr = 0; qtr < 3; qtr++)";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -23973,7 +24010,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="Quarter(network)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -24316,7 +24353,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -24329,7 +24366,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -24348,7 +24385,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Trial_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -24422,7 +24459,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Trial_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -24618,7 +24655,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -24714,7 +24751,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -24849,7 +24886,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -25080,7 +25117,7 @@ also save specs.";
       method=taMisc::LeadingZeros;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -25121,7 +25158,7 @@ also save specs.";
       method=taMisc::LeadingZeros;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -25173,7 +25210,7 @@ also save specs.";
       method=taBase::GetFileNameFmProject;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -25242,7 +25279,7 @@ also save specs.";
       method=Network::SaveWeights;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -25653,7 +25690,7 @@ also save specs.";
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  user_data_=NULL;
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -25722,7 +25759,7 @@ also save specs.";
 	 method=DataTable::SaveDataLog;
 	 meth_args {
 	  user_data_=NULL;
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -26899,7 +26936,7 @@ also save specs.";
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -26942,7 +26979,7 @@ also save specs.";
        method=taBase::CheckConfig;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -26972,7 +27009,7 @@ also save specs.";
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -27119,7 +27156,7 @@ also save specs.";
        method=DataTable::AddBlankRow;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -27136,7 +27173,7 @@ also save specs.";
        method=NetMonitor::GetMonVals;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -27153,7 +27190,7 @@ also save specs.";
        method=DataTable::WriteClose;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -27170,7 +27207,7 @@ also save specs.";
        method=Network::DMem_ShareTrialData;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -28490,7 +28527,7 @@ also save specs.";
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -28533,7 +28570,7 @@ also save specs.";
        method=taBase::CheckConfig;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -28563,7 +28600,7 @@ also save specs.";
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -28710,7 +28747,7 @@ also save specs.";
        method=DataTable::AddBlankRow;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -28727,7 +28764,7 @@ also save specs.";
        method=NetMonitor::GetMonVals;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -28755,7 +28792,7 @@ also save specs.";
        method=DataTable::SetValColName;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -28824,7 +28861,7 @@ also save specs.";
        method=DataTable::SetValColName;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -28893,7 +28930,7 @@ also save specs.";
        method=DataTable::WriteClose;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -30043,7 +30080,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -30086,7 +30123,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=taBase::CheckConfig;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -30116,7 +30153,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -30263,7 +30300,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=DataTable::AddBlankRow;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -30280,7 +30317,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=NetMonitor::GetMonVals;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -30297,7 +30334,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=DataTable::WriteClose;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -30314,7 +30351,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=Network::DMem_ShareTrialData;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -31425,7 +31462,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -31468,7 +31505,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=taBase::CheckConfig;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -31498,7 +31535,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -31645,7 +31682,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=DataTable::AddBlankRow;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -31662,7 +31699,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=NetMonitor::GetMonVals;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -31679,7 +31716,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        method=DataTable::WriteClose;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
        };
@@ -31759,7 +31796,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9962806;
+     value 8 0=0.9957514;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33576,7 +33613,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -33937,7 +33974,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       delay=4;
      };
      deep_raw_qtr=0;
-     deep {user_data_=NULL: on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
+     deep {user_data_=NULL: on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
      da_mod {user_data_=NULL: on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {user_data_=NULL: name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -34568,6 +34605,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     minus=75;
     plus=25;
     total_cycles=100;
+    current_cycle_gate_cycle=0;
    };
    lstats {
     user_data_=NULL;
