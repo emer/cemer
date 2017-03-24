@@ -20,6 +20,7 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <QObject>
+#include <QString>
 #endif
 
 // member includes:
@@ -33,8 +34,13 @@ class TA_API ClusterRun_QObj : public QObject {
 
   Q_OBJECT
   friend class ClusterRun;
+  friend class ClusterManager;
+  friend class ClusterManager_UpdtThr;
 
   public slots:
+  void          printError(const QString msg);
+  void          printInfo(const QString msg);
+  void          ReloadClusterTables();
   void          UpdateEnabling(int panel_id);
   void          SelectionChanged(const QModelIndex& index);
 

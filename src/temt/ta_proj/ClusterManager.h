@@ -19,15 +19,47 @@
 #include "ta_def.h"
 #include <taString>
 #include <SubversionClient>
+#include <QThread>
+#include <QString>
+#include <ClusterRun_QObj>
 
 class ClusterRun;
 class DataTable;
 class taProject;
+class ClusterManager;
 
 // note: this is not processed by maketa!
 
-class TA_API ClusterManager {
+class  ClusterManager_UpdtThr : public QThread {
+  Q_OBJECT
+private:
+  ClusterManager * m_cm;
+  ClusterRun_QObj * qt_object_helper;
+  QStringList credentialsAvailable;
+  
+  
+  int  UpdateWorkingCopy();
+  int  UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
+                                            const String& user, const String& clust, const String& projname,
+                              bool main_svn);
+protected:
+  
+  SubversionClient* m_svn_other;
+  void run() override;
+signals:
+  void UpdatedSVN();
+  void sendError(const QString msg);
+  void sendInfo(const QString msg);
+public:
+  int isUpdating;
+  ClusterManager_UpdtThr (ClusterManager * cm,  ClusterRun_QObj * qt_object_helper, QObject *parent = 0);
+  void EnsureSVNCredentialsAvailable();
+};
+
+
+class TA_API ClusterManager   {
   // The ClusterManager class handles all Subversion operations and doesn't know anything about the contents of the job DataTables. The ClusterRun class (and its search algorithm) take care of everything DataTable related and for the most part do no Subversion operations.
+
 public:
   ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
@@ -55,6 +87,8 @@ public:
   // add a file from working copy to svn
   void  CommitFiles(const String &commit_msg);
   // commit current working copy files
+  int InitiateBackgroundSVNUpdate();
+  // update current working copy files in the background on a different thread
   int   UpdateWorkingCopy();
   // update current working copy files -- returns the current svn revision number
   void  Cleanup();
@@ -96,6 +130,7 @@ public:
 
 
 protected:
+  ClusterRun_QObj * qt_helper_object;
   // This exception class only used internally.
   class Exception : public std::runtime_error {
   public:
@@ -137,6 +172,7 @@ public:
   void DeleteFile(const String &filename);
 
   ClusterRun& m_cluster_run;
+  ClusterManager_UpdtThr* m_updtThr;
   bool m_valid;
   SubversionClient* m_svn_client;
   SubversionClient* m_svn_other; // other user or cluster svn client
@@ -159,6 +195,8 @@ public:
   String m_done_dat_filename;
   String m_archive_dat_filename;
   String m_deleted_dat_filename;
+
 };
+
 
 #endif // CLUSTER_MANAGER_H_

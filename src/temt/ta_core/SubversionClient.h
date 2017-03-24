@@ -21,6 +21,7 @@
 #include <apr.h>  // apr_off_t
 #include <stdexcept>
 #include <string>
+#include <QMutex>
 
 #ifdef CopyFile
 #undef CopyFile
@@ -206,6 +207,7 @@ private:
   bool m_cancelled;
   String      m_commit_message;
   int m_last_changed_revision;
+  QMutex *svn_operation;
 };
 
 #endif // SUBVERSION_CLIENT_H_

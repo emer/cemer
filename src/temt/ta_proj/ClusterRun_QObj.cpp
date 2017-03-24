@@ -24,3 +24,17 @@ void ClusterRun_QObj::UpdateEnabling(int panel_id) {
 void ClusterRun_QObj::SelectionChanged(const QModelIndex &index) {
   master->UpdateUI();
 }
+
+void ClusterRun_QObj::ReloadClusterTables() {
+  master->Update_impl(false);
+}
+
+
+void ClusterRun_QObj::printError(const QString msg) {
+  taMisc::Error("We encountered an error! ", msg);
+}
+
+void ClusterRun_QObj::printInfo(const QString msg) {
+  taMisc::Info(msg);
+}
+

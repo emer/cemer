@@ -483,6 +483,8 @@ SubversionClient::SubversionClient()
   // Set up APR and a pool.
   Apr::initializeOnce(); // must be done prior to any other APR calls.
   m_pool_perm = svn_pool_create(0);
+  
+  svn_operation = new QMutex();
 
   // Set the error handler to one that doesn't abort!
   // We'll check for these errors and convert to exceptions.
@@ -819,6 +821,7 @@ int
 SubversionClient::Checkout(const String& url_in, const String& to_wc, int rev, bool recurse)
 {
   m_cancelled = false;
+  QMutexLocker qml(svn_operation);
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
 
@@ -999,6 +1002,7 @@ SubversionClient::GetInfo(const String& file_or_dir_or_url, int& rev, int& kind,
                           String& root_url, int& last_changed_rev, int& last_changed_date,
                           String& last_changed_author, int64_t& size) {
   apr_pool_t* m_pool = svn_pool_create(0);
+  QMutexLocker qml(svn_operation);
 
   String path_in = file_or_dir_or_url;
   bool is_url = false;
@@ -1089,6 +1093,7 @@ void
 SubversionClient::GetFile(const String& from_url, String& to_str, int rev) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
+  QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -1137,6 +1142,7 @@ void
 SubversionClient::SaveFile(const String& from_url, const String& to_path, int rev) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
+  QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -1274,6 +1280,7 @@ SubversionClient::GetDiffToPrev(const String& from_url, String& to_str, int rev)
 void 
 SubversionClient::GetDiffWc(const String& from_url, String& to_str) {
   apr_pool_t* m_pool = svn_pool_create(0);
+  QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -1436,6 +1443,7 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
                           const String& url, int end_rev, int n_entries) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
+  QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
@@ -1508,6 +1516,7 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
 int
 SubversionClient::Update(int rev)
 {
+  QMutexLocker qml(svn_operation);
   m_cancelled = false;
 
   apr_pool_t* m_pool = svn_pool_create(0);
@@ -1552,7 +1561,7 @@ SubversionClient::Update(int rev)
 #else
   svn_boolean_t adds_as_modification = true;
   svn_boolean_t make_parents = false;
-
+    
   if (svn_error_t *error = svn_client_update4(
         &result_revs,
         paths,
@@ -1585,6 +1594,8 @@ SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
   if(files.size == 0) {
     return Update(rev);
   }
+  
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1667,6 +1678,7 @@ SubversionClient::RevertFiles(const String_PArray& files) {
   if(files.size == 0) {
     return;
   }
+  QMutexLocker qml(svn_operation);
   apr_pool_t* m_pool = svn_pool_create(0);
 
   // create an array containing a single element which is the input path to be updated
@@ -1700,6 +1712,7 @@ void
 SubversionClient::Add(const String& f_or_d, bool recurse, bool add_parents)
 {
   m_cancelled = false;
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1738,6 +1751,7 @@ void
 SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local)
 {
   m_cancelled = false;
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1783,6 +1797,7 @@ SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local
 void
 SubversionClient::MoveFile(const String_PArray& from_nms, String& to_nm, bool force) {
   m_cancelled = false;
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1911,6 +1926,7 @@ SubversionClient::MakeDir(const String& new_dir, bool make_parents)
   m_cancelled = false;
 
   apr_pool_t* m_pool = svn_pool_create(0);
+  QMutexLocker qml(svn_operation);
 
   // won't be used unless we make an immediate commit after adding files (by setting revprop_table)
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
@@ -1978,6 +1994,7 @@ int
 SubversionClient::Checkin(const String& comment) {
   m_cancelled = false;
   m_commit_message = comment;
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -2035,6 +2052,7 @@ SubversionClient::CheckinFiles(const String_PArray& files, const String& comment
   if(files.size == 0) {
     return Checkin(comment);
   }
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -2092,6 +2110,7 @@ SubversionClient::GetLastChangedRevision(const String& path)
 {
   m_cancelled = false;
   m_last_changed_revision = -1;
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -2172,6 +2191,7 @@ void
 SubversionClient::Cleanup()
 {
   m_cancelled = false;
+  QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
 

@@ -35,6 +35,207 @@
 #include <QTextStream>
 
 
+
+ClusterManager_UpdtThr::ClusterManager_UpdtThr ( ClusterManager * cm, ClusterRun_QObj * qt_object_helper, QObject *parent) : QThread(parent) {
+  m_cm = cm;
+  isUpdating = 0;
+  this->qt_object_helper = qt_object_helper;
+  m_svn_other = new SubversionClient();
+  String_Array clusts;
+  clusts.Split(m_cm->m_cluster_run.clusters, " ");
+  String_Array users;
+  users.Split(m_cm->m_cluster_run.users, " ");
+
+  int noRepos = clusts.size * users.size;
+  credentialsAvailable.clear();
+}
+
+//This function checks that we can access all of the repository URLs
+//This function should be called from the GUI thread, as this
+//might result in the opening of a QT dialog to prompt for credentials
+//It then caches the result to not need any network operations on the
+//second time
+void ClusterManager_UpdtThr::EnsureSVNCredentialsAvailable() {
+  String_Array clusts;
+  clusts.Split(m_cm->m_cluster_run.clusters, " ");
+  String_Array users;
+  users.Split(m_cm->m_cluster_run.users, " ");
+  String clust_nm = m_cm->GetClusterName();
+  String username = m_cm->GetUsername();
+  int i = 0;
+  for(int cl = 0; cl < clusts.size; cl++) {
+    String clust = clusts[cl];
+    for(int us = 0; us < users.size; us++) {
+      String user = users[us];
+      const String uurl = m_cm->GetRepoUrl_UserClust(users[us], clust);
+      if (credentialsAvailable.contains(uurl)) //We have been able to access the repository before, so assume we still can
+        continue;
+      int rev = 0;
+      bool main_svn = ((clust == clust_nm) && (user == username));
+      if (main_svn) {
+        m_cm->m_svn_client->UrlExists(uurl, rev); //Call an operation on the repository to check we have access
+      } else {
+        m_svn_other->UrlExists(uurl, rev);
+      }
+      credentialsAvailable.append(uurl);
+    }
+  }
+}
+void ClusterManager_UpdtThr::run() {
+  QObject::connect(this, SIGNAL(UpdatedSVN()), qt_object_helper, SLOT(ReloadClusterTables()));
+  QObject::connect(this, SIGNAL(sendError(const QString)), qt_object_helper, SLOT(printError(const QString)));
+  QObject::connect(this, SIGNAL(sendInfo(const QString)), qt_object_helper, SLOT(printInfo(const QString)));
+  UpdateWorkingCopy();
+  emit UpdatedSVN();
+  isUpdating--;
+}
+
+int
+ClusterManager_UpdtThr::UpdateWorkingCopy() {
+    String clust_nm = m_cm->GetClusterName();
+    String username = m_cm->GetUsername();
+    
+    String_Array clusts;
+    clusts.Split(m_cm->m_cluster_run.clusters, " ");
+    String_Array users;
+    users.Split(m_cm->m_cluster_run.users, " ");
+    
+    QFileInfo fi(m_cm->GetFilename());
+    String projname = fi.completeBaseName();
+    
+    // note: useful for testing speed..
+    // taMisc::Info("Starting Update...");
+    // taMisc::ProcessEvents();
+    
+    for(int cl = 0; cl < clusts.size; cl++) {
+      String clust = clusts[cl];
+      for(int us = 0; us < users.size; us++) {
+        String user = users[us];
+        String wcp = m_cm->GetWcPath_UserClust(m_cm->m_wc_path, user, clust);
+        bool main_svn = ((clust == clust_nm) && (user == username));
+        if(main_svn) {
+          m_cm->m_cur_svn_rev = UpdateWorkingCopy_impl(m_cm->m_svn_client, m_cm->m_wc_path, user, clust, projname,
+                                                 main_svn);
+        }
+        else {
+          try{
+            m_svn_other->SetWorkingCopyPath(wcp);
+            int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user, clust, projname,
+                                             main_svn);
+          } catch (const SubversionClient::Exception &ex) {
+            //These are additional repositories, so don't worry about them too much
+            emit sendInfo("Could not update SVN working copy " + wcp + ". Ignoring secondary repository\n" + ex.what());
+          }
+        }
+      }
+    }
+    
+    emit sendInfo("Working copy was updated to revision " + String(m_cm->m_cur_svn_rev));
+    return m_cm->m_cur_svn_rev;
+  }
+
+  
+int
+ClusterManager_UpdtThr::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
+                                         const String& user, const String& clust, const String& projname,
+                                         bool main_svn)
+  {
+    // If the user already has a working copy, update it.  Otherwise, create
+    // it on the server and check it out.
+    int rev_rval = 0;
+    QFileInfo fi_wc(wc_path.toQString());
+    if (!fi_wc.exists()) {
+      String uurl = m_cm->GetRepoUrl_UserClust(user, clust);
+      if(main_svn) {
+        // This could be the first time the user has used Click-to-cluster.
+        emit sendInfo("Working copy not found; will try to create at:" + wc_path);
+        
+        // Create the directory on the repository, if not already present.
+        String comment = "Creating cluster directory for user: ";
+        comment += user;
+        try {
+          sc->TryMakeUrlDir(uurl, comment);
+        } catch (const SubversionClient::Exception &ex) {
+          emit sendInfo("Could not create " + uurl+ " in svn. Trying to see if it already exists: " + ex.what());
+        }
+      }
+      
+      // Check out a working copy (possibly just an empty directory if we
+      // just created it for the first time).
+      emit sendInfo("Checking out repository url: " + uurl + " to wc path:" + wc_path +
+                   " can take a while..");
+      rev_rval = sc->Checkout(uurl, wc_path);
+    }
+    else {
+      // Update the existing wc.
+      if (projname.nonempty()) {
+        // If we have a specific project, only check out a sub section of the repository to save time
+        String wcp = wc_path + PATH_SEP + projname;
+        sc->SetWorkingCopyPath(wc_path + PATH_SEP + projname);
+        QFileInfo fi_wcp(wcp.toQString());
+        if(!fi_wcp.exists()) {
+          String uurl = m_cm->GetRepoUrl_UserClust(user, clust);
+          uurl += PATH_SEP + projname;
+          int url_rev;
+          if(sc->UrlExists(uurl, url_rev)) {
+            emit sendInfo("Working copy doesn't exist, checking out:" + wcp);
+            rev_rval = sc->Checkout(uurl, wcp);
+          }
+          else {
+            emit sendInfo("Working copy and url don't exist, skipping: "+ wcp);
+          }
+        }
+        else {
+          int wc_rev, url_rev;
+          bool same_rev = sc->IsWCRevSameAsHead(wcp, wc_rev, url_rev);
+          if(same_rev) {
+            rev_rval = wc_rev;
+          }
+          else {
+            try {
+              rev_rval = sc->Update();// TODO: FIXME: testing thread safety issues.
+            } catch (const SubversionClient::Exception & ex) {
+              rev_rval = -1;
+              emit sendError("Could not update wc: " + wcp + " " + ex.what());
+            }
+          }
+        }
+        
+        if(main_svn) {
+          // We also need the cluster_info.dat from the top level directory -- only for us..
+          String cip = wc_path + PATH_SEP + "cluster_info.dat";
+          String ctp = wc_path + PATH_SEP + "clusterscript_timestamp.dat";
+          int wc_rev, url_rev;
+          bool same_rev = sc->IsWCRevSameAsHead(cip, wc_rev, url_rev);
+          if(!same_rev) {
+            String_PArray files;
+            files.Add(cip);
+            files.Add(ctp);
+            try {
+              sc->UpdateFiles(files, -1);
+            } catch (const SubversionClient::Exception &ex) {
+              emit sendError("Could not get cluster_info " + wcp + " " + ex.what());
+            }
+          }
+        }
+      }
+      else {
+        rev_rval = sc->Update();
+      }
+    }
+    
+    // We could check if these directories already exist, but it's easier
+    // to just try to create them all and ignore any creation errors.
+    if(main_svn) {
+      sc->TryMakeDir(m_cm->m_wc_proj_path);
+      sc->TryMakeDir(m_cm->m_wc_submit_path);
+      sc->TryMakeDir(m_cm->m_wc_models_path);
+      sc->TryMakeDir(m_cm->m_wc_results_path);
+    }
+    return rev_rval;
+  }
+
+
 ClusterManager::Exception::Exception(const char *msg)
   : std::runtime_error(msg) {
   if(taiMisc::busy_count > 0)   // if we excepted
@@ -79,6 +280,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   if(HasBasicData(false))
     SetPaths(false);                 // always get paths if possible, but not if not..
   m_valid = true;
+  m_updtThr = new ClusterManager_UpdtThr(this,m_cluster_run.qt_object_helper, 0);
 }
 
 ClusterManager::~ClusterManager()
@@ -196,6 +398,8 @@ ClusterManager::UpdateTables(bool do_svn_update)
     if (do_svn_update) {
       UpdateWorkingCopy();
     }
+    
+    InitClusterInfoTable();
 
     // Get new revisions.
     int new_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
@@ -583,158 +787,30 @@ ClusterManager::SetPaths(bool updt_wc) {
   return true;
 }
 
+
+int
+ClusterManager::InitiateBackgroundSVNUpdate() {
+  if (m_updtThr->isUpdating) {
+    taMisc::Info("Cluster run is already updating in the background. Skipping new update call");
+    return 1;
+  }
+  if(!SetPaths()) return -1;
+  m_updtThr->isUpdating++;
+  m_updtThr->EnsureSVNCredentialsAvailable();
+  m_updtThr->start();
+  return 0;
+}
+
+//This is the syncronous version of UpdateWorkingCopy.
+//It initiates the update in the background thread, but then
+//calls a wait on the thread until it completes.
 int
 ClusterManager::UpdateWorkingCopy() {
-  if(!SetPaths()) return -1;
-
-  String clust_nm = GetClusterName();
-  String username = GetUsername();
-
-  String_Array clusts;
-  clusts.Split(m_cluster_run.clusters, " ");
-  String_Array users;
-  users.Split(m_cluster_run.users, " ");
-
-  QFileInfo fi(GetFilename());
-  String projname = fi.completeBaseName();
-
-  // note: useful for testing speed..
-  // taMisc::Info("Starting Update...");
-  // taMisc::ProcessEvents();
-  
-  for(int cl = 0; cl < clusts.size; cl++) {
-    String clust = clusts[cl];
-    for(int us = 0; us < users.size; us++) {
-      String user = users[us];
-      String wcp = GetWcPath_UserClust(m_wc_path, user, clust);
-      bool main_svn = ((clust == clust_nm) && (user == username));
-      if(main_svn) {
-        m_cur_svn_rev = UpdateWorkingCopy_impl(m_svn_client, m_wc_path, user, clust, projname,
-                                                main_svn);
-      }
-      else {
-        try{
-          m_svn_other->SetWorkingCopyPath(wcp);
-          int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user, clust, projname,
-              main_svn);
-        } catch (const SubversionClient::Exception &ex) {
-          //These are additional repositories, so don't worry about them too much
-          taMisc::Info("Could not update SVN working copy ", wcp, ". Ignoring secondary repository\n", ex.what());
-          taMisc::DoneBusy();
-        }
-      }
-    }
-  }
+  InitiateBackgroundSVNUpdate();
+  m_updtThr->wait();
 
   taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
   return m_cur_svn_rev;
-}
-
-int
-ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
-                                       const String& user, const String& clust, const String& projname,
-                                       bool main_svn)
-{
-  // If the user already has a working copy, update it.  Otherwise, create
-  // it on the server and check it out.
-  int rev_rval = 0;
-  QFileInfo fi_wc(wc_path.toQString());
-  if (!fi_wc.exists()) {
-    String uurl = GetRepoUrl_UserClust(user, clust);
-    if(main_svn) {
-      // This could be the first time the user has used Click-to-cluster.
-      taMisc::Info("Working copy not found; will try to create at:", wc_path);
-
-      // Create the directory on the repository, if not already present.
-      String comment = "Creating cluster directory for user: ";
-      comment += user;
-      try {
-        sc->TryMakeUrlDir(uurl, comment);
-      } catch (const SubversionClient::Exception &ex) {
-        taMisc::Warning("Could not create ", uurl, " in svn. Trying to see if it already exists: ", ex.what());
-      }
-    }
-
-    // Check out a working copy (possibly just an empty directory if we
-    // just created it for the first time).
-    taMisc::Info("Checking out repository url:", uurl, "to wc path:", wc_path,
-                 "can take a while..");
-    taMisc::Busy();
-    rev_rval = sc->Checkout(uurl, wc_path);
-    taMisc::DoneBusy();
-    if(main_svn) {
-      taMisc::Info("Working copy checked out for revision", String(rev_rval));
-    }
-  }
-  else {
-    // Update the existing wc.
-    taMisc::Busy();
-    if (projname.nonempty()) {
-      // If we have a specific project, only check out a sub section of the repository to save time
-      String wcp = wc_path + PATH_SEP + projname;
-      sc->SetWorkingCopyPath(wc_path + PATH_SEP + projname);
-      QFileInfo fi_wcp(wcp.toQString());
-      if(!fi_wcp.exists()) {
-        String uurl = GetRepoUrl_UserClust(user, clust);
-        uurl += PATH_SEP + projname;
-        int url_rev;
-        if(sc->UrlExists(uurl, url_rev)) {
-          taMisc::Info("Working copy doesn't exist, checking out:", wcp);
-          rev_rval = sc->Checkout(uurl, wcp);
-        }
-        else {
-          taMisc::DebugInfo("Working copy and url don't exist, skipping:", wcp);
-        }          
-      }
-      else {
-        int wc_rev, url_rev;
-        bool same_rev = sc->IsWCRevSameAsHead(wcp, wc_rev, url_rev);
-        if(same_rev) {
-          rev_rval = wc_rev;
-        }
-        else {
-          rev_rval = sc->Update();
-        }
-      }
-
-      if(main_svn) {
-        // We also need the cluster_info.dat from the top level directory -- only for us..
-        String cip = wc_path + PATH_SEP + "cluster_info.dat";
-        String ctp = wc_path + PATH_SEP + "clusterscript_timestamp.dat";
-        int wc_rev, url_rev;
-        bool same_rev = sc->IsWCRevSameAsHead(cip, wc_rev, url_rev);
-        if(!same_rev) {
-          String_PArray files;
-          files.Add(cip);
-          files.Add(ctp);
-          try {
-            sc->UpdateFiles(files, -1);
-          } catch (const ClusterManager::Exception &ex) {
-            taMisc::Error("Could not get cluster_info", ex.what());
-          }
-        }
-      }
-    }
-    else {
-      rev_rval = sc->Update();
-    }
-    taMisc::DoneBusy();
-  }
-
-  if(main_svn) {
-    InitClusterInfoTable();
-    
-  }
-  
-  // We could check if these directories already exist, but it's easier
-  // to just try to create them all and ignore any creation errors.
-  if(main_svn) {
-    sc->TryMakeDir(m_wc_proj_path);
-    sc->TryMakeDir(m_wc_submit_path);
-    sc->TryMakeDir(m_wc_models_path);
-    sc->TryMakeDir(m_wc_results_path);
-  }
-  return rev_rval;
 }
 
 void

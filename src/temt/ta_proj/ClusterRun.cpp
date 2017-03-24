@@ -181,6 +181,7 @@ ParamSearchAlgo* ClusterRun::NewSearchAlgo(TypeDef *type) {
 void ClusterRun::Run() {
   if(!InitClusterManager())
     return;
+  Update(); //Update the SVN repository in the background
   FormatTables();               // ensure tables are formatted properly
   jobs_submit.ResetData();      // clear the submission table
   bool prompt_user = true;      // always prompt the user on a new run.
@@ -207,7 +208,10 @@ void ClusterRun::Run() {
 
 
 bool ClusterRun::Update() {
-  return Update_impl(true);
+  if(!InitClusterManager())
+    return false;
+  m_cm->InitiateBackgroundSVNUpdate();
+  return true;
 }
 
 bool ClusterRun::LoadJobs() {
@@ -292,6 +296,26 @@ bool ClusterRun::Update_impl(bool do_svn_update) {
   FillInRunningTime(&jobs_deleted);
   FillInElapsedTime(&jobs_running);
 
+  if (wait_proc_updt) {
+    taDateTime curtime;
+    curtime.currentDateTime();
+    if(wait_proc_updt->cur_svn_rev >= wait_proc_trg_rev) {
+      taMisc::Info("ClusterRun: updated to target revision:",
+                   String(wait_proc_updt->cur_svn_rev));
+      wait_proc_updt = NULL;
+      wait_proc_trg_rev = -1;
+      return true;
+    }
+    if(wait_proc_start.secsTo(curtime) > wait_proc_updt->auto_updt_timeout) {
+      taMisc::Info("ClusterRun: time out on updating cluster run -- press the Update button manually to get the updates, cur rev:",
+                   String(wait_proc_updt->cur_svn_rev));
+    
+      wait_proc_updt = NULL;
+      wait_proc_trg_rev = -1;
+      return true;
+    }
+  }
+  taMisc::Info("ClusterRun: updated to revision: ", String(cur_svn_rev));
   SigEmitUpdated();
   UpdateUI();
   return has_updates;
@@ -604,7 +628,7 @@ void ClusterRun::SelectCluster() {
   String clust = m_cm->ChooseCluster("Select a cluster to use for this project:");
   if(clust.empty()) return;
   cluster = clust;
-  Update_impl(m_cm->m_do_svn_update);
+  
   
   
   if (m_cm->m_do_svn_update) {
@@ -617,6 +641,11 @@ void ClusterRun::SelectCluster() {
   }
   // this is not worth the risks if things are not configured properly:
   //  AutoUpdateMe();
+  if (m_cm->m_do_svn_update) {
+    Update();
+  } else {
+    Update_impl(m_cm->m_do_svn_update);
+  }
   UpdateUI();
 }
 
@@ -2280,8 +2309,6 @@ void ClusterRun::AutoUpdateMe(bool clear_sels) {
   wait_proc_trg_rev = cur_svn_rev + 1;
   wait_proc_start.currentDateTime();
   wait_proc_last_updt.currentDateTime();
-  SigEmitUpdated();             // get the latest revision
-  
 }
 
 bool ClusterRun::WaitProcAutoUpdate() {
@@ -2299,23 +2326,9 @@ bool ClusterRun::WaitProcAutoUpdate() {
     return false;               // don't update while a window is open!
   }
   wait_proc_updt->Update();
-  wait_proc_updt->SigEmitUpdated();
+  //wait_proc_updt->SigEmitUpdated();
   wait_proc_last_updt.currentDateTime();
-  if(wait_proc_updt->cur_svn_rev >= wait_proc_trg_rev) {
-    taMisc::Info("ClusterRun: updated to target revision:",
-                 String(wait_proc_updt->cur_svn_rev));
-    wait_proc_updt = NULL;
-    wait_proc_trg_rev = -1;
-    return true;
-  }
-  if(wait_proc_start.secsTo(curtime) > wait_proc_updt->auto_updt_timeout) {
-    taMisc::Info("ClusterRun: time out on updating cluster run -- press the Update button manually to get the updates, cur rev:",
-                 String(wait_proc_updt->cur_svn_rev));
-    
-    wait_proc_updt = NULL;
-    wait_proc_trg_rev = -1;
-    return true;
-  }
+  
   return true;
 }
 

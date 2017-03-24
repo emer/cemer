@@ -80,10 +80,11 @@ set(ta_proj_HEADS_NOMAKETA_MOC
   TemtClient_QObj.h
   TemtServer_QObj.h
   ClusterRun_QObj.h
+  ClusterManager.h
 )
 
 set(ta_proj_HEADS_NOMAKETA_NOMOC
-  ClusterManager.h
+  
 )
 
 # all headers that need maketa run on them
@@ -126,7 +127,7 @@ set(ta_proj_SRCS
   ParamSearchAlgo_List.cpp
   GridSearch.cpp
   ClusterRun.cpp
-  ClusterManager.cpp
+  
   ClusterRunJob.cpp
 
   taMediaWiki.cpp
@@ -168,6 +169,7 @@ set(ta_proj_SRCS
   TemtClient_QObj.cpp
   TemtServer_QObj.cpp
   ClusterRun_QObj.cpp
+  ClusterManager.cpp
 )
 
 set(ta_proj_FILES ${ta_proj_HEADS} ${ta_proj_SRCS})

@@ -48,6 +48,7 @@ taTypeDef_Of(ClusterRun);
 class TA_API ClusterRun : public ControlPanel {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
   INHERITED(ControlPanel)
+  friend class ClusterManager;
 public:
   
   enum PanelId {
