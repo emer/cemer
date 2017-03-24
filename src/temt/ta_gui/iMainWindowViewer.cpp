@@ -316,7 +316,7 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
 void iMainWindowViewer::raise() {
   QMainWindow::raise();
   AlignCssConsole();
-  ProjDirToCurrent();
+  SetProjAsCurrent();
 }
 
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
@@ -325,10 +325,10 @@ void iMainWindowViewer::moveEvent(QMoveEvent* e) {
   AlignCssConsole();
 }
 
-void iMainWindowViewer::ProjDirToCurrent() {
+void iMainWindowViewer::SetProjAsCurrent() {
   taProject* prj = curProject();
   if(!prj) return;
-  prj->ProjDirToCurrent();
+  prj->SetProjAsCurrent();
 }
 
 bool iMainWindowViewer::AlignCssConsole() {
@@ -352,7 +352,7 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   tabMisc::DelayedFunCall_gui(data, "WindowShowHook");
   // make it delayed so window should actuall show first!
   AlignCssConsole();
-  ProjDirToCurrent();
+  SetProjAsCurrent();
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   // setFocus();
@@ -2176,6 +2176,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 
   int win_id = 0;
   iMainWindowViewer* top_win = NULL;
+  taProject* proj = NULL;
 
   // we usually embed the uniqueId of the win that had the invoking url
   String frag_str;
@@ -2184,25 +2185,35 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   if(frag_str.startsWith("winid_")) {
     win_id = frag_str.after("winid_").toInt(); // 0 if empty or not an int
     top_win = taiMisc::active_wins.FindMainWindowById(win_id);
+    if (top_win) {
+      proj = top_win->myProject();
+    }
   }
-  
-  if(top_win == NULL) {         // fallback
+
+  if(path.startsWith(".projects")) {
+    String prj_name = path.after("[\"");
+    prj_name = prj_name.before("\"]");
+    proj = taRootBase::instance()->projects.FindName(prj_name);
+  }
+  else if(taProject::cur_proj) {
+    proj = taProject::cur_proj;
+  }
+
+  if(proj && !top_win) {
+    MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
+    if(mwv) {
+      top_win = mwv->widget();
+    }
+  }
+
+  if(!top_win) {
     top_win = taiMisc::active_wins.Peek_MainWindow();
-    if (top_win)
-      win_id = top_win->uniqueId();
   }
-  
-  // get the project -- should be able to get from any viewer/browser
-  taProject* proj = NULL;
+
   if (top_win) {
-    proj = top_win->myProject();
-  }
-  if (!proj) {
-    // not the top window so locate the project (works unless 2 projects with same name)
-    if(path.startsWith(".projects")) {
-      String prj_name = path.after("[\"");
-      prj_name = prj_name.before("\"]");
-      proj = taRootBase::instance()->projects.FindName(prj_name);
+    win_id = top_win->uniqueId();
+    if(!proj) {
+      proj = top_win->myProject();
     }
   }
   
@@ -2255,17 +2266,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     }
     taBase* tab = NULL;
     MemberDef* md;
-    if(path.startsWith(".projects")) {
-      tab = tabMisc::root->FindFromPath(path, md);
-    }
-    else {
-      if(path.startsWith("."))
-        path = path.after(".");
-      if (proj)
-        tab = proj->FindFromPath(path, md);
-      else
-        tab = tabMisc::root;    // fallback on root!
-    }
+    tab = tabMisc::RootFindFromPath(path, md);
     if (!tab) {
       taMisc::Warning("ta: URL",path,"not found as a path to an object!");
       return;
@@ -2327,7 +2328,7 @@ bool iMainWindowViewer::event(QEvent* ev) {
   if(ev->type() == QEvent::WindowActivate) {
     taiMisc::active_wins.GotFocus_MainWindow(this);
     AlignCssConsole();
-    ProjDirToCurrent();
+    SetProjAsCurrent();
   }
   return rval;
 }

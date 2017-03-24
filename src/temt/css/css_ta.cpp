@@ -820,7 +820,7 @@ void cssTA_Base::operator=(const String& s) {
     String tmp_val = s;
     if((tmp_val != String::con_NULL) && (tmp_val != "Null") && (tmp_val != "__null")) {
       MemberDef* md = NULL;
-      bs = tabMisc::root->FindFromPath(tmp_val, md);
+      bs = tabMisc::RootFindFromPath(tmp_val, md);
       if(!bs) {
 	taMisc::Warning("Invalid Path in cssTA_Base = String:",tmp_val);
 	return;

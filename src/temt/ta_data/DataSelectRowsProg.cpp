@@ -108,7 +108,7 @@ void DataSelectRowsProg::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "// DataSelectRows: src_data_var not set!  cannot run!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";",
+  prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();

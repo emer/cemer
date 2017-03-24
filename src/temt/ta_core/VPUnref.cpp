@@ -32,6 +32,7 @@ VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {
 
 taBase* VPUnref::Resolve() {
   MemberDef* md;
+  // note: loading paths can point outside of project -- use root directly
   taBase* bs = tabMisc::root->FindFromPath(path, md);
   if(!bs)
     return NULL;
@@ -78,7 +79,7 @@ void VPUList::Resolve() {
       VPUnref* vp = (VPUnref*)FastEl(i);
       String par_path;
       if(vp->parent != NULL)
-	par_path = vp->parent->GetPathNames();
+	par_path = vp->parent->DisplayPath();
       taMisc::Warning("Could not resolve following path:",vp->path,
 		    "in object:",par_path);
       i++;

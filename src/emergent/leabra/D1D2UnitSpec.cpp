@@ -23,24 +23,6 @@ void D1D2UnitSpec::Initialize() {
 }
 
 void D1D2UnitSpec::Defaults_init() {
-  deep.mod_thr = 0.01f;         // default is .1
-}
-
-void D1D2UnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  if(deep.SendDeepMod()) {
-    u->deep_lrn = u->deep_mod = u->act;      // record what we send!
-  }
-  else if(deep.IsTRC()) {
-    u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
-  }
-  // must be SUPER units at this point
-  else if(lay->am_deep_mod_net.max < deep.mod_thr) { // not enough yet
-    u->deep_lrn = u->deep_mod = 0.0f;    // default is 0!
-  }
-  else {
-    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
-    u->deep_mod = deep.mod_min + deep.mod_range * u->deep_lrn;
-  }
+  deep.mod_thr = 0.1f;         // default is .1
 }
 

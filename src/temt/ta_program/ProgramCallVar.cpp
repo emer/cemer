@@ -123,7 +123,7 @@ void ProgramCallVar::GenCompileScript(Program* prog) {
   if(!prog_group) return;
   prog->AddLine(prog, "{");
   prog->IncIndent();
-  prog->AddLine(prog, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
+  prog->AddLine(prog, String("Program_Group* spgp = this") + GetPath(prog) + "->GetProgramGp();");
   prog->AddLine(prog, "for(int spi=0; spi<spgp->leaves; spi++) {");
   prog->IncIndent();
   prog->AddLine(prog, "Program* prg = spgp->Leaf(spi);");
@@ -141,7 +141,7 @@ void ProgramCallVar::GenCallInit(Program* prog) {
   if(!trg) return;
   prog->AddLine(prog, "{");
   prog->IncIndent();
-  prog->AddLine(prog, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
+  prog->AddLine(prog, String("Program_Group* spgp = this") + GetPath(prog) + "->GetProgramGp();");
   prog->AddLine(prog, "for(int spi=0; spi<spgp->leaves; spi++) {");
   prog->IncIndent();
   prog->AddLine(prog, "Program* prg = spgp->Leaf(spi);");
@@ -173,7 +173,7 @@ void ProgramCallVar::GenCssPre_impl(Program* prog) {
 
 void ProgramCallVar::GenCssBody_impl(Program* prog) {
   if(!prog_group) return;
-  prog->AddLine(this, String("Program* target = this") + GetPath(NULL, program())+ "->GetTarget();");
+  prog->AddLine(this, String("Program* target = this") + GetPath(program())+ "->GetTarget();");
   prog->AddLine(this, "if(target) {");
   prog->IncIndent();
 

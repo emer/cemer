@@ -44,7 +44,6 @@ public:
   TypeDef*     GetDataTypeDef() const override;
   String       GetPath() const override {return data()->GetPath();}
   String       GetPathNames() const override {return data()->GetPathNames();}
-  String       GetPath_Long() const override {return data()->GetPath_Long();}
   String       GetTypeDecoKey() const override;
   String       GetStateDecoKey() const override;
   String       GetName() const override;

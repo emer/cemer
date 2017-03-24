@@ -45,15 +45,14 @@ public:
 
   virtual int           checkConfigFlags() const { return 0;}
     // taBase::THIS_INVALID|CHILD_INVALID
-  virtual taiSigLink*  ownLink() const {return NULL;} // owner link (NOT gui par)
+  virtual taiSigLink*   ownLink() const {return NULL;} // owner link (NOT gui par)
 
   virtual void          FillContextMenu(taiWidgetActions* menu); // only override to prepend to menu
   virtual void          FillContextMenu_EditItems(taiWidgetActions* menu, int allowed) {}
   virtual bool          GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
-  virtual taiSigLink*  GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
-  virtual taiSigLink*  GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
+  virtual taiSigLink*   GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
+  virtual taiSigLink*   GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
   virtual String        GetPath() const {return _nilString;} // esp taBase path
-  virtual String        GetPath_Long() const {return _nilString;} // esp taBase path
   virtual String        GetPathNames() const {return _nilString;} // esp taBase path
   virtual String        GetTypeDecoKey() const {return _nilString;}
   virtual String        GetStateDecoKey() const {return _nilString;}
@@ -64,10 +63,10 @@ public:
     {return false;} // asks this type if we should show the md member
 
   iPanelBase*           CreateDataPanel();
-  taiTreeNode*      CreateTreeDataNode(MemberDef* md, taiTreeNode* parent,
+  taiTreeNode*          CreateTreeDataNode(MemberDef* md, taiTreeNode* parent,
     taiTreeNode* after, const String& node_name, int dn_flags = 0);
     // create the proper tree node, with a tree node as a parent
-  taiTreeNode*      CreateTreeDataNode(MemberDef* md, iTreeView* parent,
+  taiTreeNode*          CreateTreeDataNode(MemberDef* md, iTreeView* parent,
     taiTreeNode* after, const String& node_name, int dn_flags = 0);
     // create the proper tree node, with a iTreeView as a parent
 
@@ -80,10 +79,10 @@ protected:
   virtual void          Assert_QObj(); // makes sure the qobj is created
   virtual void          FillContextMenu_impl(taiWidgetActions* menu) {} // this is usually the one to override
   virtual iPanelBase*   CreateDataPanel_impl(); // default uses taiView
-  taiTreeNode*      CreateTreeDataNode(MemberDef* md,
+  taiTreeNode*          CreateTreeDataNode(MemberDef* md,
     taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags); // combined version, only 1 xxPar is set
-  virtual taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
+  virtual taiTreeNode*  CreateTreeDataNode_impl(MemberDef* md,
     taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags) = 0; // NOTE: only 1 of the parents is non-null -- use that version of the taiTreeNode constructor
 

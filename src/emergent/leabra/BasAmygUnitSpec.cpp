@@ -32,6 +32,7 @@ void BasAmygUnitSpec::Defaults_init() {
   deep.role = DeepSpec::DEEP;
   deep.raw_thr_rel = 0.1f;
   deep.raw_thr_abs = 0.1f;
+  deep.mod_thr = 0.01f;         // default is .1
 }
 
 void BasAmygUnitSpec::UpdateAfterEdit_impl() {
@@ -61,14 +62,18 @@ void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
   }
   else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
+    if(deep.trc_thal_gate) {
+      u->net *= u->thal;
+    }
   }
   // must be SUPER units at this point
-  else if(lay->am_deep_mod_net.max < 0.01f) { // not enough yet // was .1f
+  // else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
+  else if(u->deep_mod_net <= deep.mod_thr) { // not enough yet
     u->deep_lrn = 0.0f;    // default is 0!
     u->deep_mod = 1.0f;
   }
   else {
-    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max; // todo: could not normalize this..
+    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
     u->deep_mod = 1.0f;                               // do not modulate with deep_mod!
   }
 }

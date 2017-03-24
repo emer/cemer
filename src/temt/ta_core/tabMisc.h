@@ -45,6 +45,9 @@ public:
   // #READ_ONLY #NO_SAVE for actions that alter the structural hierarchy (adding, moving, deleting items), this is the list or group that owns the objects being modified -- every object that has special is_undo_saving optimizations should check for this being non-null, and check if IsChildOf(undo_save_owner) -- if true, they should save!
   
   static ContextFlag    in_wait_proc; // context -- don't do WaitProc
+
+  static taBase*        RootFindFromPath(const String& path, MemberDef*& ret_md);
+  // find an object based on its path relative to either root or a project-relative path from taBase::GetPathFromProj -- looks at the start of the path -- if it starts with .projects then root is used as the parent, otherwise taProjects::cur_proj is used as the parent (if non-null) -- use this for all generic path finding, and use GetPathFromProj for most path saving
   
   static void           WaitProc();
   // wait process function: process all the delayed stuff

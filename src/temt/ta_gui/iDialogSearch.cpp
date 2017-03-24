@@ -340,7 +340,6 @@ void iDialogSearch::Render()
     String desc =  m_items.GetValAsString(col_desc, i);
     String hits =  m_items.GetValAsString(col_hits, i);
     String path =  m_items.GetValAsString(col_path, i);
-    path = path.after(root_path);
     int relev = m_items.GetValAsInt(col_relev, i);
     RenderItem(level, headline, href, desc, hits, path, relev);
   }

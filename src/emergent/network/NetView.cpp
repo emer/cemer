@@ -1845,7 +1845,7 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
   if ((bool)unit_src) {
     if(uv)
       uv->picked = true;
-    unit_src_path = unit_src->GetPath(NULL, net());
+    unit_src_path = unit_src->GetPath(net());
   }
   // Rohrlich 8/16/2015 - reset reported as bug and I agree - can't see why we would reset history here
 //  hist_idx = 0;    // reset index to current time for new unit selection

@@ -384,7 +384,7 @@ Program* TemtClient::GetAssertProgram(const String& pnm) {
     MemberDef* md = NULL;
     taBase * obj = NULL;
     if (pnm.startsWith(".projects")) {
-      obj = tabMisc::root->FindFromPath(pnm, md);
+      obj = tabMisc::RootFindFromPath(pnm, md);
     } else if (pnm.startsWith(".programs")) {
       obj = proj->FindFromPath(pnm, md);
     } else {
@@ -437,7 +437,7 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
       taBase* obj = NULL;
       MemberDef* md = NULL;
       if (nm.startsWith(".projects")) {
-        obj = tabMisc::root->FindFromPath(nm, md);
+        obj = tabMisc::RootFindFromPath(nm, md);
       }
       else {
         obj = proj->FindFromPath(nm, md);
@@ -1824,7 +1824,7 @@ void TemtClient::cmdGetMember() {
     taBase * obj = NULL;
     MemberDef* md = NULL;
     if (pnm.startsWith(".projects")) {
-      obj = tabMisc::root->FindFromPath(pnm, md);
+      obj = tabMisc::RootFindFromPath(pnm, md);
     } else {
       taProject* proj = GetCurrentProject();
       obj = proj->FindFromPath(pnm, md);
@@ -1859,7 +1859,7 @@ void TemtClient::cmdSetMember() {
     taBase * obj = NULL;
     MemberDef* md = NULL;
     if (pnm.startsWith(".projects")) {
-      obj = tabMisc::root->FindFromPath(pnm, md);
+      obj = tabMisc::RootFindFromPath(pnm, md);
     } else {
       taProject* proj = GetCurrentProject();
       obj = proj->FindFromPath(pnm, md);

@@ -90,8 +90,8 @@ public:
       return true;
     }
     TestError(true, "SetSpec", "incorrect type of Spec:",
-		  es->GetPath(), "of type:", es->GetTypeDef()->name,
-		  "should be at least:", base_type->name,"in object:",owner->GetPath());
+		  es->DisplayPath(), "of type:", es->GetTypeDef()->name,
+		  "should be at least:", base_type->name,"in object:",owner->DisplayPath());
     return false;
   }
 

@@ -72,12 +72,12 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   taUndoRec* urec = new taUndoRec;
   undo_recs.CircAddLimit(urec, undo_depth);
   cur_undo_idx = undo_recs.length;
-  urec->mod_obj_path = mod_obj->GetPath(NULL, owner);
+  urec->mod_obj_path = mod_obj->GetPath(owner);
   urec->mod_obj_name = mod_obj->GetName();
   urec->action = action;
   urec->mod_time.currentDateTime();
   urec->save_top = save_top;
-  urec->save_top_path = save_top->GetPath(NULL, owner);
+  urec->save_top_path = save_top->GetPath(owner);
 
   if(taMisc::undo_debug) {
     taMisc::Info("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,

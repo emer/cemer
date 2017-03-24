@@ -77,15 +77,6 @@ void PropertyDef::Copy_(const PropertyDef& cp) {
   prop_set =cp.prop_set;
 }
 
-/*nn?? const String PropertyDef::GetPathName() const {
-  String rval;
-  TypeDef* owtp = GetOwnerType();
-  if (owtp)
-    rval = owtp->GetPathName();
-  rval += "::" + name;
-  return rval;
-} */
-
 const Variant PropertyDef::GetValVar(const void* base) const {
   if (prop_get)
     return prop_get(base);

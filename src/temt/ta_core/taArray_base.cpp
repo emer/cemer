@@ -181,7 +181,7 @@ bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
 int taArray_base::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
                 void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
   int rval = 0;
-  String mypath = GetPathNames();
+  String mypath = DisplayPath();
   for(int i=0; i<size; i++) {
     String str = El_GetStr_(FastEl_(i));
     if(!str.contains(srch)) continue;

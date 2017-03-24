@@ -453,7 +453,7 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
     String headline = tab->GetColText(taBase::key_disp_name) +
         " (" + tab->GetTypeDef()->name + ")";
     String href = "ta:" + tab->GetPath();
-    String path_long = tab->GetPathNames();
+    String path_long = tab->DisplayPath();
     String desc = tab->GetColText(taBase::key_desc);
     sd->AddItem(headline, href, desc, hits, path_long, level, n);
   }

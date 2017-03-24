@@ -1687,7 +1687,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
             case SC_SEARCH:
 	      return rbase->GetName();
 	    default:
-	      return rbase->GetPathNames();
+	      return rbase->GetPathFromProj();
 	    }
 	  }
 	  else {
@@ -1965,9 +1965,10 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
           if (sc == SC_STREAMING) {
             bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
             if (!bs)return;       // indicates deferred
-          } else {
+          }
+          else {
             MemberDef* md = NULL;
-            bs = tabMisc::root->FindFromPath(tmp_val, md);
+            bs = tabMisc::RootFindFromPath(tmp_val, md); // not streaming, should be safe
             if(!bs) {
               taMisc::Warning("*** Invalid Path in SetValStr:",val);
               return;
@@ -2151,11 +2152,11 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
     if(memb_def) {
       taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
                    "in", par_typ->name,
-                   "object:",((taBase*)par)->GetPathNames(),repl_info);
+                   "object:",((taBase*)par)->DisplayPath(),repl_info);
     }
     else {
       taMisc::Info("Replaced string value in type:", name, "in", par_typ->name, "object:",
-                   ((taBase*)par)->GetPathNames(), repl_info);
+                   ((taBase*)par)->DisplayPath(), repl_info);
     }
   }
   else
@@ -2876,7 +2877,7 @@ String& TypeDef::Print(String& strm, void* base, int indent) const {
       rbase = NULL;
 
     if(rbase)
-      strm << rbase->GetPathNames();
+      strm << rbase->DisplayPath();
     else
       strm << Get_C_Name();
   }

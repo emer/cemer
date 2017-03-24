@@ -87,7 +87,7 @@ void DataJoinProg::GenCssBody_impl(Program* prog) {
                   ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";",
+  prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();

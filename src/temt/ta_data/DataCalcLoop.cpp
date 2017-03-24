@@ -200,7 +200,7 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
     return;
   }
   src_cols.GetColumns(GetSrcData());
-  prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";",
+  prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();

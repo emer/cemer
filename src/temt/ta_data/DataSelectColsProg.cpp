@@ -99,7 +99,7 @@ void DataSelectColsProg::GenCssBody_impl(Program* prog) {
                   ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";",
+  prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();

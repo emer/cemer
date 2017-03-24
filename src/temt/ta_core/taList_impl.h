@@ -83,11 +83,8 @@ public:
   virtual taList_impl*  NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
   // #CAT_Access #EXPERT make a new view of this list -- returns a new pointer list with view set
 
-  String       GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const override;
-  String       GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const override;
-  virtual String GetGroupPath(taBase* ta=NULL, taBase* par_stop = NULL) const;
-  // call on groups to get the root group path without the subgroups
-  String       GetPathNames(taBase* ta=NULL, taBase* par_stop=NULL) const override;
+  String       GetPath_impl(taBase* ta=NULL, taBase* par_stop = NULL) const override;
+  String       GetPathNames_impl(taBase* ta=NULL, taBase* par_stop=NULL) const override;
 
   void*        FindMembeR(const String& nm, MemberDef*& ret_md) const override;
 
@@ -97,20 +94,21 @@ public:
   void ChildUpdateAfterEdit(taBase* child, bool& handled) override;
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-taBase*       CopyChildBefore(taBase* src, taBase* child_pos) override;
-taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
+  taBase*       CopyChildBefore(taBase* src, taBase* child_pos) override;
+  taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
 
   String&       Print(String& strm, int indent = 0) const override;
 
-  String        GetValStr(void* par = NULL, MemberDef* md = NULL,
-                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const override;
-  bool          SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
-                           TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false) override;
-  int           ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-          void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-          TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
+  String        GetValStr
+    (void* par = NULL, MemberDef* md = NULL, TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool force_inline = false) const override;
+  bool          SetValStr
+    (const String& val, void* par = NULL, MemberDef* md = NULL,
+     TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool force_inline = false) override;
+  
+  int           ReplaceValStr
+    (const String& srch, const String& repl, const String& mbr_filt,
+     void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
+     TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
   taObjDiffRec* GetObjDiffRec
     (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,

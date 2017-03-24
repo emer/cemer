@@ -165,7 +165,7 @@ void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
                                                     obj_path, true); // yes warn..
       CheckError(!md, quiet, rval,
                  "object path is not valid -- could not find path:",obj_path,
-                 "on object:", obj->GetPathNames());
+                 "on object:", obj->DisplayPath());
     }
     break;
   }

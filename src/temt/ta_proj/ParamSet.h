@@ -29,6 +29,8 @@ class TA_API ParamSet : public ControlPanel {
   // ##EXT_prm ##CAT_Display A set of member/value pairs from one or more objects in a project, like a ControlPanel, but values can be saved (SaveCurrent) and re-activated (Activate) so you can easily swap in/out different sets of parameter values.  New groups of ParamSet's have a Master/Clone config: first ParamSet is Master, rest are Clones and members are auto-updated in Clones from changesin Master
   INHERITED(ControlPanel)
 public:
+  bool                  active_editable;
+  // #CONTROL_PANEL_SHOW make the active current values of the variables editable in the gui -- otherwise they are shown but are read-only
   bool                  last_activated;
   // #READ_ONLY #SHOW this param set was the last one activated, within its owning group
     

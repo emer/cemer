@@ -142,7 +142,7 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "{ // NetDataLoop " + data_nm, ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
     prog->IncIndent();
-    prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";");
+    prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(program()) + ";");
     prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
     prog->AddLine(this, "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!");
     prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->rows);");
@@ -182,7 +182,7 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "{ // NetDataLoop " + data_nm, ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
     prog->IncIndent();
-    prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";");
+    prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(program()) + ";");
     prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variables control order -- make sure we have current values");
     prog->AddLine(this, "data_loop->GetGroupList();");
     prog->AddLine(this, "if(data_loop->group_order == NetDataLoop::PERMUTED) data_loop->group_idx_list.Permute();");

@@ -203,7 +203,7 @@ public:
   void                  ToggleTrace();
   // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state: flag indicates whether to record a trace of program execution in the css console or not
 
-  virtual void          ProjDirToCurrent();
+  virtual void          SetProjAsCurrent();
   // #CAT_Run make sure that the project directory is the current directory
   static void           SetStopReq(StopReason stop_rsn, const String& stop_message = "");
   // #CAT_Run request that the currently-running program stop at its earliest convenience..

@@ -232,7 +232,7 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       item->setData(2, Qt::DisplayRole, own->GetDisplayName()); // use disp name directly -- overriden to name for groups..
       item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
     }
-    item->setData(4, Qt::DisplayRole, btmp->GetPathNames());
+    item->setData(4, Qt::DisplayRole, btmp->DisplayPath());
     ++rval;
   }
 

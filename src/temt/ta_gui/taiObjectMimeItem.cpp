@@ -39,7 +39,7 @@ bool taiObjectMimeItem::Constr_impl(const String&) {
 void taiObjectMimeItem::DecodeData_impl() {
   MemberDef* md;
   if (isThisProcess() && (!m_obj) && tabMisc::root) {
-    m_obj = tabMisc::root->FindFromPath(path(), md);
+    m_obj = tabMisc::RootFindFromPath(path(), md);
   }
 }
 

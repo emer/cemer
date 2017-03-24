@@ -81,7 +81,9 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   MemberDef* data_md = TA_ControlPanelMember.members.FindName("data");
       
   dat_cnt = 0;  // keeps track of control count
+  bool active_editable = true;
   if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+    active_editable = ((ParamSet*)ctrlpan)->active_editable;
     MemberSpace& ms = ctrlpan->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
@@ -132,8 +134,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
 //        item->label = full_lbl;
 //      }
       
-      bool disable = false;
-//      disable = item->base->GetEditableState(taBase::BF_GUI_READ_ONLY);
+      bool disable = !active_editable;
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
@@ -152,7 +153,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       memb_set->widget_el.Add(mash_widg);
       QWidget* data = mash_widg->GetRep();
       if (disable) {
-        data->setEnabled(false);
+        mash_widg->widgets(0)->setEnabled(false); // first one is active guy
       }
       help_text = item->GetDesc();
       String new_lbl = item->caption();

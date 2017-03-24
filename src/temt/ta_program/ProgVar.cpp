@@ -982,7 +982,7 @@ void ProgVar::GenCssInitFrom(Program* prog) {
   if(!ivar) return;
   prog->AddLine(this, "{ // init_from");
   prog->IncIndent();
-  prog->AddLine(this, String("Program* init_fm_prog = this").cat(GetPath(NULL, program())).cat("->GetInitFromProg();"));
+  prog->AddLine(this, String("Program* init_fm_prog = this").cat(GetPath(program())).cat("->GetInitFromProg();"));
   prog->AddLine(this, String(name + " = init_fm_prog->GetVar(\"").cat(name).cat("\");\n"));
   prog->DecIndent();
   prog->AddLine(this, "}");

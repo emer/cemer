@@ -123,7 +123,7 @@ bool StdNetWizDlg::DoDialog() {
   int new_net;  new_net = 0;
   String curow;
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  String mypath = GetPath(NULL, proj);  // stop at proj - just use path from wizards on
+  String mypath = GetPathFromProj();  // stop at proj - just use path from wizards on
   if(mypath.startsWith("*(."))
     mypath = String("*(") + mypath.after("*(.");
   

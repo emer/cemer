@@ -244,6 +244,7 @@ void Network::InitLinks() {
   taBase::Own(stats, this);
   taBase::Own(threads, this);
   taBase::Own(cuda, this);
+  taBase::Own(net_timing, this);
 
   taBase::Own(avg_sse, this);
   taBase::Own(prerr, this);

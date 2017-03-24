@@ -37,7 +37,7 @@ TA_BASEFUNS_CTORS_DEFN(taDataGen);
 bool taDataGen::CheckDims(float_Matrix* mat, int dims) {
   if(!mat) return false;
   if(mat->dims() != dims) {
-    taMisc::Warning("taDataGen: matrix:", mat->name, "path:", mat->GetPathNames(),
+    taMisc::Warning("taDataGen: matrix:", mat->name, "path:", mat->DisplayPath(),
                     "is not of dimension:", String(dims), "it is:", String(mat->dims()));
     return false;
   }

@@ -523,7 +523,7 @@ ContextFlag     taMisc::is_loading;
 taVersion       taMisc::loading_version;
 ContextFlag     taMisc::is_post_loading;
 ContextFlag     taMisc::is_saving;
-bool            taMisc::save_use_name_paths;
+bool            taMisc::save_use_name_paths = false;
 ContextFlag     taMisc::is_undo_loading;
 ContextFlag     taMisc::is_undo_saving;
 ContextFlag     taMisc::is_auto_saving;
@@ -831,7 +831,7 @@ bool taMisc::TestError_impl(const taBase* obj, bool test, const String& fun_name
   
   if(obj) {
     // objinfo is the old style msg now just used for no_gui console output
-    String pth = obj->GetPathNames();
+    String pth = obj->DisplayPath();
 
     String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
     + "() (path: " + pth + ")\n";
@@ -872,7 +872,7 @@ bool taMisc::TestWarning_impl(const taBase* obj, bool test, const String& fun_na
   if(!test) return false;
   if(obj) {
     String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
-      + "() (path: " + obj->GetPathNames() + " )\n";
+      + "() (path: " + obj->DisplayPath() + " )\n";
     taMisc::Warning(objinfo, a, b, c, d, e, f, g, h);
   }
   else {

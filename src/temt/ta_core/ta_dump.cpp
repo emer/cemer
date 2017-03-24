@@ -294,9 +294,9 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
       if(par != NULL)
 	strm << "@";
       if(taMisc::save_use_name_paths)
-	strm << rbase->GetPathNames(NULL, (taBase*)par);
+	strm << rbase->GetPathNames((taBase*)par);
       else
-	strm << rbase->GetPath(NULL, (taBase*)par);
+	strm << rbase->GetPath((taBase*)par);
     }
   }
   return true;
@@ -1196,7 +1196,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     taBase* par = (taBase*)base;		// given base must be a parent
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
-      taMisc::Warning("Could not make a:",td->name,"in:",par->GetPathNames());
+      taMisc::Warning("Could not make a:",td->name,"in:",par->DisplayPath());
       rval = false;
       goto endload;
     }

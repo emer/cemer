@@ -349,7 +349,7 @@ void ControlPanel::GoToObject(int idx) {
     taBase* mbrown = item->base->GetMemberOwner(true);
     if(!mbrown) 
       mbrown = item->base;       // must be object itself
-    taMisc::Info("Going to:", mbrown->GetPathNames());
+    taMisc::Info("Going to:", mbrown->DisplayPath());
     tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
   }
 }

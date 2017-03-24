@@ -128,7 +128,7 @@ void OtherProgramVar::GenCssPre_impl(Program* prog) {
 
 void OtherProgramVar::GenCssBody_impl(Program* prog) {
   if (!other_prog) return;
-  prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
+  prog->AddLine(this, String("Program* other_prog = this") + GetPath(program())
       + "->GetOtherProg();");
   GenCss_OneVar(prog, var_1, 0);
   GenCss_OneVar(prog, var_2, 1);

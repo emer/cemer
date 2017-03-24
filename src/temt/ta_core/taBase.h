@@ -853,16 +853,22 @@ public:
   //    Paths in the structural hierarchy
 public:
 
-  virtual String        GetPath_Long(taBase* ta=NULL, taBase* par_stop=NULL) const;
-  // #IGNORE get path from root (default), but stop at par_stop if non-null  -- ta is used for recursion and should be NULL for any end-user calls
-  virtual String        GetPath(taBase* ta=NULL, taBase* par_stop=NULL) const;
-  // #CAT_ObjectMgmt get path without name information, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
-  virtual String        GetPathNames(taBase* ta=NULL, taBase* par_stop=NULL) const;
-  // #CAT_ObjectMgmt get paths using string names instead of indexes, which is good for portability, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
+  virtual String        GetPath_impl(taBase* ta=NULL, taBase* par_stop=NULL) const;
+  // #IGNORE get path without name information, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
+  virtual String        GetPathNames_impl(taBase* ta=NULL, taBase* par_stop=NULL) const;
+  // #IGNORE get paths using string names instead of indexes, which is good for portability, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
+  inline String         GetPath(taBase* par_stop=NULL) const
+  { return GetPath_impl(NULL, par_stop); }
+  // #CAT_ObjectMgmt get path without name information, stop at parent given by par_stop if non-null (resulting path will NOT include the parent info -- it will start with a . and be findable from that parent using FindFromPath)
+  inline String         GetPathNames(taBase* par_stop=NULL) const
+  { return GetPathNames_impl(NULL, par_stop); }
+  // #CAT_ObjectMgmt get paths using string names instead of indexes, which is good for portability, stop at parent given by par_stop if non-null (resulting path will NOT include the parent info -- it will start with a . and be findable from that parent using FindFromPath)
+  virtual String        GetPathFromProj() const;
+  // #CAT_ObjectMgmt call GetPathNames relative to owning project -- this is the best path to use for saving and setting paths within a project -- tabMisc::RootFindFromPath can use these project-relative paths in conjunction with the current project to find the relevant objects -- is robust to renaming of the project
   virtual String        DisplayPath() const;
-  // #CAT_ObjectMgmt get the path to this object for display purposes -- uses GetPathNames -- if under a program then that is used as starting point, otherwise returns a project relative path -- other special cases may optimize as needed
+  // #CAT_ObjectMgmt get the path to this object for display purposes -- uses GetPathNames -- if under a program then that is used as starting point, otherwise returns a project relative path using GetPathFromProj -- other special cases may optimize as needed
   virtual taBase*       FindFromPath(const String& path, MemberDef*& ret_md, int start=0) const;
-  // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path -- ret_md is return member def: if NULL and return is !NULL, then it is a member of a list or group, not a member in object
+  // #CAT_ObjectMgmt find object from path (starting from this object), and position to start (in characters) in the path string -- ret_md is return member def: if NULL and return is !NULL, then it is a member of a list or group, not a member in object
   virtual Variant       GetValFromPath(const String& path, MemberDef*& ret_md, bool warn_not_found=false) const;
   // #CAT_ObjectMgmt get a member value from given path -- only follows direct members (of members) of this object -- does not look into items in lists or groups
 

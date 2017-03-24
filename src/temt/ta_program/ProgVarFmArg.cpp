@@ -77,7 +77,7 @@ void ProgVarFmArg::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, String("{ // prog var fm arg: ") + prog->name, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
-  prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
+  prog->AddLine(this, String("Program* other_prog = this") + GetPath(program())
                 + "->GetOtherProg();");
   prog->AddLine(this, "other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");");
   prog->DecIndent();

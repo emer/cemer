@@ -104,14 +104,14 @@ bool ProgramCall::WillGenCompileScript(Program* prg) {
 void ProgramCall::GenCompileScript(Program* prog) {
   // note: do not pass 'this' in addline -- don't want this to be the main association for this
   if(!target) return;
-  prog->AddLine(prog, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
+  prog->AddLine(prog, String("target = this") + GetPath(prog) + "->GetTarget();");
   prog->AddLine(prog, "target->CompileScript(true); // true = force!");
 }
 
 void ProgramCall::GenCallInit(Program* prog) {
   // note: do not pass 'this' in addline -- don't want this to be the main association for this
   if(!target) return;
-  prog->AddLine(prog, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
+  prog->AddLine(prog, String("target = this") + GetPath(prog) + "->GetTarget();");
   // set args for guys that are just passing our existing args/vars along
   for (int j = 0; j < prog_args.size; ++j) {
     ProgArg* ths_arg = prog_args.FastEl(j);
@@ -135,7 +135,7 @@ void ProgramCall::GenCssPre_impl(Program* prog) {
 
 void ProgramCall::GenCssBody_impl(Program* prog) {
   if (!target) return;
-  prog->AddLine(this, String("Program* target = this") + GetPath(NULL, program())+ "->GetTarget();");
+  prog->AddLine(this, String("Program* target = this") + GetPath(program())+ "->GetTarget();");
   prog->AddLine(this, "if(target) {");
   prog->IncIndent();
 

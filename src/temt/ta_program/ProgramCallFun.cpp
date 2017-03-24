@@ -42,7 +42,7 @@ String ProgramCallFun::GetDisplayName() const {
 
 void ProgramCallFun::GenCssBody_impl(Program* prog) {
   if (!target) return;
-  prog->AddLine(this, String("Program* target = this") + GetPath(NULL, program())+ "->GetTarget();");
+  prog->AddLine(this, String("Program* target = this") + GetPath(program())+ "->GetTarget();");
   prog->AddLine(this, "if(target) {");
   prog->IncIndent();
 

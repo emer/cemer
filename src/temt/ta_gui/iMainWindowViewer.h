@@ -313,7 +313,7 @@ public:
   //bogus: see Qt docs on geometry under X
   bool                  AlignCssConsole();
   // align css console to our window, if applicable
-  void                  ProjDirToCurrent();
+  void                  SetProjAsCurrent();
   // set current project directory to current directory
   virtual void          raise();
 

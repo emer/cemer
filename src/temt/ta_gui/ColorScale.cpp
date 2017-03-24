@@ -189,6 +189,8 @@ int ColorScale::GetIdx(float val) {
 void ColorScale::NewDefaults() {
   MemberDef* md;
   String tmpath = ".ColorScaleSpec_Group";
+  // note: this is an exception to the general rule of using RootFindFromPath b/c
+  // the object is on root itself!
   ColorScaleSpec_Group* gp =
     (ColorScaleSpec_Group*)tabMisc::root->FindFromPath(tmpath, md);
   if(!gp) {

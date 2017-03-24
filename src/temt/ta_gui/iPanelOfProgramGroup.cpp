@@ -24,15 +24,18 @@ void iPanelOfProgramGroup::items_CustomExpandFilter(iTreeViewItem* item,
   int level, bool& expand)
 {
   if (level < 1) return; // always expand root level
-  // by default, we don't expand code and objs,  but do expand
-  // the args, and vars.
   taiSigLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
-  if (typ->DerivesFrom(&TA_ProgEl_List) ||
-    typ->DerivesFrom(&TA_ProgObjList)
-  )  {
-    expand = false;
-  }
+  if(typ->DerivesFrom(&TA_Program_Group)) //  || typ->DerivesFrom(&TA_Program))
+    return;             // always expand those
+  expand = false;       // otherwise don't expand by default -- not useful and very slow
+  // // by default, we don't expand code and objs,  but do expand
+  // // the args, and vars.
+  // if (typ->DerivesFrom(&TA_ProgEl_List) ||
+  //   typ->DerivesFrom(&TA_ProgObjList)
+  // )  {
+  //   expand = false;
+  // }
 }
 
 iPanelOfProgramGroup::iPanelOfProgramGroup(taiSigLink* dl_)

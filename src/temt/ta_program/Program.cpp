@@ -497,7 +497,7 @@ void Program::Init() {
   //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
   if(AlreadyRunning()) return;
-  ProjDirToCurrent();
+  SetProjAsCurrent();
   ClearStopReq();
   taProject* proj = GetMyProj();
   if(proj && proj->file_name.nonempty()) {
@@ -666,7 +666,7 @@ void Program::Run() {
                "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
-  ProjDirToCurrent();
+  SetProjAsCurrent();
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
@@ -729,7 +729,7 @@ void Program::Step(Program* step_prg) {
                "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
-  ProjDirToCurrent();
+  SetProjAsCurrent();
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = true;
@@ -820,7 +820,7 @@ void Program::RunNoArgFunction(Function* fun) {
                "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
-  ProjDirToCurrent();
+  SetProjAsCurrent();
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
@@ -865,10 +865,10 @@ void Program::ToggleTrace() {
   SigEmitUpdated();
 }
 
-void Program::ProjDirToCurrent() {
+void Program::SetProjAsCurrent() {
   taProject* proj = GetMyProj();
   if(!proj) return;
-  proj->ProjDirToCurrent();
+  proj->SetProjAsCurrent();
 }
 
 void Program::SetStopReq(StopReason stop_rsn, const String& stop_message) {
@@ -1392,7 +1392,7 @@ bool Program::AddVerboseLine(ProgEl* prog_el, bool insert_at_start, const String
     return false;
   int lno = main_line;
   if(insert_at_start) lno++;    // we're going to bump it..
-  String code = String("Program::VerboseOut(") + GetPath() + ", " + String(lno);
+  String code = String("Program::VerboseOut(") + DisplayPath() + ", " + String(lno);
   if(msg_code.nonempty())
     code += ", " + msg_code;
   code += ");";
@@ -2019,7 +2019,7 @@ String Program::RenderGlobalTrace(bool html) {
     if(sp->own_program) {
       taProject* proj = sp->own_program->GetMyProj();
       if(html) {
-        rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
+        rval << "<td><a href=\"ta:" << sp->own_program->GetPath(proj)
         << "#progln_" << ln << "\">"
         << sp->own_program->name << "</a></td>";
       }

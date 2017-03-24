@@ -50,7 +50,7 @@ void Wizard::RenderWizDoc() {
   RenderWizDoc_impl();
   RenderWizDoc_footer();
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  String my_path = GetPath(NULL, proj);
+  String my_path = GetPath(proj);
   String projpath = proj->GetPath();
   wiz_doc.text.gsub("<this>", my_path); // shortcut for functions
   wiz_doc.text.gsub("<proj>", projpath); // shortcut for functions

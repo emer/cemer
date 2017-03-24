@@ -1131,7 +1131,7 @@ bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
 int taMatrix::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt, void* par,
                             TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
   int rval = 0;
-  String mypath = GetPathNames();
+  String mypath = DisplayPath();
   for(int i=0; i<size; i++) {
     String str = FastElAsStr_Flat(i);
     if(!str.contains(srch)) continue;
@@ -1495,7 +1495,7 @@ bool taMatrix::ElemWiseOpTest(const taMatrix& t, bool oth_flex,
   if(ope.empty()) ope = "ElemWiseOpTest";
   if(oth_flex) {
     if(TestError(t.IterCount() == 0, ope,
-                 "for element-wise operation, no visible elements in other matrix:", t.GetPathNames()))
+                 "for element-wise operation, no visible elements in other matrix:", t.DisplayPath()))
       return false;
     return true;
   }
@@ -1503,7 +1503,7 @@ bool taMatrix::ElemWiseOpTest(const taMatrix& t, bool oth_flex,
   int tic = t.IterCount();
   if(TestError(myic != tic, ope,
                "for element-wise operation, number of visible elements in other matrix not identical to that in this matrix:",
-               t.GetPathNames(), "I have:", String(myic), "other has:", String(tic)))
+               t.DisplayPath(), "I have:", String(myic), "other has:", String(tic)))
     return false;
   return true;
 }
@@ -1978,7 +1978,7 @@ void taMatrix::UpdateGeom() {
   int i;
   for (i = 0; i < (dims_ - 1) ; ++i) {
     if (geom[i] <= 0) {
-      taMisc::Error(this->GetPathNames(), "geoms[0..N-2] must be > 0; object is now invalid");
+      taMisc::Error(DisplayPath(), "geoms[0..N-2] must be > 0; object is now invalid");
       return;
     }
   }

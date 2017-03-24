@@ -461,7 +461,7 @@ String taBase::GetDisplayName() const {
   // no name, so try the Owner.path name
   taBase* own = GetOwner();
   if (own) {
-    rval.cat(own->GetName()).cat(GetPath(NULL, own));
+    rval.cat(own->GetName()).cat(GetPath(own));
     if (rval.nonempty()) return rval; // shouldn't be empty!
   }
   // last resort: (TypeName@HexAddr)
@@ -1113,36 +1113,7 @@ bool taBase::FixSliceValsFromSize(int& start, int& end, int sz) const {
 ///////////////////////////////////////////////////////////////////////////
 //      Paths in the structural hierarchy
 
-String taBase::GetPath_Long(taBase* ta, taBase* par_stop) const {
-  if((this == par_stop) && (ta == NULL))
-    return ".";
-  String rval;
-
-  taBase* par = GetOwner();
-  if(par == NULL) {
-    if(ta == NULL) rval = "root";
-  }
-  else if(this != par_stop)
-    rval = par->GetPath_Long((taBase*)this, par_stop);
-
-  if ((par != NULL) && (GetName() != ""))
-    rval += "(" + GetName() + ")";
-
-  if (ta != NULL) {
-    if (MemberDef *md = FindMemberBase(ta)) {
-      rval += "." + md->name;
-    }
-    else if (MemberDef *md = FindMemberPtr(ta)) {
-      rval = String("*(") + rval + "." + md->name + ")";
-    }
-    else {
-      rval += ".?.";
-    }
-  }
-  return rval;
-}
-
-String taBase::GetPath(taBase* ta, taBase* par_stop) const {
+String taBase::GetPath_impl(taBase* ta, taBase* par_stop) const {
   if ((this == par_stop) && (ta == NULL))
     return ".";
 
@@ -1154,7 +1125,7 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
     }
   }
   else if (this != par_stop) {
-    rval = par->GetPath((taBase*)this, par_stop);
+    rval = par->GetPath_impl((taBase*)this, par_stop);
   }
 
   if (ta != NULL) {
@@ -1171,8 +1142,8 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
   return rval;
 }
 
-String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
-  if (taMisc::is_undo_saving) return GetPath(ta, par_stop); // use indexes for undo
+String taBase::GetPathNames_impl(taBase* ta, taBase* par_stop) const {
+  if (taMisc::is_undo_saving) return GetPath_impl(ta, par_stop); // use indexes for undo
 
   if ((this == par_stop) && (ta == NULL))
     return ".";
@@ -1185,7 +1156,7 @@ String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
     }
   }
   else if (this != par_stop) {
-    rval = par->GetPathNames((taBase*)this, par_stop);
+    rval = par->GetPathNames_impl((taBase*)this, par_stop);
   }
 
   if (ta != NULL) {
@@ -1200,14 +1171,18 @@ String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
     }
   }
   return rval;
+}
+
+String taBase::GetPathFromProj() const {
+  return GetPathNames(GetOwner(&TA_taProject));
 }
 
 String taBase::DisplayPath() const {
   Program* prog_own = (Program*)GetOwner(&TA_Program);
   if(prog_own) {
-    return String(".") + prog_own->name + GetPathNames(NULL, prog_own);
+    return String(".") + prog_own->name + GetPathNames(prog_own);
   }
-  return GetPathNames(NULL, GetOwner(&TA_taProject));
+  return GetPathFromProj();
 }
 
 taBase* taBase::ElemPath(const String& path, TypeDef* expect_type, bool err_msg) const {
@@ -1811,12 +1786,12 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   taBase** nw_el_ptr = (taBase**)FindMembeR(el_path, el_md);
   if(!nw_el_ptr) {
     taMisc::Warning("*** Dump_Load_Path_ptr: Could not find pointer member at path:",
-                    el_path,"in parent object:",GetPathNames());
+                    el_path,"in parent object:",DisplayPath());
     return NULL;
   }
   if(!el_md) {
     taMisc::Warning("*** Dump_Load_Path_ptr: no el_md for item at path:",
-                    el_path,"in parent object:",GetPathNames(),
+                    el_path,"in parent object:",DisplayPath(),
                     "may not set pointers correctly!");
   }
   taBase* nw_el = *nw_el_ptr;
@@ -1826,7 +1801,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   {
     // object not the right type, try to create new one..
     if(taMisc::verbose_load >= taMisc::MESSAGES) {
-      taMisc::Warning("*** Object in parent:",GetPathNames(),"at path", el_path,
+      taMisc::Warning("*** Object in parent:",DisplayPath(),"at path", el_path,
                     "of type:",nw_el->GetTypeDef()->name,"is not the right type:",
                       ld_el_typ->name,", attempting to create new one");
     }
@@ -1845,7 +1820,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
     if(!nw_el) {
       taMisc::Warning("*** Dump_Load_Path_ptr: Could not make new token of type:",
                       ld_el_typ->name,"for pointer member at path:",
-                      el_path,"in parent object:",GetPathNames());
+                      el_path,"in parent object:",DisplayPath());
       return NULL;
     }
     if(el_md && el_md->HasOption("OWN_POINTER")) { // note: this was not in original!
@@ -1854,7 +1829,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
     else {
       taMisc::Warning("*** Dump_Load_Path_ptr: NOT owning new element of type:",
                       ld_el_typ->name,"for pointer member at path:",
-                      el_path,"in parent object:",GetPathNames());
+                      el_path,"in parent object:",DisplayPath());
     }
   }
   if(nw_el && el_path.contains('\"')) {
@@ -1868,7 +1843,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     String msg;
     msg << "Success: Leaving TypeDef::Dump_Load_Path_ptr, type: " << ld_el_typ->name
-        << ", parent path = " << GetPathNames()
+        << ", parent path = " << DisplayPath()
         << ", el_path = " << el_path;
     taMisc::Info(msg);
   }
@@ -1880,7 +1855,7 @@ taBase* taBase::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ)
   taBase* nw_el = (taBase*)FindMembeR(el_path, el_md);
   if(nw_el) return nw_el;
   if(taMisc::verbose_load != taMisc::QUIET) {
-    taMisc::Warning("*** Dump_Load_Path_parent: Object at path:",GetPathNames(),
+    taMisc::Warning("*** Dump_Load_Path_parent: Object at path:",DisplayPath(),
                     "is not capable of creating a new element with the path:",el_path,
                     "of type:",ld_el_typ->name,
                     "something is askew in the loading paths");
@@ -1898,8 +1873,8 @@ String taBase::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
     return td->GetValStr_class_inline(this, par, memb_def, sc, force_inline);
   }
   else {
-    if(GetOwner() || (this == tabMisc::root))
-      return GetPathNames();
+    if(GetOwner() || this == tabMisc::root)
+      return GetPathFromProj();
     return td->name;
   }
 }
@@ -1915,7 +1890,7 @@ String taBase::GetValStr_ptr(const TypeDef* td, const void* base, void* par, Mem
     case TypeDef::SC_SEARCH:
       return rbase->GetName();
     default:
-      return rbase->GetPathNames();
+      return rbase->GetPathFromProj();
     }
   }
   else {
@@ -1952,7 +1927,7 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
     }
     else {
       MemberDef* md = NULL;
-      bs = tabMisc::root->FindFromPath(tmp_val, md);
+      bs = tabMisc::RootFindFromPath(tmp_val, md); // not streaming, should be safe..
       if(!bs) {
         taMisc::Warning("*** Invalid Path in SetValStr:",val);
         return false;
@@ -2020,7 +1995,7 @@ void taBase::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) c
   if(ptr) {
     if(GetOwner() || (this == tabMisc::root)) {
       if(IsChildOf(odl.tab_obj_a)) {
-        rec->value = GetPathNames(NULL, odl.tab_obj_a); // scope by tab obj
+        rec->value = GetPathNames(odl.tab_obj_a); // scope by tab obj
         rec->SetDiffFlag(taObjDiffRec::VAL_PATH_REL);
       }
       else {
@@ -2247,7 +2222,7 @@ void taBase::DebugInfo(const String& fun_name,
                        const String& d, const String& e, const String& f,
                        const String& g, const String& h) const {
   String objinfo = "obj: " + GetTypeDef()->name + " "
-    + GetDisplayName() + "::" + fun_name + "() (path: " + GetPathNames() + " )\n";
+    + GetDisplayName() + "::" + fun_name + "() (path: " + DisplayPath() + " )\n";
   taMisc::DebugInfo(objinfo, a, b, c, d, e, f, g, h);
 }
 
@@ -2255,7 +2230,7 @@ void taBase::CheckError_msg(const String& a, const String& b, const String& c,
                             const String& d, const String& e, const String& f,
                             const String& g, const String& h) const {
   String objinfo = "Config Error in: " + GetTypeDef()->name + " "
-    + GetDisplayName() + "\npath: " + GetPathNames() + "\n";
+    + GetDisplayName() + "\npath: " + DisplayPath() + "\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
 }
 
@@ -2731,7 +2706,7 @@ bool taBase::SearchTestItem_impl(const String_Array& srch, bool text_only,
 
 #ifdef SEARCH_DEBUG
   if(all_matched) {
-    taMisc::DebugInfo("search hit in:", GetPathNames(), "md:",
+    taMisc::DebugInfo("search hit in:", DisplayPath(), "md:",
                       (md ? md->name : "NULL"),
                       "from:", srch_match);
   }
@@ -2761,7 +2736,7 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
       if(!obj) continue;
       if(obj->SearchTestItem_impl(srch, text_only, contains, case_sensitive, obj_name, obj_type,
                                   obj_desc, obj_val, mbr_name, type_desc, md)) {
-        //      taMisc::DebugInfo("memb search hit in:", GetPathNames(), "md:", md->name);
+        //      taMisc::DebugInfo("memb search hit in:", DisplayPath(), "md:", md->name);
         items.Link(obj);
       }
     }
@@ -3416,8 +3391,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     String tab_a_path;
     String tab_b_path;
-    if(tab_par_a) tab_a_path = tab_par_a->GetPathNames();
-    if(tab_par_b) tab_b_path = tab_par_b->GetPathNames();
+    if(tab_par_a) tab_a_path = tab_par_a->DisplayPath();
+    if(tab_par_b) tab_b_path = tab_par_b->DisplayPath();
 
     //////////////////////////////////
     //          Copy -- both ways -- uses value string instead of live obj
@@ -3562,8 +3537,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
       if(rec->diff_odr->nest_level < rec->nest_level) {
         // for last obj in list, dest is now another member in parent obj..
 //      taMisc::Info("diff nest -- rec:", String(rec->nest_level), "diff:",
-//                   String(rec->diff_odr->nest_level),"rec path:", tab_a->GetPathNames(),
-//                   "diff path:", tab_b->GetPathNames());
+//                   String(rec->diff_odr->nest_level),"rec path:", tab_a_path,
+//                   "diff path:", tab_b_path);
         if(tab_par_b) {
           if(rec->par_odr->mdef) {
             // find member in dest par (parents always ta base..)
@@ -3710,7 +3685,7 @@ void taBase::GetControlPanelLabel(MemberDef* mbr, String& label, const String& x
   else {
     taBase* mo = GetMemberOwner(true); // highest
     if(mo) {
-      label = mo->GetName() + GetPath(NULL, mo);
+      label = mo->GetName() + GetPath(mo);
     }
     else {
       label = GetDisplayName();
@@ -3771,7 +3746,7 @@ void taBase::Help() {
 //      Updating pointers (when objects change type or are copied)
 
 taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, taBase* new_par) {
-  String old_path = old_guy->GetPathNames(NULL, old_par);
+  String old_path = old_guy->GetPathNames(old_par);
   MemberDef* md;
   if (!new_par) {
     return NULL;
@@ -3782,7 +3757,7 @@ taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, 
     (old_guy->GetTypeDef() != new_guy->GetTypeDef());
   if(not_found) {
     // try without names, just using indexes, to see if a name change threw us off
-    old_path = old_guy->GetPath(NULL, old_par);
+    old_path = old_guy->GetPath(old_par);
     new_guy = new_par->FindFromPath(old_path, md);
   }
   return new_guy;
@@ -3979,7 +3954,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
 }
 
 int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
-  // taMisc::Info("uptr_npar:", GetPathNames());
+  // taMisc::Info("uptr_npar:", DisplayPath());
   TypeDef* td = GetTypeDef();
   int nchg = 0;                 // total number changed
   int mychg = 0;                // my actual guys changed

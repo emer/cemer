@@ -87,6 +87,8 @@ public:
 #endif
 
 
+taProject* taProject::cur_proj = NULL;
+
 void taProject::Initialize() {
   auto_name = true;
   m_dirty = false;
@@ -145,10 +147,21 @@ void taProject::InitLinks_post() {
     DoView();
   }
   ctrl_panels.el_typ = &TA_ControlPanel; // set this as default type
+  SetProjAsCurrent();
 }
 
 void taProject::CutLinks() {
   taMisc::SetLogFileToDefault(); // don't log to us anymore
+  taProject::cur_proj = NULL;
+  if(tabMisc::root && !tabMisc::root->isDestroying()) {
+    for(int i=0; i<tabMisc::root->projects.size; i++) {
+      taProject* proj = tabMisc::root->projects[i];
+      if(proj != this && !proj->isDestroying()) {
+        proj->SetProjAsCurrent();
+        break;
+      }
+    }
+  }
   CutLinks_impl();
   inherited::CutLinks();
 }
@@ -542,7 +555,8 @@ DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
   return rval;
 }
 
-void taProject::ProjDirToCurrent() {
+void taProject::SetProjAsCurrent() {
+  cur_proj = this;
   if(proj_dir.empty()) {
     proj_dir = QDir::currentPath(); // default to current now..
   }

@@ -52,7 +52,7 @@ void DumpPathSubList::AddPath(TypeDef* td, taBase* par, String& o, String& n) {
     nt = n.before(n_last_sep);
   }
   if(taMisc::verbose_load >= taMisc::MESSAGES) {
-    String ppath = par->GetPathNames();
+    String ppath = par->DisplayPath();
     taMisc::Warning("---> New Path Fix, old:",*op,"new:",*np,"in:",ppath);
   }
   DumpPathSub* nwsb = new DumpPathSub(td, par, *op, *np);

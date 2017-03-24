@@ -31,6 +31,20 @@ taBase_RefList  tabMisc::delayed_updateafteredit;
 taBase_FunCallList  tabMisc::delayed_funcalls;
 ContextFlag  tabMisc::in_wait_proc;
 
+taBase* tabMisc::RootFindFromPath(const String& path, MemberDef*& ret_md) {
+  if(!root) {
+    taMisc::Error("RootFindFromPath: tabMisc::root is NULL!  bad programmer error -- please report bug!");
+    return NULL;
+  }
+  if(path.startsWith(".projects") || path.startsWith("root.") || path.startsWith(".root.")) {
+    return root->FindFromPath(path, ret_md);
+  }
+  if(taProject::cur_proj) {
+    return taProject::cur_proj->FindFromPath(path, ret_md);
+  }
+  return root->FindFromPath(path, ret_md);
+}
+
 void tabMisc::DelayedClose(taBase* obj) {
   if(taMisc::quitting) return;
   if(obj->isDestroying()) return;

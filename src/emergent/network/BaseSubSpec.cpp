@@ -56,7 +56,7 @@ BaseSubSpec* BaseSubSpec::FindParent() {
   BaseSpec* bsoo = bso->FindParent(); // parent's owner
   if(bsoo == NULL)      return NULL;
 
-  String my_path = GetPath(NULL, bso); // get my path to owner..
+  String my_path = GetPath(bso); // get my path to owner..
   MemberDef* md;
   BaseSubSpec* from = (BaseSubSpec*)bsoo->FindFromPath(my_path, md);
   if(!from || !from->InheritsFrom(TA_BaseSubSpec))

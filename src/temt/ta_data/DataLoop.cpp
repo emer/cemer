@@ -116,7 +116,7 @@ void DataLoop::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, String("{ // DataLoop ") + data_nm, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
-  prog->AddLine(this, String("DataLoop* data_loop = this") + GetPath(NULL,program()) + ";");
+  prog->AddLine(this, String("DataLoop* data_loop = this") + GetPath(program()) + ";");
   prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
   prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->rows);");
   prog->AddLine(this, "data_loop->item_idx_list.FillSeq();");

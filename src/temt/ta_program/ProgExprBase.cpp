@@ -364,7 +364,7 @@ bool ProgExprBase::ParseExpr() {
   if(HasExprFlag(IN_PARSE)) return false; // no loops!
   SetExprFlag(IN_PARSE);
   
-  String pnm = GetPathNames(NULL, pgp);
+  String pnm = GetPathNames(pgp);
 
   // todo: temporary fix for saved wrong flags, remove after a while (4.0.10)
   ProgEl* pel = GET_MY_OWNER(ProgEl);

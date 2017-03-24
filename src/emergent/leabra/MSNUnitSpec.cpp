@@ -110,15 +110,19 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
     }
     else if(deep.IsTRC()) {
       u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
+      if(deep.trc_thal_gate) {
+        u->net *= u->thal;
+      }
     }
     // must be SUPER units at this point
-    else if(lay->am_deep_mod_net.max < 0.01f) { // not enough yet // was .1f
-      u->deep_lrn = 0.0f;    // no learning without enabling signal
-      u->deep_mod = 1.0f;    // always allow unit activations to flow normally
+    // else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
+    else if(u->deep_mod_net <= deep.mod_thr) { // per-unit, NOT layer
+      u->deep_lrn = 0.0f;    // default is 0!
+      u->deep_mod = 1.0f;
     }
     else {
       u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
-      u->deep_mod = 1.0f;    // always allow unit activations to flow normally
+      u->deep_mod = 1.0f;
     }
   }
   else { // must be VENTRAL, PATCH

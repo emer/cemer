@@ -59,7 +59,7 @@ void PrintVar::GenCssBody_impl(Program* prog) {
     rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
   rval += " << endl;";
 
-  prog->AddLine(this, "{ PrintVar* pvar = this" + GetPath(NULL, program()) + ";",
+  prog->AddLine(this, "{ PrintVar* pvar = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->IncIndent();
   prog->AddLine(this, "if(!pvar->debug || pvar->InDebugMode()) {");

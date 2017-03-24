@@ -97,7 +97,7 @@ void DataSortProg::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "// DataSort: src_data_var not set!  cannot run", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";", ProgLine::MAIN_LINE);
+  prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(program()) + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {

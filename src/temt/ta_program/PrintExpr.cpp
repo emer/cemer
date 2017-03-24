@@ -43,7 +43,7 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
     expr.SetExpr("\"\""); // prevents error if no expression
   String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
-  prog->AddLine(this, "{ PrintExpr* pexp = this" + GetPath(NULL, program()) + ";",
+  prog->AddLine(this, "{ PrintExpr* pexp = this" + GetPath(program()) + ";",
                 ProgLine::MAIN_LINE);
   prog->IncIndent();
   prog->AddLine(this, "if(!pexp->debug || pexp->InDebugMode()) {");

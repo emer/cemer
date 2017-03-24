@@ -72,7 +72,7 @@ int taBase_RefList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     if(!itm) continue;
     taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
     if(old_own != old_par) continue;
-    String old_path = itm->GetPath(NULL, old_par);
+    String old_path = itm->GetPath(old_par);
     MemberDef* md;
     taBase* nitm = new_par->FindFromPath(old_path, md);
     if(nitm) {

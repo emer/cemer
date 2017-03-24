@@ -2030,7 +2030,7 @@ void Variant::setString(const String& val, bool null) {
   if(val.contains(":.")) {
     String path = val.after(":");
     MemberDef* md = NULL;
-    taBase* bs = tabMisc::root->FindFromPath(path, md);
+    taBase* bs = tabMisc::RootFindFromPath(path, md);
     if(!bs) {
       taMisc::Warning("*** Invalid Path in Variant::setString:",path);
       releaseType();
@@ -2167,7 +2167,7 @@ const String Variant::toCssLiteral() const {
     if (isNull()) {
       rval += "NULL";
     } else {
-      rval += d.tab->GetPathNames();
+      rval += d.tab->DisplayPath();
     }
 #endif
   case T_TypeItem:
@@ -2576,7 +2576,7 @@ void Variant::updateFromString(const String& val) {
     if(val.contains(":.")) {
       String path = val.after(":");
       MemberDef* md = NULL;
-      taBase* bs = tabMisc::root->FindFromPath(path, md);
+      taBase* bs = tabMisc::RootFindFromPath(path, md);
       if(!bs) {
         taMisc::Warning("*** Invalid Path in Variant::updateFromString:",path);
       }
@@ -2628,7 +2628,7 @@ bool Variant::setFromStringGuessType(const String& val) {
 #ifndef NO_TA_BASE
   if(tval.startsWith('.')) {
     MemberDef* md = NULL;
-    taBase* bs = tabMisc::root->FindFromPath(tval, md);
+    taBase* bs = tabMisc::RootFindFromPath(tval, md);
     if(bs) {
       if(bs->InheritsFrom(TA_taMatrix))
         setMatrix((taMatrix*)bs);
@@ -2667,7 +2667,7 @@ taBase* Variant::toBase() const {
     return NULL;
   case T_String: {
     MemberDef* md = NULL;
-    return tabMisc::root->FindFromPath(getString(), md);
+    return tabMisc::RootFindFromPath(getString(), md);
   }
   case T_Ptr:
   case T_TypeItem:
@@ -2704,7 +2704,7 @@ taMatrix* Variant::toMatrix() const {
     return NULL;
   case T_String: {
     MemberDef* md = NULL;
-    taBase* tb = tabMisc::root->FindFromPath(getString(), md);
+    taBase* tb = tabMisc::RootFindFromPath(getString(), md);
     if(tb && tb->InheritsFrom(TA_taMatrix))
       return (taMatrix*)tb;
     return NULL;
