@@ -34,10 +34,11 @@ TA_BASEFUNS_CTORS_DEFN(ControlItemNote); // OBSOLETE
 
 void ControlPanelMemberData::Initialize() {
   ctrl_type = CONTROL;
+  state = STABLE;
   is_numeric = false;
   is_single = false;
-  record = true;
-  search = false;
+  obs_record = false;
+  obs_search = false;
 }
 
 void ControlPanelMemberData::Destroy() {
@@ -46,8 +47,18 @@ void ControlPanelMemberData::Destroy() {
 void ControlPanelMemberData::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   SetCtrlType();
-  if (search) {
-    record = true;
+  if(taMisc::is_loading) {
+    taVersion v807(8, 0, 7);
+    if (taMisc::loading_version < v807) {
+      if(obs_search)
+        state = SEARCH;
+      else if(obs_record)
+        state = ACTIVE;
+    }
+    obs_search = false;
+    obs_record = false;
+  }
+  if (state == SEARCH) {
     ParseRange();
   }
 }
@@ -201,8 +212,14 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) {
     taVersion v806(8, 0, 6);
     if (taMisc::loading_version < v806) {
-      data.record = obs_param_srch.record;
-      data.search = obs_param_srch.search;
+      if(obs_param_srch.search) {
+        SetToSearch();
+      }
+      else if(obs_param_srch.record) {
+        SetToActive();
+      }
+      obs_param_srch.search = false;
+      obs_param_srch.record = false;
       data.range = obs_param_srch.range;
       data.saved_value = obs_ps_value.saved_value;
       data.notes = obs_notes.notes;
@@ -235,13 +252,12 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       data.is_single = true;    // counts as single!
     }
   }
-  if(!data.is_single) {
-    data.search = false;
-    data.record = false;
-  }
-  else if(!data.is_numeric && data.search) {
-    data.search = false;
-    data.record = true;
+  if(IsSearch()) {
+    if(!data.is_single || !data.is_numeric) {
+      taMisc::Warning("ControlPanelMember:",label,
+                      "cannot SEARCH on parameters that are not elemental numeric values");
+      SetToActive();
+    }
   }
 
   if(base && mbr) {
@@ -307,7 +323,6 @@ bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_m
   else {
     mbr->SetValStr(cur_val, base);
   }
-  base->UpdateAfterEdit();
   if((taMisc::dmem_proc > 0) || (!info_msg && !warn_no_match))
     return true;
   String act_val = CurValAsString();
@@ -327,19 +342,37 @@ void ControlPanelMember::CopyActiveToSaved() {
   data.saved_value = CurValAsString();
 }
 
+void ControlPanelMember::CopyToActiveString() {
+  if(!mbr || !base) return;
+  data.active = CurValAsString();
+}
+
 void ControlPanelMember::CopySavedToActive() {
   if(!mbr || !base) return;
   SetCurValFmString(data.saved_value, true, false);
+  base->UpdateAfterEdit();
 }
+
+void ControlPanelMember::CopySavedToActive_nouae() {
+  if(!mbr || !base) return;
+  SetCurValFmString(data.saved_value, false, false);
+}
+
+void ControlPanelMember::ActivateActiveString_nouae() {
+  if(!mbr || !base) return;
+  SetCurValFmString(data.active, false, false);
+}
+
+void ControlPanelMember::BaseUpdateAfterEdit() {
+  if(!mbr || !base) return;
+  base->MemberUpdateAfterEdit(mbr, true); // edit dialog context
+  base->UpdateAfterEdit();
+}
+
 
 bool ControlPanelMember::RecordValue() {
   if(!data.is_single) return false;
-  if(IsClusterRun()) {
-    return (data.record || data.search);
-  }
-  else {
-    return true;
-  }
+  return (IsActive() || IsSearch());
 }
 
 bool ControlPanelMember::IsControlPanelPointer() const {

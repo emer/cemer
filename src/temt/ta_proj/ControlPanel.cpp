@@ -825,7 +825,7 @@ String ControlPanel::MembersToString(bool use_search_vals) {
         params.cat(mbr->CurValAsString());
       }
       else {
-        if(mbr->data.search) {
+        if(mbr->IsSearch()) {
           params.cat(String(mbr->data.next_val));
         }
         else {

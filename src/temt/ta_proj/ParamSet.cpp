@@ -23,7 +23,6 @@ TA_BASEFUNS_CTORS_DEFN(ParamSet);
 
 
 void ParamSet::Initialize() {
-  active_editable = false;
   last_activated = false;
 }
 

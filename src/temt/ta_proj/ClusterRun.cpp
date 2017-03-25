@@ -1891,7 +1891,7 @@ String ClusterRun::ReplaceVars(const String& str) {
 
         //If we are in a search algorithm, then we need to use the value
         //set in the search parameters
-        if (!use_search_algo || !cur_search_algo || !mbr->data.is_numeric || !ps.search) {
+        if (!use_search_algo || !cur_search_algo || !mbr->data.is_numeric || !ps.IsSearch()) {
           variable_value = mbr->CurValAsString();
         }
         else {

@@ -81,9 +81,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   MemberDef* data_md = TA_ControlPanelMember.members.FindName("data");
       
   dat_cnt = 0;  // keeps track of control count
-  bool active_editable = true;
   if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
-    active_editable = ((ParamSet*)ctrlpan)->active_editable;
     MemberSpace& ms = ctrlpan->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
@@ -134,13 +132,15 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
 //        item->label = full_lbl;
 //      }
       
-      bool disable = !active_editable;
+      bool disable = item->IsLocked();
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
       memb_set->memb_el.Add(md);
 
-      taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+      // don't let the mashup do any uae by itself -- we retain full control over that!
+      taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body,
+                                                        taiWidgetMashup::flgNoUAE);
       mash_widg->SetMemberDef(md);
       mash_widg->add_labels = false;
       mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
@@ -272,7 +272,15 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
           for (int el=1; el<mash_widg->memb_el.size; el++) {
             mash_widg->AddBase(item);
           }
-          mash_widg->GetImage();
+          if(item->IsParamSet()) { // all param set items always show SAVED value!
+            item->CopyToActiveString();
+            item->CopySavedToActive_nouae(); // activate saved value temporarily
+            mash_widg->GetImage();
+            item->ActivateActiveString_nouae();
+          }
+          else {
+            mash_widg->GetImage();
+          }
         }
         else {
           md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
@@ -312,7 +320,23 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
         bool first_diff = true;
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
         if(mash_widg) {
-          mash_widg->GetValue();
+          if(item->IsParamSet()) {
+            item->CopyToActiveString(); // save current active value
+            mash_widg->GetValue();      // now get what user put in
+            item->CopyActiveToSaved();  // grab that as the new saved value
+            if(!item->IsActive()) {
+              item->ActivateActiveString_nouae(); // revert back to active value!
+            }
+            else {
+              item->BaseUpdateAfterEdit(); // active is a live change -- UAE
+            }
+            item->UpdateAfterEdit(); // always get ctrl panel item
+          }
+          else {
+            mash_widg->GetValue();
+            item->BaseUpdateAfterEdit(); // active is a live change -- UAE
+            item->UpdateAfterEdit(); // always get ctrl panel item
+          }
         }
         else {
           md->im->GetMbrValue(mb_dat, item->base, first_diff);

@@ -42,7 +42,7 @@ bool GridSearch::StartSearch() {
   bool has_yoked = false;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, m_cluster_run->mbrs) {
     ControlPanelMemberData &ps = mbr->data;
-    if (ps.search) {
+    if (ps.IsSearch()) {
       bool ok = ps.ParseRange();          // just to be sure
       if(ok) {
         if(ps.range.startsWith('%')) {
@@ -58,7 +58,7 @@ bool GridSearch::StartSearch() {
   if(has_yoked) {
     FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, m_cluster_run->mbrs) {
       ControlPanelMemberData &ps = mbr->data;
-      if (ps.search) {
+      if (ps.IsSearch()) {
         if(!ps.range.startsWith('%')) continue; // only yoked
         String prnm = ps.range.after('%');
         // ControlPanelMember* src = m_params.FindName(prnm); // FindName only works for owned
