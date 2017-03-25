@@ -277,6 +277,7 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iColorButton.h
   iCheckBox.h
   iComboBox.h
+  iComboBoxPrevNext.h
   iDialog.h
   iDimEdit.h
   iEditGrid.h
@@ -774,6 +775,7 @@ set(ta_gui_SRCS_NOMAKETA
   iColorButton.cpp
   iCheckBox.cpp
   iComboBox.cpp
+  iComboBoxPrevNext.cpp
   iDialog.cpp
   iDimEdit.cpp
   iEditGrid.cpp

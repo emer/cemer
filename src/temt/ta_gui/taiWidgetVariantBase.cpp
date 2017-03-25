@@ -17,7 +17,7 @@
 #include <IWidgetHost>
 #include <taiWidgetComboBox>
 #include <iLabel>
-#include <iComboBox>
+#include <iComboBoxPrevNext>
 #include <taiWidgetToggle>
 #include <taiWidgetFieldIncr>
 #include <taiWidgetField>

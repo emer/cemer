@@ -20,7 +20,7 @@
 #include <taiWidgetFieldIncr>
 #include <taiWidgetComboBox>
 #include <taiWidgetBitBox>
-#include <iComboBox>
+#include <iComboBoxPrevNext>
 #include <iSpinBox>
 
 

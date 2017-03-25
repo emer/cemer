@@ -23,7 +23,7 @@
 #include <taiWidgetTokenChooser>
 #include <taiWidgetBitBox>
 #include <taiWidgetComboBox>
-#include <iComboBox>
+#include <iComboBoxPrevNext>
 #include <taiMemberOfDynEnum>
 #include <iDataTableEditor>
 #include <iStdDataTableView>

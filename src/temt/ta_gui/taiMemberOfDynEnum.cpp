@@ -20,7 +20,7 @@
 #include <taiWidgetComboBox>
 #include <taiWidgetBitBox>
 #include <iLineEdit>
-#include <iComboBox>
+#include <iComboBoxPrevNext>
 #include <BuiltinTypeDefs>
 
 

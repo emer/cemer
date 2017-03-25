@@ -22,13 +22,13 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iComboBox; //
+class iComboBoxPrevNext; //
 
 
 class TA_API taiWidgetComboBox : public taiWidget {
   Q_OBJECT
 public:
-  inline iComboBox*     rep() const { return (iComboBox*)(QWidget*)m_rep; }
+  inline iComboBoxPrevNext*     rep() const { return (iComboBoxPrevNext*)(QWidget*)m_rep; }
 
   taiWidgetComboBox(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags_ = 0);
   taiWidgetComboBox(bool is_enum, TypeDef* typ_, IWidgetHost* host, taiWidget* par,

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiWidgetComboBox.h"
-#include <iComboBox>
+#include <iComboBoxPrevNext>
 #include <EnumDef>
 
 #include <taMisc>
@@ -40,7 +40,7 @@ taiWidgetComboBox::taiWidgetComboBox(bool is_enum, TypeDef* typ_, IWidgetHost* h
 
 void taiWidgetComboBox::Initialize(QWidget* gui_parent_, bool is_enum_) {
   m_is_enum = is_enum_;
-  SetRep(new iComboBox(gui_parent_));
+  SetRep(new iComboBoxPrevNext(gui_parent_));
   rep()->setFixedHeight(taiM->combo_height(defSize()));
 
   //connect changed signal to our slot, or apply

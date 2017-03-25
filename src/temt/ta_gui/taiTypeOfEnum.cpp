@@ -17,7 +17,7 @@
 #include <EnumDef>
 #include <taiWidget>
 #include <taiWidgetComboBox>
-#include <iComboBox>
+#include <iComboBoxPrevNext>
 #include <taiWidgetBitBox>
 #include <taiWidgetField>
 
