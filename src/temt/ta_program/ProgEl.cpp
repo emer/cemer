@@ -511,7 +511,17 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
     bool type_is_guess = false;
     if (var_type == ProgVar::T_UnDef && this->DerivesFromName("AssignExpr")) {
       String expr = trim(code_string.after("="));
-      if (expr.isBool()) {
+      
+      ProgVar* rhs_var = FindVarNameInScope(expr, false); // don't make!
+      if (rhs_var) {
+        ProgVar::VarType rhs_type = rhs_var->var_type;
+        if (rhs_type == ProgVar::T_Bool || rhs_type == ProgVar::T_Int
+            || rhs_type == ProgVar::T_Real || rhs_type == ProgVar::T_String) {
+          var_type = rhs_var->var_type;
+          type_is_guess = true;
+        }
+      }
+      else if (expr.isBool()) {
         var_type = ProgVar::T_Bool;
         type_is_guess = true;
       }
