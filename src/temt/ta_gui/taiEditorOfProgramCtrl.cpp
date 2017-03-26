@@ -20,12 +20,8 @@
 #include <DynEnum>
 
 #include <iLabel>
-#include <taiWidgetField>
-#include <taiWidgetComboBox>
-#include <taiWidgetFieldIncr>
 #include <taiMember>
-#include <taiWidgetBitBox>
-#include <taiMemberOfDynEnum>
+#include <taiWidgetProgVarValue>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -144,46 +140,10 @@ void taiEditorOfProgramCtrl::Constr_Widget_Labels() {
       MemberDef* md = pv->GetValMemberDef();
       if(!md) continue;
       memb_el(j).Add(md);
-      taiWidget* mb_dat;
       int flags_ = 0;
-      if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
-        flags_ |= taiWidget::flgReadOnly;
-      if((pv->var_type == ProgVar::T_HardEnum) || (pv->var_type == ProgVar::T_DynEnum)) {
-        if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
-          mb_dat = new taiWidgetField(NULL, this, NULL, body, flags_);
-        }
-        else if((pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type &&
-                 pv->hard_enum_type->HasOption("BITS")) ||
-                (pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits)) {
-          mb_dat = new taiWidgetBitBox(NULL, this, NULL, body, flags_ | taiWidget::flgAutoApply);
-        }
-        else {
-          mb_dat = new taiWidgetComboBox(true, NULL, this, NULL, body, flags_ | taiWidget::flgAutoApply);
-        }
-      }
-      else if (pv->var_type == ProgVar::T_Int) {
-        taiWidgetFieldIncr* int_rep = new taiWidgetFieldIncr(NULL, this, NULL, body, flags_);
-        int_rep->setMinimum(INT_MIN);
-        mb_dat = int_rep;
-      }
-      else {
-        mb_dat = md->im->GetWidgetRep(this, NULL, body, NULL, flags_);
-      }
-      // we need to manually set the md into the dat...
-      // need to check for enums, because md is the type, not the val
-      if (pv->var_type == ProgVar::T_HardEnum)
-        md = pv->FindMemberName("int_val");
-      else if (pv->var_type == ProgVar::T_DynEnum) {
-        // special case -- we will be setting the base to the DynEnum, not pv
-        // and herein need to set the md for the nested dyn_val, which
-        // conceivably may not even exist, so we do this via the instance
-        md = TAI_DynEnum->FindMemberName("value");
-      }
-      mb_dat->SetMemberDef(md); // usually done by im, but we are manual here...
-
+      taiWidget* mb_dat = new taiWidgetProgVarValue(NULL, this, NULL, body, flags_);
       widget_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
-      //int row = AddWidget(-1, data);
       nm = pv->name;
       help_text = pv->desc;
       AddNameWidget(-1, nm, help_text, data, mb_dat/*, md*/);
@@ -274,51 +234,12 @@ void taiEditorOfProgramCtrl::GetValue_Membs_def() {
         continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiWidget* mb_dat = widget_el(j).SafeEl(cnt++);
-      //note: code below is "risky" ex if visiblity update ctrl changes etc.
-      // then the type values can be wrong -- so we strongly cast
       if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) continue; // do this after the cnt++!
       if (!md || !mb_dat) {
         taMisc::DebugInfo("taiEditorOfProgramCtrl:GetValue_impl: ran out of controls!");
         break;
       }
-      if(pv->var_type == ProgVar::T_HardEnum) {
-        if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
-          taiWidgetBitBox* tmb_dat = dynamic_cast<taiWidgetBitBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetBitBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->GetValue(pv->int_val);
-        }
-        else {
-          taiWidgetComboBox* tmb_dat = dynamic_cast<taiWidgetComboBox*>(mb_dat);
-          //note: use of pv for tests is just a hook, pv not really germane
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetComboBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->GetEnumValue(pv->int_val); // todo: not supporting first_diff
-        }
-      }
-      else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-        if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
-          taiWidgetBitBox* tmb_dat = dynamic_cast<taiWidgetBitBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetBitBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->GetValue(pv->dyn_enum_val.value);
-        }
-        else {
-          taiWidgetComboBox* tmb_dat = dynamic_cast<taiWidgetComboBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetComboBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->GetValue(pv->dyn_enum_val.value);
-        }
-      }
-      else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
-        taiWidgetFieldIncr* tmb_dat = dynamic_cast<taiWidgetFieldIncr*>(mb_dat);
-        if (pv->TestError_impl(!tmb_dat, "expected taiWidgetFieldIncr, not: ",
-          mb_dat->metaObject()->className())) continue;
-        pv->int_val = tmb_dat->GetValue();
-      }
-      else {
-        md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
-      }
+      ((taiWidgetProgVarValue*)mb_dat)->GetValue(pv);
       pv->UpdateAfterEdit();
       if(!first_diff) {         // always reset!
         taiMember::EndScript((void*)pv);
@@ -357,60 +278,7 @@ void taiEditorOfProgramCtrl::GetImage_Membs()
         taMisc::DebugInfo("taiEditorOfProgramCtrl:GetImage_impl: ran out of controls!");
         break;
       }
-      // set base, for ctxt menu, so it won't try to use the Program (which is not the base)
-      mb_dat->SetBase(pv); // for all, except HardEnum which is nested again
-      if(pv->var_type == ProgVar::T_HardEnum) {
-        if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
-          taiWidgetField* tmb_dat = dynamic_cast<taiWidgetField*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetField, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->GetImage(pv->GenCssInitVal());
-        }
-        else if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
-          taiWidgetBitBox* tmb_dat = dynamic_cast<taiWidgetBitBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetBitBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->SetEnumType(pv->hard_enum_type);
-          tmb_dat->GetImage(pv->int_val);
-        }
-        else {
-          taiWidgetComboBox* tmb_dat = dynamic_cast<taiWidgetComboBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetComboBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->SetEnumType(pv->hard_enum_type);
-          tmb_dat->GetEnumImage(pv->int_val);
-        }
-      }
-      else if(pv->var_type == ProgVar::T_DynEnum) {
-        mb_dat->SetBase(&pv->dyn_enum_val);
-        if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
-          taiWidgetField* tmb_dat = dynamic_cast<taiWidgetField*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetField, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          tmb_dat->GetImage(pv->GenCssInitVal());
-        }
-        else if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
-          taiWidgetBitBox* tmb_dat = dynamic_cast<taiWidgetBitBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetBitBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          taiMemberOfDynEnum::UpdateDynEnumBits(tmb_dat, pv->dyn_enum_val);
-        }
-        else {
-          taiWidgetComboBox* tmb_dat = dynamic_cast<taiWidgetComboBox*>(mb_dat);
-          if (pv->TestError_impl(!tmb_dat, "expected taiWidgetComboBox, not: ",
-                            mb_dat->metaObject()->className())) continue;
-          taiMemberOfDynEnum::UpdateDynEnumCombo(tmb_dat, pv->dyn_enum_val);
-        }
-      }
-      else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
-        taiWidgetFieldIncr* tmb_dat = dynamic_cast<taiWidgetFieldIncr*>(mb_dat);
-        if (pv->TestError_impl(!tmb_dat, "expected taiWidgetFieldIncr, not: ",
-          mb_dat->metaObject()->className())) continue;
-        tmb_dat->GetImage(pv->int_val);
-      }
-      else {
-        md->im->GetImage(mb_dat, (void*)pv);
-      }
+      ((taiWidgetProgVarValue*)mb_dat)->GetImage(pv);
     }
   }
 }

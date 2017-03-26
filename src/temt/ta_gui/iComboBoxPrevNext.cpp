@@ -25,6 +25,8 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   lay = new QHBoxLayout(this);
   lay->setMargin(0); lay->setSpacing(0);
   combo_box = new iComboBox(this);
+  // combo_box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+  combo_box->setIconSize(QSize(1,1)); // no icon!
   lay->addWidget(combo_box);
 
   vlay = new QVBoxLayout();

@@ -23,6 +23,7 @@
 #include <taObjDiff_List>
 
 #include <taMisc>
+#include <tabMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ControlPanelMemberData);
 TA_BASEFUNS_CTORS_DEFN(ControlPanelMember);
@@ -271,6 +272,9 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       base->GetControlPanelDesc(mbr, desc); // regenerate
       prv_desc = desc;
     }
+    if(IsParamSet() && IsActive()) {
+      Activate();               // we always activate!
+    }
   }
 }
 
@@ -340,11 +344,50 @@ bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_m
 void ControlPanelMember::CopyActiveToSaved() {
   if(!mbr || !base) return;
   data.saved_value = CurValAsString();
+  SavedToProgVar();
 }
 
-void ControlPanelMember::CopyToActiveString() {
+void ControlPanelMember::SavedToProgVar() {
   if(!mbr || !base) return;
-  data.active = CurValAsString();
+  TypeDef* mbr_td = mbr->type;
+  if(base->InheritsFrom(&TA_DynEnum)) {
+    DynEnum* den = (DynEnum*)base;
+    data.saved.var_type = ProgVar::T_DynEnum;
+    data.saved.dyn_enum_val.CopyFrom(den);
+  }
+  else if(mbr_td->IsBool()) {
+    data.saved.SetBool(data.saved_value.toBool());
+  }
+  else if(mbr_td->IsInt()) {
+    data.saved.SetInt(data.saved_value.toInt());
+  }
+  else if(mbr_td->IsFloat()) {
+    data.saved.SetReal(data.saved_value.toDouble());
+  }
+  else if(mbr_td->IsEnum()) {
+    String enum_tp_nm;
+    data.saved.SetHardEnum(mbr_td, mbr_td->GetEnumVal(data.saved_value, enum_tp_nm));
+  }
+  else if(mbr_td->IsString()) {
+    data.saved.SetString(data.saved_value);
+  }
+  else if(mbr_td->IsBasePointerType()) {
+    if(base->InheritsFrom(&TA_ProgVar)) {
+      data.saved.object_type = ((ProgVar*)base)->object_type;
+      data.saved.object_scope = ((ProgVar*)base)->object_scope;
+    }
+    MemberDef* ret_md = NULL;
+    taBase* rbase = tabMisc::RootFindFromPath(data.saved_value, ret_md);
+    data.saved.SetObject(rbase);
+  }
+  else {
+    data.saved.SetString(data.saved_value);
+  }
+}
+
+void ControlPanelMember::ProgVarToSaved() {
+  if(!mbr || !base) return;
+  data.saved_value = data.saved.GetStringVal();
 }
 
 void ControlPanelMember::CopySavedToActive() {
@@ -356,11 +399,6 @@ void ControlPanelMember::CopySavedToActive() {
 void ControlPanelMember::CopySavedToActive_nouae() {
   if(!mbr || !base) return;
   SetCurValFmString(data.saved_value, false, false);
-}
-
-void ControlPanelMember::ActivateActiveString_nouae() {
-  if(!mbr || !base) return;
-  SetCurValFmString(data.active, false, false);
 }
 
 void ControlPanelMember::BaseUpdateAfterEdit() {

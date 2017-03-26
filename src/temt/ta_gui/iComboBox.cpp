@@ -34,3 +34,10 @@ void iComboBox::wheelEvent(QWheelEvent * event) {
   // Call ignore() to allow the parent widget to process this event.
   event->ignore();
 }
+
+void iComboBox::showEvent(QShowEvent* e) {
+  QComboBox::showEvent(e);
+  if(sizeAdjustPolicy() == AdjustToContents) {
+    setFixedWidth(sizeHint().width()-20); // shrink us -- computation is too big
+  }
+}

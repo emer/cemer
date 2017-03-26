@@ -454,7 +454,7 @@ TypeDef* ProgVar::act_object_type() const {
   return rval;
 }
 
-MemberDef* ProgVar::GetValMemberDef() {
+MemberDef* ProgVar::GetValMemberDef() const {
   if(var_type == T_Int)
     return TA_ProgVar.members.FindName("int_val");
   else if(var_type == T_Real)
@@ -697,6 +697,19 @@ void ProgVar::SetValFromString(const String& str_val) {
 }
 
 String ProgVar::GetStringVal() {
+  if(var_type == T_HardEnum && hard_enum_type) {
+    return hard_enum_type->Get_C_EnumString(int_val);
+  }
+  else if(var_type == T_DynEnum) {
+    String nv = dyn_enum_val.NameVal();
+    if(nv.nonempty()) return nv;
+  }
+  else if(var_type == T_Object) {
+    if(object_val) {
+      return object_val->GetPathFromProj();
+    }
+    return "NULL";
+  }
   return GetVar().toString();
 }
 

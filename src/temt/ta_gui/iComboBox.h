@@ -28,6 +28,7 @@ public:
 
 protected:
   void wheelEvent(QWheelEvent * event) override;
+  void showEvent(QShowEvent *e) override;
 };
 
 #endif // iComboBox_h

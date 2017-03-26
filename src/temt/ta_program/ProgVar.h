@@ -164,7 +164,7 @@ public:
 
   virtual TypeDef*      act_object_type() const;
   // #IGNORE the actual object type; never NULL (taBase min)
-  virtual MemberDef*    GetValMemberDef();
+  virtual MemberDef*    GetValMemberDef() const;
   // #IGNORE get member def that represents the value for this type of variable
 
   inline void           SetVarFlag(VarFlags flg)   { flags = (VarFlags)(flags | flg); }

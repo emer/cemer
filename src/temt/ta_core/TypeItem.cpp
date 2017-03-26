@@ -122,8 +122,10 @@ String TypeItem::GetLabel() const {
   if((rval.empty()) && !HasOption("LABEL_")) {  // not intentionally blank
     rval = name;
     taMisc::SpaceLabel(rval);
-  } else                                // do translate spaces..
+  }
+  else {                               // do translate spaces.. 
     rval.gsub('_', ' ');
+  }
   return rval;
 }
 

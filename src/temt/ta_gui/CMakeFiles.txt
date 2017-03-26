@@ -123,6 +123,7 @@ set(ta_gui_HEADS_MAKETA_NOMOC
   taiMemberOfTokenPtrFromGroup.h
   taiMemberOfDynEnum.h
   taiMemberOfProgVarIntVal.h
+  taiMemberOfProgVarValue.h
   taiMemberOfTableCellValueVal.h
 
   taiMethod.h
@@ -355,6 +356,7 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   taiWidgetEditButton.h
   taiWidgetFileButton.h
   taiWidgetProgStepButton.h
+  taiWidgetProgVarValue.h
 
   taiWidgetTokenPtrMenu.h
   taiWidgetSubTokenPtrMenu.h
@@ -632,6 +634,7 @@ set(ta_gui_SRCS_MAKETA
   taiMemberOfTokenPtrFromGroup.cpp
   taiMemberOfDynEnum.cpp
   taiMemberOfProgVarIntVal.cpp
+  taiMemberOfProgVarValue.cpp
   taiMemberOfTableCellValueVal.cpp
 
   taiMethod.cpp
@@ -854,6 +857,7 @@ set(ta_gui_SRCS_NOMAKETA
   taiWidgetEditButton.cpp
   taiWidgetFileButton.cpp
   taiWidgetProgStepButton.cpp
+  taiWidgetProgVarValue.cpp
 
   taiWidgetTokenPtrMenu.cpp
   taiWidgetSubTokenPtrMenu.cpp

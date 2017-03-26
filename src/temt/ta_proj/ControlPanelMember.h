@@ -22,6 +22,7 @@
 // member includes:
 #include <MemberDef>
 #include <double_Array>
+#include <ProgVar>
 
 // declare all other types mentioned but not required to include:
 
@@ -38,9 +39,9 @@ public:
   };
 
   enum ParamState {  // what state is the parameter in?
-    ACTIVE,          // this parameter is being actively explored -- any edit made to the active value of the parameter will automatically be saved in the saved_value field immediately, so you can just set it directly once and that is what will be used -- this value will also be saved in a ClusterRun and passed as a startup arg on the command line
+    ACTIVE,          // this parameter is being actively explored -- for param set items, edits to saved values will automatically be activated to the live current values -- this value will also be saved in a ClusterRun and passed as a startup arg on the command line
     STABLE,          // this is a stable parameter that generally should not change -- it is not recorded specifically in the ClusterRun, but you CAN edit the saved_value if you want
-    LOCKED,          // a stronger form of STABLE: the saved_value of this parameter cannot be edited directly -- it is locked down -- change to STABLE to allow editing
+    LOCKED,          // a stronger form of STABLE: the value of this parameter cannot be edited directly -- it is locked down -- change to STABLE to allow editing
     SEARCH,          // the values of this parameter are determined by the parameter searching mechanism in ClusterRun, according to the range specification -- each searched value will be passed as a command-line argument, and saved in the list of paramters shown in the cluster run
   };
 
@@ -49,9 +50,9 @@ public:
   bool                  is_single;      // #READ_ONLY is this a single item, not a composite item
 
   ParamState            state;          // #LABEL_ what state is this parameter in?  determines many features of how the parameter is used
-  
-  String                saved_value;    // #HIDDEN saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used -- gui editor automatically shows this saved value as the live value that you edit, so 
-  String                active;         // #CONDSHOW_ON_ctrl_type:PARAM_SET #NO_SAVE #READ_ONLY #SHOW current active value in string form (only valid while editing -- not otherwise updated) -- the editor automatically shows the saved_value for param sets as the thing you edit, so this shows you the current active value for comparison purposes
+
+  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED #LABEL_ #EDIT_VALUE #NO_SAVE gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
+  String                saved_value;    // #HIDDEN saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
 
   String                range;          // #CONDSHOW_ON_state:SEARCH specify the values over which to search this parameter -- specific values can be listed separated by commas , and ranges can be specified using start:stop:increment (increment is optional, defaults to 1) notation as used in Matrix code -- e.g. 1,2,3:10:1,10:20:2 -- however here the stop value here is INCLUSIVE: 1:3:1 = 1,2,3 as that is more often useful -- can also specify %paramname to yoke this parameter to the paramname parameter -- it will not be searched independently, but rather will have the same values as paramname
   double                next_val;       // #HIDDEN #NO_SAVE computed next value to assign to this item in the parameter search
@@ -170,20 +171,21 @@ public:
   
   virtual void          CopyActiveToSaved();
   // #CAT_CtrlPanel for ParamSet elements: copy the current active (live) values on the objects to the saved values
-  virtual void          CopyToActiveString();
-  // #CAT_CtrlPanel for ParamSet elements: copy the current active (live) values on the objects to the active_value string
   virtual void          CopySavedToActive();
   // #CAT_CtrlPanel for ParamSet elements: copy the save_value to be active (live) values on the objects
   virtual void          CopySavedToActive_nouae();
   // #IGNORE -- no update after edit -- just set the value
-  virtual void          ActivateActiveString_nouae();
-  // #IGNORE -- copy active_value to actual live active state -- no update after edit -- just set the value
   virtual void          BaseUpdateAfterEdit();
   // #CAT_CtrlPanel call MemberUpdateAfterEdit and UpdateAfterEdit on the base object
 
   virtual bool          RecordValue();
   // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued ACTIVE members are so recorded
 
+  virtual void          SavedToProgVar();
+  // #IGNORE set the saved progvar from the saved_value string
+  virtual void          ProgVarToSaved();
+  // #IGNORE set the saved_value string from saved progvar
+  
   inline void           SetCtrlType()   { data.SetCtrlType(); }
   // #CAT_CtrlPanel update the ctrl_type based on owner type
 

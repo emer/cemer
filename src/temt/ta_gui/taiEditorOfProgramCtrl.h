@@ -34,13 +34,11 @@ INHERITED(taiEditorOfClass)
   Q_OBJECT
 public: //
 // We use sets: 0:name/desc; 1: gp guys (ex step); set2: args; set3: vars
-  enum CtrltaiMemberWidgetss {
+  enum CtrlMemberWidgetss {
     MS_PROG,
-//     MS_GP,
     MS_ARGS,
     MS_VARS, // note: must ARGS..VARS must be in numerical sequence
-
-    MS_CNT      = 4,
+    MS_CNT      = 3,
   };
 
   inline Program*       prog() const {return (Program*)root;}

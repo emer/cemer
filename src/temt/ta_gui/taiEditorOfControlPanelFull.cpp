@@ -79,9 +79,11 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   String help_text;
     
   MemberDef* data_md = TA_ControlPanelMember.members.FindName("data");
-      
+
+  bool param_set = false;
   dat_cnt = 0;  // keeps track of control count
   if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+    param_set = true;
     MemberSpace& ms = ctrlpan->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
@@ -102,7 +104,8 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   
   if (dat_cnt > 0) {  // no increment of data_cnt
     iLabel* lbl = NULL;
-    lbl = new iLabel("Parameters", body);
+    lbl = new iLabel("Parameters --- Active (Current) Value --- State --- Saved Value --- ", body);
+    // only for ParamSet
     AddSectionLabel(-1, lbl, "");
   }
   
@@ -124,23 +127,19 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
     for (int i = 0; i < grp->size; ++i) {
       ControlPanelMember* item = grp->FastEl(i);
       
-//      if (!item->cust_label) {  // if not custom - update
-//        String extra_label;
-//        String full_lbl;
-//        String desc;
-//        item->base->GetControlPanelText(item->mbr, extra_label, full_lbl, desc); // if it is a data table cell it may have changed
-//        item->label = full_lbl;
-//      }
+      if(param_set) {
+        item->SavedToProgVar(); // update prog var rep
+      }
       
-      bool disable = item->IsLocked();
+      bool active_disable = item->IsLocked() || item->IsParamSet();
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
       memb_set->memb_el.Add(md);
 
       // don't let the mashup do any uae by itself -- we retain full control over that!
-      taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body,
-                                                        taiWidgetMashup::flgNoUAE);
+      taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+                                                        // taiWidgetMashup::flgNoUAE);
       mash_widg->SetMemberDef(md);
       mash_widg->add_labels = false;
       mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
@@ -152,7 +151,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       //          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
       memb_set->widget_el.Add(mash_widg);
       QWidget* data = mash_widg->GetRep();
-      if (disable) {
+      if (active_disable) {
         mash_widg->widgets(0)->setEnabled(false); // first one is active guy
       }
       help_text = item->GetDesc();
@@ -241,7 +240,9 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_CtrlPanel(QMenu* menu,
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {
+  bool param_set = false;
   if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+    param_set = true;
     taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
@@ -265,6 +266,11 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
         // taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
+        
+        if(param_set) {
+          item->SavedToProgVar(); // update prog var rep
+        }
+      
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
         if(mash_widg) {
           mash_widg->SetBases(NULL);
@@ -272,15 +278,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
           for (int el=1; el<mash_widg->memb_el.size; el++) {
             mash_widg->AddBase(item);
           }
-          if(item->IsParamSet()) { // all param set items always show SAVED value!
-            item->CopyToActiveString();
-            item->CopySavedToActive_nouae(); // activate saved value temporarily
-            mash_widg->GetImage();
-            item->ActivateActiveString_nouae();
-          }
-          else {
-            mash_widg->GetImage();
-          }
+          mash_widg->GetImage();
         }
         else {
           md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
@@ -293,7 +291,9 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
 }
 
 void taiEditorOfControlPanelFull::GetValue_Membs_def() {
+  bool param_set = false;
   if(ctrlpan->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
+    param_set = true;
     taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
@@ -320,22 +320,10 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
         bool first_diff = true;
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
         if(mash_widg) {
-          if(item->IsParamSet()) {
-            item->CopyToActiveString(); // save current active value
-            mash_widg->GetValue();      // now get what user put in
-            item->CopyActiveToSaved();  // grab that as the new saved value
-            if(!item->IsActive()) {
-              item->ActivateActiveString_nouae(); // revert back to active value!
-            }
-            else {
-              item->BaseUpdateAfterEdit(); // active is a live change -- UAE
-            }
-            item->UpdateAfterEdit(); // always get ctrl panel item
-          }
-          else {
-            mash_widg->GetValue();
-            item->BaseUpdateAfterEdit(); // active is a live change -- UAE
-            item->UpdateAfterEdit(); // always get ctrl panel item
+          mash_widg->GetValue();
+          if(param_set) {
+            item->ProgVarToSaved(); // copy back to string rep
+            item->UpdateAfterEdit(); // further update to allow active to update..
           }
         }
         else {
