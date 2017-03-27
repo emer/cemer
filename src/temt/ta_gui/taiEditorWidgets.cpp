@@ -93,6 +93,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
         else {                  // group
           gp = (ControlPanel_Group*)cp; // could omit master/clone groups but may be easier
           // to think in terms of group or master element, depending..
+          if(gp == &(proj->active_params)) continue;
           nm += " (Group)";
         }
         add_act = add_sub->addAction(nm);

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.6.0 rev10557
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10569
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -419,7 +419,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
  };
 
- ParamSet_Group @.param_sets = [0] {
+ ParamSet_Group @.active_params = [0] {
   ParamSet_Group @.gp["RunParams"] = [2] { 
    ParamSet @["RunMaster"] { 
     ControlPanelMember_Group @.mbrs = [18] {
@@ -472,8 +472,8 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
   };
-  ParamSet_Group @.gp["MiscParams"] = [2] { 
-   ParamSet @["MiscMaster"] { 
+  ParamSet_Group @.gp["NetParams"] = [2] { 
+   ParamSet @["NetMaster"] { 
     ControlPanelMember_Group @.mbrs = [1] {
      ControlPanelMember @[0] { };
     };
@@ -481,7 +481,7 @@ LeabraProject .projects["LeabraFlex"] {
     ControlPanelMethod_Group @.mths = [0] {
     };
    };
-   ParamSet @["MiscConfig1"] { 
+   ParamSet @["NetConfig1"] { 
     ControlPanelMember_Group @.mbrs = [1] {
      ControlPanelMember @[0] { };
     };
@@ -490,6 +490,9 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
   };
+ };
+
+ ArchivedParams_Group @.archived_params = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -715,7 +718,7 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["startup_prog"] { };
     ProgVar @["MyClusterRun"] { };
     ProgVar @["run_params"] { };
-    ProgVar @["misc_params"] { };
+    ProgVar @["net_params"] { };
    };
 
    Function_List @.functions = [0] {
@@ -907,7 +910,7 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [6] {
      ProgVar @["activate_params"] { };
      ProgVar @["run_params"] { };
-     ProgVar @["misc_params"] { };
+     ProgVar @["net_params"] { };
      ProgVar @["run_prog"] { };
      ProgVar @["init_prog"] { };
      ProgVar @["stop_train"] { };
@@ -4442,9 +4445,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value="true";
-      record=1;
-      search=0;
       range=;
       notes="should MasterTrain activate param sets at start";
      };
@@ -4462,29 +4464,27 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"RunParams\"][\"SpecialTrain\"]";
-      record=1;
-      search=0;
+      state=STABLE;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"RunParams\"][\"SpecialTrain\"]";
       range=;
       notes="MasterTrain sets these params at start";
      };
     };
     ControlPanelMember @[2] {
      user_data_=NULL;
-     label="misc_params";
+     label="net_params";
      cust_label=1;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$$;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["net_params"]$$;
      mbr=ProgVar::object_val;
      data {
       user_data_=NULL;
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].param_sets.gp[\"MiscParams\"][\"MiscOne\"]";
-      record=1;
-      search=0;
+      state=STABLE;
+      saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"MiscParams\"][\"MiscOne\"]";
       range=;
       notes="add extra params as needed..";
      };
@@ -4502,9 +4502,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value="0";
-      record=0;
-      search=0;
       range="0:1:0.1";
       notes="MasterRun step can do many different things -- very useful!";
      };
@@ -4522,9 +4521,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value="true";
-      record=0;
-      search=0;
       range="0:1:0.1";
       notes="turn OFF to see individual cycles, ON for MUCH faster running";
      };
@@ -4542,9 +4540,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value="true";
-      record=0;
-      search=0;
       range="0:1:0.1";
       notes="update network view at cycle level -- actual value depends on cycle_qtr";
      };
@@ -4562,9 +4559,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value="false";
-      record=1;
-      search=0;
       range=;
       notes="redundant with cycle for cycle_qtr = ON";
      };
@@ -4582,9 +4578,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value="false";
-      record=1;
-      search=0;
       range=;
       notes="mostly redundant but some updates happen after trial";
      };
@@ -4669,29 +4664,27 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CLUSTER_RUN;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value=;
-      record=0;
-      search=0;
       range=;
       notes=;
      };
     };
     ControlPanelMember @[1] {
      user_data_=NULL;
-     label="misc_params";
+     label="net_params";
      cust_label=1;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
+     base=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["net_params"]$;
      mbr=ProgVar::object_val;
      data {
       user_data_=NULL;
       ctrl_type=CLUSTER_RUN;
       is_numeric=0;
       is_single=1;
+      state=STABLE;
       saved_value=;
-      record=0;
-      search=0;
       range=;
       notes=;
      };
@@ -8197,9 +8190,9 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    enable_notes=1;
   };
  };
- param_sets {
+ active_params {
   user_data_=NULL;
-  name="param_sets";
+  name="active_params";
   el_typ=ParamSet;
   el_def=0;
   master_and_clones=0;
@@ -8233,9 +8226,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="BasicRun";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8253,9 +8245,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="BasicInit";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8273,9 +8264,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="BasicStartup";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8293,9 +8283,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="50";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8313,9 +8302,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="50";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8333,9 +8321,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="true";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8353,9 +8340,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="200";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8373,9 +8359,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8393,9 +8378,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8413,9 +8397,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8433,9 +8416,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8453,9 +8435,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value=;
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8473,9 +8454,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8493,9 +8473,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="50";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8513,9 +8492,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="7";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8533,9 +8511,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="-1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8553,9 +8530,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8573,9 +8549,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="0";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8588,7 +8563,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    active_editable=0;
+    date="2017_03_28_01_32_15";
     last_activated=1;
    };
    ParamSet @["RunConfig1"] {
@@ -8615,9 +8590,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="BasicRun";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8635,9 +8609,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="BasicInit";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8655,9 +8628,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="BasicStartup";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8675,9 +8647,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="5";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8695,9 +8666,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="25";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8715,9 +8685,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8735,9 +8704,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="200";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8755,9 +8723,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8775,9 +8742,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8795,9 +8761,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8815,9 +8780,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value="false";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8835,9 +8799,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=0;
        is_single=1;
+       state=STABLE;
        saved_value=;
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8855,9 +8818,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8875,9 +8837,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="50";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8895,9 +8856,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="7";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8915,9 +8875,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="-1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8935,9 +8894,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="1";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8955,9 +8913,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="0";
-       record=1;
-       search=0;
        range=;
        notes=;
       };
@@ -8970,22 +8927,22 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    active_editable=0;
+    date=;
     last_activated=0;
    };
   };
-  ParamSet_Group @.gp["MiscParams"] {
+  ParamSet_Group @.gp["NetParams"] {
    user_data_=NULL;
-   name="MiscParams";
+   name="NetParams";
    el_typ=ParamSet;
    el_def=0;
    master_and_clones=1;
-   ParamSet @["MiscMaster"] {
+   ParamSet @["NetMaster"] {
     user_data_=NULL;
-    name="MiscMaster";
+    name="NetMaster";
     cp_state=MASTER;
     updt_while_running=0;
-    desc="default values for all params -- this is a 'master' param set -- make changes here and all others in group will auto-update";
+    desc="Network params -- this contains default values for all params -- this is a 'master' param set -- make changes here and all others in group will auto-update";
     mbrs {
      user_data_=NULL;
      name="mbrs";
@@ -9004,9 +8961,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="0.04";
-       record=0;
-       search=0;
        range="0:1:0.1";
        notes=;
       };
@@ -9019,12 +8975,12 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    active_editable=0;
+    date="2017_03_28_01_32_15";
     last_activated=1;
    };
-   ParamSet @["MiscConfig1"] {
+   ParamSet @["NetConfig1"] {
     user_data_=NULL;
-    name="MiscConfig1";
+    name="NetConfig1";
     cp_state=CLONE;
     updt_while_running=0;
     desc="another configuration of misc parameters to choose from.. make as many as you need!  this is a 'clone' of the master and will auto-update for any additions or changes to members";
@@ -9046,9 +9002,8 @@ leabra flex using param sets experiment project -- updated by randy from John's 
        ctrl_type=PARAM_SET;
        is_numeric=1;
        is_single=1;
+       state=STABLE;
        saved_value="0.02";
-       record=0;
-       search=0;
        range="0:1:0.1";
        notes=;
       };
@@ -9061,10 +9016,17 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    active_editable=0;
+    date=;
     last_activated=0;
    };
   };
+ };
+ archived_params {
+  user_data_=NULL;
+  name="archived_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
  };
  data {
   user_data_=NULL;
@@ -11704,7 +11666,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="tag";
      var_type=T_String;
-     string_val="_gui";
+     string_val="_RunMaster_NetMaster";
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11726,7 +11688,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="log_file_nm";
      var_type=T_String;
-     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_BasicTrain_BasicTrain_basic_train.args";
+     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_RunMaster_NetMaster.args";
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11797,7 +11759,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="run_params";
      var_type=T_Object;
      object_type=ParamSet;
-     object_val=.projects["LeabraFlex"].param_sets.gp["RunParams"]["RunMaster"]$$;
+     object_val=.projects["LeabraFlex"].active_params.gp["RunParams"]["RunMaster"]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
@@ -11805,12 +11767,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="select parameters for controlling how network is run";
      init_from=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
     };
-    ProgVar @["misc_params"] {
+    ProgVar @["net_params"] {
      user_data_=NULL;
-     name="misc_params";
+     name="net_params";
      var_type=T_Object;
      object_type=ParamSet;
-     object_val=.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscMaster"]$$;
+     object_val=.projects["LeabraFlex"].active_params.gp["NetParams"]["NetMaster"]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
@@ -11930,7 +11892,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      flags=CAN_REVERT_TO_CODE;
      code_string="run_params.CopySavedToActive()";
      result_var=NULL;
-     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$$;
+     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["net_params"]$$;
      method=ParamSet::Activate;
      meth_args {
       user_data_=NULL;
@@ -11966,7 +11928,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["misc_params"]$;
+     ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["net_params"]$;
     };
     ControlPanelsFmArgs @[11] {
      user_data_=NULL;
@@ -11983,7 +11945,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
      expr {
       user_data_=NULL;
-      expr="\"_\" +  run_params->name + \"_\" + misc_params->name + tag";
+      expr="\"_\" +  run_params->name + \"_\" + net_params->name + tag";
      };
     };
     Comment @[13] {
@@ -12471,7 +12433,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_BasicTrain_BasicTrain_basic_train";
+      string_val="_RunMaster_NetMaster";
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
@@ -12602,7 +12564,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="batch";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12864,21 +12826,21 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].param_sets.gp["RunParams"]["RunMaster"]$;
-      object_scope=.projects["LeabraFlex"].param_sets.gp["RunParams"]$$;
+      object_val=$.projects["LeabraFlex"].active_params.gp["RunParams"]["RunMaster"]$;
+      object_scope=.projects["LeabraFlex"].active_params.gp["RunParams"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="select parameters for controlling how network is run";
       init_from=NULL;
      };
-     ProgVar @["misc_params"] {
+     ProgVar @["net_params"] {
       user_data_=NULL;
-      name="misc_params";
+      name="net_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].param_sets.gp["MiscParams"]["MiscMaster"]$;
-      object_scope=.projects["LeabraFlex"].param_sets.gp["MiscParams"]$$;
+      object_val=$.projects["LeabraFlex"].active_params.gp["NetParams"]["NetMaster"]$;
+      object_scope=.projects["LeabraFlex"].active_params.gp["NetParams"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -13068,7 +13030,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="run_params.CopySavedToActive()";
 	result_var=NULL;
-	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["misc_params"]$;
+	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["net_params"]$;
 	method=ParamSet::Activate;
 	meth_args {
 	 user_data_=NULL;
@@ -14340,7 +14302,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3680: sys=910: tot=148907322945: }: end={usr=3680: sys=910: tot=148907322944: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3926: sys=807: tot=149063234832: }: end={usr=3927: sys=807: tot=149063234832: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -14904,7 +14866,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=8564: sys=463: tot=148898725636: }: end={usr=8566: sys=463: tot=148898725638: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3931: sys=808: tot=149063234834: }: end={usr=3931: sys=808: tot=149063234835: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -15982,7 +15944,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=2;
+      int_val=5;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25001,7 +24963,7 @@ also save specs.";
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_BasicTrain_BasicTrain_basic_train";
+      string_val="_RunMaster_NetMaster";
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25023,7 +24985,7 @@ also save specs.";
       user_data_=NULL;
       name="fname";
       var_type=T_String;
-      string_val="/Users/oreilly/emergent/test/LeabraFlexParamSetExperiment_basic_train.00_0050.wts.gz";
+      string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_RunMaster_NetMaster.00_0050.wts.gz";
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25056,7 +25018,7 @@ also save specs.";
       user_data_=NULL;
       name="final_tag";
       var_type=T_String;
-      string_val="_basic_train.00_0050";
+      string_val="_RunMaster_NetMaster.00_0050";
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25405,7 +25367,7 @@ also save specs.";
        user_data_=NULL;
        name="tag";
        var_type=T_String;
-       string_val="_gui";
+       string_val="_RunMaster_NetMaster";
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -31790,13 +31752,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_top"] {
      user_data_=NULL;
      name="view_win_top";
-     value 8 0=0.04842821;
+     value 8 0=0.02973662;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9957514;
+     value 8 0=0.9952204;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -32163,7 +32125,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=15: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=32: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -32173,7 +32135,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.77555: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.02739: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -32183,7 +32145,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=50: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["pct_cor"] {
@@ -32213,7 +32175,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.632: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.54: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
 	   GraphColView @["avg_cos_err"] {
@@ -32561,7 +32523,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=49: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -32594,7 +32556,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=49: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32648,7 +32610,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.027394: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -32672,7 +32634,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.54: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -32696,7 +32658,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=50: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {user_data_=NULL: name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -33650,7 +33612,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.param_sets.gp[0];.param_sets.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.ctrl_panels[0].mbrs;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";

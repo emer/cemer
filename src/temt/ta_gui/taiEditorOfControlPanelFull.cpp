@@ -303,6 +303,7 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_CtrlPanel(QMenu* menu,
         else {                  // group
           gp = (ControlPanel_Group*)cp; // could omit master/clone groups but may be easier
           // to think in terms of group or master element, depending..
+          if(gp == &(proj->active_params)) continue;
           nm += " (Group)";
         }
         
