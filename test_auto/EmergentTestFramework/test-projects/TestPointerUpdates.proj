@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10565
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10567
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -6004,6 +6004,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["col_one"] {
+      user_data_=NULL;
       name="col_one";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6128,6 +6129,7 @@ LeabraProject .projects["TestPointerUpdates"] {
        el_typ=String_Data;
        el_def=0;
        String_Data @["col_one"] {
+	user_data_=NULL;
 	name="col_one";
 	col_flags=SAVE_DATA|AUTO_WIDTH;
 	is_matrix=0;
@@ -15429,8 +15431,8 @@ LeabraProject .projects["TestPointerUpdates"] {
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Kai Krueger";
+    email="kai.krueger@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      user_data_=NULL;
@@ -15525,7 +15527,7 @@ LeabraProject .projects["TestPointerUpdates"] {
 	result_var=.projects["TestPointerUpdates"].programs.gp["group_three"]["Callee"].vars["group_name"]$$;
 	expr {
 	 user_data_=NULL;
-	 expr="this.prog_gp";
+	 expr="this.prog_gp.GetPathNames()";
 	};
        };
       };
@@ -15772,7 +15774,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     UserDataItem @["view_win_ht"] {
      user_data_=NULL;
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.7993158;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16023,7 +16025,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       UserDataItem @["view_win_ht"] {
        user_data_=NULL;
        name="view_win_ht";
-       value 8 0=0.9521095;
+       value 8 0=0.7514253;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -16054,7 +16056,7 @@ LeabraProject .projects["TestPointerUpdates"] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.ctrl_panels;.data;.programs;.programs.gp[0];.programs.gp[0][0].vars;.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.networks; };
+ tree_state{ .;.ctrl_panels;.data;.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.networks; };
  networks {
   user_data_=NULL;
   name="networks";
