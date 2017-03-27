@@ -45,11 +45,15 @@ public:
   // #CAT_ControlPanel ifthe panel was pinned when the program was saved redisplay it on project open
 
   virtual void CopyFromDataTable(DataTable* table);
-  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel copy member values into control panels within this group of panels from same-named columns in a row of given data table -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values -- at least one control panel must exist within the group already, with members set to appropriate variables -- the first panel is cloned in creating new panels for each row of the data table if they don't exist yet
+  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel #BUTTON copy member values into control panels within this group of panels from same-named columns in a row of given data table -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values -- at least one control panel must exist within the group already, with members set to appropriate variables -- the first panel is cloned in creating new panels for each row of the data table if they don't exist yet
   virtual void CopyToDataTable(DataTable* table);
-  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- a new row is added if not already present -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
+  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel #BUTTON copy member values from this control panel into same-named columns in a row of given data table -- a new row is added if not already present -- assumes that the first column of the table contains the names of the control panels, which is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
   virtual void SetMasterAndClones(bool use_master_and_clones);
-  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel configure this group to use the master-and-clones setup or not -- sets the master_and_clones flag and, if true, updates all the clones based on the current configuration of the first control panel in the group, which becomes the master
+  // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel #BUTTON configure this group to use the master-and-clones setup or not -- sets the master_and_clones flag and, if true, updates all the clones based on the current configuration of the first control panel in the group, which becomes the master
+  virtual void AllStable();
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #BUTTON #CONFIRM set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
+  virtual void AllLocked();
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
 
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
 

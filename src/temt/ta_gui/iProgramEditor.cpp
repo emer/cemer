@@ -728,10 +728,12 @@ void iProgramEditor::DoAddToControlPanel(QAction* act) {
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMemberPrompt(rbase, md);
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md);
   }
 }
@@ -748,10 +750,12 @@ void iProgramEditor::DoAddToControlPanel_Short(QAction* act) {
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md, "", "", "", true); // true = short label
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md, "", "", "", true); // true = short label
   }
 }
@@ -769,10 +773,12 @@ void iProgramEditor::DoRmvFmControlPanel(QAction* act) {
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(cp, "RemoveFmControlPanel", cp);
     cp->RemoveMember(rbase, md);
   }
   else {
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(cp, "RemoveFmControlPanel", cp);
     cp->RemoveMember(rbase, md);
   }
 }

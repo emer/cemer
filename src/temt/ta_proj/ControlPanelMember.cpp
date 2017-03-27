@@ -51,10 +51,15 @@ void ControlPanelMemberData::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) {
     taVersion v807(8, 0, 7);
     if (taMisc::loading_version < v807) {
-      if(obs_search)
-        state = SEARCH;
-      else if(obs_record)
-        state = ACTIVE;
+      if(IsClusterRun()) {
+        if(obs_search)
+          state = SEARCH;
+        else if(obs_record)
+          state = ACTIVE;
+      }
+      else {
+        state = STABLE;         // default to stable for everything else
+      }
     }
     obs_search = false;
     obs_record = false;
@@ -253,14 +258,6 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       data.is_single = true;    // counts as single!
     }
   }
-  if(IsSearch()) {
-    if(!data.is_single || !data.is_numeric) {
-      taMisc::Warning("ControlPanelMember:",label,
-                      "cannot SEARCH on parameters that are not elemental numeric values");
-      SetToActive();
-    }
-  }
-
   if(base && mbr) {
     if(!cust_label) {
       label = "";
@@ -272,9 +269,28 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       base->GetControlPanelDesc(mbr, desc); // regenerate
       prv_desc = desc;
     }
-    if(IsParamSet() && IsActive()) {
-      Activate();               // we always activate!
+  }
+
+  if(IsSearch()) {
+    if(!data.is_single || !data.is_numeric) {
+      taMisc::Warning("ControlPanelMember:",label,
+                      "cannot SEARCH on parameters that are not elemental numeric values -- reverting to ACTIVE");
+      SetToActive();
     }
+  }
+  if(IsActive()) {
+    if(!data.is_single) {
+      taMisc::Warning("ControlPanelMember:",label,
+                      "cannot have ACTIVE parameters that are not elemental values (i.e., no composite objects are allowed) -- reverting to STABLE");
+      SetToStable();
+    }
+  }
+}
+
+void ControlPanelMember::ActivateAfterEdit() {
+  if(!mbr || !base) return;
+  if(IsParamSet() && IsActive()) {
+    Activate();
   }
 }
 
@@ -319,8 +335,8 @@ bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_m
   if(!panel) return false;
   if(TestError(!mbr, "SetCurValFmString", "item does not have member def set -- not valid control panel item", "label:", label, "in panel:", panel->name))
     return false;
-  if(TestError(!data.is_single, "SetCurValFmString", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label, "in panel:", panel->name))
-    return false;
+  // if(TestError(!data.is_single, "SetCurValFmString", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label, "in panel:", panel->name))
+  //   return false;
   if (base && (base->GetTypeDef()->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value")) {
     ((DynEnum*)base)->SetNameVal(cur_val);
   }
@@ -341,6 +357,21 @@ bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_m
   return true;
 }
 
+void ControlPanelMember::GoToObject() {
+  if(!mbr || !base) return;
+  if(!taMisc::gui_active) return;
+  taBase* mbrown = base->GetMemberOwner(true);
+  if(!mbrown) 
+    mbrown = base;       // must be object itself
+  taMisc::Info("Going to:", mbrown->DisplayPath());
+  tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
+}
+
+void ControlPanelMember::MoveTo(ControlPanel* ctrl_panel) {
+  if(!ctrl_panel) return;
+  ctrl_panel->mbrs.Transfer(this);
+}
+  
 void ControlPanelMember::CopyActiveToSaved() {
   if(!mbr || !base) return;
   data.saved_value = CurValAsString();
@@ -354,6 +385,7 @@ void ControlPanelMember::SavedToProgVar() {
     DynEnum* den = (DynEnum*)base;
     data.saved.var_type = ProgVar::T_DynEnum;
     data.saved.dyn_enum_val.CopyFrom(den);
+    data.saved.dyn_enum_val.SetNameVal(data.saved_value);
   }
   else if(mbr_td->IsBool()) {
     data.saved.SetBool(data.saved_value.toBool());
@@ -407,10 +439,21 @@ void ControlPanelMember::BaseUpdateAfterEdit() {
   base->UpdateAfterEdit();
 }
 
-
 bool ControlPanelMember::RecordValue() {
   if(!data.is_single) return false;
   return (IsActive() || IsSearch());
+}
+
+String ControlPanelMember::RecordValueString(bool use_search_vals) {
+  if(use_search_vals && IsSearch()) {
+    return data.next_val;
+  }
+  if(IsParamSet()) {
+    return data.saved_value;
+  }
+  else {
+    return CurValAsString();
+  }
 }
 
 bool ControlPanelMember::IsControlPanelPointer() const {

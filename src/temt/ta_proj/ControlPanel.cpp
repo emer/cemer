@@ -343,15 +343,29 @@ void ControlPanel::RemoveMember_impl(int idx) {
   }
 }
 
+void ControlPanel::MoveMemberToCtrlPanelIdx(int idx, ControlPanel* cp) {
+  ControlPanelMember* item = mbrs.Leaf(idx);
+  if(!item) return;
+  cp->mbrs.Transfer(item);
+  // ReShowEdit(true); //forced
+}
+
+void ControlPanel::MoveMemberToCtrlPanelGpIdx(int idx, ControlPanel_Group* cp) {
+  ControlPanelMember* item = mbrs.Leaf(idx);
+  if(!item) return;
+  ControlPanel* mstr = cp->GetMaster();
+  if(TestError(!mstr, "MoveMemberToCtrlPanelGpIdx",
+               "selected group to move to does not have a master to move to")) {
+    return;
+  }
+  mstr->mbrs.Transfer(item);
+  // ReShowEdit(true); //forced
+}
+
 void ControlPanel::GoToObject(int idx) {
   ControlPanelMember* item = mbrs.Leaf(idx);
-  if(item && item->base) {
-    taBase* mbrown = item->base->GetMemberOwner(true);
-    if(!mbrown) 
-      mbrown = item->base;       // must be object itself
-    taMisc::Info("Going to:", mbrown->DisplayPath());
-    tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
-  }
+  if(!item) return;
+  item->GoToObject();
 }
 
 void ControlPanel::EditLabel(int idx) {
@@ -517,9 +531,20 @@ void ControlPanel::CopyToDataTable(DataTable* table, int row_num) {
   table->StructUpdate(false);
 }
 
-// todo: move ClusterRun param string over to here -- can use either saved_value or cur
-// enable recursive functionality??
 
+void ControlPanel::AllStable() {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
+    item->data.SetToStable();   // use data form to prevent updating
+  }
+  ReShowEdit(true); //forced
+}
+
+void ControlPanel::AllLocked() {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
+    item->data.SetToLocked();   // use data form to prevent updating
+  }
+  ReShowEdit(true); //forced
+}
 
 bool ControlPanel::AddMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
                              const String& dscr, const String& sub_gp_nm, bool short_label)
@@ -801,42 +826,26 @@ String ControlPanel::MembersToString(bool use_search_vals) {
   bool first = true;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
-    // for now: don't recursively collect params.. active params are on control panel.
-    // if(mbr->IsControlPanelPointer()) {
-    //   ControlPanel* sub_panel= mbr->GetControlPanelPointer();
-    //   if(sub_panel) {
-    //     if(!first)
-    //       params.cat(" "); // sep
-    //     else
-    //       first = false;
-    //     String oparams = sub_panel->MembersToString(use_search_vals);
-    //     params.cat(oparams);
-    //   }
-    // }
-    // else {
-    if(!mbr->RecordValue()) continue;
-    if(!first)
-      params.cat(" "); // sep
-    else
-      first = false;
-    params.cat(mbr->GetName()).cat("=");
-    if(mbr->IsClusterRun()) {
-      if(!use_search_vals) {
-        params.cat(mbr->CurValAsString());
-      }
-      else {
-        if(mbr->IsSearch()) {
-          params.cat(String(mbr->data.next_val));
-        }
-        else {
-          params.cat(mbr->CurValAsString());
-        }
+    if(mbr->IsControlPanelPointer()) {
+      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+      if(sub_panel) {
+        if(!first)
+          params.cat(" "); // sep
+        else
+          first = false;
+        String oparams = sub_panel->MembersToString(use_search_vals);
+        params.cat(oparams);
       }
     }
     else {
-      params.cat(mbr->CurValAsString());
+      if(!mbr->RecordValue()) continue; // only active values!
+      if(!first)
+        params.cat(" "); // sep
+      else
+        first = false;
+      params.cat(mbr->GetName()).cat("=");
+      params.cat(mbr->RecordValueString(use_search_vals));
     }
-    // }
   }
   return params;
 }

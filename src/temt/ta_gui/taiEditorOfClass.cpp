@@ -413,10 +413,9 @@ void taiEditorOfClass::DoRaise_Panel() {
 
 void taiEditorOfClass::DoAddToControlPanel(QAction* act){
   //note: this routine is duplicated in the ProgramEditor
-  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
   if (!proj)
     return;
-  
   void* vval = act->data().value<void*>();
   if(!vval) return;
   taBase* rbase = ctrl_panel_base;
@@ -425,17 +424,19 @@ void taiEditorOfClass::DoAddToControlPanel(QAction* act){
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMemberPrompt(rbase, md);
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md);
   }
 }
 
 void taiEditorOfClass::DoAddToControlPanel_Short(QAction* act){
   //note: this routine is duplicated in the ProgramEditor
-  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
   if (!proj)
     return;
   
@@ -447,17 +448,19 @@ void taiEditorOfClass::DoAddToControlPanel_Short(QAction* act){
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMemberPrompt(rbase, md, true); // true = short label
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md, "", "", "", true); // true = short label
   }
 }
 
 void taiEditorOfClass::DoRmvFmControlPanel(QAction* act){
   //note: this routine is duplicated in the ProgramEditor
-  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
   if (!proj)
     return;
   
@@ -469,10 +472,12 @@ void taiEditorOfClass::DoRmvFmControlPanel(QAction* act){
   taBase* bval = (taBase*)vval;
   if(bval->InheritsFrom(&TA_ControlPanel)) {
     ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(cp, "RemoveFmControlPanel", cp);
     cp->RemoveMember(rbase, md);
   }
   else {                        // must be a group
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(cp, "RemoveFmControlPanel", cp);
     cp->RemoveMember(rbase, md);
   }
 }

@@ -147,7 +147,7 @@ void taiWidgetComposite::AddChildMember(MemberDef* md, int column) {
       break;
   }
   
-  if(name.nonempty() && name != " " && desc.nonempty()) {
+  if(desc.nonempty()) {
     if(lbl && add_labels)
       lbl->setToolTip(taiMisc::ToolTipPreProcess(desc));
     ctrl->setToolTip(taiMisc::ToolTipPreProcess(desc));

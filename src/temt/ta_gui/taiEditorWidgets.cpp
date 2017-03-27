@@ -42,7 +42,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
   // have to be a taBase to use ControlPanel
   if (!rbase || !md) return;
   // get list of control panels
-  taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
+  taProject* proj = (taProject*)rbase->GetThisOrOwner(&TA_taProject);
   if (!proj) return;
 
   // if any edits, populate menu for adding, for all ctrl panels not already on
@@ -64,6 +64,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
   rmv_sub->setFont(menu->font());
   QAction* rmv_act = NULL; // we need to track last one
 
+  // todo: would be cleaner to generalize this -- also used in taiEditorOfControlPanelFull
   const int n_types = 7;
   const char* type_names[n_types] = {"ControlPanel", "ClusterRun", "ParamSet",
                                      "ParamStep", "ControlPanel_Group", "ParamSet_Group",

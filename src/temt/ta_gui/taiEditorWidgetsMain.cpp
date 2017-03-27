@@ -50,7 +50,7 @@ iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par
   }
 
 
-  if((name.nonempty() && name != " ") && desc.nonempty()) {
+  if(desc.nonempty()) {
     label->setToolTip(taiMisc::ToolTipPreProcess(desc));
     label->setStatusTip(desc);
     if (buddy_widg != NULL) {
@@ -200,7 +200,7 @@ void taiEditorWidgetsMain::AddMultiRowName(iEditGrid* multi_body, int row, const
   QPalette pal = label->palette();
   pal.setColor(QPalette::Background, colorOfRow(row));
   label->setPalette(pal); 
-  if (name.nonempty() && name != " " && desc.nonempty()) {
+  if(desc.nonempty()) {
     label->setToolTip(taiMisc::ToolTipPreProcess(desc));
   }
   multi_body->setRowNameWidget(row, label);
@@ -212,7 +212,7 @@ void taiEditorWidgetsMain::AddMultiColName(iEditGrid* multi_body, int col, const
   QLabel* label = new QLabel(name, (QWidget*)NULL);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  if (name.nonempty() && name != " " && desc.nonempty()) {
+  if(desc.nonempty()) {
     label->setToolTip(taiMisc::ToolTipPreProcess(desc));
   }
   multi_body->setColNameWidget(col, label);

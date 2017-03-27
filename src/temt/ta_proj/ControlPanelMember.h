@@ -49,7 +49,7 @@ public:
   bool                  is_numeric;     // #READ_ONLY is this a single numeric type (float, double, int)
   bool                  is_single;      // #READ_ONLY is this a single item, not a composite item
 
-  ParamState            state;          // #LABEL_ what state is this parameter in?  determines many features of how the parameter is used
+  ParamState            state;          // #LABEL_ #CONDSHOW_OFF_ctrl_type:CONTROL what state is this parameter in?  determines many features of how the parameter is used
 
   ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED #LABEL_ #EDIT_VALUE #NO_SAVE gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
   String                saved_value;    // #HIDDEN saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
@@ -69,6 +69,13 @@ public:
   virtual bool          ParseSubRange(const String& sub_range);
   // parse the sub-range expression into srch_vals list of explicit values to search over
   virtual void          SetCtrlType(); // based on owner, set ctrl_type field
+
+  inline bool           IsControl() const  { return ctrl_type == CONTROL; }
+  // #CAT_CtrlPanel is this a member of a ControlPanel
+  inline bool           IsParamSet() const { return ctrl_type == PARAM_SET; }
+  // #CAT_CtrlPanel is this a member of a ParamSet
+  inline bool           IsClusterRun() const { return ctrl_type == CLUSTER_RUN; }
+  // #CAT_CtrlPanel is this a member of a ClusterRun
 
   inline bool          IsActive() const { return state == ACTIVE; }
   // is state == ACTIVE?
@@ -164,10 +171,16 @@ public:
                                           bool info_msg = false);
   // #CAT_CtrlPanel set current value of item from a string, optionally warning if string rep of value does not match the value passed in (possibly indicating an error in the string, such as a bad enum value) -- if info_msg is true, then an message is emitted about this value being set
 
-  void                  SaveActive() { CopyActiveToSaved(); }
-  // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the current active (live) values on the objects to the saved values
-  void                  Activate() { CopySavedToActive(); }
-  // #CAT_CtrlPanel #BUTTON for ParamSet elements: copy the save_value to be active (live) values on the objects
+  virtual void          GoToObject();
+  // #CAT_CtrlPanel #BUTTON go in the gui to the object where this member lives 
+  virtual void          MoveTo(ControlPanel* ctrl_panel);
+  // #CAT_CtrlPanel #BUTTON move this member to other control panel
+  inline void           SaveCurrent() { CopyActiveToSaved(); }
+  // #CAT_CtrlPanel #BUTTON only for ParamSet elements: copy the current active (live) values on the objects to the saved values
+  inline void           Activate() { if(IsParamSet()) CopySavedToActive(); }
+  // #CAT_CtrlPanel #BUTTON only for ParamSet elements: copy the save_value to be active (live) values on the objects
+  virtual void          ActivateAfterEdit();
+  // #CAT_CtrlPanel for ACTIVE paramset members, activate after editing -- called via the gui editor 
   
   virtual void          CopyActiveToSaved();
   // #CAT_CtrlPanel for ParamSet elements: copy the current active (live) values on the objects to the saved values
@@ -179,7 +192,9 @@ public:
   // #CAT_CtrlPanel call MemberUpdateAfterEdit and UpdateAfterEdit on the base object
 
   virtual bool          RecordValue();
-  // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued ACTIVE members are so recorded
+  // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued ACTIVE or SEARCH members are so recorded
+  virtual String        RecordValueString(bool use_search_vals);
+  // #CAT_CtrlPanel a string representation of the value to record for this member -- if use_search_vals then data.next_val is used, otherwise if a ParamSet member then use the saved_value, otherwise the current active value as a string
 
   virtual void          SavedToProgVar();
   // #IGNORE set the saved progvar from the saved_value string
@@ -189,14 +204,11 @@ public:
   inline void           SetCtrlType()   { data.SetCtrlType(); }
   // #CAT_CtrlPanel update the ctrl_type based on owner type
 
-  inline bool           IsControl() const
-  { return data.ctrl_type == ControlPanelMemberData::CONTROL; }
+  inline bool           IsControl() const  { return data.IsControl(); }
   // #CAT_CtrlPanel is this a member of a ControlPanel
-  inline bool           IsParamSet() const
-  { return data.ctrl_type == ControlPanelMemberData::PARAM_SET; }
+  inline bool           IsParamSet() const { return data.IsParamSet(); }
   // #CAT_CtrlPanel is this a member of a ParamSet
-  inline bool           IsClusterRun() const
-  { return data.ctrl_type == ControlPanelMemberData::CLUSTER_RUN; }
+  inline bool           IsClusterRun() const { return data.IsClusterRun(); }
   // #CAT_CtrlPanel is this a member of a ClusterRun
 
   inline bool          IsActive() const { return data.IsActive(); }
@@ -208,13 +220,13 @@ public:
   inline bool          IsSearch() const { return data.IsSearch(); }
   // #CAT_CtrlPanel is state == SEARCH?
 
-  inline void          SetToActive() { data.SetToActive(); }
+  inline void          SetToActive() { data.SetToActive(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to ACTIVE
-  inline void          SetToStable() { data.SetToStable(); }
+  inline void          SetToStable() { data.SetToStable(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to STABLE
-  inline void          SetToLocked() { data.SetToLocked(); }
+  inline void          SetToLocked() { data.SetToLocked(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to LOCKED
-  inline void          SetToSearch() { data.SetToSearch(); }
+  inline void          SetToSearch() { data.SetToSearch(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to SEARCH
 
   virtual bool          IsControlPanelPointer() const;

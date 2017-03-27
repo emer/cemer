@@ -79,6 +79,18 @@ void ControlPanel_Group::SetMasterAndClones(bool use_master_and_clones) {
   MasterClonesUpdate();
 }
 
+void ControlPanel_Group::AllStable() {
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    cp->AllStable();
+  }
+}
+
+void ControlPanel_Group::AllLocked() {
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    cp->AllLocked();
+  }
+}
+
 ControlPanel* ControlPanel_Group::GetMaster() {
   if(leaves == 0) return NULL;
   return Leaf(0);

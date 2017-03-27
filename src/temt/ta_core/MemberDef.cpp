@@ -35,18 +35,19 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
   if (!dsc_str.empty())
     dsc_str += "<br>";
   dsc_str += desc;
-  if(md->type->IsActualClassNoEff() &&
-     (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
-    indent += "  ";
-    for (int i=0; i < md->type->members.size; ++i) {
-      MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT, TypeItem::SHOW_CHECK_MASK) ||
-          smd->HasOption("HIDDEN_INLINE"))
-        continue;
-      GetMembDesc(smd, dsc_str, indent);
-    }
-  }
-  else if (md->type->IsEnum()) {
+  // NOTE: this is a bad idea -- makes desc too massive!
+  // if(md->type->IsActualClassNoEff() &&
+  //    (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
+  //   indent += "  ";
+  //   for (int i=0; i < md->type->members.size; ++i) {
+  //     MemberDef* smd = md->type->members.FastEl(i);
+  //     if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT, TypeItem::SHOW_CHECK_MASK) ||
+  //         smd->HasOption("HIDDEN_INLINE"))
+  //       continue;
+  //     GetMembDesc(smd, dsc_str, indent);
+  //   }
+  // }
+  if (md->type->IsEnum()) {
     for (int i = 0; i < md->type->enum_vals.size; ++i) {
       EnumDef* ed = md->type->enum_vals.FastEl(i);
       if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;

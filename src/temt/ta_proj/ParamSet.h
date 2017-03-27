@@ -32,13 +32,18 @@ public:
   bool                  last_activated;
   // #READ_ONLY #SHOW this param set was the last one activated, within its owning group
     
-  void                  SaveCurrent(bool info_msg = false)
+  inline void           SaveCurrent(bool info_msg = false)
   { CopyActiveToSaved(info_msg); }
   // #CAT_ParamSet #BUTTON #ARGC_0 copy the current active (live) values on the objects to the saved values
-  void                  Activate(bool info_msg = false)
+  inline void           Activate(bool info_msg = false)
   { CopySavedToActive(info_msg); }
   // #CAT_ParamSet #BUTTON #ARGC_0 copy the saved_value values to be active (live) values on the objects
-
+  
+  void                  AllStable() override  { inherited::AllStable(); }
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #BUTTON set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
+  void                  AllLocked() override { inherited::AllLocked(); }
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
+  
   virtual void          CopyActiveToSaved(bool info_msg = false);
   // #CAT_ParamSet #ARGC_0 copy the current active (live) values on the objects to the saved values
   virtual void          CopySavedToActive(bool info_msg = false);

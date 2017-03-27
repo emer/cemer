@@ -16,6 +16,7 @@
 #include "taiEditorOfControlPanelFull.h"
 #include <ClusterRun>
 #include <ParamSet>
+#include <taProject>
 #include <iLabel>
 #include <iFlowLayout>
 #include <taiMember>
@@ -104,7 +105,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   
   if (dat_cnt > 0) {  // no increment of data_cnt
     iLabel* lbl = NULL;
-    lbl = new iLabel("Parameters --- Active (Current) Value --- State --- Saved Value --- ", body);
+    lbl = new iLabel("Parameters --- Active (Current) Value ----- State ------- Saved Value --- ", body);
     // only for ParamSet
     AddSectionLabel(-1, lbl, "");
   }
@@ -171,9 +172,14 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
 }
 
 void taiEditorOfControlPanelFull::DoRemoveFmCtrlPanel() {
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  if (!proj)
+    return;
+  
    // removes the ctrl_panel_index item
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
   if (ctrl_panel_index >= 0) {
+    proj->undo_mgr.SaveUndo(ctrlpan, "RemoveMemberIdx", ctrlpan);
     ctrlpan->RemoveMemberIdx(ctrl_panel_index);
   }
   else {
@@ -188,6 +194,32 @@ void taiEditorOfControlPanelFull::DoGoToObject() {
   }
   else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoGoToObject: could not find item");
+  }
+}
+
+void taiEditorOfControlPanelFull::DoMoveToCtrlPanel(QAction* act) {
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  if (!proj)
+    return;
+  
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index < 0) {
+    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoMoveToCtrlPanel: could not find item");
+    return;
+  }
+
+  void* vval = act->data().value<void*>();
+  if(!vval) return;
+  taBase* bval = (taBase*)vval;
+  if(bval->InheritsFrom(&TA_ControlPanel)) {
+    ControlPanel* cp = (ControlPanel*)bval;
+    proj->undo_mgr.SaveUndo(ctrlpan, "MoveMemberToCtrlPanelIdx"); // proj save
+    ctrlpan->MoveMemberToCtrlPanelIdx(ctrl_panel_index, cp);
+  }
+  else {                        // must be a group
+    ControlPanel_Group* cp = (ControlPanel_Group*)bval;
+    proj->undo_mgr.SaveUndo(ctrlpan, "MoveMemberToCtrlPanelGpIdx"); // proj save
+    ctrlpan->MoveMemberToCtrlPanelGpIdx(ctrl_panel_index, cp);
   }
 }
 
@@ -224,19 +256,59 @@ void taiEditorOfControlPanelFull::DoEditLabel() {
 void taiEditorOfControlPanelFull::FillLabelContextMenu_CtrlPanel(QMenu* menu,
   int& last_id)
 {
+  taProject* proj = (taProject*)ctrlpan->GetThisOrOwner(&TA_taProject);
+  if (!proj) return;
+  
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_mbr, ctrl_panel_base);
   if (ctrl_panel_index < 0)
     return;
   if (ctrlpan->InheritsFrom(&TA_ParamSet)) {
-    menu->addAction("Remove from ParamSet", this, SLOT(DoRemoveFmCtrlPanel()));
     menu->addAction("Save Current", this, SLOT(DoCopyActiveToSaved()));
     menu->addAction("Activate", this, SLOT(DoCopySavedToActive()));
   }
-  else {
-    menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveFmCtrlPanel()));
-  }
+  menu->addAction("Remove", this, SLOT(DoRemoveFmCtrlPanel()));
   menu->addAction("Go To Object", this, SLOT(DoGoToObject()));
   menu->addAction("Edit Label", this, SLOT(DoEditLabel()));
+  QMenu* move_sub = menu->addMenu("Move To");
+  connect(move_sub, SIGNAL(triggered(QAction*)), this, SLOT(DoMoveToCtrlPanel(QAction*)));
+  move_sub->setFont(menu->font());
+
+  // todo: would be cleaner to generalize this -- also used in taiEditorWidgets
+  const int n_types = 7;
+  const char* type_names[n_types] = {"ControlPanel", "ClusterRun", "ParamSet",
+                                     "ParamStep", "ControlPanel_Group", "ParamSet_Group",
+                                     "ParamStep_Group"
+  };
+
+  for(int ti=0; ti<n_types; ti++) {
+    TypeDef* cptd = taMisc::FindTypeName(type_names[ti], false);
+    if(cptd) {
+      for (int i = 0; i < cptd->tokens.size; ++i) {
+        void* tok = cptd->tokens[i];
+        if(!tok) continue;
+        taBase* cp = (taBase*)tok;
+        if(!cp->SameScope(proj, &TA_taProject)) continue;
+        String nm = cp->GetName();
+        bool is_cp = false;
+        ControlPanel* cpr = NULL;
+        if(cpr == ctrlpan) continue; // don't include self!
+        ControlPanel_Group* gp = NULL;
+        if(cp->InheritsFrom(&TA_ControlPanel)) {
+          is_cp = true;
+          cpr = (ControlPanel*)cp;
+          if(cpr->IsClone()) continue; // don't clutter with clones!
+        }
+        else {                  // group
+          gp = (ControlPanel_Group*)cp; // could omit master/clone groups but may be easier
+          // to think in terms of group or master element, depending..
+          nm += " (Group)";
+        }
+        
+        QAction* move_act = move_sub->addAction(nm);
+        move_act->setData(QVariant::fromValue((void*)cp));
+      }
+    }
+  }
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {
@@ -323,7 +395,7 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
           mash_widg->GetValue();
           if(param_set) {
             item->ProgVarToSaved(); // copy back to string rep
-            item->UpdateAfterEdit(); // further update to allow active to update..
+            item->ActivateAfterEdit();
           }
         }
         else {

@@ -38,6 +38,7 @@ public:
 protected slots:
   void          DoRemoveFmCtrlPanel() override;
   void          DoGoToObject();
+  void          DoMoveToCtrlPanel(QAction* act);
   void          DoEditLabel();
   void          DoCopyActiveToSaved();
   void          DoCopySavedToActive();
