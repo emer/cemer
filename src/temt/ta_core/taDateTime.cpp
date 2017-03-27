@@ -41,3 +41,15 @@ String taDateTime::SecondsToDHM(uint64_t duration)  // duration is in seconds
   rval = taMisc::LeadingZeros(days, 2) + "d_" + taMisc::LeadingZeros(hours, 2) + "h_" + taMisc::LeadingZeros(minutes, 2) + "m";
   return rval;
 }
+
+String taDateTime::CurrentDateTimeStampString() {
+  return (String)QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+}
+
+String taDateTime::CurrentDateStampString() {
+  return (String)QDateTime::currentDateTime().toString("yyyy_MM_dd");
+}
+
+String taDateTime::CurrentTimeStampString() {
+  return (String)QDateTime::currentDateTime().toString("hh_mm_ss");
+}

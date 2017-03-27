@@ -16,7 +16,7 @@
 #include "String_Array.h"
 
 #include <QStringList>
-#include <int_Matrix>
+#include <int_Array>
 
 #include <taMisc>
 
@@ -69,39 +69,69 @@ void String_Array::Split(const String& str, const String& delim) {
   FmDelimString(str, delim);
 }
 
+int String_Array::FindContains(const String& str) {
+  for (int i = 0; i < size; ++i) {
+    if(FastEl(i).contains(str)) return i;
+  }
+  return -1;
+}
+
+int String_Array::FindContains_ci(const String& str) {
+  for (int i = 0; i < size; ++i) {
+    if(FastEl(i).contains_ci(str)) return i;
+  }
+  return -1;
+}
+
+int String_Array::FindStartsWith(const String& str) {
+  for (int i = 0; i < size; ++i) {
+    if(FastEl(i).startsWith(str)) return i;
+  }
+  return -1;
+}
+
+int String_Array::FindEndsWith(const String& str) {
+  for (int i = 0; i < size; ++i) {
+    if(FastEl(i).endsWith(str)) return i;
+  }
+  return -1;
+}
+
 String String_Array::MostFrequent() {
   if (size == 0) return _nilString;
-  
   if (size == 1) return FastEl(0);
   
   String winning_string;  // most frequent string
-  int_Matrix    counts;
+  int_Array     counts;
   String        last_string;
   int           index = -1;
   
   Sort();
-  counts.SetGeom(1, this->size); // can't be bigger than the string array
+  counts.SetSize(this->size); // can't be bigger than the string array
+  if(FastEl(0) == last_string) {  // first element could be empty!
+    index++;
+  }
   for (int i = 0; i < size; ++i) {
-    if (!(FastEl(i) == last_string)) {
+    if(FastEl(i) != last_string) {
       index++;
       last_string = FastEl(i);
     }
     counts[index]++;
- }
-  
-  int max = counts.Max().toInt(); // highest count (not position)
+  }
+
+  int maxv = 0;
+  int maxi = 0;
   int sum = 0;
   for (int i = 0; i < counts.size; ++i) {
     if (counts[i] == 0) {
       break;
     }
-    else if (counts[i] == max) { // this is our guy
+    if (counts[i] > maxv) {
+      maxv = counts[i];
+      maxi = i;
       winning_string = FastEl(sum);  // most frequent string
-      break;
     }
-    else { // keep summing
-      sum += counts[i];
-    }
+    sum += counts[i];
   }
   return winning_string;
 }

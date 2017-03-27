@@ -79,6 +79,8 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
         if(!tok) continue;
         taBase* cp = (taBase*)tok;
         if(!cp->SameScope(proj, &TA_taProject)) continue;
+        taBase* agp = cp->GetOwner(&TA_ArchivedParams_Group);
+        if(agp) continue;       // skip all archived elements
         String nm = cp->GetName();
         bool is_cp = false;
         ControlPanel* cpr = NULL;

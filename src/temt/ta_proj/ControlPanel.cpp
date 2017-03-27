@@ -446,13 +446,32 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
   if(!param_set) {
     taProject* proj = GetMyProj();
     if(!proj) return NULL;
-    param_set = (ParamSet*)proj->param_sets.NewEl(1);
-    param_set->SetName(name + "_" +
-                       (String)QDateTime::currentDateTime().toString("MM_dd_yy"));
+    param_set = (ParamSet*)proj->archived_params.NewArchive();
+    param_set->SetName(name + "_" + taDateTime::CurrentDateStampString());
   }
   param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
   param_set->CopyActiveToSaved();
+  param_set->AllStable();
   return param_set;
+}
+
+ParamSet* ControlPanel::Archive() {
+  if(TestError(IsArchived(), "Archive", "this is already archived!")) {
+    return NULL;
+  }
+  taProject* proj = GetMyProj();
+  if(!proj) return NULL;
+  ParamSet* param_set = proj->archived_params.NewArchive();
+  param_set->SetName(name + "_" + taDateTime::CurrentDateStampString());
+  param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
+  param_set->CopyActiveToSaved();
+  param_set->AllLocked();
+  return param_set;
+}
+
+bool ControlPanel::IsArchived() {
+  taBase* agp = GetOwner(&TA_ArchivedParams_Group);
+  return (agp != NULL);
 }
 
 void ControlPanel::CopyFromDataTable(DataTable* table, int row_num) {
@@ -821,7 +840,7 @@ String ControlPanel::ToWikiTable() {
   return rval;
 }
 
-String ControlPanel::MembersToString(bool use_search_vals) {
+String ControlPanel::ActiveMembersToString(bool use_search_vals) {
   String params;
   bool first = true;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
@@ -833,7 +852,7 @@ String ControlPanel::MembersToString(bool use_search_vals) {
           params.cat(" "); // sep
         else
           first = false;
-        String oparams = sub_panel->MembersToString(use_search_vals);
+        String oparams = sub_panel->ActiveMembersToString(use_search_vals);
         params.cat(oparams);
       }
     }
@@ -843,12 +862,49 @@ String ControlPanel::MembersToString(bool use_search_vals) {
         params.cat(" "); // sep
       else
         first = false;
-      params.cat(mbr->GetName()).cat("=");
+      params.cat(mbr->label).cat("=");
       params.cat(mbr->RecordValueString(use_search_vals));
     }
   }
   return params;
 }
+
+void ControlPanel::SaveNameValueMembers_impl(ParamSet* param_set, String_Array& name_vals) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    if(mbr->IsControlPanelPointer()) {
+      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+      if(sub_panel) {
+        sub_panel->SaveNameValueMembers_impl(param_set, name_vals);
+      }
+    }
+    else {
+      int idx = name_vals.FindStartsWith(mbr->label + "=");
+      if(idx >= 0) {
+        String str = name_vals[idx];
+        String val = str.after("=");
+        ControlPanelMember* itm = (ControlPanelMember*)mbr->Clone();
+        param_set->mbrs.Add(itm);
+        itm->data.saved_value = val;
+        itm->SetCtrlType();
+        name_vals.RemoveIdx(idx);
+      }        
+    }
+  }
+}
+
+void ControlPanel::SaveNameValueMembers(ParamSet* param_set, const String& name_vals_str) {
+  String_Array name_vals;
+  name_vals.Split(name_vals_str, " ");    // space sep
+  SaveNameValueMembers_impl(param_set, name_vals);
+  for(int i=0; i<name_vals.size; i++) { // deal with remainders
+    String str = name_vals[i];
+    String nm = str.before("=");
+    String val = str.after("=");
+    param_set->NewDummyMember(nm, val);
+  }
+}
+
 
 void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
   if (!base || !mbr) return;

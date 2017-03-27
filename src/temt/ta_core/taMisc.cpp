@@ -207,7 +207,8 @@ taExpandDefaultsProject::taExpandDefaultsProject() {
   docs = 1;
   wizards = 1;
   ctrl_panels = 1;
-  param_sets = 0;
+  active_params = 2;
+  archived_params = 0;
   data = 2;
   programs = 2;
   viewers = 0;

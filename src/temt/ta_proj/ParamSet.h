@@ -29,14 +29,20 @@ class TA_API ParamSet : public ControlPanel {
   // ##EXT_prm ##CAT_Display A set of member/value pairs from one or more objects in a project, like a ControlPanel, but values can be saved (SaveCurrent) and re-activated (Activate) so you can easily swap in/out different sets of parameter values.  New groups of ParamSet's have a Master/Clone config: first ParamSet is Master, rest are Clones and members are auto-updated in Clones from changesin Master
   INHERITED(ControlPanel)
 public:
+  String                date;
+  // #READ_ONLY #SHOW #CONTROL_PANEL_SHOW date that this parameter set was last activated or saved (as an archive)
   bool                  last_activated;
   // #READ_ONLY #SHOW this param set was the last one activated, within its owning group
-    
+  String                dummy;  // #READ_ONLY #HIDDEN #NO_SAVE a dummy string element that can be used to create dummy members for just saving random values in a param set
+
+  virtual void          UpDate();
+  // #CAT_ParamSet set the date to the current time
+  
   inline void           SaveCurrent(bool info_msg = false)
-  { CopyActiveToSaved(info_msg); }
+  { UpDate(); CopyActiveToSaved(info_msg); }
   // #CAT_ParamSet #BUTTON #ARGC_0 copy the current active (live) values on the objects to the saved values
   inline void           Activate(bool info_msg = false)
-  { CopySavedToActive(info_msg); }
+  { UpDate(); CopySavedToActive(info_msg); }
   // #CAT_ParamSet #BUTTON #ARGC_0 copy the saved_value values to be active (live) values on the objects
   
   void                  AllStable() override  { inherited::AllStable(); }
@@ -44,6 +50,9 @@ public:
   void                  AllLocked() override { inherited::AllLocked(); }
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
   
+  ParamSet*             Archive() override { return inherited::Archive(); }
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON archive this set of parameters into a new archived_params parameter set, for later reference
+
   virtual void          CopyActiveToSaved(bool info_msg = false);
   // #CAT_ParamSet #ARGC_0 copy the current active (live) values on the objects to the saved values
   virtual void          CopySavedToActive(bool info_msg = false);
@@ -58,10 +67,13 @@ public:
   // #CAT_ParamSet #IGNORE copy the previously-saved values to be active (live) values on the objects
 
   virtual void          ComparePeers(ParamSet* param_set);
-  // #CAT_ParamSet #BUTTON #DYN12N calls taProject::ParamSetComparePeers to populate a table that compares this param_sets member values with its peers values - this data does not update - call again if you edit any of the param_sets!
+  // #CAT_ParamSet #BUTTON #DYN12N calls taProject::ParamSetComparePeers to populate a table that compares these member values with its peers values - this data does not update - call again if you edit any of the param sets!
 
   virtual void          ResetLastActivated();
   // #CAT_ParamSet reset the last_activated flags for all elements within this ParamSet's group
+
+  ControlPanelMember*   NewDummyMember(const String& nm, const String& val);
+  // #CAT_ParamSet create a new dummy member item that points to the dummy string, set to given label and saved_value -- used e.g., for saving orphaned parameter values
   
   int                   GetSpecialState() const override;
 

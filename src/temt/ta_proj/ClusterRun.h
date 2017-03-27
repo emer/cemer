@@ -143,7 +143,7 @@ public:
   virtual void  LoadData(bool remove_existing = false);
   // #BUTTON #GHOST_ON_enable_load:false load the data for the selected rows in the jobs_running, jobs_done or file_list data tables (all rows if none selected) -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
   virtual void  SaveJobParams();
-  // #MENU_BUTTON #MENU_ON_Jobs save the parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
+  // #MENU_BUTTON #MENU_ON_Jobs save the active parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .archived_params -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
   virtual void  UpdtNotes();
   // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
   virtual void  RemoveJobs();
@@ -203,7 +203,7 @@ public:
   virtual void  RemoveAllFilesInList();
   // #IGNORE svn remove all the files listed in file_list
   virtual void SaveJobParams_impl(DataTable& table, int row);
-  // #IGNORE save job parameters to new param_sets saved params
+  // #IGNORE save job parameters to new .archived_params saved params
   void SortClusterInfoTable();
   // #IGNORE sort the cluster_info table putting user's jobs and summary info at the top
 

@@ -924,8 +924,10 @@ int taiMisc::GetGroupDefaultExpand(const String& group) {
     return taMisc::expand_defaults_project.wizards;
   else if (group == "ctrl_panels")
     return taMisc::expand_defaults_project.ctrl_panels;
-  else if (group == "param_sets")
-    return taMisc::expand_defaults_project.param_sets;
+  else if (group == "active_params")
+    return taMisc::expand_defaults_project.active_params;
+  else if (group == "archived_params")
+    return taMisc::expand_defaults_project.archived_params;
   else if (group == "data")
     return taMisc::expand_defaults_project.data;
   else if (group == "programs")
@@ -952,8 +954,10 @@ void taiMisc::SetGroupDefaultExpand(const String& group, int depth) {
     inst->expand_defaults_project.wizards = depth;
   else if (group == "ctrl_panels")
     inst->expand_defaults_project.ctrl_panels = depth;
-  else if (group == "param_sets")
-    inst->expand_defaults_project.param_sets = depth;
+  else if (group == "active_params")
+    inst->expand_defaults_project.active_params = depth;
+  else if (group == "archived_params")
+    inst->expand_defaults_project.archived_params = depth;
   else if (group == "data")
     inst->expand_defaults_project.data = depth;
   else if (group == "programs")

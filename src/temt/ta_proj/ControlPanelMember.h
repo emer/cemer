@@ -210,6 +210,8 @@ public:
   // #CAT_CtrlPanel is this a member of a ParamSet
   inline bool           IsClusterRun() const { return data.IsClusterRun(); }
   // #CAT_CtrlPanel is this a member of a ClusterRun
+  virtual bool          IsArchived();
+  // #CAT_CtrlPanel test if this is an archived item -- looks for a non-null owner of type ArchivedParams_Group
 
   inline bool          IsActive() const { return data.IsActive(); }
   // #CAT_CtrlPanel is state == ACTIVE?

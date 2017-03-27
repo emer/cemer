@@ -33,7 +33,7 @@ void ControlPanel_Group::InitLinks() {
     if(!owner) return;
     taProject* proj = GET_MY_OWNER(taProject);
     if(!proj) return;
-    if(InheritsFrom(&TA_ParamSet_Group) && leaves == 0 && owner != &proj->param_sets) {
+    if(InheritsFrom(&TA_ParamSet_Group) && leaves == 0 && owner != &proj->archived_params) {
       // default for new groups outside of main project ones is master and clones -- make a new master by default
       master_and_clones = true;
       ControlPanel* pan = (ControlPanel*)NewEl(1);                 // our new master

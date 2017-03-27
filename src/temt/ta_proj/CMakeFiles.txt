@@ -21,6 +21,7 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   
   ParamSet.h
   ParamSet_Group.h
+  ArchivedParams_Group.h
 
   ParamSearchAlgo.h
   ParamSearchAlgo_List.h
@@ -122,6 +123,7 @@ set(ta_proj_SRCS
   
   ParamSet.cpp
   ParamSet_Group.cpp
+  ArchivedParams_Group.cpp
 
   ParamSearchAlgo.cpp
   ParamSearchAlgo_List.cpp

@@ -30,6 +30,10 @@ void ParamSet::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
+void ParamSet::UpDate() {
+  date = taDateTime::CurrentDateTimeStampString();
+}
+
 void ParamSet::CopyActiveToSaved(bool info_msg) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     sei->CopyActiveToSaved();
@@ -97,4 +101,16 @@ void ParamSet::ResetLastActivated() {
 int ParamSet::GetSpecialState() const {
   if(last_activated) return 3;
   return inherited::GetSpecialState();
+}
+
+ControlPanelMember* ParamSet::NewDummyMember(const String& nm, const String& val) {
+  ControlPanelMember* itm = (ControlPanelMember*)mbrs.NewEl(1);
+  TypeDef* td = GetTypeDef();
+  MemberDef* md = td->members.FindName("dummy");
+  itm->base = this;
+  itm->mbr = md;
+  itm->SetLabel(nm, true);      // custom
+  itm->SetDesc("dummy name=value record", true);
+  itm->data.saved_value = val;
+  return itm;
 }

@@ -1084,7 +1084,7 @@ void ClusterRun::SaveJobParams() {
 void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
   taProject* proj = GetMyProj();
   if(!proj) return;
-  ParamSet* ps = (ParamSet*)proj->param_sets.NewEl(1);
+  ParamSet* ps = proj->archived_params.NewArchive(); // insert at top
 
   String tag = table.GetValAsString("tag", row);
   String params = table.GetValAsString("params", row);
@@ -1094,27 +1094,8 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
   ps->name = String("tag_") + tag;
   ps->desc = notes;
 
-  String_Array parlst;
-  parlst.Split(params, " ");    // space sep
-  for(int i=0;i<parlst.size;i++) {
-    String nm = parlst[i];
-    String val = nm.after("=");
-    nm = nm.before("=");
+  SaveNameValueMembers(ps, params);
 
-    ControlPanelMember* itmMain = mbrs.FindLeafName(nm);
-    if (!itmMain) {
-      taMisc::Info("Could not find control panel entry for parameter " + nm);
-      continue;
-    }
-    ControlPanelMember* itm = (ControlPanelMember*)itmMain->Clone();
-    ps->mbrs.Add(itm);
-    if(itm->mbr && itm->mbr->type->IsBool()) {
-      if(val == "0") val = "false"; // translate bools..
-      if(val == "1") val = "true";
-    }
-    itm->data.saved_value = val;
-    itm->SetCtrlType();
-  }
   ps->UpdateAfterEdit();
   ps->BrowserSelectMe();        // sure..
 }
@@ -2200,7 +2181,7 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
     cmd.cat(" n_threads=").cat(String(n_threads));
   }
 
-  params=MembersToString(!use_cur_vals);
+  params=ActiveMembersToString(!use_cur_vals);
 }
 
 void ClusterRun::CreateCurJob(int cmd_id) {

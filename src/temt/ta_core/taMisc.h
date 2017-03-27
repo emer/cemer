@@ -84,7 +84,8 @@ public:
   int  docs;  // #MIN_0
   int  wizards;  // #MIN_0
   int  ctrl_panels;  // #MIN_0
-  int  param_sets;  // #MIN_0
+  int  active_params;  // #MIN_0
+  int  archived_params;  // #MIN_0
   int  data;  // #MIN_0
   int  programs;  // #MIN_0
   int  viewers;  // #MIN_0

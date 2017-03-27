@@ -35,6 +35,7 @@
 #include <Wizard_Group>
 #include <ControlPanel_Group>
 #include <ParamSet_Group>
+#include <ArchivedParams_Group>
 #include <DataTable_Group>
 #include <Program_TopGroup>
 #include <ProgramRef>
@@ -93,7 +94,8 @@ public:
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
   ControlPanel_Group    ctrl_panels;  // #AKA_edits special edit dialogs for selected elements
-  ParamSet_Group        param_sets;  // sets of variables with values that can be used to restore a particular set of parameters
+  ParamSet_Group        active_params; // #AKA_param_sets actively used sets of parameters with values that can be used to restore a particular set of parameters -- best to organize into groups, which default to a Master / Clone relationship to enforce consistent set of parameters across multiple different sets that can be used
+  ArchivedParams_Group  archived_params; // archived sets of parameters with values to record the history of different parameters over time -- one use the Archive button on active params to automatically save a copy here -- typically organized by date with newest on top
   DataTable_Group       data;   // data, such as patterns for network input
   taBase_Group          data_proc; // #HIDDEN_TREE #NO_SAVE objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_TopGroup      programs; // Gui-based programs to run simulations and other processing

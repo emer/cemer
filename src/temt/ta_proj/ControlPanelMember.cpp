@@ -21,6 +21,7 @@
 #include <ClusterRun>
 #include <taObjDiffRec>
 #include <taObjDiff_List>
+#include <ArchivedParams_Group>
 
 #include <taMisc>
 #include <tabMisc>
@@ -60,6 +61,7 @@ void ControlPanelMemberData::UpdateAfterEdit_impl() {
       else {
         state = STABLE;         // default to stable for everything else
       }
+      saved_value.gsub(".param_sets", ".active_params"); // update pointers to new name
     }
     obs_search = false;
     obs_record = false;
@@ -454,6 +456,11 @@ String ControlPanelMember::RecordValueString(bool use_search_vals) {
   else {
     return CurValAsString();
   }
+}
+
+bool ControlPanelMember::IsArchived() {
+  taBase* agp = GetOwner(&TA_ArchivedParams_Group);
+  return (agp != NULL);
 }
 
 bool ControlPanelMember::IsControlPanelPointer() const {

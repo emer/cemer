@@ -130,6 +130,13 @@ public:
   static String shortDayName(int weekday) { return QDate::shortDayName(weekday); }
   static String shortMonthName(int month) { return QDate::shortMonthName(month); }
 
+  static String CurrentDateTimeStampString();
+  // return a string for the current date and time in a good default format for recording a time stamp
+  static String CurrentDateStampString();
+  // return a string for the current date in a good default format for recording a time stamp
+  static String CurrentTimeStampString();
+  // return a string for the current time in a good default format for recording a time stamp
+  
   TA_SIMPLE_BASEFUNS(taDateTime);
 private:
   void  Initialize();

@@ -3670,7 +3670,7 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
   if(!param_set) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToParamSet", "cannot find project")) return false;
-    param_set = (ParamSet*)proj->param_sets.New(1);
+    param_set = (ParamSet*)proj->active_params.New(1);
   }
   return param_set->AddMemberPrompt(this, member);
 }

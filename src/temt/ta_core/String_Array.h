@@ -34,23 +34,29 @@ INHERITED(taArray<String>)
 public:
   static const String blank; // #HIDDEN #READ_ONLY
 #ifdef TA_USE_QT
-  void                  ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
+  void          ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
 #endif
 
-  String        ToDelimString(const String& delim = " ");
+  virtual String ToDelimString(const String& delim = " ");
   // generates a string of all the items on the list, using given delimiter between items
-  String        Join(const String& delim = " ")
-  { return ToDelimString(delim); }
+  inline String  Join(const String& delim = " ")  { return ToDelimString(delim); }
   // generates a string of all the items on the list, using given delimiter between items (same as ToDelimString)
-  void          FmDelimString(const String& str, const String& delim = " ", bool reset_first = true);
+  virtual void  FmDelimString(const String& str, const String& delim = " ", bool reset_first = true);
   // add strings to this array by parsing given string using given delimiter separating strings -- reset first = reset this array before adding (else append)
 
-  void          Split(const String& str, const String& delim = "");
+  virtual void  Split(const String& str, const String& delim = "");
   // Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.
-  String        MostFrequent();
-  // Returns the string most often found in the array - if tie the first is returned
-  
+  virtual int   FindContains(const String& str);
+  // find the first element that contains the given string, -1 if not found
+  virtual int   FindContains_ci(const String& str);
+  // find the first element that contains the given string, case independent, -1 if not found
+  virtual int   FindStartsWith(const String& str);
+  // find the first element that starts with the given string, -1 if not found
+  virtual int   FindEndsWith(const String& str);
+  // find the first element that ends with the given string, -1 if not found
 
+  virtual String MostFrequent();
+  // Returns the string most often found in the array -- if tie the first is returned -- IMPORTANT: performs an in-place Sort on the array
 
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
