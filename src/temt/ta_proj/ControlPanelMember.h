@@ -39,10 +39,10 @@ public:
   };
 
   enum ParamState {  // what state is the parameter in?
-    ACTIVE,          // this parameter is being actively explored -- for param set items, edits to saved values will automatically be activated to the live current values -- this value will also be saved in a ClusterRun and passed as a startup arg on the command line
-    STABLE,          // this is a stable parameter that generally should not change -- it is not recorded specifically in the ClusterRun, but you CAN edit the saved_value if you want
-    LOCKED,          // a stronger form of STABLE: the value of this parameter cannot be edited directly -- it is locked down -- change to STABLE to allow editing
-    SEARCH,          // the values of this parameter are determined by the parameter searching mechanism in ClusterRun, according to the range specification -- each searched value will be passed as a command-line argument, and saved in the list of paramters shown in the cluster run
+    ACTIVE,          // #COLOR_green this parameter is being actively explored -- for param set items, edits to saved values will automatically be activated to the live current values -- this value will also be saved in a ClusterRun and passed as a startup arg on the command line
+    STABLE,          // #COLOR_darkblue this is a stable parameter that generally should not change -- it is not recorded specifically in the ClusterRun, but you CAN edit the saved_value if you want
+    LOCKED,          // #COLOR_black stronger form of STABLE: the value of this parameter cannot be edited directly -- it is locked down -- change to STABLE to allow editing
+    SEARCH,          // #COLOR_red the values of this parameter are determined by the parameter searching mechanism in ClusterRun, according to the range specification -- each searched value will be passed as a command-line argument, and saved in the list of paramters shown in the cluster run
   };
 
   ControlType           ctrl_type;      // #READ_ONLY type of control panel item

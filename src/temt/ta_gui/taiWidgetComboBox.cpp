@@ -108,6 +108,10 @@ void taiWidgetComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
       if (ed->HasOption("NO_SHOW") || ed->HasOption("IGNORE"))
         continue;
       AddItem(ed->GetLabel(), QVariant(ed->enum_no));
+      String clr = ed->OptionAfter("COLOR_");
+      if(clr.nonempty()) {
+        rep()->item_colors.append(clr.toQString());
+      }
     }
   }
 }

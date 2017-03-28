@@ -52,6 +52,7 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   connect(combo_box, SIGNAL(editTextChanged(const QString &)), this,
           SIGNAL(editTextChanged(const QString &)));
   connect(combo_box, SIGNAL(activated(int)), this, SIGNAL(activated(int)));
+  connect(combo_box, SIGNAL(activated(int)), this, SLOT(UpdateColor(int)));
   connect(combo_box, SIGNAL(activated(const QString &)), this,
           SIGNAL(activated(const QString &)));
   connect(combo_box, SIGNAL(highlighted(int)), this, SIGNAL(highlighted(int)));
@@ -59,6 +60,7 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
           SIGNAL(highlighted(const QString &)));
   connect(combo_box, SIGNAL(currentIndexChanged(int)), this,
           SIGNAL(currentIndexChanged(int)));
+  connect(combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateColor(int)));
   connect(combo_box, SIGNAL(currentIndexChanged(const QString &)), this,
           SIGNAL(currentIndexChanged(const QString &)));
   connect(combo_box, SIGNAL(currentTextChanged(const QString &)), this,
@@ -91,4 +93,14 @@ void iComboBoxPrevNext::NextItem() {
   }
   combo_box->setCurrentIndex(idx);
   emit activated(idx);
+}
+
+void iComboBoxPrevNext::UpdateColor(int i) {
+  if(i < 0) return;
+  if(item_colors.count() > i) {
+    QString color = item_colors[i];
+    if(!color.isEmpty()) {
+      combo_box->setStyleSheet("color: " + color);
+    }
+  }
 }

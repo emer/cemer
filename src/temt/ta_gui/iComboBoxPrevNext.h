@@ -39,6 +39,7 @@ public:
   QVBoxLayout*		vlay;
   QToolButton*          prev_button;
   QToolButton*          next_button;
+  QList<QString>        item_colors;
 
   iComboBoxPrevNext(QWidget* parent = NULL);
   ~iComboBoxPrevNext();                                         
@@ -46,6 +47,7 @@ public:
 public slots:
   virtual void  PrevItem();     // move combo box selection to previous item
   virtual void  NextItem();     // move combo box selection to next item
+  virtual void  UpdateColor(int idx);
 
 
 public:
@@ -140,7 +142,7 @@ public:
   void clear() { combo_box->clear(); }
   void clearEditText() { combo_box->clearEditText(); }
   void setEditText(const QString &text) { combo_box->setEditText(text); }
-  void setCurrentIndex(int index) { combo_box->setCurrentIndex(index); }
+  void setCurrentIndex(int index) { combo_box->setCurrentIndex(index); UpdateColor(index); }
   void setCurrentText(const QString &text) { combo_box->setCurrentText(text); }
 
  Q_SIGNALS:
