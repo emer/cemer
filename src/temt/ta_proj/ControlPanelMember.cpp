@@ -213,11 +213,16 @@ void ControlPanelMember::Copy_(const ControlPanelMember& cp) {
 void ControlPanelMember::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
+  String def_long_label;
+  String def_short_label;
+  if(base && mbr) {
+    base->GetControlPanelLabel(mbr, def_long_label, "", false);
+    base->GetControlPanelLabel(mbr, def_short_label, "", true); // short
+  }
+
   if(taMisc::is_loading) {
     data.SetCtrlType();
-  }
-  
-  if(taMisc::is_loading) {
+
     taVersion v806(8, 0, 6);
     if (taMisc::loading_version < v806) {
       if(obs_param_srch.search) {
@@ -231,15 +236,21 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       data.range = obs_param_srch.range;
       data.saved_value = obs_ps_value.saved_value;
       data.notes = obs_notes.notes;
-      if(base && mbr) {
-        String def_label;
-        base->GetControlPanelLabel(mbr, def_label);
-        if(label == def_label) {
-          cust_label = false;
-        }
-        else {
-          cust_label = true;
-        }
+    }
+
+    // update label flags and status on load -- we know obj name didn't just change
+    // so it should be safe to update at this point -- not so during other updates
+    if(base && mbr) {
+      if(label == def_long_label) {
+        cust_label = false;
+        short_label = false;
+      }
+      else if(label == def_short_label) {
+        cust_label = false;
+        short_label = true;
+      }
+      else {
+        cust_label = true;
       }
     }
   }
@@ -260,18 +271,54 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       data.is_single = true;    // counts as single!
     }
   }
-  if(base && mbr) {
-    if(!cust_label) {
-      label = "";
-      base->GetControlPanelLabel(mbr, label); // regenerate
-      prv_label = label;
+
+  // update label and desc during operation now
+  if(!taMisc::is_loading && base && mbr) {
+    if(!cust_desc && desc != prv_desc) { // we just changed -- might be custom
+      cust_desc = true;
     }
-    if (!cust_desc) {
-      desc = "";
-      base->GetControlPanelDesc(mbr, desc); // regenerate
-      prv_desc = desc;
+    if(!cust_label && label != prv_label) {
+      cust_label = true;
+    }
+
+    // if we HAPPEN to be the same as object at this point,
+    // then we can update our flags -- but cannot infer that we are definitley custom
+    // because obj vals might have changed, and we might need to update
+    if(label == def_long_label) {
+      cust_label = false;
+      short_label = false;
+    }
+    else if(label == def_short_label) {
+      cust_label = false;
+      short_label = true;
+    }
+
+    if(!cust_label) {
+      if(short_label) {
+        if(label != def_short_label) {
+          label = def_short_label;
+        }
+      }
+      else {
+        if(label != def_long_label) {
+          label = def_long_label;
+        }
+      }
+    }
+    if(!cust_desc) {
+      String def_desc;
+      base->GetControlPanelDesc(mbr, def_desc); // regenerate
+      if(desc != def_desc) {
+        desc = def_desc;
+      }
     }
   }
+
+
+  label = taMisc::StringCVar(label); // keep as safe c variables at all times..
+  // all updates over by now!
+  prv_desc = desc;
+  prv_label = label;
 
   if(IsSearch()) {
     if(!data.is_single || !data.is_numeric) {
@@ -287,6 +334,31 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       SetToStable();
     }
   }
+}
+
+bool ControlPanelMember::MbrUpdated() {
+  // called by control panel when a member is updated -- update our label, desc..
+  if(!base || !mbr) return false;
+  bool updted = false;
+  if(!cust_label) {
+    String new_label;
+    base->GetControlPanelLabel(mbr, new_label, "", short_label);
+    if(label != new_label) {
+      label = new_label;
+      updted = true;
+      prv_label = label;
+    }
+  }
+  if(!cust_desc) {
+    String def_desc;
+    base->GetControlPanelDesc(mbr, def_desc); // regenerate
+    if(desc != def_desc) {
+      desc = def_desc;
+      updted = true;
+      prv_desc = desc;
+    }
+  }
+  return updted;
 }
 
 void ControlPanelMember::ActivateAfterEdit() {

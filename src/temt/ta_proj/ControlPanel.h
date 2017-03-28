@@ -191,7 +191,8 @@ protected:
   virtual void   RemoveMethod_impl(int idx);
   virtual bool   AddMember_impl
     (taBase* base, MemberDef* md, const String& lbl, const String& desc, const String&
-     sub_gp_nm = _nilString, bool custom_label = false, bool custom_desc = false);
+     sub_gp_nm = _nilString, bool custom_label = false, bool custom_desc = false,
+     bool short_label = false);
   virtual bool   AddMethod_impl
     (taBase* base, MethodDef* md, const String& lbl, const String& desc, const String&
      sub_gp_nm = _nilString, bool custom_label = false, bool custom_desc = false);

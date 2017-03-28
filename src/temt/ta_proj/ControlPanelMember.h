@@ -236,6 +236,9 @@ public:
   virtual ControlPanel* GetControlPanelPointer() const;
   // #CAT_CtrlPanel if this is a control panel pointer, return the current control panel we point to
 
+  virtual bool          MbrUpdated();
+  // #IGNORE called by owner when a member sig emit updates -- return true if we updated something
+  
   taObjDiffRec*  GetObjDiffRec
     (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
      TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;

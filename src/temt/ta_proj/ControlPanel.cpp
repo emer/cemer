@@ -156,6 +156,7 @@ bool ControlPanel::UpdateCloneFromMaster_mbrlist
     mst = (ControlPanelMember*)ControlPanelItem::StatFindItemBase_List(master, cln->base, cln->typeItem(), ti);
     if(mst) {
       cln->cust_label = mst->cust_label;
+      cln->short_label = mst->short_label;
       cln->cust_desc = mst->cust_desc;
       cln->label = mst->label;
       cln->desc = mst->desc;
@@ -271,14 +272,9 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
 
   if(on_membs) {
     FOREACH_ELEM_IN_GROUP_REV(ControlPanelMember, item, mbrs) {
-      if (!item->cust_label && ControlPanelItem::StatCheckBase(item, ta)) {
-        // regenerate label as spec name or program name etc might have changed
-        String new_label;
-        ta->GetControlPanelLabel(item->mbr, new_label);
-        if(item->label != new_label) {
-          item->label = new_label;
-          updated_something = true;
-        }
+      if(ControlPanelItem::StatCheckBase(item, ta)) {
+        bool updt = item->MbrUpdated();
+        if(updt) updated_something = true;
       }
     }
   }
@@ -384,16 +380,24 @@ void ControlPanel::EditLabel(int idx) {
     dlg.AddStringField(&new_label, "full_lbl", "main", curow, "tooltip=enter label to use;");
 
     curow = "default";
-    bool use_default_label = false;
+    bool use_default_label = !item->cust_label;
     dlg.AddHBoxLayout(curow, "mainv","","");
     dlg.AddLabel("use_default_label", "main", curow, "label=Use Default: ;");
     dlg.AddBoolCheckbox(&use_default_label, "use_default_label", "main", curow,
                         "tooltip=Use the default label generated from the member and owner name;");
 
+    curow = "short";
+    bool use_short_label = item->short_label;
+    dlg.AddHBoxLayout(curow, "mainv","","");
+    dlg.AddLabel("use_short_label", "main", curow, "label=Use Short: ;");
+    dlg.AddBoolCheckbox(&use_short_label, "use_short_label", "main", curow,
+                        "tooltip=Use the short label generated from the member and owner name;");
+
     int drval = dlg.PostDialog(true);
     if(drval != 0) {
+      item->short_label = use_short_label;
       String default_label;
-      item->base->GetControlPanelLabel(item->mbr, default_label);
+      item->base->GetControlPanelLabel(item->mbr, default_label, "", use_short_label);
       if (use_default_label) {
         item->label = default_label;
         item->cust_label = false;
@@ -404,6 +408,7 @@ void ControlPanel::EditLabel(int idx) {
         }
         item->label = new_label;
       }
+      item->prv_label = item->label;
     }
     ReShowEdit(true); //forced
   }
@@ -580,10 +585,11 @@ bool ControlPanel::AddMember(taBase* base, MemberDef* mbr, const String& xtra_lb
   }
   bool cust_lbl = false;
   String eff_lbl;
-  if(xtra_lbl.nonempty() || short_label) // each of these = custom
+  if(xtra_lbl.nonempty())
     cust_lbl = true;
   base->GetControlPanelLabel(mbr, eff_lbl, xtra_lbl, short_label);
-  bool rval = AddMember_impl(base, mbr, eff_lbl, eff_desc, sub_gp_nm, cust_lbl, cust_desc);
+  bool rval = AddMember_impl(base, mbr, eff_lbl, eff_desc, sub_gp_nm, cust_lbl, cust_desc,
+                             short_label);
   ReShowEdit(true); //forced
   return rval;
 }
@@ -636,7 +642,7 @@ bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, bool short_labe
   if(drval == 0) {
     return false;
   }
-  bool custom_label = short_label;
+  bool custom_label = false;
   if (full_lbl != full_lbl_copy) {
     custom_label = true;
   }
@@ -678,18 +684,19 @@ bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, bool short_labe
       mbr_base->GetControlPanelDesc(mbr_md, sub_desc);
 
       rval = AddMember_impl(mbr_base, mbr_md, complete_lbl, sub_desc, sub_grp_name,
-                            custom_label || short_label, false);
+                            custom_label, false, short_label);
     }
   }
   else {
-    rval = AddMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label, false);
+    rval = AddMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label, false,
+                          short_label);
   }
   ReShowEdit(true); //forced
   return rval;
 }
 
 bool ControlPanel::AddMember_impl
-(taBase* base, MemberDef* md, const String& full_lbl, const String& dscr, const String& sub_gp_nm, bool custom_label, bool custom_desc)
+(taBase* base, MemberDef* md, const String& full_lbl, const String& dscr, const String& sub_gp_nm, bool custom_label, bool custom_desc, bool short_label)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -699,7 +706,7 @@ bool ControlPanel::AddMember_impl
     item = new ControlPanelMember;
     item->base = base;
     item->mbr = md;
-    item->SetLabel(full_lbl, custom_label);
+    item->SetLabel(full_lbl, custom_label, short_label);
     item->SetDesc(desc, custom_desc);
     if(sub_gp_nm.nonempty()) {
       ControlPanelMember_Group* egp = (ControlPanelMember_Group*)mbrs.FindMakeGpName(sub_gp_nm);
@@ -906,17 +913,15 @@ void ControlPanel::SaveNameValueMembers(ParamSet* param_set, const String& name_
 }
 
 
-void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
+void ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
   if (!base || !mbr) return;
   int idx = FindMbrBase(base, mbr);
   if (idx < 0) return;
   
   ControlPanelMember* item = (ControlPanelMember*)mbrs.FastEl(idx);
-  if (!item->cust_label) {
-    // regenerate label as spec name or program name etc might have changed
-    String new_label;
-    base->GetControlPanelLabel(item->mbr, new_label);
-    item->label = new_label;
+  bool updt = item->MbrUpdated();
+  if(updt) {
+    item->SigEmitUpdated();
   }
 }
 

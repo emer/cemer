@@ -51,15 +51,18 @@ public:
   // #IGNORE remove any items with this base
 
   String                label;          // full display label for item in edit dialog
+  bool                  short_label;    // the label only includes the direct name of the item, and does not include a longer prefix of names of the object(s) that own this item -- if the label by itself is sufficiently unique, the short form can be used -- otherwise it is a good idea to use the long form to keep the labels unique
   bool                  cust_label;     // the label is customized over the default and thus protected from automatic updates -- this flag is automatically set by editing, but can also be set manually if desired
   String                desc;           // #EDIT_DIALOG description (appears as tooltip for item)
   bool                  cust_desc;      // the description (desc) is customized over the default and thus protected from automatic updates -- otherwise desc is obtained from the member or method type information -- this flag is automatically set by editing, but can also be set manually if desired
   taBase*               base;           // #READ_ONLY #SHOW #NO_SET_POINTER #UPDATE_POINTER the mbr/mth base (not ref'ed)
+  String       prv_desc;                // #IGNORE previous description -- for checking for changes
+  String       prv_label;               // #IGNORE previous label -- for checking changes
 
   String                caption() const; // the string used in the editor
   virtual TypeItem*     typeItem() const {return NULL;} // the mbr or mth
 
-  virtual void  SetLabel(const String& new_label, bool custom_lbl = false);
+  virtual void  SetLabel(const String& new_label, bool custom_lbl = false, bool short_label = false);
   // use this method to set a new label, cust label flag, and also set the prv_label
   virtual void  SetDesc(const String& new_desc, bool custom_desc = false);
   // use this method to set a new desc, cust desc flag, and also set the prv_desc
@@ -74,8 +77,6 @@ public:
   TA_BASEFUNS(ControlPanelItem);
 protected:
   void         UpdateAfterEdit_impl() override;
-  String       prv_desc; // previous description -- for checking for changes
-  String       prv_label;  // previous label -- for checking changes
 
 private:
 

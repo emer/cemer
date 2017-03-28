@@ -57,15 +57,26 @@ void ControlPanelMethod::UpdateAfterEdit_impl() {
     }
   }
 
+  if(!taMisc::is_loading) {
+    if(!cust_desc && desc != prv_desc) {
+      cust_desc = true;
+    }
+    if(!cust_label && label != prv_label) {
+      cust_label = true;
+    }
+  }
+  
   if(mth) {
     if(!cust_label) {
       label = mth->GetLabel();
-      prv_label = label;
     }
     if (!cust_desc) {
       desc = mth->desc; // regenerate
-      prv_desc = desc;
     }
   }
+
+  prv_desc = desc;
+  label = taMisc::StringCVar(label); // keep as safe c variables at all times..
+  prv_label = label;
 }
 

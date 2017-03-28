@@ -96,6 +96,7 @@ void ControlPanelItem::Initialize() {
   base = NULL;
   cust_desc = false;
   cust_label = false;
+  short_label = false;
 }
 
 void ControlPanelItem::Destroy() {
@@ -103,6 +104,7 @@ void ControlPanelItem::Destroy() {
 
 void ControlPanelItem::Copy_(const ControlPanelItem& cp) {
   label = cp.label;
+  short_label = cp.short_label;
   cust_label = cp.cust_label;
   desc = cp.desc;
   cust_desc = cp.cust_desc;
@@ -113,21 +115,23 @@ void ControlPanelItem::Copy_(const ControlPanelItem& cp) {
 
 void ControlPanelItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(!taMisc::is_loading) {
-    if(!cust_desc && desc != prv_desc) {
-      cust_desc = true;
-    }
-    if(!cust_label && label != prv_label) {
-      cust_label = true;
-    }
-  }
-  prv_desc = desc;
-  label = taMisc::StringCVar(label); // keep as safe c variables at all times..
-  prv_label = label;
+  // each sub-class should include code like this -- needs to be specific to member vs meth
+  // if(!taMisc::is_loading) {
+  //   if(!cust_desc && desc != prv_desc) {
+  //     cust_desc = true;
+  //   }
+  //   if(!cust_label && label != prv_label) {
+  //     cust_label = true;
+  //   }
+  // }
+  // prv_desc = desc;
+  // label = taMisc::StringCVar(label); // keep as safe c variables at all times..
+  // prv_label = label;
 }
 
-void ControlPanelItem::SetLabel(const String& new_label, bool custom_lbl) {
+void ControlPanelItem::SetLabel(const String& new_label, bool custom_lbl, bool short_label) {
   label = new_label;
+  short_label = short_label;
   cust_label = custom_lbl;
   prv_label = label;
 }
