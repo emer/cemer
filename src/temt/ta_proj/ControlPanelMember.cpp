@@ -281,18 +281,6 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
       cust_label = true;
     }
 
-    // if we HAPPEN to be the same as object at this point,
-    // then we can update our flags -- but cannot infer that we are definitley custom
-    // because obj vals might have changed, and we might need to update
-    if(label == def_long_label) {
-      cust_label = false;
-      short_label = false;
-    }
-    else if(label == def_short_label) {
-      cust_label = false;
-      short_label = true;
-    }
-
     if(!cust_label) {
       if(short_label) {
         if(label != def_short_label) {
