@@ -293,6 +293,8 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
       // y = on/off, x = color channel
       for(int chan = 0; chan < n_colors; chan++) {
         float cnv_sum = 0.0f;
+        float on_sum = 0.0f;
+        float off_sum = 0.0f;
 
         if(chan == 0 && !(dog_color_only && rgb_img)) { // monochrome
           ColorChannel cchan = (ColorChannel)chan;
@@ -306,17 +308,25 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
 #ifdef TA_VEC_USE
               int xf;
               for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
-                Vec4f ivals;  ivals.load(dog_img->el + img_st + xf);
-                Vec4f fvals;  fvals.load(net_flt + fi);
-                Vec4f prod = ivals * fvals;
-                cnv_sum += horizontal_add(prod);
+                Vec4f ivals_on;  ivals_on.load(dog_img->el + img_st + xf);
+                Vec4f fvals_on;  fvals_on.load(on_flt + fi);
+                Vec4f ivals_off;  ivals_off = 1.0f - ivals_on;
+                Vec4f fvals_off;  fvals_off.load(off_flt + fi);
+                Vec4f prod_on = ivals_on * fvals_on;
+                Vec4f prod_off = ivals_off * fvals_off;
+                on_sum += horizontal_add(prod_on);
+                off_sum += horizontal_add(prod_off);
               }
               for(; xf < flt_wdf; xf++, fi++) { // get the residuals
-                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * net_flt[fi];
+                float img_val = dog_img->FastEl_Flat(img_st + xf);
+                on_sum +=  img_val * on_flt[fi];
+                off_sum += (1.0f - img_val) * off_flt[fi];
               }
 #else              
               for(int xf = 0; xf < flt_wdf; xf++, fi++) {
-                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * net_flt[fi];
+                float img_val = dog_img->FastEl_Flat(img_st + xf);
+                on_sum += img_val * on_flt[fi];
+                off_sum += (1.0f - img_val) * off_flt[fi];
               }
 #endif              
             }
@@ -327,10 +337,13 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
                 if(ic.WrapClip(wrap, input_size.retina_size)) {
                   if(region.edge_mode == VisRegionParams::CLIP) continue;
                 }
-                cnv_sum += dog_img->FastEl2d(ic.x, ic.y) * net_flt[fi];
+                float img_val = dog_img->FastEl2d(ic.x, ic.y);
+                on_sum += img_val * on_flt[fi];
+                off_sum += (1.0f - img_val) * off_flt[fi];
               }
             }
           }
+          cnv_sum = cur_dog_filter->on_gain * on_sum - off_sum;
         } // monochrome
         else {
           // color
@@ -346,8 +359,6 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
             img_on = GetImageForChan(BLUE);
             img_off = GetImageForChan(YELLOW);
           }
-          float on_sum = 0.0f;
-          float off_sum = 0.0f;
           int fi = 0;
           for(int yf = -flt_wd; yf <= flt_wd; yf++) {
             if(ne) {

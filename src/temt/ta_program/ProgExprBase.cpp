@@ -1295,6 +1295,24 @@ String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& 
   return rval;
 }
 
+
+void ProgExprBase::ExprLookupCompleterReset() {
+  include_statics = false;
+  include_progels = false;
+  include_bools = false;
+  include_null = false;
+  include_types = false;
+  include_css_functions = false;
+  completion_progvar_local_list.RemoveAll();
+  completion_progvar_global_list.RemoveAll();
+  completion_dynenum_list.RemoveAll();
+  completion_function_list.RemoveAll();
+  completion_program_list.RemoveAll();
+  completion_member_list.RemoveAll();
+  completion_method_list.RemoveAll();
+  completion_enum_list.RemoveAll();
+}
+
 String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                           taBase*& path_own_obj, TypeDef*& path_own_typ,
                                           MemberDef*& path_md, ProgEl* own_pel,
@@ -1329,22 +1347,10 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   completion_prog_el_text = prog_el_txt;
   completion_lookup_seed = lookup_seed;
   completion_text_before = txt;
-  
-  include_statics = false;
-  include_progels = false;
-  include_bools = false;
-  include_null = false;
-  include_types = false;
-  include_css_functions = false;
   completion_lookup_type = lookup_type;
-  completion_progvar_local_list.RemoveAll();
-  completion_progvar_global_list.RemoveAll();
-  completion_dynenum_list.RemoveAll();
-  completion_function_list.RemoveAll();
-  completion_program_list.RemoveAll();
-  completion_member_list.RemoveAll();
-  completion_method_list.RemoveAll();
-  completion_enum_list.RemoveAll();
+
+  ExprLookupCompleterReset();
+  
   GetProgEls(&completion_progels_list); // get the list of program elements - Init() is too early to do this
   
   switch(lookup_type) {
@@ -1736,6 +1742,9 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 //  for (int i=0; i<completion_choice_list.size; i++) {
 //    taMisc::DebugInfo(completion_choice_list.SafeEl(i));
 //  }
+
+  ExprLookupCompleterReset();
+
   return &completion_choice_list;
 }
 
@@ -1774,7 +1783,8 @@ String_Array* ProgExprBase::StringFieldLookupForCompleter(const String& cur_txt,
   
   return ProgExprBase::ExprLookupCompleter(cur_txt, cur_pos, new_pos,
                                        path_own_obj, path_own_typ, path_md,
-                                       own_pel, own_prg, own_fun, NULL, NULL);}
+                                       own_pel, own_prg, own_fun, NULL, NULL);
+}
 
 bool ProgExprBase::ExprLookupIsFunc(const String& txt) {
   String trimmed_txt = trim(txt);

@@ -231,10 +231,8 @@ public:
   inline void          SetToSearch() { data.SetToSearch(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to SEARCH
 
-  virtual bool          IsControlPanelPointer() const;
-  // #CAT_CtrlPanel is this member a pointer to another control panel?
   virtual ControlPanel* GetControlPanelPointer() const;
-  // #CAT_CtrlPanel if this is a control panel pointer, return the current control panel we point to
+  // #CAT_CtrlPanel if this is a control panel pointer, return the control panel we point to (uses saved_value if a param set item, otherwise live base value)
 
   virtual bool          MbrUpdated();
   // #IGNORE called by owner when a member sig emit updates -- return true if we updated something

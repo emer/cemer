@@ -1172,8 +1172,8 @@ String taList_impl::GetPath_impl(taBase* ta, taBase* par_stop) const {
 
   taBase* par = GetOwner();
   if (par == NULL) {
-    if (TestError(ta == NULL, "GetPath_impl", "owner and recursive ta are both NULL -- programmer error please report -- path is unusable")) {
-      rval = "null_own";
+    if (TestWarning(ta == NULL, "GetPath_impl", "owner and recursive ta are both NULL -- programmer error please report -- path is unusable")) {
+      return "null_own";
     }
   }
   else if (((taBase*) this) != par_stop) {

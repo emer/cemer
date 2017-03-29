@@ -194,14 +194,16 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp)
       continue;
+    if(btmp->isDestroying())
+      continue;
     taBase* parent = btmp->GetParent();
     // keeps templates out of the list of actual instances
+    if (!parent)
+      continue;
     if (btmp->GetPath().startsWith(".templates")) {
       continue;
     }
     // keeps templates out of the list of actual instances
-    if (!parent)
-      continue;
     // JAR - March 8, 2016 remove to fix bug 2542 - need a different solution
 //    // allow root as parent if type is project
 //    if ((parent->GetName() == "root") && (!btmp->InheritsFrom(&TA_taProject)))

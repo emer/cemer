@@ -467,7 +467,11 @@ ParamSet* ControlPanel::Archive() {
   taProject* proj = GetMyProj();
   if(!proj) return NULL;
   ParamSet* param_set = proj->archived_params.NewArchive();
-  param_set->SetName(name + "_" + taDateTime::CurrentDateStampString());
+  String nm = name;
+  if(InheritsFrom(&TA_ParamSet) && owner->InheritsFrom(&TA_ParamSet_Group)) {
+    nm = owner->GetName() + "_" + nm;
+  }
+  param_set->SetName(nm + "_" + taDateTime::CurrentDateStampString());
   param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
   param_set->CopyActiveToSaved();
   param_set->AllLocked();
@@ -852,16 +856,14 @@ String ControlPanel::ActiveMembersToString(bool use_search_vals) {
   bool first = true;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
-    if(mbr->IsControlPanelPointer()) {
-      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
-      if(sub_panel) {
-        if(!first)
-          params.cat(" "); // sep
-        else
-          first = false;
-        String oparams = sub_panel->ActiveMembersToString(use_search_vals);
-        params.cat(oparams);
-      }
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      if(!first)
+        params.cat(" "); // sep
+      else
+        first = false;
+      String oparams = sub_panel->ActiveMembersToString(use_search_vals);
+      params.cat(oparams);
     }
     else {
       if(!mbr->RecordValue()) continue; // only active values!
@@ -879,11 +881,9 @@ String ControlPanel::ActiveMembersToString(bool use_search_vals) {
 void ControlPanel::SaveNameValueMembers_impl(ParamSet* param_set, String_Array& name_vals) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
-    if(mbr->IsControlPanelPointer()) {
-      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
-      if(sub_panel) {
-        sub_panel->SaveNameValueMembers_impl(param_set, name_vals);
-      }
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      sub_panel->SaveNameValueMembers_impl(param_set, name_vals);
     }
     else {
       int idx = name_vals.FindStartsWith(mbr->label + "=");

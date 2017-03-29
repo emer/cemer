@@ -169,14 +169,17 @@ public:
                                 MemberDef*& path_md, ProgEl* own_pel,
                                 Program* own_prg, Function* own_fun,
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
-  // generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
+  // #IGNORE generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
 
   static String_Array* ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                 taBase*& path_own_obj, TypeDef*& path_own_typ,
                                 MemberDef*& path_md, ProgEl* own_pel,
                                 Program* own_prg, Function* own_fun,
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
-  // like ExprLookupChooser but returns the list of choosable strings and does not include calls to GUI widgets - just gets the list
+  // #IGNORE like ExprLookupChooser but returns the list of choosable strings and does not include calls to GUI widgets - just gets the list
+
+  static void          ExprLookupCompleterReset();
+  // #IGNORE reset all the data structures and lists for completer -- 
 
   String               StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                             const String& mbr_name, int& new_pos) override;

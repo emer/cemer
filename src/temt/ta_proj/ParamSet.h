@@ -32,7 +32,7 @@ public:
   String                date;
   // #READ_ONLY #SHOW #CONTROL_PANEL_SHOW date that this parameter set was last activated or saved (as an archive)
   bool                  last_activated;
-  // #READ_ONLY #SHOW this param set was the last one activated, within its owning group
+  // #READ_ONLY #SHOW #NO_SAVE this param set was the last one activated, within its owning group
   String                dummy;  // #READ_ONLY #HIDDEN #NO_SAVE a dummy string element that can be used to create dummy members for just saving random values in a param set
 
   virtual void          UpDate();
@@ -77,11 +77,13 @@ public:
   
   int                   GetSpecialState() const override;
 
-  TA_SIMPLE_BASEFUNS(ParamSet);
+  TA_BASEFUNS(ParamSet);
+  SIMPLE_LINKS(ParamSet);
 protected:
   void                  UpdateAfterEdit_impl() override;
 
 private:
+  void Copy_(const ParamSet& cp);
   void Initialize();
   void Destroy()     { };
 };

@@ -30,6 +30,11 @@ void ParamSet::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
+void ParamSet::Copy_(const ParamSet& cp) {
+  date = cp.date;
+  // note: not copying last_activated or dummy
+}
+
 void ParamSet::UpDate() {
   date = taDateTime::CurrentDateTimeStampString();
 }
