@@ -1266,14 +1266,16 @@ bool taProject::AutoSave(bool force) {
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
   if(flr->ostrm) {
-    taMisc::Info("Autosave start...");
+    if(taMisc::undo_debug)
+      taMisc::Info("Autosave start...");
     ++taMisc::is_auto_saving;
     taMisc::save_use_name_paths = false; // don't use name paths for autosave!
     int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this);
     // note: not using Save_strm to preserve the dirty bit!
     --taMisc::is_auto_saving;
     saved = true;
-    taMisc::Info("Autosave end.");
+    if(taMisc::undo_debug)
+      taMisc::Info("Autosave end.");
   }
   flr->Close();
   taRefN::unRefDone(flr);

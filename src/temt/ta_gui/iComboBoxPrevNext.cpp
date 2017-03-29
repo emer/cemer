@@ -100,7 +100,9 @@ void iComboBoxPrevNext::UpdateColor(int i) {
   if(item_colors.count() > i) {
     QString color = item_colors[i];
     if(!color.isEmpty()) {
-      combo_box->setStyleSheet("color: " + color);
+      // note: doesn't seem to be any way to get this thing to scope the color..
+      combo_box->setStyleSheet
+        ("QAbstractItemView { color: black; } QComboBox { color: " + color + "; }");
     }
   }
 }
