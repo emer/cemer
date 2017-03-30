@@ -110,7 +110,7 @@ void taiWidgetComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
       AddItem(ed->GetLabel(), QVariant(ed->enum_no));
       String clr = ed->OptionAfter("COLOR_");
       if(clr.nonempty()) {
-        rep()->item_colors.append(clr.toQString());
+        rep()->addColor(clr.toQString());
       }
     }
   }

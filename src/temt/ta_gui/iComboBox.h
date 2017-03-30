@@ -24,11 +24,16 @@
 class TA_API iComboBox: public QComboBox {
   Q_OBJECT
 public:
+  QList<QString>        item_colors;
+
+  void addColor(const QString& color) { item_colors.append(color); }
+  
   iComboBox(QWidget* parent = NULL);
 
 protected:
   void wheelEvent(QWheelEvent * event) override;
   void showEvent(QShowEvent *e) override;
+  void paintEvent(QPaintEvent* e) override;
 };
 
 #endif // iComboBox_h

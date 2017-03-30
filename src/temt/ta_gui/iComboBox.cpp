@@ -15,6 +15,7 @@
 
 #include "iComboBox.h"
 #include <QWheelEvent>
+#include <QStylePainter>
 
 iComboBox::iComboBox(QWidget* parent)
   : QComboBox(parent)
@@ -40,4 +41,25 @@ void iComboBox::showEvent(QShowEvent* e) {
   if(sizeAdjustPolicy() == AdjustToContents) {
     setFixedWidth(sizeHint().width()-20); // shrink us -- computation is too big
   }
+}
+
+void iComboBox::paintEvent(QPaintEvent *) {
+  QStylePainter painter(this);
+  painter.setPen(palette().color(QPalette::Text));
+
+  // draw the combobox frame, focusrect and selected etc.
+  QStyleOptionComboBox opt;
+  initStyleOption(&opt);
+  painter.drawComplexControl(QStyle::CC_ComboBox, opt);
+
+  int idx = currentIndex();
+  if(idx >= 0 && idx < item_colors.count()) {
+    QString color = item_colors[idx];
+    if(!color.isEmpty()) {
+      painter.setPen(QColor(color));
+    }
+  }
+    
+  // draw the icon and text
+  painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
 }

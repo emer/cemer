@@ -24,10 +24,6 @@
 iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   lay = new QHBoxLayout(this);
   lay->setMargin(0); lay->setSpacing(0);
-  combo_box = new iComboBox(this);
-  // combo_box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-  combo_box->setIconSize(QSize(1,1)); // no icon!
-  lay->addWidget(combo_box);
 
   vlay = new QVBoxLayout();
   vlay->setMargin(0); lay->setSpacing(0);
@@ -49,10 +45,14 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   connect(next_button, SIGNAL(pressed()), this, SLOT(NextItem()));
   vlay->addWidget(next_button);
 
+  combo_box = new iComboBox(this);
+  // combo_box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+  combo_box->setIconSize(QSize(1,1)); // no icon!
+  lay->addWidget(combo_box);
+
   connect(combo_box, SIGNAL(editTextChanged(const QString &)), this,
           SIGNAL(editTextChanged(const QString &)));
   connect(combo_box, SIGNAL(activated(int)), this, SIGNAL(activated(int)));
-  connect(combo_box, SIGNAL(activated(int)), this, SLOT(UpdateColor(int)));
   connect(combo_box, SIGNAL(activated(const QString &)), this,
           SIGNAL(activated(const QString &)));
   connect(combo_box, SIGNAL(highlighted(int)), this, SIGNAL(highlighted(int)));
@@ -60,7 +60,6 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
           SIGNAL(highlighted(const QString &)));
   connect(combo_box, SIGNAL(currentIndexChanged(int)), this,
           SIGNAL(currentIndexChanged(int)));
-  connect(combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateColor(int)));
   connect(combo_box, SIGNAL(currentIndexChanged(const QString &)), this,
           SIGNAL(currentIndexChanged(const QString &)));
   connect(combo_box, SIGNAL(currentTextChanged(const QString &)), this,
@@ -95,14 +94,3 @@ void iComboBoxPrevNext::NextItem() {
   emit activated(idx);
 }
 
-void iComboBoxPrevNext::UpdateColor(int i) {
-  if(i < 0) return;
-  if(item_colors.count() > i) {
-    QString color = item_colors[i];
-    if(!color.isEmpty()) {
-      // note: doesn't seem to be any way to get this thing to scope the color..
-      combo_box->setStyleSheet
-        ("QAbstractItemView { color: black; } QComboBox { color: " + color + "; }");
-    }
-  }
-}
