@@ -21,6 +21,7 @@
 #include <SubversionClient>
 #include <QThread>
 #include <QString>
+#include <QStringList>
 #include <ClusterRun_QObj>
 
 class ClusterRun;
