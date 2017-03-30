@@ -71,6 +71,7 @@ public:
   DorsalVentral         dorsal_ventral; // dorsal vs. ventral specialization
   Valence               valence;        // #CONDSHOW_ON_dorsal_ventral:VENTRAL US valence coding of the ventral neurons
   MatrixActSpec         matrix;         // #CONDSHOW_ON_matrix_patch:MATRIX parameters for Matrix activation dynamics
+  bool                  deep_mod_zero;  // #CONDSHOW_ON_matrix_patch:PATCH for modulation coming from the BLA via deep_mod_net -- when this modulation signal is below zero, does it have the ability to zero out the patch activations?  i.e., is the modulation required to enable patch firing?
   
   virtual GateType      MatrixGateType(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // get type of gating that given unit participates in

@@ -1465,12 +1465,14 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
+    return;
   }
   else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
     if(deep.trc_thal_gate) {
       u->net *= u->thal;
     }
+    return;
   }
   // must be SUPER units at this point
   else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet 

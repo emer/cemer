@@ -39,6 +39,7 @@ void MSNUnitSpec::Initialize() {
 }
 
 void MSNUnitSpec::Defaults_init() {
+  deep_mod_zero = true;
 }
 
 void MSNUnitSpec::UpdateAfterEdit_impl() {
@@ -99,24 +100,19 @@ void MSNUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int th
 }
 
 void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(deep.SendDeepMod() || deep.IsTRC()) {
+    inherited::Compute_DeepMod(u, net, thr_no);
+    return;
+  }
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay(); 
+  // must be SUPER units at this point
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
     u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100% -- not using deep
-    // inherited::Compute_DeepMod(u, net, thr_no);
+    return;
   }
   else if(dorsal_ventral == VENTRAL && matrix_patch == MATRIX) {
-    LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-    if(deep.SendDeepMod()) {
-      u->deep_lrn = u->deep_mod = u->act;      // record what we send!
-    }
-    else if(deep.IsTRC()) {
-      u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
-      if(deep.trc_thal_gate) {
-        u->net *= u->thal;
-      }
-    }
-    // must be SUPER units at this point
-    // else if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
-    else if(u->deep_mod_net <= deep.mod_thr) { // per-unit, NOT layer
+    // if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
+    if(u->deep_mod_net <= deep.mod_thr) { // per-unit, NOT layer
       u->deep_lrn = 0.0f;    // default is 0!
       u->deep_mod = 1.0f;
     }
@@ -125,7 +121,23 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
       u->deep_mod = 1.0f;
     }
   }
-  else { // must be VENTRAL, PATCH
+  else if(dorsal_ventral == VENTRAL && matrix_patch == PATCH) {
+    // if(lay->am_deep_mod_net.max <= deep.mod_thr) { // not enough yet
+    if(u->deep_mod_net <= deep.mod_thr) { // per-unit, NOT layer
+      u->deep_lrn = 0.0f;    // default is 0!
+      if(deep_mod_zero) {
+        u->deep_mod = 0.0f;
+      }
+      else {
+        u->deep_mod = 1.0f;
+      }
+    }
+    else {
+      u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
+      u->deep_mod = 1.0f;       // don't modulate activation here..
+    }
+  }
+  else {
     inherited::Compute_DeepMod(u, net, thr_no); // use D1D2 one
   }
 }
