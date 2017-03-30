@@ -28,6 +28,10 @@ TA_BASEFUNS_CTORS_DEFN(DoGRegionSpec);
 typedef void (DoGRegionSpec::*DoGRegionMethod)(int, int);
 
 void DoGRegionSpec::Initialize() {
+  mono_zero = MEAN_ZERO;
+  mono_zero_fix = 0.5f;
+  mono_zero_mean = 0.0f;
+  mono_zero_val = 0.5f;
   dog_specs.on = true;
   dog_specs.half_size = 8;
   dog_specs.on_sigma = 4;
@@ -239,6 +243,17 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
     PrecomputeColor(cur_img, (n_colors == 1));
   }
 
+  if(!dog_color_only) {         // get monochrome zero point
+    if(mono_zero == FIX_ZERO) {
+      mono_zero_val = mono_zero_fix;
+    }
+    else if(mono_zero == MEAN_ZERO) {
+      float_Matrix* mono_img = GetImageForChan((ColorChannel)0);
+      mono_zero_mean = taMath_float::vec_mean(mono_img);
+      mono_zero_val= mono_zero_mean;
+    }
+  }
+
   cur_dog_filter = &dog_specs;
   cur_dog_off = 0;
   IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
@@ -305,30 +320,41 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
           for(int yf = -flt_wd; yf <= flt_wd; yf++) {
             if(ne) {
               int img_st = dog_img->FastElIndex2d(icc.x - flt_wd, icc.y + yf);
-#ifdef TA_VEC_USE
-              int xf;
-              for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
-                Vec4f ivals_on;  ivals_on.load(dog_img->el + img_st + xf);
-                Vec4f fvals_on;  fvals_on.load(on_flt + fi);
-                Vec4f ivals_off;  ivals_off = 1.0f - ivals_on;
-                Vec4f fvals_off;  fvals_off.load(off_flt + fi);
-                Vec4f prod_on = ivals_on * fvals_on;
-                Vec4f prod_off = ivals_off * fvals_off;
-                on_sum += horizontal_add(prod_on);
-                off_sum += horizontal_add(prod_off);
-              }
-              for(; xf < flt_wdf; xf++, fi++) { // get the residuals
-                float img_val = dog_img->FastEl_Flat(img_st + xf);
-                on_sum +=  img_val * on_flt[fi];
-                off_sum += (1.0f - img_val) * off_flt[fi];
-              }
-#else              
+              // vectorizing doesn't work well for if / then!
+// #ifdef TA_VEC_USE
+//               int xf;
+//               for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
+//                 Vec4f ivals;  ivals_on.load(dog_img->el + img_st + xf);
+//                 Vec4f fvals_on;  fvals_on.load(on_flt + fi);
+//                 Vec4f ivals_rel;  ivals_rel = ivals - mono_zero_val;
+//                 Vec4f fvals_off;  fvals_off.load(off_flt + fi);
+//                 Vec4f prod_on = ivals_on * fvals_on;
+//                 Vec4f prod_off = ivals_off * fvals_off;
+//                 on_sum += horizontal_add(prod_on);
+//                 off_sum += horizontal_add(prod_off);
+//               }
+//               for(; xf < flt_wdf; xf++, fi++) { // get the residuals
+//                 float img_val = dog_img->FastEl_Flat(img_st + xf);
+//                 float img_rel = img_val - mono_zero_val;
+//                 if(img_rel >= 0.0f) {
+//                   on_sum +=  img_rel * on_flt[fi];
+//                 }
+//                 else {
+//                   off_sum += -img_rel * off_flt[fi];
+//                 }
+//               }
+// #else              
               for(int xf = 0; xf < flt_wdf; xf++, fi++) {
                 float img_val = dog_img->FastEl_Flat(img_st + xf);
-                on_sum += img_val * on_flt[fi];
-                off_sum += (1.0f - img_val) * off_flt[fi];
+                float img_rel = img_val - mono_zero_val;
+                if(img_rel >= 0.0f) {
+                  on_sum +=  img_rel * on_flt[fi];
+                }
+                else {
+                  off_sum += -img_rel * off_flt[fi];
+                }
               }
-#endif              
+// #endif              
             }
             else {
               for(int xf = -flt_wd; xf <= flt_wd; xf++, fi++) {
@@ -338,8 +364,13 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
                   if(region.edge_mode == VisRegionParams::CLIP) continue;
                 }
                 float img_val = dog_img->FastEl2d(ic.x, ic.y);
-                on_sum += img_val * on_flt[fi];
-                off_sum += (1.0f - img_val) * off_flt[fi];
+                float img_rel = img_val - mono_zero_val;
+                if(img_rel >= 0.0f) {
+                  on_sum +=  img_rel * on_flt[fi];
+                }
+                else {
+                  off_sum += -img_rel * off_flt[fi];
+                }
               }
             }
           }

@@ -385,12 +385,12 @@ bool VisRegionSpecBase::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
   col->SetUserData("IMAGE", true);
   if(!fmt_only) {
     float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-    if(ret_img->dims() == 3) {   // rgb input image
+    if(img->dims() == 3) {   // rgb input image
       if(region.color == VisRegionParams::COLOR) {
         ret_img->CopyFrom(img); // good
       }
       else {
-        ColorSpace::sRGBtoGreyFastImg(*ret_img.ptr(), *img); // downscale -- probably redundant with same downscale elsewhere, but we don't know here..  typically only debug / gui mode anyway
+        ColorSpace::sRGBtoGreyFastImg(*(ret_img.ptr()), *img); // downscale -- probably redundant with same downscale elsewhere, but we don't know here..  typically only debug / gui mode anyway
       }
     }
     else {                      // mono input image

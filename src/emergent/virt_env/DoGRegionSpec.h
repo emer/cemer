@@ -36,6 +36,14 @@ class E_API DoGRegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs
 INHERITED(VisRegionSpecBase)
 public:
+  enum MonoZero {               // what to use as the effective zero point for monochrome channel -- values above this contribute to ON channel while those below contribute to OFF channel
+    MEAN_ZERO,                  // place the zero-point for monochrome channel at mean image value
+    FIX_ZERO,                   // place the zero-point for monochrome channel at fixed mono_zero_fix point
+  };
+
+  MonoZero      mono_zero;       // what to use as the effective zero point for monochrome channel -- values above this contribute to ON channel while those below contribute to OFF channel
+  float         mono_zero_fix;   // #CONDSHOW_ON_mono_zero:FIX_ZERO fixed intensity value for monochrome zero point
+  
   DoGFilter	dog_specs;	// Difference of Gaussian retinal filter specification
   DoGFilter	dog_specs_2;	// Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
   DoGFilter	dog_specs_3;	// Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
@@ -49,6 +57,8 @@ public:
 
   int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 3 = full color, 2 = color + dog_color_only)
   int		n_dogs;	        // #READ_ONLY number of separate sets of dog filters in effect
+  float         mono_zero_mean; // #READ_ONLY #NO_SAVE #SHOW mean value of monochrome image -- potentially used for zero point for monochrome channel
+  float         mono_zero_val;  // #READ_ONLY #NO_SAVE actual value to use for monochrome zero point
   float_Matrix	dog_out_r;	// #READ_ONLY #NO_SAVE final output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
   float_Matrix	dog_out_l;	// #READ_ONLY #NO_SAVE final output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
   float_Matrix	dog_raw_r;	// #READ_ONLY #NO_SAVE raw, pre kwta output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
