@@ -20,11 +20,12 @@
 
 #include <QObject>
 #include <QComboBox>
+#include <QStringList>
 
 class TA_API iComboBox: public QComboBox {
   Q_OBJECT
 public:
-  QList<QString>        item_colors;
+  QStringList        item_colors;
 
   void addColor(const QString& color) { item_colors.append(color); }
   

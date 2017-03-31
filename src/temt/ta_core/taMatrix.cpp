@@ -31,6 +31,7 @@
 #include <MTRnd>
 #include <taArray_base>
 #include <taString>
+#include <DataCol>
 
 #include <taMisc>
 
@@ -1212,6 +1213,14 @@ int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   //int rval =
   inherited::Dump_Save_Value(strm, par, indent);
 
+  // no point in saving non-data table matrix elements!  basically temps.
+  if(!owner->InheritsFrom(&TA_DataCol)) {
+    return true;
+    // if(taMisc::is_undo_saving) {
+    //   if(!owner) return true;          // never
+    // }
+  }
+  
   // save data, if not completely null
   int i;
   if (geom.dims() > 0) {
