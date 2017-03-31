@@ -157,8 +157,21 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 #else
     int cur_running = (int)diff_threads.n_running;
 #endif
-    if(cur_running > 0)
+    if(cur_running > 0) {
       diff_threads.SyncThreads();       // sync now before running again..
+    }
+    // note: due to async nature of diff thread, SyncThreads is not always called
+    // and thus the native task manager timing is not often updated -- use internal
+    // timer for the one worker thread instead:
+    TimeUsedHR* undo_timer = diff_threads.UndoTimer();
+    if(undo_timer) {
+      undo_diff_time_used.CopyFrom(undo_timer);
+      if(undo_diff_time_used.s_used > 1.0) {
+        taMisc::Warning("Undo diff computation took longer than 1 second:",
+                        String(undo_diff_time_used.s_used),
+                        "this causes laggy behavior and indicates likely that unnecessary stuff is being saved -- please run UndoStats on the project, and also UndoSaveCurRec and look at what is being saved");
+      }
+    }
     urec->diff_src = cur_src;   // this smartref ptr needs to be set in main task
     rec_to_diff = urec;
     diff_threads.Run(); // run diff in separate thread
@@ -170,7 +183,9 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   undo_time_used.IncrAvg();
   if(taMisc::undo_debug) {
     taMisc::Info("undo save took:", String(undo_time_used.s_used * 1.0e3),
-                 "msec.  running average:", String(undo_time_used.avg_used.GetAvg() * 1.0e3f));
+                 "msec.  running average:", String(undo_time_used.avg_used.GetAvg() * 1.0e3f),
+                 "\nundo diff took:", String(undo_diff_time_used.s_used * 1.0e3),
+                 "msec.  running average:", String(undo_diff_time_used.avg_used.GetAvg() * 1.0e3f));
   }
   
   return true;                  // todo: need to check result of Save_String presumably

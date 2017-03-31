@@ -33,6 +33,9 @@ INHERITED(taThreadMgr)
 public:
   taUndoMgr*    undo_mgr()      { return (taUndoMgr*)owner; }
 
+  TimeUsedHR*   UndoTimer();
+  // get the undo timer from task thread if avail, else null
+ 
   void Run();
 
   TA_BASEFUNS_NOCOPY(UndoDiffThreadMgr);

@@ -1214,6 +1214,7 @@ int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   inherited::Dump_Save_Value(strm, par, indent);
 
   // no point in saving non-data table matrix elements!  basically temps.
+  // todo: if needed, can add a flag to modulate this behavior..
   if(!owner->InheritsFrom(&TA_DataCol)) {
     return true;
     // if(taMisc::is_undo_saving) {

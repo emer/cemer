@@ -14,10 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "UndoDiffThreadMgr.h"
+#include <UndoDiffTask>
 
 TA_BASEFUNS_CTORS_DEFN(UndoDiffThreadMgr);
-
-taTypeDef_Of(UndoDiffTask);
 
 void UndoDiffThreadMgr::Initialize() {
   n_threads = 2;                // don't use 0, just 1..
@@ -31,4 +30,9 @@ void UndoDiffThreadMgr::Run() {
   n_threads = 2;                // don't use 0, just 1..
   InitAll();
   RunThreads();                 // just run the thread, not main guy
+}
+
+TimeUsedHR* UndoDiffThreadMgr::UndoTimer() {
+  if(tasks.size < 2) return NULL;
+  return &(((UndoDiffTask*)tasks[1])->diff_time);
 }

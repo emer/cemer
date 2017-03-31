@@ -44,6 +44,7 @@ public:
   bool                  save_load_file; // #NO_SAVE save a copy of the file that is loaded during an undo or redo -- file name is "undo_load_file.txt" in cur directory -- useful for debugging issues
   taUndoRec*            rec_to_diff;    // #IGNORE for threading system, rec for diffing
   TimeUsedHR            undo_time_used; // #NO_SAVE undo time used recording
+  TimeUsedHR            undo_diff_time_used; // #NO_SAVE copy of undo diff time used data
 
   void          Nest(bool nest);
   // call in pairs, to indicate nested contexts

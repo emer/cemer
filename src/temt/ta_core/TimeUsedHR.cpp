@@ -36,7 +36,7 @@ public:
   LARGE_INTEGER end;
   LARGE_INTEGER used;
   void		GetStartTime() { QueryPerformanceCounter(&start);}
-  void		GetEndTime() { 
+  void		GetEndTime() { if(start == 0) return;
     QueryPerformanceCounter(&end);
     used.QuadPart = end.QuadPart - start.QuadPart;
     }
@@ -45,7 +45,9 @@ public:
       QueryPerformanceFrequency(&freq);
     } 
     double rval = used.QuadPart / (double)(freq.QuadPart);
-    return rval;}
+    return rval;
+  }
+  TimeUsedHRd() { start = 0; end = 0; used = 0; }
 };
 
 LARGE_INTEGER TimeUsedHRd::freq;
@@ -64,13 +66,15 @@ timeval timeval_diff(timeval a, timeval b) {
   return a;
 }
 
+void timeval_init(timeval& a) { a.tv_sec = 0; a.tv_usec = 0; }
+
 class TimeUsedHRd {
 public:
   timeval	start;
   timeval	end;
   timeval	used;
   void		GetStartTime() { gettimeofday(&start, NULL);}
-  void		GetEndTime() { 
+  void		GetEndTime() { if(start.tv_usec == 0 && start.tv_sec == 0) return;
     gettimeofday(&end, NULL);
     used = timeval_diff(end, start);}
   double	GetTotSecs() { 
@@ -78,6 +82,7 @@ public:
     if (used.tv_sec) rval += used.tv_sec;
     return rval;
     }
+  TimeUsedHRd() { timeval_init(start); timeval_init(end); timeval_init(used); }
 };
 
 #endif
@@ -97,6 +102,7 @@ void TimeUsedHR::Copy_(const TimeUsedHR& cp) {
   *d = *(cp.d);
   s_used = cp.s_used;
   n_used = cp.n_used;
+  avg_used = cp.avg_used;
 }
 
 void TimeUsedHR::StartTimer(bool reset_used) {

@@ -31,12 +31,15 @@ class TA_API UndoDiffTask : public taTask {
   // threading task for computing the diff on undo save data -- fork this off to save time
 INHERITED(taTask)
 public:
+  TimeUsedHR            diff_time; // amount of time spent diffing
+
   void run() override;
   // runs specified chunk of computation (encode diff)
 
   UndoDiffThreadMgr* mgr() { return (UndoDiffThreadMgr*)owner->GetOwner(); }
 
   TA_BASEFUNS_NOCOPY(UndoDiffTask);
+  SIMPLE_LINKS(UndoDiffTask);
 private:
   void  Initialize();
   void  Destroy();

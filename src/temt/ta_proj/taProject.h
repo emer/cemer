@@ -200,7 +200,7 @@ public:
   virtual void          UndoStats(bool show_list = false, bool show_diffs = false);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #NO_SAVE_UNDO #CAT_File report to css Console the current undo statistics in terms of # of records and total amount of RAM taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
   virtual void          UndoSaveCurRec();
-  // #MENU #MENU_ON_Object #NO_SAVE_UNDO #CAT_File save the current undo save file to 'undo_cur_src_rec.proj' file in current directory -- useful for determining what is being saved in the undo state when it seems bigger than it should be!
+  // #MENU #MENU_ON_Object #NO_SAVE_UNDO #CAT_File #CONFIRM save the current undo save file to 'undo_cur_src_rec.proj' file in current directory -- useful for determining what is being saved in the undo state when it seems bigger than it should be!
   virtual void          ReplaceString(const String& srch, const String& repl);
   // #BUTTON #CAT_File replace string in this project -- WARNING: this is potentially highly destructive and dangerous -- it just does a literal string replace for ANYTHING that matches srch in the ENTIRE project file (types, paths, values everything) -- this could end up rendering your project completely brain dead, which you will soon see due to error messages: it converts entire project to a string object, does the replace on that, and then attempts to load the new project string back over the top of the current one -- errors will typically be evident during this load process.  If you know what you're doing, this can be a very convenient way to update types or other such things globally.
 

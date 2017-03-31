@@ -269,7 +269,7 @@ void taThreadMgr::RunThreads() {
   }
 
   if(get_timing) {
-    sync_time.EndTimer();
+    sync_time.EndIncrAvg();
     run_time.StartTimer(false); // don't reset
   }
 }
@@ -303,7 +303,7 @@ void taThreadMgr::SyncThreadsStart() {
 
 void taThreadMgr::SyncThreads() {
   if(get_timing) {
-    run_time.EndTimer();
+    run_time.EndIncrAvg();
     sync_time.StartTimer(false); // don't reset
   }
 
@@ -351,8 +351,8 @@ void taThreadMgr::SyncThreads() {
   }
 
   if(get_timing) {
-    sync_time.EndTimer();
-    total_time.EndTimer();
+    sync_time.EndIncrAvg();
+    total_time.EndIncrAvg();
   }
 }
 
@@ -366,8 +366,8 @@ void taThreadMgr::Run() {
     }
     tasks[0]->run();      // run our own set..
     if(get_timing) {
-      total_time.EndTimer();
-      run_time.EndTimer();
+      total_time.EndIncrAvg();
+      run_time.EndIncrAvg();
     }
     return;
   }
@@ -387,6 +387,7 @@ void taThreadMgr::StartTimers() {
 }
 
 void taThreadMgr::EndTimers(bool print_report) {
+  if(!get_timing) return;
   get_timing = false;
   if(total_time.s_used > 0.0) {
     run_time_pct = run_time.s_used / total_time.s_used;
@@ -405,9 +406,9 @@ void taThreadMgr::EndTimers(bool print_report) {
   if(print_report) {
     String rpt;
     rpt << GetTypeDef()->name << " thread report for n_threads: " << n_threads << "\n";
-    rpt << "total time:   " << total_time.s_used << "\n";  
-    rpt << "run time:     " << run_time.s_used << " \t%: " << run_time_pct << "\n";  
-    rpt << "sync time:    " << sync_time.s_used << " \t%: " << sync_time_pct << "\n";  
+    rpt << "total time:   " << total_time.s_used << " avg: " << total_time.avg_used.avg << "\n";  
+    rpt << "run time:     " << run_time.s_used << " avg: " << run_time.avg_used.avg << " \t%: " << run_time_pct << "\n";  
+    rpt << "sync time:    " << sync_time.s_used << " avg: " << sync_time.avg_used.avg << " \t%: " << sync_time_pct << "\n";  
     rpt << "wake in sync: " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << "\n";
     taMisc::Info(rpt);
   }

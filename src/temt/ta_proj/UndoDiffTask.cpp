@@ -35,7 +35,9 @@ void UndoDiffTask::run() {
 
   if(um->isDestroying()) return; // checks owner..
 
+  diff_time.StartTimer(true);
   um->rec_to_diff->EncodeMyDiff();
   um->rec_to_diff = NULL;       // done, reset!
+  diff_time.EndIncrAvg();
 }
 
