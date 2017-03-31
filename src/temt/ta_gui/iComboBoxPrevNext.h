@@ -55,7 +55,6 @@ public:
   int count()   { return combo_box->count(); }
   QString currentText() const { return combo_box->currentText(); }
   int currentIndex() const { return combo_box->currentIndex(); }
-  QVariant currentData(int role = Qt::UserRole) const { return combo_box->currentData(role); }
   int maxVisibleItems() const { return combo_box->maxVisibleItems(); }
   void setMaxVisibleItems(int mx) { combo_box->setMaxVisibleItems(mx); }
   int maxCount() const { return combo_box->maxCount(); }
@@ -143,7 +142,6 @@ public:
   void clearEditText() { combo_box->clearEditText(); }
   void setEditText(const QString &text) { combo_box->setEditText(text); }
   void setCurrentIndex(int index) { combo_box->setCurrentIndex(index); }
-  void setCurrentText(const QString &text) { combo_box->setCurrentText(text); }
 
  Q_SIGNALS:
   void editTextChanged(const QString &);
