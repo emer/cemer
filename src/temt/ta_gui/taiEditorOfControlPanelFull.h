@@ -38,10 +38,14 @@ public:
 protected slots:
   void          DoRemoveFmCtrlPanel() override;
   void          DoGoToObject();
+  void          DoMoveToTop();
+  void          DoMoveToBottom();
   void          DoMoveToCtrlPanel(QAction* act);
   void          DoEditLabel();
-  void          DoCopyActiveToSaved();
-  void          DoCopySavedToActive();
+  void          DoSaveCurrent();
+  void          DoActivate();
+  void          DoCopyToAllInGroup();
+  void          DoCopyStateToAllInGroup();
 
 protected:
   void          ClearBody_impl() override;       // we also clear all the methods, and then rebuild them

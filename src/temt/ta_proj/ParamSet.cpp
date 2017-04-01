@@ -77,15 +77,31 @@ void ParamSet::CopySavedToActive_item(int idx) {
   }
 }
 
-bool ParamSet::ActiveEqualsSaved(String member_name) {
-  bool rval = false;
+void ParamSet::SetSavedValue(const String& member_name, const String& saved_value,
+                             bool no_locked) {
   ControlPanelMember* emi = mbrs.FindLeafName(member_name);
-  if (emi) {
-    String active_value = emi->CurValAsString();
-    String saved_value = emi->data.saved_value;
-    if (active_value == saved_value)
-      rval = true;
-  }
+  if(!emi) return;
+  if(no_locked && emi->IsLocked()) return;
+  emi->data.saved_value = saved_value;
+  emi->SigEmitUpdated();
+}
+
+void ParamSet::SetMemberState(const String& member_name,
+                              ControlPanelMemberData::ParamState state) {
+  ControlPanelMember* emi = mbrs.FindLeafName(member_name);
+  if(!emi) return;
+  emi->data.state = state;
+  emi->SigEmitUpdated();
+}
+
+bool ParamSet::ActiveEqualsSaved(const String& member_name) {
+  ControlPanelMember* emi = mbrs.FindLeafName(member_name);
+  if(!emi) return false;
+  bool rval = false;
+  String active_value = emi->CurValAsString();
+  String saved_value = emi->data.saved_value;
+  if (active_value == saved_value)
+    rval = true;
   return rval;
 }
 

@@ -33,7 +33,6 @@
 
 // declare all other types mentioned but not required to include:
 class taGroup_impl; // 
-class ControlPanelMember; // 
 class ControlPanelMethod; // 
 class DataTable; //
 class ControlPanel_Group; //
@@ -97,8 +96,6 @@ public: // public API
   // #IGNORE move member to control panel group (i.e., master)
   virtual void  RemoveMethod(int idx);
   // #IGNORE remove method at given index
-  virtual void  GoToObject(int idx);
-  // #IGNORE select object for given member field for editing in the gui
   virtual void  EditLabel(int idx);
   // #IGNORE edit the current label - use_default will generate the label
 
@@ -108,13 +105,13 @@ public: // public API
   // #CAT_CtrlPanel test if this is an archived item -- looks for a non-null owner of type ArchivedParams_Group
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
-  virtual void CopyFromDataTable(DataTable* table, int row_num = -1);
+  virtual void       CopyFromDataTable(DataTable* table, int row_num = -1);
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel copy member values into this control panel from same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table, which is typical for configuration tables -- if this is a ParamSet then values are copied into saved_value, otherwise goes directly into active values
-  virtual void CopyToDataTable(DataTable* table, int row_num = -1);
+  virtual void       CopyToDataTable(DataTable* table, int row_num = -1);
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table -- a new row is added if not already present -- this is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
-  virtual void AllStable();
+  virtual void       AllStable();
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #DYN1 set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
-  virtual void AllLocked();
+  virtual void       AllLocked();
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #DYN1 set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
 
   virtual bool  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);

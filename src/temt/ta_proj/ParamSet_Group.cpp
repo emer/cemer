@@ -39,3 +39,16 @@ void ParamSet_Group::ActivateSaveAll() {
     ps->SaveCurrent();
   }
 }
+
+void ParamSet_Group::SetSavedValue(const String& member_name, const String& saved_value,
+                                   bool no_locked) {
+  FOREACH_ELEM_IN_GROUP(ParamSet, ps, *this) {
+    ps->SetSavedValue(member_name, saved_value, no_locked);
+  }
+}
+
+void ParamSet_Group::SetMemberState(const String& member_name, int state) {
+  FOREACH_ELEM_IN_GROUP(ParamSet, ps, *this) {
+    ps->SetMemberState(member_name, (ControlPanelMemberData::ParamState)state);
+  }
+}

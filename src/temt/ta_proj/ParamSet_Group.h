@@ -36,6 +36,12 @@ public:
 
   virtual void  ActivateSaveAll();
   // #CAT_ParamSet #MENU #MENU_ON_ControlPanel #CONFIRM for each param set in this group, first Activate the saved parameter settings, and then do SaveCurrent to save the current values -- this does a refresh of the saved values for each item, and can be useful if new members were added or their types were changed
+  
+  virtual void  SetSavedValue(const String& member_name, const String& saved_value,
+                              bool no_locked = true);
+  // #CAT_ParamSet for each in group: set the saved_value of given member -- if no_locked is set, does NOT affect a member with state of LOCKED
+  virtual void  SetMemberState(const String& member_name, int state);
+  // #CAT_ParamSet for each in group: set the state of given member
 
   String        GetTypeDecoKey() const override { return "ParamSet"; }
 

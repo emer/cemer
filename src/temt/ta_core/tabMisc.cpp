@@ -36,7 +36,9 @@ taBase* tabMisc::RootFindFromPath(const String& path, MemberDef*& ret_md) {
     taMisc::Error("RootFindFromPath: tabMisc::root is NULL!  bad programmer error -- please report bug!");
     return NULL;
   }
-  if(path.startsWith(".projects") || path.startsWith("root.") || path.startsWith(".root.")) {
+  if(path.startsWith(".projects") || path.startsWith("root.") || path.startsWith(".root.")
+     || path.startsWith(".templates") || path.startsWith(".colorspecs")
+     ) {
     return root->FindFromPath(path, ret_md);
   }
   if(taProject::cur_proj) {

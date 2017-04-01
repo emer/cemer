@@ -53,12 +53,20 @@ public:
   ParamSet*             Archive() override { return inherited::Archive(); }
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON archive this set of parameters into a new archived_params parameter set, for later reference
 
+
+  virtual void          SetSavedValue(const String& member_name, const String& saved_value,
+                                      bool no_locked = true);
+  // #CAT_ParamSet set the saved_value of given member -- if no_locked is set, does NOT affect a member with state of LOCKED
+  virtual void          SetMemberState(const String& member_name,
+                                       ControlPanelMemberData::ParamState state);
+  // #CAT_ParamSet set the state of given member
+  
   virtual void          CopyActiveToSaved(bool info_msg = false);
   // #CAT_ParamSet #ARGC_0 copy the current active (live) values on the objects to the saved values
   virtual void          CopySavedToActive(bool info_msg = false);
   // #CAT_ParamSet #ARGC_0 copy the saved_value values to be active (live) values on the objects
 
-  virtual bool          ActiveEqualsSaved(String member_name); 
+  virtual bool          ActiveEqualsSaved(const String& member_name); 
   // #CAT_ParamSet test whether active and saved versions of a member are the same or different
 
   virtual void          CopyActiveToSaved_item(int itm_idx);

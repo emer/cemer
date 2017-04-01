@@ -358,12 +358,6 @@ void ControlPanel::MoveMemberToCtrlPanelGpIdx(int idx, ControlPanel_Group* cp) {
   // ReShowEdit(true); //forced
 }
 
-void ControlPanel::GoToObject(int idx) {
-  ControlPanelMember* item = mbrs.Leaf(idx);
-  if(!item) return;
-  item->GoToObject();
-}
-
 void ControlPanel::EditLabel(int idx) {
   ControlPanelMember* item = mbrs.Leaf(idx);
   if(item && item->base) {

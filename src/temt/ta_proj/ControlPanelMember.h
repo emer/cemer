@@ -175,10 +175,19 @@ public:
   // #CAT_CtrlPanel #BUTTON go in the gui to the object where this member lives 
   virtual void          MoveTo(ControlPanel* ctrl_panel);
   // #CAT_CtrlPanel #BUTTON move this member to other control panel
+  virtual void          MoveToTop();
+  // #CAT_CtrlPanel #BUTTON move this member to the top of list of members in its group -- automatically does this in Master if a ParamSet in a group
+  virtual void          MoveToBottom();
+  // #CAT_CtrlPanel #BUTTON move this member to the bottom of list of members in its group -- automatically does this in Master if a ParamSet in a group
   inline void           SaveCurrent() { CopyActiveToSaved(); }
-  // #CAT_CtrlPanel #BUTTON only for ParamSet elements: copy the current active (live) values on the objects to the saved values
+  // #CAT_CtrlPanel #BUTTON #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the current active (live) values on the objects to the saved values
   inline void           Activate() { if(IsParamSet()) CopySavedToActive(); }
-  // #CAT_CtrlPanel #BUTTON only for ParamSet elements: copy the save_value to be active (live) values on the objects
+  // #CAT_CtrlPanel #BUTTON #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value to be active (live) values on the objects
+  virtual void          CopyToAllInGroup();
+  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value of this member to all other ParamSet's within the same group as this one -- does NOT copy any ones with state of LOCKED, so you can protect certain ones with that
+  virtual void          CopyStateToAllInGroup();
+  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy state (ACTIVE, STABLE, etc) of this member to all other ParamSet's within the same group as this one
+
   virtual void          ActivateAfterEdit();
   // #CAT_CtrlPanel for ACTIVE paramset members, activate after editing -- called via the gui editor 
   

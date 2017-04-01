@@ -182,18 +182,79 @@ void taiEditorOfControlPanelFull::DoRemoveFmCtrlPanel() {
     proj->undo_mgr.SaveUndo(ctrlpan, "RemoveMemberIdx", ctrlpan);
     ctrlpan->RemoveMemberIdx(ctrl_panel_index);
   }
-  else {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoRemoveFmCtrlPanel: could not find item");
-  }
 }
 
 void taiEditorOfControlPanelFull::DoGoToObject() {
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
   if (ctrl_panel_index >= 0) {
-    ctrlpan->GoToObject(ctrl_panel_index);
+    ControlPanelMember* mbr = ctrlpan->mbrs.Leaf(ctrl_panel_index);
+    if(mbr) {
+      mbr->GoToObject();
+    }
   }
-  else {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoGoToObject: could not find item");
+}
+
+void taiEditorOfControlPanelFull::DoCopyToAllInGroup() {
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  if (!proj)
+    return;
+  
+   // removes the ctrl_panel_index item
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    proj->undo_mgr.SaveUndo(ctrlpan, "DoCopyToAllInGroup", ctrlpan);
+    ControlPanelMember* mbr = ctrlpan->mbrs.Leaf(ctrl_panel_index);
+    if(mbr) {
+      mbr->CopyToAllInGroup();
+    }
+  }
+}
+
+void taiEditorOfControlPanelFull::DoCopyStateToAllInGroup() {
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  if (!proj)
+    return;
+  
+   // removes the ctrl_panel_index item
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    proj->undo_mgr.SaveUndo(ctrlpan, "DoCopyStateToAllInGroup", ctrlpan);
+    ControlPanelMember* mbr = ctrlpan->mbrs.Leaf(ctrl_panel_index);
+    if(mbr) {
+      mbr->CopyStateToAllInGroup();
+    }
+  }
+}
+
+void taiEditorOfControlPanelFull::DoMoveToTop() {
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  if (!proj)
+    return;
+  
+   // removes the ctrl_panel_index item
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    proj->undo_mgr.SaveUndo(ctrlpan, "DoMoveToTop", ctrlpan);
+    ControlPanelMember* mbr = ctrlpan->mbrs.Leaf(ctrl_panel_index);
+    if(mbr) {
+      mbr->MoveToTop();
+    }
+  }
+}
+
+void taiEditorOfControlPanelFull::DoMoveToBottom() {
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  if (!proj)
+    return;
+  
+   // removes the ctrl_panel_index item
+  int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
+  if (ctrl_panel_index >= 0) {
+    proj->undo_mgr.SaveUndo(ctrlpan, "DoMoveToBottom", ctrlpan);
+    ControlPanelMember* mbr = ctrlpan->mbrs.Leaf(ctrl_panel_index);
+    if(mbr) {
+      mbr->MoveToBottom();
+    }
   }
 }
 
@@ -204,7 +265,6 @@ void taiEditorOfControlPanelFull::DoMoveToCtrlPanel(QAction* act) {
   
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
   if (ctrl_panel_index < 0) {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoMoveToCtrlPanel: could not find item");
     return;
   }
 
@@ -223,23 +283,17 @@ void taiEditorOfControlPanelFull::DoMoveToCtrlPanel(QAction* act) {
   }
 }
 
-void taiEditorOfControlPanelFull::DoCopyActiveToSaved() {
+void taiEditorOfControlPanelFull::DoSaveCurrent() {
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
   if (ctrl_panel_index >= 0) {
     ((ParamSet*)ctrlpan)->CopyActiveToSaved_item(ctrl_panel_index);
   }
-  else {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoCopyActiveToSaved: could not find item");
-  }
 }
 
-void taiEditorOfControlPanelFull::DoCopySavedToActive() {
+void taiEditorOfControlPanelFull::DoActivate() {
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
   if (ctrl_panel_index >= 0) {
     ((ParamSet*)ctrlpan)->CopySavedToActive_item(ctrl_panel_index);
-  }
-  else {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoCopySavedToActive: could not find item");
   }
 }
 
@@ -247,9 +301,6 @@ void taiEditorOfControlPanelFull::DoEditLabel() {
   int ctrl_panel_index = membs.GetFlatWidgetIndex(ctrl_panel_dat);
   if (ctrl_panel_index >= 0) {
     ctrlpan->EditLabel(ctrl_panel_index);
-  }
-  else {
-    taMisc::DebugInfo("taiEditorOfControlPanelFull::EditLabel: could not find item");
   }
 }
 
@@ -263,12 +314,16 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_CtrlPanel(QMenu* menu,
   if (ctrl_panel_index < 0)
     return;
   if (ctrlpan->InheritsFrom(&TA_ParamSet)) {
-    menu->addAction("Save Current", this, SLOT(DoCopyActiveToSaved()));
-    menu->addAction("Activate", this, SLOT(DoCopySavedToActive()));
+    menu->addAction("Save Current", this, SLOT(DoSaveCurrent()));
+    menu->addAction("Activate", this, SLOT(DoActivate()));
+    menu->addAction("Copy To All In Group", this, SLOT(DoCopyToAllInGroup()));
+    menu->addAction("Copy State To All In Group", this, SLOT(DoCopyStateToAllInGroup()));
   }
   menu->addAction("Remove", this, SLOT(DoRemoveFmCtrlPanel()));
   menu->addAction("Go To Object", this, SLOT(DoGoToObject()));
   menu->addAction("Edit Label", this, SLOT(DoEditLabel()));
+  menu->addAction("Move To Top", this, SLOT(DoMoveToTop()));
+  menu->addAction("Move To Bottom", this, SLOT(DoMoveToBottom()));
   QMenu* move_sub = menu->addMenu("Move To");
   connect(move_sub, SIGNAL(triggered(QAction*)), this, SLOT(DoMoveToCtrlPanel(QAction*)));
   move_sub->setFont(menu->font());

@@ -433,7 +433,66 @@ void ControlPanelMember::MoveTo(ControlPanel* ctrl_panel) {
   if(!ctrl_panel) return;
   ctrl_panel->mbrs.Transfer(this);
 }
-  
+
+void ControlPanelMember::MoveToTop() {
+  if(!owner || !owner->InheritsFrom(&TA_taGroup_impl)) return;
+
+  if(IsParamSet()) {
+    ParamSet_Group* owngp = GET_MY_OWNER(ParamSet_Group);
+    if(owngp && owngp->master_and_clones) {
+      ParamSet* mstr = (ParamSet*)owngp->GetMaster();
+      ParamSet* ps = GET_MY_OWNER(ParamSet);
+      if(mstr && (ps != mstr)) {
+        ControlPanelMember* mbr = mstr->mbrs.FindLeafName(label);
+        if(mbr && mbr != this) {
+          mbr->MoveToTop();
+          return;
+        }
+      }
+    }
+  }
+  taGroup_impl* owngp = (taGroup_impl*)owner;
+  int my_idx = owngp->FindEl(this);
+  if(my_idx < 0) return;
+  owngp->MoveIdx(my_idx, 0);
+}
+
+void ControlPanelMember::MoveToBottom() {
+  if(!owner || !owner->InheritsFrom(&TA_taGroup_impl)) return;
+  if(IsParamSet()) {
+    ParamSet_Group* owngp = GET_MY_OWNER(ParamSet_Group);
+    if(owngp && owngp->master_and_clones) {
+      ParamSet* mstr = (ParamSet*)owngp->GetMaster();
+      ParamSet* ps = GET_MY_OWNER(ParamSet);
+      if(mstr && (ps != mstr)) {
+        ControlPanelMember* mbr = mstr->mbrs.FindLeafName(label);
+        if(mbr && mbr != this) {
+          mbr->MoveToBottom();
+          return;
+        }
+      }
+    }
+  }
+  taGroup_impl* owngp = (taGroup_impl*)owner;
+  int my_idx = owngp->FindEl(this);
+  if(my_idx < 0) return;
+  owngp->MoveIdx(my_idx, owngp->size-1);
+}
+
+void ControlPanelMember::CopyToAllInGroup() {
+  if(!IsParamSet()) return;
+  ParamSet_Group* owngp = GET_MY_OWNER(ParamSet_Group);
+  if(!owngp) return;
+  owngp->SetSavedValue(label, data.saved_value, true);
+}
+
+void ControlPanelMember::CopyStateToAllInGroup() {
+  if(!IsParamSet()) return;
+  ParamSet_Group* owngp = GET_MY_OWNER(ParamSet_Group);
+  if(!owngp) return;
+  owngp->SetMemberState(label, data.state);
+}
+
 void ControlPanelMember::CopyActiveToSaved() {
   if(!mbr || !base) return;
   data.saved_value = CurValAsString();
