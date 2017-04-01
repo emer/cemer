@@ -66,6 +66,7 @@ void taiWidgetComboBox::Clear() {
 void taiWidgetComboBox::GetImage(int itm) {
     // set to this item number
   rep()->setCurrentIndex(itm);
+  rep()->updateSize();
 }
 
 void taiWidgetComboBox::GetValue(int& itm) const {
@@ -75,6 +76,7 @@ void taiWidgetComboBox::GetValue(int& itm) const {
 void taiWidgetComboBox::GetEnumImage(int enum_val) {
   int i = rep()->findData(QVariant(enum_val));
   rep()->setCurrentIndex(i);
+  rep()->updateSize();
 }
 
 void taiWidgetComboBox::GetEnumValue(int& enum_val) const {

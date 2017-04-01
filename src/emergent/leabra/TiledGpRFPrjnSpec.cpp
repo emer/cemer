@@ -281,11 +281,15 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   un_half_size *= 0.5f;
 
   float full_eff_sig = full_gauss.sigma * un_half_size.x;
+  if(full_eff_sig <= 0.0f)
+    full_eff_sig = full_gauss.sigma;
 
   taVector2f gp_full_size = send_lay->un_geom -1.0f;
   taVector2f gp_half_size = gp_full_size;
   gp_half_size *= 0.5f;
   float gp_eff_sig = gp_gauss.sigma * gp_half_size.x;
+  if(gp_eff_sig <= 0.0f)
+    gp_eff_sig = gp_gauss.sigma;
   
   taVector2i ru_un_pos;
   Unit* ru = cg->ThrOwnUn(net, thr_no);

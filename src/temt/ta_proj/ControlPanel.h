@@ -103,7 +103,7 @@ public: // public API
   // #IGNORE edit the current label - use_default will generate the label
 
   virtual ParamSet*  Archive();
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM archive this set of parameters into a new archived_params parameter set, for later reference
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #DYN1 archive this set of parameters into a new archived_params parameter set, for later reference
   virtual bool       IsArchived();
   // #CAT_CtrlPanel test if this is an archived item -- looks for a non-null owner of type ArchivedParams_Group
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
@@ -113,9 +113,9 @@ public: // public API
   virtual void CopyToDataTable(DataTable* table, int row_num = -1);
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel copy member values from this control panel into same-named columns in a row of given data table -- if row_num is -1 then the row number is obtained by looking up the name of this control panel in the first column of the data table -- a new row is added if not already present -- this is typical for configuration tables -- if this is a ParamSet then values are copied from saved_value, otherwise from current active value
   virtual void AllStable();
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #DYN1 set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
   virtual void AllLocked();
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #DYN1 set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
 
   virtual bool  AddMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString, const String& desc = _nilString, const String& sub_gp_nm = _nilString, bool short_label = false);
   // #CAT_CtrlPanel add new member to control panel if it isn't already here (returns true), optionally in a sub group, and optionally with an extra custom label, custom desc, or short label

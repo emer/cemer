@@ -27,9 +27,14 @@ class TA_API iComboBox: public QComboBox {
 public:
   QStringList        item_colors;
 
-  void addColor(const QString& color) { item_colors.append(color); }
+  void  addColor(const QString& color) { item_colors.append(color); }
+
   
   iComboBox(QWidget* parent = NULL);
+
+public Q_SLOTS:
+  virtual void  updateSize();
+  // update the size based on contents -- auto called in showEvent, call manually after updating
 
 protected:
   void wheelEvent(QWheelEvent * event) override;

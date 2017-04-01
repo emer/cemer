@@ -36,11 +36,15 @@ void iComboBox::wheelEvent(QWheelEvent * event) {
   event->ignore();
 }
 
-void iComboBox::showEvent(QShowEvent* e) {
-  QComboBox::showEvent(e);
+void iComboBox::updateSize() {
   if(sizeAdjustPolicy() == AdjustToContents) {
     setFixedWidth(sizeHint().width()-20); // shrink us -- computation is too big
   }
+}
+
+void iComboBox::showEvent(QShowEvent* e) {
+  QComboBox::showEvent(e);
+  updateSize();
 }
 
 void iComboBox::paintEvent(QPaintEvent *) {

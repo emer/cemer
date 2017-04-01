@@ -134,14 +134,15 @@ public:
                static_cast<Qt::MatchFlags>(Qt::MatchExactly|Qt::MatchCaseSensitive)) const
   { return combo_box->findData(data, role, flags); }
 
-  virtual void showPopup() { combo_box->showPopup(); }
-  virtual void hidePopup() { combo_box->hidePopup(); }
+  void showPopup() { combo_box->showPopup(); }
+  void hidePopup() { combo_box->hidePopup(); }
 
  public Q_SLOTS:
   void clear() { combo_box->clear(); }
   void clearEditText() { combo_box->clearEditText(); }
   void setEditText(const QString &text) { combo_box->setEditText(text); }
   void setCurrentIndex(int index) { combo_box->setCurrentIndex(index); }
+  void updateSize() { combo_box->updateSize(); }
 
  Q_SIGNALS:
   void editTextChanged(const QString &);
