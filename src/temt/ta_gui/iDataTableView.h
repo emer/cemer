@@ -74,14 +74,6 @@ public slots:
   virtual void          doubleClicked(const QModelIndex & index);
   virtual void          UpdateRowHeightColWidth();
   // update row height and column widths based on values in datatable
-  virtual void          AddCellToControlPanel(int menu_item_position);
-  // calls DataTable to create a control panel item that points back into the data table
-  virtual void          AddColumnToControlPanel(int menu_item_position);
-  // calls DataTable to create a control panel item that points back into the data table
-  virtual void          RemoveCellFromControlPanel(int menu_item_position);
-  // remove the control panel item for the selected table column
-  virtual void          RemoveColumnFromControlPanel(int menu_item_position);
-  // remove the control panel item for the selected table column
   virtual void          ResizeColumnToContents(int column);
   // can't override resizeColumnToContents - non-virtual
   virtual void          UpdateMaxColWidth(int width);

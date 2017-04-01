@@ -278,59 +278,6 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
                         this, SLOT(RowColOp(int)), (OP_ROW | OP_SHOW_ALL) );
     menu->AddSep();
   }
-
-
-  // single cell or single column
-  if (((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) ||
-      ((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix())) {
-    bool column_selected = (ca == CA_COL_HDR);
-    
-    menu->AddSep();
-    iAction* add_act = NULL;
-    iAction* remove_act = NULL;
-    taiWidgetMenu* add_menu = menu->AddSubMenu("Add To Control Panel");
-    taiWidgetMenu* remove_menu = menu->AddSubMenu("Remove From Control Panel");
-    taProject* proj = dataTable()->GetMyProj();
-    if(!proj) return;
-    for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
-      ControlPanel* cp = proj->ctrl_panels.Leaf(i);
-      String add_string;
-      add_string = "Add To " + cp->GetName();
-      if (column_selected) {
-        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddColumnToControlPanel(int)), i);
-      }
-      else {
-        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
-      }
-      add_act->setEnabled(true);
-      String remove_string = "Remove From " + cp->GetName();
-
-      if (column_selected) {
-        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveColumnFromControlPanel(int)), i);
-      }
-      else {
-        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveCellFromControlPanel(int)), i);
-      }
-      remove_act->setEnabled(false);
-      
-      // First check our list of cells on control panels - then check the control panel
-      DataTableCell* dtc = NULL;
-      if (column_selected) {
-        dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
-      }
-      else {
-        dtc = dataTable()->control_panel_cells.FindCell(dc, row);
-      }
-      if (dtc) {
-        MemberDef* md = dtc->FindMemberName("value");
-        // now check control panel
-        if (md && cp->FindMbrBase(dtc, md) > -1) {
-          add_act->setEnabled(false);
-          remove_act->setEnabled(true);
-        }
-      }
-    }
-  }
 }
 
 void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
@@ -500,40 +447,6 @@ void iDataTableView::doubleClicked(const QModelIndex& index) {
   if(!flags.testFlag(Qt::ItemIsEditable)) {
     ViewAction(0);
   }
-}
-
-void iDataTableView::AddCellToControlPanel(int menu_item_position) {
-  CellRange sel(selectionModel()->selectedIndexes());
-  int row = sel.row_fr;
-  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-  taProject* proj = dataTable()->GetMyProj();
-  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->AddCellToControlPanel(cp, dc, row);
-}
-
-void iDataTableView::AddColumnToControlPanel(int menu_item_position) {
-  CellRange sel(selectionModel()->selectedIndexes());
-  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-  taProject* proj = dataTable()->GetMyProj();
-  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->AddColumnToControlPanel(cp, dc);
-}
-
-void iDataTableView::RemoveCellFromControlPanel(int menu_item_position) {
-  CellRange sel(selectionModel()->selectedIndexes());
-  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-  int row = sel.row_fr;
-  taProject* proj = dataTable()->GetMyProj();
-  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->RemoveCellFromControlPanel(cp, dc, row);
-}
-
-void iDataTableView::RemoveColumnFromControlPanel(int menu_item_position) {
-  CellRange sel(selectionModel()->selectedIndexes());
-  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-  taProject* proj = dataTable()->GetMyProj();
-  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->RemoveColumnFromControlPanel(cp, dc);
 }
 
 void iDataTableView::keyPressEvent(QKeyEvent* key_event) {

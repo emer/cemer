@@ -34,7 +34,6 @@
 #include <DataSelectSpec>
 #include <taVector2i>
 #include <taVector2i_List>
-#include <DataTableCell_List>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -90,7 +89,6 @@ class TA_API DataTable : public taFBase {
   friend class DataTableCols;
   friend class iDataTableModel;
   friend class DataCol;
-  friend class DataTableCell_List;
 public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE             = 0, // #NO_BIT
@@ -156,21 +154,11 @@ public:
   int                   row_with_hilite;
   // #HIDDEN -1 means no row is highlighted - uses underlying index to be robust to sort and filter
 
-  DataTableCell_List    control_panel_cells;
-  // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
-  
   int                   GetViewRow(int index_row);
   //  #EXPERT Get the visible row corresponding the row number as stored
   int                   GetIndexRow(int view_row);
   //  #EXPERT Get the index of row as stored in list of all rows
-  virtual void          RowUpdate();
-  // #IGNORE called by dataproc sort/permute etc if rows are moved about, deleted etc.
-  virtual void          TableUpdate();
-  // #IGNORE call to update DataTableCells if table name has been updated
-  virtual void          ColumnUpdate(DataCol* column);
-  // #IGNORE call to update DataTableCells if col name has been updated
-  virtual void          NotifyControlPanel(DataTableCell* cell);
-  // #IGNORE let the control panel know there is a member change
+
   /////////////////////////////////////////////
   // Flags
 
@@ -643,22 +631,7 @@ public:
   void                  ToggleSaveRows();
   // #CAT_Rows #MENU #DYN1 toggle the SAVE_ROWS flag to opposite of current state: flag indicates whether data rows should be saved or not within the project (often useful to save room by not saving temp data)
 
-  virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);
-  // #IGNORE creates a DataTableCell so that a table cell can be set from a control panel - scalar only
-  virtual void          AddColumnToControlPanel(ControlPanel* cp, DataCol* data_col);
-  // #IGNORE creates a DataTableCell (of column type) so that a table cell can be set at runtime from a control panel - scalar only
-  virtual void          RemoveCellFromControlPanel(ControlPanel* cp, DataCol* data_col, int row);
-  // #IGNORE remove DataTableCell from list and remove from control panel
-  virtual void          RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* data_col);
-  // #IGNORE remove DataTableCell from list and remove from control panel - this one for DTC with dtc_is_column_type = true
-  virtual DataCol*      GetColumnForDTCLookup();
-  // #IGNORE displays chooser to get the control_panel_cell row_column member
 
-  virtual void          SetCellsInRow(int row);
-  // set the values of table cells in the specified row using the current values in control panel items for columns where there is a column_type DataTableCell (i.e. column_type_dtc == true)
-  virtual void          SetCellsFromRowLookup(String column_name, String value);
-  // set the values of table cells in the row with value matching the "value" arg of column matching "column_name" arg
-  
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
 

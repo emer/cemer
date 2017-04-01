@@ -238,10 +238,6 @@ int DataCol::imageComponents() const {
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();
-  DataTable* dt = dataTable();
-  if (dt) {
-    dt->ColumnUpdate(this);
-  }
   if(taMisc::is_loading) {
     // new char-based column sizing introduced in 803 -- set default to auto-size for older
     taVersion v803(8, 0, 3);
@@ -255,6 +251,7 @@ void DataCol::UpdateAfterEdit_impl() {
     SetColFlag(AUTO_WIDTH);
     width = MAX(GridColDisplayWidth(), name.length());
   }
+  DataTable* dt = dataTable();
   if(dt) {
     if(width > dt->max_col_width) {
       dt->max_col_width = width;

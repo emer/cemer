@@ -124,8 +124,7 @@ set(ta_gui_HEADS_MAKETA_NOMOC
   taiMemberOfDynEnum.h
   taiMemberOfProgVarIntVal.h
   taiMemberOfProgVarValue.h
-  taiMemberOfTableCellValueVal.h
-
+  
   taiMethod.h
   taiMethodOfActuator.h
   taiMethodOfStepButton.h
@@ -635,8 +634,7 @@ set(ta_gui_SRCS_MAKETA
   taiMemberOfDynEnum.cpp
   taiMemberOfProgVarIntVal.cpp
   taiMemberOfProgVarValue.cpp
-  taiMemberOfTableCellValueVal.cpp
-
+  
   taiMethod.cpp
   taiMethodOfActuator.cpp
   taiMethodOfStepButton.cpp

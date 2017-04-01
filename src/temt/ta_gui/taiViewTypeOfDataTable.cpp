@@ -38,9 +38,4 @@ void taiViewTypeOfDataTable::CreateDataPanel_impl(taiSigLink* dl_)
   DataPanelCreated(dp);
   
   inherited::CreateDataPanel_impl(dl_);
-  
-  if (taiSigLink *cells_link = dynamic_cast<taiSigLink *>(((DataTable*)dl_->taData())->control_panel_cells.GetSigLink())) {
-    iPanelOfList* dp = new iPanelOfList(cells_link, "Control Panel Cells");
-    DataPanelCreated(dp);
-  }
 }

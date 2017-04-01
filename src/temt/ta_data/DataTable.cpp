@@ -37,12 +37,8 @@
 #include <DataSelectEl>
 #include <AnalysisRun>
 #include <taProject>
-#include <ControlPanel>
 #include <iDialogChoice>
 #include <taVector2i_List>
-#include <DataTableCell>
-#include <DataTableCell_List>
-#include <taiWidgetTokenChooser>
 
 #include <GridTableView>
 #include <GraphTableView>
@@ -128,7 +124,6 @@ void DataTable::InitLinks() {
   taBase::Own(change_col_geom, this);
   taBase::Own(last_sort_spec, this);
   taBase::Own(last_select_spec, this);
-  taBase::Own(control_panel_cells, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
@@ -148,7 +143,6 @@ void DataTable::CutLinks() {
     delete calc_script;
     calc_script = NULL;
   }
-  control_panel_cells.CutLinks();
 //  inherited::CutLinks();
 }
 
@@ -241,7 +235,6 @@ void DataTable::UpdateAfterEdit_impl() {
   // the following is likely redundant:
   //  UpdateColCalcs();
   CheckForCalcs();
-  TableUpdate();
 
   if(row_height < 1) row_height = 1;
 }
@@ -513,10 +506,6 @@ taBase::DumpQueryResult DataTable::Dump_QuerySaveMember(MemberDef* md) {
 
 void DataTable::Dump_Load_post() {
   inherited::Dump_Load_post();
-  
-  if(taMisc::is_undo_loading) {
-    RowUpdate();
-  }
   
   if(taMisc::is_undo_loading) return; // none of this.
   // this is an attempt to fix BugID:66, but it leads to problems when loading the project
@@ -2073,16 +2062,6 @@ String DataTable::RangeToTSV(const CellRange& cr) {
 void DataTable::RemoveCol(const Variant& col) {
   DataCol* da = GetColData(col);
   if(!da) return;
-  
-  // Remove the DataTableCell objects and the corresponding control panel items from all the rows (visible or hidden) in the column
-  for (int i = 0; i < control_panel_cells.size; i++) {
-    DataTableCell* dtc = control_panel_cells.SafeEl(i);
-    if (dtc->value_column == da) {
-      control_panel_cells.RemoveEl(dtc);
-      break;
-    }
-  }
-  
   StructUpdate(true);
   da->Close();
   StructUpdate(false);
@@ -2158,7 +2137,6 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
     }
   }
   DataUpdate(false);
-  RowUpdate();
   return rval;
 }
 
@@ -2192,22 +2170,11 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
 
   DataUpdate(true);
   
-  // When a row is removed it is really hidden so disable any control panel cells for any "deleted" row
-  for (int i = 0; i < control_panel_cells.size; i++) {
-    DataTableCell* dtc = control_panel_cells.SafeEl(i);
-    if (!dtc->dtc_is_column_type) {
-      if (dtc->view_row >= st_row && dtc->view_row < st_row + n_rows) {
-        dtc->SetControlPanelEnabled(false);
-      }
-    }
-  }
-
   row_indexes.RemoveFrames(st_row, n_rows);
   rows -= n_rows;		// the number of rows not hidden by filtering or hiding
   if (rows == 0) {
     keygen.setInt64(0);
   }
-  RowUpdate();  // update the DataTableCells - must keep in sync
   
   DataUpdate(false);
   return true;
@@ -2308,9 +2275,6 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
   // also update itrs in case using simple itr mode
   read_idx = -1;
   write_idx = -1;
-  
-  // get rid of the DataTableCells linking this table to control panels
-//  control_panel_cells.RemoveAll();
 }
 
 void DataTable::RowsAdding(int n, bool begin) {
@@ -2329,122 +2293,6 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
   
-DataCol* DataTable::GetColumnForDTCLookup() {
-  taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_DataCol, NULL, NULL, NULL, 0, "");
-  chooser->SetTitleText("Choose column for row selector. In MasterTrain call method SetCellsFromRowLookup. See LeabraFlex/MasterTrain program for example");
-  chooser->GetImageScoped(NULL, &TA_DataCol, this, &TA_DataTable); // scope to this guy
-  bool okc = chooser->OpenChooser();
-  DataCol* dc = NULL;
-  if(okc && chooser->token()) {
-   dc = (DataCol*)chooser->token();
-  }
-  delete chooser;
-  return dc;
-}
-
-void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
-  if(!column || !cp || column->isMatrix()) return;
-  
-  taProject* proj = GetMyProj();
-  if (!proj) return;
-  
-  DataTableCell* cell = new DataTableCell();
-  cell->dtc_is_column_type = false;
-  cell->value_column = column;
-  cell->view_row = row;
-  cell->index_row = GetIndexRow(cell->view_row);
-  cell->value = column->GetValAsString(cell->view_row);
-  cell->control_panel = cp;
-  control_panel_cells.Add(cell);
-    
-  MemberDef* md = cell->FindMemberName("value");
-  if (!md) return;
-  
-  cp->AddMemberPrompt(cell, md);
-}
-
-void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // this is the column used for choosing a row - e.g. config_id column
-  if(!column || !cp || column->isMatrix()) return;
-  
-  int non_matrix_count = data.NonMatrixCount();
-  if (non_matrix_count < 2) {
-    taMisc::Error("Column type control panel items are only allowed if there is a second non-matrix column to use for the row lookup. This feature is often used for a column of a 'config' table where the config_id column is used for the row lookup");
-    return;
-  }
-  
-  taProject* proj = GetMyProj();
-  if (!proj) return;
-  
-  if (control_panel_cells.FindColumnTypeDTC(column)) {
-    taMisc::Warning("Only one column type control panel item per column");
-    return;
-  }
-  
-  DataTableCell* cell = new DataTableCell();
-  cell->dtc_is_column_type = true;
-  cell->value_column = column;
-  cell->view_row = -1;
-
-  cell->index_row = GetIndexRow(cell->view_row);
-  cell->value = column->GetValAsString(cell->view_row);
-  cell->control_panel = cp;
-  control_panel_cells.Add(cell);
-  
-  // Get the column that will be used for row lookup
-  cell->row_lookup_col =  GetColumnForDTCLookup();
-  
-  MemberDef* md = cell->FindMemberName("value");
-  if (!md) return;
-  
-  cp->AddMemberPrompt(cell, md);
-}
-
-void DataTable::RemoveCellFromControlPanel(ControlPanel* cp, DataCol* column, int row) {
-  if(!column || !cp) return;
-  
-  taProject* proj = GetMyProj();
-  if (!proj) return;
-  
-  DataTableCell* dtc = control_panel_cells.FindCell(column, row);
-  
-  if (dtc) {
-    MemberDef* md = dtc->FindMemberName("value");
-    if (!md) return;
-    cp->RemoveMember(dtc, md);
-  }
-}
-
-void DataTable::RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* column) {
-  if(!column || !cp) return;
-  
-  taProject* proj = GetMyProj();
-  if (!proj) return;
-  
-  DataTableCell* dtc = control_panel_cells.FindColumnTypeDTC(column);
-  
-  if (dtc) {
-    MemberDef* md = dtc->FindMemberName("value");
-    if (!md) return;
-    cp->RemoveMember(dtc, md);
-  }
-}
-
-void DataTable::SetCellsInRow(int row) {
-  for (int i=0; i<control_panel_cells.size; i++) {
-    DataTableCell* dtc = (DataTableCell*)control_panel_cells.FastEl_(i);
-    if (dtc && dtc->dtc_is_column_type == true) {
-      if (dtc->value.nonempty()) {  // if empty leave alone
-        dtc->value_column->SetValAsVar(dtc->value, row);
-      }
-    }
-  }
-}
-
-void DataTable::SetCellsFromRowLookup(String column_name, String value) {
-  int row = -1;
-  row = FindVal(value, column_name, 0);
-  SetCellsInRow(row);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 ///     Saving / Loading from Emergent or Plain Text Files
@@ -3021,7 +2869,6 @@ void DataTable::ShowAllRows() {
   last_sort_spec.ClearColumns();
   last_select_spec.ClearColumns();
   StructUpdate(false);
-  RowUpdate();
 }
 
 bool DataTable::Flatten() {
@@ -3043,14 +2890,6 @@ bool DataTable::FlattenTo(DataTable* flattened_table) {
     flattened_table = new DataTable;
   }
   
-  // remove any DataTableCells associated with hidden rows
-  for (int i = control_panel_cells.size-1; i >= 0; i--) {
-    DataTableCell* cell = control_panel_cells.FastEl(i);
-    if (!cell->dtc_is_column_type && !cell->enabled) {
-      control_panel_cells.RemoveIdx(i);
-    }
-  }
-
   flattened_table->StructUpdate(true);
   flattened_table->Copy_NoData(*this);
   if(made_new) {
@@ -4584,7 +4423,6 @@ bool DataTable::FilterByScript(const String& filter_expr) {
   if(TestError(!ok, "Filter", "error in filter expression, see console for errors"))
     return false;
   calc_script->Run();
-  RowUpdate();
   return true;
 }
 
@@ -4629,7 +4467,6 @@ void DataTable::FilterContainsListCol(DataCol* cda, const String& contains_list,
 bool DataTable::FilterBySpec(DataSelectSpec* spec) {
   last_select_spec = *spec;
   return taDataProc::SelectRows(this, this, spec);
-  RowUpdate();
 }
 
 void DataTable::UnFilter() {
@@ -4750,7 +4587,6 @@ void DataTable::PermuteRows(int thr_no) {
   StructUpdate(true);
   row_indexes.Permute(thr_no);
   StructUpdate(false);
-  RowUpdate();
 }
 
 bool DataTable::MatrixColToScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
@@ -5196,51 +5032,6 @@ int DataTable::GetViewRow(int index_row) {
 
 int DataTable::GetIndexRow(int view_row) {
   return row_indexes.SafeEl_Flat(view_row);
-}
-
-void DataTable::RowUpdate() {
-  DataTableCell* cell = NULL;
-  for (int i=0; i<control_panel_cells.size; i++) {
-    cell = control_panel_cells.FastEl(i);
-    cell->view_row = GetViewRow(cell->index_row);
-    
-    // set enabled state
-    if (cell->view_row == -1) {
-      cell->SetControlPanelEnabled(false);
-    }
-    else {
-      cell->SetControlPanelEnabled(true);
-    }
-  }
-  TableUpdate();  // make sure the control panel also knows
-}
-
-void DataTable::TableUpdate() {
-  DataTableCell* cell = NULL;
-  for (int i=0; i<control_panel_cells.size; i++) {
-    cell = control_panel_cells.FastEl(i);
-    if (cell) {
-      NotifyControlPanel(cell);
-    }
-  }
-}
-
-void DataTable::ColumnUpdate(DataCol* column) {
-  DataTableCell* cell = NULL;
-  for (int i=0; i<control_panel_cells.size; i++) {
-    cell = control_panel_cells.FastEl(i);
-    if (cell && cell->value_column == column) {
-      NotifyControlPanel(cell);
-    }
-  }
-}
-
-void DataTable::NotifyControlPanel(DataTableCell* cell) {
-  if (!cell) return;
-  MemberDef* md = cell->FindMemberName("value");
-  if (md) {
-    cell->control_panel->MbrUpdated(cell, md);
-  }
 }
 
 GridTableView* DataTable::NewGridView(T3Panel* fr) {
