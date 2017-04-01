@@ -698,7 +698,9 @@ void ProgVar::SetValFromString(const String& str_val) {
 
 String ProgVar::GetStringVal() {
   if(var_type == T_HardEnum && hard_enum_type) {
-    return hard_enum_type->GetEnumString("", int_val);
+    String rval = hard_enum_type->Get_C_EnumString(int_val, false);
+    taMisc::Info(rval);
+    return rval;
   }
   else if(var_type == T_DynEnum) {
     String nv = dyn_enum_val.NameVal();
@@ -1282,3 +1284,4 @@ void ProgVar::RenameToObj() {
     }
   }
 }
+

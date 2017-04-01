@@ -119,6 +119,15 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
       }
     }
   }
+  String filt_nm = GetOptionAfter("ITEM_FILTER_");
+  if (filt_nm.nonempty()) {
+    TypeDef* par_typ = typ;
+    if (par_typ) {
+      MethodDef* md = par_typ->methods.FindName(filt_nm);
+      if (md && md->is_static)
+        rval->item_filter = (item_filter_fun)(md->addr);
+    }
+  }
   rval->GetImageScoped(*((taBase**)arg_base), npt, scope, scope_type);
 }
 

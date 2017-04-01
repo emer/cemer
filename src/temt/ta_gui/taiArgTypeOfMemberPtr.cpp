@@ -45,9 +45,13 @@ taiWidget* taiArgTypeOfMemberPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidge
 void taiArgTypeOfMemberPtr::GetImage_impl(taiWidget* dat, const void* base) {
   if(arg_base == NULL)
     return;
+  TypeDef* eff_td = typ;
+  if(base && typ->IsTaBase()) {
+    eff_td = ((taBase*)base)->GetTypeDef();
+  }
   taiWidgetMemberDefChooser* rval = (taiWidgetMemberDefChooser*)dat;
   MemberDef* md = (MemberDef*)*((void**)arg_base);
-  rval->GetImage(md, typ);
+  rval->GetImage(md, eff_td);
 }
 
 void taiArgTypeOfMemberPtr::GetValue_impl(taiWidget* dat, void*) {

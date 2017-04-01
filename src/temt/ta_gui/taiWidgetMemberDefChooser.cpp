@@ -52,6 +52,7 @@ void taiWidgetMemberDefChooser::BuildCategories_impl() {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = mbr->OptionAfter("CAT_"); // note: could be empty for no category
+    if(cat == "IGNORE") continue;
     cats->AddUnique(cat);
   }
   cats->Sort(); // empty, if any, should sort to top
@@ -83,6 +84,7 @@ void taiWidgetMemberDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
   }
 }
@@ -94,6 +96,7 @@ void taiWidgetMemberDefChooser::BuildChooser_1(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if(!mbr->HasOption("EXPERT")) continue;
     cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
   }
 }

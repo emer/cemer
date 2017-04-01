@@ -82,6 +82,7 @@ void ControlPanelMemberData::SetCtrlType() {
   }
   else {
     ctrl_type = CONTROL;
+    state = ACTIVE;             // all control panel members are active by definition!
   }
 }
 
@@ -520,6 +521,8 @@ void ControlPanelMember::SavedToProgVar() {
   else if(mbr_td->IsEnum()) {
     String enum_tp_nm;
     data.saved.SetHardEnum(mbr_td, mbr_td->GetEnumVal(data.saved_value, enum_tp_nm));
+    // this is required for full bits processing:
+    mbr_td->SetValStr_enum(data.saved_value, (void*)&(data.saved.int_val), mbr_td);
   }
   else if(mbr_td->IsString()) {
     data.saved.SetString(data.saved_value);

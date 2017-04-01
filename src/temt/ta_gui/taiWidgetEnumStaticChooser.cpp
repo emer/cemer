@@ -73,7 +73,9 @@ void taiWidgetEnumStaticChooser::BuildCategories_impl() {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
-    cat = "method: " + mth->OptionAfter("CAT_"); // note: could be empty for no category
+    cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     cats->AddUnique(cat);
   }
   cats->Sort(); // empty, if any, should sort to top
@@ -129,7 +131,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_0(iDialogItemChooser* ic) {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_");
+    cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "member: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
                                         mbr->desc);
   }
@@ -138,7 +142,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_0(iDialogItemChooser* ic) {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
-    cat = "method: " + mth->OptionAfter("CAT_");
+    cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
                                         mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
@@ -166,7 +172,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_2(iDialogItemChooser* ic) {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_");
+    cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "member: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
   }
 }
@@ -177,7 +185,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_3(iDialogItemChooser* ic) {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
-    cat = "method: " + mth->OptionAfter("CAT_");
+    cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
   }
@@ -202,7 +212,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_4(iDialogItemChooser* ic) {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if(!mbr->HasOption("EXPERT")) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_");
+    cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "member: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
                                         mbr->desc);
   }
@@ -211,7 +223,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_4(iDialogItemChooser* ic) {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if(!mth->HasOption("EXPERT")) continue;
-    cat = "method: " + mth->OptionAfter("CAT_");
+    cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
                                         mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());

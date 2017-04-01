@@ -3141,6 +3141,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
 #endif
       String cat = md->GetCat();
+      if(cat == "IGNORE") continue;
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
       memb_idx.Add(key);
@@ -3155,6 +3156,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
 #endif
       String cat = md->GetCat();
+      if(cat == "IGNORE") continue;
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
       meth_idx.Add(key);
@@ -3181,6 +3183,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
 #endif
       String cat = md->GetCat();
+      if(cat == "IGNORE") continue;
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
       memb_idx.Add(key);
@@ -3195,6 +3198,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
 #endif
       String cat = md->GetCat();
+      if(cat == "IGNORE") continue;
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
       meth_idx.Add(key);

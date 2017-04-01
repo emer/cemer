@@ -3246,6 +3246,25 @@ Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
   return Variant(GetStemBase()->name); // taiTypeOfTypePtrArgType will convert from String
 }
 
+bool taBase::ControlPanelStdItemFilter(void* base_, void* ctrl_panel_) {
+  if(!ctrl_panel_) return false;
+  ControlPanel* pan = (ControlPanel*)ctrl_panel_;
+  if(pan->IsClone()) return false;
+  taBase* agp = pan->GetOwner(&TA_ArchivedParams_Group);
+  if(agp) return false;         // skip all archived
+  return true;
+}
+
+bool taBase::ControlPanelNoParamSetItemFilter(void* base_, void* ctrl_panel_) {
+  if(!ctrl_panel_) return false;
+  ControlPanel* pan = (ControlPanel*)ctrl_panel_;
+  if(pan->InheritsFrom(&TA_ParamSet)) return false;
+  if(pan->IsClone()) return false;
+  taBase* agp = pan->GetOwner(&TA_ArchivedParams_Group);
+  if(agp) return false;         // skip all archived
+  return true;
+}
+
 String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
   if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return _nilString;
   if(!doc) {
@@ -3663,16 +3682,6 @@ bool taBase::AddFunToControlPanelNm
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   return ctrl_panel->AddMethodNm(this, function, extra_label, desc, sub_gp_nm);
-}
-
-bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
-  if(TestError(!member,"AddToParamSet", "member is null")) return false;
-  if(!param_set) {
-    taProject* proj = GetMyProj();
-    if(TestError(!proj, "AddToParamSet", "cannot find project")) return false;
-    param_set = (ParamSet*)proj->active_params.New(1);
-  }
-  return param_set->AddMemberPrompt(this, member);
 }
 
 void taBase::GetControlPanelLabel(MemberDef* mbr, String& label, const String& xtra_lbl, bool short_label) const {

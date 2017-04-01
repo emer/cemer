@@ -174,7 +174,7 @@ public:
   virtual void          GoToObject();
   // #CAT_CtrlPanel #BUTTON go in the gui to the object where this member lives 
   virtual void          MoveTo(ControlPanel* ctrl_panel);
-  // #CAT_CtrlPanel #BUTTON move this member to other control panel
+  // #CAT_CtrlPanel #BUTTON #ITEM_FILTER_ControlPanelStdItemFilter move this member to other control panel
   virtual void          MoveToTop();
   // #CAT_CtrlPanel #BUTTON move this member to the top of list of members in its group -- automatically does this in Master if a ParamSet in a group
   virtual void          MoveToBottom();

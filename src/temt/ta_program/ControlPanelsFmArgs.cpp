@@ -91,40 +91,20 @@ ControlPanel* ControlPanelsFmArgs::GetControlPanel() const {
 }
 
 void ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
-  ControlPanel* se = GetControlPanel();
-  if(!se) {
+  ControlPanel* cpan = GetControlPanel();
+  if(!cpan) {
     prog->AddLine(this, "// ControlPanelsFmArgs: ctrl_panel_var not set!", ProgLine::MAIN_LINE);
     return;
   }
 
-  prog->AddLine(this, "{ // ControlPanelsFmArgs fm: " + se->name, ProgLine::MAIN_LINE);
+  prog->AddLine(this, ctrl_panel_var->name + ".SetMembersFromArgs();");
   prog->AddVerboseLine(this);
-  prog->IncIndent();
-  prog->AddLine(this, "String sefma_lbl, sefma_argval;");
-  prog->AddLine(this, "for(int j=0;j<" + ctrl_panel_var->name + ".mbrs.leaves;j++) {");
-  prog->IncIndent();
-  prog->AddLine(this, "ControlPanelMember* sei = " + ctrl_panel_var->name + ".mbrs.Leaf(j);");
-  prog->AddLine(this, "if(!sei->is_single) continue;");
-  prog->AddLine(this, "sefma_lbl = sei->label;");
-  prog->AddLine(this, "sefma_argval = taMisc::FindArgByName(sefma_lbl);");
-  prog->AddLine(this, "if(sefma_argval.empty()) continue;");
-  prog->AddLine(this, "sei->SetCurValFmString(sefma_argval, true, true);");
-  prog->DecIndent();
-  prog->AddLine(this, "}");
-  prog->DecIndent();
-  prog->AddLine(this, "}");
 }
 
 void ControlPanelsFmArgs::GenRegArgs(Program* prog) {
-  ControlPanel* se = GetControlPanel();
-  if(se) {
-    for(int j=0;j<se->mbrs.leaves;j++) {
-      ControlPanelMember* sei = se->mbrs.Leaf(j);
-      if(!sei->data.is_numeric) continue;
-      prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + sei->label + "\");");
-      prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + sei->label
-                    + "\", \"ControlPanelsFmArgs: ctrl_panel = " + se->name + "\");");
-    }
+  ControlPanel* cpan = GetControlPanel();
+  if(cpan) {
+    prog->AddLine(this, ctrl_panel_var->name + ".AddMembersAsArgs();");
   }
 }
 

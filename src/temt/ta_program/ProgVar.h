@@ -200,7 +200,7 @@ public:
   // #MENU #DYN1 #CAT_ProgVar #GHOST_OFF_var_type:Object* rename variable based on the name of the object that this variable is pointing to -- variable names are lower-case and use _ (underbar) to separate name elements (i.e., snake case)
 
   virtual void  AddVarToControlPanel(ControlPanel* ctrl_panel, bool short_label = true);
-  // #MENU #DYN1 #CAT_ProgVar add variable to control panel -- can add multiple variables at once -- use this to automatically add the correct data for each variable type -- short_label just uses the name of the variable -- otherwise prepends name of program
+  // #MENU #DYN1 #CAT_ProgVar #ITEM_FILTER_ControlPanelStdItemFilter add variable to control panel -- can add multiple variables at once -- use this to automatically add the correct data for each variable type -- short_label just uses the name of the variable -- otherwise prepends name of program
   bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) override;
   // select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use -- Leave member as NULL for default
   

@@ -58,7 +58,9 @@ void taiWidgetMemberMethodDefChooser::BuildCategories_impl() {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_"); // note: could be empty for no category
+    cat = mbr->OptionAfter("CAT_"); // note: could be empty for no category
+    if(cat == "IGNORE") continue;
+    cat = "member: " + cat;
     cats->AddUnique(cat);
   }
 
@@ -66,7 +68,9 @@ void taiWidgetMemberMethodDefChooser::BuildCategories_impl() {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
-    cat = "method: " + mth->OptionAfter("CAT_"); // note: could be empty for no category
+    cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     cats->AddUnique(cat);
   }
   cats->Sort(); // empty, if any, should sort to top
@@ -106,7 +110,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_");
+    cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "member: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
                                         mbr->desc);
   }
@@ -115,7 +121,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
-    cat = "method: " + mth->OptionAfter("CAT_");
+    cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
                                         mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
@@ -128,7 +136,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_1(iDialogItemChooser* ic) {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_");
+    cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat ="member: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
     item->setData(1, Qt::DisplayRole, mbr->desc);
   }
@@ -140,7 +150,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_2(iDialogItemChooser* ic) {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
-    cat = "method: " + mth->OptionAfter("CAT_");
+    cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;    
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
   }
@@ -152,7 +164,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_3(iDialogItemChooser* ic) {
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
     if(!mbr->HasOption("EXPERT")) continue;
-    cat = "member: " + mbr->OptionAfter("CAT_");
+    cat = mbr->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "member: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
                                         mbr->desc);
   }
@@ -161,7 +175,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_3(iDialogItemChooser* ic) {
   for (int i = 0; i < mts->size; ++i) {
     MethodDef* mth = mts->FastEl(i);
     if(!mth->HasOption("EXPERT")) continue;
-    cat = "method: " + mth->OptionAfter("CAT_");
+    cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    cat = "method: " + cat;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
                                         mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());

@@ -906,6 +906,42 @@ void ControlPanel::SaveNameValueMembers(ParamSet* param_set, const String& name_
   }
 }
 
+void ControlPanel::AddMembersAsArgs(bool active_only, bool follow_control_panel_links) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      if(follow_control_panel_links) {
+        sub_panel->AddMembersAsArgs(active_only, follow_control_panel_links);
+      }
+    }
+    else {
+      if(!mbr->data.is_single) continue;
+      if(active_only && !mbr->IsActive()) continue;
+      taMisc::AddEqualsArgName(mbr->label);
+      taMisc::AddArgNameDesc(mbr->label, "Control Panel Member: " + name);
+    }
+  }
+}
+
+void ControlPanel::SetMembersFromArgs(bool active_only, bool follow_control_panel_links) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      if(follow_control_panel_links) {
+        sub_panel->SetMembersFromArgs(active_only, follow_control_panel_links);
+      }
+    }
+    else {
+      if(!mbr->data.is_single) continue;
+      if(active_only && !mbr->IsActive()) continue;
+      String argval = taMisc::FindArgByName(mbr->label);
+      if(argval.empty()) continue;
+      mbr->SetCurValFmString(argval, true, true); // warn no match, info msg
+    }
+  }
+}
 
 void ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
   if (!base || !mbr) return;

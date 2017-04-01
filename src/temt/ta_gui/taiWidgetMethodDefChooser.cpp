@@ -56,6 +56,7 @@ void taiWidgetMethodDefChooser::BuildCategories_impl() {
     MethodDef* mth = mbs->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
+    if(cat == "IGNORE") continue;
     cats->AddUnique(cat);
   }
   cats->Sort(); // empty, if any, should sort to top
@@ -92,6 +93,7 @@ void taiWidgetMethodDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MethodDef* mth = mbs->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
   }
@@ -109,8 +111,9 @@ int taiWidgetMethodDefChooser::BuildChooser_1(iDialogItemChooser* ic, TypeDef* t
     MethodDef* mth = mbs->FastEl(i);
     if ((mth->owner != mbs) || mth->is_override) continue;
     if (!ShowMethod(mth)) continue;
-    ++rval;
     cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
+    ++rval;
     QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth, mth->desc, 2);
     QVariant proto = static_cast<const char *>(mth->prototype()); // share
     item->setData(0, Qt::ToolTipRole, proto);
@@ -139,6 +142,7 @@ void taiWidgetMethodDefChooser::BuildChooser_2(iDialogItemChooser* ic) {
     MethodDef* mth = mbs->FastEl(i);
     if(!mth->HasOption("EXPERT")) continue;
     cat = mth->OptionAfter("CAT_");
+    if(cat == "IGNORE") continue;
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
   }

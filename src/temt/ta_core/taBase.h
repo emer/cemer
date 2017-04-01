@@ -1431,6 +1431,12 @@ public:
   /////////////////////////////////////////////////////////////////////
   //            Control Panel
 public:
+
+  static bool ControlPanelStdItemFilter(void* base_, void* ctrl_panel_);
+  // #CAT_IGNORE ITEM_FILTER for control panel pointers (e.g., for methods taking control panel pointer args) -- filters out clones and archived param sets
+  static bool ControlPanelNoParamSetItemFilter(void* base_, void* ctrl_panel_);
+  // #CAT_IGNORE ITEM_FILTER for control panel pointers (e.g., for methods taking control panel pointer args) -- filters out all ParamSet's -- only allows ControlPanel and ClusterRun through -- good for method adding choices
+
   virtual bool          DiffCompare(taBase* cmp_obj);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
   virtual bool          ChangeMyType(TypeDef* new_type);
@@ -1442,17 +1448,15 @@ public:
   // #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
 
   virtual bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel);
-  // #MENU #MENU_ON_ControlPanel #NO_MENU_PANEL #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use
+  // #MENU #MENU_ON_ControlPanel #NO_MENU_PANEL #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #ITEM_FILTER_1_ControlPanelStdItemFilter select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use
   virtual bool          AddToControlPanelNm
     (const String& memb_nm, ControlPanel* ctrl_panel, const String& extra_label = _nilString, const String& sub_gp_nm = _nilString, const String& desc = _nilString, bool short_label = false);
   // #CAT_Display add given member (by name) given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected.  extra_label is prepended to member name if present, otherwise owner obj name and path to member is prepended, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist).  desc is a custom description -- will show up as tooltip for user (default is info from member).  short_label omits prepending owner name to label
   virtual bool          AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel, const String& extra_label = "");
-  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #CAT_Display select a function (method) for calling from a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.  extra_label is prepended to function name if present
+  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #CAT_Display #ITEM_FILTER_1_ControlPanelNoParamSetItemFilter select a function (method) for calling from a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.  extra_label is prepended to function name if present
   virtual bool          AddFunToControlPanelNm
     (const String& function_nm, ControlPanel* ctrl_panel, const String& extra_label = _nilString, const String& sub_gp_nm = _nilString, const String& desc = _nilString);
   // #CAT_Display select a method (by name) for use in a control_panel that is a collection of selected members and methods from different objects (if ctrl_panel is NULL, a new one is created in .crtl_panels)  returns false if method was already selected. desc is a custom description -- will show up as tooltip for user (default is info from method)
-  virtual bool          AddToParamSet(MemberDef* member, ParamSet* ctrl_panel);
-  // #MENU #MENU_ON_ParamSet #NO_MENU_PANEL #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
   virtual void          GetControlPanelLabel(MemberDef* mbr, String& label, const String& extra_label = _nilString, bool short_label = false) const;
   // #IGNORE get label for given member of this object for use in a ControlPanel -- if extra_label is non-empty, then typically the label is extra_label + _ + mbr->name, otherwise the label is owner_path + _ + mbr->name, except if short path is set, in which case the owner_path is omitted and it is just mbr->name
   virtual void          GetControlPanelDesc(MemberDef* mbr, String& desc) const;
