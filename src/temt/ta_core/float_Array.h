@@ -42,7 +42,7 @@ protected:
     { return (*((float*)a) == *((float*)b)); }
   String        El_GetStr_(const void* it) const override { return (*((float*)it)); }
   void          El_SetFmStr_(void* it, const String& val) override
-  { float tmp = (float)val; *((float*)it) = tmp; }
+  { float tmpv = (float)val; *((float*)it) = tmpv; }
 private:
   void Initialize()     {err = 0.0f; };
   void Destroy()        { };

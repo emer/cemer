@@ -42,7 +42,7 @@ protected:
     { return (*((char*)a) == *((char*)b)); }
   String        El_GetStr_(const void* it) const override { return String((int)*((char*)it)); }
   void          El_SetFmStr_(void* it, const String& val) override 
-  { int tmp = (int)val; *((char*)it) = (char)tmp; }
+  { int tmpv = (int)val; *((char*)it) = (char)tmpv; }
 private:
   NOCOPY(char_Array)
   void Initialize()     {err = ' ';};

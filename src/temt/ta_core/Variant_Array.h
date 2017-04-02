@@ -43,7 +43,7 @@ protected:
     { return (*((Variant*)a) == *((Variant*)b)); }
   String        El_GetStr_(const void* it) const override { return ((Variant*)it)->toString(); }
   void          El_SetFmStr_(void* it, const String& val) override
-  { Variant tmp = (Variant)val; *((Variant*)it) = tmp; }
+  { Variant tmpv = (Variant)val; *((Variant*)it) = tmpv; }
 private:
   void Initialize()     {err = 0.0;};
   void Destroy()        { };

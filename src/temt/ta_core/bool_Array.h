@@ -42,7 +42,7 @@ protected:
   { return (*((bool*)a) == *((bool*)b)); }
   String        El_GetStr_(const void* it) const override { return (*((bool*)it)); }
   void          El_SetFmStr_(void* it, const String& val) override
-  { bool tmp = val.toBool(); *((bool*)it) = tmp; }
+  { bool tmpv = val.toBool(); *((bool*)it) = tmpv; }
   
 private:
   void Initialize()     {err = false; };

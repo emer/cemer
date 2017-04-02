@@ -55,7 +55,7 @@ protected:
     { return (*((int*)a) == *((int*)b)); }
   String        El_GetStr_(const void* it) const override { return (*((int*)it)); }
   void          El_SetFmStr_(void* it, const String& val) override
-  { int tmp = (int)val; *((int*)it) = tmp; }
+  { *((int*)it) = (int)val; }
 };
 
 TA_ARRAY_OPS(TA_API, int_Array)

@@ -40,7 +40,7 @@ protected:
     { return (*((void**)a) == *((void**)b)); }
   String        El_GetStr_(const void* it) const { return *((ta_uintptr_t*)it); }
   void          El_SetFmStr_(void* it, const String& val)
-  { ta_uintptr_t tmp = (ta_uintptr_t)val; *((ta_uintptr_t*)it) = tmp; }
+  { ta_uintptr_t tmpv = (ta_uintptr_t)val; *((ta_uintptr_t*)it) = tmpv; }
   //note: dangerous, but needed to clear (if str empty)
 };
 
