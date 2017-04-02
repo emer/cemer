@@ -309,18 +309,20 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
   prv_desc = desc;
   prv_label = label;
 
-  if(IsSearch()) {
-    if(!data.is_single || !data.is_numeric) {
-      taMisc::Warning("ControlPanelMember:",label,
-                      "cannot SEARCH on parameters that are not elemental numeric values -- reverting to ACTIVE");
-      SetToActive();
+  if(!IsControl()) {
+    if(IsSearch()) {
+      if(!data.is_single || !data.is_numeric) {
+        taMisc::Warning("ControlPanelMember:",label,
+                        "cannot SEARCH on parameters that are not elemental numeric values -- reverting to ACTIVE");
+        SetToActive();
+      }
     }
-  }
-  if(IsActive()) {
-    if(!data.is_single) {
-      taMisc::Warning("ControlPanelMember:",label,
-                      "cannot have ACTIVE parameters that are not elemental values (i.e., no composite objects are allowed) -- reverting to STABLE");
-      SetToStable();
+    if(IsActive()) {
+      if(!data.is_single) {
+        taMisc::Warning("ControlPanelMember:",label,
+                        "cannot have ACTIVE parameters that are not elemental values (i.e., no composite objects are allowed) -- reverting to STABLE");
+        SetToStable();
+      }
     }
   }
 }

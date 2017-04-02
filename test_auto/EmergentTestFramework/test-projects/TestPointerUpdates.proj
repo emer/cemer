@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10567
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10588
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -91,9 +91,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
-   };
-
    DataTableCols @.jobs_done.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
@@ -159,9 +156,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    };
 
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_deleted.data = [33] {
@@ -231,9 +225,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
-   };
-
    DataTableCols @.jobs_archive.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
@@ -301,9 +292,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
-   };
-
    DataTableCols @.file_list.data = [11] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
@@ -321,9 +309,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    DataOpList @.file_list.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.file_list.control_panel_cells = [0] {
-   };
-
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -336,9 +321,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    DataOpList @.cluster_info.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
-   };
-
    DataTableCols @.clusterscript_timestamp.data = [2] {
     String_Data @["timestamp"] { };
     int_Data @["version"] { 
@@ -349,9 +331,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    };
 
    DataOpList @.clusterscript_timestamp.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.clusterscript_timestamp.control_panel_cells = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -371,7 +350,10 @@ LeabraProject .projects["TestPointerUpdates"] {
   };
  };
 
- ParamSet_Group @.param_sets = [0] {
+ ParamSet_Group @.active_params = [0] {
+ };
+
+ ArchivedParams_Group @.archived_params = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -382,9 +364,6 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
   };
@@ -408,9 +387,6 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
 
       DataOpList @.last_sort_spec.ops = [0] {
-      };
-
-      DataTableCell_List @.control_panel_cells = [0] {
       };
      };
     };
@@ -3310,12 +3286,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_done {
     user_data_=NULL;
@@ -4015,12 +3985,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_deleted {
     user_data_=NULL;
@@ -4720,12 +4684,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_archive {
     user_data_=NULL;
@@ -5425,12 +5383,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    file_list {
     user_data_=NULL;
@@ -5657,12 +5609,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    cluster_info {
     user_data_=NULL;
@@ -5799,12 +5745,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    clusterscript_timestamp {
     user_data_=NULL;
@@ -5880,12 +5820,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    search_algos {
     user_data_=NULL;
@@ -5949,6 +5883,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     ControlPanelMember @[0] {
      user_data_=NULL;
      label="TestGroup_which_group";
+     short_label=0;
      cust_label=1;
      desc=;
      cust_desc=0;
@@ -5975,9 +5910,16 @@ LeabraProject .projects["TestPointerUpdates"] {
    };
   };
  };
- param_sets {
+ active_params {
   user_data_=NULL;
-  name="param_sets";
+  name="active_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
+ };
+ archived_params {
+  user_data_=NULL;
+  name="archived_params";
   el_typ=ParamSet;
   el_def=0;
   master_and_clones=0;
@@ -6034,7 +5976,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [5] 0;1;2;3;4;    };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -6046,12 +5988,6 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -6159,7 +6095,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       row_indexes {
        user_data_=NULL;
        name="row_indexes";
-      [1] 0;      };
+      };
       last_sort_spec {
        user_data_=NULL;
        name="last_sort_spec";
@@ -6171,12 +6107,6 @@ LeabraProject .projects["TestPointerUpdates"] {
        };
       };
       row_with_hilite=-1;
-      control_panel_cells {
-       user_data_=NULL;
-       name="control_panel_cells";
-       el_typ=DataTableCell;
-       el_def=0;
-      };
      };
     };
     types {
@@ -15774,7 +15704,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     UserDataItem @["view_win_ht"] {
      user_data_=NULL;
      name="view_win_ht";
-     value 8 0=0.7993158;
+     value 8 0=0.7986406;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16007,25 +15937,25 @@ LeabraProject .projects["TestPointerUpdates"] {
       UserDataItem @["view_win_lft"] {
        user_data_=NULL;
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        user_data_=NULL;
        name="view_win_top";
-       value 8 0=-0.02622577;
+       value 8 0=-0.01954121;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        user_data_=NULL;
        name="view_win_ht";
-       value 8 0=0.7514253;
+       value 8 0=0.7629566;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

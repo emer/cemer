@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.4.0 rev10443
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10588
 SoProject .projects["SoStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -18,15 +18,15 @@ SoProject .projects["SoStd"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [1] {
-    EditMbrItem @[0] { };
+   ControlPanelMember_Group @.mbrs = [1] {
+    ControlPanelMember @[0] { };
    };
 
-   EditMthItem_Group @.mths = [4] {
-    EditMthItem @[0] { };
-    EditMthItem @[1] { };
-    EditMthItem @[2] { };
-    EditMthItem @[3] { };
+   ControlPanelMethod_Group @.mths = [4] {
+    ControlPanelMethod @[0] { };
+    ControlPanelMethod @[1] { };
+    ControlPanelMethod @[2] { };
+    ControlPanelMethod @[3] { };
    };
   };
   ClusterRun @["ClusterRun"] { 
@@ -34,10 +34,10 @@ SoProject .projects["SoStd"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [0] {
+   ControlPanelMember_Group @.mbrs = [0] {
    };
 
-   EditMthItem_Group @.mths = [0] {
+   ControlPanelMethod_Group @.mths = [0] {
    };
 
    DataTableCols @.jobs_running.data = [34] {
@@ -59,17 +59,45 @@ SoProject .projects["SoStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -78,9 +106,6 @@ SoProject .projects["SoStd"] {
    };
 
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_done.data = [34] {
@@ -102,17 +127,45 @@ SoProject .projects["SoStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -121,9 +174,6 @@ SoProject .projects["SoStd"] {
    };
 
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_deleted.data = [33] {
@@ -145,17 +195,45 @@ SoProject .projects["SoStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -163,9 +241,6 @@ SoProject .projects["SoStd"] {
    };
 
    DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_archive.data = [33] {
@@ -187,17 +262,45 @@ SoProject .projects["SoStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -205,9 +308,6 @@ SoProject .projects["SoStd"] {
    };
 
    DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
    };
 
    DataTableCols @.file_list.data = [11] {
@@ -227,9 +327,6 @@ SoProject .projects["SoStd"] {
    DataOpList @.file_list.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.file_list.control_panel_cells = [0] {
-   };
-
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -242,18 +339,16 @@ SoProject .projects["SoStd"] {
    DataOpList @.cluster_info.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
-   };
-
    DataTableCols @.clusterscript_timestamp.data = [2] {
     String_Data @["timestamp"] { };
-    int_Data @["version"] { };
+    int_Data @["version"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
    };
 
    DataOpList @.clusterscript_timestamp.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.clusterscript_timestamp.control_panel_cells = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -261,7 +356,10 @@ SoProject .projects["SoStd"] {
   };
  };
 
- ParamSet_Group @.param_sets = [0] {
+ ParamSet_Group @.active_params = [0] {
+ };
+
+ ArchivedParams_Group @.archived_params = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -274,9 +372,6 @@ SoProject .projects["SoStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["Lines5x5x2"] { 
     DataTableCols @.data = [2] {
@@ -286,9 +381,6 @@ SoProject .projects["SoStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["Lines5x5x1"] { 
     DataTableCols @.data = [2] {
@@ -297,9 +389,6 @@ SoProject .projects["SoStd"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
   };
@@ -316,9 +405,6 @@ SoProject .projects["SoStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["EpochOutputData"] { 
     DataTableCols @.data = [6] {
@@ -331,9 +417,6 @@ SoProject .projects["SoStd"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
    DataTable @["TestTrialOutputData"] { 
@@ -348,9 +431,6 @@ SoProject .projects["SoStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["TestEpochOutputData"] { 
     DataTableCols @.data = [6] {
@@ -364,9 +444,6 @@ SoProject .projects["SoStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] { 
@@ -375,6 +452,10 @@ SoProject .projects["SoStd"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["SoStartup"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -424,8 +505,9 @@ SoProject .projects["SoStd"] {
     If @[13] { 
      ProgEl_List @.true_code = [1] {
       MethodCall @[0] { 
-       ProgArg_List @.meth_args = [1] {
+       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
+	ProgArg @[1] { };
        };
       };
      };
@@ -529,6 +611,10 @@ SoProject .projects["SoStd"] {
   };
   Program_Group @.gp["SoAll_Std"] = [8] { 
    Program @["SoBatch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -576,6 +662,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [2] {
      RndSeed_List @["rnd_seeds"] { 
       taList @.seeds = [25] {
@@ -782,6 +872,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoEpoch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -867,6 +961,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoTrial"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -916,6 +1014,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["ApplyInputs"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [2] {
@@ -967,6 +1069,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoTrialMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [6] {
@@ -1036,6 +1142,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoEpochMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [6] {
@@ -1118,6 +1228,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SaveWeights"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1181,6 +1295,10 @@ SoProject .projects["SoStd"] {
   };
   Program_Group @.gp["SoAll_Test"] = [5] { 
    Program @["SoEpochTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1264,6 +1382,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoTrialTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1313,6 +1435,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["ApplyInputsTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [2] {
@@ -1364,6 +1490,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoTrialMonitorTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [6] {
@@ -1433,6 +1563,10 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoEpochMonitorTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [6] {
@@ -1519,14 +1653,31 @@ SoProject .projects["SoStd"] {
 
  taViewer_List @.viewers = [1] {
   MainWindowViewer @["Browser2"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["view_win_lft"] { };
+    UserDataItem @["view_win_top"] { };
+    UserDataItem @["view_win_wd"] { };
+    UserDataItem @["view_win_ht"] { };
+    UserDataItem @["view_win_iconified"] { };
+    UserDataItem @["view_splitter_state"] { };
+   };
+
    ToolBar_List @.toolbars = [1] {
-    ToolBar @["Application"] { };
+    ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_visible"] { };
+     };
+    };
    };
 
    FrameViewer_List @.frames = [3] {
     BrowseViewerTaBase @["Navigator"] { };
     PanelViewer @["Editor"] { };
     T3PanelViewer @["Visualizer"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
      T3Panel_List @.panels = [2] {
       T3Panel @["Network_0"] { 
        T3DataView_List @.root_view.children = [1] {
@@ -1636,7 +1787,16 @@ SoProject .projects["SoStd"] {
    };
 
    DockViewer_List @.docks = [1] {
-    ToolBoxDockViewer @["Tools"] { };
+    ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_lft"] { };
+      UserDataItem @["view_win_top"] { };
+      UserDataItem @["view_win_wd"] { };
+      UserDataItem @["view_win_ht"] { };
+      UserDataItem @["view_win_iconified"] { };
+      UserDataItem @["view_visible"] { };
+     };
+    };
    };
   };
  };
@@ -1788,6 +1948,7 @@ SoProject .projects["SoStd"] {
   name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
+  master_and_clones=0;
   ControlPanel @["ControlPanel"] {
    UserDataItem_List @*(.user_data_) {
     user_data_=NULL;
@@ -1802,34 +1963,31 @@ SoProject .projects["SoStd"] {
     };
    };
    name="ControlPanel";
+   cp_state=REGULAR;
    updt_while_running=0;
    desc=;
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
-    EditMbrItem @[0] {
+    ControlPanelMember @[0] {
      user_data_=NULL;
      label="HebbConSpec_0_lrate";
+     short_label=0;
+     cust_label=1;
      desc=" learning rate";
      cust_desc=0;
      base=.projects["SoStd"].networks["Network_0"].specs["HebbConSpec_0"]$$;
      mbr=SoConSpec::lrate;
-     is_numeric=1;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=1;
+      is_single=1;
+      state=ACTIVE;
       saved_value=;
-     };
-     notes {
-      user_data_=NULL;
+      range="0:1:0.1";
       notes=;
      };
     };
@@ -1837,36 +1995,44 @@ SoProject .projects["SoStd"] {
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
-    EditMthItem @[0] {
+    ControlPanelMethod @[0] {
      user_data_=NULL;
      label="Train_Init";
+     short_label=0;
+     cust_label=1;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
      base=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$$;
      mth=Program::Init;
     };
-    EditMthItem @[1] {
+    ControlPanelMethod @[1] {
      user_data_=NULL;
      label="Train_Run";
+     short_label=0;
+     cust_label=1;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
      base=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
      mth=Program::Run_Gui;
     };
-    EditMthItem @[2] {
+    ControlPanelMethod @[2] {
      user_data_=NULL;
      label="Train_Step";
+     short_label=0;
+     cust_label=1;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
      base=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
      mth=Program::Step_Gui;
     };
-    EditMthItem @[3] {
+    ControlPanelMethod @[3] {
      user_data_=NULL;
      label="Train_Stop";
+     short_label=0;
+     cust_label=1;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
      base=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
@@ -1888,18 +2054,19 @@ SoProject .projects["SoStd"] {
     };
    };
    name="ClusterRun";
+   cp_state=REGULAR;
    updt_while_running=0;
    desc=;
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
    };
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
    };
@@ -2237,6 +2404,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2326,6 +2505,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2343,6 +2534,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2360,6 +2563,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2377,6 +2592,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2394,6 +2621,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2411,6 +2650,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2535,12 +2786,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_done {
     user_data_=NULL;
@@ -2876,6 +3121,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2965,6 +3222,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2982,6 +3251,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2999,6 +3280,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3016,6 +3309,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3033,6 +3338,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3050,6 +3367,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3174,12 +3503,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_deleted {
     user_data_=NULL;
@@ -3515,6 +3838,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3604,6 +3939,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3621,6 +3968,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3638,6 +3997,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3655,6 +4026,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3672,6 +4055,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3689,6 +4084,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3795,12 +4202,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_archive {
     user_data_=NULL;
@@ -4136,6 +4537,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4225,6 +4638,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4242,6 +4667,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4259,6 +4696,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4276,6 +4725,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4293,6 +4754,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4310,6 +4783,18 @@ SoProject .projects["SoStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4377,7 +4862,7 @@ SoProject .projects["SoStd"] {
        user_data_=NULL;
        name="dim_names";
       [0]       };
-      width=0;
+      width=16;
       matrix_col_width=10;
      };
      String_Data @["last_svn"] {
@@ -4395,7 +4880,7 @@ SoProject .projects["SoStd"] {
        user_data_=NULL;
        name="dim_names";
       [0]       };
-      width=0;
+      width=16;
       matrix_col_width=10;
      };
     };
@@ -4416,12 +4901,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    file_list {
     user_data_=NULL;
@@ -4648,12 +5127,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    cluster_info {
     user_data_=NULL;
@@ -4790,12 +5263,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    clusterscript_timestamp {
     user_data_=NULL;
@@ -4821,10 +5288,22 @@ SoProject .projects["SoStd"] {
        user_data_=NULL;
        name="dim_names";
       [0]       };
-      width=0;
+      width=16;
       matrix_col_width=10;
      };
      int_Data @["version"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="version";
       desc="Version number of cluster run script ";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4838,7 +5317,7 @@ SoProject .projects["SoStd"] {
        user_data_=NULL;
        name="dim_names";
       [0]       };
-      width=0;
+      width=8;
       matrix_col_width=10;
      };
     };
@@ -4850,7 +5329,7 @@ SoProject .projects["SoStd"] {
     keygen 4 0=0;
     last_sort_spec {
      user_data_=NULL;
-     name=;
+     name="last_sort_spec";
      ops {
       user_data_=NULL;
       name="ops";
@@ -4859,12 +5338,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name=;
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    search_algos {
     user_data_=NULL;
@@ -4904,11 +5377,19 @@ SoProject .projects["SoStd"] {
    enable_notes=0;
   };
  };
- param_sets {
+ active_params {
   user_data_=NULL;
-  name="param_sets";
+  name="active_params";
   el_typ=ParamSet;
   el_def=0;
+  master_and_clones=0;
+ };
+ archived_params {
+  user_data_=NULL;
+  name="archived_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
  };
  data {
   user_data_=NULL;
@@ -4932,6 +5413,7 @@ SoProject .projects["SoStd"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["Name"] {
+      user_data_=NULL;
       name="Name";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -4956,6 +5438,7 @@ SoProject .projects["SoStd"] {
 "H1_H3";"H1_H4";"H2_H3";"H2_H4";"H3_H4";      };
      };
      float_Data @["Input"] {
+      user_data_=NULL;
       name="Input";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -5097,11 +5580,7 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [45] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;21;22;23;24;25;26;27;28;29;
-30;31;32;33;34;35;36;37;38;39;
-40;41;42;43;44;    };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -5113,12 +5592,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["Lines5x5x2"] {
     user_data_=NULL;
@@ -5130,6 +5603,7 @@ SoProject .projects["SoStd"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["Name"] {
+      user_data_=NULL;
       name="Name";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5154,6 +5628,7 @@ SoProject .projects["SoStd"] {
 "H1_H3";"H1_H4";"H2_H3";"H2_H4";"H3_H4";      };
      };
      float_Data @["Input"] {
+      user_data_=NULL;
       name="Input";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -5295,11 +5770,7 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [45] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;21;22;23;24;25;26;27;28;29;
-30;31;32;33;34;35;36;37;38;39;
-40;41;42;43;44;    };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -5311,12 +5782,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["Lines5x5x1"] {
     user_data_=NULL;
@@ -5328,6 +5793,7 @@ SoProject .projects["SoStd"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["Name"] {
+      user_data_=NULL;
       name="Name";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5349,6 +5815,7 @@ SoProject .projects["SoStd"] {
       };
      };
      float_Data @["Input"] {
+      user_data_=NULL;
       name="Input";
       col_flags=SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
@@ -5403,7 +5870,6 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [10] 0;1;2;3;4;5;6;7;8;9;
     };
     last_sort_spec {
      user_data_=NULL;
@@ -5416,12 +5882,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -5440,6 +5900,7 @@ SoProject .projects["SoStd"] {
      el_typ=int_Data;
      el_def=0;
      int_Data @["batch"] {
+      user_data_=NULL;
       name="batch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5460,6 +5921,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      int_Data @["epoch"] {
+      user_data_=NULL;
       name="epoch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5480,6 +5942,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      int_Data @["trial"] {
+      user_data_=NULL;
       name="trial";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5572,7 +6035,7 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -5584,12 +6047,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["EpochOutputData"] {
     user_data_=NULL;
@@ -5601,6 +6058,7 @@ SoProject .projects["SoStd"] {
      el_typ=int_Data;
      el_def=0;
      int_Data @["batch"] {
+      user_data_=NULL;
       name="batch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5621,6 +6079,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      int_Data @["epoch"] {
+      user_data_=NULL;
       name="epoch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5641,6 +6100,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["avg_sse"] {
+      user_data_=NULL;
       name="avg_sse";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5661,6 +6121,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["cnt_err"] {
+      user_data_=NULL;
       name="cnt_err";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5681,6 +6142,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
+      user_data_=NULL;
       name="epoch_time_tot";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5701,6 +6163,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
+      user_data_=NULL;
       name="epoch_time_usr";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5730,7 +6193,7 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -5742,12 +6205,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["TestTrialOutputData"] {
     user_data_=NULL;
@@ -5759,6 +6216,7 @@ SoProject .projects["SoStd"] {
      el_typ=int_Data;
      el_def=0;
      int_Data @["batch"] {
+      user_data_=NULL;
       name="batch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5779,6 +6237,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      int_Data @["epoch"] {
+      user_data_=NULL;
       name="epoch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5799,6 +6258,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      int_Data @["trial"] {
+      user_data_=NULL;
       name="trial";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5819,6 +6279,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      String_Data @["trial_name"] {
+      user_data_=NULL;
       name="trial_name";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5839,6 +6300,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      String_Data @["group_name"] {
+      user_data_=NULL;
       name="group_name";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5859,6 +6321,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["sse"] {
+      user_data_=NULL;
       name="sse";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5888,7 +6351,7 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -5900,12 +6363,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["TestEpochOutputData"] {
     user_data_=NULL;
@@ -5917,6 +6374,7 @@ SoProject .projects["SoStd"] {
      el_typ=int_Data;
      el_def=0;
      int_Data @["batch"] {
+      user_data_=NULL;
       name="batch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5937,6 +6395,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      int_Data @["epoch"] {
+      user_data_=NULL;
       name="epoch";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5957,6 +6416,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["avg_sse"] {
+      user_data_=NULL;
       name="avg_sse";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5977,6 +6437,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["cnt_err"] {
+      user_data_=NULL;
       name="cnt_err";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -5997,6 +6458,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
+      user_data_=NULL;
       name="epoch_time_tot";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6017,6 +6479,7 @@ SoProject .projects["SoStd"] {
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
+      user_data_=NULL;
       name="epoch_time_usr";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=0;
@@ -6046,7 +6509,7 @@ SoProject .projects["SoStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -6058,12 +6521,6 @@ SoProject .projects["SoStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -6083,6 +6540,17 @@ SoProject .projects["SoStd"] {
   desc=;
   debug_mode=0;
   Program @["SoStartup"] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     user_data_=NULL;
+     name="DocLink";
+     doc=.projects["SoStd"].programs["SoStartup"].doc$$;
+    };
+   };
    name="SoStartup";
    short_nm="Startup";
    tags="So, Startup";
@@ -6123,6 +6591,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=Network;
      object_val=.projects["SoStd"].networks["Network_0"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -6135,6 +6604,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["SoStd"].data.gp["InputData"]["StdInputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -6153,6 +6623,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=Program;
      object_val=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
@@ -6165,6 +6636,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=Program;
      object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6176,6 +6648,7 @@ SoProject .projects["SoStd"] {
      name="param_set";
      var_type=T_String;
      string_val=;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of saved parameter set to apply at startup";
@@ -6186,6 +6659,7 @@ SoProject .projects["SoStd"] {
      name="tag";
      var_type=T_String;
      string_val="_gui";
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -6196,6 +6670,7 @@ SoProject .projects["SoStd"] {
      name="batch_str";
      var_type=T_String;
      string_val="00";
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch number as a string (leading zeros)";
@@ -6206,6 +6681,7 @@ SoProject .projects["SoStd"] {
      name="log_dir";
      var_type=T_String;
      string_val=;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
@@ -6216,6 +6692,7 @@ SoProject .projects["SoStd"] {
      name="log_file_nm";
      var_type=T_String;
      string_val="/Users/oreilly/emergent/proj_templates/SoStd_gui.epc.dat";
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -6226,6 +6703,7 @@ SoProject .projects["SoStd"] {
      name="batch_start";
      var_type=T_Int;
      int_val=0;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch starting number";
@@ -6237,6 +6715,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6249,6 +6728,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6261,6 +6741,7 @@ SoProject .projects["SoStd"] {
      var_type=T_Object;
      object_type=ClusterRun;
      object_val=.projects["SoStd"].ctrl_panels["ClusterRun"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6272,7 +6753,8 @@ SoProject .projects["SoStd"] {
      name="param_sets";
      var_type=T_Object;
      object_type=ParamSet_Group;
-     object_val=.projects["SoStd"].param_sets$$;
+     object_val=.projects["SoStd"].active_params$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6429,7 +6911,7 @@ SoProject .projects["SoStd"] {
        code_string="param_sets->LoadParamSet(param_set)";
        result_var=NULL;
        obj=.projects["SoStd"].programs["SoStartup"].vars["param_sets"]$$;
-       method=ParamSet_Group::LoadParamSet;
+       method=ParamSet_Group::ActivateParamSet;
        meth_args {
 	user_data_=NULL;
 	name="meth_args";
@@ -6442,15 +6924,28 @@ SoProject .projects["SoStd"] {
 	 name="set_name";
 	 required=1;
 	 def_val=;
-	 prev_expr=;
+	 prev_expr="param_set";
 	 expr {
 	  user_data_=NULL;
 	  expr="param_set";
 	 };
 	};
+	ProgArg @[1] {
+	 user_data_=NULL;
+	 arg_type=bool;
+	 type="bool";
+	 name="err_not_found";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr=;
+	 };
+	};
        };
-       meth_sig="bool LoadParamSet(taString& set_name)";
-       meth_desc=;
+       meth_sig="bool ActivateParamSet(taString& set_name, bool err_not_found = true)";
+       meth_desc=" find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs";
       };
      };
     };
@@ -6477,7 +6972,7 @@ SoProject .projects["SoStd"] {
      };
      true_code {
       user_data_=NULL;
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       ProgVarFmArg @[0] {
@@ -6499,7 +6994,7 @@ SoProject .projects["SoStd"] {
        method=taMisc::LeadingZeros;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -6552,7 +7047,7 @@ SoProject .projects["SoStd"] {
        };
        true_code {
 	user_data_=NULL;
-	name=;
+	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
@@ -6565,7 +7060,7 @@ SoProject .projects["SoStd"] {
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  user_data_=NULL;
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -6634,7 +7129,7 @@ SoProject .projects["SoStd"] {
 	 method=taMisc::FullArgStringToFile;
 	 meth_args {
 	  user_data_=NULL;
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -6667,7 +7162,7 @@ SoProject .projects["SoStd"] {
      };
      true_code {
       user_data_=NULL;
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
@@ -6680,7 +7175,7 @@ SoProject .projects["SoStd"] {
        method=taBase::GetFileNameFmProject;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -6749,7 +7244,7 @@ SoProject .projects["SoStd"] {
        method=taMisc::FullArgStringToFile;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -6779,7 +7274,7 @@ SoProject .projects["SoStd"] {
      method=taMisc::ReportUnusedArgs;
      meth_args {
       user_data_=NULL;
-      name="ProgArg_List_0";
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -6813,7 +7308,7 @@ SoProject .projects["SoStd"] {
      method=taBase::GetFileNameFmProject;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -6882,7 +7377,7 @@ SoProject .projects["SoStd"] {
      method=DataTable::SaveDataLog;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -6958,7 +7453,7 @@ SoProject .projects["SoStd"] {
      method=taBase::GetFileNameFmProject;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -7027,7 +7522,7 @@ SoProject .projects["SoStd"] {
      method=DataTable::SaveDataLog;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -7117,7 +7612,7 @@ SoProject .projects["SoStd"] {
      code_string="SoBatch(network, input_data)";
      prog_args {
       user_data_=NULL;
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -7175,6 +7670,17 @@ SoProject .projects["SoStd"] {
    desc="The full set of programs for training a standard self-organizing network";
    debug_mode=0;
    Program @["SoBatch"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].doc$$;
+     };
+    };
     name="SoBatch";
     short_nm="Batch";
     tags="So, Std";
@@ -7215,6 +7721,7 @@ SoProject .projects["SoStd"] {
       var_type=T_Object;
       object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7227,6 +7734,7 @@ SoProject .projects["SoStd"] {
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7244,6 +7752,7 @@ SoProject .projects["SoStd"] {
       name="batch";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
@@ -7254,6 +7763,7 @@ SoProject .projects["SoStd"] {
       name="batch_start";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch number to start on";
@@ -7264,6 +7774,7 @@ SoProject .projects["SoStd"] {
       name="n_batches";
       var_type=T_Int;
       int_val=10;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -7312,6 +7823,7 @@ SoProject .projects["SoStd"] {
 	name="i";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -7447,6 +7959,17 @@ SoProject .projects["SoStd"] {
     };
    };
    Program @["SoTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].doc$$;
+     };
+    };
     name="SoTrain";
     short_nm="Train";
     tags="So, Std";
@@ -7657,6 +8180,7 @@ SoProject .projects["SoStd"] {
       var_type=T_Object;
       object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7669,6 +8193,7 @@ SoProject .projects["SoStd"] {
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7680,6 +8205,7 @@ SoProject .projects["SoStd"] {
       name="no_prompts";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
@@ -7696,6 +8222,7 @@ SoProject .projects["SoStd"] {
       name="max_epoch";
       var_type=T_Int;
       int_val=100;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="maximum number of epochs to run";
@@ -7706,6 +8233,7 @@ SoProject .projects["SoStd"] {
       name="epoch";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
@@ -7716,6 +8244,7 @@ SoProject .projects["SoStd"] {
       name="train_mode";
       var_type=T_HardEnum;
       int_val=1;
+      object_scope=NULL;
       hard_enum_type=Network::TrainMode;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7726,6 +8255,7 @@ SoProject .projects["SoStd"] {
       user_data_=NULL;
       name="rnd_init";
       var_type=T_DynEnum;
+      object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].types["RndInitType"]$$;
@@ -7741,6 +8271,7 @@ SoProject .projects["SoStd"] {
       name="err_stopcrit";
       var_type=T_Real;
       real_val=-1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
@@ -7752,6 +8283,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="n_under_thr";
       var_type=T_Int;
       int_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of times network needs to be under stopcrit threshold to actually stop";
@@ -7762,6 +8294,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="save the network's weights at the end of training?  ";
@@ -7772,6 +8305,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="save_wts_interval";
       var_type=T_Int;
       int_val=-1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
@@ -7782,6 +8316,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="n_under_cnt";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current under threshold counter";
@@ -7793,6 +8328,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=RndSeed_List;
       object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].objs["rnd_seeds"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7805,6 +8341,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["SoStd"].networks["Network_0"].train_time$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7817,6 +8354,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=RndSeed;
       object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].objs["rnd_seed"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7839,13 +8377,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name=;
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name=;
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -7855,7 +8393,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="LocalVars (0 vars)";
 	local_vars {
 	 user_data_=NULL;
-	 name=;
+	 name="local_vars";
 	 el_typ=ProgVar;
 	 el_def=0;
 	};
@@ -7868,7 +8406,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	switch_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_init"]$$;
 	cases {
 	 user_data_=NULL;
-	 name=;
+	 name="cases";
 	 el_typ=CaseBlock;
 	 el_def=0;
 	 CaseBlock @[0] {
@@ -7878,7 +8416,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  code_string="case: OLD_SEED";
 	  prog_code {
 	   user_data_=NULL;
-	   name=;
+	   name="prog_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -7891,7 +8429,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    method=RndSeed::OldSeed;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	    };
@@ -7912,7 +8450,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  code_string="case: NEW_SEED";
 	  prog_code {
 	   user_data_=NULL;
-	   name=;
+	   name="prog_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -7925,7 +8463,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    method=RndSeed::NewSeed;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	    };
@@ -7946,7 +8484,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  code_string="case: BATCH_SEEDS";
 	  prog_code {
 	   user_data_=NULL;
-	   name=;
+	   name="prog_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -7959,7 +8497,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    method=RndSeed_List::UseSeed;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	     ProgArg @[0] {
@@ -8017,7 +8555,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -8068,7 +8606,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       fun=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].functions["GetRandomSeed"]$$;
       fun_args {
        user_data_=NULL;
-       name=;
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -8083,7 +8621,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       no_label="No";
       yes_code {
        user_data_=NULL;
-       name=;
+       name="yes_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -8096,7 +8634,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	method=Network::Init_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -8154,7 +8692,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -8207,7 +8745,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       fun=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].functions["GetRandomSeed"]$;
       fun_args {
        user_data_=NULL;
-       name=;
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -8223,7 +8761,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -8236,7 +8774,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	method=Network::Init_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -8274,7 +8812,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="while (epoch < max_epoch)";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -8284,7 +8822,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="SoEpoch(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -8338,7 +8876,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 VarIncr @[0] {
@@ -8375,7 +8913,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 AssignExpr @[0] {
@@ -8402,7 +8940,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 If @[0] {
@@ -8416,7 +8954,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	  true_code {
 	   user_data_=NULL;
-	   name=;
+	   name="true_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   ProgramCall @[0] {
@@ -8426,7 +8964,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    code_string="SaveWeights(network)";
 	    prog_args {
 	     user_data_=NULL;
-	     name=;
+	     name="prog_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	     ProgArg @[0] {
@@ -8467,7 +9005,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -8477,7 +9015,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="SaveWeights(network)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -8509,7 +9047,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -8533,6 +9071,17 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
    Program @["SoEpoch"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].doc$$;
+     };
+    };
     name="SoEpoch";
     short_nm="Epoch";
     tags="So, Std";
@@ -8573,6 +9122,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -8585,6 +9135,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -8602,6 +9153,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=1;
+      object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8614,6 +9166,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -8625,6 +9178,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8637,6 +9191,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["SoStd"].networks["Network_0"].epoch_time$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8648,6 +9203,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="data_loop_index";
       var_type=T_Int;
       int_val=8;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -8723,7 +9279,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -8770,7 +9326,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=DataTable::ResetData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -8784,7 +9340,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -8794,7 +9350,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="SoTrial(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -8838,7 +9394,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 MethodCall @[0] {
@@ -8851,7 +9407,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   user_data_=NULL;
-	   name=;
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
@@ -8886,7 +9442,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -8899,7 +9455,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -8918,7 +9474,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -8932,7 +9488,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="SoEpochMonitor(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -8962,7 +9518,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -8986,6 +9542,17 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
    Program @["SoTrial"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].doc$$;
+     };
+    };
     name="SoTrial";
     short_nm="Trial";
     tags="So, Std";
@@ -9026,6 +9593,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9038,6 +9606,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9055,6 +9624,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -9088,7 +9658,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       method=Network::Init_InputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9103,7 +9673,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="ApplyInputs(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9146,7 +9716,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=SoNetwork::Trial_Run;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9163,7 +9733,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Compute_TrialStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9177,7 +9747,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="SoTrialMonitor(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9222,6 +9792,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["ApplyInputs"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].doc$$;
+     };
+    };
     name="ApplyInputs";
     short_nm="Inputs";
     tags=;
@@ -9298,6 +9879,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9310,6 +9892,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9328,6 +9911,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LayerWriter;
       object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9356,7 +9940,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9399,7 +9983,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::AutoConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9429,7 +10013,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taList_impl::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9465,7 +10049,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::ApplyInputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9489,6 +10073,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["SoTrialMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].doc$$;
+     };
+    };
     name="SoTrialMonitor";
     short_nm="SoTrlMon";
     tags="So, Std, Monitor";
@@ -9764,6 +10359,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9782,6 +10378,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9794,6 +10391,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9822,7 +10420,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9865,7 +10463,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9895,7 +10493,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -9931,7 +10529,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9948,7 +10546,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9965,7 +10563,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -9982,7 +10580,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::DMem_ShareTrialData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10032,6 +10630,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["SoEpochMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].doc$$;
+     };
+    };
     name="SoEpochMonitor";
     short_nm="SoEpcMon";
     tags="So, Std, Monitor";
@@ -10307,6 +10916,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -10325,6 +10935,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10337,6 +10948,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10349,6 +10961,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["SoStd"].networks["Network_0"].epoch_time$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10388,7 +11001,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10431,7 +11044,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10461,7 +11074,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10497,7 +11110,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10514,7 +11127,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10542,7 +11155,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10611,7 +11224,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10680,7 +11293,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10704,6 +11317,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["SaveWeights"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].doc$$;
+     };
+    };
     name="SaveWeights";
     short_nm="SavWts";
     tags="Network, Weights";
@@ -10744,6 +11368,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -10761,6 +11386,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="tag";
       var_type=T_String;
       string_val="_gui";
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
@@ -10771,6 +11397,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="wts_subdir";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided subdirectory to save weights in";
@@ -10781,6 +11408,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="fname";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
@@ -10791,6 +11419,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_str";
       var_type=T_String;
       string_val="0036";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -10801,6 +11430,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="batch_str";
       var_type=T_String;
       string_val="03";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
@@ -10811,6 +11441,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="final_tag";
       var_type=T_String;
       string_val=".03_0036";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -10837,7 +11468,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      If @[0] {
       user_data_=NULL;
       desc=;
-      flags=CAN_REVERT_TO_CODE;
+      flags=0;
       code_string=;
       cond {
        user_data_=NULL;
@@ -10851,7 +11482,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        ReturnExpr @[0] {
 	user_data_=NULL;
 	desc=;
-	flags=CAN_REVERT_TO_CODE;
+	flags=0;
 	code_string=;
 	expr {
 	 user_data_=NULL;
@@ -10870,7 +11501,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taMisc::LeadingZeros;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10911,7 +11542,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taMisc::LeadingZeros;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10963,7 +11594,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::GetFileNameFmProject;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11032,7 +11663,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::SaveWeights;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11091,6 +11722,17 @@ this program can be extended to do arbitrary things to generate data and apply i
    desc="The full set of programs for testing a standard self-organizing network (starting with Epoch)";
    debug_mode=0;
    Program @["SoEpochTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Test"]["SoEpochTest"].doc$$;
+     };
+    };
     name="SoEpochTest";
     short_nm="EpcTest";
     tags="So, Std";
@@ -11131,6 +11773,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11149,6 +11792,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11160,6 +11804,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=0;
+      object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11172,6 +11817,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -11183,6 +11829,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["SoStd"].data.gp["OutputData"]["TestTrialOutputData"]$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11195,6 +11842,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["SoStd"].networks["Network_0"].epoch_time$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11206,6 +11854,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="data_loop_index";
       var_type=T_Int;
       int_val=45;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -11294,7 +11943,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11324,7 +11973,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::ResetData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11338,7 +11987,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="Net Data Loop (SEQUENTIAL):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -11348,7 +11997,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	code_string="SoTrialTest(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -11392,7 +12041,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 MethodCall @[0] {
@@ -11405,7 +12054,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   user_data_=NULL;
-	   name=;
+	   name="meth_args";
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
@@ -11440,7 +12089,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -11453,7 +12102,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -11472,7 +12121,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11486,7 +12135,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="SoEpochMonitorTest(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11529,7 +12178,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11553,6 +12202,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["SoTrialTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Test"]["SoTrialTest"].doc$$;
+     };
+    };
     name="SoTrialTest";
     short_nm="TrlTest";
     tags="So, Std";
@@ -11593,6 +12253,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11605,6 +12266,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11622,6 +12284,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -11655,7 +12318,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::Init_InputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11670,7 +12333,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="ApplyInputsTest(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11713,7 +12376,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=SoNetwork::Trial_Run;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11730,7 +12393,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Compute_TrialStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11744,7 +12407,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="SoTrialMonitorTest(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11789,6 +12452,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["ApplyInputsTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Test"]["ApplyInputsTest"].doc$$;
+     };
+    };
     name="ApplyInputsTest";
     short_nm="InTest";
     tags=;
@@ -11865,6 +12539,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11877,6 +12552,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11895,6 +12571,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LayerWriter;
       object_val=.projects["SoStd"].programs.gp["SoAll_Test"]["ApplyInputsTest"].objs["LayerWriter_0"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11923,7 +12600,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11966,7 +12643,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::AutoConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11996,7 +12673,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taList_impl::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12032,7 +12709,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::ApplyInputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -12056,6 +12733,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["SoTrialMonitorTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Test"]["SoTrialMonitorTest"].doc$$;
+     };
+    };
     name="SoTrialMonitorTest";
     short_nm="SoMonTest";
     tags="So, Std, Monitor";
@@ -12331,6 +13019,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12349,6 +13038,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["OutputData"]["TestTrialOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12361,6 +13051,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["SoStd"].programs.gp["SoAll_Test"]["SoTrialMonitorTest"].objs["trial_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12389,7 +13080,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12432,7 +13123,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12462,7 +13153,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12498,7 +13189,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -12515,7 +13206,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -12532,7 +13223,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -12549,7 +13240,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::DMem_ShareTrialData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12599,6 +13290,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["SoEpochMonitorTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["SoStd"].programs.gp["SoAll_Test"]["SoEpochMonitorTest"].doc$$;
+     };
+    };
     name="SoEpochMonitorTest";
     short_nm="SoEpcTest";
     tags="So, Std, Monitor";
@@ -12874,6 +13576,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12892,6 +13595,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["SoStd"].data.gp["OutputData"]["TestEpochOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12904,6 +13608,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["SoStd"].programs.gp["SoAll_Test"]["SoEpochMonitorTest"].objs["epoch_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12916,6 +13621,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["SoStd"].networks["Network_0"].epoch_time$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12955,7 +13661,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12998,7 +13704,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13028,7 +13734,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13064,7 +13770,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -13081,7 +13787,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -13109,7 +13815,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13178,7 +13884,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13247,7 +13953,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -13278,6 +13984,48 @@ this program can be extended to do arbitrary things to generate data and apply i
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name="UserDataItem_List_111";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     user_data_=NULL;
+     name="view_win_lft";
+     value 8 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     user_data_=NULL;
+     name="view_win_top";
+     value 8 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     user_data_=NULL;
+     name="view_win_wd";
+     value 8 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     user_data_=NULL;
+     name="view_win_ht";
+     value 8 0=0.7994902;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     user_data_=NULL;
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     user_data_=NULL;
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=";
+     val_type_fixed=0;
+    };
+   };
    name="Browser2";
    m_data=.projects["SoStd"]$$;
    cur_font_size=12;
@@ -13294,6 +14042,18 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_112";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       user_data_=NULL;
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Application";
      m_data=NULL;
      cur_font_size=12;
@@ -13326,6 +14086,18 @@ this program can be extended to do arbitrary things to generate data and apply i
      visible=1;
     };
     T3PanelViewer @["Visualizer"] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_113";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       user_data_=NULL;
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Visualizer";
      m_data=NULL;
      cur_font_size=12;
@@ -14717,6 +15489,48 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_114";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       user_data_=NULL;
+       name="view_win_lft";
+       value 8 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       user_data_=NULL;
+       name="view_win_top";
+       value 8 0=0.008496176;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       user_data_=NULL;
+       name="view_win_wd";
+       value 8 0=0.04354753;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       user_data_=NULL;
+       name="view_win_ht";
+       value 8 0=0.7357689;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       user_data_=NULL;
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       user_data_=NULL;
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Tools";
      m_data=NULL;
      cur_font_size=12;
@@ -14732,7 +15546,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[4];.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[4];.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";
@@ -14828,6 +15642,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="SoUnitSpec_0";
      is_used=0;
+     used_status=CHILD_USED;
      desc=;
      unique{      };
      children {
@@ -14839,6 +15654,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="SoftClUnitSpec_1";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{ var;       };
        children {
@@ -14858,6 +15674,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="ThreshLinSoUnitSpec_1";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{ threshold;       };
        children {
@@ -14880,6 +15697,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="ConSpec_0";
      is_used=0;
+     used_status=UNUSED;
      desc=;
      unique{      };
      children {
@@ -14895,6 +15713,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="SoLayerSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -14909,6 +15728,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="FullPrjnSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -14928,6 +15748,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="HebbConSpec_0";
      is_used=0;
+     used_status=CHILD_USED;
      desc=;
      unique{      };
      children {
@@ -14939,6 +15760,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="SoftClConSpec_1";
        is_used=0;
+       used_status=UNUSED;
        desc=;
        unique{        };
        children {
@@ -14956,6 +15778,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="MaxInConSpec_1";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{        };
        children {

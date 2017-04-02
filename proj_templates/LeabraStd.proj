@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.4.0 rev10443
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10588
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -18,17 +18,17 @@ LeabraProject .projects["LeabraStd"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [3] {
-    EditMbrItem @[0] { };
-    EditMbrItem @[1] { };
-    EditMbrItem @[2] { };
+   ControlPanelMember_Group @.mbrs = [3] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
+    ControlPanelMember @[2] { };
    };
 
-   EditMthItem_Group @.mths = [4] {
-    EditMthItem @[0] { };
-    EditMthItem @[1] { };
-    EditMthItem @[2] { };
-    EditMthItem @[3] { };
+   ControlPanelMethod_Group @.mths = [4] {
+    ControlPanelMethod @[0] { };
+    ControlPanelMethod @[1] { };
+    ControlPanelMethod @[2] { };
+    ControlPanelMethod @[3] { };
    };
   };
   ClusterRun @["ClusterRun"] { 
@@ -36,10 +36,10 @@ LeabraProject .projects["LeabraStd"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [0] {
+   ControlPanelMember_Group @.mbrs = [0] {
    };
 
-   EditMthItem_Group @.mths = [0] {
+   ControlPanelMethod_Group @.mths = [0] {
    };
 
    DataTableCols @.jobs_running.data = [33] {
@@ -61,17 +61,45 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -79,9 +107,6 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_done.data = [33] {
@@ -103,17 +128,45 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -121,9 +174,6 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_deleted.data = [33] {
@@ -145,17 +195,45 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -163,9 +241,6 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_archive.data = [33] {
@@ -187,17 +262,45 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["job_out_file"] { };
     String_Data @["dat_files"] { };
     String_Data @["other_files"] { };
-    int_Data @["command_id"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
-    int_Data @["ram_gb"] { };
-    int_Data @["n_threads"] { };
-    int_Data @["mpi_nodes"] { };
-    int_Data @["mpi_per_node"] { };
-    int_Data @["pb_batches"] { };
-    int_Data @["pb_nodes"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
     String_Data @["done_svn"] { };
@@ -205,9 +308,6 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
    };
 
    DataTableCols @.file_list.data = [11] {
@@ -227,9 +327,6 @@ LeabraProject .projects["LeabraStd"] {
    DataOpList @.file_list.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.file_list.control_panel_cells = [0] {
-   };
-
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -242,18 +339,16 @@ LeabraProject .projects["LeabraStd"] {
    DataOpList @.cluster_info.last_sort_spec.ops = [0] {
    };
 
-   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
-   };
-
    DataTableCols @.clusterscript_timestamp.data = [2] {
     String_Data @["timestamp"] { };
-    int_Data @["version"] { };
+    int_Data @["version"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
    };
 
    DataOpList @.clusterscript_timestamp.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.clusterscript_timestamp.control_panel_cells = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -261,7 +356,10 @@ LeabraProject .projects["LeabraStd"] {
   };
  };
 
- ParamSet_Group @.param_sets = [0] {
+ ParamSet_Group @.active_params = [0] {
+ };
+
+ ArchivedParams_Group @.archived_params = [0] {
  };
 
  DataTable_Group @.data = [0] {
@@ -274,9 +372,6 @@ LeabraProject .projects["LeabraStd"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
   };
@@ -316,9 +411,6 @@ LeabraProject .projects["LeabraStd"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
    DataTable @["EpochOutputData"] { 
@@ -366,9 +458,6 @@ LeabraProject .projects["LeabraStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["TestTrialOutputData"] { 
     DataTableCols @.data = [21] {
@@ -397,9 +486,6 @@ LeabraProject .projects["LeabraStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["TestEpochOutputData"] { 
     DataTableCols @.data = [20] {
@@ -427,9 +513,6 @@ LeabraProject .projects["LeabraStd"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] { 
@@ -438,6 +521,10 @@ LeabraProject .projects["LeabraStd"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["LeabraStartup"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -487,8 +574,9 @@ LeabraProject .projects["LeabraStd"] {
     If @[13] { 
      ProgEl_List @.true_code = [1] {
       MethodCall @[0] { 
-       ProgArg_List @.meth_args = [1] {
+       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
+	ProgArg @[1] { };
        };
       };
      };
@@ -592,6 +680,10 @@ LeabraProject .projects["LeabraStd"] {
   };
   Program_Group @.gp["LeabraAll_Std"] = [10] { 
    Program @["LeabraBatch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -639,6 +731,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [2] {
      RndSeed_List @["rnd_seeds"] { 
       taList @.seeds = [25] {
@@ -849,6 +945,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraEpoch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -932,6 +1032,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrial"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1005,6 +1109,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraQuarter"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1076,6 +1184,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraCycle"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1105,6 +1217,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["ApplyInputs"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -1163,6 +1279,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrialMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [26] {
@@ -1252,6 +1372,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraEpochMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [30] {
@@ -1359,6 +1483,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["SaveWeights"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1422,6 +1550,10 @@ LeabraProject .projects["LeabraStd"] {
   };
   Program_Group @.gp["LeabraAll_Test"] = [7] { 
    Program @["LeabraEpochTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1497,6 +1629,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrialTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1570,6 +1706,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraQuarterTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1641,6 +1781,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraCycleTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1670,6 +1814,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["ApplyInputsTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -1728,6 +1876,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrialMonitorTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [20] {
@@ -1811,6 +1963,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraEpochMonitorTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [19] {
@@ -1910,14 +2066,31 @@ LeabraProject .projects["LeabraStd"] {
 
  taViewer_List @.viewers = [1] {
   MainWindowViewer @["Browser2"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["view_win_lft"] { };
+    UserDataItem @["view_win_top"] { };
+    UserDataItem @["view_win_wd"] { };
+    UserDataItem @["view_win_ht"] { };
+    UserDataItem @["view_win_iconified"] { };
+    UserDataItem @["view_splitter_state"] { };
+   };
+
    ToolBar_List @.toolbars = [1] {
-    ToolBar @["Application"] { };
+    ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_visible"] { };
+     };
+    };
    };
 
    FrameViewer_List @.frames = [3] {
     BrowseViewerTaBase @["Navigator"] { };
     PanelViewer @["Editor"] { };
     T3PanelViewer @["Visualizer"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
      T3Panel_List @.panels = [3] {
       T3Panel @["Network_0"] { 
        T3DataView_List @.root_view.children = [1] {
@@ -2115,7 +2288,16 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    DockViewer_List @.docks = [1] {
-    ToolBoxDockViewer @["Tools"] { };
+    ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_lft"] { };
+      UserDataItem @["view_win_top"] { };
+      UserDataItem @["view_win_wd"] { };
+      UserDataItem @["view_win_ht"] { };
+      UserDataItem @["view_win_iconified"] { };
+      UserDataItem @["view_visible"] { };
+     };
+    };
    };
   };
  };
@@ -2295,6 +2477,7 @@ LeabraProject .projects["LeabraStd"] {
   name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
+  master_and_clones=0;
   ControlPanel @["ControlPanel"] {
    UserDataItem_List @*(.user_data_) {
     user_data_=NULL;
@@ -2309,82 +2492,71 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    name="ControlPanel";
+   cp_state=REGULAR;
    updt_while_running=0;
    desc=;
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
-    EditMbrItem @[0] {
+    ControlPanelMember @[0] {
      user_data_=NULL;
      label="leabra_con_spec_0_lrate";
+     short_label=0;
+     cust_label=0;
      desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
      cust_desc=0;
      base=.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
      mbr=LeabraConSpec::lrate;
-     is_numeric=1;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=1;
+      is_single=1;
+      state=ACTIVE;
       saved_value=;
-     };
-     notes {
-      user_data_=NULL;
+      range="0:1:0.1";
       notes=;
      };
     };
-    EditMbrItem @[1] {
+    ControlPanelMember @[1] {
      user_data_=NULL;
      label="leabra_cycle_update_net_view";
+     short_label=0;
+     cust_label=0;
      desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      cust_desc=1;
      base=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"].vars["update_net_view"]$$;
      mbr=ProgVar::bool_val;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      state=ACTIVE;
       saved_value=;
-     };
-     notes {
-      user_data_=NULL;
+      range="0:1:0.1";
       notes=;
      };
     };
-    EditMbrItem @[2] {
+    ControlPanelMember @[2] {
      user_data_=NULL;
      label="cycle_qtr";
+     short_label=1;
+     cust_label=0;
      desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
      cust_desc=0;
      base=.projects["LeabraStd"].networks["Network_0"].times$$;
      mbr=LeabraTimes::cycle_qtr;
-     is_numeric=0;
-     is_single=1;
-     param_search {
+     data {
       user_data_=NULL;
-      record=0;
-      search=0;
-      range="0:1:0.1";
-     };
-     param_set_value {
-      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      state=ACTIVE;
       saved_value=;
-     };
-     notes {
-      user_data_=NULL;
+      range="0:1:0.1";
       notes=;
      };
     };
@@ -2392,36 +2564,44 @@ LeabraProject .projects["LeabraStd"] {
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
-    EditMthItem @[0] {
+    ControlPanelMethod @[0] {
      user_data_=NULL;
      label="Train_Init";
+     short_label=0;
+     cust_label=1;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
      base=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$$;
      mth=Program::Init;
     };
-    EditMthItem @[1] {
+    ControlPanelMethod @[1] {
      user_data_=NULL;
      label="Train_Run";
+     short_label=0;
+     cust_label=1;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
      base=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
      mth=Program::Run_Gui;
     };
-    EditMthItem @[2] {
+    ControlPanelMethod @[2] {
      user_data_=NULL;
      label="Train_Step";
+     short_label=0;
+     cust_label=1;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
      base=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
      mth=Program::Step_Gui;
     };
-    EditMthItem @[3] {
+    ControlPanelMethod @[3] {
      user_data_=NULL;
      label="Train_Stop";
+     short_label=0;
+     cust_label=1;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
      base=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
@@ -2443,18 +2623,19 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    name="ClusterRun";
+   cp_state=REGULAR;
    updt_while_running=0;
    desc=;
    mbrs {
     user_data_=NULL;
     name="mbrs";
-    el_typ=EditMbrItem;
+    el_typ=ControlPanelMember;
     el_def=0;
    };
    mths {
     user_data_=NULL;
     name="mths";
-    el_typ=EditMthItem;
+    el_typ=ControlPanelMethod;
     el_def=0;
     group_type=GT_BUTTONS;
    };
@@ -2792,6 +2973,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2881,6 +3074,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2898,6 +3103,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2915,6 +3132,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2932,6 +3161,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2949,6 +3190,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -2966,6 +3219,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3072,12 +3337,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_done {
     user_data_=NULL;
@@ -3413,6 +3672,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3502,6 +3773,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3519,6 +3802,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3536,6 +3831,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3553,6 +3860,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3570,6 +3889,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3587,6 +3918,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -3693,12 +4036,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_deleted {
     user_data_=NULL;
@@ -4034,6 +4371,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4123,6 +4472,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4140,6 +4501,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4157,6 +4530,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4174,6 +4559,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4191,6 +4588,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4208,6 +4617,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4314,12 +4735,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_archive {
     user_data_=NULL;
@@ -4655,6 +5070,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4744,6 +5171,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4761,6 +5200,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="n_threads";
       desc="number of parallel threads to use for running";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4778,6 +5229,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4795,6 +5258,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4812,6 +5287,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4829,6 +5316,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -4935,12 +5434,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    file_list {
     user_data_=NULL;
@@ -5167,12 +5660,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    cluster_info {
     user_data_=NULL;
@@ -5309,12 +5796,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    clusterscript_timestamp {
     user_data_=NULL;
@@ -5344,6 +5825,18 @@ LeabraProject .projects["LeabraStd"] {
       matrix_col_width=10;
      };
      int_Data @["version"] {
+      UserDataItem_List @*(.user_data_) {
+       user_data_=NULL;
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	user_data_=NULL;
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
       name="version";
       desc="Version number of cluster run script ";
       col_flags=SAVE_DATA|READ_ONLY|AUTO_WIDTH;
@@ -5378,12 +5871,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    search_algos {
     user_data_=NULL;
@@ -5423,11 +5910,19 @@ LeabraProject .projects["LeabraStd"] {
    enable_notes=0;
   };
  };
- param_sets {
+ active_params {
   user_data_=NULL;
-  name="param_sets";
+  name="active_params";
   el_typ=ParamSet;
   el_def=0;
+  master_and_clones=0;
+ };
+ archived_params {
+  user_data_=NULL;
+  name="archived_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
  };
  data {
   user_data_=NULL;
@@ -5553,7 +6048,7 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [6] 0;1;2;3;4;5;    };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -5565,12 +6060,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -6228,7 +6717,7 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -6240,12 +6729,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["EpochOutputData"] {
     user_data_=NULL;
@@ -7036,7 +7519,7 @@ LeabraProject .projects["LeabraStd"] {
      float_Data @["Hidden_netrel"] {
       user_data_=NULL;
       name="Hidden_netrel";
-      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -7047,7 +7530,7 @@ LeabraProject .projects["LeabraStd"] {
        user_data_=NULL;
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=13;
       matrix_col_width=10;
       ar {
        user_data_=NULL;
@@ -7057,7 +7540,7 @@ LeabraProject .projects["LeabraStd"] {
      float_Data @["Output_netrel"] {
       user_data_=NULL;
       name="Output_netrel";
-      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -7068,7 +7551,7 @@ LeabraProject .projects["LeabraStd"] {
        user_data_=NULL;
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=13;
       matrix_col_width=10;
       ar {
        user_data_=NULL;
@@ -7085,7 +7568,7 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -7097,12 +7580,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["TestTrialOutputData"] {
     user_data_=NULL;
@@ -7564,7 +8041,7 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -7576,12 +8053,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["TestEpochOutputData"] {
     user_data_=NULL;
@@ -8022,7 +8493,7 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    [0]     };
+    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -8034,12 +8505,6 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -8059,6 +8524,17 @@ LeabraProject .projects["LeabraStd"] {
   desc=;
   debug_mode=0;
   Program @["LeabraStartup"] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     user_data_=NULL;
+     name="DocLink";
+     doc=.projects["LeabraStd"].programs["LeabraStartup"].doc$$;
+    };
+   };
    name="LeabraStartup";
    short_nm="Startup";
    tags="Leabra, Startup";
@@ -8099,6 +8575,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=LeabraNetwork;
      object_val=.projects["LeabraStd"].networks["Network_0"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -8111,6 +8588,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -8129,6 +8607,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=Program;
      object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
@@ -8141,6 +8620,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=Program;
      object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -8152,6 +8632,7 @@ LeabraProject .projects["LeabraStd"] {
      name="param_set";
      var_type=T_String;
      string_val=;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of saved parameter set to apply at startup";
@@ -8162,6 +8643,7 @@ LeabraProject .projects["LeabraStd"] {
      name="tag";
      var_type=T_String;
      string_val="_gui";
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -8172,6 +8654,7 @@ LeabraProject .projects["LeabraStd"] {
      name="batch_str";
      var_type=T_String;
      string_val="00";
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch number as a string (leading zeros)";
@@ -8182,6 +8665,7 @@ LeabraProject .projects["LeabraStd"] {
      name="log_dir";
      var_type=T_String;
      string_val=;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
@@ -8192,6 +8676,7 @@ LeabraProject .projects["LeabraStd"] {
      name="log_file_nm";
      var_type=T_String;
      string_val=;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -8202,6 +8687,7 @@ LeabraProject .projects["LeabraStd"] {
      name="batch_start";
      var_type=T_Int;
      int_val=0;
+     object_scope=NULL;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch starting number";
@@ -8213,6 +8699,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -8225,6 +8712,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects["LeabraStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -8237,6 +8725,7 @@ LeabraProject .projects["LeabraStd"] {
      var_type=T_Object;
      object_type=ClusterRun;
      object_val=.projects["LeabraStd"].ctrl_panels["ClusterRun"]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -8248,7 +8737,8 @@ LeabraProject .projects["LeabraStd"] {
      name="param_sets";
      var_type=T_Object;
      object_type=ParamSet_Group;
-     object_val=.projects["LeabraStd"].param_sets$$;
+     object_val=.projects["LeabraStd"].active_params$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -8405,7 +8895,7 @@ LeabraProject .projects["LeabraStd"] {
        code_string="param_sets->LoadParamSet(param_set)";
        result_var=NULL;
        obj=.projects["LeabraStd"].programs["LeabraStartup"].vars["param_sets"]$$;
-       method=ParamSet_Group::LoadParamSet;
+       method=ParamSet_Group::ActivateParamSet;
        meth_args {
 	user_data_=NULL;
 	name="meth_args";
@@ -8418,15 +8908,28 @@ LeabraProject .projects["LeabraStd"] {
 	 name="set_name";
 	 required=1;
 	 def_val=;
-	 prev_expr=;
+	 prev_expr="param_set";
 	 expr {
 	  user_data_=NULL;
 	  expr="param_set";
 	 };
 	};
+	ProgArg @[1] {
+	 user_data_=NULL;
+	 arg_type=bool;
+	 type="bool";
+	 name="err_not_found";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr=;
+	 };
+	};
        };
-       meth_sig="bool LoadParamSet(taString& set_name)";
-       meth_desc=;
+       meth_sig="bool ActivateParamSet(taString& set_name, bool err_not_found = true)";
+       meth_desc=" find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs";
       };
      };
     };
@@ -8453,7 +8956,7 @@ LeabraProject .projects["LeabraStd"] {
      };
      true_code {
       user_data_=NULL;
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       ProgVarFmArg @[0] {
@@ -8475,7 +8978,7 @@ LeabraProject .projects["LeabraStd"] {
        method=taMisc::LeadingZeros;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -8528,7 +9031,7 @@ LeabraProject .projects["LeabraStd"] {
        };
        true_code {
 	user_data_=NULL;
-	name=;
+	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
@@ -8541,7 +9044,7 @@ LeabraProject .projects["LeabraStd"] {
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  user_data_=NULL;
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -8610,7 +9113,7 @@ LeabraProject .projects["LeabraStd"] {
 	 method=taMisc::FullArgStringToFile;
 	 meth_args {
 	  user_data_=NULL;
-	  name=;
+	  name="meth_args";
 	  el_typ=ProgArg;
 	  el_def=0;
 	  ProgArg @[0] {
@@ -8643,7 +9146,7 @@ LeabraProject .projects["LeabraStd"] {
      };
      true_code {
       user_data_=NULL;
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
@@ -8656,7 +9159,7 @@ LeabraProject .projects["LeabraStd"] {
        method=taBase::GetFileNameFmProject;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -8725,7 +9228,7 @@ LeabraProject .projects["LeabraStd"] {
        method=taMisc::FullArgStringToFile;
        meth_args {
 	user_data_=NULL;
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -8755,7 +9258,7 @@ LeabraProject .projects["LeabraStd"] {
      method=taMisc::ReportUnusedArgs;
      meth_args {
       user_data_=NULL;
-      name="ProgArg_List_0";
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -8789,7 +9292,7 @@ LeabraProject .projects["LeabraStd"] {
      method=taBase::GetFileNameFmProject;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -8858,7 +9361,7 @@ LeabraProject .projects["LeabraStd"] {
      method=DataTable::SaveDataLog;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -8934,7 +9437,7 @@ LeabraProject .projects["LeabraStd"] {
      method=taBase::GetFileNameFmProject;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -9003,7 +9506,7 @@ LeabraProject .projects["LeabraStd"] {
      method=DataTable::SaveDataLog;
      meth_args {
       user_data_=NULL;
-      name=;
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -9093,7 +9596,7 @@ LeabraProject .projects["LeabraStd"] {
      code_string="LeabraBatch(network, input_data)";
      prog_args {
       user_data_=NULL;
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -9151,6 +9654,17 @@ LeabraProject .projects["LeabraStd"] {
    desc="The full set of programs for training a standard Leabra network";
    debug_mode=0;
    Program @["LeabraBatch"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].doc$$;
+     };
+    };
     name="LeabraBatch";
     short_nm="Batch";
     tags="Leabra, Std";
@@ -9191,6 +9705,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9203,6 +9718,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9220,6 +9736,7 @@ LeabraProject .projects["LeabraStd"] {
       name="batch";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
@@ -9230,6 +9747,7 @@ LeabraProject .projects["LeabraStd"] {
       name="batch_start";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch number to start on";
@@ -9240,6 +9758,7 @@ LeabraProject .projects["LeabraStd"] {
       name="n_batches";
       var_type=T_Int;
       int_val=10;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -9288,6 +9807,7 @@ LeabraProject .projects["LeabraStd"] {
 	name="i";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -9423,6 +9943,17 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].doc$$;
+     };
+    };
     name="LeabraTrain";
     short_nm="Train";
     tags="Leabra, Train, RndSeedList";
@@ -9633,6 +10164,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9645,6 +10177,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9656,6 +10189,7 @@ LeabraProject .projects["LeabraStd"] {
       name="no_prompts";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
@@ -9672,6 +10206,7 @@ LeabraProject .projects["LeabraStd"] {
       name="max_epoch";
       var_type=T_Int;
       int_val=500;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -9682,6 +10217,7 @@ LeabraProject .projects["LeabraStd"] {
       name="epoch";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -9692,6 +10228,7 @@ LeabraProject .projects["LeabraStd"] {
       name="train_mode";
       var_type=T_HardEnum;
       int_val=1;
+      object_scope=NULL;
       hard_enum_type=Network::TrainMode;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9702,6 +10239,7 @@ LeabraProject .projects["LeabraStd"] {
       user_data_=NULL;
       name="rnd_init";
       var_type=T_DynEnum;
+      object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].types["RndInitType"]$$;
@@ -9717,6 +10255,7 @@ LeabraProject .projects["LeabraStd"] {
       name="err_stopcrit";
       var_type=T_Real;
       real_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
@@ -9727,6 +10266,7 @@ LeabraProject .projects["LeabraStd"] {
       name="n_under_thr";
       var_type=T_Int;
       int_val=2;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of times network needs to be under stopcrit threshold to actually stop";
@@ -9737,6 +10277,7 @@ LeabraProject .projects["LeabraStd"] {
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="save the network's weights at the end of training?  ";
@@ -9747,6 +10288,7 @@ LeabraProject .projects["LeabraStd"] {
       name="save_wts_interval";
       var_type=T_Int;
       int_val=-1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
@@ -9757,6 +10299,7 @@ LeabraProject .projects["LeabraStd"] {
       name="n_under_cnt";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current under threshold counter";
@@ -9768,6 +10311,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=RndSeed_List;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].objs["rnd_seeds"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9780,6 +10324,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["LeabraStd"].networks["Network_0"].train_time$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9792,6 +10337,7 @@ LeabraProject .projects["LeabraStd"] {
       var_type=T_Object;
       object_type=RndSeed;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].objs["rnd_seed"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9814,13 +10360,13 @@ LeabraProject .projects["LeabraStd"] {
       object_type=taOBase;
       args {
        user_data_=NULL;
-       name=;
+       name="args";
        el_typ=ProgVar;
        el_def=0;
       };
       fun_code {
        user_data_=NULL;
-       name=;
+       name="fun_code";
        el_typ=ProgCode;
        el_def=0;
        LocalVars @[0] {
@@ -9830,7 +10376,7 @@ LeabraProject .projects["LeabraStd"] {
 	code_string="LocalVars (0 vars)";
 	local_vars {
 	 user_data_=NULL;
-	 name=;
+	 name="local_vars";
 	 el_typ=ProgVar;
 	 el_def=0;
 	};
@@ -9843,7 +10389,7 @@ LeabraProject .projects["LeabraStd"] {
 	switch_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["rnd_init"]$$;
 	cases {
 	 user_data_=NULL;
-	 name=;
+	 name="cases";
 	 el_typ=CaseBlock;
 	 el_def=0;
 	 CaseBlock @[0] {
@@ -9853,7 +10399,7 @@ LeabraProject .projects["LeabraStd"] {
 	  code_string="case: OLD_SEED";
 	  prog_code {
 	   user_data_=NULL;
-	   name=;
+	   name="prog_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -9866,7 +10412,7 @@ LeabraProject .projects["LeabraStd"] {
 	    method=RndSeed::OldSeed;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	    };
@@ -9887,7 +10433,7 @@ LeabraProject .projects["LeabraStd"] {
 	  code_string="case: NEW_SEED";
 	  prog_code {
 	   user_data_=NULL;
-	   name=;
+	   name="prog_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -9900,7 +10446,7 @@ LeabraProject .projects["LeabraStd"] {
 	    method=RndSeed::NewSeed;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	    };
@@ -9921,7 +10467,7 @@ LeabraProject .projects["LeabraStd"] {
 	  code_string="case: BATCH_SEEDS";
 	  prog_code {
 	   user_data_=NULL;
-	   name=;
+	   name="prog_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
@@ -9934,7 +10480,7 @@ LeabraProject .projects["LeabraStd"] {
 	    method=RndSeed_List::UseSeed;
 	    meth_args {
 	     user_data_=NULL;
-	     name=;
+	     name="meth_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	     ProgArg @[0] {
@@ -9992,7 +10538,7 @@ LeabraProject .projects["LeabraStd"] {
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10043,7 +10589,7 @@ LeabraProject .projects["LeabraStd"] {
       fun=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].functions["GetRandomSeed"]$$;
       fun_args {
        user_data_=NULL;
-       name=;
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10058,7 +10604,7 @@ LeabraProject .projects["LeabraStd"] {
       no_label="No";
       yes_code {
        user_data_=NULL;
-       name=;
+       name="yes_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -10071,7 +10617,7 @@ LeabraProject .projects["LeabraStd"] {
 	method=Network::Build;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -10088,7 +10634,7 @@ LeabraProject .projects["LeabraStd"] {
 	method=Network::Init_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -10146,7 +10692,7 @@ LeabraProject .projects["LeabraStd"] {
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10199,7 +10745,7 @@ LeabraProject .projects["LeabraStd"] {
       fun=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].functions["GetRandomSeed"]$;
       fun_args {
        user_data_=NULL;
-       name=;
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10215,7 +10761,7 @@ LeabraProject .projects["LeabraStd"] {
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -10228,7 +10774,7 @@ LeabraProject .projects["LeabraStd"] {
 	method=Network::Init_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -10266,7 +10812,7 @@ LeabraProject .projects["LeabraStd"] {
       code_string="while (epoch < max_epoch)";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -10276,7 +10822,7 @@ LeabraProject .projects["LeabraStd"] {
 	code_string="LeabraEpoch(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -10330,7 +10876,7 @@ LeabraProject .projects["LeabraStd"] {
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 VarIncr @[0] {
@@ -10367,7 +10913,7 @@ LeabraProject .projects["LeabraStd"] {
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 AssignExpr @[0] {
@@ -10394,7 +10940,7 @@ LeabraProject .projects["LeabraStd"] {
 	};
 	true_code {
 	 user_data_=NULL;
-	 name=;
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 If @[0] {
@@ -10408,7 +10954,7 @@ LeabraProject .projects["LeabraStd"] {
 	  };
 	  true_code {
 	   user_data_=NULL;
-	   name=;
+	   name="true_code";
 	   el_typ=ProgCode;
 	   el_def=0;
 	   ProgramCall @[0] {
@@ -10418,7 +10964,7 @@ LeabraProject .projects["LeabraStd"] {
 	    code_string="SaveWeights(network)";
 	    prog_args {
 	     user_data_=NULL;
-	     name=;
+	     name="prog_args";
 	     el_typ=ProgArg;
 	     el_def=0;
 	     ProgArg @[0] {
@@ -10459,7 +11005,7 @@ LeabraProject .projects["LeabraStd"] {
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -10469,7 +11015,7 @@ LeabraProject .projects["LeabraStd"] {
 	code_string="SaveWeights(network)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -10501,7 +11047,7 @@ LeabraProject .projects["LeabraStd"] {
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10712,6 +11258,17 @@ mw.config.set({\"wgBackendResponseTime\":155});
     };
    };
    Program @["LeabraEpoch"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].doc$$;
+     };
+    };
     name="LeabraEpoch";
     short_nm="Epoch";
     tags="Leabra, Std";
@@ -10752,6 +11309,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -10764,6 +11322,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -10781,6 +11340,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=1;
+      object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10793,6 +11353,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="trial";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -10804,6 +11365,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10815,6 +11377,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="step_on_err";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="when you step at the Epoch level, this will automatically step through to the next point at which an error was made -- you can use the netview history to replay what happend";
@@ -10826,6 +11389,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["LeabraStd"].networks["Network_0"].epoch_time$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10837,6 +11401,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="data_loop_index";
       var_type=T_Int;
       int_val=4;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -10912,7 +11477,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -10959,7 +11524,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       method=DataTable::ResetData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -10973,7 +11538,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -10983,7 +11548,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	code_string="LeabraTrial(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -11027,7 +11592,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	};
 	true_code {
 	 user_data_=NULL;
-	 name="ProgEl_List_100";
+	 name="true_code";
 	 el_typ=ProgCode;
 	 el_def=0;
 	 StopStepPoint @[0] {
@@ -11068,7 +11633,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -11081,7 +11646,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -11100,7 +11665,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11117,7 +11682,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11131,7 +11696,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       code_string="LeabraEpochMonitor(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11168,6 +11733,17 @@ mw.config.set({\"wgBackendResponseTime\":155});
     };
    };
    Program @["LeabraTrial"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].doc$$;
+     };
+    };
     name="LeabraTrial";
     short_nm="Trial";
     tags="Leabra, Std";
@@ -11208,6 +11784,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11220,6 +11797,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11237,6 +11815,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -11275,6 +11854,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -11293,7 +11873,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -11306,7 +11886,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -11325,7 +11905,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       method=LeabraNetwork::Trial_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11470,7 +12050,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Trial_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11484,7 +12064,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="LeabraTrialMonitor(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11529,6 +12109,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraQuarter"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"].doc$$;
+     };
+    };
     name="LeabraQuarter";
     short_nm="Quarter";
     tags="Leabra, Std";
@@ -11569,6 +12160,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11581,6 +12173,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11598,6 +12191,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -11608,6 +12202,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -11656,6 +12251,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -11666,6 +12262,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -11689,7 +12286,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::Init_InputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11704,7 +12301,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="ApplyInputs(network, input_data)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -11747,7 +12344,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11843,7 +12440,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11860,7 +12457,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Compute_PhaseStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -11892,6 +12489,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraCycle"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"].doc$$;
+     };
+    };
     name="LeabraCycle";
     short_nm="Cycle";
     tags="Leabra, Std";
@@ -11932,6 +12540,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -11949,6 +12558,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
@@ -11982,7 +12592,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -12014,6 +12624,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["ApplyInputs"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].doc$$;
+     };
+    };
     name="ApplyInputs";
     short_nm="Inputs";
     tags="Network, InputData, Apply";
@@ -12102,6 +12723,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12114,6 +12736,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12132,6 +12755,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LayerWriter;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12160,7 +12784,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12203,7 +12827,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::AutoConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12233,7 +12857,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taList_impl::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12269,7 +12893,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -12312,7 +12936,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::ApplyInputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -12336,6 +12960,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraTrialMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].doc$$;
+     };
+    };
     name="LeabraTrialMonitor";
     short_nm="TrialMon";
     tags="Leabra, Std, Monitor";
@@ -13351,6 +13986,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -13369,6 +14005,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -13381,6 +14018,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -13409,7 +14047,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13452,7 +14090,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13482,7 +14120,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13518,7 +14156,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -13535,7 +14173,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -13552,7 +14190,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -13569,7 +14207,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::DMem_ShareTrialData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -13619,6 +14257,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraEpochMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].doc$$;
+     };
+    };
     name="LeabraEpochMonitor";
     short_nm="EpcMon";
     tags="Leabra, Std, Monitor";
@@ -14782,6 +15431,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -14800,6 +15450,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14812,6 +15463,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14824,6 +15476,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["LeabraStd"].networks["Network_0"].epoch_time$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14863,7 +15516,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14906,7 +15559,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14936,7 +15589,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -14972,7 +15625,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -14989,7 +15642,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15017,7 +15670,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15086,7 +15739,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15155,7 +15808,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15207,6 +15860,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
    };
    Program @["SaveWeights"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].doc$$;
+     };
+    };
     name="SaveWeights";
     short_nm="SavWts";
     tags="Network, Weights";
@@ -15247,6 +15911,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -15264,6 +15929,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="tag";
       var_type=T_String;
       string_val="_gui";
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
@@ -15274,6 +15940,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="wts_subdir";
       var_type=T_String;
       string_val=;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided subdirectory to save weights in";
@@ -15284,6 +15951,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="fname";
       var_type=T_String;
       string_val="/Users/oreilly/emergent/test/leabra_std.00_0010.wts.gz";
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
@@ -15294,6 +15962,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="epoch_str";
       var_type=T_String;
       string_val="0010";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -15304,6 +15973,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="batch_str";
       var_type=T_String;
       string_val="00";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
@@ -15314,6 +15984,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="final_tag";
       var_type=T_String;
       string_val=".00_0010";
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -15373,7 +16044,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=taMisc::LeadingZeros;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15414,7 +16085,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=taMisc::LeadingZeros;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15466,7 +16137,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=taBase::GetFileNameFmProject;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15535,7 +16206,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=Network::SaveWeights;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15594,6 +16265,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
    desc="The full set of programs for testing a standard Leabra network (starting with Epoch)";
    debug_mode=0;
    Program @["LeabraEpochTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochTest"].doc$$;
+     };
+    };
     name="LeabraEpochTest";
     short_nm="EpcTest";
     tags="Leabra, Std, Test";
@@ -15634,6 +16316,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -15652,6 +16335,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15663,6 +16347,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="data_loop_order";
       var_type=T_HardEnum;
       int_val=0;
+      object_scope=NULL;
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15675,6 +16360,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="trial";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -15686,6 +16372,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["LeabraStd"].data.gp["OutputData"]["TestTrialOutputData"]$$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15698,6 +16385,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["LeabraStd"].networks["Network_0"].epoch_time$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15709,6 +16397,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="data_loop_index";
       var_type=T_Int;
       int_val=6;
+      object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -15797,7 +16486,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -15827,7 +16516,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=DataTable::ResetData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15841,7 +16530,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       code_string="Net Data Loop (SEQUENTIAL):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
       loop_code {
        user_data_=NULL;
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -15851,7 +16540,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	code_string="LeabraTrialTest(network, input_data)";
 	prog_args {
 	 user_data_=NULL;
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -15910,7 +16599,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -15923,7 +16612,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -15942,7 +16631,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15959,7 +16648,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -15973,7 +16662,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       code_string="LeabraEpochMonitorTest(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -16023,6 +16712,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
    };
    Program @["LeabraTrialTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialTest"].doc$$;
+     };
+    };
     name="LeabraTrialTest";
     short_nm="TrlTst";
     tags="Leabra, Std";
@@ -16063,6 +16763,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16075,6 +16776,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16092,6 +16794,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -16130,6 +16833,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -16148,7 +16852,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       };
       true_code {
        user_data_=NULL;
-       name=;
+       name="true_code";
        el_typ=ProgCode;
        el_def=0;
        MethodCall @[0] {
@@ -16161,7 +16865,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	method=Network::Compute_Weights;
 	meth_args {
 	 user_data_=NULL;
-	 name=;
+	 name="meth_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
@@ -16180,7 +16884,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       method=LeabraNetwork::Trial_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16325,7 +17029,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Trial_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16339,7 +17043,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="LeabraTrialMonitorTest(network)";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -16384,6 +17088,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraQuarterTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraQuarterTest"].doc$$;
+     };
+    };
     name="LeabraQuarterTest";
     short_nm="QrtTst";
     tags="Leabra, Std";
@@ -16424,6 +17139,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16436,6 +17152,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16453,6 +17170,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="cycle";
       var_type=T_Int;
       int_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -16463,6 +17181,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -16511,6 +17230,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -16521,6 +17241,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
+	object_scope=NULL;
 	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -16544,7 +17265,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::Init_InputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16559,7 +17280,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="program_name()";
       prog_args {
        user_data_=NULL;
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -16602,7 +17323,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16698,7 +17419,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16715,7 +17436,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Compute_PhaseStats;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16747,6 +17468,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraCycleTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraCycleTest"].doc$$;
+     };
+    };
     name="LeabraCycleTest";
     short_nm="CycTest";
     tags="Leabra, Std";
@@ -16787,6 +17519,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16804,6 +17537,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
+      object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
@@ -16837,7 +17571,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -16869,6 +17603,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["ApplyInputsTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["ApplyInputsTest"].doc$$;
+     };
+    };
     name="ApplyInputsTest";
     short_nm="InTest";
     tags="Network, InputData, Apply";
@@ -16957,6 +17702,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16969,6 +17715,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -16987,6 +17734,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=LayerWriter;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["ApplyInputsTest"].objs["LayerWriter_0"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17015,7 +17763,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17058,7 +17806,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::AutoConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17088,7 +17836,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taList_impl::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17124,7 +17872,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -17167,7 +17915,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=LayerWriter::ApplyInputData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -17191,6 +17939,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraTrialMonitorTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].doc$$;
+     };
+    };
     name="LeabraTrialMonitorTest";
     short_nm="TrlMonTst";
     tags="Leabra, Std, Monitor";
@@ -17984,6 +18743,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -18002,6 +18762,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["OutputData"]["TestTrialOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -18014,6 +18775,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -18042,7 +18804,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -18085,7 +18847,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -18115,7 +18877,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -18151,7 +18913,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -18168,7 +18930,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -18185,7 +18947,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -18202,7 +18964,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=Network::DMem_ShareTrialData;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -18252,6 +19014,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    Program @["LeabraEpochMonitorTest"] {
+    UserDataItem_List @*(.user_data_) {
+     user_data_=NULL;
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      user_data_=NULL;
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].doc$$;
+     };
+    };
     name="LeabraEpochMonitorTest";
     short_nm="EpcMonTst";
     tags="Leabra, Std, Monitor";
@@ -19008,6 +19781,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=Network;
       object_val=$.projects["LeabraStd"].networks["Network_0"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -19026,6 +19800,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["OutputData"]["TestEpochOutputData"]$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -19038,6 +19813,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=NetMonitor;
       object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$$;
+      object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -19050,6 +19826,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=$.projects["LeabraStd"].networks["Network_0"].epoch_time$;
+      object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -19089,7 +19866,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::SetDataNetwork;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -19132,7 +19909,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=taBase::CheckConfig;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -19162,7 +19939,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::UpdateMonitors;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -19198,7 +19975,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::AddBlankRow;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -19215,7 +19992,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=NetMonitor::GetMonVals;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -19243,7 +20020,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -19312,7 +20089,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::SetValColName;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -19381,7 +20158,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       method=DataTable::WriteClose;
       meth_args {
        user_data_=NULL;
-       name=;
+       name="meth_args";
        el_typ=ProgArg;
        el_def=0;
       };
@@ -19412,6 +20189,48 @@ this program can be extended to do arbitrary things to generate data and apply i
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name="UserDataItem_List_114";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     user_data_=NULL;
+     name="view_win_lft";
+     value 8 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     user_data_=NULL;
+     name="view_win_top";
+     value 8 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     user_data_=NULL;
+     name="view_win_wd";
+     value 8 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     user_data_=NULL;
+     name="view_win_ht";
+     value 8 0=0.7994902;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     user_data_=NULL;
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     user_data_=NULL;
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=";
+     val_type_fixed=0;
+    };
+   };
    name="Browser2";
    m_data=.projects["LeabraStd"]$$;
    cur_font_size=12;
@@ -19428,6 +20247,18 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_115";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       user_data_=NULL;
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Application";
      m_data=NULL;
      cur_font_size=12;
@@ -19460,6 +20291,18 @@ this program can be extended to do arbitrary things to generate data and apply i
      visible=1;
     };
     T3PanelViewer @["Visualizer"] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_116";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       user_data_=NULL;
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Visualizer";
      m_data=NULL;
      cur_font_size=12;
@@ -21690,6 +22533,48 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_117";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       user_data_=NULL;
+       name="view_win_lft";
+       value 8 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       user_data_=NULL;
+       name="view_win_top";
+       value 8 0=0.008496176;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       user_data_=NULL;
+       name="view_win_wd";
+       value 8 0=0.04354753;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       user_data_=NULL;
+       name="view_win_ht";
+       value 8 0=0.7357689;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       user_data_=NULL;
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       user_data_=NULL;
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Tools";
      m_data=NULL;
      cur_font_size=12;
@@ -21705,7 +22590,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";
@@ -21891,6 +22776,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="HiddenLayer";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -21902,6 +22788,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="Input_Output";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{ lay_inhib;kwta;       };
        children {
@@ -21971,6 +22858,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="LeabraUnitSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -21984,7 +22872,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {user_data_=NULL: thr=0.5: gain=100: nvar=0.005: };
-     act_misc {user_data_=NULL: rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {user_data_=NULL: rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {user_data_=NULL: rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       user_data_=NULL;
@@ -22026,7 +22914,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       delay=4;
      };
      deep_raw_qtr=Q4;
-     deep {user_data_=NULL: on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
+     deep {user_data_=NULL: on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: mod_thr=0.1: trc_p_only_m=0: trc_thal_gate=0: trc_avg_clamp=0: trc_deep_gain=0.2: mod_range=0.2: trc_std_gain=0.8: };
      da_mod {user_data_=NULL: on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {user_data_=NULL: name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -22044,6 +22932,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="LeabraConSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -22055,6 +22944,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="LeabraBiasSpec_0";
        is_used=1;
+       used_status=USED;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
        children {
@@ -22102,6 +22992,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        user_data_=NULL;
        name="TopDownCons";
        is_used=1;
+       used_status=USED;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;       };
        children {
@@ -22183,6 +23074,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      user_data_=NULL;
      name="FullPrjnSpec_0";
      is_used=1;
+     used_status=USED;
      desc=;
      unique{      };
      children {
@@ -22506,6 +23398,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     minus=75;
     plus=25;
     total_cycles=100;
+    current_cycle_gate_cycle=1;
    };
    lstats {
     user_data_=NULL;

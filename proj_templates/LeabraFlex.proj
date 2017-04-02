@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10586
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10588
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -127,9 +127,6 @@ LeabraProject .projects["LeabraFlex"] {
     DataSortEl @["last_svn_up_5"] { };
    };
 
-   DataTableCell_List @.jobs_running.control_panel_cells = [0] {
-   };
-
    DataTableCols @.jobs_done.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
@@ -201,9 +198,6 @@ LeabraProject .projects["LeabraFlex"] {
     DataSortEl @["last_svn_up_3"] { };
     DataSortEl @["last_svn_up_4"] { };
     DataSortEl @["last_svn_up_5"] { };
-   };
-
-   DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
    DataTableCols @.jobs_deleted.data = [33] {
@@ -279,9 +273,6 @@ LeabraProject .projects["LeabraFlex"] {
     DataSortEl @["last_svn_up_5"] { };
    };
 
-   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
-   };
-
    DataTableCols @.jobs_archive.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
@@ -355,9 +346,6 @@ LeabraProject .projects["LeabraFlex"] {
     DataSortEl @["last_svn_up_5"] { };
    };
 
-   DataTableCell_List @.jobs_archive.control_panel_cells = [0] {
-   };
-
    DataTableCols @.file_list.data = [11] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
@@ -373,9 +361,6 @@ LeabraProject .projects["LeabraFlex"] {
    };
 
    DataOpList @.file_list.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.file_list.control_panel_cells = [0] {
    };
 
    DataTableCols @.cluster_info.data = [6] {
@@ -396,9 +381,6 @@ LeabraProject .projects["LeabraFlex"] {
     DataSortEl @["start_time_up_5"] { };
    };
 
-   DataTableCell_List @.cluster_info.control_panel_cells = [0] {
-   };
-
    DataTableCols @.clusterscript_timestamp.data = [2] {
     String_Data @["timestamp"] { };
     int_Data @["version"] { 
@@ -409,9 +391,6 @@ LeabraProject .projects["LeabraFlex"] {
    };
 
    DataOpList @.clusterscript_timestamp.last_sort_spec.ops = [0] {
-   };
-
-   DataTableCell_List @.clusterscript_timestamp.control_panel_cells = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -506,9 +485,6 @@ LeabraProject .projects["LeabraFlex"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
   };
   DataTable_Group @.gp["OutputData"] = [4] { 
@@ -547,9 +523,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
    DataTable @["EpochOutputData"] { 
@@ -598,9 +571,6 @@ LeabraProject .projects["LeabraFlex"] {
 
     DataOpList @.last_sort_spec.ops = [0] {
     };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
    };
    DataTable @["TestTrialOutputData"] { 
     DataTableCols @.data = [30] {
@@ -637,9 +607,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
    DataTable @["TestEpochOutputData"] { 
@@ -679,9 +646,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
     };
    };
   };
@@ -1479,9 +1443,6 @@ LeabraProject .projects["LeabraFlex"] {
 
       DataOpList @.last_sort_spec.ops = [0] {
       };
-
-      DataTableCell_List @.control_panel_cells = [0] {
-      };
      };
     };
 
@@ -2195,9 +2156,6 @@ LeabraProject .projects["LeabraFlex"] {
 
       DataOpList @.last_sort_spec.ops = [0] {
       };
-
-      DataTableCell_List @.control_panel_cells = [0] {
-      };
      };
      DataTable @["LayerLayout_previous"] { 
       DataTableCols @.data = [9] {
@@ -2213,9 +2171,6 @@ LeabraProject .projects["LeabraFlex"] {
       };
 
       DataOpList @.last_sort_spec.ops = [0] {
-      };
-
-      DataTableCell_List @.control_panel_cells = [0] {
       };
      };
     };
@@ -5443,12 +5398,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_done {
     user_data_=NULL;
@@ -6184,12 +6133,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_deleted {
     user_data_=NULL;
@@ -6925,12 +6868,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    jobs_archive {
     user_data_=NULL;
@@ -7666,12 +7603,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    file_list {
     user_data_=NULL;
@@ -7898,12 +7829,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    cluster_info {
     user_data_=NULL;
@@ -8076,12 +8001,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    clusterscript_timestamp {
     user_data_=NULL;
@@ -8157,12 +8076,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    search_algos {
     user_data_=NULL;
@@ -9210,12 +9123,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -9761,12 +9668,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["EpochOutputData"] {
     user_data_=NULL;
@@ -10475,12 +10376,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["TestTrialOutputData"] {
     user_data_=NULL;
@@ -11019,12 +10914,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
    DataTable @["TestEpochOutputData"] {
     user_data_=NULL;
@@ -11597,12 +11486,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      };
     };
     row_with_hilite=-1;
-    control_panel_cells {
-     user_data_=NULL;
-     name="control_panel_cells";
-     el_typ=DataTableCell;
-     el_def=0;
-    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -15899,12 +15782,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       row_with_hilite=-1;
-      control_panel_cells {
-       user_data_=NULL;
-       name="control_panel_cells";
-       el_typ=DataTableCell;
-       el_def=0;
-      };
      };
     };
     types {
@@ -19981,12 +19858,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       row_with_hilite=-1;
-      control_panel_cells {
-       user_data_=NULL;
-       name="control_panel_cells";
-       el_typ=DataTableCell;
-       el_def=0;
-      };
      };
      DataTable @["LayerLayout_previous"] {
       user_data_=NULL;
@@ -20208,12 +20079,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       row_with_hilite=-1;
-      control_panel_cells {
-       user_data_=NULL;
-       name="control_panel_cells";
-       el_typ=DataTableCell;
-       el_def=0;
-      };
      };
     };
     types {
@@ -31790,7 +31655,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9952179;
+     value 8 0=0.9946893;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33607,7 +33472,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
