@@ -116,12 +116,11 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
   SaveExprs();
   //NOTE: safe to call during loading
   bool any_changes = false;
-  int i;  int ti;
   ProgArg* pa;
   // delete args not in md list
-  for (i = size - 1; i >= 0; --i) {
+  for (int i = size - 1; i >= 0; --i) {
     pa = FastEl(i);
-    ti = md->arg_names.FindEl(pa->name);
+    int ti = md->arg_names.FindEl(pa->name);
     if (ti >= 0) {
       pa->UpdateFromType(md->arg_types[ti]);
     }
@@ -131,10 +130,10 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
     }
   }
   // add args in target not in us, and put in the right order
-  for (ti = 0; ti < md->arg_names.size; ++ti) {
+  for (int ti = 0; ti < md->arg_names.size; ++ti) {
     TypeDef* arg_typ = md->arg_types.FastEl(ti);
     String arg_nm = md->arg_names[ti];
-    i = FindNameIdx(arg_nm);
+    int i = FindNameIdx(arg_nm);
     if (i < 0) {
       pa = new ProgArg();
       pa->name = arg_nm;
