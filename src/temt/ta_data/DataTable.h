@@ -408,8 +408,8 @@ public:
   int                   Cells() const { return CellsPerRow() * rows; }
   // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
   taList_impl* children_() override {return &data;}
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
-  { return data.Elem(idx, mode); }
+  Variant      Elem(const Variant& dx, IndexMode mode = IDX_UNK) const override
+  { return data.Elem(dx, mode); }
 
   virtual DataCol*      NewCol(DataCol::ValType val_type,
                                const String& col_nm);

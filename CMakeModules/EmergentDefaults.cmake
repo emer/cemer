@@ -67,8 +67,14 @@ else (WIN32) # assume gcc!!!
   endif (HAS_UNDEF_INLINE_FLAG)
   
   # NOTE:  -ftree-vectorizer-verbose=1 can be interesting but not worth it for a default param -- users may add at own discretion 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wno-unused-variable -Wno-unknown-pragmas -Wshadow")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wno-unused-variable -Wno-unknown-pragmas")
 
+  # only check shadow on apple -- otherwise older versions of gcc can give excessive
+  # errs due to looking at methods in addition to members
+  if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wshadow")
+  endif (APPLE)
+  
   if(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math")
   else(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
