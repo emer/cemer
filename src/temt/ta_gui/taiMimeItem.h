@@ -72,7 +72,7 @@ protected:
   inline bool		isDecoded() const {return (m_flags & MIF_DECODED);}
   
   void			AssertData(); // insures data is fetched/decoded
-  virtual bool		Constr_impl(const String& subkey) {return true;}
+  virtual bool		Constr_impl(const String& subky) {return true;}
     // returns true if constr went ok
   virtual void		DecodeData_impl() {}
 private:

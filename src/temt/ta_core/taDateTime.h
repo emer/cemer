@@ -91,8 +91,8 @@ public:
   int daysInMonth() const       { return qdate().daysInMonth(); }
   int daysInYear() const        { return qdate().daysInYear(); }
 
-  bool setDate(int year, int month, int day)
-  { QDate dt; dt.setDate(year, month, day); setDate(dt); return isValid(); }
+  bool setDate(int yr, int mo, int dy)
+  { QDate dt; dt.setDate(yr, mo, dy); setDate(dt); return isValid(); }
   void currentDateTime()        { fmQDateTime(QDateTime::currentDateTime()); }
 
   void toLocalTime()            { fmQDateTime(qDateTime().toLocalTime()); }
