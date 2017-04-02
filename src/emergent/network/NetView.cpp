@@ -677,7 +677,7 @@ void NetView::BuildAll() { // populates all T3 guys
 
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if(lay->lesioned() || lay->Iconified()) continue;
-    FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
+    FOREACH_ELEM_IN_GROUP_NESTED(Projection, prjn, lay->projections) {
       if(prjn->NotActive() || prjn->from->Iconified() || !prjn->disp) continue;
       PrjnView* pv = new PrjnView();
       pv->SetData(prjn);
@@ -834,7 +834,7 @@ void NetView::GetMembs() {
   // not built yet, so we leave ourselves empty to signal that
   if (membs.size > 0) {
     FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
-      FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
+      FOREACH_ELEM_IN_GROUP_NESTED(Projection, prjn, lay->projections) {
         TypeDef* td = prjn->con_type;
         if(td == prv_td) continue; // don't re-scan!
         prv_td = td;

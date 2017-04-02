@@ -71,14 +71,14 @@ bool taPlugin::InitPlugin() {
       taPlugins::AppendLogEntry("Could not create state object for plugin");
       return false;
     }
-    String filename = taMisc::prefs_dir + PATH_SEP + opt->name;
-    opt->SetFileName(filename);
-    if (taMisc::FileExists(filename)) {
-      int res = opt->Load(filename);
+    String fnm = taMisc::prefs_dir + PATH_SEP + opt->name;
+    opt->SetFileName(fnm);
+    if (taMisc::FileExists(fnm)) {
+      int res = opt->Load(fnm);
       // note: we don't fail the plugin just because state didn't load...
       if (!res) {
         String msg = "Load of previously saved state for " + opt->name +
-          " did not succeed from file: '" + filename + "'";
+          " did not succeed from file: '" + fnm + "'";
         taMisc::Warning(msg);
         taPlugins::AppendLogEntry(msg);
       }

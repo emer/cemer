@@ -385,8 +385,8 @@ void cssiArgDialog::Constr_Widget_Labels() {
     QWidget* rep = mb_dat->GetRep();
     //int row = AddWidget(-1, rep);
     
-    cssEl* md = obj->members->FastEl(i+stub_arg_off); // need to skip over arg[0] arg[1]
-    GetName(j, md, name, desc);
+    cssEl* tmd = obj->members->FastEl(i+stub_arg_off); // need to skip over arg[0] arg[1]
+    GetName(j, tmd, name, desc);
     AddNameWidget(-1, name, desc, rep, mb_dat);
   }
 }

@@ -61,8 +61,8 @@ void Unit_Group::UpdateAfterEdit_impl() {
 Unit* Unit_Group::UnitAtCoord(int x, int y) {
   if(!own_lay) return NULL;
   if(x >= own_lay->un_geom.x) return NULL; // y will be caught by safe..
-  int idx = y * own_lay->un_geom.x + x;
-  return SafeEl(idx);
+  int dx = y * own_lay->un_geom.x + x;
+  return SafeEl(dx);
 }
 
 taVector2i Unit_Group::GpLogPos() {
@@ -421,8 +421,8 @@ bool Unit_Group::VarToVal(const String& dest_var, float val) {
   return true;
 }
 
-Unit* Unit_Group::MostActiveUnit(int& idx) {
-  idx = -1;
+Unit* Unit_Group::MostActiveUnit(int& dx) {
+  dx = -1;
   if(leaves == 0) return NULL;
   Unit* max_un = Leaf(0);
   float max_act = max_un->act();
@@ -430,7 +430,7 @@ Unit* Unit_Group::MostActiveUnit(int& idx) {
     Unit* un = Leaf(i);
     if(un->act() > max_act) {
       max_un = un;
-      idx = i;
+      dx = i;
       max_act = max_un->act();
     }
   }

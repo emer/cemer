@@ -946,19 +946,19 @@ void GraphTableView::InitFromUserData() {
   for(int i=0;i<children.size;i++) {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataCol* da = cvs->dataCol();
-    for(int i=1; i<plots.size; i++) {
-      String pltst = "PLOT_" + String(i+1);
+    for(int pi=1; pi<plots.size; pi++) {
+      String pltst = "PLOT_" + String(pi+1);
       if(da->HasUserData(pltst)) {
-        plots[i]->col_name = cvs->name;  plots[i]->on = true;
-        plots[i]->InitFromUserData();
+        plots[pi]->col_name = cvs->name;  plots[pi]->on = true;
+        plots[pi]->InitFromUserData();
         // taMisc::DebugInfo("init fm set:", pltst, "to:", plots[i]->col_name);
       }
     }
-    for(int i=0; i<errbars.size; i++) {
-      String pltst = "ERR_" + String(i+1);
+    for(int ei=0; ei<errbars.size; ei++) {
+      String pltst = "ERR_" + String(ei+1);
       if(da->HasUserData(pltst)) {
-        errbars[i]->col_name = cvs->name;  errbars[i]->on = true;
-        errbars[i]->InitFromUserData();
+        errbars[ei]->col_name = cvs->name;  errbars[ei]->on = true;
+        errbars[ei]->InitFromUserData();
       }
     }
     if(da->HasUserData("BY_VARIABLE")) {

@@ -769,8 +769,8 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
     }
     else {
       int idx = (int)range1;
-      String valname = GetColName(lay, val_specs.size);
-      AddScalarCol(valname, VT_FLOAT);
+      String valnm = GetColName(lay, val_specs.size);
+      AddScalarCol(valnm, VT_FLOAT);
       ScanObject_InObject(lay->units.Leaf(idx), rmdr, NULL); // don't make a col
     }
   }

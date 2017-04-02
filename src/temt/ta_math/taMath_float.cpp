@@ -1437,7 +1437,7 @@ float taMath_float::vec_kwta(float_Matrix* vec, int k, bool descending) {
       act_idx.FastEl(k_idx) = i; // replace the smallest with it
       k_val = val;              // assume its the smallest
       for(int j=0; j < k; j++) {        // and recompute the actual smallest
-        float val = vec->FastEl_Flat(act_idx[j]);
+        val = vec->FastEl_Flat(act_idx[j]);
         if(val < k_val) {
           k_val = val;
           k_idx = j;            // idx in top k
@@ -1462,7 +1462,7 @@ float taMath_float::vec_kwta(float_Matrix* vec, int k, bool descending) {
       act_idx.FastEl(k_idx) = i; // replace the smallest with it
       k_val = val;              // assume its the smallest
       for(int j=0; j < k; j++) {        // and recompute the actual smallest
-        float val = vec->FastEl_Flat(act_idx[j]);
+        val = vec->FastEl_Flat(act_idx[j]);
         if(val > k_val) {
           k_val = val;
           k_idx = j;            // idx in top k
@@ -1507,7 +1507,7 @@ void taMath_float::vec_kwta_avg(float& top_k_avg, float& bot_k_avg,
       act_idx.FastEl(k_idx) = i; // replace the smallest with it
       k_val = val;              // assume its the smallest
       for(int j=0; j < k; j++) {        // and recompute the actual smallest
-        float val = vec->FastEl_Flat(act_idx[j]);
+        val = vec->FastEl_Flat(act_idx[j]);
         if(val < k_val) {
           k_val = val;
           k_idx = j;            // idx in top k
@@ -1533,7 +1533,7 @@ void taMath_float::vec_kwta_avg(float& top_k_avg, float& bot_k_avg,
       act_idx.FastEl(k_idx) = i; // replace the smallest with it
       k_val = val;              // assume its the smallest
       for(int j=0; j < k; j++) {        // and recompute the actual smallest
-        float val = vec->FastEl_Flat(act_idx[j]);
+        val = vec->FastEl_Flat(act_idx[j]);
         if(val > k_val) {
           k_val = val;
           k_idx = j;            // idx in top k

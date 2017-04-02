@@ -31,21 +31,21 @@ void DataVarSimple::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
 }
 
-bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no) {
-  if (!var) return false;
+bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* pvar, const String& idnm, int var_no) {
+  if (!pvar) return false;
   // if the var is a matrix, then delegate to our Mat handler
-  if ((var->var_type == ProgVar::T_Object) &&
-    var->object_type->InheritsFrom(&TA_taMatrix))
-    return GenCss_OneVarMat(prog, var, idnm, var_no);
+  if ((pvar->var_type == ProgVar::T_Object) &&
+    pvar->object_type->InheritsFrom(&TA_taMatrix))
+    return GenCss_OneVarMat(prog, pvar, idnm, var_no);
 
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
 
-  if(dt && (var->var_type == ProgVar::T_HardEnum || var->var_type == ProgVar::T_DynEnum)) {
+  if(dt && (pvar->var_type == ProgVar::T_HardEnum || pvar->var_type == ProgVar::T_DynEnum)) {
     da = dt->FindColName(column_name);
     if(da->isMatrix()) {
-      return GenCss_OneVarMatEnum(prog, var, idnm, var_no);
+      return GenCss_OneVarMatEnum(prog, pvar, idnm, var_no);
     }
   }
 
@@ -56,30 +56,30 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   }
   if(row_spec == CUR_ROW) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetData(" + string_cvt + var->name + ", \"" + column_name +"\");");
+      prog->AddLine(this, idnm + ".SetData(" + string_cvt + pvar->name + ", \"" + column_name +"\");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetData(\"" + column_name + "\");");
+      prog->AddLine(this, pvar->name + " = " + idnm + ".GetData(\"" + column_name + "\");");
   }
   else if(row_spec == ROW_NUM) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + column_name +"\", "
+      prog->AddLine(this, idnm + ".SetValColName(" + string_cvt + pvar->name + ", \"" + column_name +"\", "
                     + row_var->name + ");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetValColName(\"" + column_name + "\", "
+      prog->AddLine(this, pvar->name + " = " + idnm + ".GetValColName(\"" + column_name + "\", "
                     + row_var->name + ");");
   }
   else if(row_spec == ROW_VAL) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + column_name + "\", \""
+      prog->AddLine(this, idnm + ".SetValColRowName(" + string_cvt + pvar->name + ", \"" + column_name + "\", \""
                     + row_var->name + "\", " + row_var->name + ");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetValColRowName(\"" + column_name +"\", \""
+      prog->AddLine(this, pvar->name + " = " + idnm + ".GetValColRowName(\"" + column_name +"\", \""
                     + row_var->name + "\", " + row_var->name + ");");
   }
   return true;
 }
 
-  bool DataVarSimple::GenCss_OneVarMat(Program* prog, ProgVar* var, const String& idnm, int var_no) {
+bool DataVarSimple::GenCss_OneVarMat(Program* prog, ProgVar* pvar, const String& idnm, int var_no) {
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
@@ -114,7 +114,7 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   return true;
 }
 
-  bool DataVarSimple::GenCss_OneVarMatEnum(Program* prog, ProgVar* var, const String& idnm, int var_no) {
+bool DataVarSimple::GenCss_OneVarMatEnum(Program* prog, ProgVar* pvar, const String& idnm, int var_no) {
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";

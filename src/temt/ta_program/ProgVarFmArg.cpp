@@ -72,22 +72,22 @@ Program* ProgVarFmArg::GetOtherProg() {
   return prog.ptr();
 }
 
-void ProgVarFmArg::GenCssBody_impl(Program* prog) {
-  if (!prog) return;
-  prog->AddLine(this, String("{ // prog var fm arg: ") + prog->name, ProgLine::MAIN_LINE);
-  prog->AddVerboseLine(this);
-  prog->IncIndent();
-  prog->AddLine(this, String("Program* other_prog = this") + GetPath(program())
+void ProgVarFmArg::GenCssBody_impl(Program* prg) {
+  if (!prg) return;
+  prg->AddLine(this, String("{ // prog var fm arg: ") + prg->name, ProgLine::MAIN_LINE);
+  prg->AddVerboseLine(this);
+  prg->IncIndent();
+  prg->AddLine(this, String("Program* other_prog = this") + GetPath(program())
                 + "->GetOtherProg();");
-  prog->AddLine(this, "other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");");
-  prog->DecIndent();
-  prog->AddLine(this, "} // prog var fm arg");
+  prg->AddLine(this, "other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");");
+  prg->DecIndent();
+  prg->AddLine(this, "} // prog var fm arg");
 }
 
-void ProgVarFmArg::GenRegArgs(Program* prog) {
-  prog->AddLine(this, String("taMisc::AddEqualsArgName(\"") + arg_name + "\");");
-  prog->AddLine(this, String("taMisc::AddArgNameDesc(\"") + arg_name
-                             + "\", \"ProgVarFmArg: prog = " + (((bool)prog) ? prog->name : "NOT SET")
+void ProgVarFmArg::GenRegArgs(Program* prg) {
+  prg->AddLine(this, String("taMisc::AddEqualsArgName(\"") + arg_name + "\");");
+  prg->AddLine(this, String("taMisc::AddArgNameDesc(\"") + arg_name
+                             + "\", \"ProgVarFmArg: prog = " + (((bool)prg) ? prg->name : "NOT SET")
                              + " var_name = " + var_name + "\");");
 }
 

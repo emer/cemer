@@ -362,7 +362,7 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
   int nclrs = GetImageMatrixNColors(img_data);
   if(nclrs == 0) return false;
   if(nclrs > 1) {    // an rgb guy
-    int nclrs = img_data.dim(2);
+    nclrs = img_data.dim(2);
     for(int i=0;i<nclrs;i++) {
       float_Matrix* cmp = img_data.GetFrameSlice(i);
       taBase::Ref(cmp);

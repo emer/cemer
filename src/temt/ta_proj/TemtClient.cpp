@@ -465,7 +465,7 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
   return tab;
 }
 
-bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, bool mat_) {
+bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd comd, bool mat_) {
   // defaults for values -- some of the guys below alter these, before we read them
   rows = 1;
   header = false;
@@ -477,7 +477,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
   bool remove = false;
   bool append = false;
   bool is_cell = false;
-  switch (cmd) {
+  switch (comd) {
     case TemtClient::TableParams::Get:
       get = true;
       get_set = true;
@@ -1305,78 +1305,78 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       ++obj_iter;
     }
     
-    String cmd = name_params.GetVal("command").toString();
-    RunCommand(cmd);
+    String ccmd = name_params.GetVal("command").toString();
+    RunCommand(ccmd);
   }
 }
 #endif
 
-void TemtClient::RunCommand(const String& cmd) {
-  if (cmd == "AppendData") {
+void TemtClient::RunCommand(const String& comd) {
+  if (comd == "AppendData") {
     cmdAppendData();
   }
-  else if (cmd == "Echo") {
+  else if (comd == "Echo") {
     cmdEcho();
   }
-  else if (cmd == "GetData") {
+  else if (comd == "GetData") {
     cmdGetData();
   }
-  else if (cmd == "GetDataCell") {
+  else if (comd == "GetDataCell") {
     cmdGetDataCell();
   }
-  else if (cmd == "GetDataMatrixCell") {
+  else if (comd == "GetDataMatrixCell") {
     cmdGetDataMatrixCell();
   }
-  else if (cmd == "GetVar") {
+  else if (comd == "GetVar") {
     cmdGetVar();
   }
-  else if (cmd == "GetRunState") {
+  else if (comd == "GetRunState") {
     cmdGetRunState();
   }
-  else if (cmd == "RemoveData") {
+  else if (comd == "RemoveData") {
     cmdRemoveData();
   }
-  else if (cmd == "RunProgram") {
+  else if (comd == "RunProgram") {
     cmdRunProgram(true);
   }
-  else if (cmd == "RunProgramAsync") {
+  else if (comd == "RunProgramAsync") {
     cmdRunProgram(false);
   }
-  else if (cmd == "SetData") {
+  else if (comd == "SetData") {
     cmdSetData();
   }
-  else if (cmd == "SetDataCell") {
+  else if (comd == "SetDataCell") {
     cmdSetDataCell();
   }
-  else if (cmd == "SetDataMatrixCell") {
+  else if (comd == "SetDataMatrixCell") {
     cmdSetDataMatrixCell();
   }
-  else if (cmd == "SetVar") {
+  else if (comd == "SetVar") {
     cmdSetVar();
   }
-  else if (cmd == "SetImage") {
+  else if (comd == "SetImage") {
     cmdSetImage();
   }
-  else if (cmd == "GetConsoleOutput") {
+  else if (comd == "GetConsoleOutput") {
     cmdGetConsoleOutput();
   }
-  else if (cmd == "CollectConsoleOutput") {
+  else if (comd == "CollectConsoleOutput") {
     cmdCollectConsoleOutput();
   }
-  else if (cmd == "ClearConsoleOutput") {
+  else if (comd == "ClearConsoleOutput") {
     cmdClearConsoleOutput();
   }
-  else if (cmd == "OpenProject") {
+  else if (comd == "OpenProject") {
     cmdOpenProject();
   }
 #if (QT_VERSION >= 0x050000)
-  else if (cmd == "SetJsonFormat") {
+  else if (comd == "SetJsonFormat") {
     cmdSetJsonFormat();
   }
-  else if (cmd == "GetMember") {
+  else if (comd == "GetMember") {
       cmdGetMember();
   }
-  else if (cmd == "SetMember") {
+  else if (comd == "SetMember") {
     cmdSetMember();
   }
 #endif

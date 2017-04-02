@@ -121,7 +121,7 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
   // delete args not in md list
   for (i = size - 1; i >= 0; --i) {
     pa = FastEl(i);
-    int ti = md->arg_names.FindEl(pa->name);
+    ti = md->arg_names.FindEl(pa->name);
     if (ti >= 0) {
       pa->UpdateFromType(md->arg_types[ti]);
     }

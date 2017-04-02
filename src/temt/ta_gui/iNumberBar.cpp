@@ -109,11 +109,11 @@ void iNumberBar::clearAllLineFlags() {
   update();
 }
 
-void iNumberBar::setTextEdit( iTextEdit *edit ) {
-  this->edit = edit;
-  connect( edit->document()->documentLayout(), SIGNAL( update(const QRectF &) ),
+void iNumberBar::setTextEdit(iTextEdit* ed) {
+  this->edit = ed;
+  connect( ed->document()->documentLayout(), SIGNAL( update(const QRectF &) ),
 	   this, SLOT( update() ) );
-  connect( edit->verticalScrollBar(), SIGNAL(valueChanged(int) ),
+  connect( ed->verticalScrollBar(), SIGNAL(valueChanged(int) ),
 	   this, SLOT( update() ) );
 }
 

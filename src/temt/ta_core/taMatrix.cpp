@@ -440,7 +440,7 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       String val = vitm.toString();
       int el_idx = FOREACH_itr.el_idx; // get before occluded by next iterator
-      TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
+      TA_FOREACH_NESTED(mitm, *cmat) { // use iterator on matrix so it can be filtered too
         const String nm = mitm.toString();
         if(val.matches_wildcard(nm)) {
           imat->Add(el_idx); // add absolute index of item

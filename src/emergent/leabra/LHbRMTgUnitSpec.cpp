@@ -300,7 +300,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   
   if(lhb.rec_data) {
-    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraLayer* lay = un->own_lay();
     lay->SetUserData("pv_pos", pv_pos, false); // false=no update
     lay->SetUserData("vsmatrix_pos_D1", vsmatrix_pos_D1, false); // false=no update

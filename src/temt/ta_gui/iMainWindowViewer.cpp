@@ -1660,12 +1660,12 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
 {
   // Clear and rebuild submenu.
   fileOpenFromWebMenu->Reset();
-  String wiki_name = "Emergent repository";
-  String label = wiki_name + "...";
+  String wiki_name; //  = "Emergent repository";
+  String label; //  = wiki_name + "...";
   
   for(int i=0;i<taMisc::wikis.size; i++) {
-    String wiki_name = taMisc::wikis[i].name;
-    String label = wiki_name + "...";
+    wiki_name = taMisc::wikis[i].name;
+    label = wiki_name + "...";
     fileOpenFromWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileOpenFromWeb(const Variant &)), wiki_name);
   }
 }

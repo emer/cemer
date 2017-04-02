@@ -540,17 +540,17 @@ void taiEditor::ConstrEditControl() {
   state = ACTIVE;
 }
 
-void taiEditorOfClass::FillLabelContextMenu(QMenu* menu, int& last_id) {
-  inherited::FillLabelContextMenu(menu, last_id);
+void taiEditorOfClass::FillLabelContextMenu(QMenu* mnu, int& last_id) {
+  inherited::FillLabelContextMenu(mnu, last_id);
   if (ctrl_panel_mbrs) {
-    FillLabelContextMenu_CtrlPanel(menu, last_id);
+    FillLabelContextMenu_CtrlPanel(mnu, last_id);
   }
 }
 
-void taiEditorOfClass::FillLabelContextMenu_CtrlPanel(QMenu* menu, int& last_id)
+void taiEditorOfClass::FillLabelContextMenu_CtrlPanel(QMenu* mnu, int& last_id)
 {
   DoFillLabelContextMenu_CtrlPanel
-    (menu, last_id, ctrl_panel_base, ctrl_panel_mbr, body,
+    (mnu, last_id, ctrl_panel_base, ctrl_panel_mbr, body,
      this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)),
      SLOT(DoAddToControlPanel_Short(QAction*)));
 }

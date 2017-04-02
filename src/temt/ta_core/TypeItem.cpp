@@ -89,16 +89,16 @@ String TypeItem::OptionAfter(const String& op) const {
 }
 
 bool TypeItem::HasOptionAfter(const String& prefix, const String& op) const {
-  int idx = -1;
+  int dx = -1;
   do {
-    idx = opts.FindStartsWith(prefix, idx + 1);
-    if (idx >= 0) {
-      if (opts.FastEl(idx).after(prefix) == op) {
+    dx = opts.FindStartsWith(prefix, dx + 1);
+    if (dx >= 0) {
+      if (opts.FastEl(dx).after(prefix) == op) {
         return true;
       }
     }
   }
-  while (idx >= 0);
+  while (dx >= 0);
   return false;
 }
 

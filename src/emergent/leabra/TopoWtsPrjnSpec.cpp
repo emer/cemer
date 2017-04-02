@@ -97,9 +97,9 @@ void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
           Unit* ru = prjn->layer->UnitAtCoord(x,y);
           //ru->ConnectFrom(su, prjn);
           if(!index_by_gps_send.on) { // not using send_gps
-            for(int y = 0; y < prjn->from->flat_geom.y; y++) {
-              for(int x = 0; x < prjn->from->flat_geom.x; x++) {
-                Unit* su = prjn->from->UnitAtCoord(x,y);
+            for(int yy = 0; yy < prjn->from->flat_geom.y; yy++) {
+              for(int xx = 0; xx < prjn->from->flat_geom.x; xx++) {
+                Unit* su = prjn->from->UnitAtCoord(xx,yy);
                 ru->ConnectFrom(su, prjn);
               }
             }
@@ -129,7 +129,7 @@ void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
           }
         }
         else { // send YES -- using send gps
-          FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+          FOREACH_ELEM_IN_GROUP_NESTED(Unit, su, prjn->from->units) {
             if(self_con || (ru != su))
               ru->ConnectFrom(su, prjn);
           }
@@ -278,24 +278,24 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru,
   }
   else { // index_by_gps_send.on == false - not using gps in either dimension!
     if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
-      Unit* su = cg->Un(i,net);
+      su = cg->Un(i,net);
       send_lay->UnitLogPos(su, su_pos);
       si_geom = send_lay->un_geom;
     }
     else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
-      Unit* su = cg->Un(i,net);
+      su = cg->Un(i,net);
       int sunidx = 0;
-      int sgpidx = 0;
-      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
+      int sgpidx2 = 0;
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx2); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
       
       su_pos.x = sunidx % send_lay->un_geom.x;
       su_pos.y = sunidx / send_lay->un_geom.x;
-      taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+      taVector2i sgp_pos_fl = send_lay->UnitGpPosFmIdx(sgpidx2); // group position relative to gp geom
       
       // convert to planar x, y across whole layer
-      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
-      su_pos.x += send_lay->un_geom.x * sgp_pos.x;
-      su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos_fl.x);
+      su_pos.x += send_lay->un_geom.x * sgp_pos_fl.x;
+      su_pos.y += send_lay->un_geom.y * sgp_pos_fl.y;
       si_geom = send_lay->un_geom * send_lay->gp_geom;
     }
     si_pos = su_pos;
@@ -517,24 +517,24 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
 
   else { // index_by_gps_send.on == false - not using gps in either dimension!
     if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
-      Unit* su = cg->Un(i,net);
+      su = cg->Un(i,net);
       send_lay->UnitLogPos(su, su_pos);
       si_geom = send_lay->un_geom;
     }
     else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
-      Unit* su = cg->Un(i,net);
+      su = cg->Un(i,net);
       int sunidx = 0;
-      int sgpidx = 0;
-      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
+      int sgpidx2 = 0;
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx2); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
 
       su_pos.x = sunidx % send_lay->un_geom.x;
       su_pos.y = sunidx / send_lay->un_geom.x;
-      taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+      taVector2i sgp_pos_fl = send_lay->UnitGpPosFmIdx(sgpidx2); // group position relative to gp geom
 
       // convert to planar x, y across whole layer
-      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
-      su_pos.x += send_lay->un_geom.x * sgp_pos.x;
-      su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos_fl.x);
+      su_pos.x += send_lay->un_geom.x * sgp_pos_fl.x;
+      su_pos.y += send_lay->un_geom.y * sgp_pos_fl.y;
       si_geom = send_lay->un_geom * send_lay->gp_geom;
     }
     si_pos = su_pos;
@@ -750,11 +750,11 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
       if(wrp_dist < dist) {
 	dist = wrp_dist;  	// treat dist as closer than actual distance
 				// now test wrapping in both dimensions - since X2X_Y2Y uses both send dimensions!
-	float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ri_y, ri_x);
+	wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ri_y, ri_x);
 	if(wrp_dist < dist) { dist = wrp_dist; }
       }
       else { // finally - test whether y-wrapping alone gets any closer
-	float wrp_dist = taMath_float::euc_dist(si_x, wrp_y, ri_y, ri_x);
+	wrp_dist = taMath_float::euc_dist(si_x, wrp_y, ri_y, ri_x);
 	if(wrp_dist < dist) { dist = wrp_dist; }
       }
     }

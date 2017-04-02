@@ -549,7 +549,7 @@ void VEJoint::ApplyForce(float force1, float force2) {
   }
 }
 
-void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
+void VEJoint::ApplyMotor(float vel1, float f_max1, float vl2, float f_max2) {
   if(HasJointFlag(OFF)) {
     return;
   }
@@ -575,7 +575,7 @@ void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
 
   motor.vel = vel1;
   motor.f_max = f_max1;
-  motor2.vel = vel2;
+  motor2.vel = vl2;
   motor2.f_max = f_max2;
 
   Init_Motor();

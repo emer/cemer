@@ -244,8 +244,8 @@ public:
   // #CAT_Access get *logical* position for unit within its (virtual) subgroup
   int           UnitInGpUnIdx(Unit* un) const;
   // #CAT_Access get unit index of unit within (virtual) unit group
-  int           UnitIdxFmPos(taVector2i& pos) const
-  { return pos.y * un_geom.x + pos.x; }
+  int           UnitIdxFmPos(taVector2i& ps) const
+  { return ps.y * un_geom.x + ps.x; }
   // #CAT_Access get unit index from position for unit within a subgroup or unit in a layer without any subgroups
   bool          UnitIdxIsValid(int unidx) const
   { return unidx >= 0 && unidx < un_geom.n; }
@@ -254,8 +254,8 @@ public:
   taVector2i     UnitGpPosFmIdx(int gpidx) const
   { taVector2i rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
   // #CAT_Access #IGNORE get unit group *logical* position from index
-  int           UnitGpIdxFmPos(taVector2i& pos) const
-  { return pos.y * gp_geom.x + pos.x; }
+  int           UnitGpIdxFmPos(taVector2i& ps) const
+  { return ps.y * gp_geom.x + ps.x; }
   // #CAT_Access get unit group index from position
   bool          UnitGpIdxIsValid(int gpidx) const
   { return gpidx >= 0 && gpidx < gp_geom.n; }

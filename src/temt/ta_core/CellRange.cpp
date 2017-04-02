@@ -42,9 +42,9 @@ void CellRange::SetFromModel(const QModelIndexList& indexes) {
     row_fr = row_to = mi.row();
     col_fr = col_to = mi.column();
     for (int i = 1; i < indexes.count(); ++i) {
-      const QModelIndex& mi = indexes.at(i);
-      int r = mi.row();
-      int c = mi.column();
+      const QModelIndex& mit = indexes.at(i);
+      int r = mit.row();
+      int c = mit.column();
       if (r < row_fr) row_fr = r;
       else if (r > row_to) row_to = r;
       if (c < col_fr) col_fr = c;

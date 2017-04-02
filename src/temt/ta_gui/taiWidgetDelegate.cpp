@@ -230,7 +230,7 @@ void taiWidgetDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
   }
 }
 
-void taiWidgetDelegate::rep_destroyed(QObject* rep) {
+void taiWidgetDelegate::rep_destroyed(QObject* rp) {
 }
 
 QSize taiWidgetDelegate::sizeHint(const QStyleOptionViewItem& option,

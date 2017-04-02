@@ -39,10 +39,9 @@ void RndSeed_List::MakeSeeds(int n_seeds) {
 void RndSeed_List::NewSeeds() {
   if(seeds.size == 0) return;
   uint32_t seed = MTRnd::GetTimePidSeed();
-  int rnd = MTRnd::GenRandInt32();
   for(int i=0;i<seeds.size;i++) {
-    int seed = rnd + i;
-    seeds.FastEl(i)->Init(seed);
+    int sd = seed + i;
+    seeds.FastEl(i)->Init(sd);
   }
 }
 

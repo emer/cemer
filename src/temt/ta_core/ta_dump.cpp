@@ -950,8 +950,8 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   bool inline_dump = HasOption("INLINE_DUMP");
   if (inline_dump) {
     // note: pre 4.0.19 streams had a space after { in path sections
-    char c = strm.peek();
-    inline_dump = !((c == ' ') || (c == '\n'));
+    char cc = strm.peek();
+    inline_dump = !((cc == ' ') || (cc == '\n'));
   }
   if(inline_dump) {
     if(c != '{') {
@@ -1193,10 +1193,10 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     el = (taBase*)base;			// so use the given base
   }
   else {
-    taBase* par = (taBase*)base;		// given base must be a parent
-    el = par->New(1,td);		// create one of the saved type
+    taBase* parn = (taBase*)base;		// given base must be a parent
+    el = parn->New(1,td);		// create one of the saved type
     if(el == NULL) {
-      taMisc::Warning("Could not make a:",td->name,"in:",par->DisplayPath());
+      taMisc::Warning("Could not make a:",td->name,"in:",parn->DisplayPath());
       rval = false;
       goto endload;
     }

@@ -2560,7 +2560,6 @@ void Network::Compute_EpochStats() {
 DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("NetStru_" + name, true);
     new_table = true;
   }
@@ -2734,7 +2733,6 @@ void Network::NetStructFmTable(DataTable* dt) {
 DataTable* Network::NetPrjnsToTable(DataTable* dt) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
     new_table = true;
   }
@@ -3135,7 +3133,6 @@ bool Network::SaveWeights_ClusterRunTerm() {
   if(!taMisc::cluster_run) return false;
   if(total_trials % 10 != 0) return false; // check every 10 trials to minimize load
   
-  taProject* proj = GetMyProj();
   proj->GetClusterRunJob();     // make sure we have cluster run job data
   if(ClusterRunJob::CurJobCheckSaveTermState()) {
     if(taMisc::dmem_proc == 0) {
@@ -3150,7 +3147,6 @@ bool Network::SaveWeights_ClusterRunTerm() {
 bool Network::SaveWeights_ClusterRunCmd() {
   if(!taMisc::cluster_run) return false;
   if(taMisc::dmem_proc != 0) return false;
-  taProject* proj = GetMyProj();
   String cmd = proj->CheckClusterRunCmd();
   if(cmd.nonempty()) {
     if(cmd == "SAVESTATE") {
@@ -3354,7 +3350,6 @@ void Network::UpdateMonitors() {
 
 void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm) {
   if(!ctrl_panel) {
-    taProject* proj = GetMyProj();
     if(TestError(!proj, "NetControlPanel", "cannot find project")) return;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
@@ -3609,7 +3604,6 @@ DataTable* Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_l
 DataTable* Network::VarToTable(DataTable* dt, const String& variable) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
     new_table = true;
   }
@@ -3636,7 +3630,6 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
   bool new_table = false;
   Cuda_ConStateToHost();
   if(!dt) {
-    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }
@@ -3706,7 +3699,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
     if(lay->lesioned()) continue;
     lay->ClearLayerFlag(Layer::PROJECT_WTS_NEXT);
     lay->ClearLayerFlag(Layer::PROJECT_WTS_DONE);
-    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+    FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
       if(u->lesioned()) continue;
       u->wt_prjn = u->tmp_calc1 = 0.0f;
     }
@@ -3743,7 +3736,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       // first normalize the weights on this guy
       float abs_max = 0.0f;
       int uidx = 0;
-      FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+      FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
         if(u->lesioned()) continue;
         if(u->tmp_calc1 > 0.0f)
           u->wt_prjn /= u->tmp_calc1;
@@ -3765,7 +3758,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
         for(int gi=0;gi<lay->units.gp.size;gi++) {
           Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
           float gp_val = 0.0f;
-          FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+          FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, *ug) {
             if(u->lesioned()) continue;
             if(u->wt_prjn > thr_eff) // only for those above threshold
               gp_val += u->wt_prjn;
@@ -3778,15 +3771,15 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
           Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
           topk_un_vec.SetGeom(1, ug->leaves);
 
-          int uidx = 0;
-          FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+          int tuidx = 0;
+          FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, *ug) {
             if(u->lesioned()) continue;
-            topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
-            uidx++;
+            topk_un_vec.FastEl_Flat(tuidx) = u->wt_prjn;
+            tuidx++;
           }
 
-          float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
-          FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+          thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
+          FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, *ug) {
             if(u->lesioned()) continue;
             float prjval = u->wt_prjn;
             u->wt_prjn /= abs_max;      // normalize --
@@ -3805,7 +3798,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       else {                                            // flat layer version
         float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
 
-        FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+        FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, lay->units) {
           if(u->lesioned()) continue;
           float prjval = u->wt_prjn;
           u->wt_prjn /= abs_max;        // normalize

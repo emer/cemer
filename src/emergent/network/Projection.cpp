@@ -409,14 +409,14 @@ bool Projection::UpdateConSpecs(bool force) {
   return true;
 }
 
-bool Projection::ApplySpecToMe(BaseSpec* spec) {
-  if(spec == NULL) return false;
-  if(spec->InheritsFrom(&TA_ProjectionSpec)) {
-    SetPrjnSpec((ProjectionSpec*)spec);
+bool Projection::ApplySpecToMe(BaseSpec* apspec) {
+  if(apspec == NULL) return false;
+  if(apspec->InheritsFrom(&TA_ProjectionSpec)) {
+    SetPrjnSpec((ProjectionSpec*)apspec);
     return true;
   }
-  else if(spec->InheritsFrom(&TA_ConSpec)) {
-    SetConSpec((ConSpec*)spec);
+  else if(apspec->InheritsFrom(&TA_ConSpec)) {
+    SetConSpec((ConSpec*)apspec);
     return true;
   }
   return false;

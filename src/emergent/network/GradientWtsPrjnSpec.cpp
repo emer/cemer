@@ -124,12 +124,12 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, ConGroup* cg, Un
         float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_x, rgp_y);
         if(wrp_dist < dist) {
           dist = wrp_dist;
-          float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
+          wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
         else {
-          float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
+          wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
@@ -194,12 +194,12 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, ConGroup* cg, U
         float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_x, ru_y);
         if(wrp_dist < dist) {
           dist = wrp_dist;
-          float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
+          wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }
         else {
-          float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_x, ru_y);
+          wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_x, ru_y);
           if(wrp_dist < dist)
             dist = wrp_dist;
         }

@@ -629,8 +629,8 @@ int ConGroup::VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
   }
 
   // then copy over the newly reorganized guys..
-  for(int i=0; i< ncv; i++) {
-    memcpy(MemBlock(i), (char*)(tmp_con_mem + alloc_size * i), size * sizeof(float));
+  for(int j=0; j< ncv; j++) {
+    memcpy(MemBlock(j), (char*)(tmp_con_mem + alloc_size * j), size * sizeof(float));
   }
 
   vec_chunked_size = n_chunks * vec_chunk_targ; // we are now certfied chunkable..

@@ -368,7 +368,7 @@ void iPanelOfDocView::UpdatePanel_impl() {
 
   if(doc_->web_doc && (!net_doc || taMisc::InternetConnected())) {
     String cur_url = webview->url().toString();
-    String nw_url = doc_->GetURL();
+    nw_url = doc_->GetURL();
     if(cur_url != nw_url)
       webview->load(QUrl(nw_url));
     url_edit->setEnabled(true);

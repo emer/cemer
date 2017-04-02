@@ -403,9 +403,9 @@ void So3DHeightField::renderValues() {
 	  ValToDispText(val, val_str);
 	  txt->string.setValue(val_str.chars());
 	  SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
-	  SbVec3f val = tr->translation.getValue();
-	  val[1] = MAX(zp,0.0f) + .01f;
-	  tr->translation.setValue(val); // y/z switched
+	  SbVec3f trval = tr->translation.getValue();
+	  trval[1] = MAX(zp,0.0f) + .01f;
+	  tr->translation.setValue(trval); // y/z switched
 	  t_idx++;
 	}
       }

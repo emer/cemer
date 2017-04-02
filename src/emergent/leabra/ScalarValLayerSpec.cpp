@@ -371,9 +371,9 @@ void ScalarValLayerSpec::ClampValue_ugp
   }
 
   for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    uv = (LeabraUnitVars*)u->GetUnitVars();
     float act;
     if(scalar.rep == ScalarValSpec::AVG_ACT) {
       act = avg_act;

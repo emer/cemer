@@ -263,12 +263,12 @@ int ActrModel::InsertEventInOrder(ActrEvent* ev) {
 ActrEvent* ActrModel::ScheduleEvent(float time_fm_now, int priority,
                                     ActrModule* src_mod, ActrModule* dst_mod,
                                     ActrBuffer* dst_buf, const String& action,
-                                    const String& params,
+                                    const String& pars,
                                     ActrAction* act, ActrChunk* chnk,
                                     TypeDef* event_type) {
   ActrEvent* ev = ActrEvent::NewEvent(cur_time + time_fm_now, priority,
                                       src_mod, dst_mod, dst_buf, action,
-                                      params, act, chnk, event_type);
+                                      pars, act, chnk, event_type);
   InsertEventInOrder(ev);
   return ev;
 }
@@ -285,7 +285,7 @@ void ActrModel::LogEventString(DataTable* dt, const String& val, const String& c
 
 void ActrModel::LogEvent(float time, const String& module,
                          const String& action, const String& target, 
-                         const String& params, const String& dst_module,
+                         const String& pars, const String& dst_module,
                          float priority, const String& prod_action,
                          const String& chunk) {
   if(!log_table) return;
@@ -296,7 +296,7 @@ void ActrModel::LogEvent(float time, const String& module,
   LogEventString(dt, module, "module");
   LogEventString(dt, action, "action");
   LogEventString(dt, target, "target");
-  LogEventString(dt, params, "params");
+  LogEventString(dt, pars, "params");
   LogEventString(dt, dst_module, "dst_module");
   dt->SetVal(priority, "priority", -1);
   dt->SetVal(prod_action, "prod_action", -1);

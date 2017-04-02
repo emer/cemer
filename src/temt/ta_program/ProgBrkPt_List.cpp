@@ -34,7 +34,7 @@ ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, ProgLine* pl) {
     return NULL;
   ProgBrkPt* bp = FindBrkPt(prog_el);
   if (bp == NULL) {
-    ProgBrkPt* bp = (ProgBrkPt*)New(1);
+    bp = (ProgBrkPt*)New(1);
     bp->program = GET_OWNER(prog_el, Program);
     bp->prog_el = prog_el;
     bp->desc = bp->program->name + ":" + taMisc::LeadingZeros(pl->line_no, 3)

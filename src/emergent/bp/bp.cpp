@@ -691,7 +691,7 @@ void BpNetwork::Compute_Error() {
   // compute errors -- definitely not worth threading due to very limited units it run on
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (!lay->lesioned() && (lay->ext_flag & UnitVars::TARG)) { // only compute err on targs
-      FOREACH_ELEM_IN_GROUP(BpUnit, u, lay->units) {
+      FOREACH_ELEM_IN_GROUP_NESTED(BpUnit, u, lay->units) {
 	if(u->lesioned()) continue;
         u->dEdA() = 0.0f;           // must reset -- error is incremental!
         ((BpUnitSpec*)u->GetUnitSpec())->Compute_Error((BpUnitVars*)u->GetUnitVars(), this, 0);

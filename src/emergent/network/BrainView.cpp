@@ -279,7 +279,7 @@ void BrainView::GetMembs() {
   // only get units that have been mapped to voxel coords...
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+    FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
       if (!u->voxels || u->voxels->size == 0) continue;
       // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
       Voxel *voxel = u->voxels->FastEl(0);

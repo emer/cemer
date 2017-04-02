@@ -494,8 +494,8 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
     return;
   String dat_files;
   String params;
-  String notes;
-  String label;
+  String lnotes;
+  String llabel;
   String user = m_cm->GetUsername();
   String clust = cluster;
   if(table.name == "file_list") {
@@ -504,22 +504,22 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
     int lkup = jobs_done.FindVal(tag, "tag");
     if(lkup >= 0) {
       params = jobs_done.GetValAsString("params", lkup);
-      notes = jobs_done.GetValAsString("notes", lkup);
-      label = jobs_done.GetValAsString("label", lkup);
+      lnotes = jobs_done.GetValAsString("notes", lkup);
+      llabel = jobs_done.GetValAsString("label", lkup);
     }
     else {
       lkup = jobs_running.FindVal(tag, "tag");
       if(lkup >= 0) {
         params = jobs_running.GetValAsString("params", lkup);
-        notes = jobs_running.GetValAsString("notes", lkup);
-        label = jobs_running.GetValAsString("label", lkup);
+        lnotes = jobs_running.GetValAsString("notes", lkup);
+        llabel = jobs_running.GetValAsString("label", lkup);
       }
       else {
         lkup = jobs_archive.FindVal(tag, "tag");
         if(lkup >= 0) {
           params = jobs_archive.GetValAsString("params", lkup);
-          notes = jobs_archive.GetValAsString("notes", lkup);
-          label = jobs_archive.GetValAsString("label", lkup);
+          lnotes = jobs_archive.GetValAsString("notes", lkup);
+          llabel = jobs_archive.GetValAsString("label", lkup);
         }
       }
     }
@@ -527,8 +527,8 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
   else {
     dat_files = table.GetValAsString("dat_files", row);
     params = table.GetValAsString("params", row);
-    notes = table.GetValAsString("notes", row);
-    label = table.GetValAsString("label", row);
+    lnotes = table.GetValAsString("notes", row);
+    llabel = table.GetValAsString("label", row);
     user = table.GetValAsString("user", row);
     clust = table.GetValAsString("cluster", row);
   }
@@ -554,7 +554,7 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
       dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
     }
     dat->LoadData(res_path + "/" + fl);
-    AddParamsToTable(dat, tag, tag_svn, tag_job, params, notes, label);
+    AddParamsToTable(dat, tag, tag_svn, tag_job, params, lnotes, llabel);
   }
 }
 
@@ -950,7 +950,7 @@ void ClusterRun::GetProjAtRev() {
   
   int svn_rev = -1;
   String user_name;
-  String cluster;
+  String pcluster;
   String orig_filename;
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
@@ -960,7 +960,7 @@ void ClusterRun::GetProjAtRev() {
         return;
       svn_rev = cur_table->GetVal("submit_svn", st_row).toInt();
       user_name = cur_table->GetVal("user", st_row).toString();
-      cluster = cur_table->GetVal("cluster", st_row).toString();
+      pcluster = cur_table->GetVal("cluster", st_row).toString();
       orig_filename = cur_table->GetVal("filename", st_row).toString();
     }
     else {
@@ -969,7 +969,7 @@ void ClusterRun::GetProjAtRev() {
   }
   if(TestError(svn_rev < 0, "GetProjAtRev", "valid svn revision not found"))
     return;
-  m_cm->GetProjectAtRev(cluster, user_name, orig_filename, svn_rev);
+  m_cm->GetProjectAtRev(pcluster, user_name, orig_filename, svn_rev);
   taMisc::Info("Note: GetProjAtRev does NOT require a new checkin -- do not hit Update or wait for auto-update -- the file will be in the main project directory now, or very soon.");
 }
 
@@ -1029,7 +1029,7 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
   ViewPanelNumber(5);
 }
 
-void ClusterRun::ListOtherProjFiles(const String& proj_name) {
+void ClusterRun::ListOtherProjFiles(const String& proj_nm) {
   if(!InitClusterManager())
     return;
 
@@ -1041,9 +1041,9 @@ void ClusterRun::ListOtherProjFiles(const String& proj_name) {
   cur_proj = cur_proj.before(".proj");
   String wc_path = m_cm->GetWcResultsPath();
   String proj_path = wc_path.after(us_user,-1);
-  proj_path.gsub(cur_proj, proj_name);
+  proj_path.gsub(cur_proj, proj_nm);
   url += proj_path;
-  wc_path.gsub(cur_proj, proj_name);
+  wc_path.gsub(cur_proj, proj_nm);
 
   InitOtherSvn(wc_path, url);
   ListOtherSvn();               // use defaults
@@ -1088,11 +1088,11 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
 
   String tag = table.GetValAsString("tag", row);
   String params = table.GetValAsString("params", row);
-  String notes = table.GetValAsString("notes", row);
-  String label = table.GetValAsString("label", row);
+  String lnotes = table.GetValAsString("notes", row);
+  // String llabel = table.GetValAsString("label", row); // todo: unused!?
 
   ps->name = String("tag_") + tag;
-  ps->desc = notes;
+  ps->desc = lnotes;
 
   SaveNameValueMembers(ps, params);
 

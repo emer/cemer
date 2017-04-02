@@ -408,8 +408,8 @@ bool taDataAnal::AnovaNWay(DataTable* result_data, DataTable* src_data,
   for(int ci=0; ci < n_conds; ci++) {
     String cond = cond_cols[ci];
     DataTable* res_tab = cond_tabs[ci];
-    DataGroupEl* cond_gp = (DataGroupEl*)gp_spec.ops[0];
-    cond_gp->SetColName(cond);
+    DataGroupEl* ncond_gp = (DataGroupEl*)gp_spec.ops[0];
+    ncond_gp->SetColName(cond);
     
     taDataProc::Group(res_tab, src_data, &gp_spec);
     int n_gps = res_tab->rows;

@@ -548,21 +548,21 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
       sv->name = nm;
     }
     
-    QToolButton* view_button = new iContextMenuButton(this);
+    QToolButton* viewbut = new iContextMenuButton(this);
     
     iAction* view_act = new iAction(i, nm, QKeySequence());
     view_act->connect(iAction::int_act, this,  SLOT(gotoviewbuttonClicked(int)));
-    view_act->setParent(view_button);
+    view_act->setParent(viewbut);
     view_act->setCheckable(true);
     view_act->setChecked(sv->view_saved);
     
-    view_button->setToolTip(taiMisc::ToolTipPreProcess("Go To View: Restores display to previously saved viewing configuration -- hold mouse down for menu to save view and set view name"));
-    //    view_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
-    view_button->setDefaultAction(view_act);
-    bot_button_hbox->addWidget(view_button);
+    viewbut->setToolTip(taiMisc::ToolTipPreProcess("Go To View: Restores display to previously saved viewing configuration -- hold mouse down for menu to save view and set view name"));
+    //    viewbut->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+    viewbut->setDefaultAction(view_act);
+    bot_button_hbox->addWidget(viewbut);
     
     sv->view_action = view_act;
-    sv->view_button = view_button;
+    sv->view_button = viewbut;
     
     QMenu* view_menu = new QMenu(this);
     view_menu->setFont(taiM->menuFont(taiMisc::fonMedium));
@@ -585,8 +585,8 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
     sname_act->setParent(view_menu);
     view_menu->addAction(sname_act);
     
-    view_button->setMenu(view_menu);
-    view_button->setPopupMode(QToolButton::DelayedPopup);
+    viewbut->setMenu(view_menu);
+    viewbut->setPopupMode(QToolButton::DelayedPopup);
   }
 }
 

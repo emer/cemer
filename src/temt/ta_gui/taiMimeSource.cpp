@@ -181,8 +181,8 @@ void taiMimeSource::ResolveObjects() {
   taiObjectsMimeItem* omi = objects();
   if (!omi) return;
   for (int i = 0; i < omi->count() ; ++i) {
-    taiObjectMimeItem* mi = omi->item(i);
-    mi->obj(); // asserts
+    taiObjectMimeItem* mii = omi->item(i);
+    mii->obj(); // asserts
   }
 }
 

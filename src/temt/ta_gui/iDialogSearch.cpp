@@ -183,7 +183,7 @@ void iDialogSearch::go_clicked() {
   Search();
 }
 
-void iDialogSearch::results_setSourceRequest(iTextBrowser* src,
+void iDialogSearch::results_setSourceRequest(iTextBrowser* bsrc,
   const QUrl& url, bool& cancel)
 {
   if ((url.scheme() == "sort")) {

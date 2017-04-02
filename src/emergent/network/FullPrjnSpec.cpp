@@ -37,7 +37,7 @@ void FullPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
   else {
     FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
-      FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+      FOREACH_ELEM_IN_GROUP_NESTED(Unit, su, prjn->from->units) {
         if(self_con || (ru != su))
           ru->ConnectFrom(su, prjn);
       }

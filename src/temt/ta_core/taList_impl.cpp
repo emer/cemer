@@ -368,7 +368,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
       taBase* itm = vitm.toBase();
       if(itm) {
         int el_idx = FOREACH_itr.el_idx; // get before occluded by next iterator
-        TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
+        TA_FOREACH_NESTED(mitm, *cmat) { // use iterator on matrix so it can be filtered too
           const String nm = mitm.toString();
           if(itm->GetName().matches_wildcard(nm)) {
             imat->Add(el_idx); // add absolute index of item
@@ -456,7 +456,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
       taBase* itm = vitm.toBase();
       if(itm) {
         int el_idx = FOREACH_itr.el_idx; // get before occluded by next iterator
-        TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
+        TA_FOREACH_NESTED(mitm, *cmat) { // use iterator on matrix so it can be filtered too
           // catch all for any kind of variant
           if(mitm.isTypeDef()) {
             if(itm->InheritsFrom(mitm.toTypeDef())) {
@@ -470,7 +470,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
             }
           }
           else if(mitm.isNumeric()) {
-            int el_idx = mitm.toInt();
+            el_idx = mitm.toInt();
             if(el_idx < 0) el_idx += ElemCount();
             if(el_idx < 0 || el_idx >= ElemCount()) continue; // skip out of range at this point
             imat->Add(el_idx); // add absolute index of item
@@ -1180,11 +1180,12 @@ String taList_impl::GetPath_impl(taBase* ta, taBase* par_stop) const {
     rval = par->GetPath_impl((taBase*)this, par_stop);
   }
 
+  MemberDef* md = NULL;
   if (ta != NULL) {
-    if (MemberDef *md = FindMemberBase(ta)) {
+    if ((md = FindMemberBase(ta))) {
       rval += "." + md->name;
     }
-    else if (MemberDef *md = FindMemberPtr(ta)) {
+    else if ((md = FindMemberPtr(ta))) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
@@ -1214,10 +1215,11 @@ String taList_impl::GetPathNames_impl(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMemberBase(ta)) {
+    MemberDef* md = NULL;
+    if ((md = FindMemberBase(ta))) {
       rval += "." + md->name;
     }
-    else if (MemberDef *md = FindMemberPtr(ta)) {
+    else if ((md = FindMemberPtr(ta))) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {

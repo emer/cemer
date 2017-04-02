@@ -239,11 +239,11 @@ void ProgVar::UpdateAfterEdit_impl() {
       if (this->flags | LOCAL_VAR) {
         choice = 0;
       }
-      ProgVar::VarType var_type = ProgVar::T_UnDef;
-      int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);  // get the name and the type
+      ProgVar::VarType vt = ProgVar::T_UnDef;
+      int result = dlg.GetLocalGlobalChoice(var_nm, choice, vt);  // get the name and the type
       if (result == 1) {
         this->SetName(var_nm);
-        this->var_type = var_type;
+        this->var_type = vt;
       }
     }
   }

@@ -132,7 +132,6 @@ bool GridSearch::CreateJobs() {
     }
     // taMisc::Info("----");
     
-    String params;
     m_cluster_run->RunCommand(cmd, params, false); // use next vals
     m_cluster_run->AddJobRow(cmd, params, m_cmd_id);
 

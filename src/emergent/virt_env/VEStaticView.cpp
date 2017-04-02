@@ -515,7 +515,7 @@ void VEStaticView::Render_impl() {
         off_tx.CopyTo(tx);
       }
       else {
-        SoTransform* tx = obv->txfm_shape();
+        tx = obv->txfm_shape();
         ob->obj_xform.CopyTo(tx);
       }
     }
@@ -579,7 +579,7 @@ void VEStaticView::Render_impl() {
           sp->width = ob->plane_vis_size.x;
           sp->depth = ob->plane_vis_size.y;
         }
-	SoTransform* tx = (SoTransform*)ssep->getChild(ssep->getNumChildren()-2);
+	tx = (SoTransform*)ssep->getChild(ssep->getNumChildren()-2);
 	switch (ob->plane_norm) {
 	case VEStatic::NORM_X:
 	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);

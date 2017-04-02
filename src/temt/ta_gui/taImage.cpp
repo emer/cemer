@@ -301,12 +301,12 @@ bool taImage::ImageToDataCell(DataTable* dt, const Variant& col, int row) {
       for(int x=0; x< wd; x++) {
         QRgb pix = q_img.pixel(x, y);
         if(isfloat) {
-          float rval = qRed(pix) / 255.0f;
-          float gval = qGreen(pix) / 255.0f;
-          float bval = qBlue(pix) / 255.0f;
-          mat->SetFmVar(rval, x, ht-1 - y, 0);
-          mat->SetFmVar(gval, x, ht-1 - y, 1);
-          mat->SetFmVar(bval, x, ht-1 - y, 2);
+          float rdval = qRed(pix) / 255.0f;
+          float gnval = qGreen(pix) / 255.0f;
+          float blval = qBlue(pix) / 255.0f;
+          mat->SetFmVar(rdval, x, ht-1 - y, 0);
+          mat->SetFmVar(gnval, x, ht-1 - y, 1);
+          mat->SetFmVar(blval, x, ht-1 - y, 2);
         }
         else {
           mat->SetFmVar(qRed(pix), x, ht-1 - y, 0);
@@ -366,17 +366,17 @@ bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
     for(int y=0; y<ht; y++) {
       for(int x=0; x< wd; x++) {
         if(isfloat) {
-          int rval = (int)(mat->FastElAsFloat(x, y, 0) * 255.0f);
-          int gval = (int)(mat->FastElAsFloat(x, y, 1) * 255.0f);
-          int bval = (int)(mat->FastElAsFloat(x, y, 2) * 255.0f);
-          QRgb pix = qRgb(rval, gval, bval);
+          int rdval = (int)(mat->FastElAsFloat(x, y, 0) * 255.0f);
+          int gnval = (int)(mat->FastElAsFloat(x, y, 1) * 255.0f);
+          int blval = (int)(mat->FastElAsFloat(x, y, 2) * 255.0f);
+          QRgb pix = qRgb(rdval, gnval, blval);
           q_img.setPixel(x, ht-1-y, pix);
         }
         else {                  // assume int
-          int rval = (int)mat->FastElAsFloat(x, y, 0);
-          int gval = (int)mat->FastElAsFloat(x, y, 1);
-          int bval = (int)mat->FastElAsFloat(x, y, 2);
-          QRgb pix = qRgb(rval, gval, bval);
+          int rdval = (int)mat->FastElAsFloat(x, y, 0);
+          int gnval = (int)mat->FastElAsFloat(x, y, 1);
+          int blval = (int)mat->FastElAsFloat(x, y, 2);
+          QRgb pix = qRgb(rdval, gnval, blval);
           q_img.setPixel(x, ht-1-y, pix);
         }
       }

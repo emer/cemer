@@ -1834,16 +1834,16 @@ void LeabraNetwork::Compute_WtBal_Thr(int thr_no) {
 void LeabraNetwork::Compute_WtBalStats() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+    FOREACH_ELEM_IN_GROUP_NESTED(LeabraPrjn, p, lay->projections) {
       if(p->NotActive()) continue;
       p->wt_avg_max = 0.0f;
       p->wt_avg_avg = 0.0f;
     }
     int denom = 0;
-    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    FOREACH_ELEM_IN_GROUP_NESTED(LeabraUnit, u, lay->units) {
       if(u->lesioned()) continue;
       denom++;
-      FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+      FOREACH_ELEM_IN_GROUP_NEST2(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
         LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
         p->wt_avg_max = fmaxf(p->wt_avg_max, cg->wt_avg);
@@ -1852,7 +1852,7 @@ void LeabraNetwork::Compute_WtBalStats() {
     }
     if(denom > 0) {
       float norm = 1.0f / denom;
-      FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+      FOREACH_ELEM_IN_GROUP_NEST2(LeabraPrjn, p, lay->projections) {
         if(p->NotActive()) continue;
         p->wt_avg_avg *= norm;
       }

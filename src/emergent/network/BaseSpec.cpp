@@ -367,8 +367,8 @@ void BaseSpec::WhereUsed_impl(taBase_PtrList& spec_user_list, String_Array& spec
     }
   }
   
-  for (int i=0; i<children.size; i++) {
-    children.SafeEl(i)->WhereUsed_impl(spec_user_list, spec_name_list, true);
+  for (int j=0; j<children.size; j++) {
+    children.SafeEl(j)->WhereUsed_impl(spec_user_list, spec_name_list, true);
   }
 }
 
@@ -392,8 +392,8 @@ bool BaseSpec::UpdtIsUsed() {
     }
   }
   
-  for (int i=0; i<children.size; i++) {
-    children.SafeEl(i)->UpdtIsUsed();
+  for (int j=0; j<children.size; j++) {
+    children.SafeEl(j)->UpdtIsUsed();
   }
 
   UpdateUsedStatus();

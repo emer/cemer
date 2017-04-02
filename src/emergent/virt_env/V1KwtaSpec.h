@@ -111,9 +111,9 @@ public:
   }
   // compute equilibrium membrane potential from excitatory (gc_e) and inhibitory (gc_i) input currents (gc_e = raw filter value, gc_i = inhibition computed from kwta) -- in normalized units (e_rev_e = 1), and inhib e_rev_i = e_rev_l
   
-  inline float 	Compute_ActFmVm_nxx1(float val, float thr) {
+  inline float 	Compute_ActFmVm_nxx1(float val, float tthr) {
     float new_act;
-    float val_sub_thr = val - thr;
+    float val_sub_thr = val - tthr;
     if(val_sub_thr <= nxx1_fun.x_range.min) {
       new_act = 0.0f;
     }

@@ -791,14 +791,14 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   }
 
   int st_row = 0;
-   dest->EnforceRows(chg_rows.size);
+  dest->EnforceRows(chg_rows.size);
   for(int ri=0; ri<chg_rows.size; ri++) {
-    int row = chg_rows[ri];
+    row = chg_rows[ri];
     int n_rows = row - st_row;
     // now go through actual group ops!
     int dest_idx = 0;
-    for(int i=0;i<spec->ops.size; i++) {
-      DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
+    for(int opsi=0;opsi<spec->ops.size; opsi++) {
+      DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(opsi);
       if(ds->col_idx < 0) continue;
       DataCol* sda = ssrc.data.FastEl(ds->col_idx);
       DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
@@ -1642,16 +1642,16 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
         dest->AddBlankRow();
         for(int i=0;i<ssrc_a.data.size; i++) {
           //    if(i == spec->col_a.col_idx) continue; // include first guy..
-          DataCol* sda = ssrc_a.data.FastEl(i);
+          DataCol* ssda = ssrc_a.data.FastEl(i);
           DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-          nda->CopyFromRow(-1, *sda, row); // just copy
+          nda->CopyFromRow(-1, *ssda, row); // just copy
         }
         int col_idx = a_cols;
         for(int i=0; i < ssrc_b.data.size; i++) {
           if(i == spec->col_b.col_idx) continue; // don't include common index
-          DataCol* sdb = ssrc_b.data.FastEl(i);
+          DataCol* ssdb = ssrc_b.data.FastEl(i);
           DataCol* nda = dest->data.FastEl(col_idx);
-          nda->CopyFromRow(-1, *sdb, bi); // just copy
+          nda->CopyFromRow(-1, *ssdb, bi); // just copy
           col_idx++;
         }
         if(bi >= ssrc_b.rows-1) break; // done!
@@ -1674,9 +1674,9 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
         dest->AddBlankRow();
         for(int i=0;i<ssrc_a.data.size; i++) {
           //    if(i == spec->col_a.col_idx) continue; // include first guy..
-          DataCol* sda = ssrc_a.data.FastEl(i);
+          DataCol* ssda = ssrc_a.data.FastEl(i);
           DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-          nda->CopyFromRow(-1, *sda, row); // just copy
+          nda->CopyFromRow(-1, *ssda, row); // just copy
         }
       }
       else {                    // left and inner: just skip b's

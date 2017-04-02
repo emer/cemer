@@ -398,12 +398,12 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
           << " at path: " << urec->mod_obj_path;
       taMisc::Info(msg);
       if(show_diffs && (bool)urec->diff_src && urec->save_data.empty()) {
-        String msg;
+        String dmsg;
         String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
         for(int j=0; j<diffstr.length(); j++) {
-          msg << diffstr[j];
+          dmsg << diffstr[j];
         }
-        taMisc::ConsoleOutput(msg, false, false);
+        taMisc::ConsoleOutput(dmsg, false, false);
       }
     }
   }

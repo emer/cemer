@@ -66,7 +66,7 @@ void taiWidgetFieldFile::lookupKeyPressed() {
     }
   }
   else {                        // do a static dialog
-    taFiler* flr = taBase::StatGetFiler(NULL, file_ext, file_cmprs, file_type);
+    flr = taBase::StatGetFiler(NULL, file_ext, file_cmprs, file_type);
     taRefN::Ref(flr);
     if(file_act == FA_LOAD) {
       flr->Open();

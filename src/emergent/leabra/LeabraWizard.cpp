@@ -772,7 +772,7 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
     Layer* fm_in = NULL;
     Layer* fm_out = NULL;
     for(int pi = 0; pi < lay->projections.size; pi++) {
-      Projection* prjn = lay->projections[pi];
+      prjn = lay->projections[pi];
       if(!fm_in && prjn->direction == Projection::FM_INPUT)
         fm_in = prjn->from.ptr();
       if(!fm_out && prjn->direction == Projection::FM_OUTPUT)

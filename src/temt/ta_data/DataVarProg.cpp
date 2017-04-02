@@ -27,9 +27,9 @@ void DataVarProg::Initialize() {
   all_matches = false;
  }
 
-void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
+void DataVarProg::CheckThisConfig_impl(bool bquiet, bool& rval) {
+  inherited::CheckThisConfig_impl(bquiet, rval);
+  CheckError(row_spec != CUR_ROW && !row_var, bquiet, rval, "row_var is NULL but is required!");
 }
 
 String DataVarProg::GetDisplayName() const {

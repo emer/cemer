@@ -39,8 +39,8 @@ iViewPanel::iViewPanel(taDataView* dv_)
   updating = 0;
   m_modified = false;
   apply_req = false;
-  taSigLink* dl = dv_->GetSigLink();
-  dl->AddSigClient(this);
+  taSigLink* dvdl = dv_->GetSigLink();
+  dvdl->AddSigClient(this);
   btnApply = NULL;
   btnRevert = NULL;
   btnCopyFrom = NULL;

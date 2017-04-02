@@ -111,11 +111,11 @@ protected:
   taiMimeSource*        ctxt_ms; // during a drop and context holds the ms used for dyn and edit actions
   ISelectable*          ctxt_item; // during drop, holds the item dropped on; for context, holds the item
 
-  virtual void          FillContextMenu_pre(ISelectable_PtrList& sel_items,
+  virtual void          FillContextMenu_pre(ISelectable_PtrList& selitems,
     taiWidgetActions* menu) {} // hook
-  void                  FillContextMenu_int(ISelectable_PtrList& sel_items,
+  void                  FillContextMenu_int(ISelectable_PtrList& selitems,
     taiWidgetActions* menu, int dyn_list, ISelectable::GuiContext sh_typ);
-  virtual void          FillContextMenu_post(ISelectable_PtrList& sel_items,
+  virtual void          FillContextMenu_post(ISelectable_PtrList& selitems,
     taiWidgetActions* menu) {} // hook
 
   virtual void          EditAction_Delete(ISelectable::GuiContext gc_typ); // actually does the Edit/Delete

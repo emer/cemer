@@ -345,8 +345,8 @@ void GridTableView::AddHorizLabels
           
     for(int i=0;i<nms.size;i++) {
       String nm = nms[i];
-      float crd = midcrds[i];
-      T3Annotation* t3a = AnnoteText(true, nm, crd + exspc, 1.0f, 0.0f,
+      float midcrd = midcrds[i];
+      T3Annotation* t3a = AnnoteText(true, nm, midcrd + exspc, 1.0f, 0.0f,
                                           fontsz, T3DataViewMain::LEFT);
       t3a->RotateAroundZ(90.0f);
       t3a->SetName(nm + "_hz_" + String(i));
@@ -366,8 +366,8 @@ void GridTableView::AddHorizLabels
   else {
     for(int i=0;i<n;i++) {
       String nm = nmda->GetValAsString(i);
-      float crd = left_st + (float)i * oneon;
-      T3Annotation* t3a = AnnoteText(true, nm, crd + fontsz, 1.0f, 0.0f,
+      float lcrd = left_st + (float)i * oneon;
+      T3Annotation* t3a = AnnoteText(true, nm, lcrd + fontsz, 1.0f, 0.0f,
                                           fontsz, T3DataViewMain::LEFT);
       t3a->RotateAroundZ(90.0f);
       t3a->SetName(nm + "_hz_" + String(i));
@@ -908,7 +908,7 @@ void GridTableView::RenderGrid() {
     grid->moveTo(col_pos, 0.0f, 0.0f);
     grid->lineTo(col_pos, 1.0f, 0.0f);
 #else // TA_QT3D
-    SoTranslation* tr = new SoTranslation();
+    tr = new SoTranslation();
     vert->addChild(tr);
     tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     vert->addChild(ln);
@@ -931,7 +931,7 @@ void GridTableView::RenderGrid() {
     grid->moveTo(col_pos, 0.0f, 0.0f);
     grid->lineTo(col_pos, 1.0f, 0.0f);
 #else // TA_QT3D
-    SoTranslation* tr = new SoTranslation();
+    tr = new SoTranslation();
     vert->addChild(tr);
     tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     vert->addChild(ln);
@@ -971,7 +971,7 @@ void GridTableView::RenderGrid() {
     grid->moveTo(0.0f, 1.0f-row_pos, 0.0f);
     grid->lineTo(width, 1.0f-row_pos, 0.0f);
 #else // TA_QT3D
-    SoTranslation* tr = new SoTranslation;
+    tr = new SoTranslation;
     horiz->addChild(tr);
     tr->translation.setValue(0.0f, -head_height, 0.0f);
     horiz->addChild(ln);
@@ -991,7 +991,7 @@ void GridTableView::RenderGrid() {
     grid->moveTo(0.0f, 1.0f-row_pos, 0.0f);
     grid->lineTo(width, 1.0f-row_pos, 0.0f);
 #else // TA_QT3D
-    SoTranslation* tr = new SoTranslation();
+    tr = new SoTranslation();
     horiz->addChild(tr);
     tr->translation.setValue(0.0f, -row_height, 0.0f);
     horiz->addChild(ln);
@@ -1306,13 +1306,13 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 #else // TA_QT3D
         SoSeparator* img = new SoSeparator;
         ln->addChild(img);
-        SoTransform* tr = new SoTransform();
-        img->addChild(tr);
+        SoTransform* tx = new SoTransform();
+        img->addChild(tx);
         // scale the image according to pixel metrics
         // note: image defaults to 1 geom unit width, so we scale by our act width
-        tr->scaleFactor.setValue(col_wd, row_ht, 1.0f);
+        tx->scaleFactor.setValue(col_wd, row_ht, 1.0f);
         // center the shape in the middle of the cell
-        tr->translation.setValue(col_wd_lst * .5f, -(row_height *.5f), 0.0f);
+        tx->translation.setValue(col_wd_lst * .5f, -(row_height *.5f), 0.0f);
         SoImageEx* img_so = new SoImageEx;
         img->addChild(img_so);
 
@@ -1347,11 +1347,11 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 #else // TA_QT3D
           SoSeparator* grsep = new SoSeparator;
           ln->addChild(grsep);
-          SoTransform* tr = new SoTransform(); // todo: add this to image object! get rid of extra
-          grsep->addChild(tr);
-          tr->scaleFactor.setValue(col_wd, mat_ht, 1.0f);
-          tr->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
-          tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
+          SoTransform* tx = new SoTransform(); // todo: add this to image object! get rid of extra
+          grsep->addChild(tx);
+          tx->scaleFactor.setValue(col_wd, mat_ht, 1.0f);
+          tx->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
+          tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
 
           SoMatrixGrid* sogr = new SoMatrixGrid
             (cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 

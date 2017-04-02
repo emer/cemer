@@ -67,7 +67,8 @@ void iPanelBase::customEvent(QEvent* ev_) {
       show_req = false;
     }
   } break;
-  default: inherited(ev_);
+  default:
+    inherited::customEvent(ev_);
     return; // don't accept
   }
   ev_->accept();

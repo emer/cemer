@@ -1129,10 +1129,11 @@ String taBase::GetPath_impl(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMemberBase(ta)) {
+    MemberDef* md = NULL;
+    if ((md = FindMemberBase(ta))) {
       rval += "." + md->name;
     }
-    else if (MemberDef *md = FindMemberPtr(ta)) {
+    else if ((md = FindMemberPtr(ta))) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
@@ -1160,10 +1161,11 @@ String taBase::GetPathNames_impl(taBase* ta, taBase* par_stop) const {
   }
 
   if (ta != NULL) {
-    if (MemberDef *md = FindMemberBase(ta)) {
+    MemberDef* md = NULL;
+    if ((md = FindMemberBase(ta))) {
       rval += "." + md->name;
     }
-    else if (MemberDef *md = FindMemberPtr(ta)) {
+    else if ((md = FindMemberPtr(ta))) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {

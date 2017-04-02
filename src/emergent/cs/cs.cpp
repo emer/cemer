@@ -625,7 +625,7 @@ void CsNetwork::Compute_MaxDa() {
   output_name = "";     // todo: update this
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (!lay->lesioned()) {
-      FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+      FOREACH_ELEM_IN_GROUP_NESTED(CsUnit, un, lay->units) {
 	if(un->lesioned()) continue;
         maxda = MAX(fabsf(un->da()), maxda);
       }

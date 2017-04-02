@@ -74,13 +74,13 @@ int taString::ta_snprintf(char * s, size_t n, const char * format, ...) {
 #include <Variant>
 #include <int_Matrix.h>
 
-taString  taString::operator [] (const Variant& i) const {
+taString  taString::operator [] (const Variant& idx) const {
   taString rval;
-  if(i.isNumeric()) {
-    rval = elem(i.toInt());
+  if(idx.isNumeric()) {
+    rval = elem(idx.toInt());
   }
-  else if(i.isMatrixType()) {
-    int_Matrix* cmat = dynamic_cast<int_Matrix*>(i.toMatrix());
+  else if(idx.isMatrixType()) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     if(!cmat) {
       error("operator[], index matrix is NULL or not an int_Matrix");
       return rval;
@@ -116,9 +116,9 @@ taString  taString::operator [] (const Variant& i) const {
     }
     else {                      // just a bunch of coords
       for(int i=0; i< cmat->size; i++) {
-        int idx = cmat->FastEl_Flat(i);
-        if(idx >= 0 && idx < length())
-          rval += elem(idx);
+        int dx = cmat->FastEl_Flat(i);
+        if(dx >= 0 && dx < length())
+          rval += elem(dx);
       }
     }
   }

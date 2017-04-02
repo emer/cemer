@@ -444,9 +444,9 @@ void ControlPanelMember::MoveToTop() {
       ParamSet* mstr = (ParamSet*)owngp->GetMaster();
       ParamSet* ps = GET_MY_OWNER(ParamSet);
       if(mstr && (ps != mstr)) {
-        ControlPanelMember* mbr = mstr->mbrs.FindLeafName(label);
-        if(mbr && mbr != this) {
-          mbr->MoveToTop();
+        ControlPanelMember* mmbr = mstr->mbrs.FindLeafName(label);
+        if(mmbr && mmbr != this) {
+          mmbr->MoveToTop();
           return;
         }
       }
@@ -466,9 +466,9 @@ void ControlPanelMember::MoveToBottom() {
       ParamSet* mstr = (ParamSet*)owngp->GetMaster();
       ParamSet* ps = GET_MY_OWNER(ParamSet);
       if(mstr && (ps != mstr)) {
-        ControlPanelMember* mbr = mstr->mbrs.FindLeafName(label);
-        if(mbr && mbr != this) {
-          mbr->MoveToBottom();
+        ControlPanelMember* mmbr = mstr->mbrs.FindLeafName(label);
+        if(mmbr && mmbr != this) {
+          mmbr->MoveToBottom();
           return;
         }
       }

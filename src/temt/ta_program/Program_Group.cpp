@@ -121,7 +121,7 @@ void Program_Group::BrowserSelectFirstEl() {
 }
 
 void Program_Group::RestorePanels() {
-  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
+  FOREACH_ELEM_IN_GROUP_NESTED(Program, prog, *this) {
     if(prog->GetUserDataAsBool("user_pinned")) {
       prog->EditPanel(true, true);
     }

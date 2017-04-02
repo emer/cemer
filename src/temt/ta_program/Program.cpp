@@ -1361,14 +1361,14 @@ LocalVars* Program::FindMakeLocalVars(bool in_prog_code) {
 }
 
 bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags,
-                      const String& desc) {
-  String desc_oneline = desc;
+                      const String& dsc) {
+  String desc_oneline = dsc;
   desc_oneline.gsub('\n', ' '); // no multiline in desc comments
   String rmdr = code;
   if(rmdr.contains('\n')) {
     String curln;
     do {
-      String curln = rmdr.before('\n');
+      curln = rmdr.before('\n');
       rmdr = rmdr.after('\n');
       script_list.AddLine(prog_el, cur_indent, curln, pline_flags);
     } while(rmdr.contains('\n'));
@@ -1445,7 +1445,7 @@ void Program::AddDescString(taBase* prog_el, const String& dsc) {
   if(rmdr.contains('\n')) {
     String curln;
     do {
-      String curln = rmdr.before('\n');
+      curln = rmdr.before('\n');
       rmdr = rmdr.after('\n');
       AddLine(prog_el, "// " + curln, ProgLine::COMMENT);
     } while(rmdr.contains('\n'));

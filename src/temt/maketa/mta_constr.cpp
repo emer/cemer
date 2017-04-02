@@ -192,13 +192,13 @@ void MTA::TypeSpace_Includes(TypeSpace* ths, ostream& strm, bool instances) {
 
   // include type classes for template instances!  prevents a load of compile errs
   for(int i=0; i<taMisc::types.size; i++) {
-    TypeDef* ths = taMisc::types.FastEl(i);
-    if(!TypeDef_Gen_Test(ths)) continue;
-    if(ths->IsTemplInst() && ths->IsClass()) {
-      ths->c_name = "";         // reset this so it will be generated fresh 
+    TypeDef* td = taMisc::types.FastEl(i);
+    if(!TypeDef_Gen_Test(td)) continue;
+    if(td->IsTemplInst() && td->IsClass()) {
+      td->c_name = "";         // reset this so it will be generated fresh 
       // in case it got corrupted along the way
-      for(int j=0; j< ths->templ_pars.size; j++) {
-        TypeDef* tp = ths->templ_pars[j];
+      for(int j=0; j< td->templ_pars.size; j++) {
+        TypeDef* tp = td->templ_pars[j];
         if(tp->IsActualClass()) {
           String src = taMisc::GetFileFmPath(tp->source_file);
           if(src != trg_fname_only) {

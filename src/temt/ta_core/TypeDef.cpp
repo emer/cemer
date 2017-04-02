@@ -790,16 +790,16 @@ TypeDef* TypeDef::GetStemBase() const {
   return NULL;
 }
 
-TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
-  if(it == NULL) return NULL;
+TypeDef* TypeDef::AddParent(TypeDef* td, int p_off) {
+  if(td == NULL) return NULL;
 
-  if(parents.LinkUnique(it))
-    par_off.Add(p_off);         // it was unique, add offset
+  if(parents.LinkUnique(td))
+    par_off.Add(p_off);         // td was unique, add offset
 
-  it->children.Link(this);
+  td->children.Link(this);
 
-  opts.DupeUnique(it->inh_opts);
-  inh_opts.DupeUnique(it->inh_opts);    // and so on
+  opts.DupeUnique(td->inh_opts);
+  inh_opts.DupeUnique(td->inh_opts);    // and so on
 
   // note: type flags are set explicitly prior to calling AddParent!
 
@@ -811,12 +811,12 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
 #endif
 
   // use the old one because the parent does not have precidence over existing
-  enum_vals.BorrowUniqNameOld(it->enum_vals);
-  sub_types.BorrowUniqNameOld(it->sub_types);
-  members.BorrowUniqNameOld(it->members);
-  properties.BorrowUniqNameOld(it->properties);
-  methods.BorrowUniqNameOld(it->methods);
-  return it;
+  enum_vals.BorrowUniqNameOld(td->enum_vals);
+  sub_types.BorrowUniqNameOld(td->sub_types);
+  members.BorrowUniqNameOld(td->members);
+  properties.BorrowUniqNameOld(td->properties);
+  methods.BorrowUniqNameOld(td->methods);
+  return td;
 }
 
 TypeDef* TypeDef::AddParentName(const String& nm, int p_off) {
@@ -1060,43 +1060,43 @@ bool TypeDef::IgnoreMeth(const String& nm) const {
   return false;
 }
 
-void* TypeDef::GetParAddr(const String& it, void* base) const {
-  if (name == it) return base;   // you are it!
-  int anidx = parents.FindNameIdx(it);
+void* TypeDef::GetParAddr(const String& td, void* base) const {
+  if (name == td) return base;   // you are it!
+  int anidx = parents.FindNameIdx(td);
   if (anidx >= 0) {
     return (void*)((char*)base + par_off[anidx]);
   }
   for (int i = 0; i < parents.size; i++) {
     void* nw_base = (void*)((char*)base + par_off[i]);
-    void* rval = parents.FastEl(i)->GetParAddr(it, nw_base);
+    void* rval = parents.FastEl(i)->GetParAddr(td, nw_base);
     if (rval) return rval;
   }
   return NULL;
 }
 
-void* TypeDef::GetParAddr(TypeDef* it, void* base) const {
-  if (it == this) return base;     // you are it!
-  int anidx = parents.FindEl(it);
+void* TypeDef::GetParAddr(TypeDef* td, void* base) const {
+  if (td == this) return base;     // you are it!
+  int anidx = parents.FindEl(td);
   if (anidx >= 0) {
     return (void*)((char*)base + par_off[anidx]);
   }
   for (int i = 0; i < parents.size; i++) {
     void* nw_base = (void*)((char*)base + par_off[i]);
-    void* rval = parents.FastEl(i)->GetParAddr(it, nw_base);
+    void* rval = parents.FastEl(i)->GetParAddr(td, nw_base);
     if (rval) return rval;
   }
   return NULL;
 }
 
-int TypeDef::GetParOff(TypeDef* it, int boff) const {
+int TypeDef::GetParOff(TypeDef* td, int boff) const {
   int use_boff = (boff >= 0) ? boff : 0;
-  if (it == this) return use_boff; // you are it!
-  int anidx = parents.FindEl(it);
+  if (td == this) return use_boff; // you are it!
+  int anidx = parents.FindEl(td);
   if (anidx >= 0) {
     return use_boff + par_off[anidx];
   }
   for (int i = 0; i < parents.size; i++) {
-    int rval = parents.FastEl(i)->GetParOff(it, use_boff + par_off[i]);
+    int rval = parents.FastEl(i)->GetParOff(td, use_boff + par_off[i]);
     if (rval >= 0) return rval;
   }
   return -1;
@@ -1111,11 +1111,11 @@ bool TypeDef::FindChildName(const String& nm) const {
   }
   return false;
 }
-bool TypeDef::FindChild(TypeDef* it) const {
-  if (children.FindEl(it) >= 0)
+bool TypeDef::FindChild(TypeDef* td) const {
+  if (children.FindEl(td) >= 0)
     return true;
   for (int i = 0; i < children.size; i++) {
-    if (children.FastEl(i)->FindChild(it))
+    if (children.FastEl(i)->FindChild(td))
       return true;
   }
   return false;
@@ -1431,7 +1431,7 @@ int TypeDef::FindTokenR(const String& nm, TypeDef*& aptr) const {
 }
 #endif // ndef NO_TA_BASE
 
-void TypeDef::RegisterFinal(void* it) {
+void TypeDef::RegisterFinal(void* tok) {
   if(taMisc::in_init)           // don't register the instance tokens
     return;
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
@@ -1441,14 +1441,14 @@ void TypeDef::RegisterFinal(void* it) {
   TypeDef* par = GetParent();
   if (!par) return; // we only register if have parent
 #if defined(DEBUG) && !defined(NO_TA_BASE) // semi-TEMP, until 100% verified
-  if (par->tokens.FindEl(it) >= 0) {
+  if (par->tokens.FindEl(tok) >= 0) {
     String msg;
-    msg << "attempt to reregister token of type(addr): " <<     ((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
+    msg << "attempt to reregister token of type(addr): " <<     ((taBase*)tok)->GetTypeDef()->name << "(" << tok << ")\n";
     taMisc::Info(msg);
     return;
   }
 #endif
-  tokens.Link(it);
+  tokens.Link(tok);
   while (par) {
     par->tokens.sub_tokens.ref();       // sub class got a new token..
     par = par->GetParent();
@@ -1474,12 +1474,12 @@ bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
   return rval;
 }
 
-void TypeDef::unRegisterFinal(void* it) {
+void TypeDef::unRegisterFinal(void* tok) {
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
     return;
 
-  if (tokens.RemoveEl(it)) {
+  if (tokens.RemoveEl(tok)) {
     TypeDef* par = GetParent();
     while (par) {
       par->tokens.sub_tokens.deref();
@@ -2071,7 +2071,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
           }
           else {
             // use AKA name
-            MethodDef* md = td->methods.FindAKAMethod(mthnm);
+            md = td->methods.FindAKAMethod(mthnm);
             if(md) {
               *((MethodDef**)base) = md;
             }

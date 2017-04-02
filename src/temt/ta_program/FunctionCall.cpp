@@ -119,8 +119,8 @@ bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!scope_el) return false;
   Program* prog = GET_OWNER(scope_el, Program);
   if(!prog) return false;
-  Function* fun = prog->functions.FindName(funm);
-  if(fun) return true;
+  Function* fn = prog->functions.FindName(funm);
+  if(fn) return true;
   return false;
 }
 

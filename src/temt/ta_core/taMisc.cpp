@@ -1993,7 +1993,6 @@ void taMisc::Init_Types() {
 }
 
 void taMisc::Init_Types_Gui(bool gui) {
-  int i,j,k;
   TypeDef* td;
 
   TypeSpace i_type_space;
@@ -2002,7 +2001,7 @@ void taMisc::Init_Types_Gui(bool gui) {
   TypeSpace i_meth_space;
   TypeSpace i_edit_space;
 
-  for (i=0; i < taMisc::types.size; ++i) {
+  for (int i=0; i < taMisc::types.size; ++i) {
     td = taMisc::types.FastEl(i);
 
     // generate a list of all the qt types
@@ -2043,10 +2042,10 @@ void taMisc::Init_Types_Gui(bool gui) {
 
   // go through all the types and assign the highest bid for the it, iv, and ie
   int bid;
-  for (i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i) {
+  for (int i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i) {
     td = taMisc::types.FastEl(i);
     if (gui) {
-      for (j=0; j <i_type_space.size; ++j) {
+      for (int j=0; j <i_type_space.size; ++j) {
         taiType* tit_i = (taiType*) i_type_space.FastEl(j)->GetInstance();
         bid = tit_i->BidForType(td);
         if (bid > 0) {
@@ -2057,7 +2056,7 @@ void taMisc::Init_Types_Gui(bool gui) {
       }
     }
 
-    for (j=0; j < v_type_space.size; ++j) {
+    for (int j=0; j < v_type_space.size; ++j) {
       taiViewType* tit_v = (taiViewType*) v_type_space.FastEl(j)->GetInstance();
       bid = tit_v->BidForView(td);
       if (bid > 0) {
@@ -2068,7 +2067,7 @@ void taMisc::Init_Types_Gui(bool gui) {
     }
 
     if (gui) {
-      for (j=0; j < i_edit_space.size; ++j) {
+      for (int j=0; j < i_edit_space.size; ++j) {
         taiEdit* tie_i = (taiEdit*) i_edit_space.FastEl(j)->GetInstance();
         bid = tie_i->BidForEdit(td);
         if (bid > 0) {
@@ -2085,10 +2084,10 @@ void taMisc::Init_Types_Gui(bool gui) {
     // and do the enum types since they are not global and only on members
 
     if (gui && td->IsActualClassNoEff()) {
-      for (j=0; j < td->members.size; ++j) {
+      for (int j=0; j < td->members.size; ++j) {
         MemberDef* md = td->members.FastEl(j);
         if (md->owner->owner != td) continue; // if we do not own this mdef, skip
-        for (k=0; k < i_memb_space.size; ++k) {
+        for (int k=0; k < i_memb_space.size; ++k) {
           taiMember* tim_i = (taiMember*) i_memb_space.FastEl(k)->GetInstance();
           bid = tim_i->BidForMember(md,td);
           if (bid > 0) {
@@ -2099,9 +2098,9 @@ void taMisc::Init_Types_Gui(bool gui) {
         }
       }
 
-      for(j=0; j < td->sub_types.size; ++j) {
+      for(int j=0; j < td->sub_types.size; ++j) {
         TypeDef* subt = td->sub_types.FastEl(j);
-        for(k=0; k < i_type_space.size; ++k) {
+        for(int k=0; k < i_type_space.size; ++k) {
           taiType* tit_i = (taiType*) i_type_space.FastEl(k)->GetInstance();
           bid = tit_i->BidForType(subt);
           if (bid > 0) {
@@ -2115,10 +2114,10 @@ void taMisc::Init_Types_Gui(bool gui) {
       // only assign method im's to those methods that do better than the default
       // (which has a value of 0).  Thus, most methods don't generate a new object here
 
-      for (j=0; j < td->methods.size; ++j) {
+      for (int j=0; j < td->methods.size; ++j) {
         MethodDef* md = td->methods.FastEl(j);
         if (md->owner->owner != td) continue; // if we do not own this mdef, skip
-        for (k=0; k < i_meth_space.size; ++k) {
+        for (int k=0; k < i_meth_space.size; ++k) {
           taiMethod* tim_i = (taiMethod*) i_meth_space.FastEl(k)->GetInstance();
           bid = tim_i->BidForMethod(md,td);
           if (bid > 0) {
@@ -2172,7 +2171,7 @@ void taMisc::Init_Types_Gui(bool gui) {
 
   // link in compatible members as properties of every type
   // "compatible" means that it isn't already a property, and is otherwise accessible
-  for (i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i) {
+  for (int i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i) {
     td->SetInitFlag(TypeDef::IF_GUI_INIT);
     td = taMisc::types.FastEl(i);
     for (int j = 0; j < td->members.size; ++j) {
@@ -2187,7 +2186,7 @@ void taMisc::Init_Types_Gui(bool gui) {
   }
   
   for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
-    TypeDef* td = types.FastEl(i);
+    td = types.FastEl(i);
     if(td->HasOption("STATIC_COMPLETION") && td->IsActualClass()) {
       static_collection.Link(td);
     }
@@ -2722,8 +2721,8 @@ String taMisc::ShortName(const String& name, int max_len, int seg_len, int rm_vo
     rval.cat(StringMaxLen(seg2, seg_len));
     int mln = max_len - rval.length();
     if(mln > 0) {
-      String seg2 = nm.at(brks[1]+1, ln-brks[1]-1);
-      rval.cat(StringMaxLen(seg2, mln));
+      String seg3 = nm.at(brks[1]+1, ln-brks[1]-1);
+      rval.cat(StringMaxLen(seg3, mln));
     }
   }
   return rval;
@@ -3314,7 +3313,7 @@ String taMisc::FindFileOnPath(String_PArray& paths, const String& fname) {
 
   for(int i=0; i<paths.size; i++) {
     String trynm = paths.FastEl(i) + "/" + fname;
-    int acc = access(trynm, F_OK);
+    acc = access(trynm, F_OK);
     if (acc == 0) {
       return trynm;
     }

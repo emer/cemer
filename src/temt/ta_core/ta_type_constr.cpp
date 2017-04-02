@@ -199,22 +199,21 @@ void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
 	fa++;
       }
       if(!some_invalid_type) {
-        MethodDef* md;
-        md = new MethodDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
-                           dt->fun_overld, dt->fun_argc, dt->fun_argd,
-                           dt->is_static, dt->addr, dt->stubp, dt->is_virtual);
+        MethodDef* md = new MethodDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
+                                      dt->fun_overld, dt->fun_argc, dt->fun_argd,
+                                      dt->is_static, dt->addr, dt->stubp, dt->is_virtual);
 
-        MethodArgs_data* fa = dt->fun_args;
-        while((fa != NULL) && (fa->type != NULL)) {
-          TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type, tp.name,
-                                             String("Method arg: ") + dt->name + "->" + fa->name);
+        MethodArgs_data* famd = dt->fun_args;
+        while((famd != NULL) && (famd->type != NULL)) {
+          TypeDef* fatyp = tac_GetTypeFmName(tp, famd->type, tp.name,
+                                             String("Method arg: ") + dt->name + "->" + famd->name);
           if(fatyp != NULL) {
             md->arg_types.Link(fatyp);
-            md->arg_names.Add(fa->name);
-            md->arg_defs.Add(fa->def);
-            md->arg_vals.Add(fa->def); // initial val is default
+            md->arg_names.Add(famd->name);
+            md->arg_defs.Add(famd->def);
+            md->arg_vals.Add(famd->def); // initial val is default
           }
-          fa++;
+          famd++;
         }
         tp.methods.AddUniqNameNew(md);
       }

@@ -320,14 +320,14 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
 
     for(int rui=0; rui < ru_nunits; rui++) {
       Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-      ConGroup* scg = ru->SendConGroupPrjn(prjn);
-      if(scg == NULL) continue;
-      for(int i=0;i<scg->size;i++) {
-        Unit* su = scg->Un(i,net);
+      ConGroup* rcg = ru->SendConGroupPrjn(prjn);
+      if(rcg == NULL) continue;
+      for(int i=0;i<rcg->size;i++) {
+        Unit* ssu = rcg->Un(i,net);
         // only connect if this sender is in actual group I'm trying to connect
-        int osgpidx = su->UnitGpIdx();
+        int osgpidx = ssu->UnitGpIdx();
         if(osgpidx == sgpidx) {
-          if(ru->ConnectFromCk(su, prjn))
+          if(ru->ConnectFromCk(ssu, prjn))
             n_con++;
         }
       }

@@ -382,7 +382,7 @@ ConGroup* Unit::FindSendConGroupToName(const String& to_nm) const {
   return NULL;
 }
 
-bool Unit::SetCnValName(float val, const Variant& prjn, int idx, const String& var_nm) {
+bool Unit::SetCnValName(float val, const Variant& prjn, int dx, const String& var_nm) {
   Network* net = own_net();
   if(TestError(!net->IsBuiltIntact(), "SetCnValName",
                "Network is not built or intact -- cannot access connection variables until built!")) {
@@ -402,10 +402,10 @@ bool Unit::SetCnValName(float val, const Variant& prjn, int idx, const String& v
   if(TestError(!cg, "SetCnValName", "recv projection not found from:", prjn.toString())) {
     return false;
   }
-  return cg->SetCnValName(val, idx, var_nm);
+  return cg->SetCnValName(val, dx, var_nm);
 }
   
-float Unit::GetCnValName(const Variant& prjn, int idx, const String& var_nm) {
+float Unit::GetCnValName(const Variant& prjn, int dx, const String& var_nm) {
   Network* net = own_net();
   if(TestError(!net->IsBuiltIntact(), "GetCnValName",
                "Network is not built or intact -- cannot access connection variables until built!")) {
@@ -424,7 +424,7 @@ float Unit::GetCnValName(const Variant& prjn, int idx, const String& var_nm) {
   if(TestError(!cg, "GetCnValName", "recv projection not found from:", prjn.toString())) {
     return false;
   }
-  return cg->SafeCnName(idx, var_nm);
+  return cg->SafeCnName(dx, var_nm);
 }
 
 int Unit::NRecvConGpsSafe() const {

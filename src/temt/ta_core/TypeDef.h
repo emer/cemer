@@ -352,11 +352,11 @@ public:
       if(parents.FastEl(i)->FindParentName(nm)) return true;
     return false;
   }
-  bool                  FindParent(const TypeDef* it) const {
-    if(par_cache.size) return (par_cache.FindEl(it) >= 0); // if cache active use it exclusively
-    if(parents.FindEl(it) >= 0) return true;
+  bool                  FindParent(const TypeDef* td) const {
+    if(par_cache.size) return (par_cache.FindEl(td) >= 0); // if cache active use td exclusively
+    if(parents.FindEl(td) >= 0) return true;
     for(int i=0; i < parents.size; i++)
-      if(parents.FastEl(i)->FindParent(it))     return true;
+      if(parents.FastEl(i)->FindParent(td))     return true;
     return false;
   }
 
@@ -365,16 +365,16 @@ public:
   { if(IsNotPtr() && ((name == nm) || FindParentName(nm))) return true; return false; }
   bool                  InheritsFrom(const TypeDef* td) const
   { if(IsNotPtr() && ((this == td) || FindParent(td))) return true; return false; }
-  bool                  InheritsFrom(const TypeDef& it) const
-  { return InheritsFrom((TypeDef*)&it); }
+  bool                  InheritsFrom(const TypeDef& td) const
+  { return InheritsFrom((TypeDef*)&td); }
 
   // pointers to a type, etc, can be Derives from a given type (looser than inherits)
   bool                  DerivesFromName(const char *nm) const
   { if((name == nm) || FindParentName(nm)) return true; return false; }
   bool                  DerivesFrom(TypeDef* td) const
   { if((this == td) || FindParent(td)) return true; return false; }
-  bool                  DerivesFrom(const TypeDef& it) const
-  { return DerivesFrom((TypeDef*)&it); }
+  bool                  DerivesFrom(const TypeDef& td) const
+  { return DerivesFrom((TypeDef*)&td); }
 
   TypeDef*              GetStemBase() const;
   // for class types: get first (from me) parent with STEM_BASE directive -- defines equivalence class -- returns NULL if not found

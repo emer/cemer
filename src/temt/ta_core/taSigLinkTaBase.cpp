@@ -55,7 +55,7 @@ int taSigLinkTaBase::ChildEditAction_impl(const MemberDef* par_md, taiSigLink* c
   if (child) {
     TypeDef* td = child->GetDataTypeDef();
     if (td && td->IsActualTaBase()) {
-      int rval = data()->ChildEditAction(par_md, (taBase*)child->data(), ms, ea);
+      rval = data()->ChildEditAction(par_md, (taBase*)child->data(), ms, ea);
       if (rval == 0)
         child->EditAction_impl(ms, ea);
       return rval;

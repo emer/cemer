@@ -259,9 +259,9 @@ void taiWidgetMethod::ApplyBefore() {
   // note: applyNow is async, so we have to do event loop
   taMisc::ProcessEvents(); */
   // send the RESOLVE_NOW operator to all clients
-  taBase* base = host->Base();
-  if (base) {
-    base->SigEmit(SLS_RESOLVE_NOW);
+  taBase* hbase = host->Base();
+  if (hbase) {
+    hbase->SigEmit(SLS_RESOLVE_NOW);
   }
   //NOTE: small chance we could be deleted here, so no code here!
 }

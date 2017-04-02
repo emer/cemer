@@ -811,7 +811,7 @@ String taProject::GetProjTemplatePath(ProjLibs library) {
 }
 
 void taProject::SaveAsTemplate(const String& template_name, const String& desc,
-                               const String& tags, ProjLibs library) {
+                               const String& tagsa, ProjLibs library) {
   String path = GetProjTemplatePath(library);
   String fname = path + "/" + template_name + ".proj";
   QFileInfo qfi(fname);
@@ -832,7 +832,7 @@ void taProject::SaveAsTemplate(const String& template_name, const String& desc,
     return;
   }
   strm << "name=" + template_name << endl;
-  strm << "tags=" + tags << endl;
+  strm << "tags=" + tagsa << endl;
   strm << "desc=" + desc << endl;
   strm.close();
 

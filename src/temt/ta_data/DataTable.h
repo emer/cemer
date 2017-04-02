@@ -646,12 +646,12 @@ public:
   { return GetData(ch_nm); }
   // OBSOLETE - only here to get old projects to run
 
-  inline bool SetData(const Variant& data, const Variant& col)
+  inline bool SetData(const Variant& dat, const Variant& col)
     { if(!WriteAvailable()) return false;
-      return SetVal(data, col, write_idx); }
+      return SetVal(dat, col, write_idx); }
   // #CAT_Modify set data from given column number or name at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index
-  inline bool SetDataByName(const Variant& data, const String& ch_nm)
-    { return SetData(data, ch_nm); }
+  inline bool SetDataByName(const Variant& dat, const String& ch_nm)
+    { return SetData(dat, ch_nm); }
   // OBSOLETE - only here to get old projects to run
 
   inline taMatrix* GetMatrixData(const Variant& col)
@@ -663,13 +663,13 @@ public:
     return GetMatrixFlatVal(col, read_idx, cell); }
   // #CAT_Access get data from Matrix cell (flat index into matrix values) at column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
 
-  inline bool SetMatrixData(const taMatrix* data, const Variant& col)
+  inline bool SetMatrixData(const taMatrix* dat, const Variant& col)
   { if(!WriteAvailable()) return false;
-    return SetValAsMatrix(data, col, write_idx); }
+    return SetValAsMatrix(dat, col, write_idx); }
   // #CAT_Modify set the data for given Matrix column at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index -- returns true if successful
-  inline bool SetMatrixCellData(const Variant& data, const Variant& col, int cell)
+  inline bool SetMatrixCellData(const Variant& dat, const Variant& col, int cell)
   { if(!WriteAvailable()) return false;
-    return SetMatrixFlatVal(data, col, write_idx, cell); }
+    return SetMatrixFlatVal(dat, col, write_idx, cell); }
   // #CAT_Modify set the data for given Matrix channel cell (flat index into matrix values) at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index -- returns true if successful
 
 

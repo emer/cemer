@@ -3468,8 +3468,8 @@ static inline Vec32c permute32c(Vec32c const & a) {
         && i8 ==((i0+8 )&31) && i9 ==((i0+9 )&31) && i10==((i0+10)&31) && i11==((i0+11)&31) && i12==((i0+12)&31) && i13==((i0+13)&31) && i14==((i0+14)&31) && i15==((i0+15)&31)
         && i16==((i0+16)&31) && i17==((i0+17)&31) && i18==((i0+18)&31) && i19==((i0+19)&31) && i20==((i0+20)&31) && i21==((i0+21)&31) && i22==((i0+22)&31) && i23==((i0+23)&31)
         && i24==((i0+24)&31) && i25==((i0+25)&31) && i26==((i0+26)&31) && i27==((i0+27)&31) && i28==((i0+28)&31) && i29==((i0+29)&31) && i30==((i0+30)&31) && i31==((i0+31)&31)) {
-        __m256i t1 = _mm256_permute4x64_epi64(a, 0x4E);
-        return _mm256_alignr_epi8(a, t1, i0 & 15);
+        __m256i t1n = _mm256_permute4x64_epi64(a, 0x4E);
+        return _mm256_alignr_epi8(a, t1n, i0 & 15);
     }
 
     // Check if we can use 16-bit permute. Even numbered indexes must be even and odd numbered
@@ -3661,56 +3661,56 @@ static inline Vec4q blend4q(Vec4q const & a, Vec4q const & b) {
         const int j0 = i0 >= 0 ? i0 / 2 : i1 >= 0 ? i1 / 2 : 4;  // index for low 128 bits
         const int j1 = i2 >= 0 ? i2 / 2 : i3 >= 0 ? i3 / 2 : 4;  // index for high 128 bits
         const bool partialzero = int((i0 ^ i1) | (i2 ^ i3)) < 0; // part of a 128-bit block is zeroed
-        __m256i t1;
+        __m256i t1n;
 
         switch (j0 | j1 << 4) {
         case 0x00:
-            t1 = _mm256_inserti128_si256(a, _mm256_castsi256_si128(a), 1);  break;
+            t1n = _mm256_inserti128_si256(a, _mm256_castsi256_si128(a), 1);  break;
         case 0x02:
-            t1 = _mm256_inserti128_si256(b, _mm256_castsi256_si128(a), 1);  break;
+            t1n = _mm256_inserti128_si256(b, _mm256_castsi256_si128(a), 1);  break;
         case 0x04:
             if (dozero && !partialzero) return _mm256_inserti128_si256(_mm256_setzero_si256(), _mm256_castsi256_si128(a), 1);
-            t1 = _mm256_inserti128_si256(a, _mm256_castsi256_si128(a), 1);  break;
+            t1n = _mm256_inserti128_si256(a, _mm256_castsi256_si128(a), 1);  break;
         case 0x12:
-            t1 = _mm256_inserti128_si256(a, _mm256_castsi256_si128(b), 0);  break;
+            t1n = _mm256_inserti128_si256(a, _mm256_castsi256_si128(b), 0);  break;
         case 0x14:
             if (dozero && !partialzero) return _mm256_inserti128_si256(a,_mm_setzero_si128(), 0);
-            t1 = a;  break;
+            t1n = a;  break;
         case 0x01: case 0x10: case 0x11: // all from a
             return permute4q <i0, i1, i2, i3> (a);
         case 0x20:
-            t1 = _mm256_inserti128_si256(a, _mm256_castsi256_si128(b), 1);  break;
+            t1n = _mm256_inserti128_si256(a, _mm256_castsi256_si128(b), 1);  break;
         case 0x22:
-            t1 = _mm256_inserti128_si256(b, _mm256_castsi256_si128(b), 1);  break;
+            t1n = _mm256_inserti128_si256(b, _mm256_castsi256_si128(b), 1);  break;
         case 0x24:
             if (dozero && !partialzero) return _mm256_inserti128_si256(_mm256_setzero_si256(), _mm256_castsi256_si128(b), 1);
-            t1 = _mm256_inserti128_si256(b, _mm256_castsi256_si128(b), 1);  break;
+            t1n = _mm256_inserti128_si256(b, _mm256_castsi256_si128(b), 1);  break;
         case 0x30:
-            t1 = _mm256_inserti128_si256(b, _mm256_castsi256_si128(a), 0);  break;
+            t1n = _mm256_inserti128_si256(b, _mm256_castsi256_si128(a), 0);  break;
         case 0x34:
             if (dozero && !partialzero) return _mm256_inserti128_si256(b,_mm_setzero_si128(), 0);
-            t1 = b;  break;
+            t1n = b;  break;
         case 0x23: case 0x32: case 0x33:  // all from b
             return permute4q <i0^4, i1^4, i2^4, i3^4> (b);
         case 0x40:
             if (dozero && !partialzero) return _mm256_castsi128_si256(_mm_and_si128(_mm256_castsi256_si128(a),_mm256_castsi256_si128(a)));
-            t1 = a;  break;
+            t1n = a;  break;
         case 0x42:
             if (dozero && !partialzero) return _mm256_castsi128_si256(_mm_and_si128(_mm256_castsi256_si128(b),_mm256_castsi256_si128(b)));
-            t1 = b;  break;
+            t1n = b;  break;
         case 0x44:
             return _mm256_setzero_si256();
         default:
-            t1 = _mm256_permute2x128_si256(a, b, (j0&0x0F) | (j1&0x0F) << 4);
+            t1n = _mm256_permute2x128_si256(a, b, (j0&0x0F) | (j1&0x0F) << 4);
         }
         if (dozero) {
             // zero some elements
             const __m256i maskz = constant8i <
                 i0 < 0 ? 0 : -1, i0 < 0 ? 0 : -1, i1 < 0 ? 0 : -1, i1 < 0 ? 0 : -1, 
                 i2 < 0 ? 0 : -1, i2 < 0 ? 0 : -1, i3 < 0 ? 0 : -1, i3 < 0 ? 0 : -1 > ();
-            return _mm256_and_si256(t1, maskz);
+            return _mm256_and_si256(t1n, maskz);
         }
-        return t1;
+        return t1n;
     }
 
     // special case: all from a

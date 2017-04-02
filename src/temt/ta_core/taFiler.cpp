@@ -224,16 +224,16 @@ const String taFiler::FilterText(bool incl_allfiles, QStringList* list) const {
   // key on the exts, and just put a ? for type if we run out
   for (int i = 0; i < sa_ex.size; ++i) {
     using namespace taFilerUtil;
-    String filetype = GetFiletype(i, sa_ft);
+    String ft = GetFiletype(i, sa_ft);
     String extension = GetDottedExtension(i, sa_ex);
-    String filter = MakeFilter(filetype, extension, CompressEnabled());
-    AddFilter(filter, rval, list);
+    String flt = MakeFilter(ft, extension, CompressEnabled());
+    AddFilter(flt, rval, list);
   }
 
   if (incl_allfiles) {
     using namespace taFilerUtil;
-    String filter = "All files (*)";
-    AddFilter(filter, rval, list);
+    String flt = "All files (*)";
+    AddFilter(flt, rval, list);
   }
 
   return rval;

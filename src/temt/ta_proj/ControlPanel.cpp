@@ -746,7 +746,7 @@ bool ControlPanel::AddMethod(taBase* base, MethodDef* md, const String& xtra_lbl
   return rval;
 }
 
-bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
+bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& xtra_lbl, const String& dsc, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
@@ -765,9 +765,9 @@ bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& 
   }
   bool cust_desc = false;
   String desc_eff;
-  if(desc.nonempty()) {
+  if(dsc.nonempty()) {
     cust_desc = true;
-    desc_eff = desc;
+    desc_eff = dsc;
   }
   else {
     desc_eff = md->desc;
@@ -777,7 +777,7 @@ bool ControlPanel::AddMethodNm(taBase* base, const String& md_nm, const String& 
   return rval;
 }
 
-bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& lbl, const String& desc, const String& sub_gp_nm, bool custom_label, bool custom_desc)
+bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& lbl, const String& dsc, const String& sub_gp_nm, bool custom_label, bool custom_desc)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -788,7 +788,7 @@ bool ControlPanel::AddMethod_impl(taBase* base, MethodDef* mth, const String& lb
     item->base = base;
     item->mth = mth;
     item->SetLabel(lbl, custom_label);
-    item->SetDesc(desc, custom_desc);
+    item->SetDesc(dsc, custom_desc);
     if(sub_gp_nm.nonempty()) {
       ControlPanelMethod_Group* egp = (ControlPanelMethod_Group*)mths.FindMakeGpName(sub_gp_nm);
       egp->Add(item);
@@ -903,6 +903,19 @@ void ControlPanel::SaveNameValueMembers(ParamSet* param_set, const String& name_
     String nm = str.before("=");
     String val = str.after("=");
     param_set->NewDummyMember(nm, val);
+  }
+}
+
+void ControlPanel::ActivateAll(bool info_msg) {
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      sub_panel->ActivateAll(info_msg);
+    }
+  }
+  if(this->InheritsFrom(&TA_ParamSet)) {
+    ((ParamSet*)this)->Activate(info_msg);
   }
 }
 

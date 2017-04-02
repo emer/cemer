@@ -326,7 +326,7 @@ bool cssMisc::IsNameValid(const String& nm) {
   if (!is_alphalike(c)) return false;
   int len = nm.length();
   for (int i = 1; i < len; ++i) {
-    char c = nm.elem(i);
+    c = nm.elem(i);
     if (!(is_alphalike(c) || is_num(c))) return false;
   }
   return true;

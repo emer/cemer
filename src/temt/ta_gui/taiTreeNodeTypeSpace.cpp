@@ -95,9 +95,9 @@ void taiTreeNodeTypeSpace::CreateChildren_impl() {
     if (tree_nm.empty()) {
     //TODO  tree_nm = link()->AnonymousItemName(typ->name, i);
     }
-    int flags = iTreeViewItem::DNF_CAN_BROWSE;
+    int lflags = iTreeViewItem::DNF_CAN_BROWSE;
     last_child_node = dl->CreateTreeDataNode((MemberDef*)NULL, this, 
-      last_child_node, tree_nm, flags);
+                                             last_child_node, tree_nm, lflags);
   }
 }
 

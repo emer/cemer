@@ -93,7 +93,7 @@ bool AnalysisRun::Run() {
 
 // TODO - add popup to choose frame for graph
 
-bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
+bool AnalysisRun::CollectParamsCluster(taDataAnalParams& pars) {
   bool rval = false;
 
   taGuiDialog dlg;
@@ -114,14 +114,14 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   row = "input_table";  // no spaces!
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  String src_table_str = "Source Data Table: " + pars.src_data_table->name;
   src_table_str = "label=" + src_table_str + ";";
   dlg.AddLabel("input_table_label", widget, row, src_table_str);
 
   row = "input_data_column";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_column_str = "Source Input Column: " + params.data_column_name;
+  String src_column_str = "Source Input Column: " + pars.data_column_name;
   src_column_str = "label=" + src_column_str + ";";
   dlg.AddLabel("input_data_column_label", widget, row, src_column_str);
 
@@ -140,9 +140,9 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
     if (!hbox) {
       return false;
     }
-    for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
-      String item = params.src_data_table->data[idx]->name;
-      if (item != params.data_column_name) {
+    for (int idx = 0; idx < pars.src_data_table->data.size; ++idx) {
+      String item = pars.src_data_table->data[idx]->name;
+      if (item != pars.data_column_name) {
         combo_name_column->addItem(item);
       }
     }
@@ -160,7 +160,7 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
 
   row = "results_table";
-  String result_table_name = params.src_data_table->name + "_cluster";
+  String result_table_name = pars.src_data_table->name + "_cluster";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("result_table_label", widget, row, "label=Results Table:;");
@@ -209,7 +209,7 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("norm", widget, row, "label=Normalize the data?:;");
-  dlg.AddBoolCheckbox(&params.norm, "norm", widget, row,
+  dlg.AddBoolCheckbox(&pars.norm, "norm", widget, row,
       "tooltip=Do you want the data normalized, default is yes.;");
   dlg.AddStretch(row);
 
@@ -217,7 +217,7 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("tolerance", widget, row, "label=Tolerance Value:;");
-  dlg.AddFloatField(&params.tolerance, "tolerance", widget, row,
+  dlg.AddFloatField(&pars.tolerance, "tolerance", widget, row,
       "tooltip=Float value for the tolerance, 0.0 is the default.;");
   dlg.AddStretch(row);
 
@@ -230,15 +230,15 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("view_label", widget, row, "label=Draw Graph;");
-  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+  dlg.AddBoolCheckbox(&pars.view, "view", widget, row,
       "tooltip=Show the analysis results in a new graph panel?;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
 
-  params.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
-  params.result_data_table->name = result_table_name;
-  params.distance_metric = (taMath::DistMetric)combo_dist_metric->currentIndex();
+  pars.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
+  pars.result_data_table->name = result_table_name;
+  pars.distance_metric = (taMath::DistMetric)combo_dist_metric->currentIndex();
 
   if (drval != 0)
     rval = true;
@@ -246,7 +246,7 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   return rval;
 }
 
-bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
+bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& pars) {
   bool rval = false;
 
   taGuiDialog dlg;
@@ -267,14 +267,14 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   row = "input_table";  // no spaces!
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  String src_table_str = "Source Data Table: " + pars.src_data_table->name;
   src_table_str = "label=" + src_table_str + ";";
   dlg.AddLabel("input_table_label", widget, row, src_table_str);
 
   row = "input_data_column";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_column_str = "Source Input Column: " + params.data_column_name;
+  String src_column_str = "Source Input Column: " + pars.data_column_name;
   src_column_str = "label=" + src_column_str + ";";
   dlg.AddLabel("input_data_column_label", widget, row, src_column_str);
 
@@ -292,9 +292,9 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
     return false;
   }
   QComboBox* combo_name_column = new QComboBox;
-  for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
-    String item = params.src_data_table->data[idx]->name;
-    if (item != params.data_column_name) {
+  for (int idx = 0; idx < pars.src_data_table->data.size; ++idx) {
+    String item = pars.src_data_table->data[idx]->name;
+    if (item != pars.data_column_name) {
       combo_name_column->addItem(item);
     }
   }
@@ -311,7 +311,7 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
 
   row = "results_table";
-  String result_table_name = params.src_data_table->name + "_PCA2D";
+  String result_table_name = pars.src_data_table->name + "_PCA2D";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("result_table_label", widget, row, "label=Results Table:;");
@@ -321,7 +321,7 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("x_axis_component", widget, row, "label=X Axis Component:;");
-  dlg.AddIntField(&params.x_axis_component, "x_axis", widget, row,
+  dlg.AddIntField(&pars.x_axis_component, "x_axis", widget, row,
       "tooltip=Enter the component number to plot on the X axis. The first component '0' accounts for the most variance.;");
   dlg.AddStretch(row);
 
@@ -329,7 +329,7 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("y_axis_component", widget, row, "label=Y Axis Component:;");
-  dlg.AddIntField(&params.y_axis_component, "y_axis", widget, row,
+  dlg.AddIntField(&pars.y_axis_component, "y_axis", widget, row,
       "tooltip=Enter the component number to plot on the Y axis. The second component '1' accounts for the second most variance.;");
   dlg.AddStretch(row);
 
@@ -342,14 +342,14 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("view_label", widget, row, "label=Draw Graph;");
-  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+  dlg.AddBoolCheckbox(&pars.view, "view", widget, row,
       "tooltip=Show the analysis results in a new graph panel?;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
 
-  params.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
-  params.result_data_table->name = result_table_name;
+  pars.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
+  pars.result_data_table->name = result_table_name;
 
   if (drval != 0)
     rval = true;
@@ -357,7 +357,7 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   return rval;
 }
 
-bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
+bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& pars) {
   bool rval = false;
 
   taGuiDialog dlg;
@@ -378,14 +378,14 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
   row = "input_table";  // no spaces!
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  String src_table_str = "Source Data Table: " + pars.src_data_table->name;
   src_table_str = "label=" + src_table_str + ";";
   dlg.AddLabel("input_table_label", widget, row, src_table_str);
 
   row = "input_data_column";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_column_str = "Source Input Column: " + params.data_column_name;
+  String src_column_str = "Source Input Column: " + pars.data_column_name;
   src_column_str = "label=" + src_column_str + ";";
   dlg.AddLabel("input_data_column_label", widget, row, src_column_str);
 
@@ -396,7 +396,7 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
   dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
 
   row = "results_table";
-  String result_table_name = params.src_data_table->name + "_PCA_Eigen";
+  String result_table_name = pars.src_data_table->name + "_PCA_Eigen";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("result_table_label", widget, row, "label=Results Table:;");
@@ -411,13 +411,13 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("view_label", widget, row, "label=Draw Graph;");
-  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+  dlg.AddBoolCheckbox(&pars.view, "view", widget, row,
       "tooltip=Show the analysis results in a new graph panel?;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
 
-  params.result_data_table->name = result_table_name;
+  pars.result_data_table->name = result_table_name;
 
   if (drval != 0)
     rval = true;
@@ -425,7 +425,7 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
   return rval;
 }
 
-bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
+bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& pars) {
   bool rval = false;
 
   taGuiDialog dlg;
@@ -446,14 +446,14 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   row = "input_table";  // no spaces!
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  String src_table_str = "Source Data Table: " + pars.src_data_table->name;
   src_table_str = "label=" + src_table_str + ";";
   dlg.AddLabel("input_table_label", widget, row, src_table_str);
 
   row = "input_data_column";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_column_str = "Source Input Column: " + params.data_column_name;
+  String src_column_str = "Source Input Column: " + pars.data_column_name;
   src_column_str = "label=" + src_column_str + ";";
   dlg.AddLabel("input_data_column_label", widget, row, src_column_str);
 
@@ -475,9 +475,9 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
     // provide null option as it is better to leave out the name column
     // for large matrices
     combo_name_column->addItem("NULL");
-    for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
-      String item = params.src_data_table->data[idx]->name;
-      if (item != params.data_column_name) {
+    for (int idx = 0; idx < pars.src_data_table->data.size; ++idx) {
+      String item = pars.src_data_table->data[idx]->name;
+      if (item != pars.data_column_name) {
         combo_name_column->addItem(item);
       }
     }
@@ -495,7 +495,7 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
 
   row = "results_table";
-  String result_table_name = params.src_data_table->name + "_DistanceMatrix";
+  String result_table_name = pars.src_data_table->name + "_DistanceMatrix";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("result_table_label", widget, row, "label=Results Table:;");
@@ -533,7 +533,7 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("norm", widget, row, "label=Normalize the data?:;");
-  dlg.AddBoolCheckbox(&params.norm, "norm", widget, row,
+  dlg.AddBoolCheckbox(&pars.norm, "norm", widget, row,
       "tooltip=Do you want the data normalized, default is yes.;");
   dlg.AddStretch(row);
 
@@ -541,7 +541,7 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("tolerance", widget, row, "label=Tolerance Value:;");
-  dlg.AddFloatField(&params.tolerance, "tolerance", widget, row,
+  dlg.AddFloatField(&pars.tolerance, "tolerance", widget, row,
       "tooltip=Float value for the tolerance, 0.0 is the default.;");
   dlg.AddStretch(row);
 
@@ -549,7 +549,7 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
     dlg.AddSpace(space, vbox);
     dlg.AddHBoxLayout(row, vbox);
     dlg.AddLabel("scalars", widget, row, "label=Include Scalars?:;");
-    dlg.AddBoolCheckbox(&params.include_scalars, "scalars", widget, row,
+    dlg.AddBoolCheckbox(&pars.include_scalars, "scalars", widget, row,
         "tooltip=Do you want to include scalar values, default is no.;");
     dlg.AddStretch(row);
 
@@ -562,17 +562,17 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("view_label", widget, row, "label=Draw Graph;");
-  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+  dlg.AddBoolCheckbox(&pars.view, "view", widget, row,
       "tooltip=Show the analysis results in a new graph panel?;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
 
-  params.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
-  if (params.name_column_name == "NULL") // replace literal NULL with an empty string
-    params.name_column_name = "";
-  params.result_data_table->name = result_table_name;
-  params.distance_metric = (taMath::DistMetric)combo_dist_metric->currentIndex();
+  pars.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
+  if (pars.name_column_name == "NULL") // replace literal NULL with an empty string
+    pars.name_column_name = "";
+  pars.result_data_table->name = result_table_name;
+  pars.distance_metric = (taMath::DistMetric)combo_dist_metric->currentIndex();
 
   if (drval != 0)
     rval = true;
@@ -580,7 +580,7 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   return rval;
 }
 
-bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
+bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& pars) {
   bool rval = false;
 
   taGuiDialog dlg;
@@ -601,14 +601,14 @@ bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
   row = "input_table";  // no spaces!
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  String src_table_str = "Source Data Table: " + pars.src_data_table->name;
   src_table_str = "label=" + src_table_str + ";";
   dlg.AddLabel("input_table_label", widget, row, src_table_str);
 
   row = "X_var_data_column";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  String src_column_str = "Variable X: " + params.data_column_name;
+  String src_column_str = "Variable X: " + pars.data_column_name;
   src_column_str = "label=" + src_column_str + ";";
   dlg.AddLabel("X_var_data_column_label", widget, row, src_column_str);
 
@@ -627,9 +627,9 @@ bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
     if (!hbox) {
       return false;
     }
-    for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
-      String item = params.src_data_table->data[idx]->name;
-      if (item != params.data_column_name) {
+    for (int idx = 0; idx < pars.src_data_table->data.size; ++idx) {
+      String item = pars.src_data_table->data[idx]->name;
+      if (item != pars.data_column_name) {
         combo_Y_var_column->addItem(item);
       }
     }
@@ -648,13 +648,13 @@ bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("view_label", widget, row, "label=Render Line?;");
-  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+  dlg.AddBoolCheckbox(&pars.view, "view", widget, row,
       "tooltip=If render_line is true, a column called regress_line' is created and the function is generated into it as data;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
 
-  params.name_column_name = combo_Y_var_column->itemText(combo_Y_var_column->currentIndex());
+  pars.name_column_name = combo_Y_var_column->itemText(combo_Y_var_column->currentIndex());
 
   if (drval != 0)
     rval = true;

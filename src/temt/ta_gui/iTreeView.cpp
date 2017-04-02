@@ -804,9 +804,9 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
   bool stru_actions_enabled = true; // enabled by default
-  ISelectable* si = curItem();
-  if(si && si->link()) {
-    taBase* sb = si->link()->taData();
+  ISelectable* csi = curItem();
+  if(csi && csi->link()) {
+    taBase* sb = csi->link()->taData();
     if(sb) {
       taList_impl* sbo = NULL;
       if(sb->InheritsFrom(&TA_taList_impl)) {
@@ -937,19 +937,19 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         return;
       case taiMisc::TREE_FIND:
       case taiMisc::TREE_FIND_II:
-        if(si && si->link()) {   // si is curItem()
-          taiSigLink* link = si->link();
-          iMainWindowViewer* imw = mainWindow();
-          if(imw) imw->Find(link);
+        if(csi && csi->link()) {   // csi is curItem()
+          taiSigLink* link = csi->link();
+          iMainWindowViewer* fimw = mainWindow();
+          if(fimw) fimw->Find(link);
         }
         key_event->accept();
         return;
       case taiMisc::TREE_FIND_REPLACE:
       case taiMisc::TREE_FIND_REPLACE_II:
-        if(si && si->link()) {  // si is curItem()
-          taiSigLink* link = si->link();
-          iMainWindowViewer* imw = mainWindow();
-          if(imw) imw->Replace(link, selItems());
+        if(csi && csi->link()) {  // csi is curItem()
+          taiSigLink* link = csi->link();
+          iMainWindowViewer* fimw = mainWindow();
+          if(fimw) fimw->Replace(link, selItems());
         }
         key_event->accept();
         return;

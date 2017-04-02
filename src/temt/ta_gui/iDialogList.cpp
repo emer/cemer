@@ -105,7 +105,7 @@ void iDialogList::SetList(taBase_PtrList& base_list, String title,
   results->setHtml(src);
 }
 
-void iDialogList::results_setSourceRequest(iTextBrowser* src, const QUrl& url, bool& cancel)
+void iDialogList::results_setSourceRequest(iTextBrowser* itb_src, const QUrl& url, bool& cancel)
 {
   QDesktopServices::openUrl(url);
   cancel = true;

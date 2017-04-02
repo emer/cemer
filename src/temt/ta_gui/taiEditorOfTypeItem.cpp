@@ -90,11 +90,11 @@ void taiEditorOfTypeItem::Constr_Widget_Labels() {
     break;
     }
   case TypeItem::TIK_MEMBER:  {
-    MemberDef* md = static_cast<MemberDef*>(ti);
+    MemberDef* tmd = static_cast<MemberDef*>(ti);
     //nothing specific
     // size
     iSpinBox* repi = new iSpinBox(body);
-    repi->setValue((ta_intptr_t)md->GetOff(NULL));
+    repi->setValue((ta_intptr_t)tmd->GetOff(NULL));
     repi->setReadOnly(true);
     AddNameWidget(row++, "offset", "offset, in bytes, of the member", 
       repi, NULL, NULL, true);
@@ -110,30 +110,30 @@ void taiEditorOfTypeItem::Constr_Widget_Labels() {
     break;
     }
   case TypeItem::TIK_METHOD:  {
-    MethodDef* md = static_cast<MethodDef*>(ti);
+    MethodDef* tmd = static_cast<MethodDef*>(ti);
     // return type
-    rep = new iLineEdit(md->type->Get_C_Name(), body);
+    rep = new iLineEdit(tmd->type->Get_C_Name(), body);
     rep->setReadOnly(true);
     AddNameWidget(row++, "return type", "return type of the method",
       rep, NULL, NULL, true);
     
     // params
-    rep = new iLineEdit(md->ParamsAsString(), body);
+    rep = new iLineEdit(tmd->ParamsAsString(), body);
     rep->setReadOnly(true);
     AddNameWidget(row++, "params", "params of the method", 
       rep, NULL, NULL, true);
     
-    chk = new iCheckBox(md->is_static, body);
+    chk = new iCheckBox(tmd->is_static, body);
     chk->setReadOnly(true);
     AddNameWidget(row++, "is_static", "static (non-instance) method",
       chk, NULL, NULL, true);
     
-    chk = new iCheckBox(md->is_virtual, body);
+    chk = new iCheckBox(tmd->is_virtual, body);
     chk->setReadOnly(true);
     AddNameWidget(row++, "is_virtual", "virtual (overridable) method", 
       chk, NULL, NULL, true);
     
-    chk = new iCheckBox(md->is_override, body);
+    chk = new iCheckBox(tmd->is_override, body);
     chk->setReadOnly(true);
     AddNameWidget(row++, "is_override", "virtual override of a base method", 
       chk, NULL, NULL, true);

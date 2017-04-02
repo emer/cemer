@@ -440,7 +440,7 @@ void VEBodyView::Render_impl() {
 
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
-      SoTransform* tx = node_so()->txfm_shape();
+      tx = node_so()->txfm_shape();
       if(ob->HasBodyFlag(VEBody::OFF)) {
         taTransform off_tx = ob->obj_xform;
         off_tx.scale.SetXYZ(off_size, off_size, off_size);

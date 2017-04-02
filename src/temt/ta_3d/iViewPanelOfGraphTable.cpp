@@ -777,26 +777,26 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   
   int pltsz = MIN(max_plots, glv->plots.size);
   
-  for(int i=0;i<pltsz; i++) {
-    tcol = (GraphColView*)lelYAxis[i]->GetValue();
-    if (tcol && !glv->plots[i]->GetColPtr())
-      oncYAxis[i]->setChecked(true);
-    glv->plots[i]->on = oncYAxis[i]->isChecked();
-    GetFixedMinMaxVal(pdtYAxis[i], glv->plots[i]->fixed_range, panel_current);
-    glv->plots[i]->alt_y = chkYAltY[i]->isChecked();
-    glv->plots[i]->SetColPtr(tcol);
-    glv->plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();
+  for(int pi=0; pi<pltsz; pi++) {
+    tcol = (GraphColView*)lelYAxis[pi]->GetValue();
+    if (tcol && !glv->plots[pi]->GetColPtr())
+      oncYAxis[pi]->setChecked(true);
+    glv->plots[pi]->on = oncYAxis[pi]->isChecked();
+    GetFixedMinMaxVal(pdtYAxis[pi], glv->plots[pi]->fixed_range, panel_current);
+    glv->plots[pi]->alt_y = chkYAltY[pi]->isChecked();
+    glv->plots[pi]->SetColPtr(tcol);
+    glv->plots[pi]->matrix_cell = (int)cellYAxis[pi]->GetValue();
     
-    tcol = (GraphColView*)lelErr[i]->GetValue();
-    if (tcol && !glv->errbars[i]->GetColPtr())
-      oncErr[i]->setChecked(true);
-    glv->errbars[i]->on = oncErr[i]->isChecked();
-    glv->errbars[i]->SetColPtr(tcol);
-    glv->plots[i]->flip = flipYAxis[i]->isChecked();
+    tcol = (GraphColView*)lelErr[pi]->GetValue();
+    if (tcol && !glv->errbars[pi]->GetColPtr())
+      oncErr[pi]->setChecked(true);
+    glv->errbars[pi]->on = oncErr[pi]->isChecked();
+    glv->errbars[pi]->SetColPtr(tcol);
+    glv->plots[pi]->flip = flipYAxis[pi]->isChecked();
     
     // set each but all set by single checkbox
-    glv->plots[i]->show_axis_label = chkYAxisLabel->isChecked();
-    glv->plots[i]->show_alt_axis_label = chkAltYAxisLabel->isChecked();
+    glv->plots[pi]->show_axis_label = chkYAxisLabel->isChecked();
+    glv->plots[pi]->show_alt_axis_label = chkAltYAxisLabel->isChecked();
   }
   
   glv->err_spacing = (int)fldErrSpacing->GetValue();

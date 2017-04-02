@@ -1215,30 +1215,30 @@ bool VEArm::SetPose_impl() {
 }
 
 bool VEArm::Bender(taVector3f &p3, const taVector3f& a, const taVector3f& c,
-                   const taVector3f& p1, const taVector3f& p2) {
+                   const taVector3f& pt1, const taVector3f& pt2) {
   // This function is the C++ equivalent of piece5.m.
-  // The points a and c are insertion points, whereas p1 and p2 are the extremes of the bending line.
+  // The points a and c are insertion points, whereas pt1 and pt2 are the extremes of the bending line.
   // If the muscle wraps around the bending line, Bender returns true, and inserts the value of
   // the point of intersection with the muscle in the vector i.
 
   //---- declaring the variables to be used for bend test ----
-  //taVector3f a(-10,-5,-12), c(-1,-1,-5), p1(-3,-4,-7), p2(-2,-4,2), p3(0,0,0);
+  //taVector3f a(-10,-5,-12), c(-1,-1,-5), pt1(-3,-4,-7), pt2(-2,-4,2), p3(0,0,0);
   taVector3f b, r, v, s;
   float gam;
 
 //---- preliminary calculations ----
   if(arm_side == RIGHT_ARM)
-    b = p2 - p1;  // b points from p1 to p2
+    b = pt2 - pt1;  // b points from pt1 to pt2
   else // left arm
-    b = p1 - p2; // switching the Y and Z axes switches the bending side, so we invert b
+    b = pt1 - pt2; // switching the Y and Z axes switches the bending side, so we invert b
 
   b.MagNorm();  // b is now a unit vector
-  r = p1 - ((p1*b).Sum())*b;  // shortest line from origin to bending line
+  r = pt1 - ((pt1*b).Sum())*b;  // shortest line from origin to bending line
   //taMisc::Info("r = ", r.GetStr(), "\n");
 //----------------------------------
 
 // calculating side %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  v = p1 - a - (((p1-a)*b).Sum())*b;  // shortest vector from 'a' to bending line
+  v = pt1 - a - (((pt1-a)*b).Sum())*b;  // shortest vector from 'a' to bending line
   s.x = b.y*v.z - v.y*b.z;
   s.y = v.x*b.z - b.x*v.z;
   s.z = b.x*v.y - v.x*b.y;
@@ -1275,7 +1275,7 @@ bool VEArm::Bender(taVector3f &p3, const taVector3f& a, const taVector3f& c,
       k = k2;
     }
 
-    // limiting p3 between p1 and p2
+    // limiting p3 between pt1 and pt2
     abs_b = b;  abs_b.Abs();
     // this is because b may have entries equal to zero
     if(abs_b.x > abs_b.y && abs_b.x > abs_b.z)
@@ -1286,17 +1286,17 @@ bool VEArm::Bender(taVector3f &p3, const taVector3f& a, const taVector3f& c,
       ind = 2;
 
     if(ind == 0) {
-      k1 = (p1.x - r.x)/b.x;
-      k2 = (p2.x - r.x)/b.x; }
+      k1 = (pt1.x - r.x)/b.x;
+      k2 = (pt2.x - r.x)/b.x; }
     else if(ind == 1) {
-      k1 = (p1.y - r.y)/b.y;
-      k2 = (p2.y - r.y)/b.y; }
+      k1 = (pt1.y - r.y)/b.y;
+      k2 = (pt2.y - r.y)/b.y; }
     else if(ind == 2) {
-      k1 = (p1.z - r.z)/b.z;
-      k2 = (p2.z - r.z)/b.z; }
+      k1 = (pt1.z - r.z)/b.z;
+      k2 = (pt2.z - r.z)/b.z; }
 
     k = MIN(k,MAX(k1,k2));
-    k = MAX(k,MIN(k1,k2)); // k is now restricted between p1 and p2
+    k = MAX(k,MIN(k1,k2)); // k is now restricted between pt1 and pt2
     p3 = r + k*b;           // the point of intersection between muscle and bending line
 
     //taMisc::Info("p3 = ", p3.GetStr());

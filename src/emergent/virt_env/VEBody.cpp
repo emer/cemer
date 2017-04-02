@@ -773,11 +773,11 @@ void VEBody::AddForce(float fx, float fy, float fz, bool torque, bool rel) {
 }
 
 void VEBody::AddForceAtPos(float fx, float fy, float fz, float px, float py, float pz,
-                           bool rel_force, bool rel_pos) {
+                           bool rel_force, bool relpos) {
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
 
-  if(rel_pos) {
+  if(relpos) {
     if(rel_force)
       dBodyAddRelForceAtRelPos(bid, fx, fy, fz, px, py, pz);
     else

@@ -393,11 +393,11 @@ void LeabraLayerSpec::Init_Acts_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->laygp_data.Inhib_Init_Acts(this);
 }
 
-void LeabraLayerSpec::DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay) {
+void LeabraLayerSpec::DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay_val) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     ((LeabraUnitSpec*)u->GetUnitSpec())->DecayState
-      ((LeabraUnitVars*)u->GetUnitVars(), net, u->ThrNo(), decay);
+      ((LeabraUnitVars*)u->GetUnitVars(), net, u->ThrNo(), decay_val);
   }
 }
 

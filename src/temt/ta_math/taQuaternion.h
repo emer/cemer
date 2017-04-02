@@ -239,11 +239,11 @@ public:
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler YXY rotation angles
 
-  void	RotateXYZ(float& x, float& y, float& z) {
-    taQuaternion vecq(0, x, y, z); // convert vec to quat
+  void	RotateXYZ(float& xx, float& yy, float& zz) {
+    taQuaternion vecq(0, xx, yy, zz); // convert vec to quat
     taQuaternion conj = this->Conjugated();
     taQuaternion rotv = *this * vecq * conj;
-    x = rotv.x; y = rotv.y; z = rotv.z;
+    xx = rotv.x; yy = rotv.y; zz = rotv.z;
   }
   // #CAT_Quaternion #BUTTON rotate x,y,z vector according to current rotation parameters
 

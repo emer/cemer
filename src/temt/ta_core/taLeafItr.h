@@ -56,6 +56,22 @@ public:
            ELEM_VAR_NAME;                                                           \
            ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).NextEl(FOREACH_itr))
 
+// Iterate over each leaf element in a group -- nested within another iterator
+#define FOREACH_ELEM_IN_GROUP_NESTED(GROUP_TYPE, ELEM_VAR_NAME, GROUP)              \
+  if (bool FOREACH_done_s1 = false) { } else                                        \
+    for (taLeafItr FOREACH_itr_s1; !FOREACH_done_s1; FOREACH_done_s1 = true)        \
+      for (GROUP_TYPE *ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).FirstEl(FOREACH_itr_s1); \
+           ELEM_VAR_NAME;                                                           \
+           ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).NextEl(FOREACH_itr_s1))
+
+// Iterate over each leaf element in a group -- nested within another iterator
+#define FOREACH_ELEM_IN_GROUP_NEST2(GROUP_TYPE, ELEM_VAR_NAME, GROUP)              \
+  if (bool FOREACH_done_s2 = false) { } else                                        \
+    for (taLeafItr FOREACH_itr_s2; !FOREACH_done_s2; FOREACH_done_s2 = true)        \
+      for (GROUP_TYPE *ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).FirstEl(FOREACH_itr_s2); \
+           ELEM_VAR_NAME;                                                           \
+           ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).NextEl(FOREACH_itr_s2))
+
 // Iterate over each leaf element in a group in reverse order.
 #define FOREACH_ELEM_IN_GROUP_REV(GROUP_TYPE, ELEM_VAR_NAME, GROUP)                 \
   if (bool FOREACH_done = false) { } else                                           \

@@ -124,7 +124,7 @@ void BrainVolumeView::AllocUnitViewData()
   // need to determine number of units that are mapped...
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+    FOREACH_ELEM_IN_GROUP_NESTED(Unit, u, lay->units) {
       if (!u->voxels || u->voxels->size == 0) continue;
       if (u->lesioned()) continue;
       i++;
@@ -811,9 +811,9 @@ void BrainVolumeView::CreateFaceSets()
 
   // create the maps
   int i=0;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
+  FOREACH_ELEM_IN_GROUP_NESTED(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+    FOREACH_ELEM_IN_GROUP_NEST2(Unit, u, lay->units) {
       if (u->lesioned()) continue;
       if (!u->voxels || u->voxels->size == 0) continue;
       // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
@@ -1057,7 +1057,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
 
 #else // TA_QT3D
   for (int s = 0; s < maxslice; s++) {
-    QList<taVector3f> voxels = m_atlas_depth_map.values(s);
+    QList<taVector3f> depthvox = m_atlas_depth_map.values(s);
 
     SoIndexedFaceSet* ifs = node.atlas_face_set_array[s];
     SoVertexProperty* vtx_prop = node.atlas_vrtx_prop_array[s];
@@ -1078,10 +1078,10 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
     normal.finishEditing();
 
     int n_per_vtx = 4;
-    int tot_vtx = voxels.size() * n_per_vtx;
+    int tot_vtx = depthvox.size() * n_per_vtx;
 
     vertex.setNum(tot_vtx);
-    color.setNum(voxels.size());
+    color.setNum(depthvox.size());
     uint32_t* color_dat = color.startEditing();
     SbVec3f* vertex_dat = vertex.startEditing();
     int v_idx = 0;
@@ -1097,7 +1097,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
     const float shim  = 0.05f;
 
     // for each voxel at current slice depth, create face vertices in face set
-    foreach (taVector3f voxel_coord, voxels) {
+    foreach (taVector3f voxel_coord, depthvox) {
       float ri      = voxel_coord.x;
       float rj      = voxel_coord.y;
       float rk      = voxel_coord.z;

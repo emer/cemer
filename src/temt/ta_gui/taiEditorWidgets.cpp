@@ -117,8 +117,8 @@ void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
         }
         else {
           if(gp->leaves > 0) {
-            ControlPanel* cpr = gp->Leaf(0);
-            if (cpr->FindMbrBase(rbase, md) >= 0) {
+            ControlPanel* cprl = gp->Leaf(0);
+            if (cprl->FindMbrBase(rbase, md) >= 0) {
               add_act->setEnabled(false);
               if(add_short_act) {
                 add_short_act->setEnabled(false);

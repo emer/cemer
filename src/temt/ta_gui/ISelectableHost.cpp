@@ -215,33 +215,33 @@ void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
 void ISelectableHost::FillContextMenu(taiWidgetActions* menu) {
   if (sel_items.size == 0) return; // shouldn't happen
   QObject::connect(menu, SIGNAL(destroyed()), helper, SLOT(ctxtMenu_destroyed()) );
-  ISelectable_PtrList& sel_items = selItems();
-  ISelectable* item = sel_items.FastEl(0);
-  if (sel_items.size == 1) {
+  ISelectable_PtrList& selitems = selItems();
+  ISelectable* item = selitems.FastEl(0);
+  if (selitems.size == 1) {
     ctxt_ms = taiMimeSource::NewFromClipboard(); // deleted in the destroyed() handler
     ctxt_item = item;
   }
 
-  FillContextMenu_pre(sel_items, menu);
+  FillContextMenu_pre(selitems, menu);
 
   ISelectable::GuiContext sh_typ = item->shType();
   // init the dyn context
   dyn_idx = 0;
 
   if (sh_typ == ISelectable::GC_SINGLE_DATA) {
-    FillContextMenu_int(sel_items, menu, 0, sh_typ);
+    FillContextMenu_int(selitems, menu, 0, sh_typ);
   }
   else { // dual, make submenus
     String view_cap = "View";
     String obj_cap = "Object";
     item->GetContextCaptions(view_cap, obj_cap);
     taiWidgetMenu* sub = menu->AddSubMenu(view_cap);
-    FillContextMenu_int(sel_items, sub, 0, ISelectable::GC_DUAL_DEF_VIEW);
+    FillContextMenu_int(selitems, sub, 0, ISelectable::GC_DUAL_DEF_VIEW);
     sub = menu->AddSubMenu(obj_cap);
-    FillContextMenu_int(sel_items, sub, 1, ISelectable::GC_DUAL_DEF_DATA);
+    FillContextMenu_int(selitems, sub, 1, ISelectable::GC_DUAL_DEF_DATA);
   }
 
-  FillContextMenu_post(sel_items, menu);
+  FillContextMenu_post(selitems, menu);
 
   // have to delete ms now, because Qt deletes MimeSource from clipboard in event loop
   if (ctxt_ms) {
@@ -250,7 +250,7 @@ void ISelectableHost::FillContextMenu(taiWidgetActions* menu) {
   }
 }
 
-void ISelectableHost::FillContextMenu_int(ISelectable_PtrList& sel_items,
+void ISelectableHost::FillContextMenu_int(ISelectable_PtrList& selitems,
   taiWidgetActions* menu, int dyn_list, ISelectable::GuiContext sh_typ)
 {
   UpdateMethodsActions(dyn_list, sh_typ);
@@ -263,7 +263,7 @@ void ISelectableHost::FillContextMenu_int(ISelectable_PtrList& sel_items,
       AddDynActions(menu, dyn_list, sh_typ);
       menu->AddSep();
     }
-    ci->FillContextMenu(sel_items, menu, sh_typ);
+    ci->FillContextMenu(selitems, menu, sh_typ);
   }
 }
 
@@ -275,14 +275,14 @@ void ISelectableHost::DoDynAction(int idx) {
     idx -= dyn_methods[list].size;
     list++;
   }
-  DynMethod_PtrList& dyn_methods = this->dyn_methods[list];
+  DynMethod_PtrList& dynmeths = this->dyn_methods[list];
 //nn  iAction_List&    dyn_actions = this->dyn_actions[list];
   ISelectable::GuiContext gui_ctxt = dyn_context[list];
 
   //note: we really won't have been called if any items don't have links,
   // but we have code in here to bail anyway if we do (maybe should put warning text?)
-  if ((idx < 0) || (idx >= dyn_methods.size)) return; // shouldn't happen
-  DynMethodDesc* dmd = dyn_methods.FastEl(idx);
+  if ((idx < 0) || (idx >= dynmeths.size)) return; // shouldn't happen
+  DynMethodDesc* dmd = dynmeths.FastEl(idx);
   // NOTE: this function is based on the ta_qtdata:taiMethod::CallFun function
   // NOTE: we can't show the return values from any of the functions
 
@@ -386,11 +386,11 @@ void ISelectableHost::DoDynAction(int idx) {
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem;
         base = link->data();
-        for (int i = 1;
-          (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
-          ++i)
+        for (int j = 1;
+          (j < sel_items_cp.size) && (sel_items_cp.size == si_presize);
+          ++j)
         {
-          itN = sel_items_cp.FastEl(i);
+          itN = sel_items_cp.FastEl(j);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           if (link->isBase()) {
@@ -412,11 +412,11 @@ void ISelectableHost::DoDynAction(int idx) {
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem; //note: we prob wouldn't get called if any were null
         *param[2] = (void*)link->data();
-        for (int i = 1;
-          (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
-          ++i)
+        for (int j = 1;
+          (j < sel_items_cp.size) && (sel_items_cp.size == si_presize);
+          ++j)
         {
-          itN = sel_items_cp.FastEl(i);
+          itN = sel_items_cp.FastEl(j);
           link = itN->effLink(gui_ctxt);
           if (!link) continue; // prob won't happen
           base = link->data();
@@ -522,11 +522,11 @@ void ISelectableHost::UpdateMethodsActions(int dyn_list, ISelectable::GuiContext
   // enumerate dynamic methods
   dyn_methods[dyn_list].Reset();
   // if one dst, add the drop actions
-  ISelectable_PtrList& sel_items = selItems();
+  ISelectable_PtrList& selitems = selItems();
   if (ctxt_ms && ctxt_item) {
     dyn_methods[dyn_list].FillForDrop(*ctxt_ms, ctxt_item);
   }
-  dyn_methods[dyn_list].Fill(sel_items, gc_typ);
+  dyn_methods[dyn_list].Fill(selitems, gc_typ);
 
   // dynamically create actions
   // note: see explanation in iMainWindowViewer::ConstrEditMenu for why the
@@ -565,9 +565,9 @@ void ISelectableHost::UpdateMethodsActionsForDrop() {
 }
 
 void ISelectableHost::setCurItem(ISelectable* item, bool forced) {
-  ISelectable_PtrList& sel_items = selItems(); // in case overridden
-  ISelectable* ci = sel_items.SafeEl(0);
-  if ((ci == item) && (sel_items.size <= 1) && (!forced)) return;
+  ISelectable_PtrList& selitems = selItems(); // in case overridden
+  ISelectable* ci = selitems.SafeEl(0);
+  if ((ci == item) && (selitems.size <= 1) && (!forced)) return;
 
   SelectionChanging(true, forced);
     ClearSelectedItems(forced);

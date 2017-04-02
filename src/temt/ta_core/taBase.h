@@ -167,12 +167,12 @@ public: \
 #define TA_BASEFUNS_INST_(y) \
   taBase* Clone() const override { return new y(*this); }  \
   taBase* MakeToken() const override { return (taBase*)(new y); } \
-  taBase* MakeTokenAry(int n) const override { return (taBase*)(new y[n]); }
+  taBase* MakeTokenAry(int nwobj_n_) const override { return (taBase*)(new y[nwobj_n_]); }
 
 #define TA_TMPLT_BASEFUNS_INST_(y,T) \
   taBase* Clone() const override { return new y<T>(*this); } \
   taBase* MakeToken() const override { return (taBase*)(new y<T>); }  \
-  taBase* MakeTokenAry(int n) const override { return (taBase*)(new y<T>[n]); }
+  taBase* MakeTokenAry(int nwobj_n_) const override { return (taBase*)(new y<T>[nwobj_n_]); }
 
 // ctors -- one size fits all (where used) thanks to Initialize__
 
@@ -409,6 +409,14 @@ public: \
       for(Variant ELEM_VAR_NAME = (LIST).IterFirst(FOREACH_itr); \
           FOREACH_itr.More(); \
           ELEM_VAR_NAME = (LIST).IterNext(FOREACH_itr))
+
+// generic iterator over items in taBase containers, nested under another
+#define TA_FOREACH_NESTED(ELEM_VAR_NAME, LIST)   \
+  if (bool FOREACH_done_s1 = false) { } else \
+    for (taBaseItr FOREACH_itr_s1; !FOREACH_done_s1; FOREACH_done_s1 = true) \
+      for(Variant ELEM_VAR_NAME = (LIST).IterFirst(FOREACH_itr_s1); \
+          FOREACH_itr_s1.More(); \
+          ELEM_VAR_NAME = (LIST).IterNext(FOREACH_itr_s1))
 
 // generic iterator over items in taBase containers, index version
 #define TA_FOREACH_INDEX(IDX_VAR_NAME, LIST)                   \

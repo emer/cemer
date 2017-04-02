@@ -151,7 +151,7 @@ void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
   if(pel && (pel->GetEnabled() == 0)) return;
   ParseExpr();
   if(prompt_for_bad && !HasExprFlag(NO_VAR_ERRS)) {
-    ProgEl* pel = GET_MY_OWNER(ProgEl);
+    pel = GET_MY_OWNER(ProgEl);
     if (pel && !pel->HasBaseFlag(COPYING) && !pel->isDestroying()) {
       if(!taMisc::is_loading && bad_vars.size > 0) {
         for(int i=0; i<bad_vars.size; i++) {
@@ -331,11 +331,11 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const String& nm, cssElPtr& el
       }
     }
     else {
-      Function* fun = prog->functions.FindName(vnm);
-      if(fun && fun->name == vnm) { // findname will do crazy inherits thing on types, giving wrong match, so you need to make sure it is actually of the same name
+      Function* vfun = prog->functions.FindName(vnm);
+      if(vfun && vfun->name == vnm) { // findname will do crazy inherits thing on types, giving wrong match, so you need to make sure it is actually of the same name
         cssScriptFun* sfn = new cssScriptFun(vnm);
         pe->parse_tmp->Push(sfn);
-        sfn->argc = fun->args.size;
+        sfn->argc = vfun->args.size;
         el_ptr.SetDirect(sfn);
         return CSS_FUN;
       }

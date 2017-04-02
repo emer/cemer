@@ -48,9 +48,9 @@ void MemberFmArg::UpdateAfterEdit_impl() {
   }
 }
 
-void MemberFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(arg_name.empty(), quiet, rval, "arg_name is empty");
+void MemberFmArg::CheckThisConfig_impl(bool quieta, bool& rval) {
+  inherited::CheckThisConfig_impl(quieta, rval);
+  CheckError(arg_name.empty(), quieta, rval, "arg_name is empty");
 }
 
 void MemberFmArg::GenCssBody_impl(Program* prog) {
