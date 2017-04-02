@@ -35,7 +35,7 @@ public:
   void*        data() const override {return el;} // #IGNORE
 
   void                  SetFixedData(T* data_, const MatrixGeom& geom_,
-    fixed_dealloc_fun fixed_dealloc = NULL)
+    fixed_dealloc_fun fix_dealloc = NULL)
   { SetFixedData_(data_, geom_); }
   // #IGNORE sets external (fixed) data, setting the geom/size
 

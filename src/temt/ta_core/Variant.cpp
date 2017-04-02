@@ -103,10 +103,10 @@ const String Variant::formatNumber_impl(const Variant& val,
 }
 
 
-Variant::Variant(VarType type) {
+Variant::Variant(VarType typ) {
   memset(&d, 0, sizeof(d)); // pretty much valid for most types
   m_is_null = false; // except ptr types
-  switch (type) {
+  switch (typ) {
   case T_String: new(&d.str)String(); break;
   case T_Ptr:
   case T_Base:
@@ -116,7 +116,7 @@ Variant::Variant(VarType type) {
     break;
   default: break;
   }
-  m_type = type;
+  m_type = typ;
 }
 
 Variant::Variant(const Variant &cp) {
