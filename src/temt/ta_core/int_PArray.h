@@ -43,7 +43,7 @@ protected:
     { return (*((int*)a) == *((int*)b)); }
   String        El_GetStr_(const void* it) const { return (*((int*)it)); }
   void          El_SetFmStr_(void* it, const String& val)
-  { int tmp = (int)val; *((int*)it) = tmp; }
+  { *((int*)it) = (int)val; }
 };
 
 #endif // int_PArray_h
