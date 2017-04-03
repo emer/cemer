@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10588
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10599
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -671,7 +671,7 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["network"] { };
    };
 
-   ProgVar_List @.vars = [11] {
+   ProgVar_List @.vars = [9] {
     ProgVar @["batch_prog"] { };
     ProgVar @["tag"] { };
     ProgVar @["log_dir"] { };
@@ -681,8 +681,6 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["batch_start"] { };
     ProgVar @["startup_prog"] { };
     ProgVar @["MyClusterRun"] { };
-    ProgVar @["run_params"] { };
-    ProgVar @["net_params"] { };
    };
 
    Function_List @.functions = [0] {
@@ -691,7 +689,7 @@ LeabraProject .projects["LeabraFlex"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [19] {
+   ProgEl_List @.prog_code = [18] {
     RegisterArgs @[0] { };
     PrintExpr @[1] { };
     Comment @[2] { };
@@ -704,15 +702,10 @@ LeabraProject .projects["LeabraFlex"] {
       ProgArg @[0] { };
      };
     };
-    MethodCall @[8] { 
-     ProgArg_List @.meth_args = [1] {
-      ProgArg @[0] { };
-     };
-    };
-    ControlPanelsFmArgs @[9] { };
-    AssignExpr @[10] { };
-    Comment @[11] { };
-    If @[12] { 
+    ControlPanelsFmArgs @[8] { };
+    AssignExpr @[9] { };
+    Comment @[10] { };
+    If @[11] { 
      ProgEl_List @.true_code = [4] {
       ProgVarFmArg @[0] { };
       MiscCall @[1] { 
@@ -741,7 +734,7 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    Else @[13] { 
+    Else @[12] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -758,15 +751,15 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    OtherProgramVar @[14] { };
-    Comment @[15] { };
-    ProgramCallVar @[16] { 
+    OtherProgramVar @[13] { };
+    Comment @[14] { };
+    ProgramCallVar @[15] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[17] { };
-    ProgramCall @[18] { 
+    PrintExpr @[16] { };
+    ProgramCall @[17] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -8506,7 +8499,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_03_28_01_32_15";
+    date="2017_04_03_13_45_02";
    };
    ParamSet @["RunConfig1"] {
     user_data_=NULL;
@@ -8935,7 +8928,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_03_28_01_32_15";
+    date="2017_04_03_13_45_02";
    };
    ParamSet @["NetConfig1"] {
     user_data_=NULL;
@@ -11595,7 +11588,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="tag";
      var_type=T_String;
-     string_val="_RunMaster_NetMaster";
+     string_val="_run_params_net_params";
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11617,7 +11610,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="log_file_nm";
      var_type=T_String;
-     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_RunMaster_NetMaster.args";
+     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_run_params_net_params.args";
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11682,32 +11675,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      reference=0;
      desc=;
      init_from=NULL;
-    };
-    ProgVar @["run_params"] {
-     user_data_=NULL;
-     name="run_params";
-     var_type=T_Object;
-     object_type=ParamSet;
-     object_val=.projects["LeabraFlex"].active_params.gp["RunParams"]["RunMaster"]$$;
-     object_scope=NULL;
-     objs_ptr=0;
-     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
-     reference=0;
-     desc="select parameters for controlling how network is run";
-     init_from=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
-    };
-    ProgVar @["net_params"] {
-     user_data_=NULL;
-     name="net_params";
-     var_type=T_Object;
-     object_type=ParamSet;
-     object_val=.projects["LeabraFlex"].active_params.gp["NetParams"]["NetMaster"]$$;
-     object_scope=NULL;
-     objs_ptr=0;
-     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
-     reference=0;
-     desc="select other parameters, typically network spec params -- independent of run params";
-     init_from=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
     };
    };
    functions {
@@ -11791,8 +11758,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      flags=CAN_REVERT_TO_CODE;
      code_string="run_params.CopySavedToActive()";
      result_var=NULL;
-     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["run_params"]$$;
-     method=ParamSet::Activate;
+     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
+     method=ControlPanel::ActivateAll;
      meth_args {
       user_data_=NULL;
       name="meth_args";
@@ -11804,7 +11771,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        type="bool";
        name="info_msg";
        required=0;
-       def_val="false";
+       def_val="true";
        prev_expr=;
        expr {
 	user_data_=NULL;
@@ -11812,47 +11779,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     meth_sig="void Activate(bool info_msg = false)";
-     meth_desc=" copy the saved_value values to be active (live) values on the objects";
+     meth_sig="void ActivateAll(bool info_msg = true)";
+     meth_desc=" activate all of the parameter sets on this and any linked param set objects -- copies the saved_value values to be the active (live) values for all parameters -- this one call can be used on a master ClusterRun or ControlPanel to activate everything in Startup program, for example -- info_msg emits a message about each ParamSet as it is activated";
     };
-    MethodCall @[8] {
-     user_data_=NULL;
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="run_params.CopySavedToActive()";
-     result_var=NULL;
-     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["net_params"]$$;
-     method=ParamSet::Activate;
-     meth_args {
-      user_data_=NULL;
-      name="meth_args";
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       user_data_=NULL;
-       arg_type=bool;
-       type="bool";
-       name="info_msg";
-       required=0;
-       def_val="false";
-       prev_expr=;
-       expr {
-	user_data_=NULL;
-	expr="true";
-       };
-      };
-     };
-     meth_sig="void Activate(bool info_msg = false)";
-     meth_desc=" copy the saved_value values to be active (live) values on the objects";
-    };
-    ControlPanelsFmArgs @[9] {
+    ControlPanelsFmArgs @[8] {
      user_data_=NULL;
      desc="also gets any params from linked control panels";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
+     ctrl_panel_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$;
     };
-    AssignExpr @[10] {
+    AssignExpr @[9] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -11860,16 +11797,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
      expr {
       user_data_=NULL;
-      expr="\"_\" +  run_params->name + \"_\" + net_params->name + tag";
+      expr="\"_\" + MyClusterRun->mbrs.run_params.label + \"_\" + MyClusterRun->mbrs.net_params.label + tag";
      };
     };
-    Comment @[11] {
+    Comment @[10] {
      user_data_=NULL;
      desc="Set log files";
      flags=CAN_REVERT_TO_CODE;
      code_string="// Set log files";
     };
-    If @[12] {
+    If @[11] {
      user_data_=NULL;
      desc="set tag for starting batch (new code in v 8.0)";
      flags=CAN_REVERT_TO_CODE;
@@ -12059,7 +11996,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    Else @[13] {
+    Else @[12] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12172,7 +12109,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    OtherProgramVar @[14] {
+    OtherProgramVar @[13] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12184,13 +12121,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[15] {
+    Comment @[14] {
      user_data_=NULL;
      desc="= Call sub-startup programs =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Call sub-startup programs =";
     };
-    ProgramCallVar @[16] {
+    ProgramCallVar @[15] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12217,7 +12154,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlex"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[17] {
+    PrintExpr @[16] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12228,7 +12165,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      debug=0;
     };
-    ProgramCall @[18] {
+    ProgramCall @[17] {
      user_data_=NULL;
      desc=;
      flags=CAN_REVERT_TO_CODE;
@@ -12348,7 +12285,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_RunMaster_NetMaster";
+      string_val="_run_params_net_params";
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
@@ -12479,7 +12416,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="batch";
       var_type=T_Int;
-      int_val=1;
+      int_val=0;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12741,7 +12678,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].active_params.gp["RunParams"]["RunMaster"]$;
+      object_val=.projects["LeabraFlex"].active_params.gp["RunParams"]["RunMaster"]$$;
       object_scope=.projects["LeabraFlex"].active_params.gp["RunParams"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12754,7 +12691,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="net_params";
       var_type=T_Object;
       object_type=ParamSet;
-      object_val=$.projects["LeabraFlex"].active_params.gp["NetParams"]["NetMaster"]$;
+      object_val=.projects["LeabraFlex"].active_params.gp["NetParams"]["NetMaster"]$$;
       object_scope=.projects["LeabraFlex"].active_params.gp["NetParams"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14217,7 +14154,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3926: sys=807: tot=149063234832: }: end={usr=3927: sys=807: tot=149063234832: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=2136: sys=470: tot=149119471769: }: end={usr=2136: sys=470: tot=149119471768: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -14781,7 +14718,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=3931: sys=808: tot=149063234834: }: end={usr=3931: sys=808: tot=149063234835: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=1925: sys=448: tot=149119471302: }: end={usr=1929: sys=448: tot=149119471311: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -15853,7 +15790,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=5;
+      int_val=2;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -24860,7 +24797,7 @@ also save specs.";
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_RunMaster_NetMaster";
+      string_val="_run_params_net_params";
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25264,7 +25201,7 @@ also save specs.";
        user_data_=NULL;
        name="tag";
        var_type=T_String;
-       string_val="_RunMaster_NetMaster";
+       string_val="_run_params_net_params";
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -31655,7 +31592,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9946893;
+     value 8 0=0.9946865;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33472,7 +33409,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
