@@ -519,10 +519,16 @@ public:
   void                  Clear(int fm = 0, int to = -1);
   // #MENU #MENU_ON_Matrix #CAT_Modify optimized clear, defaults to clearing all items
 
-  bool                  SetGeom(int sz, int d0, int d1=0, int d2=0,
+#ifdef __MAKETA__
+  // note: preserving size arg name despite fact that it shadows member and generates warning
+  inline bool           SetGeom(int size, int d0, int d1=0, int d2=0,
+                                int d3=0, int d4=0, int d5=0, int d6=0);
+#else
+  inline bool           SetGeom(int sz, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)
   { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
     d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return SetGeom_(sz, d);}
+#endif  
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive
   bool                  SetGeomN(const MatrixGeom& geom_)
   { return SetGeom_(geom_.dims(), geom_.el); }
