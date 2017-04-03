@@ -31,7 +31,7 @@
 #include <MTRnd>
 #include <taArray_base>
 #include <taString>
-#include <DataCol>
+#include <ProgObjList>
 
 #include <taMisc>
 
@@ -1213,9 +1213,8 @@ int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   //int rval =
   inherited::Dump_Save_Value(strm, par, indent);
 
-  // no point in saving non-data table matrix elements!  basically temps.
-  // todo: if needed, can add a flag to modulate this behavior..
-  if(!owner->InheritsFrom(&TA_DataCol)) {
+  // don't save any matrix objects in program objs lists
+  if(owner->InheritsFrom(&TA_ProgObjList)) {
     return true;
     // if(taMisc::is_undo_saving) {
     //   if(!owner) return true;          // never

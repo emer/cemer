@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10588
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10599
 LeabraProject .projects["TestWizard"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -568,7 +568,28 @@ LeabraProject .projects["TestWizard"] {
     ProgVar @["param_sets"] { };
    };
 
-   Function_List @.functions = [0] {
+   Function_List @.functions = [1] {
+    Function @["set_n_units"] { 
+     ProgVar_List @.args = [2] {
+      ProgVar @["lay"] { };
+      ProgVar @["n_units"] { };
+     };
+
+     ProgEl_List @.fun_code = [4] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	ReturnExpr @[0] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      PrintExpr @[2] { };
+      ReturnExpr @[3] { };
+     };
+    };
    };
 
    ProgEl_List @.init_code = [0] {
@@ -1067,7 +1088,7 @@ LeabraProject .projects["TestWizard"] {
     };
 
     ProgVar_List @.vars = [1] {
-     ProgVar @["basic_train_time"] { };
+     ProgVar @["BasicTrainTime"] { };
     };
 
     Function_List @.functions = [0] {
@@ -1189,7 +1210,7 @@ LeabraProject .projects["TestWizard"] {
      ProgVar @["cur_idx"] { };
      ProgVar @["input_idx"] { };
      ProgVar @["dmem_rows"] { };
-     ProgVar @["perm_idx_table"] { };
+     ProgVar @["PermIdxTable"] { };
     };
 
     Function_List @.functions = [3] {
@@ -1407,7 +1428,7 @@ LeabraProject .projects["TestWizard"] {
     };
 
     ProgVar_List @.vars = [1] {
-     ProgVar @["layer_writer_0"] { };
+     ProgVar @["LayerWriter_0"] { };
     };
 
     Function_List @.functions = [0] {
@@ -7548,7 +7569,7 @@ svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom method
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    };
+    [6] 0;1;2;3;4;5;    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -164640,7 +164661,10 @@ svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom method
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    };
+    [36] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -165875,7 +165899,7 @@ svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom method
      float_Data @["Hidden_netrel"] {
       user_data_=NULL;
       name="Hidden_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -165892,7 +165916,7 @@ svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom method
      float_Data @["Output_netrel"] {
       user_data_=NULL;
       name="Output_netrel";
-      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      col_flags=PIN|SAVE_DATA|AUTO_WIDTH;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -166285,7 +166309,7 @@ svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom method
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    };
+    [2] 0;1;    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -166534,6 +166558,128 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     name="functions";
     el_typ=Function;
     el_def=0;
+    Function @["set_n_units"] {
+     user_data_=NULL;
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="set_n_units(Layer* lay, int n_units) returns: bool";
+     name="set_n_units";
+     return_type=T_Bool;
+     object_type=taOBase;
+     args {
+      user_data_=NULL;
+      name="args";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["lay"] {
+       user_data_=NULL;
+       name="lay";
+       var_type=T_Object;
+       object_type=Layer;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["n_units"] {
+       user_data_=NULL;
+       name="n_units";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     fun_code {
+      user_data_=NULL;
+      name="fun_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (lay->un_geom.n == n_units || n_units <= 0)";
+       cond {
+	user_data_=NULL;
+	expr="lay->un_geom.n == n_units || n_units <= 0";
+       };
+       true_code {
+	user_data_=NULL;
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ReturnExpr @[0] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="return false";
+	 expr {
+	  user_data_=NULL;
+	  expr="false";
+	 };
+	};
+       };
+      };
+      MethodCall @[1] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="lay->SetNUnits(n_units)";
+       result_var=NULL;
+       obj=.projects["TestWizard"].programs["MasterStartup"].functions["set_n_units"].args["lay"]$$;
+       method=Layer::SetNUnits;
+       meth_args {
+	user_data_=NULL;
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 user_data_=NULL;
+	 arg_type=int;
+	 type="int";
+	 name="n_units";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  user_data_=NULL;
+	  expr="n_units";
+	 };
+	};
+       };
+       meth_sig="void SetNUnits(int n_units)";
+       meth_desc=" set number of units in layer in the un_geom member -- attempts to lay out geometry in closest to a square that fits all the units evenly, if possible. note: does NOT rebuild the network. also does not make any changes if current number of units is same as arg, or arg <= 0 (e.g., for startup arg, just init n_units to -1 prior to getting arg val so it won't have any effect if arg not passed)";
+      };
+      PrintExpr @[2] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Print \"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
+       expr {
+	user_data_=NULL;
+	expr="\"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
+       };
+       debug=0;
+      };
+      ReturnExpr @[3] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="return true";
+       expr {
+	user_data_=NULL;
+	expr="true";
+       };
+      };
+     };
+    };
    };
    init_code {
     user_data_=NULL;
@@ -169250,7 +169396,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=751: sys=222: tot=145584925742: }: end={usr=750: sys=222: tot=145584925741: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=751: sys=222: tot=145584925742: }: end={usr=750: sys=222: tot=145584925741: }: used={usr=63: sys=7: tot=161: }: s_used=1.61: n_used=11: };
     };
     types {
      user_data_=NULL;
@@ -169306,9 +169452,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["basic_train_time"] {
+     ProgVar @["BasicTrainTime"] {
       user_data_=NULL;
-      name="basic_train_time";
+      name="BasicTrainTime";
       var_type=T_Object;
       object_type=TimeUsed;
       object_val=.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].objs["BasicTrainTime"]$$;
@@ -169337,7 +169483,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->ResetUsed()";
       result_var=NULL;
-      obj=.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].vars["basic_train_time"]$$;
+      obj=.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$$;
       method=TimeUsed::ResetUsed;
       meth_args {
        user_data_=NULL;
@@ -169360,7 +169506,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->StartTimer(false)";
       result_var=NULL;
-      obj=$.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].vars["basic_train_time"]$;
+      obj=$.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$;
       method=TimeUsed::StartTimer;
       meth_args {
        user_data_=NULL;
@@ -169726,7 +169872,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->EndTimer()";
       result_var=NULL;
-      obj=$.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].vars["basic_train_time"]$;
+      obj=$.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$;
       method=TimeUsed::EndTimer;
       meth_args {
        user_data_=NULL;
@@ -169938,7 +170084,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cur_idx";
       var_type=T_Int;
-      int_val=0;
+      int_val=5;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -169967,9 +170113,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-     ProgVar @["perm_idx_table"] {
+     ProgVar @["PermIdxTable"] {
       user_data_=NULL;
-      name="perm_idx_table";
+      name="PermIdxTable";
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].objs["PermIdxTable"]$$;
@@ -170179,7 +170325,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    prev_expr="PermIdxTable";
 	    expr {
 	     user_data_=NULL;
-	     expr="perm_idx_table";
+	     expr="PermIdxTable";
 	    };
 	   };
 	   ProgArg @[1] {
@@ -170192,7 +170338,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    prev_expr="PermIdxTable";
 	    expr {
 	     user_data_=NULL;
-	     expr="perm_idx_table";
+	     expr="PermIdxTable";
 	    };
 	   };
 	   ProgArg @[2] {
@@ -170265,7 +170411,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermIdxTable->EnforceRows(dmem_rows)";
 	result_var=NULL;
-	obj=.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["perm_idx_table"]$$;
+	obj=.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$$;
 	method=DataTable::EnforceRows;
 	meth_args {
 	 user_data_=NULL;
@@ -170295,7 +170441,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermIdxTable->InitValsToRowNo(0)";
 	result_var=NULL;
-	obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["perm_idx_table"]$;
+	obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$;
 	method=DataTable::InitValsToRowNo;
 	meth_args {
 	 user_data_=NULL;
@@ -170393,7 +170539,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="if (dmem_rows != PermIdxTable.rows)";
       cond {
        user_data_=NULL;
-       expr="dmem_rows != perm_idx_table.rows";
+       expr="dmem_rows != PermIdxTable.rows";
       };
       true_code {
        user_data_=NULL;
@@ -170436,7 +170582,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = PermIdxTable->GetVal(0, cur_idx)";
 	result_var=.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$$;
-	obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["perm_idx_table"]$;
+	obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$;
 	method=DataTable::GetVal;
 	meth_args {
 	 user_data_=NULL;
@@ -170623,7 +170769,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       code_string="if (cur_idx == PermIdxTable.rows -1)";
       cond {
        user_data_=NULL;
-       expr="cur_idx == perm_idx_table.rows -1";
+       expr="cur_idx == PermIdxTable.rows -1";
       };
       true_code {
        user_data_=NULL;
@@ -170996,9 +171142,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["layer_writer_0"] {
+     ProgVar @["LayerWriter_0"] {
       user_data_=NULL;
-      name="layer_writer_0";
+      name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
       object_val=.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].objs["LayerWriter_0"]$$;
@@ -171027,7 +171173,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["layer_writer_0"]$$;
+      obj=.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
@@ -171070,7 +171216,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->AutoConfig()";
       result_var=NULL;
-      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["layer_writer_0"]$;
+      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        user_data_=NULL;
@@ -171100,7 +171246,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["layer_writer_0"]$;
+      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
       meth_args {
        user_data_=NULL;
@@ -171136,7 +171282,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["layer_writer_0"]$;
+      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        user_data_=NULL;
@@ -171179,7 +171325,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["layer_writer_0"]$;
+      obj=$.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        user_data_=NULL;
@@ -172761,7 +172907,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_indexes {
        user_data_=NULL;
        name="row_indexes";
-      };
+      [3] 0;1;2;      };
       last_sort_spec {
        user_data_=NULL;
        name="last_sort_spec";
@@ -173044,7 +173190,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_indexes {
        user_data_=NULL;
        name="row_indexes";
-      };
+      [3] 0;1;2;      };
       last_sort_spec {
        user_data_=NULL;
        name="last_sort_spec";
@@ -177157,7 +177303,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=25;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -177682,7 +177828,7 @@ also save specs.";
      If @[0] {
       user_data_=NULL;
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string=;
       cond {
        user_data_=NULL;
@@ -177696,7 +177842,7 @@ also save specs.";
        ReturnExpr @[0] {
 	user_data_=NULL;
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string=;
 	expr {
 	 user_data_=NULL;
@@ -178102,7 +178248,7 @@ also save specs.";
       If @[1] {
        user_data_=NULL;
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string=;
        cond {
 	user_data_=NULL;
@@ -178116,7 +178262,7 @@ also save specs.";
 	ReturnExpr @[0] {
 	 user_data_=NULL;
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string=;
 	 expr {
 	  user_data_=NULL;
@@ -179468,7 +179614,7 @@ also save specs.";
        user_data_=NULL;
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        object_scope=NULL;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -183238,13 +183384,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_lft"] {
      user_data_=NULL;
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.006903877;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      user_data_=NULL;
      name="view_win_top";
-     value 8 0=0.05352591;
+     value 8 0=0.08836024;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -185100,7 +185246,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 9901 possible fix for crash on linux -- use SetLayerUnit[Gp]Geom methods which update the n value automatically..";
- tree_state{ .;.ctrl_panels;.data;.data.gp[0];.data.gp[0][1];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4][16];.programs.gp[4][16].prog_code;.programs.gp[4][16].prog_code[0];.programs.gp[4][16].prog_code[0].true_code[0];.programs.gp[4].gp[0];.programs.gp[4].gp[0][0];.programs.gp[4].gp[0][0].prog_code;.programs.gp[4].gp[0][0].prog_code[1];.programs.gp[4].gp[0][0].prog_code[1].true_code[0];.programs.gp[5];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[2].children[0];.networks[0].specs[2].children[1];.networks[0].layers; };
+ tree_state{ .;.ctrl_panels;.data;.data.gp[0];.data.gp[0][1];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[5];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[2].children[0];.networks[0].specs[2].children[1];.networks[0].layers; };
  networks {
   user_data_=NULL;
   name="networks";
