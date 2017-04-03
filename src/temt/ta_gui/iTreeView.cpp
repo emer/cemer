@@ -853,8 +853,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_CUT:
       case taiMisc::TREE_CUT_II:
         ext_select_on = false;
-        if (ISelectable *si = curItem()) {
-          if (ISelectableHost *host = si->host()) {
+        if (csi) {
+          if (ISelectableHost *host = csi->host()) {
             int ea = 0;
             host->EditActionsEnabled(ea);
             if (ea & iClipData::EA_CUT) {
@@ -867,8 +867,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_COPY:
       case taiMisc::TREE_COPY_II:
         ext_select_on = false;
-        if (ISelectable *si = curItem()) {
-          if (ISelectableHost *host = si->host()) {
+        if (csi) {
+          if (ISelectableHost *host = csi->host()) {
             int ea = 0;
             host->EditActionsEnabled(ea);
             if (ea & iClipData::EA_COPY) {
@@ -881,8 +881,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_PASTE:
       case taiMisc::TREE_PASTE_II:
         ext_select_on = false;
-        if (ISelectable *si = curItem()) {
-          if (ISelectableHost *host = si->host()) {
+        if (csi) {
+          if (ISelectableHost *host = csi->host()) {
             int ea = 0;
             host->EditActionsEnabled(ea);
             if (ea & iClipData::EA_PASTE) {
@@ -895,8 +895,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_DUPLICATE:
       case taiMisc::TREE_DUPLICATE_II:
         ext_select_on = false;
-        if (ISelectable *si = curItem()) {
-          if (ISelectableHost *host = si->host()) {
+        if (csi) {
+          if (ISelectableHost *host = csi->host()) {
             int ea = 0;
             host->EditActionsEnabled(ea);
             if (ea & iClipData::EA_DUPE) {
@@ -909,8 +909,8 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_DELETE:
       case taiMisc::TREE_DELETE_II:
         ext_select_on = false;
-        if (ISelectable *si = curItem()) {
-          if (ISelectableHost *host = si->host()) {
+        if (csi) {
+          if (ISelectableHost *host = csi->host()) {
             int ea = 0;
             host->EditActionsEnabled(ea);
             if (ea & iClipData::EA_DELETE) {
