@@ -408,8 +408,8 @@ public:
   int                   Cells() const { return CellsPerRow() * rows; }
   // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
   taList_impl* children_() override {return &data;}
-  Variant      Elem(const Variant& dx, IndexMode mode = IDX_UNK) const override
-  { return data.Elem(dx, mode); }
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
+  { return data.Elem(idx, mode); }
 
   virtual DataCol*      NewCol(DataCol::ValType val_type,
                                const String& col_nm);
@@ -638,40 +638,25 @@ public:
   /////////////////////////
   // Data versions: use read_index and write_index
 
-  inline const Variant GetData(const Variant& col)
-  { if(!ReadAvailable()) return _nilVariant;
-    return GetVal(col, read_idx); }
+  virtual const Variant GetData(const Variant& col);
   // #CAT_Access get data from given column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
-  inline const Variant GetDataByName(const String& ch_nm)
-  { return GetData(ch_nm); }
+  virtual const Variant GetDataByName(const String& ch_nm);
   // OBSOLETE - only here to get old projects to run
 
-  inline bool SetData(const Variant& dat, const Variant& col)
-    { if(!WriteAvailable()) return false;
-      return SetVal(dat, col, write_idx); }
+  virtual bool SetData(const Variant& data, const Variant& col);
   // #CAT_Modify set data from given column number or name at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index
-  inline bool SetDataByName(const Variant& dat, const String& ch_nm)
-    { return SetData(dat, ch_nm); }
+  virtual bool SetDataByName(const Variant& data, const String& ch_nm);
   // OBSOLETE - only here to get old projects to run
 
-  inline taMatrix* GetMatrixData(const Variant& col)
-  { if(!ReadAvailable()) return NULL;
-    return GetValAsMatrix(col, read_idx); }
+  virtual taMatrix* GetMatrixData(const Variant& col);
   // #CAT_Access get data from Matrix column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
-  inline const Variant GetMatrixCellData(const Variant& col, int cell)
-  { if(!ReadAvailable()) return _nilVariant;
-    return GetMatrixFlatVal(col, read_idx, cell); }
+  virtual const Variant GetMatrixCellData(const Variant& col, int cell);
   // #CAT_Access get data from Matrix cell (flat index into matrix values) at column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
 
-  inline bool SetMatrixData(const taMatrix* dat, const Variant& col)
-  { if(!WriteAvailable()) return false;
-    return SetValAsMatrix(dat, col, write_idx); }
+  virtual bool SetMatrixData(const taMatrix* data, const Variant& col);
   // #CAT_Modify set the data for given Matrix column at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index -- returns true if successful
-  inline bool SetMatrixCellData(const Variant& dat, const Variant& col, int cell)
-  { if(!WriteAvailable()) return false;
-    return SetMatrixFlatVal(dat, col, write_idx, cell); }
+  virtual bool SetMatrixCellData(const Variant& data, const Variant& col, int cell);
   // #CAT_Modify set the data for given Matrix channel cell (flat index into matrix values) at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index -- returns true if successful
-
 
   /////////////////////////
   // Col and row versions

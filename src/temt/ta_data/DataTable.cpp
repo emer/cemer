@@ -2292,7 +2292,48 @@ void DataTable::ToggleSaveRows() {
   ToggleDataFlag(SAVE_ROWS);
   SigEmitUpdated();
 }
-  
+
+
+/////////////////////////
+// Data versions: use read_index and write_index
+
+const Variant DataTable::GetData(const Variant& col) {
+  if(!ReadAvailable()) return _nilVariant;
+  return GetVal(col, read_idx);
+}
+
+const Variant DataTable::GetDataByName(const String& ch_nm) {
+  return GetData(ch_nm);
+}
+
+bool DataTable::SetData(const Variant& dat, const Variant& col) {
+  if(!WriteAvailable()) return false;
+  return SetVal(dat, col, write_idx);
+}
+
+bool DataTable::SetDataByName(const Variant& dat, const String& ch_nm) {
+  return SetData(dat, ch_nm);
+}
+
+taMatrix* DataTable::GetMatrixData(const Variant& col) {
+  if(!ReadAvailable()) return NULL;
+  return GetValAsMatrix(col, read_idx);
+}
+
+const Variant DataTable::GetMatrixCellData(const Variant& col, int cell) {
+  if(!ReadAvailable()) return _nilVariant;
+  return GetMatrixFlatVal(col, read_idx, cell);
+}
+
+bool DataTable::SetMatrixData(const taMatrix* dat, const Variant& col) {
+  if(!WriteAvailable()) return false;
+  return SetValAsMatrix(dat, col, write_idx);
+}
+
+bool DataTable::SetMatrixCellData(const Variant& dat, const Variant& col, int cell) {
+  if(!WriteAvailable()) return false;
+  return SetMatrixFlatVal(dat, col, write_idx, cell);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 ///     Saving / Loading from Emergent or Plain Text Files
