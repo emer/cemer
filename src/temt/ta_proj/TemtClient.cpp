@@ -1382,7 +1382,7 @@ void TemtClient::RunCommand(const String& comd) {
 #endif
   else
   {
-    String err_msg = "Unknown command: " + cmd + "-- remember everything is case sensitive";
+    String err_msg = "Unknown command: " + comd + "-- remember everything is case sensitive";
     if (msg_format == TemtClient::NATIVE) {
       SendError(err_msg);
       
