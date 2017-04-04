@@ -119,8 +119,13 @@ ClusterManager_UpdtThr::UpdateWorkingCopy() {
       String wcp = m_cm->GetWcPath_UserClust(m_cm->m_wc_path, user, clust);
       bool main_svn = ((clust == clust_nm) && (user == username));
       if(main_svn) {
-        m_cm->m_cur_svn_rev = UpdateWorkingCopy_impl(m_cm->m_svn_client, m_cm->m_wc_path, user, clust, projname,
+        try{
+          m_cm->m_cur_svn_rev = UpdateWorkingCopy_impl(m_cm->m_svn_client, m_cm->m_wc_path, user, clust, projname,
                                                      main_svn);
+        } catch (const SubversionClient::Exception &ex) {
+          //These are additional repositories, so don't worry about them too much
+          emit sendError("Could not update SVN working copy " + wcp + ".\n" + ex.what());
+        }
       }
       else {
         try{
