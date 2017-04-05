@@ -43,6 +43,7 @@ class TA_API ClusterRun_QObj : public QObject {
   void          ReloadClusterTables();
   void          UpdateEnabling(int panel_id);
   void          SelectionChanged(const QModelIndex& index);
+  void          promptCleanup();
 
 protected:
   ClusterRun*  master;

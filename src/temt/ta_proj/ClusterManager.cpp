@@ -52,6 +52,8 @@ ClusterManager_UpdtThr::ClusterManager_UpdtThr ( ClusterManager * cm, ClusterRun
 
   QObject::connect(this, SIGNAL(UpdatedSVN()), qt_object_helper,
                    SLOT(ReloadClusterTables()));
+  QObject::connect(this, SIGNAL(promptCleanup()), qt_object_helper,
+                   SLOT(promptCleanup()));
   QObject::connect(this, SIGNAL(sendError(const QString)), qt_object_helper,
                    SLOT(printError(const QString)));
   QObject::connect(this, SIGNAL(sendInfo(const QString)), qt_object_helper,
@@ -90,8 +92,9 @@ void ClusterManager_UpdtThr::EnsureSVNCredentialsAvailable() {
   }
 }
 void ClusterManager_UpdtThr::run() {
-  UpdateWorkingCopy();
-  emit UpdatedSVN();
+  if (UpdateWorkingCopy() > -1) {
+    emit UpdatedSVN();
+  }
   isUpdating--;
 }
 
@@ -123,8 +126,12 @@ ClusterManager_UpdtThr::UpdateWorkingCopy() {
           m_cm->m_cur_svn_rev = UpdateWorkingCopy_impl(m_cm->m_svn_client, m_cm->m_wc_path, user, clust, projname,
                                                      main_svn);
         } catch (const SubversionClient::Exception &ex) {
-          //These are additional repositories, so don't worry about them too much
+          if (ex.GetSvnErrorCode() == 155004) {
+            emit promptCleanup();
+            return -1;
+          }
           emit sendError("Could not update SVN working copy " + wcp + ".\n" + ex.what());
+          return -1;
         }
       }
       else {

@@ -38,3 +38,10 @@ void ClusterRun_QObj::printInfo(const QString msg) {
   taMisc::Info(msg);
 }
 
+void ClusterRun_QObj::promptCleanup() {
+  if (taMisc::Choice("Clusterrun SVN repository is locked. Should we do a cleanup?", "Yes", "No") == 0) {
+    master->Cleanup();
+    master->Update();
+  }
+}
+

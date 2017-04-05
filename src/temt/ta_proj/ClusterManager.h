@@ -51,6 +51,7 @@ signals:
   void UpdatedSVN();
   void sendError(const QString msg);
   void sendInfo(const QString msg);
+  void promptCleanup();
 public:
   int isUpdating;
   ClusterManager_UpdtThr (ClusterManager * cm,  ClusterRun_QObj * qt_object_helper, QObject *parent = 0);
