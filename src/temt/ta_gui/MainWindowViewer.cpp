@@ -273,6 +273,7 @@ bool MainWindowViewer::GetWinState() {
   iTreeView* nav_tree_view = widget()->GetMainTreeView();
   if (GetMyProj() && nav_tree_view) {
     nav_tree_view->GetTreeState(GetMyProj()->tree_state);
+    taMisc::DebugInfo("nav_tree_view->GetTreeState(GetMyProj()->tree_state);");
   }
   return true;
 }
