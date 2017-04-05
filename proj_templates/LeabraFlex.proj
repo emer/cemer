@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10599
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10607
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -8499,7 +8499,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_04_03_13_45_02";
+    date="2017_04_06_01_23_37";
    };
    ParamSet @["RunConfig1"] {
     user_data_=NULL;
@@ -8928,7 +8928,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_04_03_13_45_02";
+    date="2017_04_06_01_23_37";
    };
    ParamSet @["NetConfig1"] {
     user_data_=NULL;
@@ -9104,7 +9104,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     row_indexes {
      user_data_=NULL;
      name="row_indexes";
-    };
+    [6] 0;1;2;3;4;5;    };
     last_sort_spec {
      user_data_=NULL;
      name="last_sort_spec";
@@ -11588,7 +11588,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="tag";
      var_type=T_String;
-     string_val="_run_params_net_params";
+     string_val="_RunMaster_NetMaster";
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11610,7 +11610,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      user_data_=NULL;
      name="log_file_nm";
      var_type=T_String;
-     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_run_params_net_params.args";
+     string_val="/Users/oreilly/emergent/proj_templates/LeabraFlex_RunMaster_NetMaster.args";
      object_scope=NULL;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -11797,7 +11797,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
      expr {
       user_data_=NULL;
-      expr="\"_\" + MyClusterRun->mbrs.run_params.label + \"_\" + MyClusterRun->mbrs.net_params.label + tag";
+      expr="\"_\" + MyClusterRun->ParamSetNames() + tag";
      };
     };
     Comment @[10] {
@@ -12285,7 +12285,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_run_params_net_params";
+      string_val="_RunMaster_NetMaster";
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
@@ -14154,7 +14154,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=2136: sys=470: tot=149119471769: }: end={usr=2136: sys=470: tot=149119471768: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=1796: sys=220: tot=149140942226: }: end={usr=1805: sys=221: tot=149140942236: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -14718,7 +14718,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=1925: sys=448: tot=149119471302: }: end={usr=1929: sys=448: tot=149119471311: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {user_data_=NULL: name="BasicTrainTime": start={usr=1817: sys=223: tot=149140942247: }: end={usr=1816: sys=222: tot=149140942246: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      user_data_=NULL;
@@ -15378,7 +15378,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=1;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15790,7 +15790,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       user_data_=NULL;
       name="input_idx";
       var_type=T_Int;
-      int_val=2;
+      int_val=0;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -19783,7 +19783,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_indexes {
        user_data_=NULL;
        name="row_indexes";
-      };
+      [3] 0;1;2;      };
       last_sort_spec {
        user_data_=NULL;
        name="last_sort_spec";
@@ -20004,7 +20004,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_indexes {
        user_data_=NULL;
        name="row_indexes";
-      };
+      [3] 0;1;2;      };
       last_sort_spec {
        user_data_=NULL;
        name="last_sort_spec";
@@ -24797,7 +24797,7 @@ also save specs.";
       user_data_=NULL;
       name="tag";
       var_type=T_String;
-      string_val="_run_params_net_params";
+      string_val="_RunMaster_NetMaster";
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25201,7 +25201,7 @@ also save specs.";
        user_data_=NULL;
        name="tag";
        var_type=T_String;
-       string_val="_run_params_net_params";
+       string_val="_RunMaster_NetMaster";
        object_scope=NULL;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -31592,7 +31592,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9946865;
+     value 8 0=0.9941583;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -33409,7 +33409,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

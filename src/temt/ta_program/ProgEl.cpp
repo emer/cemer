@@ -42,9 +42,9 @@ SMARTREF_OF_CPP(ProgEl);
 
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   if (!base_)
-    return false;
+    return true;                // note: these must be true, not false!
   if (!var_)
-    return false;
+    return true;
   ProgEl* base = static_cast<ProgEl*>(base_);
   ProgVar* var = static_cast<ProgVar*>(var_);
   if (!var->IsLocal())

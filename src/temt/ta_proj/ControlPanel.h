@@ -165,6 +165,8 @@ public: // public API
 
   virtual void  ActivateAll(bool info_msg = true);
   // #CAT_CtrlPanel activate all of the parameter sets on this and any linked param set objects -- copies the saved_value values to be the active (live) values for all parameters -- this one call can be used on a master ClusterRun or ControlPanel to activate everything in Startup program, for example -- info_msg emits a message about each ParamSet as it is activated
+  virtual String ParamSetNames(bool recursive = false);
+  // #CAT_CtrlPanel return a list of _ separated names of ParamSet (or any other type of ControlPanel) linked within this ControlPanel -- this is typically used in the startup program to obtain a "tag" for the job files that indicates the overall configuration used -- if the recursive flag is set, then each linked control panel also adds any sub-controls to the returned string (at the end), and so-on..
 
   virtual void  AddMembersAsArgs(bool active_only = false, bool follow_control_panel_links = true);
   // #CAT_Args add single-valued members (optionally only those marked as ACTIVE for ControlPanel and ParamSet) as registered startup arguments that can be passed on the command line -- this is called automatically by the ControlPanelsFmArgs Program element -- optionally follows any members that are pointers to other control panels, to add them as well (default is true)

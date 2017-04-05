@@ -138,6 +138,7 @@ bool taiWidgetTokenChooser::hasOnlyOneItem() {
     }
   }
   if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return false; // no way
+  cnt = 0;
   bool got_two = countTokensToN(cnt, targ_typ, 2, last_itm); // if we get 2, then we're bust!
   if(!got_two && cnt == 1) {
     m_sel = last_itm;           // select the one item!

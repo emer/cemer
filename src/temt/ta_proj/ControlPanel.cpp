@@ -919,6 +919,33 @@ void ControlPanel::ActivateAll(bool info_msg) {
   }
 }
 
+
+String ControlPanel::ParamSetNames(bool recursive) {
+  String rval;
+  FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+    if(!mbr->base) continue;
+    ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+    if(sub_panel) {
+      if(rval.empty()) {
+        rval = sub_panel->name;
+      }
+      else {
+        rval += String("_") + sub_panel->name;
+      }
+    }
+  }
+  if(recursive) {
+    FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
+      if(!mbr->base) continue;
+      ControlPanel* sub_panel= mbr->GetControlPanelPointer();
+      if(sub_panel) {
+        rval += String("_") + sub_panel->ParamSetNames(recursive);
+      }
+    }
+  }
+  return rval;
+}
+
 void ControlPanel::AddMembersAsArgs(bool active_only, bool follow_control_panel_links) {
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
