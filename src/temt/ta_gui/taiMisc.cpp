@@ -210,11 +210,16 @@ void taiMisc::CheckConfigResult_(bool ok) {
       "Check Succeeded", false);
   }
   else {
-    iDialogTextEdit* td = new iDialogTextEdit(true);
-    td->setWindowTitle("Check Failed");
-    td->setText(taMisc::last_check_msg);
-    td->exec();
-    td->deleteLater();
+    // this is the old modal dialog
+//    iDialogTextEdit* td = new iDialogTextEdit(true);
+//    td->setWindowTitle("Check Failed");
+//    td->setText(taMisc::last_check_msg);
+//    td->exec();
+//    td->deleteLater();
+    
+    String window_title = "Check Failed";
+    taMisc::DisplayList(taMisc::check_error_objects, window_title, &taMisc::check_error_messages, "error");
+
   }
 }
 

@@ -41,6 +41,7 @@ taTypeDef_Of(EnumDef);
 #include <UserDataItem_List>
 #include <tabMisc>
 #include <taRootBase>
+#include <String_PArray>
 #include <taStringDiff>
 #include <iDialogChoice>
 #include <iDialogList>
@@ -550,9 +551,14 @@ String  taMisc::last_err_msg;
 String  taMisc::last_warn_msg;
 
 String  taMisc::last_check_msg;
-bool taMisc::check_quiet = false;
-bool taMisc::check_confirm_success = true;
-bool taMisc::check_ok = true;
+bool    taMisc::check_quiet = false;
+bool    taMisc::check_confirm_success = true;
+bool    taMisc::check_ok = true;
+
+taBase_PtrList  taMisc::check_error_objects;
+#ifndef NO_TA_BASE
+String_Array    taMisc::check_error_messages;
+#endif
 
 #ifndef NO_TA_BASE
 String_PArray* taMisc::deferred_schema_names;
@@ -798,7 +804,7 @@ void taMisc::CheckError(const String& a, const String& b, const String& c, const
   // always send to console
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   String fmsg = "***CHECK ERROR: " + msg;
-  taMisc::LogEvent(fmsg);
+  taMisc::LogEvent(fmsg);   
   taMisc::ConsoleOutput(fmsg, true, false); // no pager
   if (is_checking) {
     last_check_msg.cat(msg).cat("\n");
@@ -1544,6 +1550,10 @@ void taMisc::CheckConfigStart(bool confirm_success, bool quiet) {
   if (!taMisc::is_checking) {
     // always clear last msg, so there is no confusion after running Check
     taMisc::last_check_msg = _nilString;
+    taMisc::check_error_objects.Reset();  // this is a list of objects with errors
+#ifndef NO_TA_BASE
+   taMisc::check_error_messages.Reset();  // this is a list corresponding ( 1 for 1 ) error messages
+#endif
     check_ok = true;
     check_quiet = quiet;
     check_confirm_success = confirm_success;

@@ -2234,6 +2234,9 @@ void taBase::CheckError_msg(const String& a, const String& b, const String& c,
   String objinfo = "Config Error in: " + GetTypeDef()->name + " "
     + GetDisplayName() + "\npath: " + DisplayPath() + "\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
+  taMisc::check_error_objects.Add(const_cast<taBase*>(this));
+  taMisc::check_error_messages.Add(taMisc::SuperCat(a, b, c, d, e, f, g, h, ""));
+
 }
 
 bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {

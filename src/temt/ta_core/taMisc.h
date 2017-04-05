@@ -27,6 +27,7 @@
 #include <String_PArray>
 #include <DumpFileCvtList>
 #include <ContextFlag>
+#include <taBase_PtrList>
 
 #ifndef NO_TA_BASE
 #include <taLicense>
@@ -57,7 +58,6 @@ class MemberDef; //
 class UserDataItem_List; //
 class taProject; //
 class iDialogList; //
-class taBase_PtrList; //
 
 #ifndef NO_TA_BASE
 class cssConsoleWindow;
@@ -639,6 +639,10 @@ public:
   // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Warning function
 
   static String         last_check_msg; // #READ_ONLY #NO_SAVE #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
+  static taBase_PtrList check_error_objects;
+#ifndef NO_TA_BASE
+  static String_Array   check_error_messages;
+#endif
   static bool           check_quiet;    // #IGNORE mode we are in; set by CheckConfigStart
   static bool           check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
   static bool           check_ok;       // #IGNORE cumulative AND of all nested oks

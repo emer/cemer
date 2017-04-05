@@ -209,6 +209,8 @@ void ProgEl::CheckError_msg(const String& a, const String& b, const String& c,
   String objinfo = "Config Error in Program " + prognm + ": " + GetTypeDef()->name
     + " " + GetDisplayName() + "\npath: " + DisplayPath() + "\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
+  taMisc::check_error_objects.Add(const_cast<ProgEl*>(this));
+  taMisc::check_error_messages.Add(taMisc::SuperCat(a, b, c, d, e, f, g, h, ""));
 }
 
 bool ProgEl::CheckEqualsError(String& condition, bool quiet, bool& rval) {
