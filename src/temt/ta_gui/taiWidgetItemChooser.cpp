@@ -205,21 +205,30 @@ bool taiWidgetItemChooser::ShowItemFilter(void* base, void* item, const String& 
   return true;
 }
 
+int taiWidgetItemChooser::setInitialSel(void* cur_sel) {
+  m_sel = cur_sel;              // base case has no logic..
+  return 0;
+}
+
 void taiWidgetItemChooser::UpdateImage(void* cur_sel) {
-  m_sel = cur_sel;
+  int n_items = setInitialSel(cur_sel);
   
-  // note: don't optimize this if same msel, since we use it to set label
-  if(hasNoItems()) {
+  if(n_items == 0) {
     rep()->setEnabled(false);   // if no options
     rep()->setText("No Items Available to Choose!");
     return;
   }
-  if(hasOnlyOneItem()) {
+  
+  if(n_items == 1) {
+    // this logic of disabling options does not make sense for a higher-level choice point
+    // can disable leaves but you cannot disable branches, even if the branches happen to
+    // have no valid leaves -- people want to see that for themselves!?
     rep()->setEnabled(false);   // if only one option, this is it -- will override m_sel!
   }
   else {
     rep()->setEnabled(true);
   }
+  // rep()->setEnabled(true);
   rep()->setText(labelText());
 }
 

@@ -39,7 +39,7 @@ public:
   };
 
   int           n_pfcs;        // number of different PFC layers that map into a common BG layer -- this is the number of rows that will be enforced in the bg_table data table
-  DataTable     bg_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of PFC layers that map into a common BG layer -- one row per PFC layer -- you specify the name of each PFC layer and its size in unit groups (x,y), and optionally a starting x,y unit group offset within the BG layer (-1 means use default horizontal layout of pfc's within bg) -- mouse over the column headers for important further details
+  DataTable     bg_table;      // #SHOW_TREE #EXPERT table of PFC layers that map into a common BG layer -- one row per PFC layer -- you specify the name of each PFC layer and its size in unit groups (x,y), and optionally a starting x,y unit group offset within the BG layer (-1 means use default horizontal layout of pfc's within bg) -- mouse over the column headers for important further details
 
   bool          cross_connect;       // if true, then this creates connections based on the PFC layer name specified in the connect_as field, instead of the actual name of the PFC layer (still needs to find the PFC layer name in bg_table to know which layer is the PFC layer and which is the BG layer)
   String        connect_as;          // #CONDSHOW_ON_cross_connect PFC layer name to connect as -- see cross_connect option for details

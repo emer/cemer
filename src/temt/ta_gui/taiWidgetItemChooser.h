@@ -60,10 +60,8 @@ public:
   // number of different kinds of views, ex flat vs. tree
   virtual const String  viewText(int index) const = 0;
   // number of different kinds of views, ex flat vs.
-  virtual bool          hasNoItems() { return false; }
-  // if it is possible to quickly determine that there are no items on the list, return true -- makes the chooser read-only with "no items available to choose" text label -- if nullOK, then this must always be false.
-  virtual bool          hasOnlyOneItem() { return false; }
-  // if it is possible to quickly determine that there is one and only one item in the list, return true AND set the selection to that one item -- if true, it makes the chooser read-only --  first check should be if nullOK and there are no items -- then there is one item! -- set to null -- if not, then multiple items and should return false
+  virtual int           setInitialSel(void* cur_sel);
+  // set the initial selection value based on available options, and return the number of tokens available in the list of options as either 0, 1 or 2, where 2 = 2 or more (precise number not given if > 2), and this INCLUDES the NULL option if available -- this is called in UpdateImage with the cur_sel as the arg, passed in from the current selection -- if there are no items or one item, the default selection can be overridden from cur_sel -- the flgPreferNull flag specifies the nature of this choice
 
   void                  setNullText(const String& nt) { null_text = " " + nt; }
   // set text to display instead of NULL for a null item

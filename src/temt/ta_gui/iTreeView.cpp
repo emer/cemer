@@ -281,7 +281,8 @@ void iTreeView::InsertEl(bool after) {
   TypeDef* td = sbo->el_typ;
   typlkup->GetImage(td, sbo->el_base);
   bool okc = false;
-  if(typlkup->hasOnlyOneItem()) {
+  int n_items = typlkup->setInitialSel(td);
+  if(n_items == 1) {
     okc = true;
   }
   else {

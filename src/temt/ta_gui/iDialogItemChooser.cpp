@@ -350,7 +350,7 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   layOuter->addLayout(lay);
 
   items = new iTreeWidget(body);
-  // items->setSortingEnabled(true);
+  items->setSortingEnabled(true);
   items->setAllColumnsShowFocus(true);
   items->setSelectionMode(QAbstractItemView::SingleSelection);
   items->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -367,7 +367,7 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
     btnCancel = new QPushButton("&Cancel", body);
     lay->addWidget(btnCancel);
     connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
- }
+  }
   layOuter->addLayout(lay);
 
   timFilter = new QTimer(this);

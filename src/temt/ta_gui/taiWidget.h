@@ -88,6 +88,7 @@ public:
     flgNoEditDialogAutoApply = 0x4000, // overrides the implicit APPLY_IMMED for the edit dialog of fields
     flgNoAlpha          = 0x10000, // for taiWidgetColor, don't use the alpha channel
     flgNoHelp           = 0x20000, // for taiPtr guys, don't add a Help button
+    flgPreferNull       = 0x40000, // PREFER_NULL option -- default is to prefer a non-null option (e.g., in a token chooser) instead of a null one
 #ifndef __MAKETA__
     flg_INHERIT_MASK    = (flgReadOnly) // flags to pass on to nested children, in inline
 #endif

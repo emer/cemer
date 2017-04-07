@@ -39,7 +39,7 @@ class SoCamera; // #IGNORE
 taTypeDef_Of(T3SavedView);
 
 class TA_API T3SavedView : public taNBase {
-  // ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
+  // ##CAT_View ##NO_TOKEN_CHOOSER Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
 INHERITED(taNBase)
 public:
   bool          view_saved;     // #READ_ONLY #SHOW whether a view is currently saved or not

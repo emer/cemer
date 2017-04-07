@@ -84,15 +84,29 @@ void taiWidgetTypeDefChooser::BuildCategoriesR_impl(TypeDef* top_typ) {
   }
 }
 
-bool taiWidgetTypeDefChooser::hasNoItems() {
-  // always false for this -- targ_typ is snould not be null!
-  return false;
-}
-
-bool taiWidgetTypeDefChooser::hasOnlyOneItem() {
-  if(HasFlag(flgNullOk)) return false; // we now have 2 -- targ_typ and null
-  if(!targ_typ) return false;          // shouldn't happen
-  return (targ_typ->children.size == 0); // if we have no children, then there is only 1!
+int taiWidgetTypeDefChooser::setInitialSel(void* cur_sel) {
+  m_sel = cur_sel;              // default is always to use current
+  if(!targ_typ) {               // this should not happen
+    return 0;
+  }
+  if(HasFlag(flgNullOk)) { // we now have 2 -- targ_typ and null
+    if(!HasFlag(flgPreferNull)) {
+      if(cur_sel == NULL)
+        m_sel = targ_typ;       // override null..
+    }
+    return 2;                            // 2 or more
+  }
+  else {
+    if(cur_sel == NULL)
+      m_sel = targ_typ;       // always override null..
+    if(targ_typ->children.size == 0) {
+      m_sel = targ_typ;        // ONLY option -- set it for sure regardless of cur_sel
+      return 1;                 // just targ type
+    }
+    else {
+      return 2;                 // 2 or more..
+    }
+  }
 }
 
 void taiWidgetTypeDefChooser::BuildChooser(iDialogItemChooser* ic, int view) {

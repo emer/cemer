@@ -28,7 +28,7 @@
 taTypeDef_Of(DataColSpec);
 
 class TA_API DataColSpec: public taNBase {
-  // ##CAT_Data describes a column of data in a DataTable
+  // ##CAT_Data ##NO_TOKEN_CHOOSER describes a column of data in a DataTable
 INHERITED(taNBase)
 public:
   int                   col_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)

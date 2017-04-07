@@ -44,7 +44,7 @@ bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   if (!var_)                    // this should never happen
     return false;
   if (!base_)
-    return true;                // if no base, we can't filter properly.. but why is there no base?  this should not happen..
+    return false;               // this should never happen (used to, but now fixed.. :)
   ProgEl* base = static_cast<ProgEl*>(base_);
   ProgVar* var = static_cast<ProgVar*>(var_);
   if (!var->IsLocal())

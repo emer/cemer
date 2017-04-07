@@ -30,6 +30,8 @@
 #include <QTreeWidgetItem>
 #include <MemberDef>
 
+const int TOKEN_CHOOSER_NAME_MAX_LEN = 32;
+
 taiWidgetTokenChooser::taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,
                                      taiWidget* par, QWidget* gui_parent_, int flags_,
                                      const String& flt_start_txt)
@@ -79,7 +81,8 @@ void taiWidgetTokenChooser::EditPanel() {
   tabMisc::DelayedFunCall_gui(cur_base, "BrowserSelectMe");
 }
 
-bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm) {
+bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm,
+                                           void*& first_itm) {
   if(td->tokens.size == 0 && td->tokens.sub_tokens == 0)
     return false;
 
@@ -97,54 +100,67 @@ bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& 
     if (!ShowToken(btmp))
       continue;
     cnt++;
+    if(cnt == 1)
+      first_itm = (void*)btmp;
     last_itm = (void*)btmp;
     if(cnt >= n)
       return true;   // got it!
   }
   if(td->tokens.sub_tokens == 0) return false; // not gonna happen
 
+  // IMPORTANT: any changes here should also be made in BuildChooser_0 below!!
   for (int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
-    if(countTokensToN(cnt, chld, n, last_itm))
+    if(!chld) continue;
+    if(chld->HasOption("NO_TOKEN_CHOOSER"))
+      continue;                                 // exclude from any implicit use
+    if(countTokensToN(cnt, chld, n, last_itm, first_itm))
       return true;
   }
   return false;                 // didn't happen
 }
 
-bool taiWidgetTokenChooser::hasNoItems() {
-  if(!targ_typ) return false;          // shouldn't happen
-  if(HasFlag(flgNullOk)) return false; // we now have 1..
-  if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
-  int cnt = 0;
-  void* last_itm = NULL;
-  bool got_one = countTokensToN(cnt, targ_typ, 1, last_itm);
-  if(!got_one) {
-    m_sel = NULL;               // select the null!
-    return true;
+int taiWidgetTokenChooser::setInitialSel(void* cur_sel) {
+  m_sel = cur_sel;              // default is always to use current
+  if(!targ_typ) {               // this should not happen
+    return 0;
   }
-  return false;
-}
-
-bool taiWidgetTokenChooser::hasOnlyOneItem() {
-  if(!targ_typ) return false;          // shouldn't happen
   int cnt = 0;
   void* last_itm = NULL;
+  void* first_itm = NULL;
+  bool has_two_or_more = countTokensToN(cnt, targ_typ, 2, last_itm, first_itm);
   if(HasFlag(flgNullOk)) {
-    // now check that we don't have any others -- same logic as has no items
-    if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
-    if(!countTokensToN(cnt, targ_typ, 1, last_itm)) {
-      m_sel = NULL;             // select NULL
-      return true;
+    if(cnt == 0) {              // no items, just null
+      m_sel = NULL;             // only option
+      return 1;
     }
+    if(cnt == 1) {              // we just got one
+      if(!HasFlag(flgPreferNull)) {
+        // note: we don't check cur_sel b/c it is either null or an invalid option!
+        m_sel = first_itm;         // default to single item
+      }
+      return 2;
+    }
+    // cnt > 1
+    if(!HasFlag(flgPreferNull)) {
+      if(cur_sel == NULL)
+        m_sel = first_itm;      // only if null do we auto-select first item -- other could be on list somewhere..
+    }
+    return 2;
   }
-  if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return false; // no way
-  cnt = 0;
-  bool got_two = countTokensToN(cnt, targ_typ, 2, last_itm); // if we get 2, then we're bust!
-  if(!got_two && cnt == 1) {
-    m_sel = last_itm;           // select the one item!
-    return true;
-  }
-  return false;
+  else {
+    if(cnt == 0) {              // no items
+      return 0;
+    }
+    if(cnt == 1) {              // we just got one
+      m_sel = first_itm;        // default to ONLY option
+      return 1;
+    }
+    // cnt > 1
+    if(cur_sel == NULL)
+      m_sel = first_itm;      // only if null do we auto-select first item -- other could be on list somewhere..
+    return 2;
+  }    
 }
 
 void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
@@ -195,27 +211,25 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp)
       continue;
-    if(btmp->isDestroying())
-      continue;
-    taBase* parent = btmp->GetParent();
-    // keeps templates out of the list of actual instances
-    if (!parent)
-      continue;
-    if (btmp->GetPath().startsWith(".templates")) {
+    if(btmp->isDestroying()) {  // todo: we shouldn't be seeing these -- debug!
+      taMisc::Info("is destroying of type:", td->name, "token:", String(i));
       continue;
     }
-    // keeps templates out of the list of actual instances
-    // JAR - March 8, 2016 remove to fix bug 2542 - need a different solution
-//    // allow root as parent if type is project
-//    if ((parent->GetName() == "root") && (!btmp->InheritsFrom(&TA_taProject)))
-//      continue;
-
-    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
-    if (owner) {
-      MemberDef* md = owner->FindMemberName(btmp->GetName());
-      if (md && md->HasOption("HIDDEN_CHOOSER"))
-        continue;
+    if(!owner) continue;
+    if(!owner->InheritsFrom(&TA_taList_impl)) {
+      // radical but simple fact: if you're not on a list, you shouldn't be selectable
+      // by someone else as a token, because you are not an independent object -- you are
+      // either an owned member of another token, or effectively such as a managed pointer
+      // member, as in the AR() matrix on a DataCol
+      continue;
+    }
+    taBase* parent = btmp->GetParent(); // must have owner and not just be on some list
+    if (!parent)
+      continue;
+    // keeps templates out of the list of actual instances
+    if (owner == &tabMisc::root->templates) {
+      continue;
     }
     // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
     // is actually relevant for various choosers.  also scope_ref is assumed to be the base
@@ -226,9 +240,10 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       continue;
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
-    
-    QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
-                                        top_item, (void*)btmp);
+
+    QTreeWidgetItem* item = ic->AddItem
+      (btmp->GetColText(taBase::key_disp_name).elidedTo(TOKEN_CHOOSER_NAME_MAX_LEN),
+       top_item, (void*)btmp);
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     taBase* own = btmp->GetParent();
     if (own) {
@@ -239,9 +254,12 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     ++rval;
   }
 
+  // IMPORTANT: any changes here should also be made in countTokensToN above!!
   for (int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
-    if(!chld) break;
+    if(!chld) continue;         // shouldn't happen
+    if(chld->HasOption("NO_TOKEN_CHOOSER"))
+      continue;                                 // exclude from any implicit use
     rval += BuildChooser_0(ic, chld, top_item); //note: we don't create subnodes
   }
   return rval;
@@ -294,7 +312,7 @@ const String taiWidgetTokenChooser::headerText(int index, int view) const {
 }
 
 const String taiWidgetTokenChooser::labelNameNonNull() const {
-  return token()->GetDisplayName();
+  return token()->GetDisplayName().elidedTo(TOKEN_CHOOSER_NAME_MAX_LEN); // not 
 }
 
 bool taiWidgetTokenChooser::ShowToken(taBase* obj) const {

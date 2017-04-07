@@ -27,7 +27,7 @@
 taTypeDef_Of(DynEnumItem);
 
 class TA_API DynEnumItem : public taNBase {
-  // ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated type value (name and numerical int value)
+  // ##EDIT_INLINE ##CAT_Program ##SCOPE_Program ##NO_TOKEN_CHOOSER dynamic enumerated type value (name and numerical int value)
 INHERITED(taNBase)
 public:
   int           value;          // numerical (integer) value of this enum -- automatically set to be sequential or orthogonal bits if using bits mode -- order must be increasing in list order

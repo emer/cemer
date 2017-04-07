@@ -32,8 +32,7 @@ public:
   int                   columnCount(int view) const override;
   const String          headerText(int index, int view) const override;
   const String          viewText(int index) const override;
-  bool                  hasNoItems() override;
-  bool                  hasOnlyOneItem() override;
+  int                   setInitialSel(void* cur_sel) override;
 
   using inherited::GetImage;
   void                  GetImage(TypeDef* cur_sel, TypeDef* targ_typ)
@@ -41,7 +40,7 @@ public:
   TypeDef*              GetValue() {return td();}
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
-  void         btnHelp_clicked() override;
+  void                  btnHelp_clicked() override;
 
   taiWidgetTypeDefChooser(TypeDef* typ_, IWidgetHost* host,
                    taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -56,7 +55,7 @@ protected:
   const String          labelNameNonNull() const override;
 
   TypeCat               AddType_Class(TypeDef* typ); // true if should be shown to user
-  void         BuildCategories_impl() override;
+  void                  BuildCategories_impl() override;
   void                  BuildCategoriesR_impl(TypeDef* top_typ);
   int                   BuildChooser_0(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively
