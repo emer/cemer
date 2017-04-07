@@ -195,8 +195,13 @@ bool taiWidgetItemChooser::OpenChooser() {
 
 bool taiWidgetItemChooser::ShowItemFilter(void* base, void* item, const String& itnm) const {
 //   if(filter_start_txt.nonempty() && !itnm.startsWith(filter_start_txt)) return false;
-  if (item_filter)
+  if (item_filter) {
+    if(base == NULL) {
+      taMisc::Warning("programmer error: item_filter called with null base variable -- please report");
+      return true;
+    }
     return item_filter(base, item);
+  }
   return true;
 }
 

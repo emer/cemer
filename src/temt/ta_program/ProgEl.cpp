@@ -41,10 +41,10 @@ TA_BASEFUNS_CTORS_DEFN(ProgEl);
 SMARTREF_OF_CPP(ProgEl);
 
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
+  if (!var_)                    // this should never happen
+    return false;
   if (!base_)
-    return true;                // note: these must be true, not false!
-  if (!var_)
-    return true;
+    return true;                // if no base, we can't filter properly.. but why is there no base?  this should not happen..
   ProgEl* base = static_cast<ProgEl*>(base_);
   ProgVar* var = static_cast<ProgVar*>(var_);
   if (!var->IsLocal())

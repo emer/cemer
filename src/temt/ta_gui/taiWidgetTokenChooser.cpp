@@ -256,8 +256,8 @@ int taiWidgetTokenChooser::columnCount(int view) const {
 
 void taiWidgetTokenChooser::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 {//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
-  scope_obj.set(NULL);
-  scope_ref.set(NULL);
+  // it is actually called by iDialogItemChooser::Refresh which happens during
+  // user activation -- just use the current values and DON'T reset anything!!
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
