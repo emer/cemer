@@ -326,42 +326,40 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
   CheckError(Program::IsForbiddenName(this, name, false), quiet, rval,
-	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
+             "Name:",name,"is a css reserved name used for something else -- please choose another name");
+  
   CheckError(var_type == T_UnDef, quiet, rval,
-	     "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold");
-
-  if(var_type == T_Object) {
-    if(!IsLocal() && HasVarFlag(NULL_CHECK) && !object_val) {
-      if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
-                                    "object pointer is NULL");
-      rval = false;
-    }
-    if(object_type) {
-      if(!HasVarFlag(QUIET)) {
-        TestWarning(!objs_ptr && !IsLocal() && object_type->InheritsFrom(&TA_taMatrix) &&
-                    !HasVarFlag(NEW_OBJ),
-                    "ProgVar", "for Matrix* ProgVar named:",name,
-                    "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
-      }
-    }
+             "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold");
+  
+  if(var_type == T_Object && !IsLocal() && HasVarFlag(NULL_CHECK)) {
+    CheckError(!object_val, quiet, rval,
+               "Error in ProgVar in program:", prognm, "var name:",name, "object pointer is NULL");
   }
+  
   if(var_type == T_DynEnum && prg) {
     if(!dyn_enum_val.enum_type) {
-      if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
-                                    "enum_type is not set for this dynamic enum value");
-      rval = false;
+      CheckError(dyn_enum_val.enum_type, quiet, rval,
+                 "Error in ProgVar in program:", prognm, "var name:",name,
+                 "enum_type is not set for this dynamic enum value");
     }
     else {
       Program* dtprg = GET_OWNER(dyn_enum_val.enum_type, Program);
-      if(prg != dtprg && dtprg) {
-        if(!quiet) taMisc::CheckError
-                     ("Error in ProgVar in program:", prognm, "var name:",name,
-                      "enum_type is in a different Program:",dtprg->name,
-                      "than this variable");
-        rval = false;
-      }
+      CheckError((prg != dtprg && dtprg), quiet, rval,
+                 "Error in ProgVar in program:", prognm, "var name:",name, "enum_type is in a different Program:",
+                 dtprg->name, "than this variable");
     }
   }
+  
+  // WARN
+  if(var_type == T_Object && object_type) {
+    if(!HasVarFlag(QUIET)) {
+      TestWarning(!objs_ptr && !IsLocal() && object_type->InheritsFrom(&TA_taMatrix) &&
+                  !HasVarFlag(NEW_OBJ),
+                  "ProgVar", "for Matrix* ProgVar named:",name,
+                  "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+    }
+  }
+  
   GetInitFromVar(true);         // warn
 }
 
