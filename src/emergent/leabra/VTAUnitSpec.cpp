@@ -306,6 +306,9 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   // use total activation over whole layer
   float pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
   float lhb_da = lhb_lay->acts_eq.avg * lhb_lay->units.size;
+  //float lhb_da = lhb_lay->units[0]->act();
+  
+  
   float pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
   float vspospvi = 0.0f;
   if(da.patch_cur) {
@@ -326,6 +329,10 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
       vspospvi = gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActQ0();
     }
   }
+  
+  // vspospvi must be >= 0.0f
+  vspospvi = fmaxf(vspospvi, 0.0f);
+  
   float vsnegpvi = 0.0f;
   if(da.patch_cur) {
     if(gains.pvi_dip_shunt_gain > 0.0f && gains.pvi_anti_dip_shunt_gain > 0.0f) {
@@ -346,6 +353,9 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
     }
   }
 
+  // ?? vsnegpvi must be >= 0.0f (probably; could be <= so need to think about it...)
+  //vsnegpvi = fmaxf(vsnegpvi, 0.0f);
+  
   float burst_lhb_da = fminf(lhb_da, 0.0f); // if neg, promotes bursting
   float dip_lhb_da = fmaxf(lhb_da, 0.0f);   // else, promotes dipping
     
@@ -357,12 +367,14 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   // pos PVi shunting
   float net_burst_da = tot_burst_da - vspospvi;
   net_burst_da = fmaxf(net_burst_da, 0.0f);
+  //if(net_burst_da < 0.1f) { net_burst_da = 0.0f; } // debug...
 
   float tot_dip_da = gains.lhb_gain * dip_lhb_da;
 
   // neg PVi shunting
   float net_dip_da = tot_dip_da - vsnegpvi;
   net_dip_da = fmaxf(net_dip_da, 0.0f);
+  //if(net_dip_da < 0.1f) { net_dip_da = 0.0f; } // debug...
     
   float net_da = net_burst_da - net_dip_da;
   net_da *= gains.da_gain;
