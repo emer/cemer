@@ -17,12 +17,14 @@
 #include <taiWidgetItemChooser>
 #include <iLineEdit>
 #include <iTreeWidget>
+#include <iCheckBox>
 
 #include <taMisc>
 #include <taiMisc>
 
 #include <QPushButton>
 #include <QLineEdit>
+#include <QCheckBox>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QHeaderView>
@@ -74,6 +76,8 @@ void iDialogItemChooser::init(const String& caption_) {
   m_cat_filter = 0; // default is all
   is_dialog = true; // default
   btnCancel = NULL;
+  btn_first_column_only = NULL;
+  first_column_only = true; // default
   setModal(true);
   setWindowTitle(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
@@ -100,7 +104,7 @@ void iDialogItemChooser::accept() {
   m_selItem = itm;
 
   if(is_dialog) {
-    inherited::accept();  // Do this BEFORE the new choose dialog!!! jar 10/27/13
+    inherited::accept();  // Do this BEFORE the new choose dialog!
   }
 
   if(itm) {
@@ -342,10 +346,23 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   lbl = new QLabel("search", body);
   lbl->setToolTip(taiMisc::ToolTipPreProcess("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^"));
   lay->addWidget(lbl);
+  
   lay->addSpacing(taiM->vsep_c);
   filter = new iLineEdit(body);
   filter->setToolTip(taiMisc::ToolTipPreProcess(lbl->toolTip()));
   lay->addWidget(filter, 1);
+  
+  lay->addSpacing(taiM->vsep_c);
+  lbl = new QLabel("first column only", body);
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Search only applies to the first column - typically what you want."));
+  lay->addWidget(lbl);
+  
+  lay->addSpacing(taiM->vsep_c);
+  btn_first_column_only = new iCheckBox(body);
+  filter->setToolTip(taiMisc::ToolTipPreProcess(lbl->toolTip()));
+  lay->addWidget(btn_first_column_only, 1);
+  btn_first_column_only->setChecked(first_column_only);
+
   lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);
 
@@ -380,6 +397,7 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   connect(filter, SIGNAL(textChanged(const QString&)),
     this, SLOT(filter_textChanged(const QString&)) );
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
+  connect(btn_first_column_only, SIGNAL(clicked()), this, SLOT(SetColumnsForFilter()) );
 
   m_client = NULL;
   filter->setFocus();
@@ -468,7 +486,7 @@ bool iDialogItemChooser::SetCurrentItemByData(void* value) {
 
 bool iDialogItemChooser::ShowItem(const QTreeWidgetItem* item) const {
   // we show the item unless it either doesn't meet filter criteria, or not in cat
-
+  
   // category filter
   if (m_cat_filter != 0) {
     String act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
@@ -509,7 +527,13 @@ bool iDialogItemChooser::ShowItem(const QTreeWidgetItem* item) const {
     }
     else {
       QString s;
-      int cols = items->columnCount();
+      int cols;
+      if (first_column_only) {
+        cols = 1;
+      }
+      else {
+        cols = items->columnCount();
+      }
       for (int i = 0; i < cols; ++i) {
         s = item->text(i);
         if (s.contains(last_filter, Qt::CaseInsensitive)) {
@@ -527,6 +551,12 @@ void iDialogItemChooser::SetFilter(const QString& filt) {
   last_filter = filt;
   ApplyFiltering();
 }
+
+void iDialogItemChooser::SetColumnsForFilter() {
+  first_column_only = !first_column_only;
+  ApplyFiltering();
+}
+
 
 void iDialogItemChooser::setSelObj(void* value, bool force) {
   if ((m_selObj == value) && !force) return;

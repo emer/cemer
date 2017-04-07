@@ -33,6 +33,7 @@ class QComboBox; //
 class iTreeWidget; //
 class QTreeWidgetItem; //
 class QLineEdit; //
+class iCheckBox; //
 class QFrame; //
 
 
@@ -63,6 +64,7 @@ public:
   String                caption;        // current caption at top of chooser
   bool                  multi_cats;     // each item may have multiple categories, separated by commas
   String                init_filter;    // initial filter string -- prefix with ^ for starts-with
+  bool                  first_column_only; // search first column only
 
   inline taiWidgetItemChooser* client() const {return m_client;} // only valid in Constr and between Choose...accept/reject
   void*                 selObj() const {return m_selObj;} // current selected object
@@ -82,6 +84,7 @@ public:
   QPushButton*          btnOk;
   QPushButton*          btnCancel;
   QLineEdit*            filter;
+  iCheckBox*            btn_first_column_only;  // see member first_column_only
 
   virtual bool          Choose(taiWidgetItemChooser* client);
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
@@ -138,6 +141,8 @@ protected slots:
   void                  filter_textChanged(const QString& text);
   void                  timFilter_timeout();
   void                  show_timeout(); // for scrolling to item
+  void                  SetColumnsForFilter(); // set the columns we will search when filtering
+
 private:
   void          init(const String& captn); // called by constructors
   iDialogItemChooser(const iDialogItemChooser&); //no
