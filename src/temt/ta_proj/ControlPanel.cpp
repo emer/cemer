@@ -449,7 +449,9 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
     param_set->SetName(name + "_" + taDateTime::CurrentDateStampString());
   }
   param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
-  param_set->CopyActiveToSaved();
+  if(!InheritsFrom(&TA_ParamSet)) {
+    param_set->CopyActiveToSaved();
+  }
   param_set->AllStable();
   return param_set;
 }
@@ -467,7 +469,9 @@ ParamSet* ControlPanel::Archive() {
   }
   param_set->SetName(nm + "_" + taDateTime::CurrentDateStampString());
   param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
-  param_set->CopyActiveToSaved();
+  if(!InheritsFrom(&TA_ParamSet)) {
+    param_set->CopyActiveToSaved();
+  }
   param_set->AllLocked();
   return param_set;
 }
