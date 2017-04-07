@@ -344,7 +344,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
     else {
       Program* dtprg = GET_OWNER(dyn_enum_val.enum_type, Program);
-      CheckError((prg != dtprg && dtprg), quiet, rval,
+      CheckError((!dtprg || prg != dtprg), quiet, rval,
                  "Error in ProgVar in program:", prognm, "var name:",name, "enum_type is in a different Program:",
                  dtprg->name, "than this variable");
     }

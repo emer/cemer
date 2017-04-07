@@ -171,20 +171,14 @@ void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(!HasExprFlag(NO_VAR_ERRS)) {
     Program* prg = GET_MY_OWNER(Program);
     ProgEl* pel = GET_MY_OWNER(ProgEl);
-    if(prg && pel && bad_vars.size > 0) {
-      rval = false;
-      if(!quiet)
-        taMisc::CheckError
-          ("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:",
-           bad_vars[0],
-           (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-           (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-           (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-           // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-           // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-           // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-           );
-    }
+    String msg_start = "The expression: " + pel->GetDisplayName() + "\n in program: " + prg->name + " has errors";
+    
+    CheckError((!prg || !pel || bad_vars.size > 0), quiet, rval,
+               msg_start, "\n\nThe following variable names were not found:",
+               bad_vars[0],
+               (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+               (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+               (bad_vars.size > 3 ? bad_vars[3] : _nilString));
   }
 }
 
