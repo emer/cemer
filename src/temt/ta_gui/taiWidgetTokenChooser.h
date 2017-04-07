@@ -63,7 +63,7 @@ protected:
 
   int                   BuildChooser_0(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively
-  virtual bool          ShowToken(taBase* obj) const;
+  virtual bool          ShowToken(taBase* obj, TypeDef* td, int i) const;
 };
 
 #endif // taiWidgetTokenChooser_h

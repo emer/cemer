@@ -367,7 +367,10 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   layOuter->addLayout(lay);
 
   items = new iTreeWidget(body);
-  items->setSortingEnabled(true);
+  // NOTE: although sorting is useful, we also don't want to have things sorted by
+  // default!  so that's the problem..  need an extra flag or initial unsorted state
+  // somehow
+  // items->setSortingEnabled(true);
   items->setAllColumnsShowFocus(true);
   items->setSelectionMode(QAbstractItemView::SingleSelection);
   items->setSelectionBehavior(QAbstractItemView::SelectRows);

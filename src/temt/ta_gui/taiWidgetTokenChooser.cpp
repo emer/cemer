@@ -89,16 +89,7 @@ bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& 
   // not gonna happen if it hasn't already
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
-    if(!btmp) continue;
-    // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
-    // is actually relevant for various choosers.  also scope_ref is assumed to be the base
-    // obj -- this should ideally be cleaner
-    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
-      continue;
-    if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
-      continue;
-    if (!ShowToken(btmp))
-      continue;
+    if (!ShowToken(btmp, td, i)) continue;
     cnt++;
     if(cnt == 1)
       first_itm = (void*)btmp;
@@ -135,14 +126,14 @@ int taiWidgetTokenChooser::setInitialSel(void* cur_sel) {
       return 1;
     }
     if(cnt == 1) {              // we just got one
-      if(!HasFlag(flgPreferNull)) {
+      if(HasFlag(flgPreferItem)) {
         // note: we don't check cur_sel b/c it is either null or an invalid option!
         m_sel = first_itm;         // default to single item
       }
       return 2;
     }
     // cnt > 1
-    if(!HasFlag(flgPreferNull)) {
+    if(HasFlag(flgPreferItem)) {
       if(cur_sel == NULL)
         m_sel = first_itm;      // only if null do we auto-select first item -- other could be on list somewhere..
     }
@@ -197,6 +188,41 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
   }
 }
 
+bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
+  if(!obj) return false;
+  if(obj->isDestroying()) {  // todo: we shouldn't be seeing these -- debug!
+    taMisc::Info("is destroying of type:", td->name, "token:", String(i));
+    return false;
+  }
+  taBase* owner = obj->GetOwner();
+  if(!owner) return false;
+  if(!owner->InheritsFrom(&TA_taList_impl)) {
+    // radical but simple fact: if you're not on a list, you shouldn't be selectable
+    // by someone else as a token, because you are not an independent object -- you are
+    // either an owned member of another token, or effectively such as a managed pointer
+    // member, as in the AR() matrix on a DataCol
+
+    if(!owner->InheritsFrom(&TA_taProject)) { // allow project members!
+      return false;
+    }
+  }
+  taBase* parent = obj->GetParent(); // must have owner and not just be on some list
+  if (!parent)
+    return false;
+  // keeps templates out of the list of actual instances
+  if (owner == &tabMisc::root->templates) {
+    return false;
+  }
+  // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
+  // is actually relevant for various choosers.  also scope_ref is assumed to be the base
+  // obj -- this should ideally be cleaner
+  if ((bool)scope_ref && !obj->SameScope(scope_ref, scope_typ))
+    return false;
+  if ((bool)scope_obj && !obj->IsChildOf(scope_obj))
+    return false;
+  return ShowItemFilter(scope_ref, obj, obj->GetName());
+}
+
 int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
                                           QTreeWidgetItem* top_item)
 {
@@ -206,41 +232,13 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
   
   //NOTES:
   // if !tokens.keep then tokens.size==0
-  
+
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
-    if(!btmp)
-      continue;
-    if(btmp->isDestroying()) {  // todo: we shouldn't be seeing these -- debug!
-      taMisc::Info("is destroying of type:", td->name, "token:", String(i));
-      continue;
-    }
-    taBase* owner = btmp->GetOwner();
-    if(!owner) continue;
-    if(!owner->InheritsFrom(&TA_taList_impl)) {
-      // radical but simple fact: if you're not on a list, you shouldn't be selectable
-      // by someone else as a token, because you are not an independent object -- you are
-      // either an owned member of another token, or effectively such as a managed pointer
-      // member, as in the AR() matrix on a DataCol
-      continue;
-    }
-    taBase* parent = btmp->GetParent(); // must have owner and not just be on some list
-    if (!parent)
-      continue;
-    // keeps templates out of the list of actual instances
-    if (owner == &tabMisc::root->templates) {
-      continue;
-    }
-    // IMPORTANT: scope_typ CAN be NULL here -- if so, a default scope type is used -- this
-    // is actually relevant for various choosers.  also scope_ref is assumed to be the base
-    // obj -- this should ideally be cleaner
-    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
-      continue;
-    if ((bool)scope_obj && !btmp->IsChildOf(scope_obj))
-      continue;
-    if (!ShowToken(btmp)) continue;
-    //todo: need to get a more globally unique name, maybe key_unique_name
+    if (!ShowToken(btmp, td, i)) continue;
+    // note: IMPORTANT to put all the show logic in one method, shared by count tokens
 
+    // todo: need to get a more globally unique name, maybe key_unique_name
     QTreeWidgetItem* item = ic->AddItem
       (btmp->GetColText(taBase::key_disp_name).elidedTo(TOKEN_CHOOSER_NAME_MAX_LEN),
        top_item, (void*)btmp);
@@ -313,11 +311,6 @@ const String taiWidgetTokenChooser::headerText(int index, int view) const {
 
 const String taiWidgetTokenChooser::labelNameNonNull() const {
   return token()->GetDisplayName().elidedTo(TOKEN_CHOOSER_NAME_MAX_LEN); // not 
-}
-
-bool taiWidgetTokenChooser::ShowToken(taBase* obj) const {
-  if(obj->GetOwner() == NULL) return false; // no instances!
-  return ShowItemFilter(scope_ref, obj, obj->GetName());
 }
 
 const String taiWidgetTokenChooser::viewText(int index) const {

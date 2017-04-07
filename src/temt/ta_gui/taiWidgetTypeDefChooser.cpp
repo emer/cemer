@@ -90,7 +90,7 @@ int taiWidgetTypeDefChooser::setInitialSel(void* cur_sel) {
     return 0;
   }
   if(HasFlag(flgNullOk)) { // we now have 2 -- targ_typ and null
-    if(!HasFlag(flgPreferNull)) {
+    if(HasFlag(flgPreferItem)) {
       if(cur_sel == NULL)
         m_sel = targ_typ;       // override null..
     }

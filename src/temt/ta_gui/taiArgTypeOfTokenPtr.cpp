@@ -42,8 +42,11 @@ taiWidget* taiArgTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget
   int token_flags = 0;
   if (GetHasOption("NULL_OK"))
     token_flags |= taiWidget::flgNullOk;
-  if (GetHasOption("PREFER_NULL"))
-    token_flags |= taiWidget::flgPreferNull;
+  if (!GetHasOption("PREFER_NULL")) { // overall default for args is to prefer item
+    // unless overridden here by PREFER_NULL
+    // but see NULL_TEXT_ case below which flips default to PREFER_NULL, overridden by PREFER_ITEM
+    token_flags |= taiWidget::flgPreferItem;
+  }
   if (GetHasOption("EDIT_OK"))
     token_flags |= taiWidget::flgEditOk;
   token_flags |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
@@ -105,11 +108,9 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
   if(nulltxt.nonempty()) {
     taMisc::SpaceLabel(nulltxt);
     rval->setNullText(nulltxt);
-    if (!GetHasOption("PREFER_ITEM")) {
-      // if we set the null text, then by default null is preferred, unless we specify
-      // prefer item explicitly
-      rval->SetFlag(taiWidget::flgPreferNull, true);
-    }
+    // if we set the null text, then by default null is preferred, unless we specify
+    // prefer item explicitly
+    rval->SetFlag(taiWidget::flgPreferItem, GetHasOption("PREFER_ITEM"));
   }
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);

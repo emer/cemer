@@ -41,8 +41,8 @@ taiWidget* taiMemberOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget*
   TypeDef* npt = GetMinType(NULL); // note: this will only be a min type
   if (!mbr->HasOption("NO_NULL"))
     flags_ |= taiWidget::flgNullOk;
-  if (!mbr->HasOption("PREFER_ITEM")) // default is to prefer null if null ok
-    flags_ |= taiWidget::flgPreferNull;
+  if (mbr->HasOption("PREFER_ITEM")) // default is to prefer null
+    flags_ |= taiWidget::flgPreferItem;
   // options that require non-readonly
   if (!(flags_ & taiWidget::flgReadOnly)) {
     if (!mbr->HasOption("NO_EDIT")) //note: #EDIT is the default

@@ -54,7 +54,7 @@ taTypeDef_Of(taiWidgetItemChooser);
 taTypeDef_Of(ProgEl);
 
 class TA_API ProgEl: public taOBase {
-  // #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
+  // #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program ##NO_TOKEN_CHOOSER base class for a program element
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:
