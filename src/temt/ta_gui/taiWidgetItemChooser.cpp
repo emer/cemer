@@ -207,7 +207,7 @@ bool taiWidgetItemChooser::ShowItemFilter(void* base, void* item, const String& 
 
 int taiWidgetItemChooser::setInitialSel(void* cur_sel) {
   m_sel = cur_sel;              // base case has no logic..
-  return 0;
+  return 2;                     // assume we have items
 }
 
 void taiWidgetItemChooser::UpdateImage(void* cur_sel) {
