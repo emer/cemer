@@ -797,6 +797,8 @@ class SubversionPoller(object):
     def get_initial_wc(self):
         # Either checkout or update the directory.
         if os.path.isdir(self.repo_dir):
+            #Run an svn cleanup first, in case the script crashed beforehand and left svn in a locked state
+            self._svn_cleanup()
             cmd = ['svn', 'update', '--username', self.username, '--force',
                    '--accept', 'theirs-full', self.repo_dir]
         else:
@@ -827,6 +829,12 @@ class SubversionPoller(object):
         if debug:
             logging.info('\nPolling the Subversion server every %d seconds ' \
                              '(hit Ctrl-C to quit) ...' % self.delay)
+        # Call an SVN cleanup on the repository first.
+        # a) There might have been a crash beforehand that necessitates the restart of the script, in which case we must run an svn cleanup
+        # b) The cluster run svn repository can accumulate a huge amount of cruft in the .svn repository. We need to run an occasional cleanup
+        #      to ensure the directory size doesn't get out of hand.
+        
+        self._svn_cleanup()
         
         while True:
             # If running in background and the nohup "keep running" file
@@ -876,6 +884,17 @@ class SubversionPoller(object):
 
             # 4. Sleep until next poll cycle.
             time.sleep(self.delay)
+
+    def _svn_cleanup(self):
+        if debug:
+            logging.info('\nRunning an svn cleanup to ensure working copy is clean and compacted')
+        cmd = ['svn', 'cleanup', '--username', self.username, self.repo_dir]
+        try:
+            svn_cleanup = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to execute SVN cleanup: " + str(e))
+            return False
+
 
     def _check_for_updates(self):
         cmd = ['svn', 'update', '--username', self.username, '--force',
@@ -1128,7 +1147,7 @@ class SubversionPoller(object):
 
     def _start_or_cancel_jobs(self, filename, rev):
         if debug:
-            logging.info("start or cancel !!!")
+            logging.info("start or cancel !!! " + filename)
         # get all the file names for this dir, and load jobs_running and jobs_done 
         self._get_cur_jobs_files(filename)
         # Load the new 'submit' table from the working copy.
@@ -1140,6 +1159,9 @@ class SubversionPoller(object):
 
         for row in range(self.jobs_submit.n_rows()):
             status = self.jobs_submit.get_val(row, "status")
+
+            if debug:
+                logging.info("Processing submit row " + str(row) + " for command " + status)
             
             if status == 'REQUESTED':
                 self._start_job(filename, rev, row)
