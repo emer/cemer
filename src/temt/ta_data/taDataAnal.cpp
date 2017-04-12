@@ -1247,8 +1247,10 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 	  dist_mat->SetValAsFloat(dmat.FastEl2d(j,i), j+1, -1);
 	}
       }
+      if(view && taMisc::gui_active) {
+        dist_mat->FindMakeGridView(NULL, false); // don't select view
+      }
       dist_mat->StructUpdate(false);
-      if(view) dist_mat->FindMakeGridView(NULL, false); // don't select view
       return true;
     }
   }
@@ -1263,8 +1265,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   dist_mat->SetUserData("HEADER_OFF", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
-  dist_mat->StructUpdate(false);
-  if(view) {
+  if(view && taMisc::gui_active) {
     GridTableView* gtv = dist_mat->FindMakeGridView(NULL, false); // don't select view
     if(name_labels && !name_col_nm.empty()) {
       gtv->AnnoteClearAll();
@@ -1273,6 +1274,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
       // false = NOT bot zero
     }
   }
+  dist_mat->StructUpdate(false);
   return true;
 }
 
@@ -1397,8 +1399,10 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 	  dist_mat->SetValAsFloat(dmat.FastEl2d(j,i), j+1, -1);
 	}
       }
+      if(view && taMisc::gui_active) {
+        dist_mat->FindMakeGridView(NULL, false); // don't select view
+      }
       dist_mat->StructUpdate(false);
-      if(view) dist_mat->FindMakeGridView(NULL, false); // don't select view
       return true;
     }
   }
@@ -1412,8 +1416,10 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   dist_mat->SetUserData("AUTO_SCALE", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
+  if(view && taMisc::gui_active) {
+    dist_mat->FindMakeGridView(NULL, false); // don't select view
+  }
   dist_mat->StructUpdate(false);
-  if(view) dist_mat->FindMakeGridView(NULL, false); // don't select view
   return true;
 }
 
@@ -1465,7 +1471,9 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   correl_mat->SetUserData("AUTO_SCALE", true);
   correl_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
-  if(view) correl_mat->FindMakeGridView(NULL, false); // don't select view
+  if(view && taMisc::gui_active) {
+    correl_mat->FindMakeGridView(NULL, false); // don't select view
+  }
   return true;
 }
 
@@ -1503,9 +1511,10 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
   root.Cluster(metric, norm, tol);
   root.GraphData(clust_data);
 
+  if(view && taMisc::gui_active) {
+    clust_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   clust_data->StructUpdate(false);
-
-  if(view) clust_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -1559,8 +1568,10 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
       dmda->SetValAsFloatM(eigen_vecs.FastEl2d(i,j), -1, j);
     }
   }
+  if(view && taMisc::gui_active) {
+    pca_data->FindMakeGridView(NULL, false); // don't select view
+  }
   pca_data->StructUpdate(false);
-  if(view) pca_data->FindMakeGridView(NULL, false); // don't select view
   return true;
 }
 
@@ -1637,7 +1648,9 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     yda->SetValAsFloat(yprjn.FastEl1d(i), -1);
   }
 
-  if(view) prjn_data->FindMakeGraphView(NULL, false); // don't select view
+  if(view && taMisc::gui_active) {
+    prjn_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   return true;
 }  
 
@@ -1692,7 +1705,9 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     yda->SetValAsFloat(xy_coords.FastEl2d(1, i), -1);
   }
 
-  if(view) prjn_data->FindMakeGraphView(NULL, false); // don't select view
+  if(view && taMisc::gui_active) {
+    prjn_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   return true;
 }
 
@@ -1756,7 +1771,9 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
     yda->SetValAsFloat(yprjn.FastEl1d(i), -1);
   }
 
-  if(view) prjn_data->FindMakeGraphView(NULL, false); // don't select view
+  if(view && taMisc::gui_active) {
+    prjn_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   return true;
 }
 
@@ -1793,7 +1810,9 @@ bool taDataAnal::TimeAvg(DataTable* avg_data, bool view, DataTable* src_data,
     }
   }
 
-  if(view) avg_data->FindMakeGraphView(NULL, false); // don't select view
+  if(view && taMisc::gui_active) {
+    avg_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   return true;
 }
 
@@ -1864,9 +1883,10 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
       taMath_float::vec_to_ints(smat, &float_tmp2);
     }
   }
+  if(view && taMisc::gui_active) {
+    smooth_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   smooth_data->StructUpdate(false);
-
-  if(view) smooth_data->FindMakeGraphView(NULL, false); // don't select view
   return true;
 }
 
@@ -2027,8 +2047,10 @@ bool taDataAnal::Histogram(DataTable* hist_data, DataTable* src_data,
 
   hist_data->SetUserData("GRAPH_TYPE", "BAR");
   
+  if(view && taMisc::gui_active) {
+    hist_data->FindMakeGraphView(NULL, false); // don't select view
+  }
   hist_data->StructUpdate(false);
-  if(view) hist_data->FindMakeGraphView(NULL, false); // don't select view
   
   return true;
 }
@@ -2100,8 +2122,10 @@ bool taDataAnal::MatrixCellFreq
     freq_data->SetUserData("N_ROWS", 1);
     // freq_data->SetUserData("AUTO_SCALE", true);
   }
+  if(view && taMisc::gui_active) {
+    freq_data->FindMakeGridView(NULL, false); // don't select view
+  }
   freq_data->StructUpdate(false);
-  if(view) freq_data->FindMakeGridView(NULL, false); // don't select view
   
   return true;
 }
