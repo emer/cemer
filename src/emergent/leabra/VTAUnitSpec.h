@@ -104,7 +104,8 @@ public:
     DA_P,                       // positive-valence oriented dopamine -- burst for positive valence outcomes better than expected, dip for worse than expected, dip for negative valence outcomes and (maybe) burst for for less negative than expected
     DA_N,                       // negative-valence oriented dopamine -- burst for negative valence outcomes worse than expected, dip for opposite, and dip for positive outcomes(?)
   };
-  DaValence       da_val;       // what valence of dopamine should we compute?
+
+ DaValence       da_val;       // what valence of dopamine should we compute?
   PVLVDaSpec      da;           // parameters for the pvlv da computation
   PVLVDaGains     gains;        // gains for various parameters
   LVBlockSpec     lv_block;     // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal

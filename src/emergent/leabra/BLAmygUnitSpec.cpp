@@ -18,6 +18,7 @@
 #include <LeabraNetwork>
 
 TA_BASEFUNS_CTORS_DEFN(BLAmygDaMod);
+TA_BASEFUNS_CTORS_DEFN(BLAmygAChMod);
 TA_BASEFUNS_CTORS_DEFN(BLAmygUnitSpec);
 
 void BLAmygDaMod::Initialize() {
@@ -29,6 +30,21 @@ void BLAmygDaMod::Defaults_init() {
   burst_da_gain = 0.1f;
   dip_da_gain = 0.1f;
   us_clamp_avg = 0.2f;
+}
+
+void BLAmygAChMod::Initialize() {
+  Defaults_init();
+}
+
+void BLAmygAChMod::Defaults_init() {
+  on = true;
+  mod_min = 0.8f;
+  mod_min_c = 1.0f - mod_min;
+}
+
+void BLAmygAChMod::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  mod_min_c = 1.0f - mod_min;
 }
 
 void BLAmygUnitSpec::Initialize() {
@@ -69,6 +85,10 @@ void BLAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   else {
     u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
     u->deep_mod = 1.0f;
+  }
+
+  if(bla_ach_mod.on) {          // use deep mod to reflect ach modulation
+    u->deep_mod = bla_ach_mod.mod_min + bla_ach_mod.mod_min_c * u->ach;
   }
 }
 

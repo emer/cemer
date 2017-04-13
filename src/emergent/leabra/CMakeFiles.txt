@@ -80,6 +80,7 @@ set(leabra_HEADS_MAKETA
   VTAUnitSpec.h
   DRNUnitSpec.h
   ClampDaUnitSpec.h
+  BFCSUnitSpec.h
 
   D1D2UnitSpec.h
   MSNCon.h
@@ -208,6 +209,7 @@ set(leabra_SRCS
   VTAUnitSpec.cpp
   DRNUnitSpec.cpp
   ClampDaUnitSpec.cpp
+  BFCSUnitSpec.cpp
 
   D1D2UnitSpec.cpp
   MSNCon.cpp

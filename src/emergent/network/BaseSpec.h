@@ -115,7 +115,7 @@ public:
 
   virtual void    ApplyTo(SpecUser* obj1, SpecUser* obj2=NULL, SpecUser* obj3=NULL,
                           SpecUser* obj4=NULL);
-  // #BUTTON #NULL_OK #TYPE_ON_min_user_type apply this spec to given object(s) (leave NULL any that are not needed)
+  // #BUTTON #NULL_OK #TYPE_ON_min_user_type #PREFER_NULL apply this spec to given object(s) (leave NULL any that are not needed)
   
   virtual void	  Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value

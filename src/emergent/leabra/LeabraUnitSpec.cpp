@@ -841,19 +841,16 @@ void LeabraUnitSpec::Trial_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net, i
 void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
-  if(net->train_mode == Network::TRAIN) {
-    if(lay->acts_p.avg >= avg_l_2.lay_act_thr) {
-      const float avg_m = u->avg_m;
-      avg_l.UpdtAvgL(u->avg_l, avg_m);
-    }
-    u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
-    if(avg_l_2.err_mod) {
-      float eff_err = fmaxf(lay->cos_diff_avg_lrn, avg_l_2.err_min);
-      u->avg_l_lrn *= eff_err;
-    }
-    if((lay->layer_type != Layer::HIDDEN) || deep.IsTRC()) {
-      u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
-    }
+  if(lay->acts_p.avg >= avg_l_2.lay_act_thr) {
+    avg_l.UpdtAvgL(u->avg_l, u->avg_m);
+  }
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
+  if(avg_l_2.err_mod) {
+    float eff_err = fmaxf(lay->cos_diff_avg_lrn, avg_l_2.err_min);
+    u->avg_l_lrn *= eff_err;
+  }
+  if((lay->layer_type != Layer::HIDDEN) || deep.IsTRC()) {
+    u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
   }
 }
 

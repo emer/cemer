@@ -46,6 +46,28 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(BLAmygAChMod);
+
+class E_API BLAmygAChMod : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for ach_mod gain factors
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // whether to modulate activations as a function of ach levels
+  float         mod_min;        // #DEF_0.8 minimum ach modulation factor -- net modulation is mod_mid + ach * (1 - mod_min)
+  float         mod_min_c;      // #READ_ONLY #EXPERT 1 - mod_min
+  
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(BLAmygAChMod);
+protected:
+  SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 
 eTypeDef_Of(BLAmygUnitSpec);
 
@@ -55,6 +77,7 @@ INHERITED(D1D2UnitSpec)
 public:
   DAReceptor    dar;            // type of predominant dopamine receptor: D1 vs. D2 -- determines whether primarily appetitive / relief (D1) or aversive / disappointment (D2)
   BLAmygDaMod   bla_da_mod;     // extra parameters for dopamine modulation of activation for BLA amyg units
+  BLAmygAChMod  bla_ach_mod;   // ach modulation of activation for BLA amyg units
 
   float Compute_DaModNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                            int thr_no, float& net_syn) override;
