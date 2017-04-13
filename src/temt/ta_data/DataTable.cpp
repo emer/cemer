@@ -5186,3 +5186,29 @@ bool DataTable::GraphViewLineStyle() {
   return true;
 }
 
+bool DataTable::InitValsCol(DataCol* col, const Variant& init_val) {
+  if (col) {
+    return col->InitVals(init_val);
+  }
+  else {
+    return false;
+  }
+}
+
+bool DataTable::InitValsToRowNoCol(DataCol* col) {
+  if (col) {
+    return col->InitValsToRowNo();
+  }
+  else {
+    return false;
+  }
+}
+
+bool DataTable::InitValsByIncrementCol(DataCol* col, const int first_value, const int increment) {
+  if (col) {
+    return col->InitValsByIncrement(first_value, increment);
+  }
+  else {
+    return false;
+  }
+}
