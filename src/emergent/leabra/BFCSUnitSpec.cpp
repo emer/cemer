@@ -106,7 +106,7 @@ void BFCSUnitSpec::Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
         for(int j=0;j<recv_gp->size; j++) {
           LeabraUnitVars* suv = (LeabraUnitVars*)recv_gp->UnVars(j,net);
           float del = suv->act_eq - suv->act_q0; // trial level delta
-          if(del < 0.0f) del = 0.0f;             // positive rectification!
+          if(del < 0.0f) del = 0.0f;             // positive rectification!?
           avg_del += fabsf(del);
         }
         avg_del *= ach.cea_gain;
@@ -114,7 +114,7 @@ void BFCSUnitSpec::Compute_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
       else {                    // assume vs, within-trial delta
         for(int j=0;j<recv_gp->size; j++) {
           LeabraUnitVars* suv = (LeabraUnitVars*)recv_gp->UnVars(j,net);
-          float del = suv->act_eq - suv->act_m; // within-trial delta
+          float del = suv->act_eq * suv->da_p; // act * dopamine!
           // if(del < 0.0f) del = 0.0f;             // positive rectification!
           avg_del += fabsf(del);
         }
