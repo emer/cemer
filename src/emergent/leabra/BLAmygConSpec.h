@@ -32,8 +32,6 @@ INHERITED(SpecMemberBase)
 public:
   float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier
   float         dalr_base;      // #DEF_0 constant baseline amount of learning prior to abs(da) factor -- should be near zero otherwise offsets in activation will drive learning in the absence of da significance
-  float         wt_decay;       // #DEF_0.1 decay rate (applied each weight change, typically AlphaTrial) as proportion of the weight value above the weight floor (times sending * recv activation)
-  float         wt_floor;       // #DEF_0.3 minimum weight value below which no decay occurs
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -61,11 +59,9 @@ public:
      const float da_p, const float lrate_eff, const float wt) {
     float delta = lrate_eff * su_act * (ru_act - ru_act_prv);
     float da_lrate = bla_learn.dalr_base + bla_learn.dalr_gain * fabsf(da_p);
-    float wt_decay_base = fmaxf(0.0f, (wt - bla_learn.wt_floor));
-    dwt += da_lrate * delta -
-      lrate_eff * su_act * ru_act * wt_decay_base * bla_learn.wt_decay;
+    dwt += da_lrate * delta;
   }
-  // #IGNORE abs(da) modulated delta learning with weight decay
+  // #IGNORE abs(da) modulated delta learning
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
