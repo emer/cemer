@@ -403,16 +403,12 @@ int iTableView::MapToTreeV(QWidget* widg, int pt_y) {
 }
 
 bool iTableView::SelectedRows(int& st_row, int& end_row) {
-  QModelIndexList row_list = selectionModel()->selectedRows();
-  if (row_list.size() > 0) {
-    QModelIndex idx;
-    idx = row_list.at(0);
-    st_row = idx.row();
-    idx = row_list.at(row_list.size()-1);
-    end_row = idx.row();
-    return true;
-  }
-  return false;
+  if(!selectionModel()) return false;
+  
+  CellRange sel(selectionModel()->selectedIndexes());
+  st_row = sel.row_fr;
+  end_row = sel.row_to;
+  return true;
 }
 
 bool iTableView::SelectRows(int st_row, int end_row) {
