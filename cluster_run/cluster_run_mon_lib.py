@@ -18,6 +18,9 @@ import xml.etree.ElementTree as ET
 # name of queue -- used for a few things -- replace with actual!
 clust_queue = ""
 
+# specifies if the cluster uses QoS or partitions to specify the queue. This is only relevant for SLURM
+use_qos = True
+
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
 # emergent/cluster_run/ directory (where this script lives as well)
@@ -93,6 +96,10 @@ job_update_window = 3
 # back because its flakey, not because the job is actually done..  these are
 # iterated as ABSENT_X.. counts
 job_done_retries = 5
+
+# On large public cluster, there can be hundreds or even thousands of jobs running concurrently
+# querying all jobs to compile the cluster_info table can be prohibitively expensive in that case
+disable_cluster_info = False
 
 # set to true for more debugging info
 #debug = True
@@ -2216,7 +2223,13 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _get_cluster_info(self):
+        global disable_cluster_info
         self._get_clusterscript_timestamp()
+
+        if (('disable_cluster_info' in globals()) and disable_cluster_info):
+            if debug:
+                logging.info("Cluster_info is disabled, so skipping updating it!")
+            return
 
         if showq_parser == 'pyshowq':
             self._get_cluster_info_pyshowq()

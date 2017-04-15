@@ -11,6 +11,9 @@ import cluster_run_mon_lib as runmon
 # name of queue -- used for a few things -- replace with actual!
 runmon.clust_queue = "blanca-ccn"
 
+# specifies if the cluster uses QoS or partitions to specify the queue. This is only relevant for SLURM
+runmon.use_qos = True
+
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
 # emergent/cluster_run/ directory (where this script lives as well)
@@ -66,6 +69,10 @@ runmon.showq_parser = "slurm"
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
 runmon.job_update_window = 3
+
+# On large public cluster, there can be hundreds or even thousands of jobs running concurrently
+# querying all jobs to compile the cluster_info table can be prohibitively expensive in that case
+runmon.disable_cluster_info = False
 
 # specify the email address of the user to notify of job events
 runmon.mail_user = "$USER"
