@@ -45,6 +45,7 @@
 #include <svn_sorts.h>
 #include <apr_xlate.h> // for APR_*_CHARSET
 #include <apr_hash.h>
+#include <svn_version.h>
 namespace {
   template<typename T>
   std::string
@@ -1096,7 +1097,9 @@ SubversionClient::GetFile(const String& from_url, String& to_str, int rev) {
   QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
-  from_url = svn_uri_canonicalize(from_url, m_pool);
+  String from_url_canonical = svn_uri_canonicalize(from_url, m_pool);
+#else
+  String from_url_canonical = from_url;
 #endif
 
   // We don't want to use peg revisions, so set to unspecified.
@@ -1122,7 +1125,7 @@ SubversionClient::GetFile(const String& from_url, String& to_str, int rev) {
 
   if (svn_error_t *error = svn_client_cat2
       (out_strm,
-       from_url,
+       from_url_canonical,
        &peg_revision,
        &revision,
        m_ctx,
@@ -1145,7 +1148,9 @@ SubversionClient::SaveFile(const String& from_url, const String& to_path, int re
   QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
-  from_url = svn_uri_canonicalize(from_url, m_pool);
+  String from_url_canonical = svn_uri_canonicalize(from_url, m_pool);
+#else
+  String from_url_canonical = from_url;
 #endif
 
   // We don't want to use peg revisions, so set to unspecified.
@@ -1184,7 +1189,7 @@ SubversionClient::SaveFile(const String& from_url, const String& to_path, int re
 
   if (svn_error_t *error = svn_client_cat2
       (out_strm,
-       from_url,
+       from_url_canonical,
        &peg_revision,
        &revision,
        m_ctx,
@@ -1203,7 +1208,9 @@ SubversionClient::GetDiffToPrev(const String& from_url, String& to_str, int rev)
   apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
-  from_url = svn_uri_canonicalize(from_url, m_pool);
+  String from_url_canonical = svn_uri_canonicalize(from_url, m_pool);
+#else
+  String from_url_canonical = from_url;
 #endif
 
   if(rev < 0) {
@@ -1251,9 +1258,9 @@ SubversionClient::GetDiffToPrev(const String& from_url, String& to_str, int rev)
 
   if(svn_error_t *error = svn_client_diff4
      (NULL, // const apr_array_header_t *diff_options,
-      from_url,                 // const char *	path1,
+      from_url_canonical,                 // const char *	path1,
       &prv_revision,
-      from_url,                 // const char *	path2,
+      from_url_canonical,                 // const char *	path2,
       &revision,
       NULL,
       depth,
@@ -1283,7 +1290,9 @@ SubversionClient::GetDiffWc(const String& from_url, String& to_str) {
   QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
-  from_url = svn_uri_canonicalize(from_url, m_pool);
+  String from_url_canonical = svn_uri_canonicalize(from_url, m_pool);
+#else
+  String from_url_canonical = from_url;
 #endif
 
   // We don't want to use peg revisions, so set to unspecified.
@@ -1319,9 +1328,9 @@ SubversionClient::GetDiffWc(const String& from_url, String& to_str) {
 
   if(svn_error_t *error = svn_client_diff4
      (NULL, // const apr_array_header_t *diff_options,
-      from_url,                 // const char *	path1,
+      from_url_canonical,                 // const char *	path1,
       &prv_revision,
-      from_url,                 // const char *	path2,
+      from_url_canonical,                 // const char *	path2,
       &revision,
       NULL,
       depth,
@@ -1446,7 +1455,9 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
   QMutexLocker qml(svn_operation);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
-  url = svn_uri_canonicalize(url, m_pool);
+  String url_canonical = svn_uri_canonicalize(url, m_pool);
+#else
+  String url_canonical = url;
 #endif
 
   n_entries = MAX(1, n_entries);
@@ -1457,7 +1468,7 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
 
   // create an array containing a single element which is the url target
   apr_array_header_t *targets = apr_array_make(m_pool, 1, sizeof(const char *));
-  APR_ARRAY_PUSH(targets, const char *) = url;
+  APR_ARRAY_PUSH(targets, const char *) = url_canonical;
 
 
   svn_opt_revision_range_t revision_range;
