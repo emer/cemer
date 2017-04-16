@@ -76,8 +76,6 @@ void iDialogItemChooser::init(const String& caption_) {
   m_cat_filter = 0; // default is all
   is_dialog = true; // default
   btnCancel = NULL;
-  btn_first_column_only = NULL;
-  first_column_only = true; // default
   setModal(true);
   setWindowTitle(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
@@ -344,7 +342,7 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   QHBoxLayout* lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c);
   lbl = new QLabel("search", body);
-  lbl->setToolTip(taiMisc::ToolTipPreProcess("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^"));
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Search for items that contain this \n\n text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^. Precede text with column name and ':' or column number and ':' to restrict search to a specific column (for example, 2:sometext)"));
   lay->addWidget(lbl);
   
   lay->addSpacing(taiM->vsep_c);
@@ -352,17 +350,6 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   filter->setToolTip(taiMisc::ToolTipPreProcess(lbl->toolTip()));
   lay->addWidget(filter, 1);
   
-  lay->addSpacing(taiM->vsep_c);
-  lbl = new QLabel("first column only", body);
-  lbl->setToolTip(taiMisc::ToolTipPreProcess("Search only applies to the first column - typically what you want."));
-  lay->addWidget(lbl);
-  
-  lay->addSpacing(taiM->vsep_c);
-  btn_first_column_only = new iCheckBox(body);
-  filter->setToolTip(taiMisc::ToolTipPreProcess(lbl->toolTip()));
-  lay->addWidget(btn_first_column_only, 1);
-  btn_first_column_only->setChecked(first_column_only);
-
   lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);
 
@@ -400,7 +387,6 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   connect(filter, SIGNAL(textChanged(const QString&)),
     this, SLOT(filter_textChanged(const QString&)) );
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
-  connect(btn_first_column_only, SIGNAL(clicked()), this, SLOT(SetColumnsForFilter()) );
 
   m_client = NULL;
   filter->setFocus();
@@ -516,11 +502,24 @@ bool iDialogItemChooser::ShowItem(const QTreeWidgetItem* item) const {
     }
   }
 
+  // check for column specific filtering (accept column name (case insensitive) or column number)
+  int search_column = -1;  // search all columns
+  String full_filter_string = last_filter;
+  String text_portion = last_filter;  // the filter stripped of column specifier
+  String column_specifier = full_filter_string.before(':');
+  if (column_specifier.nonempty()) {
+    GetColumnSpecifier(column_specifier, search_column);
+    if (search_column != -1) {
+      text_portion = text_portion.after(':');
+    }
+  }
+  QString search_filter = text_portion.chars();
+  
   // filter text filter
-  if (!last_filter.isEmpty()) {
+  if (!search_filter.isEmpty()) {
     bool hide = true;
-    if(last_filter.startsWith("^")) { // special start of string search (on by default)
-      QString flt = last_filter.mid(1); // skip ^
+    if(search_filter.startsWith("^")) { // special start of string search (on by default) checks first column only
+      QString flt = search_filter.mid(1); // skip ^
       if(flt.isEmpty()) return true;    // nothing after it!
       QString s = item->text(0);        // only 1st col
       if(s.startsWith(flt, Qt::CaseInsensitive)) {
@@ -530,18 +529,20 @@ bool iDialogItemChooser::ShowItem(const QTreeWidgetItem* item) const {
     }
     else {
       QString s;
-      int cols;
-      if (first_column_only) {
-        cols = 1;
+      if (search_column != -1) {
+        s = item->text(search_column);
+        if (s.contains(search_filter, Qt::CaseInsensitive)) {
+          hide = false;
+        }
       }
       else {
-        cols = items->columnCount();
-      }
-      for (int i = 0; i < cols; ++i) {
-        s = item->text(i);
-        if (s.contains(last_filter, Qt::CaseInsensitive)) {
-          hide = false;
-          break;
+        int cols = items->columnCount();
+        for (int i = 0; i < cols; ++i) {
+          s = item->text(i);
+          if (s.contains(search_filter, Qt::CaseInsensitive)) {
+            hide = false;
+            break;
+          }
         }
       }
       if (hide) return false;
@@ -554,12 +555,6 @@ void iDialogItemChooser::SetFilter(const QString& filt) {
   last_filter = filt;
   ApplyFiltering();
 }
-
-void iDialogItemChooser::SetColumnsForFilter() {
-  first_column_only = !first_column_only;
-  ApplyFiltering();
-}
-
 
 void iDialogItemChooser::setSelObj(void* value, bool force) {
   if ((m_selObj == value) && !force) return;
@@ -631,3 +626,17 @@ void iDialogItemChooser::timFilter_timeout() {
   else SetFilter(text);
 }
 
+void iDialogItemChooser::GetColumnSpecifier(String specifier, int& column) const {
+  specifier.downcase();
+  QTreeWidgetItem* hi = items->headerItem();
+  int cols = m_client->columnCount(m_view); // cache
+  for (int i = 0; i < cols; ++i) {
+    QVariant column_label = hi->data(i, Qt::DisplayRole);
+    String label = column_label.toString();
+    label.downcase();
+    if (specifier == label || specifier == (String)i) {
+      column = i;
+      break;
+    }
+  }
+}
