@@ -32,6 +32,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
+#include <tabMisc>
 
 #include <QButtonGroup>
 #include <QAbstractButton>
@@ -482,6 +483,15 @@ void taiEditorOfClass::DoRmvFmControlPanel(QAction* act){
   }
 }
 
+void taiEditorOfClass::DoGoToControlPanel() {
+  taBase* rbase = ctrl_panel_base;
+  MemberDef* md = ctrl_panel_mbr;
+  ControlPanel* pset = rbase->MemberControlPanel(md->name);
+  if(pset) {
+    tabMisc::DelayedFunCall_gui(pset, "BrowserSelectMe");
+  }
+}
+
 MemberDef* taiEditorOfClass::GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc)
 {
@@ -552,7 +562,7 @@ void taiEditorOfClass::FillLabelContextMenu_CtrlPanel(QMenu* mnu, int& last_id)
   DoFillLabelContextMenu_CtrlPanel
     (mnu, last_id, ctrl_panel_base, ctrl_panel_mbr, body,
      this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)),
-     SLOT(DoAddToControlPanel_Short(QAction*)));
+     SLOT(DoAddToControlPanel_Short(QAction*)), SLOT(DoGoToControlPanel()));
 }
 
 void taiEditorOfClass::GetButtonImage(bool force) {

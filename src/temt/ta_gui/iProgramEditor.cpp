@@ -34,6 +34,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
+#include <tabMisc>
 
 #include <Qt>
 #include <QVBoxLayout>
@@ -704,7 +705,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
     taiEditorWidgetsMain::DoFillLabelContextMenu_CtrlPanel
       (menu, last_id,sel_item_base, sel_item_mbr, body,
        this, SLOT(DoAddToControlPanel(QAction*)), SLOT(DoRmvFmControlPanel(QAction*)),
-       SLOT(DoAddToControlPanel_Short(QAction*)));
+       SLOT(DoAddToControlPanel_Short(QAction*)), SLOT(DoGoToControlPanel()));
   }
 
   if (menu->actions().count() > 0) {
@@ -780,6 +781,15 @@ void iProgramEditor::DoRmvFmControlPanel(QAction* act) {
     ControlPanel_Group* cp = (ControlPanel_Group*)bval;
     proj->undo_mgr.SaveUndo(cp, "RemoveFmControlPanel", cp);
     cp->RemoveMember(rbase, md);
+  }
+}
+
+void iProgramEditor::DoGoToControlPanel() {
+  taBase* rbase = sel_item_base;
+  MemberDef* md = sel_item_mbr;
+  ControlPanel* pset = base->MemberControlPanel(md->name);
+  if(pset) {
+    tabMisc::DelayedFunCall_gui(pset, "BrowserSelectMe");
   }
 }
 

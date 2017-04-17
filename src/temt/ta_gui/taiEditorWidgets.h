@@ -43,7 +43,7 @@ public:
   static void           DoFillLabelContextMenu_CtrlPanel
     (QMenu* menu, int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
      QObject* slot_obj, const char* add_slot, const char* rmv_slot,
-     const char* add_short_slot = NULL);
+     const char* add_short_slot = NULL, const char* goto_slot = NULL);
     // helper used here and in ProgEditor and elsewhere to handle control panel context menus -- last slot if present is for a add with short name (no parent path)
   static void           GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
 

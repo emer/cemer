@@ -50,6 +50,10 @@ taiWidgetComposite::~taiWidgetComposite() {
 
 void taiWidgetComposite::ChildAdd(taiWidget* child) {
   widget_el.Add(child);
+  QObject::connect(child, SIGNAL(settingHighlight(bool)),
+                   this, SIGNAL(settingHighlight(bool)) );
+  QObject::connect(child, SIGNAL(settingLighten(bool)),
+                   this, SIGNAL(settingLighten(bool)) );
 }
 
 void taiWidgetComposite::ChildRemove(taiWidget* child) {

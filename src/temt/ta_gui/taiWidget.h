@@ -98,17 +98,18 @@ public:
 public:
   TypeDef*              typ;            // type for the gui object
   MemberDef*            mbr;            // for members
-  IWidgetHost*            host;           // dialog or edit panel that this belongs to (optional)
+  IWidgetHost*          host;           // dialog or edit panel that this belongs to (optional)
   String                orig_val;       // text of original data value
 
 protected:
-  bool                  mhighlight;
+  bool                  m_highlight;
+  bool                  m_lighten;       // also make background slightly lighter
   bool                  m_visible;      // defaults to true, only for CONDSHOW guys
 #ifndef __MAKETA__
   QPointer<QWidget>     m_rep;          // widget that represents the data
   QPointer<QLabel>      m_label;        // an associate label, typically for condshow show/hide
 #endif
-  taiWidget*              mparent;        // if data is contained within data, this the parent container
+  taiWidget*            mparent;        // if data is contained within data, this the parent container
   int                   mflags;
   mutable taBaseRef     m_base;         // this is a hack for when the Host is not the Base, particularly ProgCtrl panels, etc., and enables Seledit to work
 
@@ -129,10 +130,12 @@ public:
 
   int                   defSize() const;        // default taiMisc::SizeSpec value, for sizing controls (taken from parent, else "default")
   virtual bool          isConstructed();        // true if our parents (ex dialog) are fully constructed
-  bool                  highlight() const { return mhighlight; }        // #GET_highlight  changed highlight
+  bool                  highlight() const { return m_highlight; }        // #GET_highlight  changed highlight
+  virtual void          setHighlight(bool value);       // #SET_Highlight
+  bool                  lighten() const { return m_lighten; } // #GET_lighten
+  virtual void          setLighten(bool value);              // #SET_lighten
   QLabel*               label() const {return m_label;}
   void                  setLabel(QLabel* value) {m_label = value;}
-  virtual void          setHighlight(bool value);       // #SET_Highlight
   virtual bool          readOnly() const; // #GET_ReadOnly true if the control should be read only -- partially delegates to parent
   virtual bool          fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
   bool                  visible() const {return m_visible;}
@@ -164,8 +167,10 @@ public:
 #ifndef __MAKETA__
   void                  emit_UpdateUi();
   void                  emit_settingHighlight(bool setting);
+  void                  emit_settingLighten(bool setting);
 signals:
   bool                  settingHighlight(bool setting); // invoked when highlight state changes
+  bool                  settingLighten(bool setting); // invoked when lighten state changes
   void                  UpdateUi(); // cliphandler callback, to get it to requery the ui items
   void                  SigEmitNotify(taiWidget* sender); // raised when data changed for us (but not when invoked by a child)
 #endif

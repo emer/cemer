@@ -32,6 +32,7 @@ class TA_API taBase_RefList: public taPtrList<taBase>,
   // ##NO_TOKENS ##NO_MEMBERS ##NO_CSS a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
 public:
   void                  setOwner(IRefListClient* own_);
+  IRefListClient*       getOwner() const { return m_own; }
 
   taBase_RefList(IRefListClient* own_ = NULL) {Initialize(); setOwner(own_);}
   ~taBase_RefList();

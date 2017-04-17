@@ -45,31 +45,34 @@ public:
 
   MemberDef*    mbr;
 
-  taiMember*            LowerBidder() { return static_cast<taiMember*>(next_lower_bidder); }
+  taiMember*   LowerBidder() { return static_cast<taiMember*>(next_lower_bidder); }
   bool         handlesReadOnly() const override;
-  bool                  isCondEdit() const;
-  bool                  isCondShow() const;
+  bool         isCondEdit() const;
+  bool         isCondShow() const;
 
-  int                   BidForType(TypeDef*) override { return 0; }
+  int          BidForType(TypeDef*) override { return 0; }
   // none of the member specific ones should apply types
-  virtual int           BidForMember(MemberDef*, TypeDef*) { return 1; }
+  virtual int  BidForMember(MemberDef*, TypeDef*) { return 1; }
   // bid for (appropriateness) for given type of member (and members owner type)
 
+  static void  SetHighlights(MemberDef* mbr, TypeDef* typ, taiWidget* dat, const void* base);
+  // set highlight state for widget based on state info (non-default, on control panel, etc)
+  
 //
 //   // default member action is to pass thru to the type
 //
-  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+  taiWidget*   GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) override;
   // get taiWidget rep of type -- delegates to mbr's it
-  DefaultStatus         GetDefaultStatus(String memb_val);
+  DefaultStatus GetDefaultStatus(String memb_val);
     // get status of value, if is default value or not
-  void         GetImage(taiWidget* dat, const void* base) override;
+  void          GetImage(taiWidget* dat, const void* base) override;
   // generate the gui representation of the data -- same rules as GetWidgetRep
-  virtual void          GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
+  virtual void  GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
   // this is the one to call to get a member value (GetValue is not used)
   // TODO: should this class void GetValue(taiWidget* dat, void * base) override; as a noop?
 
-  virtual TypeDef*      GetTargetType(const void* base);
+  virtual TypeDef* GetTargetType(const void* base);
   // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
 
   // script-generation code
@@ -92,19 +95,19 @@ public:
 protected:
   // the "Arbitrate routines all apply the same logic of ro, and subtype, to call
   // either that guy, or our own -- only SpecPtr overrides these
-  virtual taiWidget*      GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par,
+  virtual taiWidget* GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr); // gets sub or this, and factors ro
-  virtual void          GetArbitrateImage(taiWidget* dat, const void* base);
+  virtual void GetArbitrateImage(taiWidget* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetWidgetRep
-  virtual void          GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff);
+  virtual void GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff);
 
-  taiWidget*     GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*   GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
   void         GetImage_impl(taiWidget* dat, const void* base) override;
   // generate the gui representation of the data -- same rules as GetWidgetRep
-  virtual void          GetMbrValue_impl(taiWidget* dat, void* base);
+  virtual void GetMbrValue_impl(taiWidget* dat, void* base);
   bool         isReadOnly(taiWidget* dat, IWidgetHost* host_ = NULL) override; // used dlg, par, and member directives to determine if RO
-  void                  CheckProcessCondEnum(taiTypeOfEnum* et, taiWidget* dat, const void* base);
+  void         CheckProcessCondEnum(taiTypeOfEnum* et, taiWidget* dat, const void* base);
 };
 
 

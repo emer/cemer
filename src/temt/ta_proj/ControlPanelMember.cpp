@@ -56,7 +56,7 @@ void ControlPanelMemberData::UpdateAfterEdit_impl() {
         if(obs_search)
           state = SEARCH;
         else if(obs_record)
-          state = ACTIVE;
+          state = EXPLORE;
       }
       else {
         state = STABLE;         // default to stable for everything else
@@ -82,7 +82,7 @@ void ControlPanelMemberData::SetCtrlType() {
   }
   else {
     ctrl_type = CONTROL;
-    state = ACTIVE;             // all control panel members are active by definition!
+    state = EXPLORE;             // all control panel members are active by definition!
   }
 }
 
@@ -230,7 +230,7 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
         SetToSearch();
       }
       else if(obs_param_srch.record) {
-        SetToActive();
+        SetToExplore();
       }
       obs_param_srch.search = false;
       obs_param_srch.record = false;
@@ -313,14 +313,14 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
     if(IsSearch()) {
       if(!data.is_single || !data.is_numeric) {
         taMisc::Warning("ControlPanelMember:",label,
-                        "cannot SEARCH on parameters that are not elemental numeric values -- reverting to ACTIVE");
-        SetToActive();
+                        "cannot SEARCH on parameters that are not elemental numeric values -- reverting to EXPLORE");
+        SetToExplore();
       }
     }
-    if(IsActive()) {
+    if(IsExplore()) {
       if(!data.is_single) {
         taMisc::Warning("ControlPanelMember:",label,
-                        "cannot have ACTIVE parameters that are not elemental values (i.e., no composite objects are allowed) -- reverting to STABLE");
+                        "cannot have EXPLORE parameters that are not elemental values (i.e., no composite objects are allowed) -- reverting to STABLE");
         SetToStable();
       }
     }
@@ -349,12 +349,48 @@ bool ControlPanelMember::MbrUpdated() {
       prv_desc = desc;
     }
   }
+
+  if(!IsParamSet() || IsInactive()) {
+    return updted;
+  }
+
+  ParamSet* psown = GET_MY_OWNER(ParamSet);
+  if(!psown) {
+    return updted;              // shouldn't happen
+  }
+  if(!psown->last_activated) {  // only if active guy..
+    return updted;
+  }
+
+  if(!ActiveEqualsSaved() && base->IsMemberEditable(mbr->name)) {
+    String cur_val = CurValAsString();
+    if(cur_val != data.last_prompt_val) { // prevent multiple queries on same value!
+      data.last_prompt_val = cur_val;
+      int chs = taMisc::Choice
+        ("ParamSet: " + psown->name + " Member: " + label +
+         " has been edited and is different from the saved value\n" +
+         "cur value: " + cur_val + "\n" +
+         "saved val: " + data.saved_value, "Apply (ParamSet unchanged)", "Apply and Save To ParamSet", "Revert from ParamSet Saved Val");
+      if(chs == 0) {
+        return updted;
+      }
+      if(chs == 1) {
+        SaveCurrent();
+        return true;
+      }
+      if(chs == 2) {
+        Activate();
+        data.last_prompt_val = CurValAsString();
+        return true;
+      }
+    }
+  }
   return updted;
 }
 
 void ControlPanelMember::ActivateAfterEdit() {
   if(!mbr || !base) return;
-  if(IsParamSet() && IsActive()) {
+  if(IsParamSet() && IsExplore()) {
     Activate();
   }
 }
@@ -502,6 +538,13 @@ void ControlPanelMember::CopyActiveToSaved() {
   SavedToProgVar();
 }
 
+bool ControlPanelMember::ActiveEqualsSaved() const {
+  if(!IsParamSet()) return true; // only active..
+  String active_value = CurValAsString();
+  String saved_value = data.saved_value;
+  return (active_value == saved_value);
+}
+
 void ControlPanelMember::SavedToProgVar() {
   if(!mbr || !base) return;
   TypeDef* mbr_td = mbr->type;
@@ -550,12 +593,14 @@ void ControlPanelMember::ProgVarToSaved() {
 
 void ControlPanelMember::CopySavedToActive() {
   if(!mbr || !base) return;
+  if(IsInactive()) return;
   SetCurValFmString(data.saved_value, true, false);
   base->UpdateAfterEdit();
 }
 
 void ControlPanelMember::CopySavedToActive_nouae() {
   if(!mbr || !base) return;
+  if(IsInactive()) return;
   SetCurValFmString(data.saved_value, false, false);
 }
 
@@ -567,7 +612,7 @@ void ControlPanelMember::BaseUpdateAfterEdit() {
 
 bool ControlPanelMember::RecordValue() {
   if(!data.is_single) return false;
-  return (IsActive() || IsSearch());
+  return (IsExplore() || IsSearch());
 }
 
 String ControlPanelMember::RecordValueString(bool use_search_vals) {

@@ -35,17 +35,17 @@ class TA_API ControlPanelItem: public taOBase {
 public:
   // some convenience functions
     
-  static bool           StatCheckBase(ControlPanelItem* itm, taBase* base);
+  static bool           StatCheckBase(ControlPanelItem* itm, const taBase* base);
   // #IGNORE check if either itm->base == base or itm->mbr->GetOff(itm->base) == base
   static ControlPanelItem* StatFindItemBase
-    (const taGroup_impl* grp, taBase* base, TypeItem* ti, int& idx);
+    (const taGroup_impl* grp, const taBase* base, TypeItem* ti, int& idx);
   // #IGNORE find the item with indicated base and mth/mbr in the group
   static ControlPanelItem* StatFindItemBase_List
-    (const taGroup_impl* grp, taBase* base, TypeItem* ti, int& idx);
+    (const taGroup_impl* grp, const taBase* base, TypeItem* ti, int& idx);
   // #IGNORE find the item with indicated base and mth/mbr in the main list elements ONLY (not in any subgroups)
   static bool           StatGetBase_Flat(const taGroup_impl* grp, int idx, taBase*& base);
   // #IGNORE gets the flat (leaf) base
-  static bool           StatHasBase(taGroup_impl* grp, taBase* base);
+  static bool           StatHasBase(taGroup_impl* grp, const taBase* base);
   // #IGNORE see if anyone has this base
   static bool           StatRemoveItemBase(taGroup_impl* grp, taBase* base);
   // #IGNORE remove any items with this base

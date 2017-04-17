@@ -198,6 +198,7 @@ protected slots:
   void                  DoAddToControlPanel(QAction* act);
   void                  DoAddToControlPanel_Short(QAction* act);
   void                  DoRmvFmControlPanel(QAction* act);
+  void                  DoGoToControlPanel();
   void                  BackMenuAboutToShow();
   void                  ForwardMenuAboutToShow();
   void                  HistoryGoTo(QAction* action);

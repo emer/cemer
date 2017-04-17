@@ -272,7 +272,7 @@ void taiWidgetActions::child_triggered_toggled(iAction* act) {
 }
 
 iAction* taiWidgetActions::curSel() const {
-  if (par_menu != NULL)
+  if (par_menu != NULL && par_menu != this)
     return par_menu->curSel();
   else  return cur_sel;
 }
@@ -365,9 +365,10 @@ void taiWidgetActions::Reset() {
 void taiWidgetActions::setCurSel(iAction* value) {
   //curSel can only be a global radio type, or null
   if ( (value != NULL) && !value->canSelect() ) return;
-  if (par_menu != NULL) {
+  if (par_menu != NULL && par_menu != this) {
     par_menu->setCurSel(value);
-  } else {
+  }
+  else {
     // controlling root needs to unselect existing element
     if (cur_sel == value) return;
     if (cur_sel != NULL) {
@@ -387,7 +388,7 @@ void taiWidgetActions::setCurSel(iAction* value) {
 }
 
 String taiWidgetActions::label() const {
-  if (par_menu != NULL)
+  if (par_menu != NULL && par_menu != this)
     return par_menu->label();
   else {
     return mlabel;
@@ -395,8 +396,9 @@ String taiWidgetActions::label() const {
 }
 
 void taiWidgetActions::setLabel(const String& val) {
-  if (par_menu != NULL)
+  if (par_menu != NULL && par_menu != this) {
     par_menu->setLabel(val);
+  }
   else {
     if (mlabel == val) return;
     mlabel = val;

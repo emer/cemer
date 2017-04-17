@@ -21,17 +21,21 @@
 #include <QLabel>
 #include <QVariant>
 
+class IWidgetHost; //
 
 class TA_API iLabel: public QLabel {
-//class __declspec(dllexport) iLabel: public QLabel {
+  // enhanced label
   Q_OBJECT
 INHERITED(QLabel)
 public:
+  IWidgetHost*          host; // dialog or edit panel that this belongs to (optional)
+
   bool			highlight() {return mhighlight;}
   int			index() {return mindex;}
   inline QVariant	userData() const {return muser_data;}
     // put anything you want here
   void			setUserData(const QVariant& value);
+  virtual void          updateBgColor();
 
   iLabel(QWidget* parent = 0);
   iLabel(const QString& text, QWidget* parent); 
@@ -39,6 +43,7 @@ public:
 
 public slots:
   void			setHighlight(bool value);
+  void			setLighten(bool value);
   
 #ifndef __MAKETA__
 signals:
@@ -47,6 +52,7 @@ signals:
 
 protected:
   bool 			mhighlight;
+  bool 			mlighten;
   int			mindex;
   QVariant		muser_data;
 

@@ -39,9 +39,10 @@ public:
   };
 
   enum ParamState {  // what state is the parameter in?
-    ACTIVE,          // #COLOR_green this parameter is being actively explored -- for param set items, edits to saved values will automatically be activated to the live current values -- this value will also be saved in a ClusterRun and passed as a startup arg on the command line
+    EXPLORE,          // #COLOR_green #AKA_ACTIVE this parameter is being actively explored -- for param set items, edits to saved values will automatically be activated to the live current values -- this value will also be saved in a ClusterRun and passed as a startup arg on the command line
     STABLE,          // #COLOR_darkblue this is a stable parameter that generally should not change -- it is not recorded specifically in the ClusterRun, but you CAN edit the saved_value if you want
     LOCKED,          // #COLOR_black stronger form of STABLE: the value of this parameter cannot be edited directly -- it is locked down -- change to STABLE to allow editing
+    INACTIVE,        // #COLOR_grey the value of this parameter cannot be edited directly,  and the saved value is not copied to the live (active) values for a param set when it is activated -- essentially as if this item was removed from the list -- useful for temporary inactivation instead of removing and then re-adding
     SEARCH,          // #COLOR_red the values of this parameter are determined by the parameter searching mechanism in ClusterRun, according to the range specification -- each searched value will be passed as a command-line argument, and saved in the list of paramters shown in the cluster run
   };
 
@@ -51,7 +52,7 @@ public:
 
   ParamState            state;          // #LABEL_ #CONDSHOW_OFF_ctrl_type:CONTROL what state is this parameter in?  determines many features of how the parameter is used
 
-  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED #LABEL_ #EDIT_VALUE #NO_SAVE gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
+  ProgVar               saved;          // #CONDSHOW_ON_ctrl_type:PARAM_SET #CONDEDIT_OFF_state:LOCKED,INACTIVE #LABEL_ #EDIT_VALUE #NO_SAVE gui editor version of saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
   String                saved_value;    // #HIDDEN saved value of this parameter -- the value that was in use for a saved parameter set (ParamSet) or the value to be used for a parameter set that is specified to be used -- this value will be copied to the active current value of this object when it is used
 
   String                range;          // #CONDSHOW_ON_state:SEARCH specify the values over which to search this parameter -- specific values can be listed separated by commas , and ranges can be specified using start:stop:increment (increment is optional, defaults to 1) notation as used in Matrix code -- e.g. 1,2,3:10:1,10:20:2 -- however here the stop value here is INCLUSIVE: 1:3:1 = 1,2,3 as that is more often useful -- can also specify %paramname to yoke this parameter to the paramname parameter -- it will not be searched independently, but rather will have the same values as paramname
@@ -59,8 +60,9 @@ public:
   double_Array          srch_vals;      // #HIDDEN #NO_SAVE full list of search values, parsed from range expression
 
   String                notes;          // #EDIT_DIALOG #EDIT_WIDTH_40 a place to comment on the effect of parameter or any other comment -- please document early and often!
+  String                last_prompt_val; // #IGNORE the last current value of stimulus that user was prompted about regarding differences from saved value
   
-  bool                  obs_record;     // #AKA_record #HIDDEN #READ_ONLY #NO_SAVE #OBSOLETE just for loading obsolete data -- now ACTIVE
+  bool                  obs_record;     // #AKA_record #HIDDEN #READ_ONLY #NO_SAVE #OBSOLETE just for loading obsolete data -- now EXPLORE
   bool                  obs_search;     // #AKA_search #HIDDEN #READ_ONLY #NO_SAVE #OBSOLETE just for loading obsolete data -- now SEARCH
 
 
@@ -77,21 +79,25 @@ public:
   inline bool           IsClusterRun() const { return ctrl_type == CLUSTER_RUN; }
   // #CAT_CtrlPanel is this a member of a ClusterRun
 
-  inline bool          IsActive() const { return state == ACTIVE; }
-  // is state == ACTIVE?
+  inline bool          IsExplore() const { return state == EXPLORE; }
+  // is state == EXPLORE?
   inline bool          IsStable() const { return state == STABLE; }
   // is state == STABLE?
   inline bool          IsLocked() const { return state == LOCKED; }
   // is state == LOCKED?
+  inline bool          IsInactive() const { return state == INACTIVE; }
+  // is state == INACTIVE?
   inline bool          IsSearch() const { return state == SEARCH; }
   // is state == SEARCH?
 
-  inline void          SetToActive() { state = ACTIVE; }
-  // set the state to ACTIVE
+  inline void          SetToExplore() { state = EXPLORE; }
+  // set the state to EXPLORE
   inline void          SetToStable() { state = STABLE; }
   // set the state to STABLE
   inline void          SetToLocked() { state = LOCKED; }
   // set the state to LOCKED
+  inline void          SetToInactive() { state = INACTIVE; }
+  // set the state to INACTIVE
   inline void          SetToSearch() { state = SEARCH; }
   // set the state to SEARCH
   
@@ -184,24 +190,26 @@ public:
   inline void           Activate() { if(IsParamSet()) CopySavedToActive(); }
   // #CAT_CtrlPanel #BUTTON #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value to be active (live) values on the objects
   virtual void          CopyToAllInGroup();
-  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value of this member to all other ParamSet's within the same group as this one -- does NOT copy any ones with state of LOCKED, so you can protect certain ones with that
+  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy the save_value of this member to all other ParamSet's within the same group as this one -- does NOT copy any ones with state of LOCKED or INACTIVE, so you can protect certain ones with that
   virtual void          CopyStateToAllInGroup();
-  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy state (ACTIVE, STABLE, etc) of this member to all other ParamSet's within the same group as this one
+  // #CAT_CtrlPanel #BUTTON #CONFIRM #GHOST_OFF_data.ctrl_type:PARAM_SET only for ParamSet elements: copy state (EXPLORE, STABLE, etc) of this member to all other ParamSet's within the same group as this one
 
   virtual void          ActivateAfterEdit();
-  // #CAT_CtrlPanel for ACTIVE paramset members, activate after editing -- called via the gui editor 
+  // #CAT_CtrlPanel for EXPLORE paramset members, activate after editing -- called via the gui editor 
   
   virtual void          CopyActiveToSaved();
   // #CAT_CtrlPanel for ParamSet elements: copy the current active (live) values on the objects to the saved values
   virtual void          CopySavedToActive();
   // #CAT_CtrlPanel for ParamSet elements: copy the save_value to be active (live) values on the objects
+  virtual bool          ActiveEqualsSaved() const;
+  // #CAT_CtrlPanel does the current active value equal the saved_value?
   virtual void          CopySavedToActive_nouae();
   // #IGNORE -- no update after edit -- just set the value
   virtual void          BaseUpdateAfterEdit();
   // #CAT_CtrlPanel call MemberUpdateAfterEdit and UpdateAfterEdit on the base object
 
   virtual bool          RecordValue();
-  // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued ACTIVE or SEARCH members are so recorded
+  // #CAT_CtrlPanel whether this member value should be recorded in MembersToString record (e.g., for ClusterRun) -- only single-valued EXPLORE or SEARCH members are so recorded
   virtual String        RecordValueString(bool use_search_vals);
   // #CAT_CtrlPanel a string representation of the value to record for this member -- if use_search_vals then data.next_val is used, otherwise if a ParamSet member then use the saved_value, otherwise the current active value as a string
 
@@ -222,21 +230,25 @@ public:
   virtual bool          IsArchived();
   // #CAT_CtrlPanel test if this is an archived item -- looks for a non-null owner of type ArchivedParams_Group
 
-  inline bool          IsActive() const { return data.IsActive(); }
-  // #CAT_CtrlPanel is state == ACTIVE?
+  inline bool          IsExplore() const { return data.IsExplore(); }
+  // #CAT_CtrlPanel is state == EXPLORE?
   inline bool          IsStable() const { return data.IsStable(); }
   // #CAT_CtrlPanel is state == STABLE?
   inline bool          IsLocked() const { return data.IsLocked(); }
   // #CAT_CtrlPanel is state == LOCKED?
+  inline bool          IsInactive() const { return data.IsInactive(); }
+  // #CAT_CtrlPanel is state == INACTIVE?
   inline bool          IsSearch() const { return data.IsSearch(); }
   // #CAT_CtrlPanel is state == SEARCH?
 
-  inline void          SetToActive() { data.SetToActive(); SigEmitUpdated(); }
-  // #CAT_CtrlPanel #DYN1 set the state to ACTIVE
+  inline void          SetToExplore() { data.SetToExplore(); SigEmitUpdated(); }
+  // #CAT_CtrlPanel #DYN1 set the state to EXPLORE
   inline void          SetToStable() { data.SetToStable(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to STABLE
   inline void          SetToLocked() { data.SetToLocked(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to LOCKED
+  inline void          SetToInactive() { data.SetToInactive(); SigEmitUpdated(); }
+  // #CAT_CtrlPanel #DYN1 set the state to INACTIVE
   inline void          SetToSearch() { data.SetToSearch(); SigEmitUpdated(); }
   // #CAT_CtrlPanel #DYN1 set the state to SEARCH
 

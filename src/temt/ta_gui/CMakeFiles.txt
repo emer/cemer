@@ -222,6 +222,11 @@ set(ta_gui_HEADS_MAKETA_MOC
   taiEditorOfClass.h
   taiEditorOfString.h
   taiEditorOfProgramCtrl.h
+  taiEditorOfDoc.h
+  taiEditorOfWizard.h
+  taiEditorOfUserData.h
+  taiEditorOfControlPanelBase.h
+  taiEditorOfControlPanelFull.h
 
   taGuiEditor.h
 
@@ -326,12 +331,6 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   taGuiWidget_QObj.h
   taGuiAction_QObj.h
   ISelectableHost_QObj.h
-
-  taiEditorOfDoc.h
-  taiEditorOfWizard.h
-  taiEditorOfUserData.h
-  taiEditorOfControlPanelBase.h
-  taiEditorOfControlPanelFull.h
 
   taiWidgetDelegate.h
   taiWidgetDelegateUserData.h

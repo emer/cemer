@@ -64,7 +64,7 @@ BaseSubSpec* BaseSubSpec::FindParent() {
   return from;
 }
 
-void BaseSubSpec::SetUnique(const char* memb_nm, bool on) {
+void BaseSubSpec::SetUnique(const String& memb_nm, bool on) {
   MemberDef* md = FindMemberName(memb_nm);
   if(md)
     SetUnique(md->idx, on);
@@ -88,20 +88,20 @@ void BaseSubSpec::SetUnique(int memb_no, bool on) {
     unique.RemoveEl(md->name);
 }
 
-bool BaseSubSpec::GetUnique(const char* memb_nm) {
+bool BaseSubSpec::GetUnique(const String& memb_nm) {
   MemberDef* md = FindMemberName(memb_nm);
   if(md)
     return GetUnique(md->idx);
   TestError(true, "GetUnique", "Member named:", memb_nm, "not found");
-  return false;
+  return true;
 }
 
 bool BaseSubSpec::GetUnique(int memb_no) {
   if(memb_no < TA_BaseSubSpec.members.size)
-    return false;
+    return true;
   MemberDef* md = GetTypeDef()->members[memb_no];
   if(TestError(!md, "GetUnique", "Member number:", String(memb_no), "not found")) {
-    return false;
+    return true;
   }
   if(unique.FindEl(md->name) >= 0) return true;
   return false;

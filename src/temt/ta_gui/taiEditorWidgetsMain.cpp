@@ -34,7 +34,10 @@ iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par
   iLabel* label = new iLabel(row, name, par);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  if (buddy) label->setUserData((ta_intptr_t)buddy);
+  if (buddy) {
+    label->setUserData((ta_intptr_t)buddy);
+    label->host = buddy->host;
+  }
   if (ctx_obj) {
     QObject::connect
       (label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
@@ -47,6 +50,8 @@ iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par
     buddy_widg = buddy->GetRep();
     QObject::connect(buddy, SIGNAL(settingHighlight(bool)),
         label, SLOT(setHighlight(bool)) );
+    QObject::connect(buddy, SIGNAL(settingLighten(bool)),
+        label, SLOT(setLighten(bool)) );
   }
 
 

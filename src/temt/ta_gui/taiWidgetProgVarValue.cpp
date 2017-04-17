@@ -74,6 +74,11 @@ void taiWidgetProgVarValue::GetSubWidget(ProgVar* pv) {
   sub_widget->SetMemberDef(md); // usually done by im, but we are manual here...
   SetMemberDef(md);
 
+  QObject::connect(sub_widget, SIGNAL(settingHighlight(bool)),
+                   this, SIGNAL(settingHighlight(bool)) );
+  QObject::connect(sub_widget, SIGNAL(settingLighten(bool)),
+                   this, SIGNAL(settingLighten(bool)) );
+
   QHBoxLayout* lay = new QHBoxLayout(m_rep);
   lay->setMargin(0); lay->setSpacing(0);
   lay->addWidget(sub_widget->GetRep());

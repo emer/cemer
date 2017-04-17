@@ -44,6 +44,7 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <taSigLink>
+#include <taSigLinkItr>
 #include <TypeDefault>
 #include <int_Matrix>
 #include <byte_Matrix>
@@ -2123,7 +2124,7 @@ void taBase::SetMember(const String& member, const String& value) {
   int base_off = 0;
   MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, mbr_off,
                                                  member, false); // no warn
-  if(mbr_def && !mbr_def->HasOption("READ_ONLY") && !mbr_def->HasOption("GUI_READ_ONLY")) {
+  if(mbr_def && !mbr_def->isGuiReadOnly()) {
     void* address = MemberDef::GetOff_static(this, base_off, mbr_off);
     mbr_def->type->SetValStr(value, address, NULL, mbr_def);
     UpdateAfterEdit();
@@ -3242,6 +3243,13 @@ void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& v
   md->type->SetValVar(val, mbase, NULL, md);
 }
 
+bool taBase::IsMemberEditable(const String& memb_name) const {
+  MemberDef* md = GetTypeDef()->members.FindName(memb_name);
+  if(!md) return false;
+  return !md->isGuiReadOnly();
+}
+
+
 Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if (fun_name == "NewColMatrixN_gui" && arg_idx == 2) {
     MatrixGeom* mg = new MatrixGeom(2, 2, 2);
@@ -3716,6 +3724,38 @@ void taBase::GetControlPanelLabel(MemberDef* mbr, String& label, const String& x
 
 void taBase::GetControlPanelDesc(MemberDef* mbr, String& desc) const {
   MemberDef::GetMembDesc(mbr, desc, "");
+}
+
+ControlPanel* taBase::MemberControlPanel(const String& member_name, TypeDef* panel_type) const {
+  TypeDef* td = GetTypeDef();
+  MemberDef* md = td->members.FindName(member_name);
+  if(!md) {                     // used in low-level routines, no err msg
+    return NULL;
+  }
+  taSigLink* dl = sig_link();
+  if(!dl) {
+    return NULL;
+  }
+
+  for(int i=0; i<dl->clients_list().size; i++) {
+    ISigLinkClient* dlc = dl->clients_list().FastEl(i);
+    TypeDef* dlc_typ = dlc->GetTypeDef();
+    if(!dlc_typ) continue;
+    if(!dlc_typ->InheritsFrom(&TA_taBase_RefList)) continue;
+    taBase_RefList* rlist = (taBase_RefList*)dlc->This();
+    if(!rlist) continue;
+    IRefListClient* lown = rlist->getOwner();
+    if(!lown) continue;
+    ControlPanel* pan = (ControlPanel*)lown->This();
+    if(panel_type != NULL) {
+      if(pan->GetTypeDef() != panel_type) continue;
+    }
+    int idx = pan->FindMbrBase(this, md);
+    if(idx >= 0) {
+      return pan;
+    }
+  }
+  return NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@
 TA_BASEFUNS_CTORS_DEFN(ControlPanelItem);
 
 
-bool ControlPanelItem::StatCheckBase(ControlPanelItem* itm, taBase* base) {
+bool ControlPanelItem::StatCheckBase(ControlPanelItem* itm, const taBase* base) {
   if(itm->base == base)
     return true;
   TypeItem* ti = itm->typeItem();
@@ -35,8 +35,8 @@ bool ControlPanelItem::StatCheckBase(ControlPanelItem* itm, taBase* base) {
   return false;
 }
 
-ControlPanelItem* ControlPanelItem::StatFindItemBase(const taGroup_impl* grp,
-   taBase* base, TypeItem* ti, int& idx)
+ControlPanelItem* ControlPanelItem::StatFindItemBase
+(const taGroup_impl* grp, const taBase* base, TypeItem* ti, int& idx)
 {
   idx = 0;
   FOREACH_ELEM_IN_GROUP(ControlPanelItem, rval, *grp) {
@@ -48,8 +48,8 @@ ControlPanelItem* ControlPanelItem::StatFindItemBase(const taGroup_impl* grp,
   return NULL;
 }
 
-ControlPanelItem* ControlPanelItem::StatFindItemBase_List(const taGroup_impl* grp,
-   taBase* base, TypeItem* ti, int& idx)
+ControlPanelItem* ControlPanelItem::StatFindItemBase_List
+(const taGroup_impl* grp, const taBase* base, TypeItem* ti, int& idx)
 {
   idx = -1;
   for(int i=0; i<grp->size; i++) {
@@ -73,7 +73,7 @@ bool ControlPanelItem::StatGetBase_Flat(const taGroup_impl* grp, int idx,
   return false;
 }
 
-bool ControlPanelItem::StatHasBase(taGroup_impl* grp, taBase* base) {
+bool ControlPanelItem::StatHasBase(taGroup_impl* grp, const taBase* base) {
   FOREACH_ELEM_IN_GROUP(ControlPanelItem, ei, *grp) {
     if (StatCheckBase(ei, base)) return true;
   }

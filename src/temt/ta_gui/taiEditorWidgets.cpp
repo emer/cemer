@@ -37,13 +37,19 @@
 
 void taiEditorWidgets::DoFillLabelContextMenu_CtrlPanel
 (QMenu* menu, int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
- QObject* slot_obj, const char* add_slot, const char* rmv_slot, const char* add_short_slot)
+ QObject* slot_obj, const char* add_slot, const char* rmv_slot, const char* add_short_slot,
+   const char* goto_slot)
 {
   // have to be a taBase to use ControlPanel
   if (!rbase || !md) return;
   // get list of control panels
   taProject* proj = (taProject*)rbase->GetThisOrOwner(&TA_taProject);
   if (!proj) return;
+
+  QAction* act = menu->addAction("Go To ControlPanel", slot_obj, goto_slot);
+  if(!rbase->MemberControlPanel(md->name)) {
+    act->setEnabled(false);
+  }
 
   // if any edits, populate menu for adding, for all ctrl panels not already on
   QMenu* add_sub = menu->addMenu("Add to ControlPanel");

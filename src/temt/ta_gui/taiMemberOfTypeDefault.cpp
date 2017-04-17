@@ -38,19 +38,19 @@ taiWidget* taiMemberOfTypeDefault::GetWidgetRep(IWidgetHost* host_, taiWidget* p
   else {
     rdat = taiMember::GetWidgetRep_impl(host_, rval, rval->GetRep(), flags_, mbr);
   }
-  rval->data = rdat;
   rval->AddChildWidget(rdat->GetRep());
   rval->EndLayout();
   return rval;
 }
 
 void taiMemberOfTypeDefault::GetImage(taiWidget* dat, const void* base) {
-  QCAST_MBR_SAFE_EXIT(taiWidgetPlusToggle*, rval, dat)
+  taiWidgetPlusToggle* rval = (taiWidgetPlusToggle*)dat;
+  taiWidget* sub_dat= rval->widget_el.FastEl(0);
   if (HasLowerBidder()) {
-    LowerBidder()->GetImage(rval->data, base);
+    LowerBidder()->GetImage(sub_dat, base);
   }
   else {
-    taiMember::GetImage_impl(rval->data, base);
+    taiMember::GetImage_impl(sub_dat, base);
   }
   taBase_List* gp = typ->defaults;
   tpdflt = NULL;
@@ -69,13 +69,13 @@ void taiMemberOfTypeDefault::GetImage(taiWidget* dat, const void* base) {
 }
 
 void taiMemberOfTypeDefault::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
-  //note: we don't call the inherited, or use the impls
-  QCAST_MBR_SAFE_EXIT(taiWidgetPlusToggle*, rval, dat)
+  taiWidgetPlusToggle* rval = (taiWidgetPlusToggle*)dat;
+  taiWidget* sub_dat= rval->widget_el.FastEl(0);
   if (HasLowerBidder()) {
-    LowerBidder()->GetMbrValue(rval->data, base, first_diff);
+    LowerBidder()->GetMbrValue(sub_dat, base, first_diff);
   }
   else {
-    taiMember::GetMbrValue(rval->data, base,first_diff);
+    taiMember::GetMbrValue(sub_dat, base,first_diff);
   }
   if (tpdflt != NULL) {         // gotten by prev GetImage
     tpdflt->SetActive(mbr->idx, rval->GetValue());

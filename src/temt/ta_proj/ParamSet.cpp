@@ -97,12 +97,7 @@ void ParamSet::SetMemberState(const String& member_name,
 bool ParamSet::ActiveEqualsSaved(const String& member_name) {
   ControlPanelMember* emi = mbrs.FindLeafName(member_name);
   if(!emi) return false;
-  bool rval = false;
-  String active_value = emi->CurValAsString();
-  String saved_value = emi->data.saved_value;
-  if (active_value == saved_value)
-    rval = true;
-  return rval;
+  return emi->ActiveEqualsSaved();
 }
 
 void ParamSet::ComparePeers(ParamSet* param_set) {

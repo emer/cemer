@@ -26,16 +26,13 @@ taiWidgetPlusToggle::taiWidgetPlusToggle(TypeDef* typ_, IWidgetHost* host_, taiW
 {
   SetRep(MakeLayoutWidget(gui_parent_));
   but_rep = NULL;
-  data = NULL;
 }
 
 taiWidgetPlusToggle::~taiWidgetPlusToggle() {
 //  rep = NULL;
-  data = NULL; //note: will be owned/parented elsewise, so it must delete that way
 }
 
 void taiWidgetPlusToggle::applyNow() {
-  but_rep->setChecked(true);
   inherited::applyNow();
 }
 
@@ -47,21 +44,17 @@ void taiWidgetPlusToggle::InitLayout() {
     but_rep->setReadOnly(true);
   }
   else {
-    connect(but_rep, SIGNAL(clicked(bool)),
-        this, SLOT(Toggle_Callback()) );
-  }
+    QObject::connect(but_rep, SIGNAL(clicked(bool) ),
+                     this, SLOT(applyNow() ) );
+   }
 }
 
-int taiWidgetPlusToggle::GetValue() {
+bool taiWidgetPlusToggle::GetValue() {
   return but_rep->isChecked();
 }
+
 void taiWidgetPlusToggle::GetImage(bool chk) {
   but_rep->setChecked(chk);
-}
-void taiWidgetPlusToggle::Toggle_Callback() {
-  if (host != NULL)
-    host->Changed();
-  // SigEmit(); //note: was already remarked out prior to qt port
 }
 
 void taiWidgetPlusToggle::SigEmit_impl(taiWidget* chld) {

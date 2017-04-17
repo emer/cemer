@@ -46,9 +46,9 @@ public:
   // #CAT_ParamSet #BUTTON #ARGC_0 copy the saved_value values to be active (live) values on the objects
   
   void                  AllStable() override  { inherited::AllStable(); }
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #BUTTON set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #BUTTON set all members to be STABLE -- you can then selectively mark a subset as EXPLORE -- in general don't want to explore too many fields at once
   void                  AllLocked() override { inherited::AllLocked(); }
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or EXPLORE -- use this to lock down a very stable set of parameters and prevent further editing
   
   ParamSet*             Archive() override { return inherited::Archive(); }
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON archive this set of parameters into a new archived_params parameter set, for later reference

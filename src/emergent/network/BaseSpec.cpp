@@ -159,7 +159,7 @@ BaseSpec* BaseSpec::FindMakeChild(const String& nm, TypeDef* td, bool& nw_itm, c
   return children.FindMakeSpec(nm, td, nw_itm, alt_nm);
 }
 
-BaseSpec* BaseSpec::FindParent() {
+BaseSpec* BaseSpec::FindParent() const {
   return GET_MY_OWNER(BaseSpec);
 }
 
@@ -202,17 +202,23 @@ void BaseSpec::SetUnique(int memb_no, bool on) {
     unique.RemoveEl(md->name);
 }
 
-bool BaseSpec::GetUnique(const String& memb_nm) {
-  if(unique.FindEl(memb_nm) >= 0) return true;
-  return false;
+bool BaseSpec::GetUnique(const String& memb_nm) const {
+  int mbr_no = GetTypeDef()->members.FindNameIdx(memb_nm);
+  if(TestError(mbr_no < 0, "GetUnique", "Member name:", memb_nm, "not found")) {
+    return true;
+  }
+  return GetUnique(mbr_no);
 }
 
-bool BaseSpec::GetUnique(int memb_no) {
+bool BaseSpec::GetUnique(int memb_no) const {
   if(memb_no < TA_BaseSpec.members.size)
-    return false;
+    return true;
   MemberDef* md = GetTypeDef()->members[memb_no];
   if(TestError(!md, "GetUnique", "Member number:", String(memb_no), "not found")) {
     return false;
+  }
+  if(md->HasOption("NO_INHERIT")) {
+    return true;
   }
   if(unique.FindEl(md->name) >= 0) return true;
   return false;
@@ -454,6 +460,25 @@ void BaseSpec::SetMember(const String& member, const String& value) {
     mbr_eff = mbr_eff.before('.');
   SetUnique(mbr_eff, true);
   inherited::SetMember(member, value);
+}
+
+bool BaseSpec::IsInheritedAndHasParent(const String& memb_nm) const {
+  BaseSpec* par = FindParent();
+  if(!par) return false;
+  bool uniq = GetUnique(memb_nm);
+  if(uniq) return false;
+  MemberDef* md = par->FindMemberName(memb_nm);
+  if(!md) return false;
+  return true;
+}
+
+bool BaseSpec::IsMemberEditable(const String& memb_name) const {
+  bool rval = inherited::IsMemberEditable(memb_name);
+  if(!rval) return rval;
+  if(IsInheritedAndHasParent(memb_name)) {
+    return false;
+  }
+  return true;
 }
 
 taBase* BaseSpec::ChooseNew(taBase* origin) {

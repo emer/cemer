@@ -132,7 +132,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         item->SavedToProgVar(); // update prog var rep
       }
       
-      bool active_disable = item->IsLocked() || item->IsParamSet();
+      bool active_disable = item->IsLocked() || item->IsInactive() || item->IsParamSet();
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
@@ -160,8 +160,8 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
       ++dat_cnt;
 
-      if(ctrlpan->InheritsFrom(&TA_ParamSet)) {
-        if(!((ParamSet*)ctrlpan)->ActiveEqualsSaved(item->GetName())) {
+      if(item->IsParamSet() && !item->IsInactive()) {
+        if(!item->ActiveEqualsSaved()) {
           MarkRowException(dat_cnt);
         }
       }

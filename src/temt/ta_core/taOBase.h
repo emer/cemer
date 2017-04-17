@@ -41,8 +41,8 @@ protected:
 
 // Methods:
 public:
-  taSigLink**          addr_sig_link() { return &m_sig_link; }
-  taSigLink*  sig_link() override { return m_sig_link; }
+  taSigLink**           addr_sig_link() { return &m_sig_link; }
+  taSigLink*            sig_link() const override { return m_sig_link; }
   taBase*               GetOwner() const override { return owner; }
   using inherited::GetOwner;
   taBase*               SetOwner(taBase* ta) override { owner = ta; return ta; }

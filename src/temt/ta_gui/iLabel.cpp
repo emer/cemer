@@ -26,6 +26,8 @@
 #include <qtextstream.h>
 #include <qstyle.h>
 
+#include <IWidgetHost>
+#include <iColor>
 
 iLabel::iLabel(QWidget* parent)
 : QLabel(parent)
@@ -48,7 +50,9 @@ iLabel::iLabel(int index_, const QString& text, QWidget* parent)
 
 void iLabel::init() {
   mhighlight = false;
+  mlighten = false;
   mindex = -1;
+  host = NULL;
 }
 
 void iLabel::contextMenuEvent(QContextMenuEvent* e) {
@@ -58,23 +62,48 @@ void iLabel::contextMenuEvent(QContextMenuEvent* e) {
 void iLabel::setHighlight(bool value){
   if (mhighlight == value) return;
   mhighlight = value;
+  updateBgColor();
+}
+
+void iLabel::setLighten(bool value){
+  if (mlighten == value) return;
+  mlighten = value;
+  updateBgColor();
+}
+
+void iLabel::updateBgColor() {
   QFont fnt(font());
   QPalette pal(palette());
-//NOTES:
-// foregroundRole() is role used to render text
-  if (value) {
+  if (mhighlight) {
     fnt.setBold(true);
-    pal.setColor(backgroundRole(), Qt::yellow);
+    if(mlighten) {
+      pal.setColor(backgroundRole(), QColor(Qt::yellow).darker(120)); // yeah actually darker
+    }
+    else {
+      pal.setColor(backgroundRole(), Qt::yellow);
+    }
     setAutoFillBackground(true);
-    pal.setColor(foregroundRole(), Qt::darkBlue); 
-      //QApplication::palette().color(QPalette::Highlight)); // typically darkBlue
-  } else {
+    // pal.setColor(foregroundRole(), Qt::darkBlue); 
+  }
+  else {
     fnt.setBold(false);
-    pal.setColor(backgroundRole(),  
-      QApplication::palette(this).color(backgroundRole()));
-    setAutoFillBackground(false);
-    pal.setColor(foregroundRole(),  
-      QApplication::palette(this).color(foregroundRole()));
+    QColor bgclr;
+    if(host) {
+      bgclr = host->colorOfCurRow();
+    }
+    else {
+      bgclr = Qt::cyan;
+    }
+    if(mlighten) {
+      pal.setColor(backgroundRole(), bgclr.lighter(120));
+      setAutoFillBackground(true);
+    }
+    else {
+      pal.setColor(backgroundRole(), bgclr);
+      setAutoFillBackground(false);
+    }
+    // pal.setColor(foregroundRole(),  
+    //              QApplication::palette(this).color(foregroundRole()));
   }
   setFont(fnt);
   setPalette(pal);

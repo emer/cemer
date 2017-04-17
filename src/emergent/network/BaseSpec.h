@@ -76,13 +76,16 @@ public:
 
   bool              SpecInheritsFrom(BaseSpec* spec) const;
     // returns true if this spec is the spec, or is one of its children
-  virtual BaseSpec*	FindParent();
+  virtual BaseSpec* FindParent() const;
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
   virtual void	SetUnique(int memb_no, bool on); // set inherit bit
   virtual void	SetUnique(const String& memb_nm, bool on); // set inherit bit
-  virtual bool	GetUnique(int memb_no);	     	// check inherit bit
-  virtual bool	GetUnique(const String& memb_nm);	// check inherit bit
+  virtual bool	GetUnique(int memb_no) const;	     	  // check inherit bit
+  virtual bool	GetUnique(const String& memb_nm) const; // check inherit bit
+
+  virtual bool  IsInheritedAndHasParent(const String& memb_nm) const;
+  // is given member inherited from its parent (i.e., NOT unique) and parent actually has this member ot inherit from
 
   virtual void	UpdateMember(BaseSpec* from, int memb_no);
   // copy member from given parent
@@ -134,6 +137,7 @@ public:
   
   void            SetMember(const String& member, const String& value) override;
   // #DYN1 . This also automatically sets the spec unique flag to 'On' so that this value is unique to this spec, and updates all the children of this spec so they can inherit this change (or not depending on their unique flags).
+  bool            IsMemberEditable(const String& memb_name) const override;
 
   virtual void    CompareWithChildren();
   // #BUTTON calls network::SpecCompareWithChildren to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!

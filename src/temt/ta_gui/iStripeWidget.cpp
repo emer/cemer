@@ -18,7 +18,10 @@
 #include <QPainter>
 
 iStripeWidget::iStripeWidget(QWidget* parent)
-:QWidget(parent), mhiLightColor(0x80, 0x80, 0x80), exception_color(0xFF, 0xFF, 0xD0), exception_color_dark(0xFF, 0xFF, 0x00)
+:QWidget(parent)
+, mhiLightColor(0x80, 0x80, 0x80)
+, exception_color(0xFF, 0xD0, 0xD0)
+, exception_color_dark(0xFF, 0xB0, 0xB0)
 {
   mstripeHeight = 25;
   mtopMargin = 0;

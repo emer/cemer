@@ -40,9 +40,9 @@ public:
   // #MENU #USE_RVAL Find the parent spec of this one
 
   virtual void	SetUnique(int memb_no, bool on); // set inherit bit
-  virtual void	SetUnique(const char* memb_nm, bool on); // set inherit bit
+  virtual void	SetUnique(const String& memb_nm, bool on); // set inherit bit
   virtual bool	GetUnique(int memb_no);	     	// check inherit bit
-  virtual bool	GetUnique(const char* memb_nm);	// check inherit bit
+  virtual bool	GetUnique(const String& memb_nm);	// check inherit bit
 
   virtual void	UpdateMember(BaseSubSpec* from, int memb_no);
   // copy member from given sub spec if not unique

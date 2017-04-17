@@ -99,6 +99,7 @@ public:
 
   virtual String&       ListClients(String& strm, int indent = 0) const;
   // list all the data clients for this object to string
+  ISigLinkClient_PtrList& clients_list() { return clients; }
 
   virtual TypeDef*      GetTypeDef() const;
   taSigLink(void* data_, taSigLink* &link_ref_);

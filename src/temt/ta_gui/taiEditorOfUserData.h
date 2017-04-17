@@ -25,6 +25,7 @@
 class taiWidgetDelegateUserData; //
 class QTableWidget; //
 class QTableWidgetItem; //
+class QPoint; //
 
 
 class TA_API taiEditorOfUserData : public taiEditorOfClass {

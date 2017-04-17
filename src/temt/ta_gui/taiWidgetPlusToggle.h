@@ -30,7 +30,6 @@ class TA_API taiWidgetPlusToggle : public taiWidgetComposite {
   Q_OBJECT
   INHERITED(taiWidgetComposite)
 public:
-  taiWidget*              data; // set by caller after creating contained class
   iCheckBox*            but_rep;
   inline QWidget*       rep() {return (QWidget*)m_rep;} //parent of contained controls
 
@@ -39,10 +38,8 @@ public:
 
   void InitLayout() override;
 
-  virtual int   GetValue();
+  virtual bool  GetValue();
   virtual void  GetImage(bool chk);
-public slots:
-  virtual void  Toggle_Callback();
 
 protected:
   void SigEmit_impl(taiWidget* chld) override;

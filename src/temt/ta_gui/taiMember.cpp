@@ -23,6 +23,9 @@
 #include <EnumDef>
 #include <taiTypeOfEnum>
 #include <BuiltinTypeDefs>
+#include <IWidgetHost>
+
+taTypeDef_Of(taiEditorOfControlPanelBase);
 
 #include <taMisc>
 #include <tabMisc>
@@ -220,14 +223,34 @@ taiMember::DefaultStatus taiMember::GetDefaultStatus(String memb_val) {
   return (memb_val == defval) ? EQU_DEF : NOT_DEF;
 }
 
-void taiMember::GetOrigVal(taiWidget* dat, const void* base) {
-  dat->orig_val = mbr->GetValStr(base);
+
+void taiMember::SetHighlights(MemberDef* mbr, TypeDef* typ, taiWidget* dat, const void* base) {
   // if a default value was specified, compare and set the highlight accordingly
   switch (mbr->GetDefaultStatus(base)) {
-  case MemberDef::NOT_DEF: dat->setHighlight(true); break;
-  case MemberDef::EQU_DEF: dat->setHighlight(false); break;
+  case MemberDef::NOT_DEF:
+    dat->setHighlight(true);
+    break;
+  case MemberDef::EQU_DEF:
+    dat->setHighlight(false);
+    break;
   default: break; // compiler food
   }
+  if(typ->IsActualTaBase()) {
+    if(!dat->host->GetTypeDef()->InheritsFrom(&TA_taiEditorOfControlPanelBase)) {
+      ControlPanel* pset = ((taBase*)base)->MemberControlPanel(mbr->name, &TA_ParamSet);
+      if(pset) {
+        dat->setLighten(true);
+      }
+      else {
+        dat->setLighten(false);
+      }
+    }
+  }
+}
+
+void taiMember::GetOrigVal(taiWidget* dat, const void* base) {
+  dat->orig_val = mbr->GetValStr(base);
+  taiMember::SetHighlights(mbr, typ, dat, base);
 }
 
 void taiMember::GetMbrValue_impl(taiWidget* dat, void* base) {

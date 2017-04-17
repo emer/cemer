@@ -822,13 +822,13 @@ ControlPanelMethod* ControlPanel::mth(int i) const {
   return mths.Leaf(i);
 }
 
-int ControlPanel::FindMbrBase(taBase* base, MemberDef* md) {
+int ControlPanel::FindMbrBase(const taBase* base, MemberDef* md) {
   int rval = -1;
   ControlPanelItem::StatFindItemBase(&mbrs, base, md, rval);
   return rval;
 }
 
-int ControlPanel::FindMethBase(taBase* base, MethodDef* md) {
+int ControlPanel::FindMethBase(const taBase* base, MethodDef* md) {
   int rval = -1;
   ControlPanelItem::StatFindItemBase(&mths, base, md, rval);
   return rval;
@@ -849,7 +849,7 @@ String ControlPanel::ToWikiTable() {
   return rval;
 }
 
-String ControlPanel::ActiveMembersToString(bool use_search_vals) {
+String ControlPanel::ExploreMembersToString(bool use_search_vals) {
   String params;
   bool first = true;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
@@ -860,7 +860,7 @@ String ControlPanel::ActiveMembersToString(bool use_search_vals) {
         params.cat(" "); // sep
       else
         first = false;
-      String oparams = sub_panel->ActiveMembersToString(use_search_vals);
+      String oparams = sub_panel->ExploreMembersToString(use_search_vals);
       params.cat(oparams);
     }
     else {
@@ -961,7 +961,7 @@ void ControlPanel::AddMembersAsArgs(bool active_only, bool follow_control_panel_
     }
     else {
       if(!mbr->data.is_single) continue;
-      if(active_only && !mbr->IsActive()) continue;
+      if(active_only && !mbr->IsExplore()) continue;
       taMisc::AddEqualsArgName(mbr->label);
       taMisc::AddArgNameDesc(mbr->label, "Control Panel Member: " + name);
     }
@@ -979,7 +979,7 @@ void ControlPanel::SetMembersFromArgs(bool active_only, bool follow_control_pane
     }
     else {
       if(!mbr->data.is_single) continue;
-      if(active_only && !mbr->IsActive()) continue;
+      if(active_only && !mbr->IsExplore()) continue;
       String argval = taMisc::FindArgByName(mbr->label);
       if(argval.empty()) continue;
       mbr->SetCurValFmString(argval, true, true); // warn no match, info msg

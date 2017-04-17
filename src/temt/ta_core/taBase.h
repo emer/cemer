@@ -1068,7 +1068,7 @@ protected:  // Impl
   //    SigLinks -- notify other guys when you change
 public:
 
-  virtual taSigLink*   sig_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(sig_link()) sig_link->SomeFunc(); NOT autocreated by call to this func -- call GetSigLink() to force creation
+  virtual taSigLink*   sig_link() const {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(sig_link()) sig_link->SomeFunc(); NOT autocreated by call to this func -- call GetSigLink() to force creation
   virtual taSigLink*   GetSigLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support siglinks
   bool                  AddSigClient(ISigLinkClient* dlc); // #IGNORE note: only applicable for classes that implement siglinks
   bool                  RemoveSigClient(ISigLinkClient* dlc); // #IGNORE WARNING: link is undefined after this
@@ -1261,7 +1261,7 @@ public:
   static  void          CallObjFun(taBase* obj, const String& fun_name);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 call function (method) of given name on given object, prompting for args using gui interface
   virtual bool          ShowCallFunDialog(const String& method_name = "") { return true; }
-  // #CAT_ObjectMgmt there are cases when you want to call the function via CallFun but skip the parameter dialog - this allows you to test those conditions - switch on method name
+  // #IGNORE there are cases when you want to call the function via CallFun but skip the parameter dialog - this allows you to test those conditions - switch on method name
 
   static  void          SetMemberStr(taBase* obj, const String& memb_name,
                                      const String& str);
@@ -1270,7 +1270,9 @@ public:
                                      const Variant& val);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on variant -- memb_name can be an arbitrary full path below the obj
   virtual void          MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) { };
-  // #CAT_ObjectMgmt the given member was just edited to a new value -- apply any member-specific changes before the global UpdateAfterEdit function is called.  if called from a gui edit dialog interface, the edit_dialog flag is set, so that behavior can be appropriately differentiated
+  // #IGNORE the given member was just edited to a new value -- apply any member-specific changes before the global UpdateAfterEdit function is called.  if called from a gui edit dialog interface, the edit_dialog flag is set, so that behavior can be appropriately differentiated
+  virtual bool          IsMemberEditable(const String& memb_name) const;
+  // #IGNORE is the given member editable -- by default looks at the MemberDef flags for READ_ONLY etc, isReadOnly -- subclasses may have other ways of determining editability
 
   virtual Variant       GetGuiArgVal(const String& fun_name, int arg_idx);
   // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!
@@ -1457,19 +1459,21 @@ public:
   // #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
 
   virtual bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel);
-  // #MENU #MENU_ON_ControlPanel #NO_MENU_PANEL #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #PREFER_ITEM #ITEM_FILTER_1_ControlPanelStdItemFilter select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use
+  // #MENU #MENU_ON_ControlPanel #NO_MENU_PANEL #MENU_SEP_BEFORE #CAT_ControlPanel #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #PREFER_ITEM #ITEM_FILTER_1_ControlPanelStdItemFilter select an object member to be added to a given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected. prompts user for final specification of label to use
   virtual bool          AddToControlPanelNm
     (const String& memb_nm, ControlPanel* ctrl_panel, const String& extra_label = _nilString, const String& sub_gp_nm = _nilString, const String& desc = _nilString, bool short_label = false);
-  // #CAT_Display add given member (by name) given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected.  extra_label is prepended to member name if present, otherwise owner obj name and path to member is prepended, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist).  desc is a custom description -- will show up as tooltip for user (default is info from member).  short_label omits prepending owner name to label
+  // #CAT_ControlPanel add given member (by name) given control_panel (a user-chosen collection of members and methods from one or more objects  -- if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected.  extra_label is prepended to member name if present, otherwise owner obj name and path to member is prepended, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist).  desc is a custom description -- will show up as tooltip for user (default is info from member).  short_label omits prepending owner name to label
   virtual bool          AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel, const String& extra_label = "");
-  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #PREFER_ITEM #CAT_Display #ITEM_FILTER_1_ControlPanelNoParamSetItemFilter select a function (method) for calling from a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.  extra_label is prepended to function name if present
+  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #PREFER_ITEM #CAT_ControlPanel #ITEM_FILTER_1_ControlPanelNoParamSetItemFilter select a function (method) for calling from a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.  extra_label is prepended to function name if present
   virtual bool          AddFunToControlPanelNm
     (const String& function_nm, ControlPanel* ctrl_panel, const String& extra_label = _nilString, const String& sub_gp_nm = _nilString, const String& desc = _nilString);
-  // #CAT_Display select a method (by name) for use in a control_panel that is a collection of selected members and methods from different objects (if ctrl_panel is NULL, a new one is created in .crtl_panels)  returns false if method was already selected. desc is a custom description -- will show up as tooltip for user (default is info from method)
+  // #CAT_ControlPanel select a method (by name) for use in a control_panel that is a collection of selected members and methods from different objects (if ctrl_panel is NULL, a new one is created in .crtl_panels)  returns false if method was already selected. desc is a custom description -- will show up as tooltip for user (default is info from method)
   virtual void          GetControlPanelLabel(MemberDef* mbr, String& label, const String& extra_label = _nilString, bool short_label = false) const;
   // #IGNORE get label for given member of this object for use in a ControlPanel -- if extra_label is non-empty, then typically the label is extra_label + _ + mbr->name, otherwise the label is owner_path + _ + mbr->name, except if short path is set, in which case the owner_path is omitted and it is just mbr->name
   virtual void          GetControlPanelDesc(MemberDef* mbr, String& desc) const;
   // #IGNORE get description string for given member -- by default this is just the description information (comments in C++ code) associated with the given member def from the class type -- but can be other info for other object types
+  virtual ControlPanel* MemberControlPanel(const String& member_name, TypeDef* panel_type = NULL) const;
+  // #CAT_ControlPanel if a given member name (must be direct member of object) is on a control panel, this returns the first such control panel that it is on, else NULL -- if panel_type is non-null, it ONLY looks for panels of a given type (e.g., ParamSet, etc) -- otherwise looks for any kind of ControlPanel
   
   ///////////////////////////////////////////////////////////////////////////
   //    User Data: optional configuration settings for objects

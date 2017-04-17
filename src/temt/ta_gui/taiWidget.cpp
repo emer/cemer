@@ -30,7 +30,8 @@ taiWidget::taiWidget()
   , mbr(0)
   , host(0)
   , orig_val()
-  , mhighlight(false)
+  , m_highlight(false)
+  , m_lighten(false)
   , m_visible(true)
   , m_rep(0)
   , m_label()
@@ -46,7 +47,8 @@ taiWidget::taiWidget(TypeDef* typ_, IWidgetHost* host_, taiWidget* parent_, QWid
   , mbr(0)
   , host(host_)
   , orig_val()
-  , mhighlight(false)
+  , m_highlight(false)
+  , m_lighten(false)
   , m_visible(true)
   , m_rep(0)
   , m_label()
@@ -144,6 +146,10 @@ void taiWidget::emit_settingHighlight(bool setting) {
   emit settingHighlight(setting);
 }
 
+void taiWidget::emit_settingLighten(bool setting) {
+  emit settingLighten(setting);
+}
+
 bool taiWidget::eventFilter(QObject* watched, QEvent* ev) {
   //note: we don't delete events, just look for focusin on our rep
   bool rval = inherited::eventFilter(watched, ev);
@@ -199,8 +205,8 @@ bool taiWidget::readOnly() const {
 }
 
 void taiWidget::setHighlight(bool value) {
-  if (mhighlight == value) return;
-  mhighlight = value;
+  if (m_highlight == value) return;
+  m_highlight = value;
   // if we are in a DataDeck, then it is the deck that needs to emit signal
   taiWidgetDeck* deck = dynamic_cast<taiWidgetDeck*>(mparent);
   if (deck)
@@ -208,6 +214,18 @@ void taiWidget::setHighlight(bool value) {
   else
     emit_settingHighlight(value);
 }
+
+void taiWidget::setLighten(bool value) {
+  if (m_lighten == value) return;
+  m_lighten = value;
+  // if we are in a DataDeck, then it is the deck that needs to emit signal
+  taiWidgetDeck* deck = dynamic_cast<taiWidgetDeck*>(mparent);
+  if (deck)
+    deck->emit_settingLighten(value);
+  else
+    emit_settingLighten(value);
+}
+
 void taiWidget::setParent(taiWidget* value) {
   if (mparent == value) return;
   if (mparent != NULL)

@@ -2181,7 +2181,7 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
     cmd.cat(" n_threads=").cat(String(n_threads));
   }
 
-  params=ActiveMembersToString(!use_cur_vals);
+  params=ExploreMembersToString(!use_cur_vals);
 }
 
 void ClusterRun::CreateCurJob(int cmd_id) {

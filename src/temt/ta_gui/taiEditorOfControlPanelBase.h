@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+taTypeDef_Of(taiEditorOfControlPanelBase);
+
 class TA_API taiEditorOfControlPanelBase : public taiEditorOfClass {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditorOfClass)
@@ -39,6 +41,8 @@ public:
   taiEditorOfControlPanelBase()     { Initialize();};
   ~taiEditorOfControlPanelBase();
 
+public: // ITypedObject i/f (common to IDLC and IDH)
+  TypeDef*              GetTypeDef() const override {return &TA_taiEditorOfControlPanelBase;}
 protected:
   void         Constr_Methods_impl() override;
 

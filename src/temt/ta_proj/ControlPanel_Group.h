@@ -51,9 +51,9 @@ public:
   virtual void SetMasterAndClones(bool use_master_and_clones);
   // #CAT_ControlPanel #MENU #MENU_ON_ControlPanel #BUTTON configure this group to use the master-and-clones setup or not -- sets the master_and_clones flag and, if true, updates all the clones based on the current configuration of the first control panel in the group, which becomes the master
   virtual void AllStable();
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #BUTTON #CONFIRM set all members to be STABLE -- you can then selectively mark a subset as ACTIVE -- in general don't want too many active fields
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #BUTTON #CONFIRM set all members to be STABLE -- you can then selectively mark a subset as EXPLORE -- in general don't want too many active fields
   virtual void AllLocked();
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or ACTIVE -- use this to lock down a very stable set of parameters and prevent further editing
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or EXPLORE -- use this to lock down a very stable set of parameters and prevent further editing
 
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
 
