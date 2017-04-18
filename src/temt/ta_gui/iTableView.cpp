@@ -408,6 +408,8 @@ bool iTableView::SelectedRows(int& st_row, int& end_row) {
   CellRange sel(selectionModel()->selectedIndexes());
   st_row = sel.row_fr;
   end_row = sel.row_to;
+  if (end_row == -1) return false;
+  
   return true;
 }
 
