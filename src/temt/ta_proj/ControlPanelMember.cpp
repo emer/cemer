@@ -457,7 +457,8 @@ bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_m
   }
   if(warn_no_match && act_val != cur_val) {
     taMisc::Warning("Control Panel Member:",label, "in Panel:", panel->name,
-                    "DOES NOT MATCH the string value used to set its value in SetCurValFmString, actual value:", act_val, "set from string:", cur_val);
+                    "DOES NOT MATCH the string value used to set its value in SetCurValFmString\nactual value:", act_val, "\nstring value:", cur_val,
+                    "\nRecommend doing Activate and then Save Current on this item or entire ParamSet or entire ParamSet_Group (ActivateSaveAll) to update saved values.");
   }
   return true;
 }
