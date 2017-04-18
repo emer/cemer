@@ -55,8 +55,10 @@ public:
   String            GetDisplayName() const override;
   //  virtual void      InitV2RF(Network* net, DataTable* dt_rf, DataTable* wts,  Layer* tlay, Layer* slay, V1RetinaProc* rproc);
   virtual bool      ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc, float wt_threshold = 0);
-  virtual bool      ComputeV2RF_V2(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc, float wt_threshold = 0);
   // #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
+  virtual bool      ComputeV2RF_V2(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc, float wt_threshold = 0);
+
+  
   virtual bool      ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts,  Layer* tlay, Layer* slay);
   // #CAT_WtBasedRF compute the rf_data for layers beyond V2. These calculations use the RF computations from all layers below (e.g. the V3 representational analysis uses the values computed for V2)
   
