@@ -330,6 +330,8 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
 bool ControlPanelMember::MbrUpdated() {
   // called by control panel when a member is updated -- update our label, desc..
   if(!base || !mbr) return false;
+  if(HasBaseFlag(BF_MISC3)) return false;
+  SetBaseFlag(BF_MISC3);        // signal that is updating - our updates can cause updates..
   bool updted = false;
   if(!cust_label) {
     String new_label;
@@ -350,16 +352,17 @@ bool ControlPanelMember::MbrUpdated() {
     }
   }
 
+  ParamSet* psown = GET_MY_OWNER(ParamSet);
+
   if(!IsParamSet() || IsInactive()) {
-    return updted;
+    goto endreturn;
   }
 
-  ParamSet* psown = GET_MY_OWNER(ParamSet);
   if(!psown) {
-    return updted;              // shouldn't happen
+    goto endreturn;
   }
   if(!psown->last_activated) {  // only if active guy..
-    return updted;
+    goto endreturn;
   }
 
   if(!ActiveEqualsSaved() && base->IsMemberEditable(mbr->name)) {
@@ -371,20 +374,21 @@ bool ControlPanelMember::MbrUpdated() {
          " has been edited and is different from the saved value\n" +
          "cur value: " + cur_val + "\n" +
          "saved val: " + data.saved_value, "Apply (ParamSet unchanged)", "Apply and Save To ParamSet", "Revert from ParamSet Saved Val");
-      if(chs == 0) {
-        return updted;
-      }
       if(chs == 1) {
         SaveCurrent();
-        return true;
+        updted = true;
+        goto endreturn;
       }
       if(chs == 2) {
         Activate();
         data.last_prompt_val = CurValAsString();
-        return true;
+        updted = true;
+        goto endreturn;
       }
     }
   }
+ endreturn:
+  ClearBaseFlag(BF_MISC3);
   return updted;
 }
 
@@ -594,8 +598,10 @@ void ControlPanelMember::ProgVarToSaved() {
 void ControlPanelMember::CopySavedToActive() {
   if(!mbr || !base) return;
   if(IsInactive()) return;
+  SetBaseFlag(BF_MISC3);        // signal that is updating - our updates can cause updates..
   SetCurValFmString(data.saved_value, true, false);
   base->UpdateAfterEdit();
+  ClearBaseFlag(BF_MISC3);
 }
 
 void ControlPanelMember::CopySavedToActive_nouae() {
