@@ -2217,6 +2217,50 @@ float LeabraNetwork::Compute_TrialCosDiff_Agg() {
   return cosv;
 }
 
+void LeabraNetwork::Compute_ActMargin() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_ActMargin_Thr);
+  Compute_ActMargin_Agg();
+}
+    
+void LeabraNetwork::Compute_ActMargin_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    const float low_thr = lay->margin_low_thr;
+    const float med_thr = lay->margin_med_thr;
+    const float hi_thr = lay->margin_hi_thr;
+    
+    float low_avg = 0.0f;  float hi_avg = 0.0f;  float med_avg = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const float v_m_eq = uv->v_m_eq;
+      if(v_m_eq >= low_thr) {
+        low_avg += 1.0f;
+        if(v_m_eq > hi_thr)
+          hi_avg += 1.0f;
+        else if(v_m_eq <= med_thr)
+          med_avg += 1.0f;
+      }
+    }
+
+    ThrLayStats(thr_no, li, 0, ACTMARGIN) = low_avg;
+    ThrLayStats(thr_no, li, 1, ACTMARGIN) = med_avg;
+    ThrLayStats(thr_no, li, 2, ACTMARGIN) = hi_avg;
+  }
+}
+
+void LeabraNetwork::Compute_ActMargin_Agg() {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
+    l->Compute_ActMargin(this);
+  }
+}
+
 float LeabraNetwork::Compute_NetSd() {
   NET_THREAD_CALL(LeabraNetwork::Compute_NetSd_Thr);
   return Compute_NetSd_Agg();
@@ -2351,6 +2395,7 @@ void LeabraNetwork::Compute_PlusStats_Thr(int thr_no) {
   // cosdiff must be computed prior to Compute_dWt, in Quarter_Final
   Compute_AvgActDiff_Thr(thr_no);
   Compute_TrialCosDiff_Thr(thr_no);
+  Compute_ActMargin_Thr(thr_no);
   //  Compute_HogDeadPcts_Thr(thr_no);  // only in epoch
 }
 
@@ -2364,6 +2409,7 @@ void LeabraNetwork::Compute_PlusStats_Agg() {
   // cosdiff must be computed prior to Compute_dWt, in Quarter_Final
   Compute_AvgActDiff_Agg();
   Compute_TrialCosDiff_Agg();
+  Compute_ActMargin_Agg();
   //  Compute_HogDeadPcts_Agg();  // only in epoch
 }
 

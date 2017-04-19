@@ -577,6 +577,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l = avg_l.init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   u->act_avg = 0.15f;
+  u->margin = 0.0f;
   u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
@@ -718,6 +719,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   // not avg_l
   // not act_avg
+  u->margin = 0.0f;
   u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
@@ -1845,6 +1847,7 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnitVars* u, LeabraNetwork* net, int t
 
 void LeabraUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Compute_SRAvg(u, net, thr_no);
+  Compute_Margin(u, net, thr_no);
 }
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1862,6 +1865,26 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
 
   u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
 }
+
+void LeabraUnitSpec::Compute_Margin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  const float v_m_eq = u->v_m_eq;
+  if(v_m_eq >= lay->margin_low_thr) {
+    if(v_m_eq > lay->margin_hi_thr) {
+      u->margin = 0.0f;
+    }
+    else if(v_m_eq > lay->margin_med_thr) {
+      u->margin = 1.0f;
+    }
+    else {
+      u->margin = -1.0f;
+    }
+  }
+  else {
+    u->margin = 0.0f;
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats

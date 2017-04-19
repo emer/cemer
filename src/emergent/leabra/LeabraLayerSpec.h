@@ -135,7 +135,6 @@ public:
 
   float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
-
   inline bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg) {
     float delta_pct = (acts_m_avg - trg_avg_act) / trg_avg_act;
     if(fabsf(delta_pct) >= tol_pct) {
@@ -154,6 +153,60 @@ protected:
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LeabraActMargin);
+
+class E_API LeabraActMargin : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
+INHERITED(SpecMemberBase)
+public:
+  float         pct_marg;       // #DEF_0.5 proportion of the total number of active units (defined by layer acts_p_avg value) that should fit between the low and high marginal thresholds, on average -- hi_thr is adapted over time to hit this target on average (actually (1-pct_marg) * acts_p_avg above the hi thr, to remove dependence on low_thr), while low_thr is adapted to capture the full set of acts_p_avg units, and med_thr is adapted to roughly split the pct_marg proportion in half
+  float         avg_tau;        // #DEF_100 time constant in terms of trials for computing the average numbers of units in the different marginal categories
+  float         adapt_tau;      // #DEF_2000 time constant in terms of trials for adapting the thresholds based on average target values
+  float         tol_pct;        // #DEF_0.25 tolerance around target values as a proportion of that target value -- don't adapt values if values are within this tolerance of their targets
+  float         avg_act;        // #DEF_0.8 expected average activation level for active neurons -- this is a correction factor for converting acts_p_avg into target averages (divide by this avg_act)
+  float	        low_thr;        // #DEF_0.501 initial low threshold for marginal activation, in terms of v_m_eq -- adapts from here so that roughly acts_p_avg units on average are above this low threshold
+  float         med_thr;        // #DEF_0.506 initial medium threshold for marginal activation in terms of v_m_eq -- adapts from here so that the number of marginal units are split evenly on average
+  float         hi_thr;         // #DEF_0.508 initial high threshold for marginal activation in terms of v_m_eq -- adapts from here so that roughly (1-pct_marg) * acts_p_avg are above the hi thr (and thus, pct_marg * acts_p_avg are between low and hi thresholds)
+  
+  float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  float		adapt_dt;	// #READ_ONLY #EXPERT rate = 1 / tau
+
+  inline void   IncrAvgVal(float& avg, const float new_val) {
+    avg += avg_dt * (new_val - avg);
+  }
+  // increment running average based on new value
+  inline float  AdaptThr(float& thr, const float avg, const float trg, const float sgn) {
+    float delta_pct = (avg - trg) / trg;
+    if(fabsf(delta_pct) >= tol_pct) {
+      float del = sgn * adapt_dt * delta_pct;
+      thr += del;
+      return del;
+    }
+    return 0.0f;
+  }
+  // adadpt a threshold as function of difference between avg and target, in direction given by sign
+  inline float  HiTarg(const float acts_p_avg) {
+    return (1.0f - pct_marg) * acts_p_avg;
+  }
+  // the target value for hi threshold as function of acts_p_avg level in layer
+  inline float  MedTarg(const float acts_p_avg) {
+    return (0.5f * pct_marg) * acts_p_avg;
+  }
+  // the target value for med threshold as function of acts_p_avg level in layer
+  
+  
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraActMargin);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
   void	Defaults_init();
 };
 
@@ -343,6 +396,7 @@ public:
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+  LeabraActMargin margin;	// #CAT_Activation marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
   float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer -- see also cos_diff for additional lrate modulation on top of this
   LeabraCosDiffMod cos_diff;    // #CAT_Statistic leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
   LeabraLayStats  lstats;       // #CAT_Statistic layer-level statistics parameters
@@ -493,6 +547,8 @@ public:
   // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute cosine (normalized dot product) of trial activation difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
+  virtual void   Compute_ActMargin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute activation margin stats and adapt thresholds
   virtual float   Compute_NetSd(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- must be called at end of minus phase
   virtual void   Compute_HogDeadPcts(LeabraLayer* lay, LeabraNetwork* net);

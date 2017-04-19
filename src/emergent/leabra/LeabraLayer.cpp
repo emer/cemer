@@ -28,6 +28,13 @@ void LeabraLayer::Initialize() {
 
   Inhib_Initialize();
   adapt_gi = 1.0f;
+  margin_low_thr = 0.495f;
+  margin_med_thr = 0.503f;
+  margin_hi_thr = 0.508f;
+  margin_low_avg = .15f;
+  margin_med_avg = 0.0375f;
+  margin_hi_avg = 0.075f;
+  
   hard_clamped = false;
   da_p = 0.0f;
   da_n = 0.0f;

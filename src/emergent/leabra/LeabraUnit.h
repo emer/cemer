@@ -132,6 +132,9 @@ public:
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_misc.avg_tau -- typically 200) -- useful for finding hog units and seeing overall distribution of activation -- if act_misc.avg_trace is active, then it is instead an exponentially decaying trace -- used in TD reinforcement learning
+  inline float& margin()
+  { return ((LeabraUnitVars*)GetUnitVars())->margin; }
+  // #CAT_UnitVar is this unit at the margin of the attractor state of the network, as determined by layer spec margin thresholds?  zeros indicate non-marginal state, negative numbers are low-margin and positive numbers are high-margin
   inline float& act_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->act_raw; }
   // #CAT_UnitVar raw superficial-layer activation prior to mutliplication by deep_norm -- this may reflect layer 4 activation -- used in computing new deep_raw values

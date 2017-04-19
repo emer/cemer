@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraMultiGpSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerAvgActSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAdaptInhib);
+TA_BASEFUNS_CTORS_DEFN(LeabraActMargin);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
 TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
@@ -100,6 +101,30 @@ void LeabraAdaptInhib::Defaults_init() {
 void LeabraAdaptInhib::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   dt = 1.0f / tau;
+}
+
+void LeabraActMargin::Initialize() {
+  Defaults_init();
+}
+
+void LeabraActMargin::Defaults_init() {
+  pct_marg = 0.5f;
+  avg_tau = 100.0f;
+  adapt_tau = 2000.0f;
+  tol_pct = 0.25f;
+  avg_act = 0.8f;
+  low_thr = 0.5f;
+  med_thr = 0.505f;
+  hi_thr = 0.51f;
+
+  avg_dt = 1.0f / avg_tau;
+  adapt_dt = 1.0f / adapt_tau;
+}
+
+void LeabraActMargin::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  avg_dt = 1.0f / avg_tau;
+  adapt_dt = 1.0f / adapt_tau;
 }
 
 void LeabraInhibMisc::Initialize() {
@@ -335,6 +360,13 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::Init_AdaptInhib(LeabraLayer* lay, LeabraNetwork* net) {
   lay->adapt_gi = 1.0f;
+  lay->margin_low_thr = margin.low_thr;
+  lay->margin_med_thr = margin.med_thr;
+  lay->margin_hi_thr = margin.hi_thr;
+  float eff_p_avg = lay->acts_p_avg / margin.avg_act;
+  lay->margin_low_avg = eff_p_avg;
+  lay->margin_med_avg = margin.MedTarg(eff_p_avg);
+  lay->margin_hi_avg = margin.HiTarg(eff_p_avg);
 }
 
 void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1020,6 +1052,54 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   return cosv;
 }
 
+void LeabraLayerSpec::Compute_ActMargin(LeabraLayer* lay, LeabraNetwork* net) {
+  float low_avg = 0.0f;
+  float med_avg = 0.0f;
+  float hi_avg = 0.0f;
+
+  if(lay->units.leaves <= 1) return;
+  
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lowv = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::ACTMARGIN);
+    float& medv = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::ACTMARGIN);
+    float& hiv = net->ThrLayStats(thr_no, li, 2, LeabraNetwork::ACTMARGIN);
+
+    low_avg += lowv;
+    med_avg += medv;
+    hi_avg += hiv;
+  }
+
+  // todo: could agg n too but..
+  low_avg /= (float)lay->units.leaves;
+  med_avg /= (float)lay->units.leaves;
+  hi_avg /= (float)lay->units.leaves;
+
+  margin.IncrAvgVal(lay->margin_low_avg, low_avg);
+  margin.IncrAvgVal(lay->margin_med_avg, med_avg);
+  margin.IncrAvgVal(lay->margin_hi_avg, hi_avg);
+
+  float eff_p_avg = lay->acts_p_avg / margin.avg_act;
+  
+  float low_del = margin.AdaptThr(lay->margin_low_thr, lay->margin_low_avg, eff_p_avg, 1.0f);
+  // sign = same direction as diff - if avg > targ, increase thr
+  lay->margin_med_thr += low_del; // med automatically tracks low!
+  margin.AdaptThr(lay->margin_med_thr, lay->margin_med_avg,
+                  margin.MedTarg(eff_p_avg), -1.0f);
+  // sign = opposite direction as diff - if avg > targ, *decrease* thr
+  margin.AdaptThr(lay->margin_hi_thr, lay->margin_hi_avg,
+                  margin.HiTarg(eff_p_avg), 1.0f);
+  // sign = same direction as diff - if avg > targ, *increase* thr
+  // preserve ordering!
+  if(lay->margin_med_thr < lay->margin_low_thr) {
+    lay->margin_med_thr = lay->margin_low_thr + 0.001f;
+  }
+  if(lay->margin_hi_thr < lay->margin_med_thr) {
+    lay->margin_hi_thr = lay->margin_med_thr + 0.001f;
+  }
+}
+
 float LeabraLayerSpec::Compute_NetSd(LeabraLayer* lay, LeabraNetwork* net) {
   lay->net_sd = 0.0f;
   float var = 0.0f;
@@ -1088,6 +1168,8 @@ void LeabraLayerSpec::Compute_AvgTrialCosDiff(LeabraLayer* lay, LeabraNetwork* n
 void LeabraLayerSpec::Compute_AvgNetSd(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_net_sd.GetAvg_Reset();
 }
+
+
 
 void LeabraLayerSpec::Compute_EpochStats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->Layer::Compute_EpochStats(net);

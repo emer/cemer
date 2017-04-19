@@ -348,6 +348,34 @@ private:
 };
 
 
+eTypeDef_Of(MarginLearnSpec);
+
+class E_API MarginLearnSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning specs as function of whether units are on the margin
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable the margin-based learning
+  float         stable_lrate;   // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for units that are NOT in the margin (i.e., stable units) -- these typically have a reduced level of learning compared to those in the margin
+  bool          use_sign;       // #CONDSHOW_ON_on use the sign of the margin state (low vs. high marginal status) to flip the sign of the learning value
+
+  inline float  GetLrate(const float marg) {
+    if(marg == 0.0f) return stable_lrate;
+    if(use_sign) return marg;
+    return fabsf(marg);
+  }
+  // get the margin-based learning rate multiplier
+  
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(MarginLearnSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 
 eTypeDef_Of(LeabraConSpec);
 
@@ -392,8 +420,8 @@ public:
   WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: a soft form of normalization that maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- alters rate of weight increases vs. decreases in soft bounding function
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
-  DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
-
+  DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for DeepLeabra learning rate modulation -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
+  MarginLearnSpec margin;	// #CAT_Learning #CONDSHOW_ON_learn learning specs for modulation as a function of marginal activation status -- emphasize learning for units on the margin
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating

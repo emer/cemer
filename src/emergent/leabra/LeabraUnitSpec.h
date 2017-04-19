@@ -797,6 +797,8 @@ public:
   // #CAT_Activation post-processing step after activations are computed -- calls  Compute_SRAvg by default
     virtual void Compute_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Learning compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
+    virtual void Compute_Margin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Learning compute margin status of acivation relative to layer thresholds
 
   ///////////////////////////////////////////////////////////////////////
   //        Cycle Stats

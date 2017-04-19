@@ -223,6 +223,7 @@ public:
     COSDIFF,
     AVGACTDIFF,
     TRIALCOSDIFF,
+    ACTMARGIN,
     NETSD,
     HOGDEAD,
     N_LeabraThrLayStats,
@@ -605,6 +606,12 @@ public:
     virtual void Compute_TrialCosDiff_Thr(int thr_no);
     // #IGNORE
     virtual float Compute_TrialCosDiff_Agg();
+    // #IGNORE
+  virtual void	Compute_ActMargin();
+  // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between act_q0 and act_q4 unit values -- must be called after Quarter_Final for plus phase to get the act_q4 values
+    virtual void Compute_ActMargin_Thr(int thr_no);
+    // #IGNORE
+    virtual void Compute_ActMargin_Agg();
     // #IGNORE
   virtual float	Compute_NetSd();
   // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layers -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- MUST call this at end of minus phase!

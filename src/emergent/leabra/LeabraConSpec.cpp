@@ -29,6 +29,7 @@ TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
+TA_BASEFUNS_CTORS_DEFN(MarginLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
 
@@ -202,6 +203,16 @@ void DeepLrateSpec::Initialize() {
 }
 
 void DeepLrateSpec::Defaults_init() {
+}
+
+void MarginLearnSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void MarginLearnSpec::Defaults_init() {
+  stable_lrate = 0.1f;
+  use_sign = false;
 }
 
 

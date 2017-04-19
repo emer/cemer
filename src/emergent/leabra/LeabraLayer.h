@@ -39,6 +39,12 @@ INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
   float         adapt_gi;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive  inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the layer, unit inhib specs, starts out at 1 and moves from there -- adjusted by adaptive inhibition function -- saved with weight files
+  float         margin_low_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS low threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly acts_p_avg units on average are above this low threshold
+  float         margin_med_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS medium threshold for marginal activation, in terms of v_m_eq -- adapts so that marginal units are roughly split in half by this threshold
+  float         margin_hi_thr;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS high threshold for marginal activation, in terms of v_m_eq -- adapts so that roughly margin.pct_marg * acts_p_avg units on average are between low and high threshold
+  float         margin_low_avg; // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS running-average computed proportion of units above the low_thr
+  float         margin_med_avg; // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS running-average computed proportion of units between the low and medium thresholds
+  float         margin_hi_avg; // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS running-average computed proportion of units above the hi_thr
   bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Quarter_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
   String        minus_output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
   float		da_p;           // #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
@@ -234,6 +240,9 @@ public:
   float Compute_TrialCosDiff(LeabraNetwork* net)
   { return spec->Compute_TrialCosDiff(this, net); }
   // #CAT_Statistic compute cosine (normalized dot product) of trial activaiton difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
+  void Compute_ActMargin(LeabraNetwork* net)
+  { spec->Compute_ActMargin(this, net); }
+  // #CAT_Statistic compute activation margin stats and adapt thresholds
   float Compute_NetSd(LeabraNetwork* net)
   { return spec->Compute_NetSd(this, net); }
   // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- must be called at end of minus phase
