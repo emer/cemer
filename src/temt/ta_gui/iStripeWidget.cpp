@@ -101,7 +101,7 @@ void iStripeWidget::paintEvent(QPaintEvent* pev)
   p.setBrush(mhiLightColor);
 
   // hilight every second stripe with the hilightcolor or the dark_exception_color
-  for (int i = 1; i < num_stripes; i+=2 ) {
+  for (int i = 1; i <= num_stripes; i+=2 ) {
     if (exception_rows.size > 0 && exception_rows.FindEl(i) != -1) {
       p.setPen(exception_color_dark);
       p.setBrush(exception_color_dark);

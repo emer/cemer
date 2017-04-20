@@ -142,6 +142,8 @@ public: // ISigLinkClient i/f
 
 public: // IWidgetHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const override; // #IGNORE
+  const iColor          backgroundColor() const override { return bg_color; }
+  const iColor          backgroundColorDark() const override { return bg_color_dark; }
   bool                  HasChanged() override {return m_modified;}
   bool                  isConstructed() override {return true;}
   bool                  isModal() override {return false;} // never for us

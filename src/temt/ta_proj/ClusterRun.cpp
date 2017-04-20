@@ -597,7 +597,7 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
     String nm = pv.before('=');
     String vl = pv.after('=');
     if(nm.empty()) {
-      taMisc::Warning("AddParamsToTable: name empty in param element:", pv, "from list:", params);
+      // taMisc::Warning("AddParamsToTable: name empty in param element:", pv, "from list:", params);
       continue;
     }
     if(vl.empty()) {

@@ -89,7 +89,7 @@ void iLabel::updateBgColor() {
     fnt.setBold(false);
     QColor bgclr;
     if(host) {
-      bgclr = host->colorOfCurRow();
+      bgclr = host->backgroundColor();
     }
     else {
       bgclr = Qt::cyan;

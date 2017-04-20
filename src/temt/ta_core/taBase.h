@@ -1473,7 +1473,7 @@ public:
   virtual void          GetControlPanelDesc(MemberDef* mbr, String& desc) const;
   // #IGNORE get description string for given member -- by default this is just the description information (comments in C++ code) associated with the given member def from the class type -- but can be other info for other object types
   virtual ControlPanel* MemberControlPanel(const String& member_name, TypeDef* panel_type = NULL) const;
-  // #CAT_ControlPanel if a given member name (must be direct member of object) is on a control panel, this returns the first such control panel that it is on, else NULL -- if panel_type is non-null, it ONLY looks for panels of a given type (e.g., ParamSet, etc) -- otherwise looks for any kind of ControlPanel
+  // #CAT_ControlPanel if a given member name (must be direct member of object) is on a control panel, this returns the first such control panel that it is on, else NULL -- if panel_type is non-null, it ONLY looks for panels of a given type (e.g., ParamSet, etc) -- otherwise looks for any kind of ControlPanel (excluding archives -- only active)
   
   ///////////////////////////////////////////////////////////////////////////
   //    User Data: optional configuration settings for objects

@@ -904,9 +904,13 @@ void ControlPanel::SaveNameValueMembers(ParamSet* param_set, const String& name_
   SaveNameValueMembers_impl(param_set, name_vals);
   for(int i=0; i<name_vals.size; i++) { // deal with remainders
     String str = name_vals[i];
-    String nm = str.before("=");
-    String val = str.after("=");
-    param_set->NewDummyMember(nm, val);
+    if(str.contains("=")) {
+      String nm = str.before("=");
+      String val = str.after("=");
+      if(nm.nonempty() && val.nonempty()) {
+        param_set->NewDummyMember(nm, val);
+      }
+    }
   }
 }
 
@@ -924,23 +928,26 @@ void ControlPanel::ActivateAll(bool info_msg) {
 }
 
 
-String ControlPanel::ParamSetNames(bool recursive) {
+String ControlPanel::ParamSetNames(bool recursive, bool explore_only) {
   String rval;
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
     if(!mbr->base) continue;
+    if(explore_only && !mbr->IsControl() && !mbr->IsExplore())
+      continue;
     ControlPanel* sub_panel= mbr->GetControlPanelPointer();
-    if(sub_panel) {
-      if(rval.empty()) {
-        rval = sub_panel->name;
-      }
-      else {
-        rval += String("_") + sub_panel->name;
-      }
+    if(!sub_panel) continue;
+    if(rval.empty()) {
+      rval = sub_panel->name;
+    }
+    else {
+      rval += String("_") + sub_panel->name;
     }
   }
   if(recursive) {
     FOREACH_ELEM_IN_GROUP(ControlPanelMember, mbr, mbrs) {
       if(!mbr->base) continue;
+      if(explore_only && !mbr->IsControl() && !mbr->IsExplore())
+        continue;
       ControlPanel* sub_panel= mbr->GetControlPanelPointer();
       if(sub_panel) {
         rval += String("_") + sub_panel->ParamSetNames(recursive);

@@ -83,6 +83,8 @@ public: // ISigLinkClient i/f -- note: only registered though for taiEDH and lat
 
 public: // IWidgetHost i/f
   const iColor   colorOfCurRow() const override {return colorOfRow(curRow());}
+  const iColor   backgroundColor() const override { return bg_color; }
+  const iColor   backgroundColorDark() const override { return bg_color_dark; }
   TypeItem::ShowMembs  show() const override; // legacy -- just returns the app value
   bool          HasChanged() override {return modified;}
   bool          isConstructed() override {int s = state & STATE_MASK;

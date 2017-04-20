@@ -33,6 +33,8 @@ class iColor; //
 class TA_API IWidgetHost: public ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_CSS
 public:
   virtual const iColor  colorOfCurRow() const = 0; // #IGNORE background color of cur row
+  virtual const iColor  backgroundColor() const = 0; // #IGNORE general background color
+  virtual const iColor  backgroundColorDark() const = 0; // #IGNORE dark background color, if striped
   virtual bool          isConstructed() = 0;
   virtual bool          isModal() = 0;
   virtual bool          isReadOnly() = 0;

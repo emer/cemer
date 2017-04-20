@@ -3748,7 +3748,7 @@ ControlPanel* taBase::MemberControlPanel(const String& member_name, TypeDef* pan
     if(!lown) continue;
     if(!lown->GetTypeDef()->InheritsFrom(&TA_ControlPanel)) continue;
     ControlPanel* pan = (ControlPanel*)lown->This();
-    if(!pan) continue;
+    if(!pan || pan->IsArchived()) continue;
     if(panel_type != NULL) {
       if(pan->GetTypeDef() != panel_type) continue;
     }
