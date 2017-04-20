@@ -159,6 +159,8 @@ class TA_API ControlPanelMember: public ControlPanelItem {
   // #AKA_EditMbrItem a member control panel item -- allows editing of just one member from a class
   INHERITED(ControlPanelItem)
 public:
+  static bool           member_activating; // #IGNORE flag for when a member is activating -- prevents any prompting about that..
+  
   MemberDef*            mbr; // #READ_ONLY #SHOW the mbr type
   ControlPanelMemberData data; // all the data associated with this member, including param search, saved value, notes
   // note: the above must be in a separate subclass due to the way that the taiWidgetMashup works -- it requires a MemberDef to operate on -- the MemberDef to this data member is it..

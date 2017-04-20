@@ -33,7 +33,6 @@ TA_BASEFUNS_CTORS_DEFN(EditParamSearch); // OBSOLETE
 TA_BASEFUNS_CTORS_DEFN(ParamSetItem); // OBSOLETE
 TA_BASEFUNS_CTORS_DEFN(ControlItemNote); // OBSOLETE
 
-
 void ControlPanelMemberData::Initialize() {
   ctrl_type = CONTROL;
   state = STABLE;
@@ -187,6 +186,8 @@ bool ControlPanelMemberData::ParseSubRange(const String& sub_range) {
 //////////////////////////////////////////////////////
 //              Member
 
+bool ControlPanelMember::member_activating = false;
+
 void ControlPanelMember::Initialize() {
   mbr = NULL;
 }
@@ -330,7 +331,7 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
 bool ControlPanelMember::MbrUpdated() {
   // called by control panel when a member is updated -- update our label, desc..
   if(!base || !mbr) return false;
-  if(HasBaseFlag(BF_MISC3)) return false;
+  if(HasBaseFlag(BF_MISC3) || member_activating) return false;
   SetBaseFlag(BF_MISC3);        // signal that is updating - our updates can cause updates..
   bool updted = false;
   if(!cust_label) {
@@ -600,9 +601,11 @@ void ControlPanelMember::CopySavedToActive() {
   if(!mbr || !base) return;
   if(IsInactive()) return;
   SetBaseFlag(BF_MISC3);        // signal that is updating - our updates can cause updates..
+  member_activating = true;
   SetCurValFmString(data.saved_value, true, false);
   base->UpdateAfterEdit();
   ClearBaseFlag(BF_MISC3);
+  member_activating = false;
 }
 
 void ControlPanelMember::CopySavedToActive_nouae() {

@@ -710,6 +710,7 @@ bool ControlPanel::AddMember_impl
     item->mbr = md;
     item->SetLabel(full_lbl, custom_label, short_label);
     item->SetDesc(desc, custom_desc);
+    item->CopyActiveToSaved();  // do this BEFORE so clones get it!
     if(sub_gp_nm.nonempty()) {
       ControlPanelMember_Group* egp = (ControlPanelMember_Group*)mbrs.FindMakeGpName(sub_gp_nm);
       egp->Add(item);
@@ -718,7 +719,6 @@ bool ControlPanel::AddMember_impl
       mbrs.Add(item); // will trigger BaseAdded
     }
     rval = true;
-    item->CopyActiveToSaved();
   }
   else if(sub_gp_nm.nonempty()) {
     ControlPanelMember_Group* egp = (ControlPanelMember_Group*)item->owner;

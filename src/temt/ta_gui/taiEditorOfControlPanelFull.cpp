@@ -450,7 +450,9 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
         bool first_diff = true;
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
         if(mash_widg) {
+          item->member_activating = true; // prevent updates from UAE here!
           mash_widg->GetValue();
+          item->member_activating = false;
           if(param_set) {
             item->ProgVarToSaved(); // copy back to string rep
             item->ActivateAfterEdit();

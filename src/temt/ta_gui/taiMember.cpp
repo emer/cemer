@@ -237,7 +237,7 @@ void taiMember::SetHighlights(MemberDef* mbr, TypeDef* typ, taiWidget* dat, cons
   }
   if(typ->IsActualTaBase()) {
     if(!dat->host->GetTypeDef()->InheritsFrom(&TA_taiEditorOfControlPanelBase)) {
-      ControlPanel* pset = ((taBase*)base)->MemberControlPanel(mbr->name, &TA_ParamSet);
+      ControlPanel* pset = ((taBase*)base)->MemberControlPanel(mbr->name);
       if(pset) {
         dat->setLighten(true);
       }

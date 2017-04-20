@@ -69,7 +69,6 @@ void BaseSpec::CutLinks() {
 
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdtIsUsed();
   if(taMisc::is_loading) {
     TypeDef* td = GetTypeDef();
     for(int i=TA_BaseSpec.members.size; i< td->members.size; i++) {
@@ -106,7 +105,6 @@ void BaseSpec::ApplyTo(SpecUser* obj1, SpecUser* obj2, SpecUser* obj3, SpecUser*
     obj4->ApplySpecToMe(this);
   }
   UpdtIsUsed();
-  SigEmitUpdated();
 }
 
 void BaseSpec::Defaults() {
@@ -243,6 +241,7 @@ void BaseSpec::UpdateSpec() {
   }
   UpdateSubSpecs();
   UpdateChildren();
+  UpdtIsUsed(false);
 }
 
 void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
@@ -333,12 +332,10 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
 
 void BaseSpec::SpecSet(taBase* obj) {
   UpdtIsUsed();
-  SigEmitUpdated();
 }
 
 void BaseSpec::SpecUnSet(taBase* obj) {
   UpdtIsUsed();
-  SigEmitUpdated();
 }
 
 void BaseSpec::WhereUsed() {
@@ -353,7 +350,6 @@ void BaseSpec::WhereUsed() {
 
 void BaseSpec::WhereUsed_impl(taBase_PtrList& spec_user_list, String_Array& spec_name_list, bool child) {
   UpdtIsUsed();
-  SigEmitUpdated();
   taSigLink* dl = sig_link();
   if(!dl) return;
   taSmartRef* sref;
@@ -378,7 +374,7 @@ void BaseSpec::WhereUsed_impl(taBase_PtrList& spec_user_list, String_Array& spec
   }
 }
 
-bool BaseSpec::UpdtIsUsed() {
+bool BaseSpec::UpdtIsUsed(bool gui_updt) {
   is_used = false;
   taSigLink* dl = sig_link();
   if(!dl) {
@@ -397,46 +393,42 @@ bool BaseSpec::UpdtIsUsed() {
       is_used = true;
     }
   }
-  
+
+  bool some_kid_used = false;
+  bool some_kid_unused = false;
   for (int j=0; j<children.size; j++) {
-    children.SafeEl(j)->UpdtIsUsed();
-  }
-
-  UpdateUsedStatus();
-  SigEmitUpdated();
-  
-  return is_used;
-}
-
-void BaseSpec::UpdateUsedStatus() {
-  if (is_used && children.size == 0) {
-    used_status = USED;
-  }
-  else if (!is_used && children.size == 0) {
-    used_status = UNUSED;
-  }
-  
-  for (int i=0; i<children.size; i++) {
-    bool child_used = children.SafeEl(i)->UpdtIsUsed();
-    if (is_used && !child_used) {
-      used_status = PARENT_USED;
-      return;
+    BaseSpec* kid = children.FastEl(j);
+    bool child_used = kid->UpdtIsUsed(gui_updt);
+    if(child_used) {
+      some_kid_used = true;
     }
-    if (!is_used && child_used) {
+    else {
+      some_kid_unused = true;
+    }
+  }
+
+  if (!is_used) {
+    if (!some_kid_used) {
+      used_status = UNUSED;
+    }
+    else {
       used_status = CHILD_USED;
-      return;
     }
-    children.SafeEl(i)->UpdateUsedStatus();
-  }
-  
-  if (is_used) {
-    used_status = USED;
-    return;
   }
   else {
-    used_status = UNUSED;
-    return;
+    if (some_kid_unused) {
+      used_status = PARENT_USED;
+    }
+    else {
+      used_status = USED;       // fully used!
+    }
   }
+  
+  if(gui_updt) {
+    SigEmitUpdated();
+  }
+  
+  return is_used;
 }
 
 String BaseSpec::GetStateDecoKey() const {
