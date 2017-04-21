@@ -86,6 +86,9 @@ public:
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
+      if(margin.on) {
+        lrate_eff *= margin.GetLrate(ru->margin);
+      }
       float l_lrn_eff;
       if(xcal.set_l_lrn)
         l_lrn_eff = xcal.l_lrn;
@@ -97,7 +100,7 @@ public:
       else {
         C_Compute_dWt_CtLeabraXCAL
           (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-           ru->avg_l, l_lrn_eff);
+           ru->avg_l, l_lrn_eff, ru->margin);
       }
     }
   }

@@ -128,5 +128,6 @@ ControlPanelMember* ParamSet::NewDummyMember(const String& nm, const String& val
   itm->SetLabel(nm, true);      // custom
   itm->SetDesc("dummy name=value record", true);
   itm->data.saved_value = val;
+  itm->SetToLocked();
   return itm;
 }

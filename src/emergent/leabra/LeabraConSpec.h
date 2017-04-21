@@ -355,9 +355,11 @@ class E_API MarginLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the margin-based learning
-  float         margin_lrate;   // #CONDSHOW_ON_on #MIN_0 #DEF_2 learning rate multiplier for units that are in the margin -- typically need to increase lrate here to compensate for reduced lrate overall
+  float         margin_lrate;   // #CONDSHOW_ON_on #MIN_0 #DEF_1 learning rate multiplier for units that are in the margin -- typically need to increase lrate here to compensate for reduced lrate overall
   float         stable_lrate;   // #CONDSHOW_ON_on #MIN_0 #DEF_0.5 learning rate multiplier for units that are NOT in the margin (i.e., stable units) -- these typically have a reduced level of learning compared to those in the margin
-  // bool          use_sign;       // #CONDSHOW_ON_on #DEF_false use the sign of the margin state (low vs. high marginal status) to flip the sign of the learning value
+  bool          sign_dwt;       // #CONDSHOW_ON_on use the sign of the margin state (low vs. high marginal status) to drive an additional dwt learning factor
+  bool          sign_l_lrn;     // #CONDSHOW_ON_on&&sign_dwt apply the avg_l (BCM Hebbian) learning factor to sign-based learning
+  float         sign_lrn;       // #CONDSHOW_ON_on&&sign_dwt #MIN_0 amount of learning for sign-based learning factor
 
   inline float  GetLrate(const float marg) {
     if(marg == 0.0f) return stable_lrate;
@@ -564,11 +566,16 @@ public:
   inline void 	C_Compute_dWt_CtLeabraXCAL
     (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
      const float su_avg_s, const float su_avg_m, const float ru_avg_l,
-     const float ru_avg_l_lrn) 
+     const float ru_avg_l_lrn, const float ru_margin) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
     dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                      xcal.m_lrn * xcal.dWtFun(srs, srm));
+    if(margin.on && margin.sign_dwt) {
+      float mdwt = margin.sign_lrn * ru_margin * su_avg_s;
+      if(margin.sign_l_lrn) mdwt *= ru_avg_l_lrn;
+      dwt += clrate * mdwt;
+    }
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
@@ -577,11 +584,11 @@ public:
      float& dwt_max, const float dwt_max_avg, const float clrate,
      const float ru_avg_s, const float ru_avg_m,
      const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float ru_avg_l_lrn) 
+     const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
   {
     // send in clrate = 1.0f -- apply clrate later
     C_Compute_dWt_CtLeabraXCAL(dwt, 1.0f, ru_avg_s, ru_avg_m,
-                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn);
+                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn, ru_margin);
     dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
     dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
     float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);

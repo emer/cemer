@@ -465,7 +465,9 @@ ParamSet* ControlPanel::Archive() {
   ParamSet* param_set = proj->archived_params.NewArchive();
   String nm = name;
   if(InheritsFrom(&TA_ParamSet) && owner->InheritsFrom(&TA_ParamSet_Group)) {
-    nm = owner->GetName() + "_" + nm;
+    if(owner->GetOwner() != proj) { // don't add name of base group
+      nm = owner->GetName() + "_" + nm;
+    }
   }
   param_set->SetName(nm + "_" + taDateTime::CurrentDateStampString());
   param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
@@ -891,6 +893,7 @@ void ControlPanel::SaveNameValueMembers_impl(ParamSet* param_set, String_Array& 
         ControlPanelMember* itm = (ControlPanelMember*)mbr->Clone();
         param_set->mbrs.Add(itm);
         itm->data.saved_value = val;
+        itm->SetToLocked();
         itm->SetCtrlType();
         name_vals.RemoveIdx(idx);
       }        
