@@ -251,6 +251,7 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
 {
   if(sls >= SLS_UPDATE_VIEWS) return;
   if(!ta) return;
+  if(ta->GetOwner(&TA_ControlPanel) == this) return; // self-generated!
 
   bool is_prog = ta->InheritsFrom(&TA_Program);
   
@@ -281,9 +282,8 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
 
   if(updated_something) {
     MasterTriggerUpdate();
+    SigEmitUpdated();             // trigger an update of us -- this is expensive!
   }
-  
-  SigEmitUpdated();             // trigger an update of us -- this is expensive!
 }
 
 void ControlPanel::SigEmit_Group(taGroup_impl* grp,
