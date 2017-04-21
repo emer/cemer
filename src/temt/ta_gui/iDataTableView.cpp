@@ -555,7 +555,10 @@ void iDataTableView::UpdateMaxColWidth(int width) {
 }
 
 void iDataTableView::SetRowHighlight(int row) {
-  if (dataTable()->row_with_hilite == row) {
+  if(row < 0) {
+    dataTable()->row_with_hilite = -1; // toggles off highlight
+  }
+  else if (dataTable()->row_with_hilite == row) {
     dataTable()->row_with_hilite = -1; // toggles off highlight
   }
   else {

@@ -453,7 +453,8 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
     // udi should be a complex container
     key = var.before('.');
     var = var.after(".");
-  } else {
+  }
+  else {
     // udi should be a simple value
     key = var;
     var = _nilString;
@@ -509,11 +510,13 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
   return false; // compiler food
 }
 
-bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) {
+bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj, bool err_not_found) {
   if (!obj) return false;
   MemberDef* md = NULL;
 
   // first, try the recursive end, look for terminal member in ourself
+  if(var.startsWith('.'))
+    var = var.after('.');
   if (var.contains('.')) {
     if(var.startsWith("user_data.")) {
       return ScanObject_InUserData(obj, var.after("."), name_obj);
@@ -521,10 +524,13 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
 
     String path = var.before('.',-1);
     taBase* mbr = obj->FindFromPath(path, md);
-    if(TestError(!mbr,"ScanObject_InObject",
-                 "path to variable not found in parent object, path:",
-                 path, "var: ", var, "parent:", obj->DisplayPath())) {
-      return true; //no mon, but we did handle it
+    if(!mbr) {
+      if(TestError(err_not_found, "ScanObject_InObject",
+                   "path to variable not found in parent object, path:",
+                   path, "var: ", var, "parent:", obj->DisplayPath())) {
+        return true; //no mon, but we did handle it
+      }
+      return false;             // silent fail bounces back
     }
 
     String membname = var.after('.',-1);
@@ -588,17 +594,15 @@ void NetMonItem::ScanObject_Network(Network* net, String var) {
     return;
   }
   if(var.startsWith("prjns.") || var.startsWith(".prjns.")) {
-    var = var.after("prjns.");
     ScanObject_Network_Layers(net, var);
     return;
   }
   if(var.startsWith("projections.") || var.startsWith(".projections.")) {
-    var = var.after("projections.");
     ScanObject_Network_Layers(net, var);
     return;
   }
 
-  if (ScanObject_InObject(net, var, net)) return;
+  if (ScanObject_InObject(net, var, net, false)) return; // false = test
 
   ScanObject_Network_Layers(net, var);
 }
@@ -626,6 +630,8 @@ void NetMonItem::ScanObject_Network_Layers(Network* net, String var) {
 
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   // check for projection monitor
+  if(var.startsWith('.'))
+    var = var.after('.');
   if(var.contains('.')) {
     if(var.startsWith("units[")) {
       ScanObject_LayerUnits(lay, var);
@@ -633,7 +639,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     }
 
     String subvar = var.before('.');
-    if((subvar == "projections") || (subvar == "prjns")) {
+    if(subvar.endsWith("projections") || subvar.endsWith("prjns")) {
       ScanObject_ProjectionGroup(&lay->projections, var.after('.'));
       return;
     }
@@ -643,7 +649,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     }
   }
 
-  if (ScanObject_InObject(lay, var, lay)) return;
+  if (ScanObject_InObject(lay, var, lay, false)) return; // false = just test, no error
 
   // we now know it must be a regular unit variable (or invalid); do that
   MatrixGeom geom;
@@ -652,7 +658,8 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
       geom.SetGeom(1, lay->units.leaves);       // irregular: flatten!
     else
       geom.SetGeom(4, lay->un_geom.x, lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
-  } else {
+  }
+  else {
     if(lay->un_geom.n_not_xy)
       geom.SetGeom(1, lay->units.leaves);       // irregular: flatten!
     else
@@ -903,7 +910,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
 }
 
 void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
-  if (ScanObject_InObject(pg, var, pg)) return;
+  if (ScanObject_InObject(pg, var, pg, false)) return; // false = test
 
   for (int i = 0; i < pg->size; i++) {
     if (Projection* prjn = pg->FastEl(i)) {
@@ -927,6 +934,8 @@ void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
 
 void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
   // check for projection monitor
+  if(var.startsWith('.'))
+    var = var.after('.');
   if(var.contains('.')) {
     String subvar = var.before('.');
     if(TestError((subvar == "projections") || (subvar == "prjns"), "ScanObject_UnitGroup",
@@ -941,7 +950,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
     }
   }
 
-  if (ScanObject_InObject(ug, var, ug)) return;
+  if (ScanObject_InObject(ug, var, ug, false)) return; // false = test
 
   if(!ug->own_lay->own_net->IsBuiltIntact()) // no-can-do
     return;
@@ -976,7 +985,7 @@ void NetMonItem::ScanObject_Unit(Unit* u, String var) {
   if(u->lesioned()) return;
   if(!u->own_net()->IsBuiltIntact()) // no-can-do
     return;
-  if(ScanObject_InObject(u, var, u)) return;
+  if(ScanObject_InObject(u, var, u, false)) return; // false = test
 
   // otherwise, we only grok the special s. and r. indicating conns
   if (!var.contains('.')) return;

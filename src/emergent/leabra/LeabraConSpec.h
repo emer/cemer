@@ -355,13 +355,13 @@ class E_API MarginLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the margin-based learning
-  float         stable_lrate;   // #CONDSHOW_ON_on #MIN_0 #DEF_0.2 learning rate multiplier for units that are NOT in the margin (i.e., stable units) -- these typically have a reduced level of learning compared to those in the margin
-  bool          use_sign;       // #CONDSHOW_ON_on #DEF_false use the sign of the margin state (low vs. high marginal status) to flip the sign of the learning value
+  float         margin_lrate;   // #CONDSHOW_ON_on #MIN_0 #DEF_2 learning rate multiplier for units that are in the margin -- typically need to increase lrate here to compensate for reduced lrate overall
+  float         stable_lrate;   // #CONDSHOW_ON_on #MIN_0 #DEF_0.5 learning rate multiplier for units that are NOT in the margin (i.e., stable units) -- these typically have a reduced level of learning compared to those in the margin
+  // bool          use_sign;       // #CONDSHOW_ON_on #DEF_false use the sign of the margin state (low vs. high marginal status) to flip the sign of the learning value
 
   inline float  GetLrate(const float marg) {
     if(marg == 0.0f) return stable_lrate;
-    if(use_sign) return marg;
-    return fabsf(marg);
+    return margin_lrate;
   }
   // get the margin-based learning rate multiplier
   

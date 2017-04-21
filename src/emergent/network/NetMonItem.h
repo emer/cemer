@@ -181,7 +181,7 @@ protected:
   // these are for finding the members and building the stat
   // out of the objects and the variable
   
-  bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj);
+  bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj, bool err_not_found = true);
   // #IGNORE if name_obj == NULL, don't make a column for this guy
   bool ScanObject_InUserData(taBase* obj, String var, taBase* name_obj);
   // #IGNORE called when an InObject var is "user_data.xxx[.yyy]"
