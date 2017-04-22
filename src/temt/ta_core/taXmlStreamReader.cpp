@@ -25,6 +25,8 @@ TA_BASEFUNS_CTORS_DEFN(taXmlStreamReader);
 
 bool taXmlStreamReader::SetFile(const String& filename) {
 #if (QT_VERSION >= 0x040600)
+  if(file.isOpen())
+    file.close();
   file.setFileName(filename);
   if(!file.open(QFile::ReadOnly | QFile::Text)){
     String msg("ImageNetUtils::OpenReader -- could not open file " + filename);
@@ -82,5 +84,5 @@ void taXmlStreamReader::Clear() {
 }
 
 void taXmlStreamReader::CloseFile() {
-  file.QIODevice::close();
+  file.close();
 }
