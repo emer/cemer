@@ -47,11 +47,8 @@ taiWidget* taiMemberOfDynEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* 
   taiWidgetBitBox* bit_rep = new taiWidgetBitBox(typ, host_, rval, gui_parent_, flags_);
   taiWidgetField*  field_rep = new taiWidgetField(typ, host_, rval, gui_parent_, flags_); // read only
   taiWidgetComboBox* combo_rep = new taiWidgetComboBox(true, NULL, host_, rval, gui_parent_, flags_);
-  rval->widget_el.Add(bit_rep);
   rval->AddChildWidget(bit_rep->rep());
-  rval->widget_el.Add(field_rep);
   rval->AddChildWidget(field_rep->rep());
-  rval->widget_el.Add(combo_rep);
   rval->AddChildWidget(combo_rep->rep());
   rval->EndLayout();
   return rval;

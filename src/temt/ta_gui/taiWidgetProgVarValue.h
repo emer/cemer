@@ -36,8 +36,8 @@ public:
   taiWidget*    sub_widget;     // specific widget for given subtype
   
   void          GetSubWidget(ProgVar* val);
-  void          GetImage(ProgVar* val);
-  void          GetValue(ProgVar* val) const;
+  void          GetImageProgVar(ProgVar* val);
+  void          GetValueProgVar(ProgVar* val) const;
 };
 
 #endif // taiWidgetProgVarValue_h

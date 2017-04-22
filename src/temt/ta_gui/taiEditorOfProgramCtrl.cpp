@@ -141,7 +141,7 @@ void taiEditorOfProgramCtrl::Constr_Widget_Labels() {
       if(!md) continue;
       memb_el(j).Add(md);
       int flags_ = 0;
-      taiWidget* mb_dat = new taiWidgetProgVarValue(NULL, this, NULL, body, flags_);
+      taiWidget* mb_dat = new taiWidgetProgVarValue(&TA_ProgVar, this, NULL, body, flags_);
       widget_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       nm = pv->name;
@@ -239,7 +239,7 @@ void taiEditorOfProgramCtrl::GetValue_Membs_def() {
         taMisc::DebugInfo("taiEditorOfProgramCtrl:GetValue_impl: ran out of controls!");
         break;
       }
-      ((taiWidgetProgVarValue*)mb_dat)->GetValue(pv);
+      ((taiWidgetProgVarValue*)mb_dat)->GetValueProgVar(pv);
       pv->UpdateAfterEdit();
       if(!first_diff) {         // always reset!
         taiMember::EndScript((void*)pv);
@@ -278,7 +278,7 @@ void taiEditorOfProgramCtrl::GetImage_Membs()
         taMisc::DebugInfo("taiEditorOfProgramCtrl:GetImage_impl: ran out of controls!");
         break;
       }
-      ((taiWidgetProgVarValue*)mb_dat)->GetImage(pv);
+      ((taiWidgetProgVarValue*)mb_dat)->GetImageProgVar(pv);
     }
   }
 }

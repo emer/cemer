@@ -43,11 +43,8 @@ taiWidget* taiMemberOfProgVarIntVal::GetWidgetRep_impl(IWidgetHost* host_, taiWi
   int_rep->setMinimum(INT_MIN);
   taiWidgetComboBox*  enum_rep = new taiWidgetComboBox(true, NULL, host_, rval, gui_parent_, flags_);
   taiWidgetBitBox* bit_rep = new taiWidgetBitBox(typ, host_, rval, gui_parent_, flags_);
-  rval->widget_el.Add(int_rep);
   rval->AddChildWidget(int_rep->rep());
-  rval->widget_el.Add(enum_rep);
   rval->AddChildWidget(enum_rep->rep());
-  rval->widget_el.Add(bit_rep);
   rval->AddChildWidget(bit_rep->rep());
   rval->EndLayout();
   return rval;
@@ -64,12 +61,14 @@ void taiMemberOfProgVarIntVal::GetImage_impl(taiWidget* dat, const void* base) {
       taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->widget_el.SafeEl(2));
       if (!bit_rep) return; // shouldn't happen
       bit_rep->SetEnumType(pv->hard_enum_type);
+      taiMember::SetHighlights(mbr, typ, bit_rep, pv);
       bit_rep->GetImage(val);
     }
     else {
       rval->GetImage(1);
       taiWidgetComboBox* enum_rep = dynamic_cast<taiWidgetComboBox*>(rval->widget_el.SafeEl(1));
       if (!enum_rep) return; // shouldn't happen
+      taiMember::SetHighlights(mbr, typ, enum_rep, pv);
       enum_rep->SetEnumType(pv->hard_enum_type);
       enum_rep->GetEnumImage(val);
     }
@@ -78,6 +77,7 @@ void taiMemberOfProgVarIntVal::GetImage_impl(taiWidget* dat, const void* base) {
     rval->GetImage(0);
     taiWidgetFieldIncr* int_rep = dynamic_cast<taiWidgetFieldIncr*>(rval->widget_el.SafeEl(0));
     if (!int_rep) return; // shouldn't happen
+    taiMember::SetHighlights(mbr, typ, int_rep, pv);
     int_rep->GetImage(val);
   }
 }

@@ -35,11 +35,11 @@ taiWidget* taiMemberOfProgVarValue::GetWidgetRep_impl(IWidgetHost* host_, taiWid
 void taiMemberOfProgVarValue::GetImage_impl(taiWidget* dat, const void* base) {
   ProgVar* pv = (ProgVar*)mbr->GetOff(base);
   taiWidgetProgVarValue* rval = (taiWidgetProgVarValue*)dat;
-  rval->GetImage(pv);
+  rval->GetImageProgVar(pv);
 }
 
 void taiMemberOfProgVarValue::GetMbrValue_impl(taiWidget* dat, void* base) {
   ProgVar* pv = (ProgVar*)mbr->GetOff(base);
   taiWidgetProgVarValue* rval = (taiWidgetProgVarValue*)dat;
-  rval->GetValue(pv);
+  rval->GetValueProgVar(pv);
 }

@@ -251,14 +251,17 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
 {
   if(sls >= SLS_UPDATE_VIEWS) return;
   if(!ta) return;
-  if(ta->GetOwner(&TA_ControlPanel) == this) return; // self-generated!
 
+  if(HasBaseFlag(BF_MISC3))
+    return;
+  SetBaseFlag(BF_MISC3);        // signal that is updating - our updates can cause updates..
   bool is_prog = ta->InheritsFrom(&TA_Program);
   
   if(!updt_while_running) {
     if((Program::global_run_state == Program::RUN ||
         Program::global_run_state == Program::INIT) && !is_prog) {
-      return;                     // skip any non-program updates while running!
+      ClearBaseFlag(BF_MISC3);
+      return;
     }
   }
 
@@ -266,6 +269,7 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
   bool on_membs = ControlPanelItem::StatHasBase(&mbrs, ta);
 
   if(on_meths && !on_membs && !is_prog) { // don't update for any non-program method only cases
+    ClearBaseFlag(BF_MISC3);
     return;
   }
 
@@ -282,8 +286,9 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
 
   if(updated_something) {
     MasterTriggerUpdate();
-    SigEmitUpdated();             // trigger an update of us -- this is expensive!
   }
+  SigEmitUpdated();             // trigger an update of us -- this is expensive!
+  ClearBaseFlag(BF_MISC3);
 }
 
 void ControlPanel::SigEmit_Group(taGroup_impl* grp,

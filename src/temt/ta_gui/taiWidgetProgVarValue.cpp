@@ -32,9 +32,13 @@ taiWidgetProgVarValue::taiWidgetProgVarValue(TypeDef* typ_, IWidgetHost* host_, 
 {
   sub_widget = NULL;
   SetRep( MakeLayoutWidget(gui_parent_));
+  if(!typ)
+    typ = &TA_ProgVar;
+
 }
 
 void taiWidgetProgVarValue::GetSubWidget(ProgVar* pv) {
+  typ = &TA_ProgVar;
   MemberDef* md = pv->GetValMemberDef();
   if(!md) return; // undefined!
   int flags_ = mflags;          // inherit get the flags we got
@@ -85,7 +89,7 @@ void taiWidgetProgVarValue::GetSubWidget(ProgVar* pv) {
 }
 
 
-void taiWidgetProgVarValue::GetImage(ProgVar* pv) {
+void taiWidgetProgVarValue::GetImageProgVar(ProgVar* pv) {
   if(!sub_widget) {
     GetSubWidget(pv);
   }
@@ -98,12 +102,14 @@ void taiWidgetProgVarValue::GetImage(ProgVar* pv) {
       taiWidgetField* tmp_widget = dynamic_cast<taiWidgetField*>(sub_widget);
       if (pv->TestError_impl(!tmp_widget, "expected taiWidgetField, not: ",
                              sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
       tmp_widget->GetImage(pv->GenCssInitVal());
     }
     else if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
       taiWidgetBitBox* tmp_widget = dynamic_cast<taiWidgetBitBox*>(sub_widget);
       if (pv->TestError_impl(!tmp_widget, "expected taiWidgetBitBox, not: ",
                              sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
       tmp_widget->SetEnumType(pv->hard_enum_type);
       tmp_widget->GetImage(pv->int_val);
     }
@@ -111,6 +117,7 @@ void taiWidgetProgVarValue::GetImage(ProgVar* pv) {
       taiWidgetComboBox* tmp_widget = dynamic_cast<taiWidgetComboBox*>(sub_widget);
       if (pv->TestError_impl(!tmp_widget, "expected taiWidgetComboBox, not: ",
                              sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
       tmp_widget->SetEnumType(pv->hard_enum_type);
       tmp_widget->GetEnumImage(pv->int_val);
     }
@@ -122,18 +129,21 @@ void taiWidgetProgVarValue::GetImage(ProgVar* pv) {
       taiWidgetField* tmp_widget = dynamic_cast<taiWidgetField*>(sub_widget);
       if (pv->TestError_impl(!tmp_widget, "expected taiWidgetField, not: ",
                              sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
       tmp_widget->GetImage(pv->GenCssInitVal());
     }
     else if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
       taiWidgetBitBox* tmp_widget = dynamic_cast<taiWidgetBitBox*>(sub_widget);
       if (pv->TestError_impl(!tmp_widget, "expected taiWidgetBitBox, not: ",
                              sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
       taiMemberOfDynEnum::UpdateDynEnumBits(tmp_widget, pv->dyn_enum_val);
     }
     else {
       taiWidgetComboBox* tmp_widget = dynamic_cast<taiWidgetComboBox*>(sub_widget);
       if (pv->TestError_impl(!tmp_widget, "expected taiWidgetComboBox, not: ",
                              sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
       taiMemberOfDynEnum::UpdateDynEnumCombo(tmp_widget, pv->dyn_enum_val);
     }
   }
@@ -141,6 +151,7 @@ void taiWidgetProgVarValue::GetImage(ProgVar* pv) {
     taiWidgetFieldIncr* tmp_widget = dynamic_cast<taiWidgetFieldIncr*>(sub_widget);
     if (pv->TestError_impl(!tmp_widget, "expected taiWidgetFieldIncr, not: ",
                            sub_widget->metaObject()->className())) return;
+      taiMember::SetHighlights(md, typ, tmp_widget, pv);
     tmp_widget->GetImage(pv->int_val);
   }
   else {
@@ -148,7 +159,7 @@ void taiWidgetProgVarValue::GetImage(ProgVar* pv) {
   }
 }
 
-void taiWidgetProgVarValue::GetValue(ProgVar* pv) const {
+void taiWidgetProgVarValue::GetValueProgVar(ProgVar* pv) const {
   MemberDef* md = pv->GetValMemberDef();
   if(!md || !sub_widget) return;
   if(pv->var_type == ProgVar::T_HardEnum) {
