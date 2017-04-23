@@ -433,6 +433,7 @@ void taiEditorOfClass::DoAddToControlPanel(QAction* act){
     proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md);
   }
+  tabMisc::DelayedUpdateAfterEdit(rbase); // update highlights
 }
 
 void taiEditorOfClass::DoAddToControlPanel_Short(QAction* act){
@@ -457,6 +458,7 @@ void taiEditorOfClass::DoAddToControlPanel_Short(QAction* act){
     proj->undo_mgr.SaveUndo(cp, "AddToControlPanel", cp);
     cp->AddMember(rbase, md, "", "", "", true); // true = short label
   }
+  tabMisc::DelayedUpdateAfterEdit(rbase); // update highlights
 }
 
 void taiEditorOfClass::DoRmvFmControlPanel(QAction* act){
@@ -481,6 +483,7 @@ void taiEditorOfClass::DoRmvFmControlPanel(QAction* act){
     proj->undo_mgr.SaveUndo(cp, "RemoveFmControlPanel", cp);
     cp->RemoveMember(rbase, md);
   }
+  tabMisc::DelayedUpdateAfterEdit(rbase); // update highlights
 }
 
 void taiEditorOfClass::DoGoToControlPanel() {

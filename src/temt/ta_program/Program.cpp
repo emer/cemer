@@ -2347,11 +2347,16 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
   
-  iPanelOfProgramBase* mwv = FindMyProgramPanel();
-  itm->taBase::BrowserSelectMe();
-
-  if (!mwv) return false;
+  this->taBase::BrowserSelectMe(); // first, select the program in main tree -- should get program panel!
+  taMisc::ProcessEvents();
   
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
+
+  if (!mwv) {
+    taMisc::Info("No program panel open, selecting item in Navigator");
+    itm->taBase::BrowserSelectMe();
+    return false;
+  }
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
@@ -2385,17 +2390,27 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
   }
+  else {
+    taMisc::Info("no tree item");
+  }
   return (bool)iti;
 }
 
 bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
   if(!taMisc::gui_active) return false;
 
-  BrowserSelectMe();        // select my program
+  this->taBase::BrowserSelectMe(); // first, select the program in main tree
+  taMisc::ProcessEvents();
+
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
   
   iPanelOfProgramBase* mwv = FindMyProgramPanel();
+  if(!mwv) {
+    taMisc::Info("No program panel open, selecting item in Navigator");
+    itm->taBase::BrowserSelectMe();
+    return false;
+  }
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
@@ -2404,7 +2419,7 @@ bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
     // clear the selection first: makes sure that the select of actual item is
     // novel and triggers whatever we want it to trigger!
     itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
-    itv->scrollTo(iti);
+    itv->scrollTo(iti, iTreeView::PositionAtCenter);
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
 
     // make sure our operations are finished
@@ -2456,7 +2471,7 @@ void Program::BrowserScrollToMe_ProgItem() {
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
-    itv->scrollTo(iti);
+    itv->scrollTo(iti, iTreeView::PositionAtCenter);
   }
 }
 

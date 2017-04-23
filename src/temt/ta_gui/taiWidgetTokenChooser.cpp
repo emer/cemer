@@ -74,10 +74,12 @@ void taiWidgetTokenChooser::EditPanel() {
       imw = vwr->widget();
   }
 
-  taiSigLink* dl = (taiSigLink*)cur_base->GetSigLink();
-  if (dl) {
-    imw->EditItem(dl, true); // edit, but not in this tab
-  }
+  // NOTE: this negates any effects of the BrowserSelect function,
+  // esp for program items that go somewhere other than in the main tree..
+  // taiSigLink* dl = (taiSigLink*)cur_base->GetSigLink();
+  // if (dl) {
+  //   imw->EditItem(dl, true); // edit, but not in this tab
+  // }
   tabMisc::DelayedFunCall_gui(cur_base, "BrowserSelectMe");
 }
 

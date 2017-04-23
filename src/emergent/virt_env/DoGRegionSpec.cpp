@@ -45,6 +45,7 @@ void DoGRegionSpec::Initialize() {
   dog_specs_3.on_gain = 0.8333f;
 
   dog_color_only = true;
+  dog_mono_gain = 0.1f;
   dog_renorm = NO_RENORM;
   dog_save = SAVE_DATA;
   dog_feat_geom.x = 1;
@@ -293,6 +294,11 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
   taVector2i st_ne = (flt_wd - input_size.border); // no edge
   taVector2i ed_ne = dog_img_geom - (flt_wd - input_size.border);
 
+  float mono_gain = 1.0f;
+  if(!dog_color_only && n_colors > 1) {
+    mono_gain = dog_mono_gain;
+  }
+  
   taVector2i oc;         // current coord -- output space
   taVector2i ic;         // input coord
 
@@ -374,7 +380,7 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
               }
             }
           }
-          cnv_sum = cur_dog_filter->on_gain * on_sum - off_sum;
+          cnv_sum = mono_gain * (cur_dog_filter->on_gain * on_sum - off_sum);
         } // monochrome
         else {
           // color
@@ -455,8 +461,9 @@ bool DoGRegionSpec::InitDataTable() {
 
   int idx;
   if(dog_save & SAVE_DATA) {
-    TestError((data_table.ptr() == NULL), "InitDataTable", "You need to set the data table variable of the DoGRegionSpec before calling Init()" );
-    return false;
+    if(TestError((data_table.ptr() == NULL), "InitDataTable", "You need to set the data table variable of the DoGRegionSpec before calling Init()" )) {
+      return false;
+    }
     DoGOutputToTable(data_table, true); // format only
   }
   return true;
