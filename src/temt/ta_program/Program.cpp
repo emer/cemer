@@ -2344,11 +2344,14 @@ iPanelOfProgramBase* Program::FindMyProgramPanel() {
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
   
+  itm->taBase::BrowserSelectMe();
+  taMisc::ProcessEvents();
+
+  this->taBase::BrowserSelectMe(); // first, select the program in main tree
+  taMisc::ProcessEvents();
+  
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
-  
-  this->taBase::BrowserSelectMe(); // first, select the program in main tree -- should get program panel!
-  taMisc::ProcessEvents();
   
   iPanelOfProgramBase* mwv = FindMyProgramPanel();
 
@@ -2387,6 +2390,13 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
         }
       }
     }
+    else {
+      if(itm->InheritsFrom(&TA_ProgVar)) {
+        // auto edit vars too..
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
+      }
+    }
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
   }
@@ -2399,9 +2409,12 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
 bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
   if(!taMisc::gui_active) return false;
 
-  this->taBase::BrowserSelectMe(); // first, select the program in main tree
+  itm->taBase::BrowserSelectMe();
   taMisc::ProcessEvents();
 
+  this->taBase::BrowserSelectMe(); // first, select the program in main tree
+  taMisc::ProcessEvents();
+  
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
   
@@ -2425,30 +2438,30 @@ bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
     // make sure our operations are finished
     taMisc::ProcessEvents();
     // edit ProgCode but not other ProgEls, and tab into all other items
-    if(itm->InheritsFrom(&TA_ProgEl)) {
-      ProgEl* pel = (ProgEl*)itm;
-      if(pel->edit_move_after > 0) {
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-                                                       Qt::NoModifier));
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-                                                       Qt::MetaModifier));
-        pel->edit_move_after = 0;
-      }
-      else if(pel->edit_move_after < 0) {
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
-                                                       Qt::NoModifier));
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-                                                       Qt::MetaModifier));
-        pel->edit_move_after = 0;
-      }
-      else {
-        if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
-          // auto edit prog code
-          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-                                                         Qt::MetaModifier));
-        }
-      }
-    }
+    // if(itm->InheritsFrom(&TA_ProgEl)) {
+    //   ProgEl* pel = (ProgEl*)itm;
+    //   if(pel->edit_move_after > 0) {
+    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+    //                                                    Qt::NoModifier));
+    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+    //                                                    Qt::MetaModifier));
+    //     pel->edit_move_after = 0;
+    //   }
+    //   else if(pel->edit_move_after < 0) {
+    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
+    //                                                    Qt::NoModifier));
+    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+    //                                                    Qt::MetaModifier));
+    //     pel->edit_move_after = 0;
+    //   }
+    //   else {
+    //     if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
+    //       // auto edit prog code
+    //       QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+    //                                                      Qt::MetaModifier));
+    //     }
+    //   }
+    // }
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
   }
