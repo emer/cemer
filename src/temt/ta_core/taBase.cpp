@@ -313,12 +313,19 @@ void taBase::AutoNameMyMembers() {
 }
 
 void taBase::Register() {
-  if(!taMisc::not_constr)
+  if(!taMisc::not_constr) {
+    // if(GetTypeDef()->name == "taMatrixT") {
+    //   taMisc::Info("MatrixT register");
+    // }
     GetTypeDef()->RegisterFinal((void*)this);
+  }
   SetBaseFlag(REGISTERED);
 }
 
 void taBase::unRegister() {
+  // if(GetTypeDef()->name == "taMatrixT") {
+  //   taMisc::Info("MatrixT attempt unregister");
+  // }
   CheckDestroyed();
   if(!taMisc::not_constr && HasBaseFlag(REGISTERED)) {
     GetTypeDef()->unRegisterFinal((void*)this); ClearBaseFlag(REGISTERED);

@@ -330,7 +330,7 @@ public: \
 #define TA_TMPLT_ABSTRACT_BASEFUNS(y,T) \
   TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   TA_TMPLT_BASEFUNS_MAIN_(y,T) \
-  TA_TMPLT_BASEFUNS_TOK_(y,T)
+  TA_TMPLT_BASEFUNS_NTOK_(y,T)
 
 // for use with templates
 #define TA_TMPLT_TYPEFUNS(y,T) \
