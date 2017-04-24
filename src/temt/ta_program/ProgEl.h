@@ -188,15 +188,21 @@ public:
   virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
   // update our progvar elements after change in scope (move, copy)
   
+  int           ReplaceValStr
+    (const String& srch, const String& repl, const String& mbr_filt,
+     void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
+     TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
+
   taObjDiffRec*  GetObjDiffRec
     (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
      TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  
   void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
     const override;
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
-
+  
   String       GetStateDecoKey() const override;
   int          GetEnabled() const override;
   // note: it is our own, plus disabled if parent is

@@ -281,6 +281,7 @@ void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
 
 void ProgEl::GenCss(Program* prog) {
   if(HasProgFlag(OFF)) return;
+  code_string = BrowserEditString(); // save it whenever you compile!
   if(useDesc()) {
     prog->AddDescString(this, desc);
   }
@@ -653,6 +654,15 @@ bool ProgEl::CvtFmCode(const String& code) {
 bool ProgEl::CvtFmSavedCode() {
   bool rval = CvtFmCode(code_string);
   SigEmitUpdated();
+  return rval;
+}
+
+int ProgEl::ReplaceValStr
+(const String& srch, const String& repl, const String& mbr_filt,
+ void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
+  String cur_val = BrowserEditString(); // current best string rep
+  int rval = cur_val.gsub(srch, repl);
+  CvtFmCode(cur_val);
   return rval;
 }
 

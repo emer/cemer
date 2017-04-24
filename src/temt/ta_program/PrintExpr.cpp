@@ -78,6 +78,12 @@ bool PrintExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
     String varstr = exprstr.after('"',-1);
     // if(varstr.nonempty()) return false; // var expr
   }
+  // todo: seems like we could lookup the variable name somehow..
+//   String varnm = exprstr;
+//   if(varnm.contains(',')) varnm = trim(varnm.before(','));
+//   // if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
+//   if(varnm.contains(' ')) varnm = trim(varnm.before(' '));
+// //  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
   return true;
 }
 

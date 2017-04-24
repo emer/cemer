@@ -110,11 +110,11 @@ bool PrintVar::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
     exprstr = trim(exprstr.after('"',-1));
     if(exprstr.contains(',')) exprstr = trim(exprstr.after(','));
   }
-  String varnm = exprstr;
-  if(exprstr.contains(',')) varnm = trim(exprstr.before(','));
-  // if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
-  if(exprstr.contains(' ')) varnm = trim(exprstr.before(' '));
-//  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
+//   String varnm = exprstr;
+//   if(varnm.contains(',')) varnm = trim(varnm.before(','));
+//   // if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
+//   if(varnm.contains(' ')) varnm = trim(varnm.before(' '));
+// //  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
   return true;
 }
 
