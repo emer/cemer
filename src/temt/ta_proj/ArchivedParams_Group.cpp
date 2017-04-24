@@ -27,7 +27,7 @@ ParamSet* ArchivedParams_Group::NewArchive() {
 
 ParamSet* ArchivedParams_Group::Archive(ControlPanel* params) {
   if(params) {
-    return params->Archive();
+    return params->Archive(_nilString);
   }
   return NULL;
 }

@@ -50,9 +50,8 @@ public:
   void                  AllLocked() override { inherited::AllLocked(); }
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or EXPLORE -- use this to lock down a very stable set of parameters and prevent further editing
   
-  ParamSet*             Archive() override { return inherited::Archive(); }
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON archive this set of parameters into a new archived_params parameter set, for later reference
-
+  ParamSet*             Archive(const String& descr) override { return inherited::Archive(descr); }
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #BUTTON archive this set of parameters into a new archived_params parameter set, for later reference -- provide a description of this archive as well
 
   virtual void          SetSavedValue(const String& member_name, const String& saved_value,
                                       bool no_locked = true);

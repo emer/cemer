@@ -111,6 +111,7 @@ GraphTableView* GraphAxisBase::GetGTV() {
 void GraphAxisBase::CopyFromView_base(GraphAxisBase* cp){
   on = cp->on;
   col_name = cp->col_name;
+  col_name_good = cp->col_name_good;
   fixed_range= cp->fixed_range;
   color= cp->color;
   flip = cp->flip;
@@ -145,6 +146,13 @@ void GraphAxisBase::UpdateFmDataCol() {
   }
 }
 
+void GraphAxisBase::RestoreGoodCol() {
+  if(col_name.empty() && col_name_good.nonempty()) {
+    col_name = col_name_good;
+    UpdateFmDataCol();
+  }
+}
+
 void GraphAxisBase::UpdateOnFlag() {
   // nop at base level
 }
@@ -157,6 +165,9 @@ void GraphAxisBase::UpdateFmColLookup() {
       gcv->fixed_range = fixed_range;
     }
     col_name = col_lookup->GetName();
+    if(col_name.nonempty()) {
+      col_name_good = col_name; // save!
+    }
     fixed_range = col_lookup->fixed_range;           // get range from that guy
     if(taBase::GetRefn(col_lookup) <= 1) {
     }

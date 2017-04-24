@@ -5182,7 +5182,14 @@ bool DataTable::GraphViewDefaultStyles() {
 bool DataTable::GraphViewLineStyle() {
   GraphTableView* gv = FindGraphView();
   if(!gv) return false;
-  gv->CallFun("SetLineStyle");
+  gv->CallFun("SetLineStyle");  // this will prompt for args
+  return true;
+}
+
+bool DataTable::RestoreGoodCols() {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->RestoreGoodCols();
   return true;
 }
 

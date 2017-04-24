@@ -1134,6 +1134,9 @@ public:
   // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display #NO_SAVE_UNDO set plots to use the default plot styles
   virtual bool GraphViewLineStyle();
   // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display #NO_SAVE_UNDO set line styles for plots in the graph view
+  virtual bool RestoreGoodCols();
+  // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display attempt to restore previous column names that were last successfully set and used -- sometimes these cols can get lost due to updates and those columns become null, so this is a chance to restore them
+
   virtual void  ScrollEditorsToBottom();
   // #IGNORE scroll all data table editors to the bottom -- called when new blank row added
 

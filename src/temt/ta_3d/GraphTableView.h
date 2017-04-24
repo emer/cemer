@@ -174,7 +174,9 @@ public:
   // #BUTTON set the default plot styles for given range of Y plots (all by default -- -1 = end) -- iterates through colors: black, red, blue, green, purple, orange, brown, chartreuse; and in parallel point sytles circle, square, diamond, triangle_up, triangle_down, plus, cross, star; and then as an outer loop line styles (solid, dot, dash, dash-dot)
   virtual void          SetLineStyle(GraphPlotView::LineStyle line_style,
                                      int start_y=1, int end_y=-1);
-  // #BUTTON set the line style for given range of Y plots (all by default -- -1 = end) 
+  // #BUTTON set the line style for given range of Y plots (all by default -- -1 = end)
+  virtual void          RestoreGoodCols();
+  // #BUTTON attempt to restore previous column names that were last successfully set and used -- sometimes these cols can get lost due to updates and those columns become null, so this is a chance to restore them
 
   void          SaveImageSVG(const String& svg_fname) override;
 

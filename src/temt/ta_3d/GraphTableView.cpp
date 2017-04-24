@@ -533,6 +533,14 @@ void GraphTableView::SetLineStyle(GraphPlotView::LineStyle line_style,
   UpdateDisplay();
 }
 
+void GraphTableView::RestoreGoodCols() {
+  for(int i=0; i<plots.size; i++) {
+    GraphPlotView* gpv = plots[i];
+    gpv->RestoreGoodCol();
+  }
+  UpdateDisplay();
+}
+
 const iColor GraphTableView::bgColor(bool& ok) const {
   ok = true;
   return colorscale.background;

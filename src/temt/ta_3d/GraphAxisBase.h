@@ -44,6 +44,7 @@ public:
   AxisType              axis;           // #READ_ONLY #SHOW type of axis this is, for rendering purposes
   GraphColView*         col_lookup;     // #NULL_OK #FROM_LIST_col_list #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #NO_COPY lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String                col_name;       // name of column of data for this axis
+  String                col_name_good;  // #READ_ONLY #SHOW previous non-NULL column name -- used for restore previous columns
   bool                  is_string;      // #READ_ONLY #NO_COPY true if column is a string
   bool                  is_matrix;      // #READ_ONLY #NO_COPY true if column is a matrix (else a scalar)
   int                   n_cells;        // #READ_ONLY #NO_COPY number of cells if a matrix
@@ -133,6 +134,8 @@ public:
   // if col_lookup is set, update our values from it
   virtual void          UpdateFmDataCol();
   // update various settings from the DataCol (matrix, string, etc)
+  virtual void          RestoreGoodCol();
+  // if current col_name is empty and col_name_good is non-empty, then copy col_name_good to col_name and try to plot that..
 
   void                   CopyFromView_base(GraphAxisBase* cp);
   // special copy function that just copies user view options in a robust manner

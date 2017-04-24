@@ -470,7 +470,7 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
   return param_set;
 }
 
-ParamSet* ControlPanel::Archive() {
+ParamSet* ControlPanel::Archive(const String& descr) {
   if(TestError(IsArchived(), "Archive", "this is already archived!")) {
     return NULL;
   }
@@ -484,6 +484,7 @@ ParamSet* ControlPanel::Archive() {
     }
   }
   param_set->SetName(nm + "_" + taDateTime::CurrentDateStampString());
+  param_set->desc = descr;
   param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
   if(!InheritsFrom(&TA_ParamSet)) {
     param_set->CopyActiveToSaved();

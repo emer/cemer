@@ -99,8 +99,8 @@ public: // public API
   virtual void  EditLabel(int idx);
   // #IGNORE edit the current label - use_default will generate the label
 
-  virtual ParamSet*  Archive();
-  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CONFIRM #DYN1 archive this set of parameters into a new archived_params parameter set, for later reference
+  virtual ParamSet*  Archive(const String& desc);
+  // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #DYN1 archive this set of parameters into a new archived_params parameter set, for later reference -- please provide a description of this archive
   virtual bool       IsArchived();
   // #CAT_CtrlPanel test if this is an archived item -- looks for a non-null owner of type ArchivedParams_Group
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
