@@ -177,6 +177,8 @@ public:
                                 Program* own_prg, Function* own_fun,
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
   // #IGNORE like ExprLookupChooser but returns the list of choosable strings and does not include calls to GUI widgets - just gets the list
+  static void          AddToCompleter(const String& itm);
+  // #IGNORE convenience and debugging entry point for anything added to the list
 
   static void          ExprLookupCompleterReset();
   // #IGNORE reset all the data structures and lists for completer -- 

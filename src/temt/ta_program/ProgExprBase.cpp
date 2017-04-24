@@ -1307,6 +1307,13 @@ void ProgExprBase::ExprLookupCompleterReset() {
   completion_enum_list.RemoveAll();
 }
 
+void ProgExprBase::AddToCompleter(const String& txt) {
+  // if(txt == "saved") {
+  //   taMisc::Info("got saved!");
+  // }
+  completion_choice_list.Add(txt);
+}
+
 String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_pos, int& new_pos,
                                           taBase*& path_own_obj, TypeDef*& path_own_typ,
                                           MemberDef*& path_md, ProgEl* own_pel,
@@ -1649,64 +1656,64 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
   
   for (int i=0; i<completion_progvar_local_list.size; i++) {
     taBase* base = completion_progvar_local_list.FastEl(i);
-    completion_choice_list.Add(base->GetName());
+    AddToCompleter(base->GetName());
   }
 
   for (int i=0; i<completion_progvar_global_list.size; i++) {
     taBase* base = completion_progvar_global_list.FastEl(i);
-    completion_choice_list.Add(base->GetName());
+    AddToCompleter(base->GetName());
   }
   
   if (include_bools) {
     for (int i=0; i<completion_bool_list.size; i++) {
-      completion_choice_list.Add(completion_bool_list.FastEl(i));
+      AddToCompleter(completion_bool_list.FastEl(i));
     }
   }
   
   if (include_null) {
     for (int i=0; i<completion_null_list.size; i++) {
-      completion_choice_list.Add(completion_null_list.FastEl(i));
+      AddToCompleter(completion_null_list.FastEl(i));
     }
   }
   
   for (int i=0; i<completion_function_list.size; i++) {
     taBase* base = completion_function_list.FastEl(i);
-    completion_choice_list.Add(base->GetName() + "()");
+    AddToCompleter(base->GetName() + "()");
   }
   
   for (int i=0; i<completion_program_list.size; i++) {
     taBase* base = completion_program_list.FastEl(i);
-    completion_choice_list.Add(base->GetName() + "()");
+    AddToCompleter(base->GetName() + "()");
   }
   
   if (include_types) {
     for (int i=0; i<completion_type_list.size; i++) {
-      completion_choice_list.Add(completion_type_list.FastEl(i));
+      AddToCompleter(completion_type_list.FastEl(i));
     }
   }
 
   if (include_progels) {
     for (int i=0; i<completion_progels_list.size; i++) {
-      completion_choice_list.Add(completion_progels_list.FastEl(i));
+      AddToCompleter(completion_progels_list.FastEl(i));
     }
   }
   
   if (include_statics) {
     for (int i=0; i<completion_statics_list.size; i++) {
-      completion_choice_list.Add(completion_statics_list.FastEl(i));
+      AddToCompleter(completion_statics_list.FastEl(i));
     }
   }
   
   if (include_css_functions) {
     for (int i=0; i<cssMisc::Functions.size; i++) {
-      completion_choice_list.Add(cssMisc::Functions.FastEl(i)->name);
+      AddToCompleter(cssMisc::Functions.FastEl(i)->name);
     }
   }
 
   completion_member_list.Sort();
   for (int i=0; i<completion_member_list.size; i++) {
     MemberDef* member_def = completion_member_list.FastEl(i);
-    completion_choice_list.Add(member_def->name);
+    AddToCompleter(member_def->name);
   }
 
   for (int i=0; i<completion_method_list.size; i++) {
@@ -1719,17 +1726,17 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 //      }
 //    }
     full_seed += ")";
-    completion_choice_list.Add(full_seed);
+    AddToCompleter(full_seed);
   }
   
   for (int i=0; i<completion_dynenum_list.size; i++) {
     taBase* base = completion_dynenum_list.FastEl(i);
-    completion_choice_list.Add(base->GetName());
+    AddToCompleter(base->GetName());
   }
 
   for (int i=0; i<completion_enum_list.size; i++) {
     EnumDef* enum_def = completion_enum_list.FastEl(i);
-    completion_choice_list.Add(enum_def->name);
+    AddToCompleter(enum_def->name);
   }
 
   // useful for debug
@@ -1871,26 +1878,12 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if(!btmp)
       continue;
-    taBase* parent = btmp->GetParent();
-    // keeps templates out of the list of actual instances
-    if (btmp->GetPath().startsWith(".templates")) {  // maybe SameScope handles this
-      continue;
-    }
-    // keeps templates out of the list of actual instances
-//    if (!parent)
-//      continue;
-    
     if (scope && scope_type) {
       if (!btmp->SameScope(scope, scope_type))
         continue;
-//      if (!ShowToken(btmp)) continue;
-    }
-    
-    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
-    taBase* owner = btmp->GetOwner();
-    if (owner) {
-      MemberDef* md = owner->FindMemberName(btmp->GetName());
-      if (md && md->HasOption("HIDDEN_CHOOSER"))
+      // for complex reasons.. same scope can return true if prog_var is not actually within
+      // given scope -- strictly exclude those here!
+      if(btmp->GetOwner(scope_type) == NULL)
         continue;
     }
     tokens->Link(btmp);
@@ -1923,27 +1916,16 @@ void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* sc
 //      if (var_owner_list->GetName() != prog_el_owner_list_name) continue;
     }
     
-    taBase* parent = prog_var->GetParent();
-    // keeps templates out of the list of actual instances
-    if (prog_var->GetPath().startsWith(".templates")) {  // maybe SameScope handles this
-      continue;
-    }
-    
     taBase* prog_var_scope = prog_var->GetScopeObj(scope_type);
-    
     if (!prog_var_scope) continue;
     
     if (scope && scope_type) {
       if (!prog_var->SameScope(scope, scope_type)) {
         continue;
       }
-    }
-    
-    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
-    taBase* owner = prog_var->GetOwner();
-    if (owner) {
-      MemberDef* md = owner->FindMemberName(prog_var->GetName());
-      if (md && md->HasOption("HIDDEN_CHOOSER"))
+      // for complex reasons.. same scope can return true if prog_var is not actually within
+      // given scope -- strictly exclude those prog vars!
+      if(prog_var->GetOwner(scope_type) == NULL)
         continue;
     }
     tokens->Link(prog_var);
@@ -1961,20 +1943,11 @@ void ProgExprBase::GetGlobalVars(taBase_List* tokens, taBase* scope, TypeDef* sc
     
     if(prog_var->IsLocal()) continue;
     
-    taBase* parent = prog_var->GetParent();
-    // keeps templates out of the list of actual instances
-    if (prog_var->GetPath().startsWith(".templates")) {  // maybe SameScope handles this
-      continue;
-    }
     if (scope && scope_type) {
       if (!prog_var->SameScope(scope, scope_type)) continue;
-    }
-    
-    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
-    taBase* owner = prog_var->GetOwner();
-    if (owner) {
-      MemberDef* md = owner->FindMemberName(prog_var->GetName());
-      if (md && md->HasOption("HIDDEN_CHOOSER"))
+      // for complex reasons.. same scope can return true if prog_var is not actually within
+      // given scope -- strictly exclude those prog vars!
+      if(prog_var->GetOwner(scope_type) == NULL)
         continue;
     }
     tokens->Link(prog_var);
