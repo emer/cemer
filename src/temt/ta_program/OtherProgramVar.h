@@ -29,7 +29,7 @@
 taTypeDef_Of(OtherProgramVar);
 
 class TA_API OtherProgramVar : public ProgEl { 
-  // A program element for exchanging variable information between programs -- variables must have the same names in both programs
+  // ##PROGEL_COMPLETION A program element for exchanging variable information between programs -- variables must have the same names in both programs
 INHERITED(ProgEl)
 public:
   ProgramRef	other_prog; 	// the other program with variables that you want to get or set
