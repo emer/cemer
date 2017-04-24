@@ -166,6 +166,7 @@ public slots:
 protected slots:
   void                  butScaleDefault_pressed();
   void                  butSetColor_pressed();
+  void                  scalebar_changed();
   void                  hist_back();
   void                  hist_back_f();
   void                  hist_back_all();

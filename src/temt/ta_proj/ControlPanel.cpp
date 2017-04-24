@@ -138,18 +138,24 @@ void ControlPanel::MasterTriggerUpdate() {
 
 
 bool ControlPanel::UpdateCloneFromMaster(ControlPanel* master) {
-  bool itm_chgs = UpdateCloneFromMaster_mbrlist(&(this->mbrs), &(master->mbrs));
-  bool gp_chgs = UpdateCloneFromMaster_mbrgps(&(this->mbrs), &(master->mbrs));
+  bool itm_chgs = UpdateCloneFromMaster_mbrlist(&(this->mbrs), &(master->mbrs), this);
+  bool gp_chgs = UpdateCloneFromMaster_mbrgps(&(this->mbrs), &(master->mbrs), this);
   return itm_chgs || gp_chgs;
 }
 
 bool ControlPanel::UpdateCloneFromMaster_mbrlist
-(ControlPanelMember_Group* clone, ControlPanelMember_Group* master)
+(ControlPanelMember_Group* clone, ControlPanelMember_Group* master, ControlPanel* clone_panel)
 {
   bool any_changes = false;
   int i;  int ti;
   ControlPanelMember* cln;
   ControlPanelMember* mst;
+
+  bool explore_new = false;
+  if(clone_panel->InheritsFrom(&TA_ParamSet)) {
+    explore_new = ((ParamSet*)clone_panel)->last_activated; // set new options to explore only for last activated
+  }
+  
   // delete not in master; freshen those that are
   for (i = clone->size - 1; i >= 0; --i) {
     cln = clone->FastEl(i);
@@ -173,6 +179,9 @@ bool ControlPanel::UpdateCloneFromMaster_mbrlist
     if (i < 0) {
       cln = (ControlPanelMember*)mst->Clone();
       clone->Insert(cln, ti);
+      if(explore_new) {
+        cln->SetToExplore();
+      }
       any_changes = true;
     }
     else if (i != ti) {
@@ -184,7 +193,7 @@ bool ControlPanel::UpdateCloneFromMaster_mbrlist
 }
 
 bool ControlPanel::UpdateCloneFromMaster_mbrgps
-(ControlPanelMember_Group* clone, ControlPanelMember_Group* master) {
+(ControlPanelMember_Group* clone, ControlPanelMember_Group* master, ControlPanel* clone_panel) {
   bool any_changes = false;
   int i;  int ti;
   ControlPanelMember_Group* cln;
@@ -194,7 +203,7 @@ bool ControlPanel::UpdateCloneFromMaster_mbrgps
     cln = (ControlPanelMember_Group*)clone->gp.FastEl(i);
     mst = (ControlPanelMember_Group*)master->gp.FindName(cln->name);
     if(mst) {
-      any_changes |= UpdateCloneFromMaster_mbrlist(cln, mst);
+      any_changes |= UpdateCloneFromMaster_mbrlist(cln, mst, clone_panel);
     }
     else {
       clone->gp.RemoveIdx(i);
@@ -213,7 +222,7 @@ bool ControlPanel::UpdateCloneFromMaster_mbrgps
     }
     else if (i != ti) {
       clone->gp.MoveIdx(i, ti);
-      UpdateCloneFromMaster_mbrlist((ControlPanelMember_Group*)clone->gp.FastEl(i), mst);
+      UpdateCloneFromMaster_mbrlist((ControlPanelMember_Group*)clone->gp.FastEl(i), mst, clone_panel);
       any_changes = true;
     }
   }

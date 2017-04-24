@@ -143,10 +143,10 @@ public: // public API
   virtual bool  UpdateCloneFromMaster(ControlPanel* master);
   // update this clone control panel from given master control panel -- ensures that the same structure and names of members are present
   static bool  UpdateCloneFromMaster_mbrlist
-    (ControlPanelMember_Group* clone, ControlPanelMember_Group* master);
+    (ControlPanelMember_Group* clone, ControlPanelMember_Group* master, ControlPanel* clone_panel);
   // #IGNORE update items in given list (not subgroups)
   static bool  UpdateCloneFromMaster_mbrgps
-    (ControlPanelMember_Group* clone, ControlPanelMember_Group* master);
+    (ControlPanelMember_Group* clone, ControlPanelMember_Group* master, ControlPanel* clone_panel);
   // #IGNORE update items in given subgroups
  
   

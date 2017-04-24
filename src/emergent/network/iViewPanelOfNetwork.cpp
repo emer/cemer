@@ -285,7 +285,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
 
   cbar = new iHColorScaleBar(&(dv_->scale), iColorScaleBar::RANGE, true, true, widg);
-  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
+  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(scalebar_changed()) );
 //  cbar->setMaximumWidth(30);
 //   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   layiColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
@@ -632,6 +632,19 @@ void iViewPanelOfNetwork::butSetColor_pressed() {
     nv->CallFun("SetColorSpec");
   }
   repaint();
+}
+
+void iViewPanelOfNetwork::scalebar_changed() {
+  Changed();                  // overall edit changed
+  if (updating) return;
+  if (NetView *nv = getNetView()) {
+    ++updating;
+    if(nv->scale.auto_scale) {
+      nv->scale.auto_scale = false;
+      chkAutoScale->setChecked(false); // raises signal on widget..
+    }
+    --updating;
+  }
 }
 
 void iViewPanelOfNetwork::hist_back_all() {

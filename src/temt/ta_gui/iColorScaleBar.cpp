@@ -53,16 +53,17 @@ void iColorScaleBar::Init(bool hor_, bool adj, bool ed){
   bar = NULL;
   enlarger = NULL;
   shrinker = NULL;
-  min_incr = NULL;
-  min_decr = NULL;
-  max_incr = NULL;
-  max_decr = NULL;
+  // min_incr = NULL;
+  // min_decr = NULL;
+  // max_incr = NULL;
+  // max_decr = NULL;
 
   if (hor)
     layOuter = new QHBoxLayout(this);
   else
     layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0);
+  layOuter->setSpacing(0);
 
   min_frep = new iLineEdit(this);
   min_frep->setCharWidth(6); // make them a bit smaller
@@ -77,54 +78,61 @@ void iColorScaleBar::Init(bool hor_, bool adj, bool ed){
   }
 
   if (adjustflag) {
-    if (sm == RANGE) {
+    // if (sm == RANGE) {
       enlarger = new QToolButton(this);
       ((QToolButton*)enlarger)->setArrowType(Qt::UpArrow);
       connect(enlarger, SIGNAL(pressed()), this, SLOT(Incr_Range()));
       shrinker = new QToolButton(this);
       ((QToolButton*)shrinker)->setArrowType(Qt::DownArrow);
       connect(shrinker, SIGNAL(pressed()), this, SLOT(Decr_Range()));
-    } else {
-      min_incr = new QToolButton(this);
-      ((QToolButton*)min_incr)->setArrowType(Qt::UpArrow);
-      connect(min_incr, SIGNAL(pressed()), this, SLOT(Incr_Min()));
-      min_decr = new QToolButton(this);
-      ((QToolButton*)min_decr)->setArrowType(Qt::DownArrow);
-      connect(min_decr, SIGNAL(pressed()), this, SLOT(Decr_Min()));
-      max_incr = new QToolButton(this);
-      ((QToolButton*)max_incr)->setArrowType(Qt::UpArrow);
-      connect(max_incr, SIGNAL(pressed()), this, SLOT(Incr_Max()));
-      max_decr = new QToolButton(this);
-      ((QToolButton*)max_decr)->setArrowType(Qt::DownArrow);
-      connect(max_decr, SIGNAL(pressed()), this, SLOT(Decr_Max()));
-    }
+    // }
+    // else {
+    //   min_incr = new QToolButton(this);
+    //   ((QToolButton*)min_incr)->setArrowType(Qt::UpArrow);
+    //   connect(min_incr, SIGNAL(pressed()), this, SLOT(Incr_Min()));
+    //   min_decr = new QToolButton(this);
+    //   ((QToolButton*)min_decr)->setArrowType(Qt::DownArrow);
+    //   connect(min_decr, SIGNAL(pressed()), this, SLOT(Decr_Min()));
+    //   max_incr = new QToolButton(this);
+    //   ((QToolButton*)max_incr)->setArrowType(Qt::UpArrow);
+    //   connect(max_incr, SIGNAL(pressed()), this, SLOT(Incr_Max()));
+    //   max_decr = new QToolButton(this);
+    //   ((QToolButton*)max_decr)->setArrowType(Qt::DownArrow);
+    //   connect(max_decr, SIGNAL(pressed()), this, SLOT(Decr_Max()));
+    // }
   }
 }
 
 void iColorScaleBar::InitLayout() {
-//TODO : add remainder of controls, ex. min/max types
+  int targ_ht = min_frep->height();
+  int arrow_sz = targ_ht / 2;
   if (hor) {
+    if (shrinker) { //note: both or none
+      // put them side by side, to save vert room
+      QBoxLayout* layBut = new QVBoxLayout; layOuter->addLayout(layBut);
+      enlarger->setFixedWidth(arrow_sz);
+      enlarger->setFixedHeight(arrow_sz);
+      shrinker->setFixedWidth(arrow_sz);
+      shrinker->setFixedHeight(arrow_sz);
+      layBut->setMargin(0); //spacing=2
+      layBut->setSpacing(0); //abut
+      layBut->addWidget(enlarger);
+      layBut->addWidget(shrinker);
+    }
     layOuter->addWidget(min_frep);
     if (bar) { 
       bar->setMaximumHeight(min_frep->height()); // make them the same
       layOuter->addWidget(bar, 1);
     }
     layOuter->addWidget(max_frep);
-    if (shrinker) { //note: both or none
-      // put them side by side, to save vert room
-      QBoxLayout* layBut = new QHBoxLayout; layOuter->addLayout(layBut);
-      layBut->setMargin(0); //spacing=2
-      layBut->setSpacing(0); //abut
-      layBut->addWidget(enlarger);
-      layBut->addWidget(shrinker);
-     }
-  } else { // vert
+  }
+  else { // vert
     if (enlarger) { //note: both or none
       QBoxLayout* layBut = new QHBoxLayout; layOuter->addLayout(layBut);
       layBut->setMargin(0); //spacing=2
       layBut->addWidget(enlarger);
       layBut->addWidget(shrinker);
-     }
+    }
     layOuter->addWidget(max_frep);
     if (bar) layOuter->addWidget(bar);
     layOuter->addWidget(min_frep);
@@ -192,6 +200,22 @@ bool iColorScaleBar::GetScaleValues(){
   }
   return ok;
 }
+
+void iColorScaleBar::UpdateScaleValues() {
+  if(cur_minmax_set && min() == cur_min && max() == cur_max)
+    return;
+  cur_minmax_set = true;
+  cur_min = min();
+  cur_max = max();
+
+  String min_str(min(), "%5.3f");
+  String max_str(max(), "%5.3f");
+
+  min_frep->setText(min_str);
+  max_frep->setText(max_str);
+  UpdatePads();
+}
+
 void iColorScaleBar::Incr_Range(){
   int i = 1; // used to be a param
   if(adjustflag) {
@@ -206,8 +230,7 @@ void iColorScaleBar::Incr_Range(){
     UpdatePads();
     Adjust();
   }
-
-};
+}
 
 void iColorScaleBar::Decr_Range(){
   int i = 1; // used to be a param
@@ -222,80 +245,82 @@ void iColorScaleBar::Decr_Range(){
     UpdatePads();
     Adjust();
   }
-};
-
-void iColorScaleBar::Incr_Min(){
-  int i = 1; // used to be a param
-  if (adjustflag) {
-    GetScaleValues();
-    int j;
-    float min_t = min();
-    float newmin = min_t;
-    for(j=0;j<i;j++) {
-      newmin = min_t  + std::max((float)(fabs((double) min_t)*.111111)
-				    ,(float) scalebar_low_value);
-      if(newmin > max()) newmin = max();
-    }
-    bar->scale->SetMinMax(newmin, max());
-    UpdateScaleValues();
-    UpdatePads();
-    Adjust();
-
-  }
-}
-void iColorScaleBar::Decr_Min(){
-  int i = 1; // used to be a param
-  if (adjustflag) {
-    GetScaleValues();
-    int j;
-    float min_t = min();
-    for (j=0;j<i;j++) {
-      min_t -= std::max((fabs((double) min_t)*.1),scalebar_low_value);
-    }
-    bar->scale->SetMinMax(min_t, max());
-    UpdateScaleValues();
-    UpdatePads();
-    Adjust();
-  }
 }
 
-void iColorScaleBar::Incr_Max(){
-  int i = 1; // used to be a param
-  if (adjustflag) {
-    GetScaleValues();
-    int j;
-    float max_t = max();
-    for(j=0;j<i;j++) {
-      max_t += std::max((fabs((double)max_t) * 0.111111),scalebar_low_value);
-    }
-    bar->scale->SetMinMax(min(), max_t);
-    UpdateScaleValues();
-    UpdatePads();
-    Adjust();
-  }
-}
-void iColorScaleBar::Decr_Max(){
-  int i = 1; // used to be a param
-  if (adjustflag) {
-    GetScaleValues();
-    int j;
-    float max_t = max();
-    float newmax = max_t;
-    for(j=0;j<i;j++) {
-      newmax = max_t - std::max((fabs((double) max_t )*.1),scalebar_low_value);
-      if(newmax < min()) newmax = min();
-      max_t = newmax;
-    }
-    bar->scale->SetMinMax(min(), max_t);
-    UpdateScaleValues();
-    UpdatePads();
-    Adjust();
-  }
-}
+// void iColorScaleBar::Incr_Min(){
+//   int i = 1; // used to be a param
+//   if (adjustflag) {
+//     GetScaleValues();
+//     int j;
+//     float min_t = min();
+//     float newmin = min_t;
+//     for(j=0;j<i;j++) {
+//       newmin = min_t  + std::max((float)(fabs((double) min_t)*.111111)
+// 				    ,(float) scalebar_low_value);
+//       if(newmin > max()) newmin = max();
+//     }
+//     bar->scale->SetMinMax(newmin, max());
+//     UpdateScaleValues();
+//     UpdatePads();
+//     Adjust();
+
+//   }
+// }
+
+// void iColorScaleBar::Decr_Min(){
+//   int i = 1; // used to be a param
+//   if (adjustflag) {
+//     GetScaleValues();
+//     int j;
+//     float min_t = min();
+//     for (j=0;j<i;j++) {
+//       min_t -= std::max((fabs((double) min_t)*.1),scalebar_low_value);
+//     }
+//     bar->scale->SetMinMax(min_t, max());
+//     UpdateScaleValues();
+//     UpdatePads();
+//     Adjust();
+//   }
+// }
+
+// void iColorScaleBar::Incr_Max(){
+//   int i = 1; // used to be a param
+//   if (adjustflag) {
+//     GetScaleValues();
+//     int j;
+//     float max_t = max();
+//     for(j=0;j<i;j++) {
+//       max_t += std::max((fabs((double)max_t) * 0.111111),scalebar_low_value);
+//     }
+//     bar->scale->SetMinMax(min(), max_t);
+//     UpdateScaleValues();
+//     UpdatePads();
+//     Adjust();
+//   }
+// }
+// void iColorScaleBar::Decr_Max(){
+//   int i = 1; // used to be a param
+//   if (adjustflag) {
+//     GetScaleValues();
+//     int j;
+//     float max_t = max();
+//     float newmax = max_t;
+//     for(j=0;j<i;j++) {
+//       newmax = max_t - std::max((fabs((double) max_t )*.1),scalebar_low_value);
+//       if(newmax < min()) newmax = min();
+//       max_t = newmax;
+//     }
+//     bar->scale->SetMinMax(min(), max_t);
+//     UpdateScaleValues();
+//     UpdatePads();
+//     Adjust();
+//   }
+// }
+
 void iColorScaleBar::SetRange(float val){
   bar->scale->ModRange(val);
   UpdateScaleValues();
-};
+}
 
 void iColorScaleBar::SetColorScale(ColorScale* c){
   if(bar != NULL) bar->SetColorScale(c);
@@ -311,20 +336,5 @@ void iColorScaleBar::SetMinMax(float mn,float mx){
 void iColorScaleBar::SetRoundRange(float val){
   bar->scale->ModRange(val);
   UpdateScaleValues();
-}
-
-void iColorScaleBar::UpdateScaleValues() {
-  if(cur_minmax_set && min() == cur_min && max() == cur_max)
-    return;
-  cur_minmax_set = true;
-  cur_min = min();
-  cur_max = max();
-
-  String min_str(min(), "%5.3f");
-  String max_str(max(), "%5.3f");
-
-  min_frep->setText(min_str);
-  max_frep->setText(max_str);
-  UpdatePads();
 }
 

@@ -68,10 +68,11 @@ public:
 
   QAbstractButton* 	enlarger;	// increase range button
   QAbstractButton* 	shrinker;	// decrease range button
-  QAbstractButton* 	min_incr;	// increment minimum button
-  QAbstractButton* 	min_decr;	// decrement minimum button
-  QAbstractButton* 	max_incr;	// increment maximum button
-  QAbstractButton* 	max_decr;	// decrement maximum button
+  // note: not currently supported
+  // QAbstractButton* 	min_incr;	// increment minimum button
+  // QAbstractButton* 	min_decr;	// decrement minimum button
+  // QAbstractButton* 	max_incr;	// increment maximum button
+  // QAbstractButton* 	max_decr;	// decrement maximum button
 
   iWidget_List	  	padlist; 	// #IGNORE list of color pads for palletes
 
@@ -98,10 +99,10 @@ public slots:
   //nn virtual void editor_reject(ivFieldEditor*);
   virtual void Incr_Range();
   virtual void Decr_Range();
-  virtual void Incr_Min();
-  virtual void Incr_Max();
-  virtual void Decr_Min();
-  virtual void Decr_Max();
+  // virtual void Incr_Min();
+  // virtual void Incr_Max();
+  // virtual void Decr_Min();
+  // virtual void Decr_Max();
 
 #ifndef __MAKETA__
 signals:
