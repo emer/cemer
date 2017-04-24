@@ -56,6 +56,7 @@ public:
   // #CAT_CtrlPanel #MENU #MENU_ON_ControlPanel #CONFIRM #BUTTON #BUTTON set all members to be LOCKED (not subject to editing of any sort) -- you can then selectively mark a subset as STABLE (editable but not recorded) or EXPLORE -- use this to lock down a very stable set of parameters and prevent further editing
 
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
   virtual void  MasterClonesUpdate();
   // #CAT_ControlPanel update all the control panels for the master-and-clones configuration

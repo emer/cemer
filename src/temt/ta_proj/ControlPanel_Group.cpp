@@ -18,6 +18,7 @@
 #include <DataTable>
 #include <taProject>
 #include <ParamSet_Group>
+#include <SigLinkSignal>
 
 #include <taMisc>
 
@@ -46,6 +47,13 @@ void ControlPanel_Group::InitLinks() {
 void ControlPanel_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(!taMisc::is_loading) {
+    MasterClonesUpdate();
+  }
+}
+
+void ControlPanel_Group::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
+  if(sls >= SLS_LIST_ORDER_MIN && sls <= SLS_LIST_ORDER_MAX) { // order was changed
     MasterClonesUpdate();
   }
 }
