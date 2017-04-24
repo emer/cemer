@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10607
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10640
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
@@ -23,7 +23,7 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   ControlPanelMember_Group @.mbrs = [8] {
+   ControlPanelMember_Group @.mbrs = [9] {
     ControlPanelMember @[0] { };
     ControlPanelMember @[1] { };
     ControlPanelMember @[2] { };
@@ -32,6 +32,7 @@ LeabraProject .projects["LeabraFlex"] {
     ControlPanelMember @[5] { };
     ControlPanelMember @[6] { };
     ControlPanelMember @[7] { };
+    ControlPanelMember @[8] { };
    };
 
    ControlPanelMethod_Group @.mths = [4] {
@@ -526,7 +527,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [40] {
+    DataTableCols @.data = [41] {
      int_Data @["batch"] { };
      int_Data @["epoch"] { };
      float_Data @["avg_sse"] { };
@@ -565,8 +566,9 @@ LeabraProject .projects["LeabraFlex"] {
      float_Data @["Input_avg_act"] { };
      float_Data @["Hidden_avg_act"] { };
      float_Data @["Output_avg_act"] { };
-     float_Data @["Hidden_netrel"] { };
-     float_Data @["Output_netrel"] { };
+     float_Data @["Hidden_Fm_Input_netrel"] { };
+     float_Data @["Hidden_Fm_Output_netrel"] { };
+     float_Data @["Output_Fm_Hidden_netrel"] { };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -862,12 +864,15 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [6] {
+    ProgVar_List @.vars = [9] {
      ProgVar @["activate_params"] { };
      ProgVar @["run_params"] { };
      ProgVar @["net_params"] { };
      ProgVar @["run_prog"] { };
      ProgVar @["init_prog"] { };
+     ProgVar @["cluster_run"] { };
+     ProgVar @["cust_tag"] { };
+     ProgVar @["tag"] { };
      ProgVar @["stop_train"] { };
     };
 
@@ -894,13 +899,19 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.prog_code = [4] {
      AssignExpr @[0] { };
      If @[1] { 
-      ProgEl_List @.true_code = [2] {
-       MethodCall @[0] { 
+      ProgEl_List @.true_code = [5] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       AssignExpr @[1] { };
+       OtherProgramVar @[2] { };
+       MethodCall @[3] { 
 	ProgArg_List @.meth_args = [1] {
 	 ProgArg @[0] { };
 	};
        };
-       MethodCall @[1] { 
+       MethodCall @[4] { 
 	ProgArg_List @.meth_args = [1] {
 	 ProgArg @[0] { };
 	};
@@ -2572,13 +2583,9 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     If @[3] { 
-      ProgEl_List @.true_code = [1] {
-       ProgramCall @[0] { 
-	ProgArg_List @.prog_args = [1] {
-	 ProgArg @[0] { };
-	};
-       };
+     ProgramCall @[3] { 
+      ProgArg_List @.prog_args = [1] {
+       ProgArg @[0] { };
       };
      };
      MethodCall @[4] { 
@@ -3170,7 +3177,15 @@ LeabraProject .projects["LeabraFlex"] {
      Function_List @.functions = [0] {
      };
 
-     ProgEl_List @.init_code = [0] {
+     ProgEl_List @.init_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [0] {
+	 };
+	};
+       };
+      };
      };
 
      ProgEl_List @.prog_code = [6] {
@@ -3740,7 +3755,7 @@ LeabraProject .projects["LeabraFlex"] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
-	 T3DataView_List @.children = [40] {
+	 T3DataView_List @.children = [41] {
 	  GraphColView @["batch"] { };
 	  GraphColView @["epoch"] { };
 	  GraphColView @["avg_sse"] { };
@@ -3779,8 +3794,9 @@ LeabraProject .projects["LeabraFlex"] {
 	  GraphColView @["Input_avg_act"] { };
 	  GraphColView @["Hidden_avg_act"] { };
 	  GraphColView @["Output_avg_act"] { };
-	  GraphColView @["Hidden_netrel"] { };
-	  GraphColView @["Output_netrel"] { };
+	  GraphColView @["Hidden_Fm_Input_netrel"] { };
+	  GraphColView @["Hidden_Fm_Output_netrel"] { };
+	  GraphColView @["Output_Fm_Hidden_netrel"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -4392,7 +4408,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value="true";
       range=;
       notes="should MasterTrain activate param sets at start";
@@ -4412,7 +4428,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"RunParams\"][\"SpecialTrain\"]";
       range=;
       notes="MasterTrain sets these params at start";
@@ -4432,7 +4448,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"MiscParams\"][\"MiscOne\"]";
       range=;
       notes="add extra params as needed..";
@@ -4452,7 +4468,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value="0";
       range="0:1:0.1";
       notes="MasterRun step can do many different things -- very useful!";
@@ -4472,7 +4488,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value="true";
       range="0:1:0.1";
       notes="turn OFF to see individual cycles, ON for MUCH faster running";
@@ -4492,7 +4508,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value="true";
       range="0:1:0.1";
       notes="update network view at cycle level -- actual value depends on cycle_qtr";
@@ -4512,7 +4528,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value="false";
       range=;
       notes="redundant with cycle for cycle_qtr = ON";
@@ -4532,10 +4548,30 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CONTROL;
       is_numeric=0;
       is_single=1;
-      state=ACTIVE;
+      state=EXPLORE;
       saved_value="false";
       range=;
       notes="mostly redundant but some updates happen after trial";
+     };
+    };
+    ControlPanelMember @[8] {
+     user_data_=NULL;
+     label="cust_tag";
+     short_label=1;
+     cust_label=0;
+     desc="add any custom tag string here -- used for labeling log and weight files along with config info";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cust_tag"]$$;
+     mbr=ProgVar::string_val;
+     data {
+      user_data_=NULL;
+      ctrl_type=CONTROL;
+      is_numeric=0;
+      is_single=1;
+      state=EXPLORE;
+      saved_value="mtau10_mrg1st.5";
+      range=;
+      notes="update this to label log files -- will also be labeled with config names ";
      };
     };
    };
@@ -4623,10 +4659,10 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CLUSTER_RUN;
       is_numeric=0;
       is_single=1;
-      state=STABLE;
+      state=EXPLORE;
       saved_value=;
       range=;
-      notes=;
+      notes="set to explore for name to be added to tag";
      };
     };
     ControlPanelMember @[1] {
@@ -4643,7 +4679,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       ctrl_type=CLUSTER_RUN;
       is_numeric=0;
       is_single=1;
-      state=STABLE;
+      state=EXPLORE;
       saved_value=;
       range=;
       notes=;
@@ -10317,12 +10353,12 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       width=14;
       matrix_col_width=10;
      };
-     float_Data @["Hidden_netrel"] {
+     float_Data @["Hidden_Fm_Input_netrel"] {
       user_data_=NULL;
-      name="Hidden_netrel";
+      name="Hidden_Fm_Input_netrel";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        user_data_=NULL;
        expr=;
@@ -10330,16 +10366,16 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       dim_names {
        user_data_=NULL;
        name="dim_names";
-      [2] ;;      };
-      width=13;
+      [0]       };
+      width=22;
       matrix_col_width=10;
      };
-     float_Data @["Output_netrel"] {
+     float_Data @["Hidden_Fm_Output_netrel"] {
       user_data_=NULL;
-      name="Output_netrel";
+      name="Hidden_Fm_Output_netrel";
       col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        user_data_=NULL;
        expr=;
@@ -10347,8 +10383,25 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       dim_names {
        user_data_=NULL;
        name="dim_names";
-      [2] ;;      };
-      width=13;
+      [0]       };
+      width=23;
+      matrix_col_width=10;
+     };
+     float_Data @["Output_Fm_Hidden_netrel"] {
+      user_data_=NULL;
+      name="Output_Fm_Hidden_netrel";
+      col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       user_data_=NULL;
+       expr=;
+      };
+      dim_names {
+       user_data_=NULL;
+       name="dim_names";
+      [0]       };
+      width=23;
       matrix_col_width=10;
      };
     };
@@ -12114,7 +12167,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-     other_prog=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"]$$;
+     other_prog=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"]$$;
      set_other=1;
      var_1=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
      var_2=NULL;
@@ -12721,6 +12774,41 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="name of init program -- must exist in the InitProgs group";
       init_from=NULL;
      };
+     ProgVar @["cluster_run"] {
+      user_data_=NULL;
+      name="cluster_run";
+      var_type=T_Object;
+      object_type=ClusterRun;
+      object_val=$.projects["LeabraFlex"].ctrl_panels["ClusterRun"]$;
+      object_scope=NULL;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="used for setting the tag name -- param sets with EXPLORE set will be added to tag";
+      init_from=NULL;
+     };
+     ProgVar @["cust_tag"] {
+      user_data_=NULL;
+      name="cust_tag";
+      var_type=T_String;
+      string_val=;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="add any custom tag string here -- used for labeling log and weight files along with config info";
+      init_from=NULL;
+     };
+     ProgVar @["tag"] {
+      user_data_=NULL;
+      name="tag";
+      var_type=T_String;
+      string_val="_mtau10_mrg1st.5_BasicTrain_MarginSign";
+      object_scope=NULL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
      ProgVar @["stop_train"] {
       user_data_=NULL;
       name="stop_train";
@@ -12846,7 +12934,42 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="true_code";
        el_typ=ProgCode;
        el_def=0;
-       MethodCall @[0] {
+       LocalVars @[0] {
+	user_data_=NULL;
+	desc=;
+	flags=0;
+	code_string=;
+	local_vars {
+	 user_data_=NULL;
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       AssignExpr @[1] {
+	user_data_=NULL;
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="tag = \"_\" + control_panel->ParamSetNames(false)";
+	result_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["tag"]$$;
+	expr {
+	 user_data_=NULL;
+	 expr="\"_\" + cust_tag + \"_\" + cluster_run->ParamSetNames(false)";
+	};
+       };
+       OtherProgramVar @[2] {
+	user_data_=NULL;
+	desc=;
+	flags=0;
+	code_string=;
+	other_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"]$;
+	set_other=1;
+	var_1=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["tag"]$;
+	var_2=NULL;
+	var_3=NULL;
+	var_4=NULL;
+       };
+       MethodCall @[3] {
 	user_data_=NULL;
 	desc="activate config values";
 	flags=CAN_REVERT_TO_CODE;
@@ -12876,7 +12999,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	meth_sig="void Activate(bool info_msg = false)";
 	meth_desc=" copy the saved_value values to be active (live) values on the objects";
        };
-       MethodCall @[1] {
+       MethodCall @[4] {
 	user_data_=NULL;
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
@@ -13127,7 +13250,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
-       value=1;
+       value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -22409,48 +22532,32 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     If @[3] {
+     ProgramCall @[3] {
       user_data_=NULL;
-      desc="save log files for background, non-interactive jobs -- after network is fully configured and built";
+      desc="save log files for all jobs -- after network is fully built and configed";
       flags=CAN_REVERT_TO_CODE;
-      code_string="if (!taMisc::interactive)";
-      cond {
+      code_string="SaveLogFiles(network)";
+      prog_args {
        user_data_=NULL;
-       expr="!taMisc::interactive";
-      };
-      true_code {
-       user_data_=NULL;
-       name="true_code";
-       el_typ=ProgCode;
+       name="prog_args";
+       el_typ=ProgArg;
        el_def=0;
-       ProgramCall @[0] {
+       ProgArg @[0] {
 	user_data_=NULL;
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="SaveLogFiles(network)";
-	prog_args {
+	arg_type=LeabraNetwork;
+	type="LeabraNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
 	 user_data_=NULL;
-	 name="prog_args";
-	 el_typ=ProgArg;
-	 el_def=0;
-	 ProgArg @[0] {
-	  user_data_=NULL;
-	  arg_type=LeabraNetwork;
-	  type="LeabraNetwork*";
-	  name="network";
-	  required=1;
-	  def_val=;
-	  prev_expr=;
-	  expr {
-	   user_data_=NULL;
-	   expr="network";
-	  };
-	 };
+	 expr="network";
 	};
-	target=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"]$$;
-	targ_ld_init="*SaveLogFiles*";
        };
       };
+      target=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"]$;
+      targ_ld_init="*SaveLogFiles*";
      };
      MethodCall @[4] {
       user_data_=NULL;
@@ -22859,7 +22966,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"]$;
+	target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"]$$;
 	targ_ld_init="*SaveWeights*";
        };
       };
@@ -24799,10 +24906,10 @@ also save specs.";
       var_type=T_String;
       string_val="_RunMaster_NetMaster";
       object_scope=NULL;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="user defined tag (set by startup script)";
-      init_from=NULL;
+      init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"]$;
      };
      ProgVar @["wts_subdir"] {
       user_data_=NULL;
@@ -25203,10 +25310,10 @@ also save specs.";
        var_type=T_String;
        string_val="_RunMaster_NetMaster";
        object_scope=NULL;
-       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc=;
-       init_from=$.projects["LeabraFlex"].programs["MasterStartup"]$;
+       desc="this is set by MasterStartup or MasterTrain -- is primary source of tag for any other programs (SaveWeights copies from here)";
+       init_from=NULL;
       };
       ProgVar @["log_trials"] {
        user_data_=NULL;
@@ -25279,6 +25386,39 @@ also save specs.";
       name="init_code";
       el_typ=ProgCode;
       el_def=0;
+      If @[0] {
+       user_data_=NULL;
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if(taMisc::interactive)";
+       cond {
+	user_data_=NULL;
+	expr="taMisc::interactive";
+       };
+       true_code {
+	user_data_=NULL;
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 user_data_=NULL;
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="epoch_output_data.CloseDataLog()";
+	 result_var=NULL;
+	 obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["epoch_output_data"]$$;
+	 method=DataTable::CloseDataLog;
+	 meth_args {
+	  user_data_=NULL;
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	 };
+	 meth_sig="void CloseDataLog()";
+	 meth_desc=" close the data log file if it was previously open";
+	};
+       };
+      };
      };
      prog_code {
       user_data_=NULL;
@@ -25329,7 +25469,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
        result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["log_file_nm"]$$;
-       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["epoch_output_data"]$$;
+       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].vars["epoch_output_data"]$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	user_data_=NULL;
@@ -31592,7 +31732,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_wd"] {
      user_data_=NULL;
      name="view_win_wd";
-     value 8 0=0.9941583;
+     value 8 0=0.9941552;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -32322,21 +32462,31 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
-	   GraphColView @["Hidden_netrel"] {
+	   GraphColView @["Hidden_Fm_Input_netrel"] {
 	    user_data_=NULL;
-	    name="Hidden_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_netrel"]$$;
-	    cur_font_size=14;
+	    name="Hidden_Fm_Input_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Input_netrel"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {user_data_=NULL: min=0: max=0: };
 	   };
-	   GraphColView @["Output_netrel"] {
+	   GraphColView @["Hidden_Fm_Output_netrel"] {
 	    user_data_=NULL;
-	    name="Output_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_netrel"]$$;
-	    cur_font_size=14;
+	    name="Hidden_Fm_Output_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Output_netrel"]$$;
+	    cur_font_size=12;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {user_data_=NULL: min=0: max=0: };
+	   };
+	   GraphColView @["Output_Fm_Hidden_netrel"] {
+	    user_data_=NULL;
+	    name="Output_Fm_Hidden_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_Fm_Hidden_netrel"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -33409,7 +33559,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       UserDataItem @["view_win_wd"] {
        user_data_=NULL;
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -33664,6 +33814,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp {user_data_=NULL: hard=1: gain=0.2: avg=0: avg_gain=0.2: };
        decay {user_data_=NULL: trial=1: };
        del_inhib {user_data_=NULL: on=0: prv_trl=0: prv_q=0: };
+       margin {user_data_=NULL: pct_marg=0.2: avg_tau=100: adapt_tau=2000: tol_pct=0.25: avg_act=0.8: low_thr=0.5: med_thr=0.505: hi_thr=0.51: avg_dt=0.01: adapt_dt=0.0005: };
        lay_lrate=1;
        cos_diff {
 	user_data_=NULL;
@@ -33693,6 +33844,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      clamp {user_data_=NULL: hard=1: gain=0.2: avg=0: avg_gain=0.2: };
      decay {user_data_=NULL: trial=1: };
      del_inhib {user_data_=NULL: on=0: prv_trl=0: prv_q=0: };
+     margin {user_data_=NULL: pct_marg=0.2: avg_tau=100: adapt_tau=2000: tol_pct=0.25: avg_act=0.8: low_thr=0.5: med_thr=0.505: hi_thr=0.51: avg_dt=0.01: adapt_dt=0.0005: };
      lay_lrate=1;
      cos_diff {
       user_data_=NULL;
@@ -33891,6 +34043,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {user_data_=NULL: on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {user_data_=NULL: on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {user_data_=NULL: on=0: bg_lrate=1: fg_lrate=0: };
+       margin {user_data_=NULL: on=0: margin_lrate=1: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @["TopDownCons"] {
@@ -33988,6 +34141,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {user_data_=NULL: on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {user_data_=NULL: on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {user_data_=NULL: on=0: bg_lrate=1: fg_lrate=0: };
+       margin {user_data_=NULL: on=0: margin_lrate=1: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
       };
      };
      rnd {user_data_=NULL: name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -34072,6 +34226,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      adapt_scale {user_data_=NULL: on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {user_data_=NULL: on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {user_data_=NULL: on=0: bg_lrate=1: fg_lrate=0: };
+     margin {user_data_=NULL: on=0: margin_lrate=1: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      user_data_=NULL;
@@ -34166,6 +34321,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_p_avg_eff=0.15;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
+     margin_low_thr=0.5;
+     margin_med_thr=0.505;
+     margin_hi_thr=0.51;
+     margin_low_avg=0.1875;
+     margin_med_avg=0.01875;
+     margin_hi_avg=0.15;
     };
     LeabraLayer @["Hidden"] {
      user_data_=NULL;
@@ -34262,6 +34423,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_p_avg_eff=0.15;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
+     margin_low_thr=0.5;
+     margin_med_thr=0.505;
+     margin_hi_thr=0.51;
+     margin_low_avg=0.1875;
+     margin_med_avg=0.01875;
+     margin_hi_avg=0.15;
     };
     LeabraLayer @["Output"] {
      user_data_=NULL;
@@ -34339,6 +34506,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_p_avg_eff=0.15;
      spec {user_data_=NULL: type=LeabraLayerSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
+     margin_low_thr=0.5;
+     margin_med_thr=0.505;
+     margin_hi_thr=0.51;
+     margin_low_avg=0.1875;
+     margin_med_avg=0.01875;
+     margin_hi_avg=0.15;
     };
    };
    weights {
