@@ -170,7 +170,8 @@ public:
   }
   // static version of function for implementing inverse of weight sigmoid -- for default gain = 6, offset = 1 params
 
-  inline float	SigFmLinWt(float lw) { return SigFun(lw, gain, off); }
+  inline float	SigFmLinWt(float lw)
+  { if(gain == 1.0f && off == 1.0f) return lw; return SigFun(lw, gain, off); }
   // get sigmoidal contrast-enhanced weight from linear weight
   
   inline float	LinFmSigWt(const float sw) { return InvFun(sw, gain, off); }
@@ -437,7 +438,8 @@ public:
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
 
-  inline float	SigFmLinWt(float lw)     { return wt_sig_fun.Eval(lw); }
+  inline float	SigFmLinWt(float lw)
+  { if(wt_sig.gain == 1.0f && wt_sig.off == 1.0f) return lw; return wt_sig_fun.Eval(lw); }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
   inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value

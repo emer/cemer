@@ -68,10 +68,11 @@ public:
   inline void  ApplyMinLimit(float& wt)        { if(wt < min) wt = min; }
   inline void  ApplyMaxLimit(float& wt)        { if(wt > max) wt = max; }
 
-  inline void  ApplyLimits(float& wt)
-  { if(type == GT_MIN)          ApplyMinLimit(wt);
+  inline void  ApplyLimits(float& wt) {
+    if(type == MIN_MAX)    { ApplyMinLimit(wt); ApplyMaxLimit(wt); }
+    else if(type == GT_MIN)     ApplyMinLimit(wt);
     else if(type == LT_MAX)     ApplyMaxLimit(wt);
-    else if(type == MIN_MAX)    { ApplyMinLimit(wt); ApplyMaxLimit(wt); } }
+  }
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 

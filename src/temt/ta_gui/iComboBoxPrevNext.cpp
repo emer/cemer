@@ -23,7 +23,7 @@
 
 iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   lay = new QHBoxLayout(this);
-  lay->setMargin(0); lay->setSpacing(0);
+  lay->setMargin(0); lay->setSpacing(1);
 
   vlay = new QVBoxLayout();
   vlay->setMargin(0); lay->setSpacing(0);
@@ -49,6 +49,7 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   // combo_box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   combo_box->setIconSize(QSize(1,1)); // no icon!
   lay->addWidget(combo_box);
+  lay->addStretch(1);           // soak up any stretching AFTER this guy, not between
 
   connect(combo_box, SIGNAL(editTextChanged(const QString &)), this,
           SIGNAL(editTextChanged(const QString &)));
