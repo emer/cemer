@@ -638,6 +638,10 @@ public:
       if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
       else		dwt *= wb_dec * fwt;
     }
+    else {
+      if(dwt > 0.0f)	dwt *= wb_inc;
+      else		dwt *= wb_dec;
+    }
     fwt += dwt;
     C_ApplyLimits(fwt);
     // swt = fwt;  // leave swt as pristine original weight value -- saves time
