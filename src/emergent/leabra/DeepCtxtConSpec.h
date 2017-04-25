@@ -87,7 +87,7 @@ public:
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
       if(margin.on) {
-        lrate_eff *= margin.GetLrate(ru->margin);
+        lrate_eff *= margin.MarginLrate(ru->margin);
       }
       float l_lrn_eff;
       if(xcal.set_l_lrn)

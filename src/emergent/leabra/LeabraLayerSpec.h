@@ -164,7 +164,7 @@ INHERITED(SpecMemberBase)
 public:
   float         pct_marg;       // #DEF_0.2 proportion of the total number of active units (defined by layer acts_p_avg value) that should fit between the low and high marginal thresholds, on average -- hi_thr is adapted over time to hit this target on average (actually (1-pct_marg) * acts_p_avg above the hi thr, to remove dependence on low_thr), while low_thr is adapted to capture the full set of acts_p_avg units, and med_thr is adapted to roughly split the pct_marg proportion in half
   float         avg_tau;        // #DEF_100 time constant in terms of trials for computing the average numbers of units in the different marginal categories
-  float         adapt_tau;      // #DEF_2000 time constant in terms of trials for adapting the thresholds based on average target values
+  float         adapt_tau;      // #DEF_500 time constant in terms of trials for adapting the thresholds based on average target values
   float         tol_pct;        // #DEF_0.25 tolerance around target values as a proportion of that target value -- don't adapt values if values are within this tolerance of their targets
   float         avg_act;        // #DEF_0.8 expected average activation level for active neurons -- this is a correction factor for converting acts_p_avg into target averages (divide by this avg_act)
   float	        low_thr;        // #DEF_0.501 initial low threshold for marginal activation, in terms of v_m_eq -- adapts from here so that roughly acts_p_avg units on average are above this low threshold

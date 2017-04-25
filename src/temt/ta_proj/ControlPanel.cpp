@@ -858,8 +858,12 @@ String ControlPanel::ToWikiTable() {
   
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, sei, mbrs) {
     rval << "|-\n";
-    rval << "| " << sei->label << " || " << sei->CurValAsString()
-    << " || " << sei->data.notes << "\n";
+    rval << "| " << sei->label << " || ";
+    if(sei->IsParamSet())
+      rval << sei->data.saved_value;
+    else
+      rval << sei->CurValAsString();
+    rval << " || " << sei->data.notes << "\n";
   }
   
   rval << "|}\n";

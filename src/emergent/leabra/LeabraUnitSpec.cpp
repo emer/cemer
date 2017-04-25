@@ -1871,17 +1871,17 @@ void LeabraUnitSpec::Compute_Margin(LeabraUnitVars* u, LeabraNetwork* net, int t
   const float v_m_eq = u->v_m_eq;
   if(v_m_eq >= lay->margin_low_thr) {
     if(v_m_eq > lay->margin_hi_thr) {
-      u->margin = 0.0f;
-    }
-    else if(v_m_eq > lay->margin_med_thr) {
       u->margin = 1.0f;
     }
+    else if(v_m_eq > lay->margin_med_thr) {
+      u->margin = 0.5f;
+    }
     else {
-      u->margin = -1.0f;
+      u->margin = -0.5f;
     }
   }
   else {
-    u->margin = 0.0f;
+    u->margin = -1.0f;
   }
 }
 

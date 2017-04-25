@@ -211,11 +211,11 @@ void MarginLearnSpec::Initialize() {
 }
 
 void MarginLearnSpec::Defaults_init() {
-  margin_lrate = 1.0f;
-  stable_lrate = 0.5f;
+  on_lrate = 0.5f;
+  off_lrate = 0.5f;
   sign_dwt = false;
   sign_l_lrn = false;
-  sign_lrn = 0.01f;
+  sign_lrn = 0.001f;
 }
 
 
