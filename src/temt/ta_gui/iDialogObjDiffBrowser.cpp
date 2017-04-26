@@ -82,8 +82,8 @@ void iDialogObjDiffBrowser::accept() {
   // here is where we execute actions!
   if(!isModal() && odl->tab_obj_a) {
     odl->tab_obj_a->DoDiffEdits(*odl);
+    delete odl;                   // all done!
   }
-  delete odl;                   // all done!
   odl = NULL;
 }
 

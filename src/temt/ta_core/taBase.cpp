@@ -275,8 +275,9 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
     if(md->type->IsActualTaBase()) {
       taBase* mb = (taBase*)md->GetOff(this);
       if(md->is_static) {
-        // taMisc::Info("initlinks auto:", md->name);
         if(taBase::GetRefn(mb) == 0) {
+          taMisc::Info("InitLinks Ref of Static Object:", md->name, "in type:",
+                       td->name, "probably not a great thing...");
           taBase::Ref(mb);
           mb->SetName(md->name);    // always set the names of members to their member name!
         }
@@ -3349,9 +3350,20 @@ bool taBase::DiffCompare_impl(taObjDiff_List* diffs, taBase* cmp_obj, bool modal
   return rval;
 }
 
-static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec) {
+static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec,
+                                   Patch* patch) {
   MemberDef* md;
   taBase* new_guy = par_obj->FindFromPath(srec->value, md);
+  if(patch) {
+    String str_val = "NULL";
+    if(new_guy)
+      str_val = new_guy->GetPathFromProj();
+    PatchRec* pr = patch->NewPatchRec_Assign(par_obj, str_val);
+    if(drec->mdef) {
+      pr->mbr_path = drec->mdef->name;
+    }
+    return;
+  }
   if(drec->type->IsPointer() && drec->type->IsTaBase()) {
     if(drec->mdef && drec->mdef->HasOption("OWN_POINTER")) {
       if(!drec->par_addr)
@@ -3380,12 +3392,16 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
   taProject* proj_a = (taProject*)diffs.tab_obj_a->GetOwner(&TA_taProject);
   taProject* proj_b = (taProject*)diffs.tab_obj_b->GetOwner(&TA_taProject);
 
+  String save_str;              // string for saving files to
+  
   //  for(int i=diffs.size-1; i>= 0; i--) { // go backwards to minimize knock-on effects
   for(int i=0; i < diffs.size; i++) { // forwards usually better actually
     taObjDiffRec* rec = diffs[i];
     if(!rec->HasDiffFlag(taObjDiffRec::ACT_MASK)) continue;
     if(!rec->addr || !rec->type) continue; // sanity checks..
 
+    // NOTE: rec is A, rec->diff_odr is B
+    
     bool ta_bases = false;
     bool tab_diff_typ = false;
     bool taptr = false;
@@ -3444,107 +3460,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
     if(tab_par_b) tab_b_path = tab_par_b->DisplayPath();
 
     //////////////////////////////////
-    //          Copy -- both ways -- uses value string instead of live obj
-
-    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB) &&
-       rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
-      // this is unfortunate but possible
-      taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
-                   rec->diff_odr->GetDisplayName(), "=", rec->value);
-      taMisc::Info("Copying B -> A:", tab_b_path, "->", tab_a_path, "\n",
-                   rec->GetDisplayName(), "=", rec->diff_odr->value);
-      if(tab_diff_typ) {
-        // need to replace old guy with new one
-        taBase* down = tab_b->GetOwner();
-        if(down) {              // should always be true
-          down->CopyChildBefore(tab_a, tab_b);
-        }
-
-        taBase* sown = tab_a->GetOwner();
-        if(sown) {              // should always be true
-          sown->CopyChildBefore(tab_b, tab_a);
-        }
-
-        tab_b->Close(); // nuke old guys
-        tab_a->Close(); // nuke old guys
-      }
-      else {
-        if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
-          DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr);
-        }
-        else if(taptr) {
-          DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr); // always project relative
-        }
-        else {
-          rec->diff_odr->type->SetValStr(rec->value, rec->diff_odr->addr,
-                                         rec->diff_odr->par_addr, rec->diff_odr->mdef);
-        }
-        if(tab_par_b) {
-          tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
-          tab_par_b->UpdateAfterEdit();
-        }
-
-        if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
-          DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
-        }
-        else if(taptr) {
-          DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec); // always project relative
-        }
-        else {
-          rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
-        }
-        if(tab_par_a) {
-          tab_par_a->MemberUpdateAfterEdit(rec->mdef);
-          tab_par_a->UpdateAfterEdit();
-        }
-      }
-      continue;
-    }
-
-    //////////////////////////////////
-    //          Copy -- only one way
-
-    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
-      taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
-                   rec->diff_odr->GetDisplayName(), "=", rec->value);
-      if(tab_diff_typ) {
-        // need to replace old guy with new one
-        if(patch_b) {
-          PatchRec* pr = patch_b->NewPatchRec_Replace(tab_b, tab_a->GetValStr());
-        }
-        else {
-          taBase* down = tab_b->GetOwner();
-          if(down) {
-            down->CopyChildBefore(tab_a, tab_b);
-            tab_b->Close();       // nuke old guy
-          }
-        }
-      }
-      else {
-        if(patch_b) {
-          PatchRec* pr = patch_b->NewPatchRec_Assign(tab_b, tab_a->GetValStr());
-        }
-        else {
-          if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
-            DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr);
-          }
-          else if(taptr) {
-            DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr); // always project relative
-          }
-          else {
-            rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
-            if(ta_bases) {
-              tab_b->SetName(tab_a->GetName()); // need to copy names too!
-            }
-          }
-          if(tab_par_b) {
-            tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
-            tab_par_b->UpdateAfterEdit();
-          }
-        }
-      }
-      continue;
-    }
+    // Copy
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
       taMisc::Info("Copying B -> A:", tab_b_path, "->", tab_a_path, "\n",
@@ -3552,7 +3468,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
       if(tab_diff_typ) {
         // need to replace old guy with new one
         if(patch_a) {
-          PatchRec* pr = patch_a->NewPatchRec_Replace(tab_a, tab_b->GetValStr());
+          tab_b->Save_String(save_str);
+          PatchRec* pr = patch_a->NewPatchRec_Replace(tab_a, save_str);
         }
         else {
           taBase* down = tab_a->GetOwner();
@@ -3563,25 +3480,104 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
         }
       }
       else {
-        if(patch_a) {
-          PatchRec* pr = patch_a->NewPatchRec_Assign(tab_a, tab_b->GetValStr());
+        if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+          DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec, patch_a);
+        }
+        else if(taptr) {
+          DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec, patch_a);
         }
         else {
-          if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
-            DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
-          }
-          else if(taptr) {
-            DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec); // always project relative
-          }
-          else {
-            rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
-            if(ta_bases) {
+          if(ta_bases) {
+            if(patch_a) {
+              tab_b->Save_String(save_str);
+              PatchRec* pr = patch_a->NewPatchRec_Assign(tab_a, save_str);
+            }
+            else {
+              rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
               tab_a->SetName(tab_b->GetName()); // need to copy names too!
             }
           }
-          if(tab_par_a) {
-            tab_par_a->MemberUpdateAfterEdit(rec->mdef);
-            tab_par_a->UpdateAfterEdit();
+          else {
+            if(patch_a) {
+              if(rec->mdef) {
+                String sval = rec->diff_odr->type->GetValStr
+                  (rec->diff_odr->addr, tab_b, rec->diff_odr->mdef, TypeDef::SC_STREAMING, true);
+                PatchRec* pr = patch_a->NewPatchRec_Assign(tab_par_a, sval);
+                pr->mbr_path = rec->mdef->name;
+              }
+              else {
+                taMisc::Info("non-taBase non-member copy -- no can do..");
+                continue;
+              }
+            }
+            else {
+              rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
+            }
+          }
+        }
+        if(!patch_a && tab_par_a) {
+          tab_par_a->MemberUpdateAfterEdit(rec->mdef);
+          tab_par_a->UpdateAfterEdit();
+        }
+      }
+      continue;
+    }
+
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
+      taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
+                   rec->diff_odr->GetDisplayName(), "=", rec->value);
+      if(tab_diff_typ) {
+        // need to replace old guy with new one
+        if(patch_b) {
+          tab_a->Save_String(save_str);
+          PatchRec* pr = patch_b->NewPatchRec_Replace(tab_b, save_str);
+        }
+        else {
+          taBase* down = tab_b->GetOwner();
+          if(down) {
+            down->CopyChildBefore(tab_a, tab_b);
+            tab_b->Close();       // nuke old guy
+          }
+        }
+      }
+      else {
+        if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+          DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr, patch_b);
+        }
+        else if(taptr) {
+          DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr, patch_b);
+        }
+        else {
+          if(ta_bases) {
+            if(patch_b) {
+              tab_a->Save_String(save_str);
+              PatchRec* pr = patch_b->NewPatchRec_Assign(tab_b, save_str);
+            }
+            else {
+              rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
+              tab_b->SetName(tab_a->GetName()); // need to copy names too!
+            }
+          }
+          else {
+            if(patch_b) {
+              if(rec->diff_odr->mdef) {
+                String sval = rec->type->GetValStr
+                  (rec->addr, tab_a, rec->mdef, TypeDef::SC_STREAMING, true);
+                PatchRec* pr = patch_b->NewPatchRec_Assign(tab_par_b, sval);
+                pr->mbr_path = rec->diff_odr->mdef->name;
+              }
+              else {
+                taMisc::Info("non-taBase non-member copy -- no can do..");
+                continue;
+              }
+            }
+            else {
+              rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
+            }
+          }
+          if(!patch_b && tab_par_b) {
+            tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
+            tab_par_b->UpdateAfterEdit();
           }
         }
       }
@@ -3590,8 +3586,6 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
 
     if(!ta_bases) continue;     // only ta bases from this point on!
 
-    // todo: seems like we need diff add for each case!?
-    
     //////////////////////////////////
     //          Add
     bool add = false;
@@ -3599,74 +3593,102 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_ADD_A)) { // do add before del..
       taMisc::Info("Adding A to B:", tab_a_path, "\n", rec->GetDisplayName());
       add = true;
+      // if(rec->diff_odr->nest_level == rec->nest_level) {
+      taBase* down = tab_b->GetOwner();
+      if(down) {
+        if(patch_b) {
+          tab_a->Save_String(save_str);
+          PatchRec* pr = patch_b->NewPatchRec_Insert
+            (tab_b, down, save_str, tab_a->GetTypeDef()->name);
+        }
+        else {
+          down->CopyChildBefore(tab_a, tab_b);
+        }
+        added = true;
+      }
     }
+    //   }
+    //   else if(tab_par_b) {
+    //     // todo: not sure any of this logic makes sense -- we said to put it in b so
+    //     // why doesn't it just go in b!?
+    //     if(rec->diff_odr->nest_level < rec->nest_level) {
+    //       // for last obj in list, dest is now another member in parent obj..
+    //       taMisc::Info("diff nest -- rec:", String(rec->nest_level), "diff:",
+    //                    String(rec->diff_odr->nest_level),"rec path:", tab_a_path,
+    //                    "diff path:", tab_b_path);
+    //       if(rec->par_odr->mdef) {
+    //         // find member in dest par (parents always ta base..)
+    //         if(rec->diff_odr->par_odr->mdef &&
+    //            rec->diff_odr->par_odr->mdef->name == rec->par_odr->mdef->name) {
+    //           // parent is the guy!
+    //           if(patch_b) {
+    //             tab_a->Save_String(save_str);
+    //             PatchRec* pr = patch_a->NewPatchRec_Insert
+    //               (tab_par_b, tab_par_b, save_str, tab_a->GetTypeDef()->name);
+    //           }
+    //           else {
+    //             tab_par_b->CopyChildBefore(tab_a, NULL); // NULL goes to end..
+    //           }
+    //           added = true;
+    //         }
+    //         else {
+    //           MemberDef* dmd;
+    //           void* mbase = tab_par_b->FindMembeR(rec->par_odr->mdef->name, dmd);
+    //           if(dmd && dmd->type->IsActualTaBase()) { // it should!
+    //             taBase* down = (taBase*)mbase;
+    //             down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
+    //             added = true;
+    //           }
+    //         }
+    //       }
+    //       else { // go one level higher
+    //         taObjDiffRec* parpar_a = rec->par_odr->par_odr;
+    //         if(parpar_a->mdef) {
+    //           taBase* tabparpar_b = tab_par_b->GetOwner();
+    //           // find member in dest par (parents always ta base..)
+    //           MemberDef* dmd;
+    //           void* mbase = tabparpar_b->FindMembeR(parpar_a->mdef->name, dmd);
+    //           if(dmd && dmd->type->IsActualTaBase()) { // it should!
+    //             taBase* down = (taBase*)mbase;
+    //             down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
+    //             added = true;
+    //           }
+    //         }
+    //       }
+    //     }
+    //     else if(rec->diff_odr->nest_level > rec->nest_level) {
+    //       taBase* down = tab_par_b;
+    //       for(int k=0;k < rec->diff_odr->nest_level - rec->nest_level;k++) {
+    //         down = down->GetOwner();
+    //         if(!down) break;
+    //       }
+    //       if(down) {
+    //         down->CopyChildBefore(tab_a, NULL); // no ref info avail -- probably end
+    //         added = true;
+    //       }
+    //     }
+    //   }
+    // }
+    
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_ADD_B)) { // do add before del..
       taMisc::Info("Adding B to A:", tab_b_path, "\n", rec->GetDisplayName());
       add = true;
-    }
-    if(add) {
-      if(rec->diff_odr->nest_level < rec->nest_level) {
-        // for last obj in list, dest is now another member in parent obj..
-//      taMisc::Info("diff nest -- rec:", String(rec->nest_level), "diff:",
-//                   String(rec->diff_odr->nest_level),"rec path:", tab_a_path,
-//                   "diff path:", tab_b_path);
-        if(tab_par_b) {
-          if(rec->par_odr->mdef) {
-            // find member in dest par (parents always ta base..)
-            if(rec->diff_odr->par_odr->mdef &&
-               rec->diff_odr->par_odr->mdef->name == rec->par_odr->mdef->name) {
-              // parent is the guy!
-              tab_par_b->CopyChildBefore(tab_a, NULL); // NULL goes to end..
-              added = true;
-            }
-            else {
-              MemberDef* dmd;
-              void* mbase = tab_par_b->FindMembeR(rec->par_odr->mdef->name, dmd);
-              if(dmd && dmd->type->IsActualTaBase()) { // it should!
-                taBase* down = (taBase*)mbase;
-                down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
-                added = true;
-              }
-            }
-          }
-          else { // go one level higher
-            taObjDiffRec* parpar_a = rec->par_odr->par_odr;
-            if(parpar_a->mdef) {
-              taBase* tabparpar_b = tab_par_b->GetOwner();
-              // find member in dest par (parents always ta base..)
-              MemberDef* dmd;
-              void* mbase = tabparpar_b->FindMembeR(parpar_a->mdef->name, dmd);
-              if(dmd && dmd->type->IsActualTaBase()) { // it should!
-                taBase* down = (taBase*)mbase;
-                down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
-                added = true;
-              }
-            }
-          }
+      // if(rec->diff_odr->nest_level == rec->nest_level) {
+      taBase* down = tab_a->GetOwner();
+      if(down) {
+        if(patch_a) {
+          tab_b->Save_String(save_str);
+          PatchRec* pr = patch_a->NewPatchRec_Insert
+            (tab_a, down, save_str, tab_b->GetTypeDef()->name);
         }
-      }
-      else if(rec->diff_odr->nest_level > rec->nest_level) {
-        if(tab_par_b) {
-          taBase* down = tab_par_b;
-          for(int k=0;k < rec->diff_odr->nest_level - rec->nest_level;k++) {
-            down = down->GetOwner();
-            if(!down) break;
-          }
-          if(down) {
-            down->CopyChildBefore(tab_a, NULL); // no ref info avail -- probably end
-            added = true;
-          }
+        else {
+          down->CopyChildBefore(tab_b, tab_a);
         }
-      }
-      else {                    // equal nesting!
-        taBase* down = tab_b->GetOwner();
-        if(down) {
-          down->CopyChildBefore(tab_a, tab_b);
-          added = true;
-        }
+        added = true;
       }
     }
-    if(!added) {
+
+    if(add && !added) {
       taMisc::Warning("NOTE: Last Add was NOT successful!", rec->GetDisplayName());
     }
 
@@ -3679,7 +3701,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
       taMisc::Info("Deleting A:", tab_a_path, "\n", rec->GetDisplayName());
       if(patch_a) {
-        PatchRec* pr = patch_a->NewPatchRec_Delete(tab_a, tab_a->GetValStr());
+        tab_a->Save_String(save_str);
+        PatchRec* pr = patch_a->NewPatchRec_Delete(tab_a, save_str);
       }
       else {
         tab_a->Close();
@@ -3688,7 +3711,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) 
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_B)) {
       taMisc::Info("Deleting B:", tab_b_path, "\n", rec->GetDisplayName());
       if(patch_b) {
-        PatchRec* pr = patch_b->NewPatchRec_Delete(tab_b, tab_b->GetValStr());
+        tab_b->Save_String(save_str);
+        PatchRec* pr = patch_b->NewPatchRec_Delete(tab_b, save_str);
       }
       else {
         tab_b->Close();

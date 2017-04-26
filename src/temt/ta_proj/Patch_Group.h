@@ -42,9 +42,10 @@ public:
 
   String        GetTypeDecoKey() const override { return "ControlPanel"; }
 
- TA_SIMPLE_BASEFUNS(Patch_Group);
+  TA_BASEFUNS(Patch_Group);
 private:
-  void Initialize()  { };
+  NOCOPY(Patch_Group);
+  void Initialize();
   void Destroy()     { };
 };
 

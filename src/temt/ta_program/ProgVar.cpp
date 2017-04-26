@@ -697,7 +697,6 @@ void ProgVar::SetValFromString(const String& str_val) {
 String ProgVar::GetStringVal() {
   if(var_type == T_HardEnum && hard_enum_type) {
     String rval = hard_enum_type->Get_C_EnumString(int_val, false);
-    taMisc::Info(rval);
     return rval;
   }
   else if(var_type == T_DynEnum) {

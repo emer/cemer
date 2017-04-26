@@ -64,6 +64,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   int font_spec = taiMisc::fonMedium;
   this->setWindowTitle("Subversion Browser");
 
+  log_subdir = false;
+  
   svn_log_model = new iSvnRevLogModel(this);
   svn_file_model = new iSvnFileListModel(this);
   svn_wc_model = new iFileSystemModel(this);
@@ -81,6 +83,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   main_tb = new QToolBar;
   lay_bd->addWidget(main_tb);
 
+  a_log_file =  main_tb->addAction("Log Of File");
+  connect(a_log_file, SIGNAL(triggered()), this, SLOT(a_log_file_do()));
   a_view_file = main_tb->addAction("View File");
   connect(a_view_file, SIGNAL(triggered()), this, SLOT(a_view_file_do()));
   a_view_diff = main_tb->addAction("View Diff");
@@ -272,6 +276,10 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   rev_only->setToolTip(taiMisc::ToolTipPreProcess("only show files from specified revision"));
   tool_bar->addWidget(rev_only);
 
+  log_me = new iCheckBox(" log", fbrow);
+  log_me->setToolTip(taiMisc::ToolTipPreProcess("show change log only for files in this directory"));
+  tool_bar->addWidget(log_me);
+  
   fb_act_go = tool_bar->addAction("Go");
 
   file_table = new iTableView(fbrow);
@@ -389,6 +397,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   connect(sd_up, SIGNAL(triggered()), this, SLOT(subDirUp()) );
   connect(rev_box, SIGNAL(editingFinished()), this, SLOT(fBrowGoClicked()) );
   connect(rev_only, SIGNAL(clicked(bool)), this, SLOT(fBrowGoClicked()) );
+  connect(log_me, SIGNAL(clicked(bool)), this, SLOT(logMeClicked()) );
   connect(fb_act_go, SIGNAL(triggered()), this, SLOT(fBrowGoClicked()) );
   connect(file_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(fileCellDoubleClicked(const QModelIndex&)));
@@ -484,6 +493,7 @@ void iSubversionBrowser::setUrl_impl(const String& url) {
   svn_file_model->setUrl(url);
   String ur = svn_file_model->url();
   url_text->setText(ur);
+
   if(svn_log_model->end_rev() < 0 && svn_file_model->svn_head_rev >= 0) {
     int end_rev = svn_file_model->svn_head_rev;
     end_rev_box->setValue(end_rev);
@@ -493,8 +503,9 @@ void iSubversionBrowser::setUrl_impl(const String& url) {
   else {
     int end_rev = end_rev_box->value();
     int n_entries = n_entries_box->value();
-    if(svn_log_model->url() != url)
+    if(svn_log_model->url() != url) {
       svn_log_model->setUrl(url, end_rev, n_entries);
+    }
   }
 }
 
@@ -632,6 +643,26 @@ void iSubversionBrowser::wBrowGoClicked() {
   }
 }
 
+void iSubversionBrowser::logMeClicked() {
+  bool log_st = log_me->isChecked();
+  if(log_subdir != log_st) {
+    log_subdir = log_st;
+    if(!log_subdir) {
+      log_file_name = "";       // clear
+    }
+  }
+
+  String log_url = svn_file_model->url();
+  if(log_subdir || log_file_name.nonempty()) {
+    log_url = svn_file_model->url_full();
+    if(log_file_name.nonempty()) {
+      log_url += "/" + log_file_name;
+    }
+  }
+  taMisc::Info("Logging:", log_url);
+  svn_log_model->setUrl(log_url, svn_log_model->end_rev(), svn_log_model->n_entries());
+}
+
 void iSubversionBrowser::wBrowResizeCols() {
   QHeaderView* header = wc_table->horizontalHeader();
   for(int i=0; i<svn_wc_model->columnCount(); i++) {
@@ -753,6 +784,8 @@ void iSubversionBrowser::wcCellDoubleClicked(const QModelIndex& index) {
 void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos) {
   taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
   iAction* act = NULL;
+  act = menu->AddItem("&Log of File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_log_file_do()), 1);
   act = menu->AddItem("View &File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_view_file_do()), 1);
   act = menu->AddItem("View &Diffs", taiWidgetMenu::normal,
@@ -773,6 +806,8 @@ void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos
 void iSubversionBrowser::wc_table_customContextMenuRequested(const QPoint& pos) {
   taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
   iAction* act = NULL;
+  act = menu->AddItem("&Log of File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_log_file_wc_do()), 1);
   act = menu->AddItem("View &File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_view_file_wc_do()), 1);
   act = menu->AddItem("&Edit File", taiWidgetMenu::normal,
@@ -864,6 +899,28 @@ void iSubversionBrowser::viewWcDiffs(const String& fnm) {
   // args are: read_only, modal, parent, line_nos, rich_text, diffs
   host_->Constr("Selected Working Copy Diffs: " + fnm);
   host_->Edit(false);
+}
+
+void iSubversionBrowser::a_log_file_do() {
+  int rev = 0;
+  String fnm = selSvnFile(rev);
+  if(fnm.nonempty()) {
+    log_file_name = fnm;
+    log_me->setChecked(true);
+    logMeClicked();
+  }
+  else {
+    a_log_file_wc_do();
+  }
+}
+
+void iSubversionBrowser::a_log_file_wc_do() {
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    log_file_name = fnm;
+    log_me->setChecked(true);
+    logMeClicked();
+  }
 }
 
 void iSubversionBrowser::a_view_file_do() {

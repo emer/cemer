@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taProject; //
 
 taTypeDef_Of(PatchRec);
 
@@ -37,15 +38,32 @@ public:
   };
 
   PatchActions  action;         // action that this patch record performs
-  String        obj_path_names; // project-relative path to object using names -- must be a taBase object -- for INSERT it is the path to the object BEFORE the one to be inserted
-  String        obj_path_idx;   // project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the object BEFORE the one to be inserted
+  String        obj_path_names; // project-relative path to object using names -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
+  String        obj_path_idx;   // project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
   String        obj_type;       // type of object to be found at given obj_path -- for double-checking path finding
   String        mbr_path;       // path to a member of object, if relevant (for ASSIGN only)
-  String        path_after_names; // project-relative path for object after an insertion using names
-  String        path_after_idx; // project-relative path for object after an insertion using indexes
+  String        path_before_names; // project-relative path for object after an insertion using names (NULL if first item in list)
   String        new_obj_type;   // for REPLACE and INSERT, the type name of the new object to create 
   String        value;          // string encoded value of object for assign and insert -- also has info about the object that should be deleted, to provide a match
 
+  virtual bool ApplyPatch(taProject* proj);
+  // apply the patch
+
+  virtual bool ApplyPatch_assign(taProject* proj);
+  // #IGNORE
+  virtual bool ApplyPatch_replace(taProject* proj);
+  // #IGNORE
+  virtual bool ApplyPatch_insert(taProject* proj);
+  // #IGNORE
+  virtual bool ApplyPatch_delete(taProject* proj);
+  // #IGNORE
+
+  virtual taBase* FindPathRobust(taProject* proj);
+  // find the object on the path robustly
+  virtual taBase* CheckObjType(taProject* proj, taBase* obj, const String& path_used);
+  // check that object is of the right type -- if not, do something..
+  
+  String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ControlPanel"; }
   
   TA_SIMPLE_BASEFUNS(PatchRec);

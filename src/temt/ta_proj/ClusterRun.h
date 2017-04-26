@@ -146,11 +146,11 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs save the active parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .archived_params -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
   virtual void  UpdtNotes();
   // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
-  virtual void  RemoveJobs();
+  virtual void  DeleteJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs to the deleted table, including all their data that has been checked in (according to the local contents of the repository) -- jobs in the deleted table can be undeleted or permanently deleted -- (good idea to do an Update before running this) -- for cleaning up old unneeded jobs
   virtual void  NukeJobs();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM immediately delete jobs including all their data that has been checked in (according to the local contents of the repository) -- does NOT move to the deleted table for subsequent recovery (see RemoveJobs) -- for jobs that are truly useless accidents and have no lasting value
-  virtual void  RemoveKilledJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM immediately delete jobs including all their data that has been checked in (according to the local contents of the repository) -- does NOT move to the deleted table for subsequent recovery (see DeleteJobs) -- for jobs that are truly useless accidents and have no lasting value
+  virtual void  DeleteKilledJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
   virtual void  UnDeleteJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM recover jobs selected in the jobs_deleted data table into the jobs_done table, and restore the dat_files into the svn repository as well
@@ -177,9 +177,9 @@ public:
   // #MENU_BUTTON #MENU_ON_Files get the files shown in the file_list tab -- if these are not local files but are in current cluster, then tell the cluster to check in the files, and they will then be downloaded to the local working copy directory (via auto-update) -- otherwise if not local it will attempt to copy down from svn and add to local svn directory -- if already local, but they are in a different directory (e.g., from a different user / cluster, or project), then they will be copied locally, and checked into the current user / cluster project svn repository
   virtual void  CleanJobFiles();
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM #MENU_SEP_BEFORE remove all the job management files associated with the jobs selected in jobs_done or jobs_archive lists -- these are the JOB.* files and the tagged copy of the project that was used to launch the job(s) -- they are also automatically removed when a job is moved to archived
-  virtual void  RemoveFiles();
+  virtual void  DeleteFiles();
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the files selected in the file_list tab -- or associated with selected jobs -- this does an svn remove and also removes the files locally -- for cleaning up stuff you are done with
-  virtual void  RemoveNonDataFiles();
+  virtual void  DeleteNonDataFiles();
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the non-data files associated with jobs selected in the jobs_done or jobs_archive lists -- these are typically larger files such as weight files, which it is good to clean up eventually
   virtual void  GetProjAtRev();
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
@@ -200,7 +200,7 @@ public:
   // #IGNORE get file info from given full path to file into file_list formatted data table at given row -- if tag is empty it will attempt to set it from the file name, and set it, also returning it
   virtual void SelectFiles_impl(DataTable& table, int row, bool include_data);
   // #IGNORE add files from row in table to file_list
-  virtual void  RemoveAllFilesInList();
+  virtual void  DeleteAllFilesInList();
   // #IGNORE svn remove all the files listed in file_list
   virtual void SaveJobParams_impl(DataTable& table, int row);
   // #IGNORE save job parameters to new .archived_params saved params
@@ -242,7 +242,7 @@ public:
   // make sure that given row of table is for current cluster and user -- otherwise issue info message and return false -- submit functions can only operate on current user and cluster
   virtual bool  CheckLocalClustUserRows(const DataTable& table, int start_row, int end_row);
   // make sure that all rows selected are for current cluster and user -- otherwise ask user if they want to stop or continue -- submit functions can only operate on current user and cluster
-  virtual void  SubmitRemoveJob(const DataTable& table, int row);
+  virtual void  SubmitDeleteJob(const DataTable& table, int row);
   // add to jobs_submit for remove job for job at the given row of the given table
   virtual void  SubmitNukeJob(const DataTable& table, int row);
   // add to jobs_submit for nuke job for job at the given row of the given table
@@ -250,13 +250,13 @@ public:
   // add to jobs_submit for move job to archive for job at the given row of the given table
   virtual void  SubmitUnDeleteJob(const DataTable& table, int row);
   // add to jobs_submit for move job to done from deleted for job at the given row of the given table
-  virtual void  SubmitRemoveDelJob(const DataTable& table, int row);
+  virtual void  SubmitDeleteDelJob(const DataTable& table, int row);
   // add to jobs_submit for remove deleted job for job at the given row of the given table
   virtual void  SubmitCleanJobFiles(const DataTable& table, int row);
   // add to jobs_submit for clean job files for job at the given row of the given table
   virtual void  SubmitGetFiles(const String& files);
   // add to jobs_submit for get files for given list of files (space separated)
-  virtual void  SubmitRemoveFiles(const String& files);
+  virtual void  SubmitDeleteFiles(const String& files);
   // add to jobs_submit for remove files for given list of files (space separated)
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);
   // count the number of jobs in given table with given status value 

@@ -20,6 +20,10 @@
 
 TA_BASEFUNS_CTORS_DEFN(Patch_Group);
 
+void Patch_Group::Initialize() {
+  SetBaseType(&TA_Patch);
+}
+
 void Patch_Group::LoadPatch() {
   CallFun("Load");              // args etc
 }

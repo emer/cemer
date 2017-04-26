@@ -58,7 +58,8 @@ public:
   virtual PatchRec*  NewPatchRec_Replace(taBase* obj, const String& val);
   // #IGNORE 
 
-  virtual PatchRec*  NewPatchRec_Insert(taBase* obj, const String& val);
+  virtual PatchRec*  NewPatchRec_Insert(taBase* obj, taBase* own_obj, const String& val,
+                                        const String& nw_typ);
   // #IGNORE 
 
   virtual PatchRec*  NewPatchRec_Delete(taBase* obj, const String& val);

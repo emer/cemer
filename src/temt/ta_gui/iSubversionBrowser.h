@@ -51,10 +51,12 @@ public:
   static iSubversionBrowser*   OpenBrowser(const String& url, const String& wc_path);
   // open a new browser for given paths -- if only wc_path is specified, then it tries to find url from that working copy path
 
-  String                 view_svn_file; // subversion file for viewing
-  String                 view_wc_file;  // working copy file for viewing
-  String                 view_svn_diffs; // subversion diffs for viewing
-  String                 view_wc_diffs;  // working copy diffs for viewing
+  String                view_svn_file; // subversion file for viewing
+  String                view_wc_file;  // working copy file for viewing
+  String                view_svn_diffs; // subversion diffs for viewing
+  String                view_wc_diffs;  // working copy diffs for viewing
+  bool                  log_subdir;     // show log only current svn subdir
+  String                log_file_name;  // file path to view change log for, if non-empty
 
   virtual void  setUrl(const String& url);
   // set the url for the repository and update display to that
@@ -103,6 +105,7 @@ protected slots:
   void    fBrowGoClicked();
   void    wBrowGoClicked();
   void    wBrowResizeCols();
+  void    logMeClicked();
 
   void    endRevPgUp();
   void    endRevPgDn();
@@ -115,6 +118,7 @@ protected slots:
   void    file_table_customContextMenuRequested(const QPoint& pos);
   void    wc_table_customContextMenuRequested(const QPoint& pos);
 
+  void    a_log_file_do();
   void    a_view_file_do();
   void    a_view_diff_do();
   void    a_save_file_do();
@@ -123,6 +127,7 @@ protected slots:
   void    a_mv_file_do();
   void    a_rev_file_do();
   
+  void    a_log_file_wc_do();
   void    a_view_file_wc_do();
   void    a_edit_file_wc_do();
   void    a_view_diff_wc_do();
@@ -154,6 +159,7 @@ protected:
   QSortFilterProxyModel* svn_wc_sort;
 
   QToolBar*             main_tb;
+  QAction*              a_log_file;
   QAction*              a_view_file;
   QAction*              a_view_diff;
   QAction*              a_save_file;
@@ -184,6 +190,7 @@ protected:
   QAction*              sd_up;
   iSpinBox*             rev_box;
   iCheckBox*            rev_only;
+  iCheckBox*            log_me;
   QAction*              fb_act_go;
   iTableView*           file_table;
 

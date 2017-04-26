@@ -18,13 +18,11 @@
 #include <PatchRec_Group>
 #include <taProject>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(Patch);
 
 String Patch::cur_subgp;
-
-bool Patch::ApplyPatch(taProject* proj) {
-  return false;
-}
 
 PatchRec* Patch::NewPatchRec_impl(taBase* obj, const String& val,
                                   const String& subgp) {
@@ -40,9 +38,14 @@ PatchRec* Patch::NewPatchRec_impl(taBase* obj, const String& val,
     }
     rval = (PatchRec*)sub->NewEl(1);
   }
-  rval->obj_path_names = obj->GetPathFromProj();
-  rval->obj_path_idx = obj->GetPath(obj->GetOwner(&TA_taProject));
-  rval->obj_type = obj->GetTypeDef()->name;
+  if(obj) {
+    rval->obj_path_names = obj->GetPathFromProj();
+    rval->obj_path_idx = obj->GetPath(obj->GetOwner(&TA_taProject));
+    rval->obj_type = obj->GetTypeDef()->name;
+  }
+  else {
+    taMisc::Warning("Null obj in patch -- shouldn't happen!");
+  }
   rval->value = val;
   return rval;
 }
@@ -58,13 +61,43 @@ PatchRec* Patch::NewPatchRec_Replace(taBase* obj, const String& val) {
   rval->action = PatchRec::REPLACE;
   return rval;
 }
-PatchRec* Patch::NewPatchRec_Insert(taBase* obj, const String& val) {
+
+PatchRec* Patch::NewPatchRec_Insert
+(taBase* obj, taBase* own, const String& val, const String& nw_tp) {
   PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
   rval->action = PatchRec::INSERT;
+  rval->new_obj_type = nw_tp;
+
+  String chldpath = obj->GetPath(own); // path relative to owner
+  if(chldpath.contains(']')) {
+    String sidx = chldpath.between('[',']');
+    int idx = sidx.toInt();
+    if(idx > 0) {
+      String nwpath = chldpath.through('[') + String(idx-1) + "]";
+      MemberDef* md;
+      taBase* bfr = own->FindFromPath(nwpath, md);
+      if(bfr) {
+        rval->path_before_names = bfr->GetPathFromProj();
+      }
+    }
+  }
   return rval;
 }
+
 PatchRec* Patch::NewPatchRec_Delete(taBase* obj, const String& val) {
   PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
   rval->action = PatchRec::DELETE;
   return rval;
 }
+
+bool Patch::ApplyPatch(taProject* proj) {
+  proj->StructUpdate(true);
+  bool rval = true;
+  FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch_recs) {
+    bool ok = pat->ApplyPatch(proj);
+    if(!ok) rval = false;
+  }
+  proj->StructUpdate(false);
+  return rval;
+}
+

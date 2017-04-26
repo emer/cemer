@@ -33,11 +33,11 @@ INHERITED(taGroup<PatchRec>)
 public:
   String       path;            // our root path for all the patches that apply under us
   
-  String       GetTypeDecoKey() const override { return "Wizard"; }
+  String       GetTypeDecoKey() const override { return "ControlPanel"; }
 
   TA_SIMPLE_BASEFUNS(PatchRec_Group);
 private:
-  void Initialize()  { };
+  void Initialize()  { SetBaseType(&TA_PatchRec); }
   void Destroy()     { };
 };
 

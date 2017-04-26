@@ -20,6 +20,7 @@
 #include <taSmartPtrT>
 #include <MemberDef>
 #include <tabMisc>
+#include <taMisc>
 #include <taRootBase>
 
 
@@ -147,7 +148,8 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
     if(a_or_b == 0) {           // "a" guy
       rval = HasDiffFlag(ACT_DEL_A);
       lbl = "Del A";
-    } else {
+    }
+    else {
       rval = HasDiffFlag(ACT_ADD_A);
       lbl = "Add A";
     }
@@ -156,7 +158,8 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
     if(a_or_b == 0) {           // "a" guy
       rval = HasDiffFlag(ACT_ADD_B);
       lbl = "Add B";
-    } else {
+    }
+    else {
       rval = HasDiffFlag(ACT_DEL_B);
       lbl = "Del B";
     }
@@ -165,7 +168,8 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
     if(a_or_b == 0) {           // "a" guy
       rval = HasDiffFlag(ACT_COPY_BA);
       lbl = "Cpy B";
-    } else {
+    }
+    else {
       rval = HasDiffFlag(ACT_COPY_AB);
       lbl = "Cpy A";
     }
@@ -177,22 +181,33 @@ void taObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
   if(HasDiffFlag(DIFF_DEL)) {
     if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_DEL_A, on_off);
-    } else {
+    }
+    else {
       SetDiffFlagState(ACT_ADD_A, on_off);
     }
   }
   else if(HasDiffFlag(DIFF_ADD)) {
     if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_ADD_B, on_off);
-    } else {
+    }
+    else {
       SetDiffFlagState(ACT_DEL_B, on_off);
     }
   }
   else if(HasDiffFlag(DIFF_CHG)) {
     if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_COPY_BA, on_off);
-    } else {
+      if(on_off && HasDiffFlag(ACT_COPY_AB)) {
+        taMisc::Info("Cannot copy both ways -- toggling A->B copy OFF");
+        ClearDiffFlag(ACT_COPY_AB);
+      }
+    }
+    else {
       SetDiffFlagState(ACT_COPY_AB, on_off);
+      if(on_off && HasDiffFlag(ACT_COPY_BA)) {
+        taMisc::Info("Cannot copy both ways -- toggling B->A copy OFF");
+        ClearDiffFlag(ACT_COPY_BA);
+      }
     }
   }
 }

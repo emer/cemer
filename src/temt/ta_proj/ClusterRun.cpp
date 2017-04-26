@@ -867,7 +867,7 @@ void ClusterRun::CleanJobFiles() {
   }
 }
 
-void ClusterRun::RemoveFiles() {
+void ClusterRun::DeleteFiles() {
   if(!InitClusterManager())
     return;
 
@@ -893,7 +893,7 @@ void ClusterRun::RemoveFiles() {
     if(rmt_files.size > 0) {
       String files_str = rmt_files.ToDelimString(" ");
       jobs_submit.ResetData();
-      SubmitRemoveFiles(files_str);
+      SubmitDeleteFiles(files_str);
       // Commit the table.
       m_cm->CommitJobSubmissionTable();
     }
@@ -905,14 +905,14 @@ void ClusterRun::RemoveFiles() {
       for (int row = end_row; row >= st_row; --row) {
         SelectFiles_impl(jobs_done, row, true); // include data
       }
-      RemoveAllFilesInList();
+      DeleteAllFilesInList();
     }
     else if (SelectedRows(jobs_archive, st_row, end_row)) {
       file_list.ResetData();
       for (int row = end_row; row >= st_row; --row) {
         SelectFiles_impl(jobs_archive, row, true); // include data
       }
-      RemoveAllFilesInList();
+      DeleteAllFilesInList();
     }
     else {
       taMisc::Warning("No rows selected in either file_list or jobs_done or jobs_archive -- no files removed");
@@ -920,7 +920,7 @@ void ClusterRun::RemoveFiles() {
   }
 }
 
-void ClusterRun::RemoveNonDataFiles() {
+void ClusterRun::DeleteNonDataFiles() {
   if(!InitClusterManager())
     return;
   
@@ -934,7 +934,7 @@ void ClusterRun::RemoveNonDataFiles() {
       for (int row = end_row; row >= st_row; --row) {
         SelectFiles_impl(*cur_table, row, false); // NOT include data
       }
-      RemoveAllFilesInList();
+      DeleteAllFilesInList();
     }
     else {
       taMisc::Warning("No rows selected in jobs_done or jobs_archive -- no files removed");
@@ -1143,7 +1143,7 @@ void ClusterRun::UnDeleteJobs() {
   }
 }
 
-void ClusterRun::RemoveJobs() {
+void ClusterRun::DeleteJobs() {
   if(!InitClusterManager())
     return;
   
@@ -1152,12 +1152,12 @@ void ClusterRun::RemoveJobs() {
     if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
       return;
     }
-    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_done list (can only be your jobs, on current cluster)?", "Ok", "Cancel");
+    int chs = taMisc::Choice("DeleteJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_done list (can only be your jobs, on current cluster)?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SubmitRemoveJob(jobs_done, row);
+      SubmitDeleteJob(jobs_done, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
@@ -1166,12 +1166,12 @@ void ClusterRun::RemoveJobs() {
     if (!CheckLocalClustUserRows(jobs_archive, st_row, end_row)) {
       return;
     }
-    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
+    int chs = taMisc::Choice("DeleteJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SubmitRemoveJob(jobs_archive, row);
+      SubmitDeleteJob(jobs_archive, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
@@ -1180,12 +1180,12 @@ void ClusterRun::RemoveJobs() {
     if (!CheckLocalClustUserRows(jobs_deleted, st_row, end_row)) {
       return;
     }
-    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_deleted list?", "Ok", "Cancel");
+    int chs = taMisc::Choice("DeleteJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_deleted list?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SubmitRemoveDelJob(jobs_deleted, row);
+      SubmitDeleteDelJob(jobs_deleted, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
@@ -1237,7 +1237,7 @@ void ClusterRun::NukeJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SubmitRemoveDelJob(jobs_deleted, row);
+      SubmitDeleteDelJob(jobs_deleted, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
@@ -1247,7 +1247,7 @@ void ClusterRun::NukeJobs() {
   }
 }
 
-void ClusterRun::RemoveKilledJobs() {
+void ClusterRun::DeleteKilledJobs() {
   if(!InitClusterManager())
     return;
   jobs_submit.ResetData();
@@ -1255,7 +1255,7 @@ void ClusterRun::RemoveKilledJobs() {
   for (int row = jobs_done.rows-1; row >= 0; --row) {
     String status = jobs_done.GetValAsString("status", row);
     if(status != "KILLED") continue;
-    SubmitRemoveJob(jobs_done, row);
+    SubmitDeleteJob(jobs_done, row);
   }
   if(jobs_submit.rows > 0) {
     m_cm->CommitJobSubmissionTable();
@@ -1263,7 +1263,7 @@ void ClusterRun::RemoveKilledJobs() {
   }
 }
 
-void ClusterRun::RemoveAllFilesInList() {
+void ClusterRun::DeleteAllFilesInList() {
   String_PArray files;
   String_Array rmt_files;
   for(int i=0;i<file_list.rows; i++) {
@@ -1285,7 +1285,7 @@ void ClusterRun::RemoveAllFilesInList() {
   if(rmt_files.size > 0) {
     String files_str = rmt_files.ToDelimString(" ");
     jobs_submit.ResetData();
-    SubmitRemoveFiles(files_str);
+    SubmitDeleteFiles(files_str);
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
     updt = true;
@@ -2045,7 +2045,7 @@ ClusterRun::CancelJob(int running_row)
 }
 
 void
-ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
+ClusterRun::SubmitDeleteJob(const DataTable& table, int tab_row)
 {
   if(!CheckLocalClustUser(table, tab_row))
     return;
@@ -2069,7 +2069,7 @@ ClusterRun::SubmitNukeJob(const DataTable& table, int tab_row)
 }
 
 void
-ClusterRun::SubmitRemoveDelJob(const DataTable& table, int tab_row)
+ClusterRun::SubmitDeleteDelJob(const DataTable& table, int tab_row)
 {
   if(!CheckLocalClustUser(table, tab_row))
     return;
@@ -2125,7 +2125,7 @@ ClusterRun::SubmitGetFiles(const String& files) {
 }
 
 void
-ClusterRun::SubmitRemoveFiles(const String& files) {
+ClusterRun::SubmitDeleteFiles(const String& files) {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REMOVEFILES", "status", dst_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
