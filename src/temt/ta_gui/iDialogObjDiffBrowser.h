@@ -75,8 +75,8 @@ public:
   QBrush*                   chg_color_lt;
   QBrush*                   off_color;
 
-  virtual bool          Browse();
-  // main user interface: this actually puts up the dialog -- is non-modal so will return immediately with true..
+  virtual bool  Browse(bool modal);
+  // main user interface: this actually puts up the dialog -- if non-modal, will return immediately with true, otherwise returns after user selects ok or not (returns true if OK)
 
   virtual void  Constr();
   virtual void  AddItems();

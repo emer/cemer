@@ -54,6 +54,8 @@
 #include <ViewColor_List>
 #include <dumpMisc>
 #include <taObjDiffRec>
+#include <Patch>
+#include <PatchRec>
 #include <taiViewType>
 #include <UserData_DocLink>
 #include <iMainWindowViewer>
@@ -272,8 +274,17 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
     if((md->owner != &(td->members)) || md->type->IsAnyPtr()) continue;
     if(md->type->IsActualTaBase()) {
       taBase* mb = (taBase*)md->GetOff(this);
-      taBase::Own(*mb, this);
-      mb->SetName(md->name);    // always set the names of members to their member name!
+      if(md->is_static) {
+        // taMisc::Info("initlinks auto:", md->name);
+        if(taBase::GetRefn(mb) == 0) {
+          taBase::Ref(mb);
+          mb->SetName(md->name);    // always set the names of members to their member name!
+        }
+      }
+      else {
+        taBase::Own(*mb, this);
+        mb->SetName(md->name);    // always set the names of members to their member name!
+      }
     }
     else if(md->type->InheritsFrom(TA_taSmartRef)) {
       taSmartRef* sr = (taSmartRef*)md->GetOff(this);
@@ -286,6 +297,7 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   // go in reverse order because sometimes later members refer to earlier member items
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members.FastEl(i);
+    if(md->is_static) continue;
     if((md->owner != &(td->members)) || !md->type->IsTaBase()) continue;
     if(md->type->IsNotPtr()) {
       taBase* mb = (taBase*)md->GetOff(this);
@@ -3308,8 +3320,13 @@ String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
 
 bool taBase::DiffCompare(taBase* cmp_obj) {
   if(TestError(!cmp_obj, "DiffCompare", "cmp_obj is null")) return false;
-
+  
   taObjDiff_List* diffs = new taObjDiff_List;
+  bool rval = DiffCompare_impl(diffs, cmp_obj, false); // non-modal by default
+  return rval;
+}
+
+bool taBase::DiffCompare_impl(taObjDiff_List* diffs, taBase* cmp_obj, bool modal_dlg) {
   diffs->CreateSrcs();
   diffs->src_a->tab_obj_a = this; // root of paths!
   diffs->src_b->tab_obj_a = cmp_obj; // root of paths!
@@ -3322,17 +3339,14 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
   diffs->Diff();
 
   iDialogObjDiffBrowser* odb = iDialogObjDiffBrowser::New(diffs, taiMisc::defFontSize);
-  bool rval = odb->Browse();
-
-  // browser is not modal and will return immediately
-  // browser now owns the diffs list and will delete it when it dies -- and it will
+  bool rval = odb->Browse(modal_dlg);
+  // if !modal, browser now owns the diffs list and will delete it when it dies -- and it will
   // be responsible for performing any actions that get done..
 
   // if(rval) {
   //   DoDiffEdits(diffs);
   // }
-
-  return true;
+  return rval;
 }
 
 static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec) {
@@ -3360,7 +3374,7 @@ static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDif
   }
 }
 
-bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
+bool taBase::DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a, Patch* patch_b) {
   StructUpdate(true);
 
   taProject* proj_a = (taProject*)diffs.tab_obj_a->GetOwner(&TA_taProject);
@@ -3495,28 +3509,38 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
                    rec->diff_odr->GetDisplayName(), "=", rec->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
-        taBase* down = tab_b->GetOwner();
-        if(down) {
-          down->CopyChildBefore(tab_a, tab_b);
-          tab_b->Close();       // nuke old guy
+        if(patch_b) {
+          PatchRec* pr = patch_b->NewPatchRec_Replace(tab_b, tab_a->GetValStr());
+        }
+        else {
+          taBase* down = tab_b->GetOwner();
+          if(down) {
+            down->CopyChildBefore(tab_a, tab_b);
+            tab_b->Close();       // nuke old guy
+          }
         }
       }
       else {
-        if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
-          DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr);
-        }
-        else if(taptr) {
-          DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr); // always project relative
+        if(patch_b) {
+          PatchRec* pr = patch_b->NewPatchRec_Assign(tab_b, tab_a->GetValStr());
         }
         else {
-          rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
-          if(ta_bases) {
-            tab_b->SetName(tab_a->GetName()); // need to copy names too!
+          if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+            DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr);
           }
-        }
-        if(tab_par_b) {
-          tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
-          tab_par_b->UpdateAfterEdit();
+          else if(taptr) {
+            DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr); // always project relative
+          }
+          else {
+            rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
+            if(ta_bases) {
+              tab_b->SetName(tab_a->GetName()); // need to copy names too!
+            }
+          }
+          if(tab_par_b) {
+            tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
+            tab_par_b->UpdateAfterEdit();
+          }
         }
       }
       continue;
@@ -3527,28 +3551,38 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
                    rec->GetDisplayName(), "=", rec->diff_odr->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
-        taBase* down = tab_a->GetOwner();
-        if(down) {
-          down->CopyChildBefore(tab_b, tab_a);
-          tab_a->Close();       // nuke old guy
+        if(patch_a) {
+          PatchRec* pr = patch_a->NewPatchRec_Replace(tab_a, tab_b->GetValStr());
+        }
+        else {
+          taBase* down = tab_a->GetOwner();
+          if(down) {
+            down->CopyChildBefore(tab_b, tab_a);
+            tab_a->Close();       // nuke old guy
+          }
         }
       }
       else {
-        if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
-          DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
-        }
-        else if(taptr) {
-          DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec); // always project relative
+        if(patch_a) {
+          PatchRec* pr = patch_a->NewPatchRec_Assign(tab_a, tab_b->GetValStr());
         }
         else {
-          rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
-          if(ta_bases) {
-            tab_a->SetName(tab_b->GetName()); // need to copy names too!
+          if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+            DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
           }
-        }
-        if(tab_par_a) {
-          tab_par_a->MemberUpdateAfterEdit(rec->mdef);
-          tab_par_a->UpdateAfterEdit();
+          else if(taptr) {
+            DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec); // always project relative
+          }
+          else {
+            rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
+            if(ta_bases) {
+              tab_a->SetName(tab_b->GetName()); // need to copy names too!
+            }
+          }
+          if(tab_par_a) {
+            tab_par_a->MemberUpdateAfterEdit(rec->mdef);
+            tab_par_a->UpdateAfterEdit();
+          }
         }
       }
       continue;
@@ -3556,6 +3590,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     if(!ta_bases) continue;     // only ta bases from this point on!
 
+    // todo: seems like we need diff add for each case!?
+    
     //////////////////////////////////
     //          Add
     bool add = false;
@@ -3640,20 +3676,24 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     if(rec->tabref && !((taBaseRef*)rec->tabref)->ptr()) continue;
     // double-check
 
-    bool del = false;
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
       taMisc::Info("Deleting A:", tab_a_path, "\n", rec->GetDisplayName());
-      del = true;
+      if(patch_a) {
+        PatchRec* pr = patch_a->NewPatchRec_Delete(tab_a, tab_a->GetValStr());
+      }
+      else {
+        tab_a->Close();
+      }
     }
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_B)) {
       taMisc::Info("Deleting B:", tab_b_path, "\n", rec->GetDisplayName());
-      del = true;
+      if(patch_b) {
+        PatchRec* pr = patch_b->NewPatchRec_Delete(tab_b, tab_b->GetValStr());
+      }
+      else {
+        tab_b->Close();
+      }
     }
-
-    if(del) {
-      tab_a->Close();
-    }
-
   }
   StructUpdate(false);
   return true;

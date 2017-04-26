@@ -206,14 +206,13 @@ void DeepLrateSpec::Defaults_init() {
 }
 
 void MarginLearnSpec::Initialize() {
-  on = false;
+  lrate_mod = false;
+  sign_dwt = false;
   Defaults_init();
 }
 
 void MarginLearnSpec::Defaults_init() {
-  on_lrate = 0.5f;
-  off_lrate = 0.5f;
-  sign_dwt = false;
+  stable_lrate = 0.5f;
   sign_l_lrn = false;
   sign_lrn = 0.001f;
 }

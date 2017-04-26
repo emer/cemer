@@ -426,6 +426,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   // figure out default if not otherwise saved
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
   if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
+  if(tab->GetOwner() == NULL) return;
     
   if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
     // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc

@@ -178,7 +178,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
-      if(margin.on) {
+      if(margin.lrate_mod) {
         lrate_eff *= margin.MarginLrate(ru->margin);
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
@@ -201,7 +201,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
-      if(margin.on) {
+      if(margin.lrate_mod) {
         lrate_eff *= margin.MarginLrate(ru->margin);
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);

@@ -63,6 +63,10 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   TemtServer.h
 
   taRootBase.h
+  PatchRec.h
+  PatchRec_Group.h
+  Patch.h
+  Patch_Group.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -172,6 +176,10 @@ set(ta_proj_SRCS
   TemtServer_QObj.cpp
   ClusterRun_QObj.cpp
   ClusterManager.cpp
+  PatchRec.cpp
+  PatchRec_Group.cpp
+  Patch.cpp
+  Patch_Group.cpp
 )
 
 set(ta_proj_FILES ${ta_proj_HEADS} ${ta_proj_SRCS})

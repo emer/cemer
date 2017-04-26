@@ -55,6 +55,7 @@ class MainWindowViewer; //
 class String_Array; //
 class taProject; //
 class String_Array; //
+class Patch; //
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1450,11 +1451,14 @@ public:
 
   virtual bool          DiffCompare(taBase* cmp_obj);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
+  virtual bool          DiffCompare_impl(taObjDiff_List* diffs, taBase* cmp_obj, bool modal_dlg);
+  // #IGNORE implements diff compare -- doesn't do any diff edits -- done automatically for !modal_dlg -- otherwise is caller's responsibility -- if modal then returns true if user hit Ok
   virtual bool          ChangeMyType(TypeDef* new_type);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
 
-  virtual bool          DoDiffEdits(taObjDiff_List& diffs);
-  // #CAT_ObjectMgmt actually perform edit actions (copy, add, delete) selected on given list of diffs
+  virtual bool          DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a = NULL,
+                                    Patch* patch_b = NULL);
+  // #CAT_ObjectMgmt convert given list of diffs into edit actions (copy, add, delete) -- if patch objects are non-null then patches are generated instead of directly applying the edits, otherwise performs actions directly
   virtual String        DiffCompareString(taBase* cmp_obj, taDoc*& doc);
   // #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
 

@@ -31,6 +31,8 @@
 #include <iDialogChoice>
 #include <ctime>
 #include <ParamSet>
+#include <taObjDiff_List>
+#include <Patch>
 
 taTypeDef_Of(taDataProc);
 SMARTREF_OF_CPP(taProject);
@@ -115,6 +117,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(version, this);
   taBase::Own(license, this);
   taBase::Own(wiki, this);
+  taBase::Own(patches, this);
   taBase::Own(docs, this);
   taBase::Own(wizards, this);
   taBase::Own(ctrl_panels, this);
@@ -1074,6 +1077,40 @@ bool taProject::SvnCommitDialog(String& commit_msg, bool& updt_change_log,
     return true;
   }
   return false;
+}
+
+void taProject::SvnDiffPatch() {
+}
+
+bool taProject::DiffCompare(taBase* cmp_obj) {
+  if(TestError(!cmp_obj->InheritsFrom(&TA_taProject), "DiffCompare",
+               "comparison object must be a project!")) {
+    return false;
+  }
+
+  taProject* cmp_proj = (taProject*)cmp_obj;
+
+  Patch* patch_a = this->patches.NewPatch();
+  Patch* patch_b = cmp_proj->patches.NewPatch();
+  
+  taObjDiff_List diffs;
+  
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(!md->type->InheritsFrom(&TA_taGroup_impl)) continue;
+    if(md->HasOption("NO_DIFF")) continue;
+    taGroup_impl* my_gp = (taGroup_impl*)md->GetOff(this);
+    taGroup_impl* cmp_gp = (taGroup_impl*)md->GetOff(cmp_proj);
+    Patch::cur_subgp = md->name;
+    diffs.Reset();
+    bool ok = my_gp->DiffCompare_impl(&diffs, cmp_gp, true); // modal dialog -- blocks here
+    if(ok) {
+      DoDiffEdits(diffs, patch_a, patch_b); // generate patch
+    }
+  }
+  Patch::cur_subgp = "";
+  return true;
 }
 
 void taProject::UpdateChangeLog() {

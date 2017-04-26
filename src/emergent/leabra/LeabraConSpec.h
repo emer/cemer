@@ -355,23 +355,20 @@ class E_API MarginLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning specs as function of whether units are on the margin
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable the margin-based learning -- marginal units have a learning rate of 1, while others are reduced -- also can learn based on low vs. high within the margin (sign_dwt)
-  float         on_lrate;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.5 learning rate multiplier for units that are above the margin and solidly active -- should be reduced relative to those on the margin
-  float         off_lrate;      // #CONDSHOW_ON_on #MIN_0 #DEF_0.5 learning rate multiplier for units that are below the margin and solidly inactive -- maybe also get a reduced level of learning compared to those in the margin, or maybe not??
-  bool          sign_dwt;       // #CONDSHOW_ON_on use the sign of the margin state (low vs. high marginal status) to drive an additional dwt learning factor
-  bool          sign_l_lrn;     // #CONDSHOW_ON_on&&sign_dwt apply the avg_l (BCM Hebbian) learning factor to sign-based learning
-  float         sign_lrn;       // #CONDSHOW_ON_on&&sign_dwt #MIN_0 amount of learning for sign-based learning factor
+  bool          lrate_mod;      // enable the margin-based modulation of the learning rate -- marginal units have a learning rate of 1, while others are reduced
+  float         stable_lrate;   // #CONDSHOW_ON_lrate_mod #MIN_0 #DEF_0.5 learning rate multiplier for units that are outside of the margin (either solidly active or inactive) -- reduced relative to those on the margin (which have the default learning rate)
+  bool          sign_dwt;       // use the sign of the margin state (low vs. high marginal status) to drive an additional dwt learning factor
+  bool          sign_l_lrn;     // #CONDSHOW_ON_sign_dwt apply the avg_l (BCM Hebbian) learning factor to sign-based learning
+  float         sign_lrn;       // #CONDSHOW_ON_sign_dwt #MIN_0 amount of learning for sign-based learning factor
 
   inline float  MarginLrate(const float marg) {
-    if(marg == -1.0f) return off_lrate;
-    else if(marg == 1.0f) return on_lrate;
+    if(marg == -2.0f || marg == 2.0f) return stable_lrate;
     return 1.0f;
   }
   // the margin-based learning rate multiplier
 
   inline float  SignDwt(const float marg) {
-    if(marg == -1.0f) return 0.0f;
-    else if(marg == 1.0f) return 0.0f;
+    if(marg == -2.0f || marg == 2.0f) return 0.0f;
     return marg;
   }
   // get the margin-based sign dwt factor -- filters out on and off values
@@ -581,7 +578,7 @@ public:
     float srm = ru_avg_m * su_avg_m;
     dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                      xcal.m_lrn * xcal.dWtFun(srs, srm));
-    if(margin.on && margin.sign_dwt) {
+    if(margin.sign_dwt) {
       float mdwt = margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
       if(margin.sign_l_lrn) mdwt *= ru_avg_l_lrn;
       dwt += clrate * mdwt;

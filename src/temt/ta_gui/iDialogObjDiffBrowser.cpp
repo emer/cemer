@@ -80,7 +80,7 @@ iDialogObjDiffBrowser::~iDialogObjDiffBrowser() {
 void iDialogObjDiffBrowser::accept() {
   inherited::accept();
   // here is where we execute actions!
-  if(odl->tab_obj_a) {
+  if(!isModal() && odl->tab_obj_a) {
     odl->tab_obj_a->DoDiffEdits(*odl);
   }
   delete odl;                   // all done!
@@ -91,10 +91,12 @@ void iDialogObjDiffBrowser::reject() {
   inherited::reject();
 }
 
-bool iDialogObjDiffBrowser::Browse() {
-  // modal:
-  // return (exec() == iDialog::Accepted);
-  // non-modal:
+bool iDialogObjDiffBrowser::Browse(bool modal) {
+  if(modal) {
+    setModal(true);
+    return (exec() == iDialog::Accepted);
+  }
+  setModal(false);
   show();
   return true;
 }
