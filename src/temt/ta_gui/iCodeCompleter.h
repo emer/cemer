@@ -62,11 +62,13 @@ public:
   void                    FilterList(String seed);  // pair down based on seed
   void                    ExtendSeed(String& seed); // extend the seed if possible -- called prefix in QCompleter terminology
   void                    SetIsDialogField(bool dialog_field) { is_dialog_field = dialog_field; }
-  
+  void                    SetAcceptReturn(bool accept_it = true) { accept_return = accept_it; }
+
 protected:
   QStringList             string_list;
   bool                    eventFilter(QObject* obj, QEvent* event) override;
   bool                    is_dialog_field; // is the widget using this completer in a dialog - if so special tab handling
+  bool                    accept_return;
 
   String                  GetPretext();  // get the pretext from the expression parser
   String                  GetText();     // get the text before cursor from the expression parser
