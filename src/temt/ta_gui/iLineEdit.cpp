@@ -388,7 +388,6 @@ void iLineEdit::DoCompletion(bool extend) {
 }
 
 void iLineEdit::CompletionDone() {
-  GetCompleter()->SetAcceptReturn(true);
   QModelIndex index = GetCompleter()->currentIndex();
   emit completed(GetCompleter()->currentIndex());
 }

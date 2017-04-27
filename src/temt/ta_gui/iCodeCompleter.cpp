@@ -48,7 +48,6 @@ void iCodeCompleter::Init() {
   setModel(list_model);
   
   //  setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-  accept_return = false;
 }
 
 void iCodeCompleter::SetModelList(String_Array *list) {
@@ -81,34 +80,19 @@ bool iCodeCompleter::eventFilter(QObject* obj, QEvent* event) {
     last_epression_text = GetText();
     QCoreApplication* app = QCoreApplication::instance();
     if (event->type() == QEvent::KeyPress && popup()->currentIndex().row() != -1) {  // some item is highlighted
-      accept_return = true;
       app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
     }
     else if (GetList()->size() == 1) {
-      accept_return = true;
-     app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
-     app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier)); // only one item in list
+      app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));  // select
     }
     else {
-      accept_return = true;
       app->postEvent(popup(), new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));  // try extending
     }
     return true;
   }
   else {
-    if (key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return) {
-      if (accept_return || popup()->isVisible() == false) {
-        accept_return = false;
-        return inherited::eventFilter(obj, event);
-      }
-      else {
-        key_event->accept();
-        return true;
-      }
-    }
-    else {
-      return inherited::eventFilter(obj, event);
-    }
+    return inherited::eventFilter(obj, event);
   }
 }
 
