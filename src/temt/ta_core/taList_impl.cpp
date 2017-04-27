@@ -647,6 +647,14 @@ taBase* taList_impl::CopyChildBefore(taBase* src, taBase* child_pos) {
 }
 
 taBase* taList_impl::CopyChildBeforeIndex(taBase* src, int child_pos) {
+  if(!src) {
+    return NULL;
+  }
+  if(TestWarning(!src->InheritsFrom(el_base), "CopyChildBeforeIndex",
+                 "Attempt to create type:", src->GetTypeDef()->name,
+                 "in list with base type:", el_base->name)) {
+    return NULL;
+  }
   taBase* new_obj = src->MakeToken();
   Insert(new_obj, child_pos);
   new_obj->UnSafeCopy(src);
@@ -1244,10 +1252,14 @@ taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
     typ = el_typ;
   if(TestWarning(!typ->InheritsFrom(el_base), "New",
                  "Attempt to create type:", typ->name,
-                 "in list with base type:", el_base->name)) return NULL;
+                 "in list with base type:", el_base->name)) {
+    return NULL;
+  }
   if(TestError(typ->HasOption("VIRT_BASE"),
                  "You cannot create a token of type:", typ->name,
-                 "because it is a 'virtual' base type -- you must create a more specific subtype of it instead")) return NULL;
+               "because it is a 'virtual' base type -- you must create a more specific subtype of it instead")) {
+    return NULL;
+  }
   if(no > 10)                   // adding large numbers is slow!
     StructUpdate(true);
   taBase* rval = NULL;

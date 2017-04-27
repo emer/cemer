@@ -60,10 +60,11 @@ void ProgVar::Destroy() {
 }
 
 void ProgVar::InitLinks() {
+  inherited::InitLinks();
   taBase::Own(object_val, this);
   taBase::Own(object_scope, this);
   taBase::Own(dyn_enum_val, this);
-  inherited::InitLinks();
+  taBase::Own(init_from, this);
   if(!taMisc::is_loading) {
     SetFlagsByOwnership();
   }
@@ -721,8 +722,8 @@ void ProgVar::Cleanup() {
   if (var_type != T_Bool)  bool_val = false;
   if (var_type != T_Object) {
     //note: its ok to leave whatever type is there
-    object_val.CutLinks();
-    object_scope.CutLinks();    // no dangling links to objs though
+    object_val.set(NULL);
+    object_scope.set(NULL);
   }
   if (var_type != T_HardEnum) {
     hard_enum_type = NULL;

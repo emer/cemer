@@ -31,23 +31,25 @@ class TA_API PatchRec : public taOBase {
 INHERITED(taOBase)
 public:
   enum PatchActions { // patch actions to perform
-    ASSIGN,           // assign object at given path to given value
-    REPLACE,          // replace object at given path with new one of a different type from saved value
-    INSERT,           // insert new object between path and path_after to given value
-    DELETE,           // delete object at given path -- should hopefully match value -- prompt if not
+    NO_APPLY,         // #COLOR_grey choose this to disable application of this patch element
+    ASSIGN,           // #COLOR_purple assign object at given path to given value
+    REPLACE,          // #COLOR_darkblue replace object at given path with new one of a different type from saved value
+    INSERT,           // #COLOR_green insert new object between path and path_after to given value
+    DELETE,           // #COLOR_red delete object at given path -- should hopefully match value -- prompt if not
   };
 
   PatchActions  action;         // action that this patch record performs
-  String        obj_path_names; // project-relative path to object using names -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
-  String        obj_path_idx;   // project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
+  bool          failed;         // #READ_ONLY #SHOW #NO_SAVE did the last attempt to apply this patch fail?
+  String        obj_path_names; // #EDIT_DIALOG project-relative path to object using names -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
+  String        obj_path_idx;   // #EDIT_DIALOG project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
   String        obj_type;       // type of object to be found at given obj_path -- for double-checking path finding
   String        mbr_path;       // path to a member of object, if relevant (for ASSIGN only)
-  String        path_before_names; // project-relative path for object after an insertion using names (NULL if first item in list)
+  String        path_before_names; // #EDIT_DIALOG project-relative path for object after an insertion using names (NULL if first item in list)
   String        new_obj_type;   // for REPLACE and INSERT, the type name of the new object to create 
-  String        value;          // string encoded value of object for assign and insert -- also has info about the object that should be deleted, to provide a match
+  String        value;          // #EDIT_DIALOG string encoded value of object for assign and insert -- also has info about the object that should be deleted, to provide a match
 
   virtual bool ApplyPatch(taProject* proj);
-  // apply the patch
+  // #BUTTON apply this patch record to given project -- can also apply at level of entire patch
 
   virtual bool ApplyPatch_assign(taProject* proj);
   // #IGNORE
@@ -62,9 +64,11 @@ public:
   // find the object on the path robustly
   virtual taBase* CheckObjType(taProject* proj, taBase* obj, const String& path_used);
   // check that object is of the right type -- if not, do something..
-  
+
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ControlPanel"; }
+  int           GetEnabled() const override;
+  int           GetSpecialState() const override;
   
   TA_SIMPLE_BASEFUNS(PatchRec);
 private:

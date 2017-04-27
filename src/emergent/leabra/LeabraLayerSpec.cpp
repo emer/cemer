@@ -108,7 +108,7 @@ void LeabraActMargin::Initialize() {
 }
 
 void LeabraActMargin::Defaults_init() {
-  pct_marg = 0.2f;
+  pct_marg = 0.3f;
   avg_tau = 100.0f;
   adapt_tau = 500.0f;
   tol_pct = 0.25f;

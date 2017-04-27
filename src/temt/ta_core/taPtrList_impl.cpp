@@ -318,6 +318,7 @@ bool taPtrList_impl::AddUnique_(void* it) {
   Add_(it);
   return true;
 }
+
 bool taPtrList_impl::AddUniqNameNew_(void* it) {
   if(El_GetOwnerList_(it) == this) return false; // if we're already on the list, the replace causes delete and it is bad
   int i = FindNameIdx(El_GetName_(it));
@@ -328,6 +329,7 @@ bool taPtrList_impl::AddUniqNameNew_(void* it) {
   Add_(it);
   return true;
 }
+
 void* taPtrList_impl::AddUniqNameOld_(void* it) {
   // note: this optimization is relatively new and could potentially cause problems..
   // if(El_GetOwnerList_(it) == this) return it;
@@ -365,10 +367,12 @@ bool taPtrList_impl::RemoveEl_(void* it) {
   int i = FindEl_(it);
   return (i < 0) ? false : RemoveIdx(i);
 }
+
 bool taPtrList_impl::RemoveName(const String& it) {
   int i = FindNameIdx(it);
   return (i < 0) ? false : RemoveIdx(i);
 }
+
 bool taPtrList_impl::RemoveLast() {
   return (size == 0) ? false : RemoveIdx(size - 1);
 }
@@ -400,17 +404,20 @@ bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {
   }
   return true;
 }
+
 bool taPtrList_impl::ReplaceEl_(void* ol, void* nw) {
   int i = FindEl_(ol);
   if (i < 0) return false;
   ReplaceIdx_(i, nw);
   return true;
 }
+
 bool taPtrList_impl::ReplaceName_(const String& ol, void* nw) {
   int i = FindNameIdx(ol);
   if(i < 0) return false;
   return ReplaceIdx_(i, nw);
 }
+
 bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
   if((size == 0) || (ol >= size))
     return false;

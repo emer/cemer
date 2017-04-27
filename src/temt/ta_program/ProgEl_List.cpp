@@ -58,16 +58,16 @@ void ProgEl_List::UpdateAfterEdit_impl() {
 
 void ProgEl_List::GenCss(Program* prog) {
   for (int i = 0; i < size; ++i) {
-    ProgEl* el = FastEl(i);
-    el->GenCss(prog);
+    ProgEl* pel = FastEl(i);
+    pel->GenCss(prog);
   }
 }
 
 const String ProgEl_List::GenListing(int indent_level) const {
   String rval;
   for (int i = 0; i < size; ++i) {
-    ProgEl* el = FastEl(i);
-    rval += el->GenListing(indent_level);
+    ProgEl* pel = FastEl(i);
+    rval += pel->GenListing(indent_level);
   }
   return rval;
 }
@@ -91,15 +91,15 @@ const KeyString ProgEl_List::GetListColKey(int col) const {
 
 void ProgEl_List::PreGen(int& item_id) {
   for (int i = 0; i < size; ++i) {
-    ProgEl* el = FastEl(i);
-    el->PreGen(item_id);
+    ProgEl* pel = FastEl(i);
+    pel->PreGen(item_id);
   }
 }
 
 ProgVar* ProgEl_List::FindVarName(const String& var_nm) const {
   for (int i = 0; i < size; ++i) {
-    ProgEl* el = FastEl(i);
-    ProgVar* pv = el->FindVarName(var_nm);
+    ProgEl* pel = FastEl(i);
+    ProgVar* pv = pel->FindVarName(var_nm);
     if(pv) return pv;
   }
   return NULL;
@@ -126,8 +126,8 @@ bool ProgEl_List::BrowserCollapseAll() {
 bool ProgEl_List::BrowserEditTest() {
   bool all_ok = true;
   for (int i = 0; i < size; ++i) {
-    ProgEl* el = FastEl(i);
-    if(!el->BrowserEditTest()) {
+    ProgEl* pel = FastEl(i);
+    if(!pel->BrowserEditTest()) {
       all_ok = false;
     }
   }
@@ -255,48 +255,48 @@ bool ProgEl_List::IsAcceptable(taBase* candidate) {
 
 void ProgEl_List::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
   for(int ei=0; ei<size; ei++) {
-    ProgEl* pe = FastEl(ei);
-    pe->UpdateProgElVars(old_scope, new_scope);
+    ProgEl* pel = FastEl(ei);
+    pel->UpdateProgElVars(old_scope, new_scope);
   }
 }
 
 void ProgEl_List::GetProgramCallFuns(taBase_PtrList& callers, const Function* callee) {
   for (int i=0; i<this->size; i++) {
-    ProgEl* el = this->SafeEl(i);
-    if (el->GetTypeDef() == &TA_ProgramCallFun) {
-      ProgramCallFun* pgrm_call_fun = (ProgramCallFun*)el;
+    ProgEl* pel = this->SafeEl(i);
+    if (pel->GetTypeDef() == &TA_ProgramCallFun) {
+      ProgramCallFun* pgrm_call_fun = (ProgramCallFun*)pel;
       if (pgrm_call_fun->function == callee->GetName() &&
           callee->GetOwner(&TA_Program) == pgrm_call_fun->GetTarget()) {
         callers.Add(pgrm_call_fun);
       }
     }
-    else if (el->DerivesFromName("Loop")) {
-      Loop* loop_el = (Loop*)el;
+    else if (pel->DerivesFromName("Loop")) {
+      Loop* loop_el = (Loop*)pel;
       ProgEl_List* list = &loop_el->loop_code;
       list->GetProgramCallFuns(callers, callee);
     }
-    else if (el->DerivesFromName("CondBase")) {
-      CondBase* cond_base_el = (CondBase*)el;
+    else if (pel->DerivesFromName("CondBase")) {
+      CondBase* cond_base_el = (CondBase*)pel;
       ProgEl_List* list = &cond_base_el->true_code;
       list->GetProgramCallFuns(callers, callee);
     }
-    else if (el->DerivesFromName("Else")) {
-      Else* else_el = (Else*)el;
+    else if (pel->DerivesFromName("Else")) {
+      Else* else_el = (Else*)pel;
       ProgEl_List* list = &else_el->true_code;
       list->GetProgramCallFuns(callers, callee);
     }
-    else if (el->DerivesFromName("If")) {
-      If* if_el = (If*)el;
+    else if (pel->DerivesFromName("If")) {
+      If* if_el = (If*)pel;
       ProgEl_List* list = &if_el->true_code;
       list->GetProgramCallFuns(callers, callee);
     }
-    else if (el->DerivesFromName("Switch")) {
-      Switch* switch_el = (Switch*)el;
+    else if (pel->DerivesFromName("Switch")) {
+      Switch* switch_el = (Switch*)pel;
       ProgEl_List* list = &switch_el->cases;
       list->GetProgramCallFuns(callers, callee);
     }
-    else if (el->DerivesFromName("CodeBlock")) {
-      CodeBlock* CodeBlock_el = (CodeBlock*)el;
+    else if (pel->DerivesFromName("CodeBlock")) {
+      CodeBlock* CodeBlock_el = (CodeBlock*)pel;
       ProgEl_List* list = &CodeBlock_el->prog_code;
       list->GetProgramCallFuns(callers, callee);
     }

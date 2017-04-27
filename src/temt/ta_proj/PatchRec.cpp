@@ -21,22 +21,39 @@
 TA_BASEFUNS_CTORS_DEFN(PatchRec);
 
 void PatchRec::Initialize() {
-  action = ASSIGN;
+  action = NO_APPLY;
+  failed = false;
 }
 
 String PatchRec::GetDisplayName() const {
   MemberDef* md = GetTypeDef()->members.FindName("action");
   String rval = md->type->Get_C_EnumString(action, false);
-  rval += "_" + obj_type;
+  if(action == INSERT) {
+    rval += "_" + new_obj_type;
+  }
+  else if(action == REPLACE) {
+    rval += "_" + obj_type + "->" + new_obj_type;
+  }
+  else {
+    rval += "_" + obj_type;
+  }
   return rval;
 }
 
+int PatchRec::GetEnabled() const {
+  return (action != NO_APPLY);
+}
+
+int PatchRec::GetSpecialState() const {
+  if(failed) return 4;          // red
+  return 0;
+}
 
 taBase* PatchRec::CheckObjType(taProject* proj, taBase* obj, const String& path_used) {
   if(!obj) return obj;
   if(!obj->InheritsFromName(obj_type)) {
     // todo: maybe prompt user for finding something else instead?
-    taMisc::Info("object type doesn't match target:", obj->GetTypeDef()->name,
+    taMisc::Info("object type:", obj->GetTypeDef()->name, "doesn't match target:", 
                  obj_type, "at path:", path_used);
   }
   return obj;
@@ -57,25 +74,35 @@ taBase* PatchRec::FindPathRobust(taProject* proj) {
 }
 
 bool PatchRec::ApplyPatch(taProject* proj) {
+  bool rval = false;
   switch(action) {
+  case NO_APPLY: {
+    rval = true;                // nop
+    break;
+  }
   case ASSIGN: {
-    return ApplyPatch_assign(proj);
+    rval = ApplyPatch_assign(proj);
     break;
   }
   case REPLACE: {
-    return ApplyPatch_replace(proj);
+    rval = ApplyPatch_replace(proj);
     break;
   }
   case INSERT: {
-    return ApplyPatch_insert(proj);
+    rval = ApplyPatch_insert(proj);
     break;
   }
   case DELETE: {
-    return ApplyPatch_delete(proj);
+    rval = ApplyPatch_delete(proj);
     break;
   }
   }
-  return false;
+  failed = !rval;
+  if(failed) {
+    taMisc::Warning("Apply of patch:", GetDisplayName(), "FAILED");
+    SigEmitUpdated();
+  }
+  return rval;
 }
 
 bool PatchRec::ApplyPatch_assign(taProject* proj) {
@@ -95,6 +122,7 @@ bool PatchRec::ApplyPatch_assign(taProject* proj) {
     obj->Load_String(value);
     taMisc::Info("ASSIGN of:", obj->DisplayPath());
   }
+  obj->UpdateAfterEdit();
   return true;
 }
 
@@ -108,6 +136,9 @@ bool PatchRec::ApplyPatch_replace(taProject* proj) {
   taBase* tok = taBase::MakeToken(new_typ);
   String old_path = obj->DisplayPath();
   taBase* new_guy = own->CopyChildBefore(tok, obj);
+  if(!new_guy) {
+    return false;
+  }
   new_guy->Load_String(value);
   taMisc::Info("REPLACE of:", old_path, "with:", new_guy->DisplayPath());
   obj->Close();       // nuke old guy
@@ -124,6 +155,9 @@ bool PatchRec::ApplyPatch_insert(taProject* proj) {
   if(!new_typ) return false;
   taBase* tok = taBase::MakeToken(new_typ);
   taBase* new_guy = own->CopyChildBefore(tok, obj);
+  if(!new_guy) {
+    return false;
+  }
   new_guy->Load_String(value);
   taMisc::Info("INSERT of:", new_guy->DisplayPath());
   return true;
