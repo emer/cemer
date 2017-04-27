@@ -671,9 +671,6 @@ void Program::Run() {
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
-  if(cur_step_prog.GetOwner() != NULL) {
-    taMisc::Info("cur_step_prog owner non-null!");
-  }
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
@@ -736,16 +733,10 @@ void Program::Step(Program* step_prg) {
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = true;
-  if(cur_step_prog.GetOwner() != NULL) {
-    taMisc::Info("cur_step_prog owner non-null!");
-  }
   if(step_prg)
     cur_step_prog = step_prg;
   else
     cur_step_prog = step_prog;
-  if(cur_step_prog.GetOwner() != NULL) {
-    taMisc::Info("cur_step_prog owner non-null!");
-  }
   
   if(TestError(!cur_step_prog || !cur_step_prog->owner, "Step",
                "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
@@ -833,9 +824,6 @@ void Program::RunNoArgFunction(Function* fun) {
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
-  if(cur_step_prog.GetOwner() != NULL) {
-    taMisc::Info("cur_step_prog owner non-null!");
-  }
   cur_step_prog = NULL;
   taMisc::Busy();
   SetRunState(RUN);
@@ -937,9 +925,6 @@ void Program::Stop_impl() {
 }
 
 bool Program::IsStepProg() {
-  if(cur_step_prog.GetOwner() != NULL) {
-    taMisc::Info("cur_step_prog owner non-null!");
-  }
   return (step_mode && (cur_step_prog.ptr() == this));
 }
 

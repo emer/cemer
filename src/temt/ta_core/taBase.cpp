@@ -272,20 +272,11 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
     if((md->owner != &(td->members)) || md->type->IsAnyPtr()) continue;
+    if(md->is_static) continue; // no init links on statics!
     if(md->type->IsActualTaBase()) {
       taBase* mb = (taBase*)md->GetOff(this);
-      if(md->is_static) {
-        if(taBase::GetRefn(mb) == 0) {
-          taMisc::Info("InitLinks Ref of Static Object:", md->name, "in type:",
-                       td->name, "probably not a great thing...");
-          taBase::Ref(mb);
-          mb->SetName(md->name);    // always set the names of members to their member name!
-        }
-      }
-      else {
-        taBase::Own(*mb, this);
-        mb->SetName(md->name);    // always set the names of members to their member name!
-      }
+      taBase::Own(*mb, this);
+      mb->SetName(md->name);    // always set the names of members to their member name!
     }
     else if(md->type->InheritsFrom(TA_taSmartRef)) {
       taSmartRef* sr = (taSmartRef*)md->GetOff(this);
