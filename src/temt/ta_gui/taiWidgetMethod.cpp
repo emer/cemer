@@ -152,6 +152,7 @@ bool taiWidgetMethod::CallFun_impl() {
       use_argc = 0; // don't show dialog
     }
   }
+  bool use_busy = !meth->HasOption("NO_BUSY");
   if ((use_argc == 0) && !meth->HasOption("CONFIRM")) {
     GenerateScript();
 #ifdef DMEM_COMPILE
@@ -159,7 +160,6 @@ bool taiWidgetMethod::CallFun_impl() {
     if (taMisc::dmem_nprocs == 1)
 #endif
     {
-      bool use_busy = !meth->HasOption("NO_BUSY");
       if (use_busy) taMisc::Busy(true);
       ++taMisc::in_gui_call;
       cssEl* rval = (*(meth->stubp))(base, 1, (cssEl**)NULL);
@@ -193,14 +193,14 @@ bool taiWidgetMethod::CallFun_impl() {
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
     if (taMisc::dmem_nprocs == 1) {
 #endif
-      taMisc::Busy(true);
+      if(use_busy) taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, arg_dlg->obj->members->size-1,
                                      arg_dlg->obj->members->els);
       // only UA if we still exist!
       if (ths)
         UpdateAfter();
 
-      taMisc::Busy(false);
+      if(use_busy) taMisc::Busy(false);
       if ((show_rval && (rval != &cssMisc::Void)))
         ShowReturnVal(rval, thost, meth_name);
       if(rval) {
