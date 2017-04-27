@@ -75,6 +75,7 @@ bool PatchRec::ApplyPatch(taProject* proj) {
     break;
   }
   }
+  return false;
 }
 
 bool PatchRec::ApplyPatch_assign(taProject* proj) {
