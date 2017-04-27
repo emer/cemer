@@ -448,9 +448,8 @@ public:
   void          SetIndex(int value) override {col_idx = (short)value;}
   String        GetDesc() const override {return desc;}
   void          SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  taObjDiffRec* GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
 
   virtual void GetUniqueColumnValues(String_Array& groups);
   // make a list of the unique values of the column

@@ -105,7 +105,7 @@ bool taNBase::SetCopyName(const taBase& cp) {
   return true;
 }
 
-bool taNBase::BrowserEditEnable() {
+bool taNBase::BrowserEditEnable() const {
   if(GetMemberOwner() != NULL) {
     return false;               // if we are a member, can't edit
   }

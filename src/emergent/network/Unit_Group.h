@@ -122,11 +122,11 @@ public:
   virtual Unit* MostActiveUnit(int& idx);
   // #CAT_Activation Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
+
   // implement save_rmv_units:
   bool Dump_QuerySaveChildren() override;
-  taObjDiffRec* GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
   // we maintain our index in any owning list
   int  GetIndex() const override { return idx; }

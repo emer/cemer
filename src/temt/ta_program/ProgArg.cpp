@@ -17,6 +17,7 @@
 #include <Program>
 #include <taProject>
 #include <BuiltinTypeDefs>
+#include <FlatTreeEl_List>
 
 TA_BASEFUNS_CTORS_DEFN(ProgArg);
 
@@ -134,6 +135,30 @@ bool ProgArg::UpdateFromType(TypeDef* td) {
 String ProgArg::GetDisplayName() const {
   return type + " " + name + " = " + expr.GetFullExpr();
 //  return expr.expr;
+}
+
+FlatTreeEl* ProgArg::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                 const taBase* par_obj, MemberDef* md) const {
+  FlatTreeEl* fel = NULL;
+  if(md) {
+    fel = ftl.NewMember(nest_lev, md, par_obj, par_el);
+  }
+  else {
+    fel = ftl.NewObject(nest_lev, this, par_el);
+  }
+  GetFlatTreeValue(ftl, fel);   // get our value
+  // ftl.GetFlatTreeMembers_ListsOnly(fel, this); // nothing!
+  return fel;
+}
+
+void ProgArg::GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr) const {
+  if(ptr) {
+    inherited::GetFlatTreeValue(ftl, ft, ptr);
+    return;
+  }
+  else {
+    ft->value = BrowserEditString();
+  }
 }
 
 bool ProgArg::BrowserEditSet(const String& code, int move_after) {

@@ -19,7 +19,7 @@
 #include <taMisc>
 #include <taiMisc>
 #include <taBase_PtrList>
-#include <taObjDiffRec>
+#include <FlatTreeEl_List>
 #include <tabMisc>
 #include <taRootBase>
 
@@ -299,16 +299,14 @@ int taGroup_impl::ReplaceValStr(const String& srch, const String& repl, const St
   return rval;
 }
 
-taObjDiffRec* taGroup_impl::GetObjDiffRec
-(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  // always just add a record for this guy
-  taObjDiffRec* odr = inherited::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
+FlatTreeEl* taGroup_impl::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                      const taBase* par_obj, MemberDef* md) const {
+  FlatTreeEl* fel = inherited::GetFlatTree(ftl, nest_lev, par_el, par_obj, md);
   MemberDef* gpmd = FindMemberName("gp");
-  taObjDiffRec* gpodr = gp.GetObjDiffRec(odl, nest_lev+1, gpmd, this, GetTypeDef(), odr);
-  gpodr->name = odr->name + "_gp";
-  gpodr->value = odr->value + "_gp";
-  gpodr->ComputeHashCode();
-  return odr;
+  FlatTreeEl* gpfel = ftl.GetFlatTreeMember(nest_lev+1, gpmd, fel, this);
+  gpfel->name = fel->name + "_gp";
+  gpfel->value = fel->value + "_gp";
+  return fel;
 }
 
 int taGroup_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {

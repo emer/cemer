@@ -19,8 +19,7 @@
 #include <ControlPanel>
 #include <ParamSet>
 #include <ClusterRun>
-#include <taObjDiffRec>
-#include <taObjDiff_List>
+#include <FlatTreeEl_List>
 #include <ArchivedParams_Group>
 
 #include <taMisc>
@@ -663,32 +662,31 @@ ControlPanel* ControlPanelMember::GetControlPanelPointer() const {
   return NULL;
 }
 
-taObjDiffRec* ControlPanelMember::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
-                                    const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
-                                       (void*)par, par_typ, par_od);
-  odl.Add(odr);
-  if(GetOwner()) {
-    odr->tabref = new taBaseRef;
-    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+FlatTreeEl* ControlPanelMember::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                            const taBase* par_obj, MemberDef* md) const {
+  FlatTreeEl* fel = NULL;
+  if(md) {
+    fel = ftl.NewMember(nest_lev, md, par_obj, par_el);
   }
-  // do NOT do sub-classes -- only the main obj -- uses listing text!
-  // GetTypeDef()->GetObjDiffRec_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
-  return odr;
+  else {
+    fel = ftl.NewObject(nest_lev, this, par_el);
+  }
+  GetFlatTreeValue(ftl, fel);   // get our value
+  // ftl.GetFlatTreeMembers_ListsOnly(fel, this); // nothing!
+  return fel;
 }
 
-void ControlPanelMember::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) const {
+void ControlPanelMember::GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr) const {
   if(ptr) {
-    inherited::GetObjDiffValue(rec, odl, ptr);
+    inherited::GetFlatTreeValue(ftl, ft, ptr);
     return;
   }
   else {
     if(IsParamSet()) {
-      rec->value = data.saved_value;
+      ft->value = data.saved_value;
     }
     else {
-      rec->value = CurValAsString();
+      ft->value = CurValAsString();
     }
   }
 }

@@ -34,8 +34,9 @@
 class taMatrix; // 
 class taBaseItr; // 
 class MemberDef; // 
-class taBase_PtrList; // 
-class taObjDiff_List; // 
+class taBase_PtrList; //
+class FlatTreeEl; //
+class FlatTreeEl_List; //
 class taDoc; // 
 class ControlPanel; //
 class ParamSet; //
@@ -55,8 +56,6 @@ class MainWindowViewer; //
 class String_Array; //
 class taProject; //
 class String_Array; //
-class Patch; //
-
 
 //////////////////////////////////////////////////////////////////////////////////
 // Copy logic (this is complicated for dealing with constructors and = assignment
@@ -969,12 +968,11 @@ public:
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true);
   // #IGNORE replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none) -- mbr_filt = filter for members to replace in -- if non-empty, member name for terminal value members where replace actually occurs (as opposed to owner class objects) must contain this string - if deep is false changing a string will not be recursive nor will members of list or groups be changed
 
-  virtual taObjDiffRec*  GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
-  // #IGNORE add this object and all its members and sub-objects to the object diff list, for diff compare function
-  virtual void          GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false) const;
-  // #IGNORE get the string representation of the value of this object for diff compare -- if ptr is true, then this is a pointer to an object of this type -- otherwise it is the actual object itself -- by default it is just the display name or path for pointers, but subtypes can represent entire object as a string if desired (in which case, do not call GetObjDiffRec on members!) -- called in the constructor of the taObjDiffRec when created by GetObjDiffRec, via TypeDef::GetObjDiffValue
+  virtual FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                    const taBase* par_obj, MemberDef* md) const;
+  // #IGNORE add this object and all its members and sub-objects to the flat tree list, used in object diff compare and other structure ops
+  virtual void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const;
+  // #IGNORE get the string representation of the value of this object for flat tree representation for object diff compare -- if ptr is true, then this is a pointer to an object of this type -- otherwise it is the actual object itself -- by default it is just the display name or path for pointers, but subtypes can represent entire object as a string if desired (in which case, do not call GetFlatTree on members!)
 
   //////////////////////////////////////////////////////////////////////
   //    Low-level dump load/save
@@ -1226,9 +1224,9 @@ public:
   // #CAT_Display collapse all sub-leaves under this item in the browser
   virtual void          BrowseMe();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #EDIT_READ_ONLY #CAT_Display show this object in its own browser
-  virtual bool          BrowserEditEnable() { return false; }
+  virtual bool          BrowserEditEnable() const { return false; }
   // #IGNORE is this item editable in the tree browser interface?
-  virtual String        BrowserEditString() { return GetDisplayName(); }
+  virtual String        BrowserEditString() const { return GetDisplayName(); }
   // #IGNORE the string representation to use for editing this item in the browser
   virtual bool          BrowserEditSet(const String& new_val_str, int move_after = 0)
   { return false; }
@@ -1451,14 +1449,9 @@ public:
 
   virtual bool          DiffCompare(taBase* cmp_obj);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
-  virtual bool          DiffCompare_impl(taObjDiff_List* diffs, taBase* cmp_obj, bool modal_dlg);
-  // #IGNORE implements diff compare -- doesn't do any diff edits -- done automatically for !modal_dlg -- otherwise is caller's responsibility -- if modal then returns true if user hit Ok
   virtual bool          ChangeMyType(TypeDef* new_type);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
 
-  virtual bool          DoDiffEdits(taObjDiff_List& diffs, Patch* patch_a = NULL,
-                                    Patch* patch_b = NULL);
-  // #CAT_ObjectMgmt convert given list of diffs into edit actions (copy, add, delete) -- if patch objects are non-null then patches are generated instead of directly applying the edits, otherwise performs actions directly
   virtual String        DiffCompareString(taBase* cmp_obj, taDoc*& doc);
   // #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
 

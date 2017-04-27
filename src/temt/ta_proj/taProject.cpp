@@ -30,8 +30,8 @@
 #include <iSvnFileListModel>
 #include <iDialogChoice>
 #include <ctime>
+#include <ObjDiff>
 #include <ParamSet>
-#include <taObjDiff_List>
 #include <Patch>
 
 taTypeDef_Of(taDataProc);
@@ -1093,8 +1093,6 @@ bool taProject::DiffCompare(taBase* cmp_obj) {
   Patch* patch_a = this->patches.NewPatch();
   Patch* patch_b = cmp_proj->patches.NewPatch();
   
-  taObjDiff_List diffs;
-  
   TypeDef* td = GetTypeDef();
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members[i];
@@ -1103,11 +1101,11 @@ bool taProject::DiffCompare(taBase* cmp_obj) {
     taGroup_impl* my_gp = (taGroup_impl*)md->GetOff(this);
     taGroup_impl* cmp_gp = (taGroup_impl*)md->GetOff(cmp_proj);
     Patch::cur_subgp = md->name;
-    diffs.Reset();
-    bool ok = my_gp->DiffCompare_impl(&diffs, cmp_gp, true); // modal dialog -- blocks here
-    if(ok) {
-      DoDiffEdits(diffs, patch_a, patch_b); // generate patch
-    }
+    ObjDiff diffs;
+    // bool ok = my_gp->DiffCompare_impl(&diffs, cmp_gp, true); // modal dialog -- blocks here
+    // if(ok) {
+    //   DoDiffEdits(diffs, patch_a, patch_b); // generate patch
+    // }
   }
   Patch::cur_subgp = "";
   return true;

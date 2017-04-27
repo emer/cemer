@@ -216,17 +216,15 @@ public:
   virtual ProgVar*      GetInitFromVar(bool warn = true);
   // #CAT_ProgVar get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
 
-  taObjDiffRec*  GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
-  void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
-    const override;
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
+  void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
   int          GetEnabled() const override;
   int          GetSpecialState() const override;
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
-  bool         BrowserEditEnable() override { return true; }
+  bool         BrowserEditEnable() const override { return true; }
   bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
   
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override; // don't save the unused vals

@@ -24,8 +24,7 @@
 #include <taBase_Group>
 #include <tabMisc>
 #include <taRootBase>
-#include <taObjDiffRec>
-#include <taObjDiff_List>
+#include <FlatTreeEl_List>
 #include <dumpMisc>
 #include <MemberDef>
 #include <iTreeViewItem>
@@ -706,28 +705,28 @@ int taList_impl::ReplaceValStr(const String& srch, const String& repl, const Str
   return rval;
 }
 
-taObjDiffRec* taList_impl::GetObjDiffRec
-(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  // do NOT do the basic members on the list -- just a bunch of clutter
-  // taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
-
-  // this is the rep of this item
-  taObjDiffRec* lsodr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def,
-                                         (void*)this, (void*)par, par_typ, par_od);
-  if(GetOwner()) {
-    lsodr->tabref = new taBaseRef;
-    ((taBaseRef*)lsodr->tabref)->set((taBase*)this);
+FlatTreeEl* taList_impl::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                     const taBase* par_obj, MemberDef* md) const {
+  FlatTreeEl* fel = NULL;
+  if(md) {
+    fel = ftl.NewMember(nest_lev, md, par_obj, par_el);
   }
+  else {
+    fel = ftl.NewObject(nest_lev, this, par_el);
+  }
+  GetFlatTreeValue(ftl, fel);   // get our value
+  //  ftl.GetFlatTreeMembers(fel, this); // do not!
 
-  odl.Add(lsodr);
-
+  int new_lev = nest_lev+1;
+  
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) {
-      itm->GetObjDiffRec(odl, nest_lev+1, NULL, this, GetTypeDef(), lsodr);
+      itm->GetFlatTree(ftl, new_lev, fel, this, NULL);
     }
   }
-  return lsodr;
+  
+  return fel;
 }
 
 int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {

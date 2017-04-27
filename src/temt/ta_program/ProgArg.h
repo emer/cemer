@@ -54,10 +54,13 @@ public:
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgArg"; }
 
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
+  void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
-  bool         BrowserEditEnable() override { return true; }
+  bool         BrowserEditEnable() const override { return true; }
   bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
 
   void  InitLinks() override;

@@ -34,7 +34,6 @@ class TypeDef; //
 class taMatrix; // 
 class taBaseItr; // 
 class MemberDef; // 
-class taObjDiff_List; // 
 class taDoc; // 
 class ControlPanel; // 
 class MethodDef; // 
@@ -110,9 +109,8 @@ public:
      void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
      TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
-  taObjDiffRec* GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
 
 #ifndef __MAKETA__
   void Dump_Save_GetPluginDeps() override;

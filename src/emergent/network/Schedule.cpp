@@ -35,7 +35,7 @@ String SchedItem::GetDisplayName() const {
   return GetDesc();
 }
 
-bool SchedItem::BrowserEditEnable() {
+bool SchedItem::BrowserEditEnable() const {
   return true;
 }
 

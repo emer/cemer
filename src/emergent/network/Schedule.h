@@ -40,8 +40,8 @@ public:
   // get value for given ctr value
 
   String          GetDisplayName() const override;
-  bool            BrowserEditEnable() override;
-  String          BrowserEditString() override { return GetDisplayName(); }
+  bool            BrowserEditEnable() const override;
+  String          BrowserEditString() const override { return GetDisplayName(); }
   bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   String       GetDesc() const override;

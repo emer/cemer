@@ -251,9 +251,8 @@ public:
                               MemberDef* md = NULL,
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
-  taObjDiffRec* GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
 
   void Dump_Save_GetPluginDeps() override; // note: in ta_dump.cpp
 #ifndef __MAKETA__

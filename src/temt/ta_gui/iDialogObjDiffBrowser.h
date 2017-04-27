@@ -24,8 +24,8 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class taObjDiffRec; //
-class taObjDiff_List; //
+class ObjDiff; //
+class ObjDiffRec; //
 class iDialogObjDiffFilter; //
 class QVBoxLayout; //
 class QTreeWidget; //
@@ -52,11 +52,11 @@ public:
     COL_N,
   };
 
-  static iDialogObjDiffBrowser* New(taObjDiff_List* diffs,
+  static iDialogObjDiffBrowser* New(ObjDiff* diffs,
                                 int font_type, QWidget* par_window_ = NULL);
 
   String                caption;        // current caption at top of chooser
-  taObjDiff_List*       odl;            // diffs list -- we own this list and will delete it when done
+  ObjDiff*              odl;            // diffs list -- we own this list and will delete it when done
   iDialogObjDiffFilter* filter_dlg;
 
   QVBoxLayout*          layOuter;
@@ -86,10 +86,10 @@ public:
                             bool nm_not, String nm_contains, bool val_not,
                             String val_contains);
   // toggle checked state of all items -- a_or_b = 0 for A, 1 for B filtered by given filter settings
-  virtual void  UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
+  virtual void  UpdateItemDisp(QTreeWidgetItem* witm, ObjDiffRec* rec, int a_or_b);
   // update display of item
 
-  virtual void  ViewItem(taObjDiffRec* rec);
+  virtual void  ViewItem(ObjDiffRec* rec);
 
   iDialogObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~iDialogObjDiffBrowser();

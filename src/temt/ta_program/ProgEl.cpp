@@ -30,8 +30,7 @@
 #include <ProgCode>
 #include <ProgElChoiceDlg>
 #include <SigLinkSignal>
-#include <taObjDiffRec>
-#include <taObjDiff_List>
+#include <FlatTreeEl_List>
 
 #include <taMisc>
 
@@ -666,46 +665,29 @@ int ProgEl::ReplaceValStr
   return rval;
 }
 
-taObjDiffRec* ProgEl::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
-                                    const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
-                                       (void*)par, par_typ, par_od);
-  odl.Add(odr);
-  if(GetOwner()) {
-    odr->tabref = new taBaseRef;
-    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+FlatTreeEl* ProgEl::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                const taBase* par_obj, MemberDef* md) const {
+  FlatTreeEl* fel = NULL;
+  if(md) {
+    fel = ftl.NewMember(nest_lev, md, par_obj, par_el);
   }
-  // do NOT do sub-classes -- only the main obj -- uses listing text!
-  // GetTypeDef()->GetObjDiffRec_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
-  // except: get any children lists..
-  TypeDef* td = GetTypeDef();
-  for(int i=0; i<td->members.size; i++) {
-    MemberDef* md = td->members.FastEl(i);
-    if(!md->type->IsActualTaBase()) continue;
-    if(md->type->InheritsFrom(&TA_taList_impl)) { // container!
-      md->type->GetObjDiffRec(odl, nest_lev+1, md->GetOff(this), md, this,
-                              const_cast<TypeDef*>(td), odr);
-    }
+  else {
+    fel = ftl.NewObject(nest_lev, this, par_el);
   }
-  return odr;
+  GetFlatTreeValue(ftl, fel);   // get our value
+  ftl.GetFlatTreeMembers_ListsOnly(fel, this); // only lists!
+  return fel;
 }
 
-void ProgEl::GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr) const {
+void ProgEl::GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr) const {
   if(ptr) {
-    inherited::GetObjDiffValue(rec, odl, ptr);
+    inherited::GetFlatTreeValue(ftl, ft, ptr);
     return;
   }
   else {
-    // rec->value = GenListing_this(0); // no indent!
-    rec->value = (const_cast<ProgEl*>(this))->BrowserEditString();
-    // if(!rec->mdef && rec->nest_level > 0)
-    //   rec->value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
-    // else
-    //   rec->value = type->name;
+    ft->value = BrowserEditString();
   }
 }
-
 
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   if(move_after != -11) {

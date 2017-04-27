@@ -24,8 +24,7 @@
 #include <MemberDef>
 #include <MinMax>
 #include <MatrixIndex>
-#include <taObjDiffRec>
-#include <taObjDiff_List>
+#include <FlatTreeEl_List>
 #include <DataSelectSpec>
 #include <DataSelectEl>
 #include <String_Array>
@@ -981,49 +980,45 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   base_nm = nm;
 }
 
-taObjDiffRec* DataCol::GetObjDiffRec(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
-    const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  // this is same as base objdiff but puts children last to make more sense for user
-  // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
-                                       (void*)par, par_typ, par_od);
-  odl.Add(odr);
-  if(GetOwner()) {
-    odr->tabref = new taBaseRef;
-    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+FlatTreeEl* DataCol::GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                                  const taBase* par_obj, MemberDef* md) const {
+  FlatTreeEl* fel = NULL;
+  if(md) {
+    fel = ftl.NewMember(nest_lev, md, par_obj, par_el);
+  }
+  else {
+    fel = ftl.NewObject(nest_lev, this, par_el);
   }
 
-  // don't include all the class member stuff -- nobody cares about that level and if
-  // they do, they can look at it manually..
-  
-  // taObjDiffRec* odr = inherited::GetObjDiffRec(odl, nest_lev, memb_def, par, par_typ, par_od);
+  int nxt_lev = nest_lev + 1;
 
+  // todo: do something like this for matrix too!?
+  
   const int n_rows = rows();
   for(int i=0;i<n_rows;i++) {
+    FlatTreeEl* fe= ftl.NewObject(nxt_lev, this, fel);
+    fe->name = "row_" + String(i);
     if(isMatrix()) {
       taMatrix* mat = ((DataCol*)this)->GetValAsMatrix(i);
       taBase::Ref(mat);
-      // stream each cell separately..
-      for(int j=0;j<cell_size();j++) {
-        taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
-            mat->FastEl_Flat_(j),
-            (void*)this, GetTypeDef(), odr);
-        clodr->name = String(i) + "," + String(j);      // row, cell
-        clodr->ComputeHashCode();                       // need to update
-        odl.Add(clodr);
-      }
+      fe->value = mat->GetValStr();
       taBase::unRefDone(mat);
     }
     else {
-      taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
-          (void*)AR()->FastEl_Flat_(IndexOfEl_Flat(i, 0)),
-          (void*)this, GetTypeDef(), odr);
-      clodr->name = String(i);  // row
-      clodr->ComputeHashCode(); // need to update
-      odl.Add(clodr);
+      fe->value = GetValAsString(i);
     }
   }
-  return odr;
+  
+  int n_el = 0;
+  if(isMatrix()) {
+    n_el = n_rows * cell_geom.Product();
+  }
+  else {
+    n_el = n_rows;
+  }
+
+  fel->size = fel->size + valTypeDef()->size * n_el;
+  return fel;
 }
 
 void DataCol::RunClusterAnalysis() {

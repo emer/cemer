@@ -163,9 +163,6 @@ set(ta_core_HEADS_MAKETA_NOMOC
   taStringDiffEdits.h
   taStringDiff.h
 
-  taObjDiffRec.h
-  taObjDiff_List.h
-
   TypeDefault.h
   taFiler.h
 
@@ -428,9 +425,6 @@ set(ta_core_SRCS_MAKETA
   taStringDiffItem_PArray.cpp
   taStringDiffEdits.cpp
   taStringDiff.cpp
-
-  taObjDiffRec.cpp
-  taObjDiff_List.cpp
 
   TypeDefault.cpp
   taFiler.cpp

@@ -260,11 +260,9 @@ public:
   virtual bool          MbrUpdated();
   // #IGNORE called by owner when a member sig emit updates -- return true if we updated something
   
-  taObjDiffRec*  GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
-  void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
-    const override;
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
+  void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
   
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMember);

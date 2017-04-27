@@ -37,8 +37,6 @@ class taBase_List; //
 class taiType; //
 class taiEdit; //
 class taiViewType; //
-class taObjDiff_List; //
-class taObjDiffRec; //
 class UserDataItemBase; //
 class UserDataItem_List; //
 
@@ -547,22 +545,6 @@ public:
                            int show_forbidden=NO_HIDDEN, int show_allowed=SHOW_CHECK_MASK, 
                            bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
-
-#ifndef NO_TA_BASE
-  void          GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, const void* base,
-     MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
-     taObjDiffRec* par_od=NULL) const;
-  // add this object and all its members (if a class) to the object diff list
-  void          GetObjDiffRec_class
-    (taObjDiff_List& odl, int nest_lev, const void* base,
-     MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
-     taObjDiffRec* par_od=NULL) const;
-  // just add members of a class object to the diff list
-  void          GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl) const;
-  // get the string value of this object for diff compare purposes -- called in the constructor of the taObjDiffRec when created by GetObjDiffRec
-#endif
-
 
   /////////////////////////////////////////////////////////////
   // 		Value printing

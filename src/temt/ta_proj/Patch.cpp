@@ -77,7 +77,7 @@ PatchRec* Patch::NewPatchRec_Insert
       MemberDef* md;
       taBase* bfr = own->FindFromPath(nwpath, md);
       if(bfr) {
-        rval->path_before_names = bfr->GetPathFromProj();
+        rval->path_before = bfr->GetPathFromProj();
       }
     }
   }

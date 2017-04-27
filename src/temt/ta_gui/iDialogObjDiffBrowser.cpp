@@ -14,7 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "iDialogObjDiffBrowser.h"
-#include <taObjDiff_List>
+#include <ObjDiff>
+#include <ObjDiffRec>
+#include <ObjDiffRec_List>
 #include <iDialogObjDiffFilter>
 #include <taBase>
 #include <MemberDef>
@@ -28,10 +30,10 @@
 #include <QPushButton>
 #include <QTreeWidget>
 
-iDialogObjDiffBrowser* iDialogObjDiffBrowser::New(taObjDiff_List* diffs,
+iDialogObjDiffBrowser* iDialogObjDiffBrowser::New(ObjDiff* diffs,
                                           int font_type, QWidget* par_window_) {
-  String caption = "DiffCompare_" + diffs->tab_obj_a->GetDisplayName() + "_" +
-    diffs->tab_obj_b->GetDisplayName();
+  String caption = "DiffCompare_" + diffs->a_top->GetDisplayName() + "_" +
+    diffs->b_top->GetDisplayName();
 
   iDialogObjDiffBrowser* rval = new iDialogObjDiffBrowser(caption, par_window_);
   rval->setFont(taiM->dialogFont(font_type));
@@ -80,8 +82,8 @@ iDialogObjDiffBrowser::~iDialogObjDiffBrowser() {
 void iDialogObjDiffBrowser::accept() {
   inherited::accept();
   // here is where we execute actions!
-  if(!isModal() && odl->tab_obj_a) {
-    odl->tab_obj_a->DoDiffEdits(*odl);
+  if(!isModal()) {
+    // odl->>DoDiffEdits(NULL, NULL);
     delete odl;                   // all done!
   }
   odl = NULL;
@@ -101,15 +103,15 @@ bool iDialogObjDiffBrowser::Browse(bool modal) {
   return true;
 }
 
-Q_DECLARE_METATYPE(taObjDiffRec*);
+Q_DECLARE_METATYPE(ObjDiffRec*);
 
 void iDialogObjDiffBrowser::Constr() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c);
 
-  String a_path = odl->tab_obj_a->GetPathNames();
-  String b_path = odl->tab_obj_b->GetPathNames();
+  String a_path = odl->a_top->GetPathNames();
+  String b_path = odl->b_top->GetPathNames();
   String lb_txt = "Differences between object A and object B, shown as changes needed to make A into B\nA is: " + a_path + "\nB is: " + b_path +
     "\nClick actions to actually perform edits on objects, which will take place when Ok is pressed";
 
@@ -204,7 +206,7 @@ void iDialogObjDiffBrowser::Constr() {
 }
 
 void iDialogObjDiffBrowser::AddItems() {
-  if(! odl || odl->size == 0) return;
+  if(! odl || odl->diffs.size == 0) return;
 
   int max_width = 40;
 
@@ -215,11 +217,12 @@ void iDialogObjDiffBrowser::AddItems() {
   int b_idx = 0;
 
   int cur_nest = init_nest;
-  for(int i=0;i<odl->size; i++) {
+  for(int i=0;i<odl->diffs.size; i++) {
+    /*
     if(a_idx >= odl->src_a->size && b_idx >= odl->src_b->size)
       break;                    // done!  shouldn't happen
 
-    taObjDiffRec* rec = odl->FastEl(i); // from diffs guy itself
+    ObjDiffRec* rec = odl->FastEl(i); // from diffs guy itself
     String lbl_a;
     bool chk_a = rec->GetCurAction(0, lbl_a);
     String lbl_b;
@@ -227,10 +230,10 @@ void iDialogObjDiffBrowser::AddItems() {
 
     int a_add = 0;
     int b_add = 0;
-    if(rec->HasDiffFlag(taObjDiffRec::SRC_A)) {
+    if(rec->HasDiffFlag(ObjDiffRec::SRC_A)) {
       a_add = (rec->idx - a_idx) + 1; // add this many to catch up in a
       b_add = (rec->diff_odr->idx - b_idx); // " b
-      if(!rec->HasDiffFlag(taObjDiffRec::DIFF_DEL))
+      if(!rec->HasDiffFlag(ObjDiffRec::DIFF_DEL))
         b_add++;                // add the 1
     }
     else {
@@ -243,8 +246,8 @@ void iDialogObjDiffBrowser::AddItems() {
     int ast = mxadd - a_add;
     int bst = mxadd - b_add;
     for(int ad=0; ad < mxadd; ad++) {
-      taObjDiffRec* a_rec = NULL;
-      taObjDiffRec* b_rec = NULL;
+      ObjDiffRec* a_rec = NULL;
+      ObjDiffRec* b_rec = NULL;
       if(ad < a_add) {
         a_rec = odl->src_a->SafeEl(a_idx);
         a_idx++;
@@ -262,10 +265,10 @@ void iDialogObjDiffBrowser::AddItems() {
 
       bool some_diff = false;
       bool chg_diff = false;
-      if((a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK)) ||
-         (b_rec && b_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK))) {
+      if((a_rec && a_rec->HasDiffFlag(ObjDiffRec::DIFF_MASK)) ||
+         (b_rec && b_rec->HasDiffFlag(ObjDiffRec::DIFF_MASK))) {
         some_diff = true;
-        if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_CHG))
+        if(a_rec && a_rec->HasDiffFlag(ObjDiffRec::DIFF_CHG))
           chg_diff = true;
       }
 
@@ -400,7 +403,7 @@ void iDialogObjDiffBrowser::AddItems() {
 
       if(!some_diff) continue;
 
-      if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
+      if(a_rec && a_rec->HasDiffFlag(ObjDiffRec::DIFF_DEL)) {
         if(chk_a) witm->setBackground(COL_A_FLG, *del_color);
         witm->setBackground(COL_A_VAL, a_off ? *del_color_lt : *del_color);
         witm->setBackground(COL_A_NM, a_off ? *del_color_lt : *del_color);
@@ -408,7 +411,7 @@ void iDialogObjDiffBrowser::AddItems() {
         witm->setBackground(COL_B_VAL, b_off ? *add_color_lt : *add_color);
         witm->setBackground(COL_B_NM, b_off ? *add_color_lt : *add_color);
         witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
-        if(!a_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
+        if(!a_rec->HasDiffFlag(ObjDiffRec::SUB_NO_ACT)) {
           // only ta base items really feasible here..
           if(rec->type->IsActualTaBase()) {
             witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
@@ -419,7 +422,7 @@ void iDialogObjDiffBrowser::AddItems() {
           }
         }
       }
-      else if(b_rec && b_rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
+      else if(b_rec && b_rec->HasDiffFlag(ObjDiffRec::DIFF_ADD)) {
         if(chk_a) witm->setBackground(COL_A_FLG, *add_color);
         witm->setBackground(COL_A_VAL, a_off ? *add_color_lt : *add_color);
         witm->setBackground(COL_A_NM, a_off ? *add_color_lt : *add_color);
@@ -427,7 +430,7 @@ void iDialogObjDiffBrowser::AddItems() {
         witm->setBackground(COL_B_VAL, b_off ? *del_color_lt : *del_color);
         witm->setBackground(COL_B_NM, b_off ? *del_color_lt : *del_color);
         witm->setExpanded(false);
-        if(!b_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
+        if(!b_rec->HasDiffFlag(ObjDiffRec::SUB_NO_ACT)) {
           // only ta base items really feasible here..
           if(rec->type->IsActualTaBase()) {
             witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
@@ -438,7 +441,7 @@ void iDialogObjDiffBrowser::AddItems() {
           }
         }
       }
-      else if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
+      else if(a_rec && a_rec->HasDiffFlag(ObjDiffRec::DIFF_CHG)) {
         if(chk_a) witm->setBackground(COL_A_FLG, *chg_color);
         witm->setBackground(COL_A_VAL, a_off ? *chg_color_lt : *chg_color);
         witm->setBackground(COL_A_NM, a_off ? *chg_color_lt : *chg_color);
@@ -453,6 +456,7 @@ void iDialogObjDiffBrowser::AddItems() {
         witm->setText(COL_B_FLG, lbl_b);
       }
     }
+    */
   }
 
   items->resizeColumnToContents(COL_NEST);
@@ -467,18 +471,18 @@ void iDialogObjDiffBrowser::AddItems() {
   items->resizeColumnToContents(COL_B_VIEW);
 }
 
-void iDialogObjDiffBrowser::ViewItem(taObjDiffRec* rec) {
+void iDialogObjDiffBrowser::ViewItem(ObjDiffRec* rec) {
   if(!rec) return;
-  taBase* tab = rec->GetOwnTaBase();
-  if(!tab) return;
-  tab->BrowserSelectMe();
+  // taBase* tab = rec->GetOwnTaBase();
+  // if(!tab) return;
+  // tab->BrowserSelectMe();
 }
 
 void iDialogObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
   QVariant a_val = itm->data(0, Qt::UserRole+1);
-  taObjDiffRec* a_rec = a_val.value<taObjDiffRec*>();
+  ObjDiffRec* a_rec = a_val.value<ObjDiffRec*>();
   QVariant b_val = itm->data(1, Qt::UserRole+1);
-  taObjDiffRec* b_rec = b_val.value<taObjDiffRec*>();
+  ObjDiffRec* b_rec = b_val.value<ObjDiffRec*>();
 
   if(column == COL_A_VIEW || column == COL_B_VIEW) {
     if(column == COL_A_VIEW) {
@@ -500,7 +504,7 @@ void iDialogObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
   Qt::CheckState chkst = itm->checkState(column);
   bool on = (chkst == Qt::Checked);
 
-  taObjDiffRec* rec;
+  ObjDiffRec* rec;
   if(a_rec)
     rec = a_rec;
   else
@@ -510,7 +514,7 @@ void iDialogObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
   UpdateItemDisp(itm, rec, a_or_b);
 }
 
-void iDialogObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, taObjDiffRec* rec,  int a_or_b) {
+void iDialogObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, ObjDiffRec* rec,  int a_or_b) {
   QBrush no_color;
 
   String lbl;
@@ -519,19 +523,19 @@ void iDialogObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, taObjDiffRec* r
   if(a_or_b == 0) column = COL_A_FLG;
   else column = COL_B_FLG;
 
-  if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL))
-    itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
-  else if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD))
-    itm->setBackground(column, chk ? (a_or_b ? *del_color : *add_color) : no_color);
-  else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG))
-    itm->setBackground(column, chk ? *chg_color : no_color);
+  // if(rec->HasDiffFlag(ObjDiffRec::DIFF_DEL))
+  //   itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
+  // else if(rec->HasDiffFlag(ObjDiffRec::DIFF_ADD))
+  //   itm->setBackground(column, chk ? (a_or_b ? *del_color : *add_color) : no_color);
+  // else if(rec->HasDiffFlag(ObjDiffRec::DIFF_CHG))
+  //   itm->setBackground(column, chk ? *chg_color : no_color);
 
   itm->setCheckState(column, chk ? Qt::Checked : Qt::Unchecked);
 }
 
 void iDialogObjDiffBrowser::ToggleAll(int a_or_b) {
-  for(int i=0;i<odl->size; i++) {
-    taObjDiffRec* rec = odl->FastEl(i);
+  for(int i=0;i<odl->diffs.size; i++) {
+    ObjDiffRec* rec = odl->diffs.FastEl(i);
 
     if(!rec->ActionAllowed()) continue;
 
@@ -556,37 +560,37 @@ void iDialogObjDiffBrowser::toggleAllB() {
 void iDialogObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del, bool chg,
                                     bool nm_not, String nm_contains, bool val_not,
                                     String val_contains) {
-  for(int i=0;i<odl->size; i++) {
-    taObjDiffRec* rec = odl->FastEl(i);
+  for(int i=0;i<odl->diffs.size; i++) {
+    ObjDiffRec* rec = odl->diffs.FastEl(i);
 
     if(!rec->ActionAllowed()) continue;
 
-    if(a_or_b == 0) {
-      if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD) && !add) continue;
-      if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL) && !del) continue;
-    }
-    else {                      // switched for b
-      if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL) && !add) continue;
-      if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD) && !del) continue;
-    }
+    // if(a_or_b == 0) {
+    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_ADD) && !add) continue;
+    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_DEL) && !del) continue;
+    // }
+    // else {                      // switched for b
+    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_DEL) && !add) continue;
+    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_ADD) && !del) continue;
+    // }
 
-    if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG) && !chg) continue;
-    if(nm_contains.nonempty()) {
-      if(nm_not) {
-        if(rec->name.contains(nm_contains)) continue;
-      }
-      else {
-        if(!rec->name.contains(nm_contains)) continue;
-      }
-    }
-    if(val_contains.nonempty()) {
-      if(val_not) {
-        if(rec->value.contains(val_contains)) continue;
-      }
-      else {
-        if(!rec->value.contains(val_contains)) continue;
-      }
-    }
+    // if(rec->HasDiffFlag(ObjDiffRec::DIFF_CHG) && !chg) continue;
+    // if(nm_contains.nonempty()) {
+    //   if(nm_not) {
+    //     if(rec->name.contains(nm_contains)) continue;
+    //   }
+    //   else {
+    //     if(!rec->name.contains(nm_contains)) continue;
+    //   }
+    // }
+    // if(val_contains.nonempty()) {
+    //   if(val_not) {
+    //     if(rec->value.contains(val_contains)) continue;
+    //   }
+    //   else {
+    //     if(!rec->value.contains(val_contains)) continue;
+    //   }
+    // }
 
     QTreeWidgetItem* witm = (QTreeWidgetItem*)rec->widget;
     if(!witm) continue;         // shouldn't happen

@@ -63,6 +63,12 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   TemtServer.h
 
   taRootBase.h
+  
+  FlatTreeEl.h
+  FlatTreeEl_List.h
+  ObjDiff.h
+  ObjDiffRec.h
+  ObjDiffRec_List.h
   PatchRec.h
   PatchRec_Group.h
   Patch.h
@@ -176,6 +182,12 @@ set(ta_proj_SRCS
   TemtServer_QObj.cpp
   ClusterRun_QObj.cpp
   ClusterManager.cpp
+  
+  FlatTreeEl.cpp
+  FlatTreeEl_List.cpp
+  ObjDiff.cpp
+  ObjDiffRec.cpp
+  ObjDiffRec_List.cpp
   PatchRec.cpp
   PatchRec_Group.cpp
   Patch.cpp

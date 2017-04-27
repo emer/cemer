@@ -61,7 +61,7 @@ public:
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgArg"; }
 
-  bool          BrowserEditEnable() override { return true; }
+  bool          BrowserEditEnable() const override { return true; }
   bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   TA_SIMPLE_BASEFUNS(DataOpEl);

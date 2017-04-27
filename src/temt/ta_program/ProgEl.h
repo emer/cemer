@@ -167,7 +167,7 @@ public:
   // attempt to convert the code to a new variable declaration -- prompts for var location -- if true, then it was interpreted as a var decl, and var decl is removed from code -- e.g., if input is "int i = 20" then remaining code will be "i = 20" -- if nothing but a decl (e.g., "int i"), then code is empty, and nothing left to do
   virtual bool          CvtFmCodeCheckNames(const String& code) const;
   // #IGNORE check the toolbar name and the type def name returning true if match and make sure it isn't just the start of some variable name
-  bool                  BrowserEditEnable() override { return true; }
+  bool                  BrowserEditEnable() const override { return true; }
   bool                  BrowserEditSet(const String& code, int move_after = 0) override;
   static  String        CodeGetDesc(const String& code, String& desc);
   // #IGNORE get description (comment) from the code string -- returns code without the comment -- processes // and /* types of comments
@@ -193,12 +193,10 @@ public:
      void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
      TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
-  taObjDiffRec*  GetObjDiffRec
-    (taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL, const void* par=NULL,
-     TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
+  FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
+                            const taBase* par_obj, MemberDef* md) const override;
+  void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
   
-  void         GetObjDiffValue(taObjDiffRec* rec, taObjDiff_List& odl, bool ptr = false)
-    const override;
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;

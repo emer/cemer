@@ -38,8 +38,8 @@ public:
   void            MakeNameUnique() override;
   bool            SetCopyName(const taBase& cp) override;
 
-  bool            BrowserEditEnable() override;
-  String          BrowserEditString() override { return GetDisplayName(); }
+  bool            BrowserEditEnable() const override;
+  String          BrowserEditString() const override { return GetDisplayName(); }
   bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;
   
   virtual bool    AddFromTemplate(taBase* obj, bool& is_acceptable) { return false; }
