@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "FlatTreeEl.h"
+#include <MemberDef>
 
 TA_BASEFUNS_CTORS_DEFN(FlatTreeEl);
 
@@ -30,4 +31,24 @@ void FlatTreeEl::Initialize() {
 taHashVal FlatTreeEl::ComputeHashCode() {
   // note: level is critical -- don't want to compare at diff levels
   return taHashEl::HashCode_String(name + "&" + value) + nest_level;
+}
+
+bool FlatTreeEl::MemberNoShow() {
+  if(!mdef || !obj) return false;
+  return !mdef->GetCondOptTest("CONDSHOW", obj->GetTypeDef(), obj.ptr());
+}
+
+bool FlatTreeEl::MemberNoEdit() {
+  if(!mdef || !obj) return false;
+  return !mdef->GetCondOptTest("CONDEDIT", obj->GetTypeDef(), obj.ptr());
+}
+
+String FlatTreeEl::GetTypeDecoKey() const {
+  if(obj)
+    return obj->GetTypeDecoKey();
+  return _nilString;
+}
+
+String FlatTreeEl::GetDisplayName() const {
+  return name;                  // for now..
 }

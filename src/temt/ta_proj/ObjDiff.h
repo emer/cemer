@@ -23,7 +23,7 @@
 #include <ObjDiffRec_List>
 #include <FlatTreeEl_List>
 #include <taSmartRefT>
-#include <voidptr_PArray>
+#include <voidptr_Array>
 
 // declare all other types mentioned but not required to include:
 class ObjDiffRec; //
@@ -37,16 +37,13 @@ INHERITED(taNBase)
 public:
   taBaseRef             a_top;  // top-level A object for comparison
   taBaseRef             b_top;  // top-level B object for comparison
-  FlatTreeEl_List       a_tree; // flattened object hierarchy for A -- source of diffs
-  FlatTreeEl_List       b_tree; // flattened object hierarchy for B -- source of diffs
+  FlatTreeEl_List       a_tree; // #NO_SAVE flattened object hierarchy for A -- source of diffs
+  FlatTreeEl_List       b_tree; // #NO_SAVE flattened object hierarchy for B -- source of diffs
   
   ObjDiffRec_List       diffs;
-  // diff records, in a parallel, side-by-side format
-  
-  // voidptr_PArray        nest_a_pars;
-  // // keeps track of current parents at each nest level, source a
-  // voidptr_PArray        nest_b_pars;
-  // // keeps track of current parents at each nest level, source b
+  // #NO_SAVE diff records, in a parallel, side-by-side format
+  voidptr_Array         nest_pars;
+  // #IGNORE parent records for nesting -- last parent at each level of nesting
 
   virtual int  Diff(taBase* obj_a, taBase* obj_b);
   // perform a diff on two objects, returns number of differences
@@ -60,8 +57,8 @@ public:
   virtual ObjDiffRec* NewRec(int idx, int flags, int a_idx, int b_idx);
   // #IGNORE get a new diff record
   
-  // bool          DiffFlagParents(taObjDiffRec* rec);
-  // flag parents of rec item
+  virtual ObjDiffRec* DiffAddParents(int a_idx, int b_idx);
+  // #IGNORE add all parents to diff record up to point of a and b indexes, relative to last items in diff -- returns the current parent for new record to be added
 
   TA_SIMPLE_BASEFUNS(ObjDiff);
 private:

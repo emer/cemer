@@ -31,7 +31,7 @@ void ObjDiff::Initialize() {
 
 int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
   diffs.Reset();                      // clear out my list of diffs
-  
+
   a_top = obj_a;
   b_top = obj_b;
 
@@ -39,41 +39,45 @@ int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
   a_tree.FlatTreeOf(a_top);
   b_tree.FlatTreeOf(b_top);
 
-  taStringDiff diff;
+  taStringDiff str_diff;
 
-  a_tree.HashToIntArray(diff.data_a.data);
-  b_tree.HashToIntArray(diff.data_b.data);
+  a_tree.HashToIntArray(str_diff.data_a.data);
+  b_tree.HashToIntArray(str_diff.data_b.data);
 
-  diff.Diff_impl("", "");       // null strings, use int hash's
+  str_diff.Diff_impl("", "");       // null strings, use int hash's
 
-  // nest_a_pars.Reset();
-  // nest_b_pars.Reset();
-  for(int i=0;i<diff.diffs.size;i++) {
-    taStringDiffItem& df = diff.diffs[i];
+  nest_pars.Reset();
+  for(int i=0;i<str_diff.diffs.size;i++) {
+    taStringDiffItem& df = str_diff.diffs[i];
 
     if(df.delete_a == df.insert_b) {
-      for(int l=0; l<df.delete_a; l++) {
-        ObjDiffRec* rec = NewRec(i, ObjDiffRec::A_B_DIFF, df.start_a + l, df.start_b + l);
-        // DiffFlagParents(rec_a);
+      for(int l=1; l<df.delete_a; l++) {
+        ObjDiffRec* cur_par = DiffAddParents(df.start_a+l, df.start_b+l);
+        ObjDiffRec* rec = NewRec(i, ObjDiffRec::A_B_DIFF, df.start_a+l, df.start_b+l);
+        rec->par_rec = cur_par;
+        rec->nest_level = cur_par->nest_level + 1;
       }
     }
     else {
       if(df.delete_a > 0) {     // a records exist, b do not..
         for(int l=0; l<df.delete_a; l++) {
+          ObjDiffRec* cur_par = DiffAddParents(df.start_a+l, df.start_b);
           ObjDiffRec* rec = NewRec(i, ObjDiffRec::A_NOT_B, df.start_a + l, df.start_b);
-          // if(DiffFlagParents(rec_a)) // reset nest level if parents needed to be added
-          //   del_nest = rec_a->nest_level;
+          rec->par_rec = cur_par;
+          rec->nest_level = cur_par->nest_level + 1;
         }
       }
       if(df.insert_b > 0) {     // b records exist, a do not..
         for(int l=0; l<df.insert_b; l++) {
+          ObjDiffRec* cur_par = DiffAddParents(df.start_a, df.start_b+1);
           ObjDiffRec* rec = NewRec(i, ObjDiffRec::B_NOT_A, df.start_a, df.start_b + l);
+          rec->par_rec = cur_par;
+          rec->nest_level = cur_par->nest_level + 1;
         }
       }
     }
   }
-  // nest_a_pars.Reset();
-  // nest_b_pars.Reset();
+  nest_pars.Reset();
   return 0;                     // todo get size
 }
 
@@ -83,6 +87,8 @@ ObjDiffRec* ObjDiff::NewRec(int idx, int flags, int a_idx, int b_idx) {
   rec->diff_no = idx;
   rec->a_idx = a_idx;
   rec->b_idx = b_idx;
+  rec->a_src = a_tree.SafeEl(a_idx);
+  rec->b_src = b_tree.SafeEl(b_idx);
   return rec;
 }
 
@@ -92,6 +98,65 @@ bool ObjDiff::DisplayDialog(bool modal_dlg) {
   // if !modal, browser now owns the diffs list and will delete it when it dies -- and it will
   // be responsible for performing any actions that get done..
   return rval;
+}
+
+ObjDiffRec* ObjDiff::DiffAddParents(int a_idx, int b_idx) {
+  FlatTreeEl* a_src = a_tree.SafeEl(a_idx);
+  FlatTreeEl* b_src = b_tree.SafeEl(b_idx);
+  if(!a_src || !b_src) {
+    return NULL;  // shouldn't happen
+  }
+
+  if(nest_pars.size > 0) {
+    ObjDiffRec* cur_par = (ObjDiffRec*)nest_pars.Peek();
+    FlatTreeEl* a_par = a_src->parent_el;
+    FlatTreeEl* b_par = b_src->parent_el;
+    if(cur_par->a_src == a_par && cur_par->b_src == b_par) {
+      return cur_par;           // current one is good
+    }
+  }
+  
+  FlatTreeEl_List a_stack;
+  FlatTreeEl_List b_stack;
+  ObjDiffRec* found_par = NULL;
+  int par_level = 0;
+  while(true) {
+    FlatTreeEl* a_par = a_src->parent_el;
+    FlatTreeEl* b_par = b_src->parent_el;
+    if(!a_par || !b_par)        // top!
+      break;
+    // find a parent on stack that already has parent records -- if found, stop there
+    for(int pi=nest_pars.size-1; pi>=0; pi--) {
+      ObjDiffRec* prec = (ObjDiffRec*)nest_pars[pi];
+      if(prec->a_src == a_par && prec->b_src == b_par) {
+        found_par = prec;
+        par_level = pi;
+        break;
+      }
+    }
+    a_stack.Link(a_par);
+    b_stack.Link(b_par);
+    a_src = a_par;
+    b_src = b_par;
+  }
+  // now we have a list of parents in the a, b stacks, and a possible parent record
+  // add in *descending* order from current level
+  ObjDiffRec* cur_par = found_par;
+  int new_pars = a_stack.size;  // same as b
+  int max_lev = par_level + a_stack.size;
+  nest_pars.SetSize(max_lev + 1);
+  for(int i=0; i<new_pars; i++) {
+    // take from the top first
+    FlatTreeEl* a_par = a_stack.FastEl(new_pars - 1 - i);
+    FlatTreeEl* b_par = b_stack.FastEl(new_pars - 1 - i);
+    ObjDiffRec* rec = NewRec(-1, ObjDiffRec::DIFF_PAR, a_par->idx, b_par->idx);
+    rec->par_rec = cur_par;
+    int lev = par_level + i;
+    rec->nest_level = lev;
+    nest_pars[lev] = rec;
+    cur_par = rec;              // new cur
+  }
+  return cur_par;
 }
 
 

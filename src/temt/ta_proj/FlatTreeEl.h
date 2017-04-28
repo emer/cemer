@@ -31,6 +31,7 @@ class TA_API FlatTreeEl : public taBase {
   // ##NO_TOKENS #CAT_FlatTree an element of the flattened tree structure -- flat version of the structure hierarchy of taBase objects -- used in computing diffs for example
 INHERITED(taBase)
 public:
+  int           idx;            // index in the list of flat elements
   int           nest_level;     // how deeply nested or embedded is this object in the obj hierarchy
   String        name;           // object name (member name, object name)
   String        value;          // string representation of value -- does NOT contain values for class object types
@@ -42,8 +43,19 @@ public:
   int           size;           // size of this object itself
   int           tot_size;       // size of this object and all the elements under it
 
-  taHashVal  ComputeHashCode();
+  virtual taHashVal  ComputeHashCode();
   // compute the hash_code based on name, value and level -- used for differencing
+
+  virtual bool MemberNoShow();
+  // is this a member field, and if so, does it have CONDSHOW OFF at the moment?
+  virtual bool MemberNoEdit();
+  // is this a member field, and if so, does it have CONDEDIT OFF at the moment?
+  
+  int          GetIndex() const override { return idx;}
+  void         SetIndex(int dx) override { idx = dx; }
+
+  String       GetTypeDecoKey() const override;
+  String       GetDisplayName() const override;
   
   TA_BASEFUNS(FlatTreeEl);
 private:
