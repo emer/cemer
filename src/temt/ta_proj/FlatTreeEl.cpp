@@ -28,17 +28,17 @@ void FlatTreeEl::Initialize() {
   tot_size = 0;
 }
 
-taHashVal FlatTreeEl::ComputeHashCode() {
+taHashVal FlatTreeEl::ComputeHashCode() const {
   // note: level is critical -- don't want to compare at diff levels
   return taHashEl::HashCode_String(name + "&" + value) + nest_level;
 }
 
-bool FlatTreeEl::MemberNoShow() {
+bool FlatTreeEl::MemberNoShow() const {
   if(!mdef || !obj) return false;
   return !mdef->GetCondOptTest("CONDSHOW", obj->GetTypeDef(), obj.ptr());
 }
 
-bool FlatTreeEl::MemberNoEdit() {
+bool FlatTreeEl::MemberNoEdit() const {
   if(!mdef || !obj) return false;
   return !mdef->GetCondOptTest("CONDEDIT", obj->GetTypeDef(), obj.ptr());
 }

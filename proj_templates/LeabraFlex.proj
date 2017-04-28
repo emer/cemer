@@ -1,5 +1,8 @@
-// ta_Dump File v3.0 -- code v8.0.7.0 rev10640
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10659
 LeabraProject .projects["LeabraFlex"] { 
+ Patch_Group @.patches = [0] {
+ };
+
  Doc_Group @.docs = [2] {
   taDoc @["LeabraFlexProgs"] { 
    UserDataItem_List @*(.user_data_) {
@@ -896,34 +899,34 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgEl_List @.prog_code = [4] {
-     AssignExpr @[0] { };
-     If @[1] { 
-      ProgEl_List @.true_code = [5] {
-       LocalVars @[0] { 
-	ProgVar_List @.local_vars = [0] {
+    ProgEl_List @.prog_code = [5] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     AssignExpr @[1] { };
+     If @[2] { 
+      ProgEl_List @.true_code = [4] {
+       AssignExpr @[0] { };
+       OtherProgramVar @[1] { };
+       MethodCall @[2] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
 	};
        };
-       AssignExpr @[1] { };
-       OtherProgramVar @[2] { };
        MethodCall @[3] { 
 	ProgArg_List @.meth_args = [1] {
 	 ProgArg @[0] { };
 	};
        };
-       MethodCall @[4] { 
-	ProgArg_List @.meth_args = [1] {
-	 ProgArg @[0] { };
-	};
-       };
       };
      };
-     ProgramCallVar @[2] { 
+     ProgramCallVar @[3] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     WhileLoop @[3] { 
+     WhileLoop @[4] { 
       ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
@@ -4034,6 +4037,12 @@ LeabraProject .projects["LeabraFlex"] {
   user_data_=NULL;
   wiki=;
   page_name=;
+ };
+ patches {
+  user_data_=NULL;
+  name="patches";
+  el_typ=Patch;
+  el_def=0;
  };
  docs {
   user_data_=NULL;
@@ -12909,7 +12918,19 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     AssignExpr @[0] {
+     LocalVars @[0] {
+      user_data_=NULL;
+      desc=;
+      flags=0;
+      code_string=;
+      local_vars {
+       user_data_=NULL;
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     AssignExpr @[1] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -12920,7 +12941,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr="false";
       };
      };
-     If @[1] {
+     If @[2] {
       user_data_=NULL;
       desc="only if running interactively -- otherwise set in MasterStartup!";
       flags=CAN_REVERT_TO_CODE;
@@ -12934,19 +12955,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="true_code";
        el_typ=ProgCode;
        el_def=0;
-       LocalVars @[0] {
-	user_data_=NULL;
-	desc=;
-	flags=0;
-	code_string=;
-	local_vars {
-	 user_data_=NULL;
-	 name="local_vars";
-	 el_typ=ProgVar;
-	 el_def=0;
-	};
-       };
-       AssignExpr @[1] {
+       AssignExpr @[0] {
 	user_data_=NULL;
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
@@ -12957,7 +12966,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 expr="\"_\" + cust_tag + \"_\" + cluster_run->ParamSetNames(false)";
 	};
        };
-       OtherProgramVar @[2] {
+       OtherProgramVar @[1] {
 	user_data_=NULL;
 	desc=;
 	flags=0;
@@ -12969,7 +12978,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	var_3=NULL;
 	var_4=NULL;
        };
-       MethodCall @[3] {
+       MethodCall @[2] {
 	user_data_=NULL;
 	desc="activate config values";
 	flags=CAN_REVERT_TO_CODE;
@@ -12999,7 +13008,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	meth_sig="void Activate(bool info_msg = false)";
 	meth_desc=" copy the saved_value values to be active (live) values on the objects";
        };
-       MethodCall @[4] {
+       MethodCall @[3] {
 	user_data_=NULL;
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
@@ -13031,7 +13040,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     ProgramCallVar @[2] {
+     ProgramCallVar @[3] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -13058,7 +13067,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       prog_group=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]$$;
       prog_name_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$;
      };
-     WhileLoop @[3] {
+     WhileLoop @[4] {
       user_data_=NULL;
       desc=;
       flags=CAN_REVERT_TO_CODE;
@@ -31720,13 +31729,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @["view_win_lft"] {
      user_data_=NULL;
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.01594049;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      user_data_=NULL;
      name="view_win_top";
-     value 8 0=0.02973662;
+     value 8 0=0.104503;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -32536,6 +32545,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
+	   col_name_good=;
 	   is_string=0;
 	   is_matrix=0;
 	   n_cells=1;
@@ -32560,6 +32570,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   on=0;
 	   axis=Z;
 	   col_name="batch";
+	   col_name_good=;
 	   is_string=0;
 	   is_matrix=0;
 	   n_cells=1;
@@ -32590,6 +32601,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=1;
 	    axis=Y;
 	    col_name="avg_sse";
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32614,6 +32626,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=1;
 	    axis=Y;
 	    col_name="avg_norm_err";
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32638,6 +32651,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=1;
 	    axis=Y;
 	    col_name="cnt_err";
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32662,6 +32676,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name="Hidden_avg_net_sd";
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32686,6 +32701,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name="Hidden_avg_cos_diff";
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32710,6 +32726,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32734,6 +32751,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32758,6 +32776,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32782,6 +32801,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32806,6 +32826,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32830,6 +32851,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32854,6 +32876,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32878,6 +32901,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32902,6 +32926,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32926,6 +32951,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32950,6 +32976,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -32980,6 +33007,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=1;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33004,6 +33032,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=1;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33028,6 +33057,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=1;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33052,6 +33082,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=1;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33076,6 +33107,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33100,6 +33132,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33124,6 +33157,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33148,6 +33182,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33172,6 +33207,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33196,6 +33232,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33220,6 +33257,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33244,6 +33282,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33268,6 +33307,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33292,6 +33332,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33316,6 +33357,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33340,6 +33382,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    on=0;
 	    axis=Y;
 	    col_name=;
+	    col_name_good=;
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -33368,6 +33411,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   on=0;
 	   axis=Y;
 	   col_name=;
+	   col_name_good=;
 	   is_string=0;
 	   is_matrix=0;
 	   n_cells=1;
@@ -33405,6 +33449,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   on=0;
 	   axis=Y;
 	   col_name=;
+	   col_name_good=;
 	   is_string=0;
 	   is_matrix=0;
 	   n_cells=1;
@@ -34043,7 +34088,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {user_data_=NULL: on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {user_data_=NULL: on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {user_data_=NULL: on=0: bg_lrate=1: fg_lrate=0: };
-       margin {user_data_=NULL: on=0: margin_lrate=1: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+       margin {user_data_=NULL: lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @["TopDownCons"] {
@@ -34141,7 +34186,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {user_data_=NULL: on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {user_data_=NULL: on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {user_data_=NULL: on=0: bg_lrate=1: fg_lrate=0: };
-       margin {user_data_=NULL: on=0: margin_lrate=1: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+       margin {user_data_=NULL: lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
       };
      };
      rnd {user_data_=NULL: name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -34226,7 +34271,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      adapt_scale {user_data_=NULL: on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {user_data_=NULL: on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {user_data_=NULL: on=0: bg_lrate=1: fg_lrate=0: };
-     margin {user_data_=NULL: on=0: margin_lrate=1: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+     margin {user_data_=NULL: lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      user_data_=NULL;

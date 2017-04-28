@@ -26,6 +26,7 @@
 // declare all other types mentioned but not required to include:
 class ObjDiff; //
 class ObjDiffRec; //
+class FlatTreeEl; //
 class iDialogObjDiffFilter; //
 class QVBoxLayout; //
 class QTreeWidget; //
@@ -89,7 +90,7 @@ public:
   virtual void  UpdateItemDisp(QTreeWidgetItem* witm, ObjDiffRec* rec, int a_or_b);
   // update display of item
 
-  virtual void  ViewItem(ObjDiffRec* rec);
+  virtual void  ViewItem(FlatTreeEl* fel);
 
   iDialogObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~iDialogObjDiffBrowser();

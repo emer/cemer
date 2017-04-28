@@ -29,6 +29,14 @@ void ObjDiff::Initialize() {
 }
 
 
+bool ObjDiff::DisplayDialog(bool modal_dlg) {
+  iDialogObjDiffBrowser* odb = iDialogObjDiffBrowser::New(this, taiMisc::defFontSize);
+  bool rval = odb->Browse(modal_dlg);
+  // if !modal, browser now owns the diffs list and will delete it when it dies -- and it will
+  // be responsible for performing any actions that get done..
+  return rval;
+}
+
 int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
   diffs.Reset();                      // clear out my list of diffs
 
@@ -49,30 +57,27 @@ int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
   nest_pars.Reset();
   for(int i=0;i<str_diff.diffs.size;i++) {
     taStringDiffItem& df = str_diff.diffs[i];
+    
+    FlatTreeEl* a_src = a_tree.FastEl(df.start_a);
+    FlatTreeEl* b_src = b_tree.FastEl(df.start_b);
+    taMisc::Info("diff at:", String(df.start_a), String(df.start_b),
+                 "a:", a_src->name + "_" + a_src->value,
+                 "b:", b_src->name + "_" + b_src->value);
 
     if(df.delete_a == df.insert_b) {
-      for(int l=1; l<df.delete_a; l++) {
-        ObjDiffRec* cur_par = DiffAddParents(df.start_a+l, df.start_b+l);
-        ObjDiffRec* rec = NewRec(i, ObjDiffRec::A_B_DIFF, df.start_a+l, df.start_b+l);
-        rec->par_rec = cur_par;
-        rec->nest_level = cur_par->nest_level + 1;
+      for(int l=0; l<df.delete_a; l++) {
+        ObjDiffRec* rec = NewDiff(i, ObjDiffRec::A_B_DIFF, df.start_a+l, df.start_b+l);
       }
     }
     else {
       if(df.delete_a > 0) {     // a records exist, b do not..
         for(int l=0; l<df.delete_a; l++) {
-          ObjDiffRec* cur_par = DiffAddParents(df.start_a+l, df.start_b);
-          ObjDiffRec* rec = NewRec(i, ObjDiffRec::A_NOT_B, df.start_a + l, df.start_b);
-          rec->par_rec = cur_par;
-          rec->nest_level = cur_par->nest_level + 1;
+          ObjDiffRec* rec = NewDiff(i, ObjDiffRec::A_NOT_B, df.start_a + l, df.start_b);
         }
       }
       if(df.insert_b > 0) {     // b records exist, a do not..
         for(int l=0; l<df.insert_b; l++) {
-          ObjDiffRec* cur_par = DiffAddParents(df.start_a, df.start_b+1);
-          ObjDiffRec* rec = NewRec(i, ObjDiffRec::B_NOT_A, df.start_a, df.start_b + l);
-          rec->par_rec = cur_par;
-          rec->nest_level = cur_par->nest_level + 1;
+          ObjDiffRec* rec = NewDiff(i, ObjDiffRec::B_NOT_A, df.start_a, df.start_b + l);
         }
       }
     }
@@ -92,68 +97,82 @@ ObjDiffRec* ObjDiff::NewRec(int idx, int flags, int a_idx, int b_idx) {
   return rec;
 }
 
-bool ObjDiff::DisplayDialog(bool modal_dlg) {
-  iDialogObjDiffBrowser* odb = iDialogObjDiffBrowser::New(this, taiMisc::defFontSize);
-  bool rval = odb->Browse(modal_dlg);
-  // if !modal, browser now owns the diffs list and will delete it when it dies -- and it will
-  // be responsible for performing any actions that get done..
-  return rval;
+ObjDiffRec* ObjDiff::NewDiff(int idx, int flags, int a_idx, int b_idx) {
+  ObjDiffRec* cur_par = DiffAddParents(a_idx, b_idx);
+  ObjDiffRec* rec = NewRec(idx, flags, a_idx, b_idx);
+  rec->par_rec = cur_par;
+  rec->nest_level = cur_par->nest_level + 1;
+  if(rec->IsObj()) {
+    nest_pars.Add(rec);           // new parent!
+  }
+  return rec;
 }
 
 ObjDiffRec* ObjDiff::DiffAddParents(int a_idx, int b_idx) {
-  FlatTreeEl* a_src = a_tree.SafeEl(a_idx);
-  FlatTreeEl* b_src = b_tree.SafeEl(b_idx);
-  if(!a_src || !b_src) {
-    return NULL;  // shouldn't happen
-  }
+  FlatTreeEl* a_src = NULL;
+  FlatTreeEl* b_src = NULL;
+
+  if(a_idx >= 0) 
+    a_src = a_tree.SafeEl(a_idx);
+  if(b_idx >= 0)
+    b_src = b_tree.SafeEl(b_idx);
 
   if(nest_pars.size > 0) {
     ObjDiffRec* cur_par = (ObjDiffRec*)nest_pars.Peek();
-    FlatTreeEl* a_par = a_src->parent_el;
-    FlatTreeEl* b_par = b_src->parent_el;
-    if(cur_par->a_src == a_par && cur_par->b_src == b_par) {
+    if(cur_par->IsParentOf(a_src, b_src)) {
       return cur_par;           // current one is good
     }
   }
   
-  FlatTreeEl_List a_stack;
-  FlatTreeEl_List b_stack;
+  voidptr_Array a_stack;
+  voidptr_Array b_stack;
   ObjDiffRec* found_par = NULL;
-  int par_level = 0;
+  int par_level = -1;
   while(true) {
-    FlatTreeEl* a_par = a_src->parent_el;
-    FlatTreeEl* b_par = b_src->parent_el;
-    if(!a_par || !b_par)        // top!
-      break;
     // find a parent on stack that already has parent records -- if found, stop there
     for(int pi=nest_pars.size-1; pi>=0; pi--) {
       ObjDiffRec* prec = (ObjDiffRec*)nest_pars[pi];
-      if(prec->a_src == a_par && prec->b_src == b_par) {
+      taMisc::Info("checking par:", prec->GetDisplayName());
+      if(prec->IsParentOf(a_src, b_src)) {
+        taMisc::Info("found par:", prec->GetDisplayName());
         found_par = prec;
         par_level = pi;
         break;
       }
     }
-    a_stack.Link(a_par);
-    b_stack.Link(b_par);
-    a_src = a_par;
-    b_src = b_par;
+    if(found_par)
+      break;
+    if(a_src) {
+      a_stack.Add(a_src->parent_el);
+      a_src = a_src->parent_el;
+    }
+    else {
+      a_stack.Add(NULL);
+    }
+    if(b_src) {
+      b_stack.Add(b_src->parent_el);
+      b_src = b_src->parent_el;
+    }
+    else {
+      b_stack.Add(NULL);
+    }
   }
   // now we have a list of parents in the a, b stacks, and a possible parent record
   // add in *descending* order from current level
   ObjDiffRec* cur_par = found_par;
   int new_pars = a_stack.size;  // same as b
-  int max_lev = par_level + a_stack.size;
-  nest_pars.SetSize(max_lev + 1);
+  int max_lev = par_level + a_stack.size + 1;
+  nest_pars.SetSize(max_lev);
   for(int i=0; i<new_pars; i++) {
     // take from the top first
-    FlatTreeEl* a_par = a_stack.FastEl(new_pars - 1 - i);
-    FlatTreeEl* b_par = b_stack.FastEl(new_pars - 1 - i);
+    FlatTreeEl* a_par = (FlatTreeEl*)a_stack.FastEl(new_pars - 1 - i);
+    FlatTreeEl* b_par = (FlatTreeEl*)b_stack.FastEl(new_pars - 1 - i);
     ObjDiffRec* rec = NewRec(-1, ObjDiffRec::DIFF_PAR, a_par->idx, b_par->idx);
     rec->par_rec = cur_par;
-    int lev = par_level + i;
+    int lev = par_level + 1 + i;
     rec->nest_level = lev;
     nest_pars[lev] = rec;
+    taMisc::Info("added par:", String(lev), "a:", a_par->name, "b:", b_par->name);
     cur_par = rec;              // new cur
   }
   return cur_par;

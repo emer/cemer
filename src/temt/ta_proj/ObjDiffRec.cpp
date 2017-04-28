@@ -50,8 +50,51 @@ void ObjDiffRec::Copy_(const ObjDiffRec& cp) {
   diff_no_end = cp.diff_no_end;
 }
 
-int ObjDiffRec::SrcNestLevel() {
-  if(!a_src || !b_src)
+bool ObjDiffRec::IsParentOf(FlatTreeEl* ael, FlatTreeEl* bel) {
+  if(IsBnotA()) {               // can't check a
+    if(bel && bel->parent_el == b_src) return true;
+    return false;
+  }
+  else if(IsAnotB()) {
+    if(ael && ael->parent_el == a_src) return true;
+    return false;
+  }
+  bool a_ok = true;             // assume ok
+  if(ael && ael->parent_el != a_src) a_ok = false; // nope
+  bool b_ok = true;             // assume ok
+  if(bel && bel->parent_el != b_src) b_ok = false; // nope
+  return (a_ok && b_ok);
+}
+
+
+bool ObjDiffRec::IsObj() const {
+  if(IsBnotA()) {
+    return b_src->IsObj();
+  }
+  else if(IsAnotB()) {
+    return a_src->IsObj();
+  }
+  return (a_src->IsObj() || b_src->IsObj());
+}
+
+bool ObjDiffRec::IsNonMemberObj() const {
+  if(IsBnotA()) {
+    return b_src->IsNonMemberObj();
+  }
+  else if(IsAnotB()) {
+    return a_src->IsNonMemberObj();
+  }
+  return (a_src->IsNonMemberObj() || b_src->IsNonMemberObj());
+}
+
+FlatTreeEl* ObjDiffRec::Source() const {
+  if(IsBnotA())
+    return b_src;
+  return a_src;
+}
+
+int ObjDiffRec::SrcNestLevel() const {
+  if(!a_src || !b_src)          // shouldn't happen
     return 0;
   int lev = a_src->nest_level;
   if(IsBnotA()) {
@@ -66,15 +109,32 @@ String ObjDiffRec::GetDisplayName() const {
   if(!a_src || !b_src) {
     return rval;
   }
-  String nm = a_src->name;
-  if(IsBnotA()) {
-    nm = b_src->name;
-  }
+  String nm = Source()->name;
   rval = String(nest_level) + "_" + rval + "_" + nm;
   return rval;
 }
 
-bool ObjDiffRec::ActionAllowed() {
+bool ObjDiffRec::NameContains(const String& nm) {
+  if(IsBnotA()) {
+    return b_src->name.contains(nm);
+  }
+  else if(IsAnotB()) {
+    return a_src->name.contains(nm);
+  }
+  return (a_src->name.contains(nm) || b_src->name.contains(nm));
+}
+ 
+bool ObjDiffRec::ValueContains(const String& nm) {
+  if(IsBnotA()) {
+    return b_src->value.contains(nm);
+  }
+  else if(IsAnotB()) {
+    return a_src->value.contains(nm);
+  }
+  return (a_src->value.contains(nm) || b_src->value.contains(nm));
+}
+  
+bool ObjDiffRec::ActionAllowed() const {
   if(HasDiffFlag(DIFF_ADDEL)) {
     if(HasDiffFlag(SUB_NO_ACT)) return false;
     // if(!type->IsActualTaBase()) return false;
@@ -85,7 +145,7 @@ bool ObjDiffRec::ActionAllowed() {
   return true;
 }
 
-bool ObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
+bool ObjDiffRec::GetCurAction(int a_or_b, String& lbl) const {
   bool rval = false;
   lbl = _nilString;
   if(HasDiffFlag(A_NOT_B)) {

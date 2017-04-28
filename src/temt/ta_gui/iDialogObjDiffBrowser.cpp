@@ -292,7 +292,7 @@ void iDialogObjDiffBrowser::AddItems() {
         witm->setTextColor(COL_A_VAL, clr);
       }
 
-      if(a_src->type->IsActualTaBase() && !a_src->mdef) {
+      if(a_src->IsNonMemberObj()) {
         witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
         witm->setCheckState(COL_A_VIEW, Qt::Unchecked);
       }
@@ -408,28 +408,26 @@ void iDialogObjDiffBrowser::AddItems() {
   items->resizeColumnToContents(COL_B_VIEW);
 }
 
-void iDialogObjDiffBrowser::ViewItem(ObjDiffRec* rec) {
-  if(!rec) return;
-  // taBase* tab = rec->GetOwnTaBase();
-  // if(!tab) return;
-  // tab->BrowserSelectMe();
+void iDialogObjDiffBrowser::ViewItem(FlatTreeEl* fel) {
+  if(!fel) return;
+  if(!fel->obj) return;
+  fel->obj->BrowserSelectMe();
 }
 
 void iDialogObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
-  QVariant a_val = itm->data(0, Qt::UserRole+1);
-  ObjDiffRec* a_rec = a_val.value<ObjDiffRec*>();
-  QVariant b_val = itm->data(1, Qt::UserRole+1);
-  ObjDiffRec* b_rec = b_val.value<ObjDiffRec*>();
+  QVariant qval = itm->data(0, Qt::UserRole+1);
+  ObjDiffRec* rec = qval.value<ObjDiffRec*>();
+  if(!rec) return;
 
   if(column == COL_A_VIEW || column == COL_B_VIEW) {
     if(column == COL_A_VIEW) {
       itm->setCheckState(COL_A_VIEW, Qt::Unchecked); // never actually click
-      ViewItem(a_rec);
+      ViewItem(rec->a_src);
       return;
     }
     else {
-      itm->setCheckState(COL_A_VIEW, Qt::Unchecked);
-      ViewItem(b_rec);
+      itm->setCheckState(COL_B_VIEW, Qt::Unchecked);
+      ViewItem(rec->b_src);
       return;
     }
   }
@@ -441,12 +439,7 @@ void iDialogObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
   Qt::CheckState chkst = itm->checkState(column);
   bool on = (chkst == Qt::Checked);
 
-  ObjDiffRec* rec;
-  if(a_rec)
-    rec = a_rec;
-  else
-    rec = b_rec;
-  if(!rec || !rec->ActionAllowed()) return;
+  if(!rec->ActionAllowed()) return;
   rec->SetCurAction(a_or_b, on);
   UpdateItemDisp(itm, rec, a_or_b);
 }
@@ -460,12 +453,12 @@ void iDialogObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, ObjDiffRec* rec
   if(a_or_b == 0) column = COL_A_FLG;
   else column = COL_B_FLG;
 
-  // if(rec->HasDiffFlag(ObjDiffRec::DIFF_DEL))
-  //   itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
-  // else if(rec->HasDiffFlag(ObjDiffRec::DIFF_ADD))
-  //   itm->setBackground(column, chk ? (a_or_b ? *del_color : *add_color) : no_color);
-  // else if(rec->HasDiffFlag(ObjDiffRec::DIFF_CHG))
-  //   itm->setBackground(column, chk ? *chg_color : no_color);
+  if(rec->HasDiffFlag(ObjDiffRec::B_NOT_A))
+    itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
+  else if(rec->HasDiffFlag(ObjDiffRec::A_NOT_B))
+    itm->setBackground(column, chk ? (a_or_b ? *del_color : *add_color) : no_color);
+  else if(rec->HasDiffFlag(ObjDiffRec::A_B_DIFF))
+    itm->setBackground(column, chk ? *chg_color : no_color);
 
   itm->setCheckState(column, chk ? Qt::Checked : Qt::Unchecked);
 }
@@ -502,32 +495,34 @@ void iDialogObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del,
 
     if(!rec->ActionAllowed()) continue;
 
-    // if(a_or_b == 0) {
-    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_ADD) && !add) continue;
-    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_DEL) && !del) continue;
-    // }
-    // else {                      // switched for b
-    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_DEL) && !add) continue;
-    //   if(rec->HasDiffFlag(ObjDiffRec::DIFF_ADD) && !del) continue;
-    // }
+    if(a_or_b == 0) {
+      if(rec->HasDiffFlag(ObjDiffRec::B_NOT_A) && !add) continue;
+      if(rec->HasDiffFlag(ObjDiffRec::A_NOT_B) && !del) continue;
+    }
+    else {                      // switched for b
+      if(rec->HasDiffFlag(ObjDiffRec::A_NOT_B) && !add) continue;
+      if(rec->HasDiffFlag(ObjDiffRec::B_NOT_A) && !del) continue;
+    }
 
-    // if(rec->HasDiffFlag(ObjDiffRec::DIFF_CHG) && !chg) continue;
-    // if(nm_contains.nonempty()) {
-    //   if(nm_not) {
-    //     if(rec->name.contains(nm_contains)) continue;
-    //   }
-    //   else {
-    //     if(!rec->name.contains(nm_contains)) continue;
-    //   }
-    // }
-    // if(val_contains.nonempty()) {
-    //   if(val_not) {
-    //     if(rec->value.contains(val_contains)) continue;
-    //   }
-    //   else {
-    //     if(!rec->value.contains(val_contains)) continue;
-    //   }
-    // }
+    if(rec->HasDiffFlag(ObjDiffRec::A_B_DIFF) && !chg) continue;
+    if(nm_contains.nonempty()) {
+      bool cont = rec->NameContains(nm_contains);
+      if(nm_not) {
+        if(cont) continue;
+      }
+      else {
+        if(!cont) continue;
+      }
+    }
+    if(val_contains.nonempty()) {
+      bool cont = rec->ValueContains(val_contains);
+      if(val_not) {
+        if(cont) continue;
+      }
+      else {
+        if(!cont) continue;
+      }
+    }
 
     QTreeWidgetItem* witm = (QTreeWidgetItem*)rec->widget;
     if(!witm) continue;         // shouldn't happen

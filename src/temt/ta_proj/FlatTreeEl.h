@@ -43,12 +43,19 @@ public:
   int           size;           // size of this object itself
   int           tot_size;       // size of this object and all the elements under it
 
-  virtual taHashVal  ComputeHashCode();
+
+  inline bool   IsObj() const { return (obj.ptr() != NULL); }
+  // is this an object
+  inline bool   IsNonMemberObj() const
+  { return (obj.ptr() != NULL && mdef == NULL); }
+  // is this a separate non-member object (i.e., lives on a list or group..)
+
+  virtual taHashVal  ComputeHashCode() const;
   // compute the hash_code based on name, value and level -- used for differencing
 
-  virtual bool MemberNoShow();
+  virtual bool MemberNoShow() const;
   // is this a member field, and if so, does it have CONDSHOW OFF at the moment?
-  virtual bool MemberNoEdit();
+  virtual bool MemberNoEdit() const;
   // is this a member field, and if so, does it have CONDEDIT OFF at the moment?
   
   int          GetIndex() const override { return idx;}

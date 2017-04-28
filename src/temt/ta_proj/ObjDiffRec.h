@@ -85,13 +85,29 @@ public:
   inline bool   IsADDel() const { return HasDiffFlag(DIFF_ADDEL); }
   inline bool   HasAcl() const { return HasDiffFlag(ACT_MASK); }
 
-  virtual int   SrcNestLevel();
-  // get nest level of this record according to sources -- uses A level when avail except for BnotA case
+  virtual bool  IsParentOf(FlatTreeEl* ael, FlatTreeEl* bel);
+  // robust checking if this record is the parent of given a/b records -- either of these can be null if not relevant
   
-  virtual bool  ActionAllowed();
+  virtual bool  IsObj() const;
+  // is either A or B record an object (obj.ptr() is set)
+  virtual bool  IsNonMemberObj() const;
+  // is either A or B record a sparate, non-member object
+  
+  virtual FlatTreeEl* Source() const;
+  // returns source for A record unless B_NOT_A in which case it is B -- not definitive but if you just need to check a source
+  
+  virtual int   SrcNestLevel() const;
+  // get nest level of this record according to sources -- uses A level when avail except for BnotA case
+
+  virtual bool  NameContains(const String& nm);
+  // does either a or b name contain given string
+  virtual bool  ValueContains(const String& nm);
+  // does either a or b value contain given string
+  
+  virtual bool  ActionAllowed() const;
   // is an action allowed for this item?  checks flags and types to make sure
 
-  virtual bool  GetCurAction(int a_or_b, String& lbl);
+  virtual bool  GetCurAction(int a_or_b, String& lbl) const;
   // get currently set action for this guy, depending on its flag status, and a_or_b (a=0, b=1) -- also fills in label describing action
   virtual void  SetCurAction(int a_or_b, bool on_off);
   // set action for this guy, depending on its flag status, and a_or_b (a=0, b=1)

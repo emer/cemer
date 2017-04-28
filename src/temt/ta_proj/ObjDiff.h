@@ -54,11 +54,14 @@ public:
   virtual bool  DoDiffEdits(Patch* patch_a, Patch* patch_b);
   // perform edits as selected in the diff records -- if patch objects are passed, then patches are generated instead of actually doing the edits
   
+  virtual ObjDiffRec* NewDiff(int idx, int flags, int a_idx, int b_idx);
+  // #IGNORE create a new diff, including adding any relevant parents prior to it, and populating the diff with all the relevant pointers
+  
   virtual ObjDiffRec* NewRec(int idx, int flags, int a_idx, int b_idx);
-  // #IGNORE get a new diff record
+  // #IGNORE get a new diff record and populate it with basic records, but don't add parents or anything -- just a basic new
   
   virtual ObjDiffRec* DiffAddParents(int a_idx, int b_idx);
-  // #IGNORE add all parents to diff record up to point of a and b indexes, relative to last items in diff -- returns the current parent for new record to be added
+  // #IGNORE add all parents to diff record up to point of a and b indexes, relative to current stack of parents in diff -- returns the current parent for new record to be added
 
   TA_SIMPLE_BASEFUNS(ObjDiff);
 private:
