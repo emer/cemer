@@ -30,7 +30,7 @@ class ProgVar; //
 taTypeDef_Of(ProgArg);
 
 class TA_API ProgArg: public taOBase {
-  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program a program or method argument
+  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program ##DIFF_STRING a program or method argument
 INHERITED(taOBase)
 public:
   TypeDef*              arg_type; // #READ_ONLY typedef of the target arg, where available

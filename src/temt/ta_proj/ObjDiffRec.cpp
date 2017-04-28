@@ -23,126 +23,124 @@ TA_BASEFUNS_CTORS_DEFN(ObjDiffRec);
 
 void ObjDiffRec::Initialize() {
   flags = DF_NONE;
-  diff_no = -1;
+  nest_level = 0;
   a_idx = -1;
   b_idx = -1;
-  nest_level = 0;
-  a_src = NULL;
-  b_src = NULL;
+  mdef = NULL;
   par_rec = NULL;
   n_diffs = 0;
-  diff_no_start = -1;
-  diff_no_end = -1;
   widget = NULL;
 }
 
 void ObjDiffRec::Copy_(const ObjDiffRec& cp) {
   flags = cp.flags;
-  diff_no = cp.diff_no;
+  nest_level = cp.nest_level;
   a_idx = cp.a_idx;
   b_idx = cp.b_idx;
-  nest_level = cp.nest_level;
-  a_src = cp.a_src;
-  b_src = cp.b_src;
+  a_obj = cp.a_obj;
+  b_obj = cp.b_obj;
+  mdef = cp.mdef;
   par_rec = cp.par_rec;
   n_diffs = cp.n_diffs;
-  diff_no_start = cp.diff_no_start;
-  diff_no_end = cp.diff_no_end;
-}
-
-bool ObjDiffRec::IsParentOf(FlatTreeEl* ael, FlatTreeEl* bel) {
-  if(IsBnotA()) {               // can't check a
-    if(bel && bel->parent_el == b_src) return true;
-    return false;
-  }
-  else if(IsAnotB()) {
-    if(ael && ael->parent_el == a_src) return true;
-    return false;
-  }
-  bool a_ok = true;             // assume ok
-  if(ael && ael->parent_el != a_src) a_ok = false; // nope
-  bool b_ok = true;             // assume ok
-  if(bel && bel->parent_el != b_src) b_ok = false; // nope
-  return (a_ok && b_ok);
-}
-
-
-bool ObjDiffRec::IsObj() const {
-  if(IsBnotA()) {
-    return b_src->IsObj();
-  }
-  else if(IsAnotB()) {
-    return a_src->IsObj();
-  }
-  return (a_src->IsObj() || b_src->IsObj());
-}
-
-bool ObjDiffRec::IsNonMemberObj() const {
-  if(IsBnotA()) {
-    return b_src->IsNonMemberObj();
-  }
-  else if(IsAnotB()) {
-    return a_src->IsNonMemberObj();
-  }
-  return (a_src->IsNonMemberObj() || b_src->IsNonMemberObj());
-}
-
-FlatTreeEl* ObjDiffRec::Source() const {
-  if(IsBnotA())
-    return b_src;
-  return a_src;
-}
-
-int ObjDiffRec::SrcNestLevel() const {
-  if(!a_src || !b_src)          // shouldn't happen
-    return 0;
-  int lev = a_src->nest_level;
-  if(IsBnotA()) {
-    lev = b_src->nest_level;
-  }
-  return lev;
 }
 
 String ObjDiffRec::GetDisplayName() const {
   MemberDef* md = GetTypeDef()->members.FindName("flags");
-  String rval = md->type->Get_C_EnumString(flags, false);
-  if(!a_src || !b_src) {
-    return rval;
+  String rval = String(nest_level) + "_" + md->type->Get_C_EnumString(flags, false);
+  if(mdef) {
+    rval += "_" + mdef->name;
   }
-  String nm = Source()->name;
-  rval = String(nest_level) + "_" + rval + "_" + nm;
+  if(IsBnotA()) {
+    rval += "_" + BName();
+  }
+  else if(IsAnotB()) {
+    rval += "_" + AName();
+  }
+  else if(!mdef) {
+    rval += "_" + AName();
+  }
   return rval;
 }
 
-bool ObjDiffRec::NameContains(const String& nm) {
+String ObjDiffRec::AName() const {
+  if(mdef) {
+    return mdef->name;
+  }
+  if(a_obj) {
+    return a_obj->GetDisplayName();
+  }
+  return _nilString;
+}
+
+String ObjDiffRec::BName() const {
+  if(mdef) {
+    return mdef->name;
+  }
+  if(b_obj) {
+    return b_obj->GetDisplayName();
+  }
+  return _nilString;
+}
+
+String ObjDiffRec::ADecoKey() const {
+  if(a_obj)
+    return a_obj->GetTypeDecoKey();
+  return _nilString;
+}
+
+String ObjDiffRec::BDecoKey() const {
+  if(b_obj)
+    return b_obj->GetTypeDecoKey();
+  return _nilString;
+}
+
+bool ObjDiffRec::NameContains(const String& nm) const {
+  bool a_has = AName().contains(nm);
+  bool b_has = BName().contains(nm);
   if(IsBnotA()) {
-    return b_src->name.contains(nm);
+    return b_has;
   }
   else if(IsAnotB()) {
-    return a_src->name.contains(nm);
+    return a_has;
   }
-  return (a_src->name.contains(nm) || b_src->name.contains(nm));
+  return (a_has || b_has);
 }
  
-bool ObjDiffRec::ValueContains(const String& nm) {
-  if(IsBnotA()) {
-    return b_src->value.contains(nm);
+bool ObjDiffRec::ValueContains(const String& nm) const {
+  if(IsObjects())
+    return NameContains(nm);
+  if(IsBnotA()) {               // should never happen...
+    return b_val.contains(nm);
   }
   else if(IsAnotB()) {
-    return a_src->value.contains(nm);
+    return a_val.contains(nm);
   }
-  return (a_src->value.contains(nm) || b_src->value.contains(nm));
+  return (a_val.contains(nm) || b_val.contains(nm));
 }
   
+bool ObjDiffRec::AMemberNoShow() const {
+  if(!mdef || !a_obj) return false;
+  return !mdef->GetCondOptTest("CONDSHOW", a_obj->GetTypeDef(), a_obj.ptr());
+}
+
+bool ObjDiffRec::BMemberNoShow() const {
+  if(!mdef || !b_obj) return false;
+  return !mdef->GetCondOptTest("CONDSHOW", b_obj->GetTypeDef(), b_obj.ptr());
+}
+
+bool ObjDiffRec::AMemberNoEdit() const {
+  if(!mdef || !a_obj) return false;
+  return !mdef->GetCondOptTest("CONDEDIT", a_obj->GetTypeDef(), a_obj.ptr());
+}
+
+bool ObjDiffRec::BMemberNoEdit() const {
+  if(!mdef || !b_obj) return false;
+  return !mdef->GetCondOptTest("CONDEDIT", b_obj->GetTypeDef(), b_obj.ptr());
+}
+
 bool ObjDiffRec::ActionAllowed() const {
-  if(HasDiffFlag(DIFF_ADDEL)) {
-    if(HasDiffFlag(SUB_NO_ACT)) return false;
-    // if(!type->IsActualTaBase()) return false;
-  }
-  else if(HasDiffFlag(DIFF_PAR)) {
-    return false;
-  }
-  return true;
+  if(IsParent()) return false;
+  return IsDiff();
 }
 
 bool ObjDiffRec::GetCurAction(int a_or_b, String& lbl) const {
@@ -215,20 +213,4 @@ void ObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
     }
   }
 }
-
-// ObjDiffRec* ObjDiffRec::GetOwnTaBaseRec() {
-//   if(tabref && ((taBaseRef*)tabref)->ptr())
-//     return this;
-//   ObjDiffRec* todr = par_odr;
-//   while(todr && (!todr->tabref || !((taBaseRef*)todr->tabref)->ptr()))
-//     todr = todr->par_odr;
-//   return todr;
-// }
-
-// taBase* ObjDiffRec::GetOwnTaBase() {
-//   ObjDiffRec* todr = GetOwnTaBaseRec();
-//   if(todr && todr->tabref)
-//     return ((taBaseRef*)todr->tabref)->ptr();
-//   return NULL;
-// }
 

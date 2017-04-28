@@ -19,7 +19,9 @@ TA_BASEFUNS_CTORS_DEFN(ObjDiff);
 
 #include <ObjDiffRec>
 #include <int_PArray>
+#include <int_Array>
 #include <taStringDiff>
+#include <MemberDef>
 #include <iDialogObjDiffBrowser>
 
 #include <taMisc>
@@ -43,182 +45,295 @@ int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
   a_top = obj_a;
   b_top = obj_b;
 
-  // first get flat reps of the trees
-  a_tree.FlatTreeOf(a_top);
-  b_tree.FlatTreeOf(b_top);
+  DiffObjs(NULL, obj_a, obj_b);
 
+  if(diffs.size == 0)
+    return 0;
+  return diffs[0]->n_diffs;
+}
+
+int ObjDiff::DiffObjs(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
+  if(!a_obj || !b_obj) return 0; // shouldn't happen
+  if(a_obj->GetTypeDef() != b_obj->GetTypeDef()) {
+    // different types must be dealt with at top-level by choosing one or the other change
+    return 0;                   // nothing
+  }
+  if(a_obj->GetTypeDef()->HasOption("NO_DIFF"))
+    return 0;
+  
+  int rollback_idx = diffs.size; // rollback to here if no further diffs
+  ObjDiffRec* new_par = NewParRec(par_rec, a_obj, b_obj);
+  int n_mbr_diffs = DiffMembers(new_par, a_obj, b_obj);
+  int n_list_diffs = DiffMemberLists(new_par, a_obj, b_obj);
+  int n_diffs = n_mbr_diffs + n_list_diffs;
+  if(n_diffs == 0) {
+    RollBack(rollback_idx);
+  }
+  else {
+    new_par->n_diffs = n_diffs;
+  }
+  return n_diffs;
+}
+
+int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* list_b) {
   taStringDiff str_diff;
 
-  a_tree.HashToIntArray(str_diff.data_a.data);
-  b_tree.HashToIntArray(str_diff.data_b.data);
+  HashList(list_a, str_diff.data_a.data);
+  HashList(list_b, str_diff.data_b.data);
 
   str_diff.Diff_impl("", "");       // null strings, use int hash's
 
-  nest_pars.Reset();
-  for(int i=0;i<str_diff.diffs.size;i++) {
+  int n_diffs = str_diff.diffs.size;
+
+  // these must be on stack because recursive..
+  int_Array a_ok;
+  int_Array b_ok;
+  a_ok.SetSize(list_a->size);  a_ok.FillSeq();
+  b_ok.SetSize(list_b->size);  b_ok.FillSeq();
+  
+  for(int i=0;i<n_diffs;i++) {
     taStringDiffItem& df = str_diff.diffs[i];
     
-    FlatTreeEl* a_src = a_tree.FastEl(df.start_a);
-    FlatTreeEl* b_src = b_tree.FastEl(df.start_b);
-    taMisc::Info("diff at:", String(df.start_a), String(df.start_b),
-                 "a:", a_src->name + "_" + a_src->value,
-                 "b:", b_src->name + "_" + b_src->value);
-
     if(df.delete_a == df.insert_b) {
       for(int l=0; l<df.delete_a; l++) {
-        ObjDiffRec* rec = NewDiff(i, ObjDiffRec::A_B_DIFF, df.start_a+l, df.start_b+l);
+        ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_B_DIFF, list_a, df.start_a+l,
+                                      list_b, df.start_b+l);
       }
     }
     else {
       if(df.delete_a > 0) {     // a records exist, b do not..
         for(int l=0; l<df.delete_a; l++) {
-          ObjDiffRec* rec = NewDiff(i, ObjDiffRec::A_NOT_B, df.start_a + l, df.start_b);
+          ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_NOT_B, list_a, df.start_a + l,
+                                        list_b, df.start_b);
+          FastIdxRemove(a_ok, df.start_a + l); // don't sub-process A
         }
       }
       if(df.insert_b > 0) {     // b records exist, a do not..
         for(int l=0; l<df.insert_b; l++) {
-          ObjDiffRec* rec = NewDiff(i, ObjDiffRec::B_NOT_A, df.start_a, df.start_b + l);
+          ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::B_NOT_A, list_a, df.start_a,
+                                        list_b, df.start_b + l);
+          FastIdxRemove(b_ok, df.start_b + l); // don't sub-process B
         }
       }
     }
   }
-  nest_pars.Reset();
-  return 0;                     // todo get size
+
+  // a_ok and b_ok MUST have same size at this point!
+  if(a_ok.size != b_ok.size) {
+    taMisc::Error("DiffList error -- remaining list items not same size!");
+    return n_diffs;
+  }
+
+  int n_subs = a_ok.size;
+  for(int i=0; i<n_subs; i++) {
+    taBase* a_obj = (taBase*)list_a->SafeEl_(a_ok[i]);
+    taBase* b_obj = (taBase*)list_b->SafeEl_(b_ok[i]);
+    int sub_diffs = DiffObjs(par_rec, a_obj, b_obj); // will automatically add parent if needed
+    n_diffs += sub_diffs;
+  }
+    
+  return n_diffs;
 }
 
-ObjDiffRec* ObjDiff::NewRec(int idx, int flags, int a_idx, int b_idx) {
+void ObjDiff::HashList(taList_impl* list, int_PArray& array) {
+  array.Reset();
+  array.Alloc(list->size);
+  for(int i=0; i<list->size; i++) {
+    taBase* obj = (taBase*)list->FastEl_(i);
+    if(!obj || obj->GetOwner() != list) {
+      array.Add(0);
+      continue;
+    }
+    String key = obj->GetTypeDef()->name + "&" + obj->GetName();
+    taHashVal hash = taHashEl::HashCode_String(key);
+    array.Add(hash);
+  }
+}
+
+String ObjDiff::PtrPath(TypeDef* td, void* addr, taBase* top) {
+  taBase* rbase = NULL;
+  if((td->IsPointer()) && td->IsTaBase()) {
+    rbase = *((taBase**)addr);
+  }
+  else if(InheritsFrom(TA_taSmartRef)) {
+    rbase = ((taSmartRef*)addr)->ptr();
+  }
+  else if(InheritsFrom(TA_taSmartPtr)) {
+    rbase = ((taSmartPtr*)addr)->ptr();
+  }
+  if(rbase) {
+    if(rbase->IsChildOf(top)) {
+      return rbase->GetPathNames(top);
+    }
+    return rbase->DisplayPath();
+  }
+  return "NULL";
+}
+
+int ObjDiff::DiffMember(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, MemberDef* md) {
+  TypeDef* td = md->type;
+  void* a_addr = md->GetOff(a_obj);
+  void* b_addr = md->GetOff(b_obj);
+  if(td->IsActualTaBase()) {
+    int rollback_idx = diffs.size; // rollback to here if no further diffs
+    ObjDiffRec* new_par = NewParRec(par_rec, a_obj, b_obj);
+    int n_diffs = DiffMembers(new_par, (taBase*)a_addr, (taBase*)b_addr);
+    if(n_diffs == 0) {
+      RollBack(rollback_idx);
+    }
+    else {
+      new_par->n_diffs = n_diffs;
+    }
+    return n_diffs;
+  }
+  if(td->IsBasePointerType()) {
+    String a_val = PtrPath(td, a_addr, a_top);
+    String b_val = PtrPath(td, b_addr, b_top);
+    return DiffMemberStrings(par_rec, a_obj, b_obj, md, a_val, b_val);
+  }
+  String a_val = md->GetValStr(a_obj, TypeDef::SC_VALUE, false);
+  String b_val = md->GetValStr(b_obj, TypeDef::SC_VALUE, false);
+  return DiffMemberStrings(par_rec, a_obj, b_obj, md, a_val, b_val);
+}
+
+int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
+  // guaranteed to have same types -- just compare members and generate member diffs
+  // do NOT go into lists..
+  TypeDef* td = a_obj->GetTypeDef();
+
+  if(td->HasOption("DIFF_STRING")) {
+    String a_val = a_obj->BrowserEditString();
+    String b_val = b_obj->BrowserEditString();
+    return DiffMemberStrings(par_rec, a_obj, b_obj, NULL, a_val, b_val);
+  }
+
+  int n_diffs = 0;
+  
+  MemberDef* last_md = NULL;    // special option for putting one member after others!
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
+       md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN") ||
+       md->HasOption("NO_DIFF"))
+      continue;
+    if(md->type->InheritsFrom(&TA_taList_impl)) { // not now
+      continue;
+    }
+    if(md->HasOption("DIFF_LAST")) {
+      last_md = md;
+      continue;
+    }
+    if(md->name == "user_data_") {
+      continue;                 // too much clutter for now..
+    }
+    int cnt = DiffMember(par_rec, a_obj, b_obj, md);
+    n_diffs += cnt;
+  }
+  if(last_md) {
+    int cnt = DiffMember(par_rec, a_obj, b_obj, last_md);
+    n_diffs += cnt;
+  }
+  return n_diffs;
+}
+
+int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
+  // guaranteed to have same types -- sub lists from here
+  TypeDef* td = a_obj->GetTypeDef();
+
+  int n_diffs = 0;
+  
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(!md->type->InheritsFrom(&TA_taList_impl)) { // now
+      continue;
+    }
+    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
+       md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN") ||
+       md->HasOption("NO_DIFF"))
+      continue;
+    if(md->name == "user_data_") {
+      continue;                 // too much clutter for now..
+    }
+    taList_impl* a_list = (taList_impl*)md->GetOff(a_obj);
+    taList_impl* b_list = (taList_impl*)md->GetOff(b_obj);
+    int rollback_idx = diffs.size; // rollback to here if no further diffs
+    ObjDiffRec* new_par = NewParRec(par_rec, a_list, b_list);
+    int cnt = DiffLists(new_par, a_list, b_list);
+    if(cnt == 0) {
+      RollBack(rollback_idx);
+    }
+    else {
+      new_par->n_diffs = cnt;
+    }
+    n_diffs += cnt;
+  }
+  return n_diffs;
+}
+
+void ObjDiff::FastIdxRemove(int_Array& ary, int idx) {
+  int st = MIN(idx, ary.size-1); // always less than or equal to idx pos
+  while(st >= 0) {
+    if(ary.FastEl(st) == idx) {
+      ary.RemoveIdx(st);
+      return;
+    }
+    st--;
+  }
+}
+
+void ObjDiff::RollBack(int rollback) {
+  while(diffs.size > rollback) {
+    diffs.Pop();
+  }
+}
+
+ObjDiffRec* ObjDiff::NewParRec(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
+  ObjDiffRec* rec = NewRec(par_rec, ObjDiffRec::PARENT, -1, -1, a_obj, b_obj);
+  return rec;
+}
+
+ObjDiffRec* ObjDiff::NewListDiff
+(ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx,
+ taList_impl* list_b, int b_idx) {
+  taBase* a_obj = (taBase*)list_a->SafeEl_(a_idx);
+  taBase* b_obj = (taBase*)list_b->SafeEl_(b_idx);
+  if(a_obj && a_obj->GetOwner() != list_a) // don't want these!
+    return NULL;
+  if(b_obj && b_obj->GetOwner() != list_b) // don't want these!
+    return NULL;
+  ObjDiffRec* rec = NewRec(par_rec, flags, a_idx, b_idx, a_obj, b_obj);
+  rec->SetDiffFlag(ObjDiffRec::OBJECTS);
+  return rec;
+}
+
+int ObjDiff::DiffMemberStrings
+(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, MemberDef* md,
+ const String& a_val, const String& b_val) {
+  if(a_val == b_val) return 0;
+  ObjDiffRec* rec = NewRec(par_rec, ObjDiffRec::A_B_DIFF, -1, -1, a_obj, b_obj);
+  rec->SetDiffFlag(ObjDiffRec::MEMBERS);
+  rec->mdef = md;
+  rec->a_val = a_val;
+  rec->b_val = b_val;
+  rec->n_diffs = 1;             // always 1 for members
+  return 1;                     // one diff
+}
+
+
+ObjDiffRec* ObjDiff::NewRec
+(ObjDiffRec* par_rec, int flags, int a_idx, int b_idx, taBase* a_obj, taBase* b_obj) {
   ObjDiffRec* rec = (ObjDiffRec*)diffs.New(1);
   rec->flags = (ObjDiffRec::DiffFlags)flags;
-  rec->diff_no = idx;
+  if(par_rec) {
+    rec->nest_level = par_rec->nest_level + 1; // always inc
+  }
   rec->a_idx = a_idx;
   rec->b_idx = b_idx;
-  rec->a_src = a_tree.SafeEl(a_idx);
-  rec->b_src = b_tree.SafeEl(b_idx);
+  rec->a_obj = a_obj;
+  rec->b_obj = b_obj;
+  rec->par_rec = par_rec;
   return rec;
 }
-
-ObjDiffRec* ObjDiff::NewDiff(int idx, int flags, int a_idx, int b_idx) {
-  ObjDiffRec* cur_par = DiffAddParents(a_idx, b_idx);
-  ObjDiffRec* rec = NewRec(idx, flags, a_idx, b_idx);
-  rec->par_rec = cur_par;
-  rec->nest_level = cur_par->nest_level + 1;
-  if(rec->IsObj()) {
-    nest_pars.Add(rec);           // new parent!
-  }
-  return rec;
-}
-
-ObjDiffRec* ObjDiff::DiffAddParents(int a_idx, int b_idx) {
-  FlatTreeEl* a_src = NULL;
-  FlatTreeEl* b_src = NULL;
-
-  if(a_idx >= 0) 
-    a_src = a_tree.SafeEl(a_idx);
-  if(b_idx >= 0)
-    b_src = b_tree.SafeEl(b_idx);
-
-  if(nest_pars.size > 0) {
-    ObjDiffRec* cur_par = (ObjDiffRec*)nest_pars.Peek();
-    if(cur_par->IsParentOf(a_src, b_src)) {
-      return cur_par;           // current one is good
-    }
-  }
-  
-  voidptr_Array a_stack;
-  voidptr_Array b_stack;
-  ObjDiffRec* found_par = NULL;
-  int par_level = -1;
-  while(true) {
-    // find a parent on stack that already has parent records -- if found, stop there
-    for(int pi=nest_pars.size-1; pi>=0; pi--) {
-      ObjDiffRec* prec = (ObjDiffRec*)nest_pars[pi];
-      taMisc::Info("checking par:", prec->GetDisplayName());
-      if(prec->IsParentOf(a_src, b_src)) {
-        taMisc::Info("found par:", prec->GetDisplayName());
-        found_par = prec;
-        par_level = pi;
-        break;
-      }
-    }
-    if(found_par)
-      break;
-    if(a_src) {
-      a_stack.Add(a_src->parent_el);
-      a_src = a_src->parent_el;
-    }
-    else {
-      a_stack.Add(NULL);
-    }
-    if(b_src) {
-      b_stack.Add(b_src->parent_el);
-      b_src = b_src->parent_el;
-    }
-    else {
-      b_stack.Add(NULL);
-    }
-  }
-  // now we have a list of parents in the a, b stacks, and a possible parent record
-  // add in *descending* order from current level
-  ObjDiffRec* cur_par = found_par;
-  int new_pars = a_stack.size;  // same as b
-  int max_lev = par_level + a_stack.size + 1;
-  nest_pars.SetSize(max_lev);
-  for(int i=0; i<new_pars; i++) {
-    // take from the top first
-    FlatTreeEl* a_par = (FlatTreeEl*)a_stack.FastEl(new_pars - 1 - i);
-    FlatTreeEl* b_par = (FlatTreeEl*)b_stack.FastEl(new_pars - 1 - i);
-    ObjDiffRec* rec = NewRec(-1, ObjDiffRec::DIFF_PAR, a_par->idx, b_par->idx);
-    rec->par_rec = cur_par;
-    int lev = par_level + 1 + i;
-    rec->nest_level = lev;
-    nest_pars[lev] = rec;
-    taMisc::Info("added par:", String(lev), "a:", a_par->name, "b:", b_par->name);
-    cur_par = rec;              // new cur
-  }
-  return cur_par;
-}
-
-
-// bool ObjDiff::DiffFlagParents(ObjDiffRec* rec) {
-//   if(rec->nest_level == 0) return false;
-
-//   voidptr_PArray* nestpars;
-//   if(rec->HasDiffFlag(ObjDiffRec::SRC_A))
-//     nestpars = &nest_a_pars;
-//   else
-//     nestpars = &nest_b_pars;
-
-//   int rec_nest = rec->nest_level;
-//   nestpars->SetSize(rec_nest+1);
-
-//   int par_nest = rec_nest;
-//   ObjDiffRec* par_rec = rec;
-//   while(par_rec->par_odr != (ObjDiffRec*)nestpars->FastEl(par_nest-1)) {
-//     nestpars->FastEl(par_nest-1) = (void*)par_rec->par_odr;
-//     par_rec = par_rec->par_odr;
-//     par_nest = par_rec->nest_level;
-//     if(par_nest == 0) break;
-//   }
-
-//   bool rval = false;
-//   for(int i=0;i<rec_nest;i++) {
-//     par_rec = (ObjDiffRec*)nestpars->FastEl(i);
-//     if(par_rec != rec) {
-//       par_rec->SetDiffFlag(ObjDiffRec::DIFF_PAR);
-//       par_rec->n_diffs++;
-//       if(par_rec->diff_no_start < 0)
-//         par_rec->diff_no_start = rec->diff_no;
-//       else
-//         par_rec->diff_no_start = MIN(rec->diff_no, par_rec->diff_no_start);
-//       par_rec->diff_no_end = MAX(rec->diff_no, par_rec->diff_no_end);
-//       rval = true;              // got one..
-//     }
-//   }
-
-//   nestpars->FastEl(rec_nest) = (void*)rec; // always add current as potential next parent
-//   return rval;
-// }
-
 
 bool ObjDiff::DoDiffEdits(Patch* patch_a, Patch* patch_b) {
   return true;
