@@ -1473,6 +1473,17 @@ int taMatrix::CountValAsString(const String& val, bool contains) const {
   return count;
 }
 
+const String taMatrix::SafeElAsStr_Flat_ElView(int idx) const {
+  if(el_view && el_view_mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(el_view.ptr());
+    if(idx < cmat->size && idx >= 0) {
+      return SafeElAsStr(cmat->FastEl_Flat(idx));
+    }
+    return _nilString;
+  }
+  return SafeElAsStr(idx);
+}
+
 const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to) {
   if ((row_fr < 0) || (col_fr < 0) || (row_to < row_fr) || (col_to < col_fr))
     return _nilString;

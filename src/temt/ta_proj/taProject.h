@@ -102,7 +102,7 @@ public:
   taBase_Group          data_proc; // #NO_DIFF #HIDDEN_TREE #NO_SAVE objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_TopGroup      programs; // Gui-based programs to run simulations and other processing
   taViewer_List         viewers; // #NO_DIFF a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
-  taViewer_List         viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
+  taViewer_List         viewers_tmp; // #NO_DIFF #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr             undo_mgr; // #NO_DIFF #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
   bool                  save_view; // project specific setting determines if view state saved when project is saved

@@ -26,6 +26,8 @@ void ObjDiffRec::Initialize() {
   nest_level = 0;
   a_idx = -1;
   b_idx = -1;
+  a_obj = NULL;
+  b_obj = NULL;
   mdef = NULL;
   par_rec = NULL;
   n_diffs = 0;
@@ -40,6 +42,10 @@ void ObjDiffRec::Copy_(const ObjDiffRec& cp) {
   a_obj = cp.a_obj;
   b_obj = cp.b_obj;
   mdef = cp.mdef;
+  a_val = cp.a_val;
+  b_val = cp.b_val;
+  a_indep_obj = cp.a_indep_obj;
+  b_indep_obj = cp.b_indep_obj;
   par_rec = cp.par_rec;
   n_diffs = cp.n_diffs;
 }
@@ -63,33 +69,65 @@ String ObjDiffRec::GetDisplayName() const {
 }
 
 String ObjDiffRec::AName() const {
+  if(IsValues()) {
+    return String(a_idx);
+  }
   if(mdef) {
     return mdef->name;
   }
-  if(a_obj) {
+  if(a_obj && IsAValid()) {
     return a_obj->GetDisplayName();
   }
   return _nilString;
 }
 
 String ObjDiffRec::BName() const {
+  if(IsValues()) {
+    return String(b_idx);
+  }
   if(mdef) {
     return mdef->name;
   }
-  if(b_obj) {
+  if(b_obj && IsBValid()) {
     return b_obj->GetDisplayName();
   }
   return _nilString;
 }
 
+String ObjDiffRec::AValue() const {
+  if(IsValues() || IsMembers()) {
+    return a_val;
+  }
+  if(a_val.nonempty()) {
+    return a_val;
+  }
+  if(a_obj && IsAValid()) {
+    return a_obj->GetTypeDef()->name;
+  }
+  return _nilString;
+}
+
+String ObjDiffRec::BValue() const {
+  if(IsValues() || IsMembers()) {
+    return b_val;
+  }
+  if(b_val.nonempty()) {
+    return b_val;
+  }
+  if(b_obj && IsBValid()) {
+    return b_obj->GetTypeDef()->name;
+  }
+  return _nilString;
+}
+
 String ObjDiffRec::ADecoKey() const {
-  if(a_obj)
+  if(a_obj && IsAValid())
     return a_obj->GetTypeDecoKey();
   return _nilString;
 }
 
 String ObjDiffRec::BDecoKey() const {
-  if(b_obj)
+  if(b_obj && IsBValid())
     return b_obj->GetTypeDecoKey();
   return _nilString;
 }
@@ -119,28 +157,23 @@ bool ObjDiffRec::ValueContains(const String& nm) const {
 }
   
 bool ObjDiffRec::AMemberNoShow() const {
-  if(!mdef || !a_obj) return false;
-  return !mdef->GetCondOptTest("CONDSHOW", a_obj->GetTypeDef(), a_obj.ptr());
+  if(!mdef || !a_obj || !IsAValid()) return false;
+  return !mdef->GetCondOptTest("CONDSHOW", a_obj->GetTypeDef(), a_obj);
 }
 
 bool ObjDiffRec::BMemberNoShow() const {
-  if(!mdef || !b_obj) return false;
-  return !mdef->GetCondOptTest("CONDSHOW", b_obj->GetTypeDef(), b_obj.ptr());
+  if(!mdef || !b_obj || !IsBValid()) return false;
+  return !mdef->GetCondOptTest("CONDSHOW", b_obj->GetTypeDef(), b_obj);
 }
 
 bool ObjDiffRec::AMemberNoEdit() const {
-  if(!mdef || !a_obj) return false;
-  return !mdef->GetCondOptTest("CONDEDIT", a_obj->GetTypeDef(), a_obj.ptr());
+  if(!mdef || !a_obj || !IsAValid()) return false;
+  return !mdef->GetCondOptTest("CONDEDIT", a_obj->GetTypeDef(), a_obj);
 }
 
 bool ObjDiffRec::BMemberNoEdit() const {
-  if(!mdef || !b_obj) return false;
-  return !mdef->GetCondOptTest("CONDEDIT", b_obj->GetTypeDef(), b_obj.ptr());
-}
-
-bool ObjDiffRec::ActionAllowed() const {
-  if(IsParent()) return false;
-  return IsDiff();
+  if(!mdef || !b_obj || !IsBValid()) return false;
+  return !mdef->GetCondOptTest("CONDEDIT", b_obj->GetTypeDef(), b_obj);
 }
 
 bool ObjDiffRec::GetCurAction(int a_or_b, String& lbl) const {

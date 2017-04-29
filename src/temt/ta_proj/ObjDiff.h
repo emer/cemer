@@ -28,6 +28,8 @@ class ObjDiffRec; //
 class Patch; //
 class int_Array; //
 class int_PArray; //
+class taMatrix; //
+class taArray_base; //
 
 taTypeDef_Of(ObjDiff);
 
@@ -66,9 +68,16 @@ public:
   // generate diffs for given member
 
   virtual int  DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj);
-  // gnerate diffs for any members that are lists
+  // generate diffs for any members that are lists
+
+  virtual int  DiffMatrix(ObjDiffRec* par_rec, taMatrix* a_mat, taMatrix* b_mat);
+  // diff two matricies -- only looks at geometry and size if not direct target of overall diff (or DataTable, DataCol)
+
+  virtual int  DiffArray(ObjDiffRec* par_rec, taArray_base* a_ary, taArray_base* b_ary);
+  // diff two arrays -- only looks at  size if not direct target of overall diff 
   
-  virtual ObjDiffRec* NewParRec(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj);
+  virtual ObjDiffRec* NewParRec(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj,
+                                MemberDef* md = NULL);
   // new parent record -- for context
   
   virtual ObjDiffRec* NewListDiff
@@ -76,6 +85,14 @@ public:
      taList_impl* list_b, int b_idx);
   // new diff record of objects on a list
   
+  virtual ObjDiffRec* NewMatrixDiff
+    (ObjDiffRec* par_rec, int flags, taMatrix* a_mat, int a_idx, taMatrix* b_mat, int b_idx);
+  // new diff record on matrix values -- per frame..
+  
+  virtual ObjDiffRec* NewArrayDiff
+    (ObjDiffRec* par_rec, int flags, taArray_base* a_mat, int a_idx, taArray_base* b_mat, int b_idx);
+  // new diff record on array values
+
   virtual int DiffMemberStrings
     (ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, MemberDef* md,
      const String& a_val, const String& b_val);
@@ -90,6 +107,12 @@ public:
 
   virtual void  HashList(taList_impl* list, int_PArray& array);
   // generate hash codes of type & name of objs on list
+
+  virtual void  HashMatrix(taMatrix* mat, int_PArray& array);
+  // generate hash codes of matrix -- does a frame (row in data table) at a time
+
+  virtual void  HashArray(taArray_base* mat, int_PArray& array);
+  // generate hash codes of matrix -- does a frame (row in data table) at a time
 
   virtual String PtrPath(TypeDef* td, void* addr, taBase* top);
   // get pointer path at given address of given type, relative to given top if possible

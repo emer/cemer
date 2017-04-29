@@ -40,6 +40,7 @@ INHERITED(iDialog)
 public:
   enum ODBCols {
     COL_NEST,
+    COL_NDIFF,
     COL_A_FLG,
     COL_A_NM,
     COL_A_VAL,

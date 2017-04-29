@@ -21,7 +21,13 @@ TA_BASEFUNS_CTORS_DEFN(ObjDiff);
 #include <int_PArray>
 #include <int_Array>
 #include <taStringDiff>
+#include <taGroup_impl>
 #include <MemberDef>
+#include <taMatrix>
+#include <taBaseItr>
+#include <DataCol>
+#include <DataTable>
+#include <taArray_base>
 #include <iDialogObjDiffBrowser>
 
 #include <taMisc>
@@ -46,7 +52,7 @@ int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
   b_top = obj_b;
 
   DiffObjs(NULL, obj_a, obj_b);
-
+  
   if(diffs.size == 0)
     return 0;
   return diffs[0]->n_diffs;
@@ -58,14 +64,21 @@ int ObjDiff::DiffObjs(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
     // different types must be dealt with at top-level by choosing one or the other change
     return 0;                   // nothing
   }
-  if(a_obj->GetTypeDef()->HasOption("NO_DIFF"))
-    return 0;
-  
+
   int rollback_idx = diffs.size; // rollback to here if no further diffs
   ObjDiffRec* new_par = NewParRec(par_rec, a_obj, b_obj);
-  int n_mbr_diffs = DiffMembers(new_par, a_obj, b_obj);
-  int n_list_diffs = DiffMemberLists(new_par, a_obj, b_obj);
-  int n_diffs = n_mbr_diffs + n_list_diffs;
+  if(!new_par) {
+    return 0;
+  }
+  int n_diffs = 0;
+  if(a_obj->InheritsFrom(&TA_taList_impl)) {
+    n_diffs = DiffLists(new_par, (taList_impl*)a_obj, (taList_impl*)b_obj);
+  }
+  else {
+    int n_mbr_diffs = DiffMembers(new_par, a_obj, b_obj);
+    int n_list_diffs = DiffMemberLists(new_par, a_obj, b_obj);
+    n_diffs = n_mbr_diffs + n_list_diffs;
+  }
   if(n_diffs == 0) {
     RollBack(rollback_idx);
   }
@@ -131,7 +144,21 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
     int sub_diffs = DiffObjs(par_rec, a_obj, b_obj); // will automatically add parent if needed
     n_diffs += sub_diffs;
   }
-    
+
+  if(list_a->InheritsFrom(&TA_taGroup_impl)) {
+    int rollback_idx = diffs.size; // rollback to here if no further diffs
+    ObjDiffRec* new_par = NewParRec(par_rec, list_a, list_b);
+    int n_gp_diffs = DiffLists(new_par, &(((taGroup_impl*)list_a)->gp),
+                               &(((taGroup_impl*)list_b)->gp));
+    if(n_gp_diffs == 0) {
+      RollBack(rollback_idx);
+    }
+    else {
+      new_par->n_diffs = n_gp_diffs;
+    }
+    n_diffs += n_gp_diffs;
+  }
+  
   return n_diffs;
 }
 
@@ -176,8 +203,10 @@ int ObjDiff::DiffMember(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, Membe
   void* b_addr = md->GetOff(b_obj);
   if(td->IsActualTaBase()) {
     int rollback_idx = diffs.size; // rollback to here if no further diffs
-    ObjDiffRec* new_par = NewParRec(par_rec, a_obj, b_obj);
-    int n_diffs = DiffMembers(new_par, (taBase*)a_addr, (taBase*)b_addr);
+    taBase* a_sub = (taBase*)a_addr;
+    taBase* b_sub = (taBase*)b_addr;
+    ObjDiffRec* new_par = NewParRec(par_rec, a_sub, b_sub, md);
+    int n_diffs = DiffMembers(new_par, a_sub, b_sub);
     if(n_diffs == 0) {
       RollBack(rollback_idx);
     }
@@ -204,7 +233,26 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
   if(td->HasOption("DIFF_STRING")) {
     String a_val = a_obj->BrowserEditString();
     String b_val = b_obj->BrowserEditString();
-    return DiffMemberStrings(par_rec, a_obj, b_obj, NULL, a_val, b_val);
+    if(a_val == b_val) return 0;
+    // co-opt the parent record now!
+    par_rec->a_val = a_val;
+    par_rec->b_val = b_val;
+    par_rec->n_diffs = 1;
+    par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
+    par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
+    // this record is the only case of an A_B_DIFF with no mdef set!
+    return 1;
+  }
+
+  // special cases for array / matrix cases
+  if(td->InheritsFrom(&TA_DataCol)) {
+    return DiffMatrix(par_rec, ((DataCol*)a_obj)->AR(), ((DataCol*)b_obj)->AR());
+  }
+  if(td->InheritsFrom(&TA_taMatrix)) {
+    return DiffMatrix(par_rec, (taMatrix*)a_obj, (taMatrix*)b_obj);
+  }
+  if(td->InheritsFrom(&TA_taArray_base)) {
+    return DiffArray(par_rec, (taArray_base*)a_obj, (taArray_base*)b_obj);
   }
 
   int n_diffs = 0;
@@ -214,7 +262,7 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
     MemberDef* md = td->members[i];
     if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
        md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN") ||
-       md->HasOption("NO_DIFF"))
+       md->HasOption("NO_DIFF") || md->type->HasOption("NO_DIFF") || md->is_static)
       continue;
     if(md->type->InheritsFrom(&TA_taList_impl)) { // not now
       continue;
@@ -249,7 +297,7 @@ int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) 
     }
     if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
        md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN") ||
-       md->HasOption("NO_DIFF"))
+       md->HasOption("NO_DIFF") || md->type->HasOption("NO_DIFF") || md->is_static)
       continue;
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..
@@ -257,7 +305,7 @@ int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) 
     taList_impl* a_list = (taList_impl*)md->GetOff(a_obj);
     taList_impl* b_list = (taList_impl*)md->GetOff(b_obj);
     int rollback_idx = diffs.size; // rollback to here if no further diffs
-    ObjDiffRec* new_par = NewParRec(par_rec, a_list, b_list);
+    ObjDiffRec* new_par = NewParRec(par_rec, a_list, b_list, md);
     int cnt = DiffLists(new_par, a_list, b_list);
     if(cnt == 0) {
       RollBack(rollback_idx);
@@ -268,6 +316,205 @@ int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) 
     n_diffs += cnt;
   }
   return n_diffs;
+}
+
+int ObjDiff::DiffMatrix(ObjDiffRec* par_rec, taMatrix* a_mat, taMatrix* b_mat) {
+  MatrixGeom a_frame_geom = a_mat->geom;
+  if(a_frame_geom.dims() > 1)
+    a_frame_geom.SetDims(a_frame_geom.dims()-1);
+  MatrixGeom b_frame_geom = b_mat->geom;
+  if(b_frame_geom.dims() > 1)
+    b_frame_geom.SetDims(b_frame_geom.dims()-1);
+  if(a_mat->geom.dims() > 1 || b_mat->geom.dims() > 1) {
+    if(a_frame_geom != b_frame_geom) {
+      // co-opt the parent record now!
+      par_rec->a_val = "frame geom: " + a_frame_geom.ToString();
+      par_rec->b_val = "frame geom: " + b_frame_geom.ToString();
+      par_rec->n_diffs = 1;
+      par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
+      par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
+      return 1;
+    }
+  }
+  if(a_mat != a_top && !a_top->InheritsFrom(&TA_DataTable) &&
+     !a_top->InheritsFrom(&TA_DataCol)) {
+    // we are not specifically diffing this guy -- just go based on size!
+    if(a_mat->size != b_mat->size) {
+      par_rec->a_val = "size: " + String(a_mat->size);
+      par_rec->b_val = "size: " + String(b_mat->size);
+      par_rec->n_diffs = 1;
+      par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
+      par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
+      return 1;
+    }
+    return 0;                   // assume no diffs!
+  }
+
+  // we are specifically diffing this -- here we go!
+  
+  taStringDiff str_diff;
+
+  HashMatrix(a_mat, str_diff.data_a.data);
+  HashMatrix(b_mat, str_diff.data_b.data);
+
+  str_diff.Diff_impl("", "");       // null strings, use int hash's
+
+  int n_diffs = str_diff.diffs.size;
+  if(n_diffs == 0) return 0;
+
+  for(int i=0;i<n_diffs;i++) {
+    taStringDiffItem& df = str_diff.diffs[i];
+    
+    if(df.delete_a == df.insert_b) {
+      for(int l=0; l<df.delete_a; l++) {
+        ObjDiffRec* rec = NewMatrixDiff(par_rec, ObjDiffRec::A_B_DIFF, a_mat, df.start_a+l,
+                                        b_mat, df.start_b+l);
+      }
+    }
+    else {
+      if(df.delete_a > 0) {     // a records exist, b do not..
+        for(int l=0; l<df.delete_a; l++) {
+          ObjDiffRec* rec = NewMatrixDiff(par_rec, ObjDiffRec::A_NOT_B, a_mat, df.start_a + l,
+                                        b_mat, df.start_b);
+        }
+      }
+      if(df.insert_b > 0) {     // b records exist, a do not..
+        for(int l=0; l<df.insert_b; l++) {
+          ObjDiffRec* rec = NewMatrixDiff(par_rec, ObjDiffRec::B_NOT_A, a_mat, df.start_a,
+                                          b_mat, df.start_b + l);
+        }
+      }
+    }
+  }
+  return n_diffs;
+}
+
+void ObjDiff::HashMatrix(taMatrix* mat, int_PArray& array) {
+  array.Reset();
+  const int n_fr = mat->Frames();
+  array.Alloc(n_fr);
+  if(mat->dims() == 1) {
+    TA_FOREACH_INDEX(i, *mat) {
+      String val = mat->SafeElAsStr(i);
+      taHashVal hash = taHashEl::HashCode_String(val);
+      array.Add(hash);
+    }
+  }
+  else {
+    for(int i=0; i<n_fr; i++) {
+      taMatrix* a_fr = mat->GetFrameSlice_(i);
+      taBase::Ref(a_fr);
+      String val = a_fr->GetValStr();
+      taBase::unRefDone(a_fr);
+      taHashVal hash = taHashEl::HashCode_String(val);
+      array.Add(hash);
+    }
+  }
+}
+
+ObjDiffRec* ObjDiff::NewMatrixDiff
+(ObjDiffRec* par_rec, int flags, taMatrix* a_mat, int a_idx, taMatrix* b_mat, int b_idx) {
+  ObjDiffRec* rec = NewRec(par_rec, flags, a_idx, b_idx, a_mat, b_mat);
+  rec->a_indep_obj = par_rec->a_indep_obj;
+  rec->b_indep_obj = par_rec->b_indep_obj;
+  rec->SetDiffFlag(ObjDiffRec::VALUES);
+  rec->n_diffs = 1;
+
+  if(a_mat->dims() > 1) {
+    if(a_idx < a_mat->Frames()) {
+      taMatrix* a_fr = a_mat->GetFrameSlice_(a_idx);
+      taBase::Ref(a_fr);
+      rec->a_val = a_fr->GetValStr();
+      taBase::unRefDone(a_fr);
+    }
+
+    if(b_idx < b_mat->Frames()) {
+      taMatrix* b_fr = b_mat->GetFrameSlice_(b_idx);
+      taBase::Ref(b_fr);
+      rec->b_val = b_fr->GetValStr();
+      taBase::unRefDone(b_fr);
+    }
+  }
+  else {
+    rec->a_val = a_mat->SafeElAsStr_Flat_ElView(a_idx);
+    rec->b_val = b_mat->SafeElAsStr_Flat_ElView(b_idx);
+  }
+  return rec;
+}
+
+int ObjDiff::DiffArray(ObjDiffRec* par_rec, taArray_base* a_mat, taArray_base* b_mat) {
+  if(a_mat != a_top) {
+    // we are not specifically diffing this guy -- just go based on size!
+    if(a_mat->size != b_mat->size) {
+      par_rec->a_val = "size: " + String(a_mat->size);
+      par_rec->b_val = "size: " + String(b_mat->size);
+      par_rec->n_diffs = 1;
+      par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
+      par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
+      return 1;
+    }
+    return 0;                   // assume no diffs!
+  }
+
+  // we are specifically diffing this -- here we go!
+  
+  taStringDiff str_diff;
+
+  HashArray(a_mat, str_diff.data_a.data);
+  HashArray(b_mat, str_diff.data_b.data);
+
+  str_diff.Diff_impl("", "");       // null strings, use int hash's
+
+  int n_diffs = str_diff.diffs.size;
+  if(n_diffs == 0) return 0;
+
+  for(int i=0;i<n_diffs;i++) {
+    taStringDiffItem& df = str_diff.diffs[i];
+    
+    if(df.delete_a == df.insert_b) {
+      for(int l=0; l<df.delete_a; l++) {
+        ObjDiffRec* rec = NewArrayDiff(par_rec, ObjDiffRec::A_B_DIFF, a_mat, df.start_a+l,
+                                        b_mat, df.start_b+l);
+      }
+    }
+    else {
+      if(df.delete_a > 0) {     // a records exist, b do not..
+        for(int l=0; l<df.delete_a; l++) {
+          ObjDiffRec* rec = NewArrayDiff(par_rec, ObjDiffRec::A_NOT_B, a_mat, df.start_a + l,
+                                        b_mat, df.start_b);
+        }
+      }
+      if(df.insert_b > 0) {     // b records exist, a do not..
+        for(int l=0; l<df.insert_b; l++) {
+          ObjDiffRec* rec = NewArrayDiff(par_rec, ObjDiffRec::B_NOT_A, a_mat, df.start_a,
+                                          b_mat, df.start_b + l);
+        }
+      }
+    }
+  }
+  return n_diffs;
+}
+
+void ObjDiff::HashArray(taArray_base* mat, int_PArray& array) {
+  array.Reset();
+  array.Alloc(mat->size);
+  for(int i=0; i<mat->size; i++) {
+    String val = mat->FastElAsStr(i);
+    taHashVal hash = taHashEl::HashCode_String(val);
+    array.Add(hash);
+  }
+}
+
+ObjDiffRec* ObjDiff::NewArrayDiff
+(ObjDiffRec* par_rec, int flags, taArray_base* a_mat, int a_idx, taArray_base* b_mat, int b_idx) {
+  ObjDiffRec* rec = NewRec(par_rec, flags, a_idx, b_idx, a_mat, b_mat);
+  rec->a_indep_obj = par_rec->a_indep_obj;
+  rec->b_indep_obj = par_rec->b_indep_obj;
+  rec->SetDiffFlag(ObjDiffRec::VALUES);
+  rec->n_diffs = 1;
+  rec->a_val = a_mat->SafeElAsStr(a_idx);
+  rec->b_val = b_mat->SafeElAsStr(b_idx);
+  return rec;
 }
 
 void ObjDiff::FastIdxRemove(int_Array& ary, int idx) {
@@ -287,8 +534,25 @@ void ObjDiff::RollBack(int rollback) {
   }
 }
 
-ObjDiffRec* ObjDiff::NewParRec(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
-  ObjDiffRec* rec = NewRec(par_rec, ObjDiffRec::PARENT, -1, -1, a_obj, b_obj);
+ObjDiffRec* ObjDiff::NewParRec(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, MemberDef* md) {
+  if(!md) {
+    if(!a_obj->InheritsFrom(&TA_taOBase) || !b_obj->InheritsFrom(&TA_taOBase)) {
+      taMisc::Info("Diff cannot be performed on independent objects that are not at least a taOBase, bailing on obj of types, A:", a_obj->GetTypeDef()->name,
+                   "B:", b_obj->GetTypeDef()->name);
+      return NULL;
+    }
+  }
+  
+  ObjDiffRec* rec = NewRec(par_rec, ObjDiffRec::PARENTS, -1, -1, a_obj, b_obj);
+  rec->mdef = md;
+  if(md) {                      // we are not an independent parent
+    rec->a_indep_obj = par_rec->a_indep_obj;
+    rec->b_indep_obj = par_rec->b_indep_obj;
+  }
+  else {
+    rec->a_indep_obj = a_obj;
+    rec->b_indep_obj = b_obj;
+  }
   return rec;
 }
 
@@ -302,7 +566,14 @@ ObjDiffRec* ObjDiff::NewListDiff
   if(b_obj && b_obj->GetOwner() != list_b) // don't want these!
     return NULL;
   ObjDiffRec* rec = NewRec(par_rec, flags, a_idx, b_idx, a_obj, b_obj);
+  if(a_obj && a_obj->InheritsFrom(&TA_taOBase)) {
+    rec->a_indep_obj = a_obj;
+  }
+  if(b_obj && b_obj->InheritsFrom(&TA_taOBase)) {
+    rec->b_indep_obj = b_obj;
+  }
   rec->SetDiffFlag(ObjDiffRec::OBJECTS);
+  rec->n_diffs = 1;
   return rec;
 }
 
@@ -316,6 +587,8 @@ int ObjDiff::DiffMemberStrings
   rec->a_val = a_val;
   rec->b_val = b_val;
   rec->n_diffs = 1;             // always 1 for members
+  rec->a_indep_obj = par_rec->a_indep_obj;
+  rec->b_indep_obj = par_rec->b_indep_obj;
   return 1;                     // one diff
 }
 

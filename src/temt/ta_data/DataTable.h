@@ -129,7 +129,7 @@ public:
   int                   max_col_width; // #MIN_1 maximum width of columns (in characters) in the editor -- this is enforced for auto-size of column width to contents, and for manual resizing -- if you specifically request a size larger than this value in the gui, it will be increased here automatically as well
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
-  int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
+  int_Matrix            row_indexes;     // #EXPERT #NO_DIFF #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
   // #READ_ONLY #HIDDEN The number of rows of actual data (visible or hidden)
   cssProgSpace*         calc_script;
   // #IGNORE script object for performing column calculations

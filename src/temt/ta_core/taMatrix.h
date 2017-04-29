@@ -312,6 +312,9 @@ public:
   { if (InRange_Flat(idx))  El_SetFmStr_(FastEl_Flat_(idx), str); }
   // #CAT_Modify treats the matrix like a flat array, sets the element as a string
 
+  const String          SafeElAsStr_Flat_ElView(int idx) const;
+  // #CAT_Access treats the matrix like a flat array, returns the element as a string, taking into account any active IDX_FRAMES element view (as used by data table)
+  
   // Clipboard Support (note: works well unless you have tabs/newlines in your data)
 
   const String          FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to);

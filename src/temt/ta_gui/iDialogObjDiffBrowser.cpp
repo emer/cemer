@@ -113,7 +113,7 @@ void iDialogObjDiffBrowser::Constr() {
   String a_path = odl->a_top->GetPathNames();
   String b_path = odl->b_top->GetPathNames();
   String lb_txt = "Differences between object A and object B, shown as changes needed to make A into B\nA is: " + a_path + "\nB is: " + b_path +
-    "\nClick actions to actually perform edits on objects, which will take place when Ok is pressed";
+    "\nClick actions to select which edits to perform on objects -- these will generate a Patch that can then execute these changes if you press OK.";
 
   QLabel* lbl = new QLabel(lb_txt);
   layOuter->addWidget(lbl);
@@ -156,12 +156,14 @@ void iDialogObjDiffBrowser::Constr() {
   items->setEditTriggers(QAbstractItemView::DoubleClicked);
   items->headerItem()->setText(COL_NEST, "Nesting");
   items->headerItem()->setToolTip(COL_NEST, taiMisc::ToolTipPreProcess("Nesting level below the original A or B object"));
+  items->headerItem()->setText(COL_NDIFF, "N Diffs");
+  items->headerItem()->setToolTip(COL_NEST, taiMisc::ToolTipPreProcess("Number of differences for this level"));
   items->headerItem()->setText(COL_A_FLG, "A Action");
   items->headerItem()->setToolTip(COL_A_FLG, taiMisc::ToolTipPreProcess("Edit action to perform on the A object -- these actions, if selected will transform A into B"));
   items->headerItem()->setText(COL_A_NM, "A Name");
   items->headerItem()->setToolTip(COL_A_NM, taiMisc::ToolTipPreProcess("Name of the item in A -- member name or sub-object name"));
   items->headerItem()->setText(COL_A_VAL, "A Value");
-  items->headerItem()->setToolTip(COL_A_VAL, taiMisc::ToolTipPreProcess("Value of the item in B"));
+  items->headerItem()->setToolTip(COL_A_VAL, taiMisc::ToolTipPreProcess("Value / type of the item in B"));
   items->headerItem()->setText(COL_A_VIEW, "View");
   items->headerItem()->setToolTip(COL_A_VIEW, taiMisc::ToolTipPreProcess("View A item in project -- selects this object in the appropriate browser in the main project window"));
 
@@ -172,7 +174,7 @@ void iDialogObjDiffBrowser::Constr() {
   items->headerItem()->setText(COL_B_NM, "B Name");
   items->headerItem()->setToolTip(COL_B_NM, taiMisc::ToolTipPreProcess("Name of the item in B -- member name or sub-object name"));
   items->headerItem()->setText(COL_B_VAL, "B Value");
-  items->headerItem()->setToolTip(COL_B_VAL, taiMisc::ToolTipPreProcess("Value of the item in B"));
+  items->headerItem()->setToolTip(COL_B_VAL, taiMisc::ToolTipPreProcess("Value / type of the item in B"));
   items->headerItem()->setText(COL_B_VIEW, "View");
   items->headerItem()->setToolTip(COL_B_VIEW, taiMisc::ToolTipPreProcess("View B item in project -- selects this object in the appropriate browser in the main project window"));
   items->setUniformRowHeights(true);
@@ -218,28 +220,8 @@ void iDialogObjDiffBrowser::AddItems() {
     String lbl_b;
     bool chk_b = rec->GetCurAction(1, lbl_b);
     
-    bool some_diff = false;
-    bool chg_diff = false;
-    if(rec->IsDiff()) {
-      some_diff = true;
-      if(rec->IsABDiff()) {
-        chg_diff = true;
-      }
-    }
-
-    bool condshow_off = false;
-    bool a_off = (rec->AMemberNoShow() || rec->AMemberNoEdit());
-    bool b_off = (rec->BMemberNoShow() || rec->BMemberNoEdit());
-
-    if(a_off && b_off) {
-      condshow_off = true;
-      // if(!some_diff)
-      //   continue;             // nothing to see here
-    }
-
-    // if(some_diff && !chg_diff && (a_off || b_off)) {
-    //   continue;               // if off and add or del, will only show in one, so omit
-    // }
+    bool a_off = !rec->IsAValid() || (rec->AMemberNoShow() || rec->AMemberNoEdit());
+    bool b_off = !rec->IsBValid() || (rec->BMemberNoShow() || rec->BMemberNoEdit());
 
     QTreeWidgetItem* parw = NULL;
     if(rec->par_rec) {
@@ -258,6 +240,7 @@ void iDialogObjDiffBrowser::AddItems() {
     witm->setData(0, Qt::UserRole+1, qval);
 
     witm->setText(COL_NEST, String(rec->nest_level));
+    witm->setText(COL_NDIFF, String(rec->n_diffs));
     witm->setText(COL_SEP, " | ");
 
     if(!rec->IsBnotA()) {
@@ -265,8 +248,8 @@ void iDialogObjDiffBrowser::AddItems() {
       taMisc::IndentString(nm, rec->nest_level);
       nm += rec->AName().elidedTo(max_width);
       witm->setText(COL_A_NM, nm);
-      witm->setText(COL_A_VAL, rec->a_val.elidedTo(max_width));
-      witm->setToolTip(COL_A_VAL, rec->a_val);
+      witm->setText(COL_A_VAL, rec->AValue().elidedTo(max_width));
+      witm->setToolTip(COL_A_VAL, rec->AValue());
 
       String dec_key = rec->ADecoKey();
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
@@ -280,7 +263,7 @@ void iDialogObjDiffBrowser::AddItems() {
         witm->setTextColor(COL_A_VAL, clr);
       }
 
-      if(rec->IsObjects() || rec->IsParent()) {
+      if(rec->IsIndepObj() && rec->IsAValid()) {
         witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
         witm->setCheckState(COL_A_VIEW, Qt::Unchecked);
       }
@@ -295,8 +278,8 @@ void iDialogObjDiffBrowser::AddItems() {
       taMisc::IndentString(nm, rec->nest_level);
       nm += rec->BName().elidedTo(max_width);
       witm->setText(COL_B_NM, nm);
-      witm->setText(COL_B_VAL, rec->b_val.elidedTo(max_width));
-      witm->setToolTip(COL_B_VAL, rec->b_val);
+      witm->setText(COL_B_VAL, rec->BValue().elidedTo(max_width));
+      witm->setToolTip(COL_B_VAL, rec->BValue());
 
       String dec_key = rec->BDecoKey();
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
@@ -310,7 +293,7 @@ void iDialogObjDiffBrowser::AddItems() {
         witm->setTextColor(COL_B_VAL, clr);
       }
 
-      if(rec->IsObjects() || rec->IsParent()) {
+      if(rec->IsIndepObj() && rec->IsBValid()) {
         witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
         witm->setCheckState(COL_B_VIEW, Qt::Unchecked);
       }
@@ -321,14 +304,7 @@ void iDialogObjDiffBrowser::AddItems() {
       }
     }
 
-    // if(rec->n_diffs > 0) {
-      witm->setExpanded(true);
-    // }
-    // else {
-    //   witm->setExpanded(false);
-    // }
-
-    if(!some_diff) continue;
+    witm->setExpanded(true);
 
     if(rec->IsAnotB()) {
       if(chk_a) witm->setBackground(COL_A_FLG, *del_color);
@@ -338,16 +314,11 @@ void iDialogObjDiffBrowser::AddItems() {
       witm->setBackground(COL_B_VAL, b_off ? *add_color_lt : *add_color);
       witm->setBackground(COL_B_NM, b_off ? *add_color_lt : *add_color);
       witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
-      if(!rec->HasDiffFlag(ObjDiffRec::SUB_NO_ACT)) {
-        // only ta base items really feasible here..
-        if(rec->IsObjects()) {
-          witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-          witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-          witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-          witm->setText(COL_A_FLG, lbl_a);
-          witm->setText(COL_B_FLG, lbl_b);
-        }
-      }
+      witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+      witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+      witm->setText(COL_A_FLG, lbl_a);
+      witm->setText(COL_B_FLG, lbl_b);
     }
     else if(rec->IsBnotA()) {
       if(chk_a) witm->setBackground(COL_A_FLG, *add_color);
@@ -357,16 +328,11 @@ void iDialogObjDiffBrowser::AddItems() {
       witm->setBackground(COL_B_VAL, b_off ? *del_color_lt : *del_color);
       witm->setBackground(COL_B_NM, b_off ? *del_color_lt : *del_color);
       witm->setExpanded(false);
-      if(!rec->HasDiffFlag(ObjDiffRec::SUB_NO_ACT)) {
-        // only ta base items really feasible here..
-        if(rec->IsObjects()) {
-          witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-          witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-          witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-          witm->setText(COL_A_FLG, lbl_a);
-          witm->setText(COL_B_FLG, lbl_b);
-        }
-      }
+      witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+      witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+      witm->setText(COL_A_FLG, lbl_a);
+      witm->setText(COL_B_FLG, lbl_b);
     }
     else if(rec->IsABDiff()) {
       if(chk_a) witm->setBackground(COL_A_FLG, *chg_color);
@@ -385,6 +351,7 @@ void iDialogObjDiffBrowser::AddItems() {
   }
 
   items->resizeColumnToContents(COL_NEST);
+  items->resizeColumnToContents(COL_NDIFF);
   items->resizeColumnToContents(COL_A_FLG);
   items->resizeColumnToContents(COL_A_NM);
   items->resizeColumnToContents(COL_A_VAL);
@@ -435,7 +402,7 @@ void iDialogObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
   Qt::CheckState chkst = itm->checkState(column);
   bool on = (chkst == Qt::Checked);
 
-  if(!rec->ActionAllowed()) return;
+  if(!rec->IsDiff()) return;
   rec->SetCurAction(a_or_b, on);
   UpdateItemDisp(itm, rec, a_or_b);
 }
@@ -449,24 +416,35 @@ void iDialogObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, ObjDiffRec* rec
   if(a_or_b == 0) column = COL_A_FLG;
   else column = COL_B_FLG;
 
-  if(rec->HasDiffFlag(ObjDiffRec::B_NOT_A))
-    itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
-  else if(rec->HasDiffFlag(ObjDiffRec::A_NOT_B))
+  if(rec->IsBnotA()) {
     itm->setBackground(column, chk ? (a_or_b ? *del_color : *add_color) : no_color);
-  else if(rec->HasDiffFlag(ObjDiffRec::A_B_DIFF))
+  }
+  else if(rec->IsAnotB()) {
+    itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
+  }
+  else if(rec->IsABDiff()) {
     itm->setBackground(column, chk ? *chg_color : no_color);
+  }
 
   itm->setCheckState(column, chk ? Qt::Checked : Qt::Unchecked);
+}
+
+static bool WidgetItemIsVisible(QTreeWidgetItem* witm) {
+  QTreeWidgetItem* par = witm->parent();
+  if(!par) return true;
+  if(!par->isExpanded()) return false;
+  return WidgetItemIsVisible(par); // has to be completely clear up to top!
 }
 
 void iDialogObjDiffBrowser::ToggleAll(int a_or_b) {
   for(int i=0;i<odl->diffs.size; i++) {
     ObjDiffRec* rec = odl->diffs.FastEl(i);
 
-    if(!rec->ActionAllowed()) continue;
+    if(!rec->IsDiff()) continue;
 
     QTreeWidgetItem* witm = (QTreeWidgetItem*)rec->widget;
     if(!witm) continue;         // shouldn't happen
+    if(!WidgetItemIsVisible(witm)) continue; // only visible!
 
     String lbl;
     bool chk = rec->GetCurAction(a_or_b, lbl);
@@ -489,18 +467,18 @@ void iDialogObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del,
   for(int i=0;i<odl->diffs.size; i++) {
     ObjDiffRec* rec = odl->diffs.FastEl(i);
 
-    if(!rec->ActionAllowed()) continue;
+    if(!rec->IsDiff()) continue;
 
     if(a_or_b == 0) {
-      if(rec->HasDiffFlag(ObjDiffRec::B_NOT_A) && !add) continue;
-      if(rec->HasDiffFlag(ObjDiffRec::A_NOT_B) && !del) continue;
+      if(rec->IsBnotA() && !add) continue;
+      if(rec->IsAnotB() && !del) continue;
     }
     else {                      // switched for b
-      if(rec->HasDiffFlag(ObjDiffRec::A_NOT_B) && !add) continue;
-      if(rec->HasDiffFlag(ObjDiffRec::B_NOT_A) && !del) continue;
+      if(rec->IsAnotB() && !add) continue;
+      if(rec->IsBnotA() && !del) continue;
     }
-
-    if(rec->HasDiffFlag(ObjDiffRec::A_B_DIFF) && !chg) continue;
+    if(rec->IsABDiff() && !chg) continue;
+    
     if(nm_contains.nonempty()) {
       bool cont = rec->NameContains(nm_contains);
       if(nm_not) {

@@ -1083,32 +1083,33 @@ void taProject::SvnDiffPatch() {
 }
 
 bool taProject::DiffCompare(taBase* cmp_obj) {
-  if(TestError(!cmp_obj->InheritsFrom(&TA_taProject), "DiffCompare",
-               "comparison object must be a project!")) {
-    return false;
-  }
+  return inherited::DiffCompare(cmp_obj);
+  // if(TestError(!cmp_obj->InheritsFrom(&TA_taProject), "DiffCompare",
+  //              "comparison object must be a project!")) {
+  //   return false;
+  // }
 
-  taProject* cmp_proj = (taProject*)cmp_obj;
+  // taProject* cmp_proj = (taProject*)cmp_obj;
 
-  Patch* patch_a = this->patches.NewPatch();
-  Patch* patch_b = cmp_proj->patches.NewPatch();
+  // Patch* patch_a = this->patches.NewPatch();
+  // Patch* patch_b = cmp_proj->patches.NewPatch();
   
-  TypeDef* td = GetTypeDef();
-  for(int i=0; i<td->members.size; i++) {
-    MemberDef* md = td->members[i];
-    if(!md->type->InheritsFrom(&TA_taGroup_impl)) continue;
-    if(md->HasOption("NO_DIFF")) continue;
-    taGroup_impl* my_gp = (taGroup_impl*)md->GetOff(this);
-    taGroup_impl* cmp_gp = (taGroup_impl*)md->GetOff(cmp_proj);
-    Patch::cur_subgp = md->name;
-    ObjDiff diffs;
-    // bool ok = my_gp->DiffCompare_impl(&diffs, cmp_gp, true); // modal dialog -- blocks here
-    // if(ok) {
-    //   DoDiffEdits(diffs, patch_a, patch_b); // generate patch
-    // }
-  }
-  Patch::cur_subgp = "";
-  return true;
+  // TypeDef* td = GetTypeDef();
+  // for(int i=0; i<td->members.size; i++) {
+  //   MemberDef* md = td->members[i];
+  //   if(!md->type->InheritsFrom(&TA_taGroup_impl)) continue;
+  //   if(md->HasOption("NO_DIFF")) continue;
+  //   taGroup_impl* my_gp = (taGroup_impl*)md->GetOff(this);
+  //   taGroup_impl* cmp_gp = (taGroup_impl*)md->GetOff(cmp_proj);
+  //   Patch::cur_subgp = md->name;
+  //   ObjDiff diffs;
+  //   // bool ok = my_gp->DiffCompare_impl(&diffs, cmp_gp, true); // modal dialog -- blocks here
+  //   // if(ok) {
+  //   //   DoDiffEdits(diffs, patch_a, patch_b); // generate patch
+  //   // }
+  // }
+  // Patch::cur_subgp = "";
+  // return true;
 }
 
 void taProject::UpdateChangeLog() {
