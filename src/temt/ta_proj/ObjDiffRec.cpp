@@ -232,17 +232,9 @@ void ObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
   else if(HasDiffFlag(A_B_DIFF)) {
     if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_COPY_BA, on_off);
-      if(on_off && HasDiffFlag(ACT_COPY_AB)) {
-        taMisc::Info("Cannot copy both ways -- toggling A->B copy OFF");
-        ClearDiffFlag(ACT_COPY_AB);
-      }
     }
     else {
       SetDiffFlagState(ACT_COPY_AB, on_off);
-      if(on_off && HasDiffFlag(ACT_COPY_BA)) {
-        taMisc::Info("Cannot copy both ways -- toggling B->A copy OFF");
-        ClearDiffFlag(ACT_COPY_BA);
-      }
     }
   }
 }

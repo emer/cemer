@@ -41,7 +41,7 @@ public:
   PatchActions  action;         // action that this patch record performs
   bool          failed;         // #READ_ONLY #SHOW #NO_SAVE did the last attempt to apply this patch fail?
   String        obj_path_names; // #EDIT_DIALOG project-relative path to object using names -- must be a taBase object -- for INSERT it is the path to the OWNER list to insert a new object in
-  String        obj_path_idx;   // #EDIT_DIALOG project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the object AFTER the one to be inserted (NULL = end of list)
+  String        obj_path_idx;   // #EDIT_DIALOG project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the OWNER list to insert a new object in
   String        obj_type;       // type of object to be found at given obj_path -- for double-checking path finding
   String        mbr_path;       // path to a member of object, if relevant (for ASSIGN only)
   String        path_before;    // #CONDSHOW_ON_action:INSERT #EDIT_DIALOG for INSERT, OWNER-relative path for object BEFORE an insertion using names (NULL if first item in list)

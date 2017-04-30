@@ -49,8 +49,8 @@ public:
   virtual bool  DisplayDialog(bool modal_dlg);
   // display a dialog showing the differences -- returns true if user said Ok to apply changes -- if non-modal, then dialog manages everything and does the diffs itself
 
-  virtual bool  DoDiffEdits(Patch* patch_a, Patch* patch_b);
-  // perform edits as selected in the diff records -- if patch objects are passed, then patches are generated instead of actually doing the edits
+  virtual int  GeneratePatches(bool apply_immed);
+  // generate Patch records to implement selected actions in these diffs -- if apply_immed set, then patches are immediately applied -- otherwise they are just saved in the Project patches group -- returns number of patch records generated
 
   //////////////////////////////////////////////
   //    IMPL below
@@ -119,8 +119,19 @@ public:
 
   void FastIdxRemove(int_Array& ary, int idx);
   // fast remove of index from array -- starts at idx and moves backward
+
+
+  virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);
+  virtual void GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch);
+  virtual void GenPatch_DelA(ObjDiffRec* rec, Patch* patch);
+  virtual void GenPatch_AddA(ObjDiffRec* rec, Patch* patch);
+  virtual void GenPatch_DelB(ObjDiffRec* rec, Patch* patch);
+  virtual void GenPatch_AddB(ObjDiffRec* rec, Patch* patch);
   
   TA_SIMPLE_BASEFUNS(ObjDiff);
+protected:
+  String tmp_save_str;     // shared string for saving large string files into
+
 private:
   void Initialize();
   void Destroy()     { };

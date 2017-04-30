@@ -63,23 +63,22 @@ PatchRec* Patch::NewPatchRec_Replace(taBase* obj, const String& val) {
 }
 
 PatchRec* Patch::NewPatchRec_Insert
-(taBase* obj, taBase* own, const String& val, const String& nw_tp) {
-  PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
+(taBase* add_obj, taBase* own_obj, taBase* bef_obj, taBase* aft_obj, const String& val) {
+  PatchRec* rval = NewPatchRec_impl(own_obj, val, cur_subgp);
   rval->action = PatchRec::INSERT;
-  rval->new_obj_type = nw_tp;
+  rval->new_obj_type = add_obj->GetTypeDef()->name;
 
-  String chldpath = obj->GetPath(own); // path relative to owner
-  if(chldpath.contains(']')) {
-    String sidx = chldpath.between('[',']');
-    int idx = sidx.toInt();
-    if(idx > 0) {
-      String nwpath = chldpath.through('[') + String(idx-1) + "]";
-      MemberDef* md;
-      taBase* bfr = own->FindFromPath(nwpath, md);
-      if(bfr) {
-        rval->path_before = bfr->GetPathFromProj();
-      }
-    }
+  if(bef_obj) {
+    rval->path_before = bef_obj->GetPathNames(own_obj);
+  }
+  else {
+    rval->path_before = "NULL";
+  }
+  if(aft_obj) {
+    rval->path_after = aft_obj->GetPathNames(own_obj);
+  }
+  else {
+    rval->path_after = "NULL";
   }
   return rval;
 }
@@ -91,6 +90,8 @@ PatchRec* Patch::NewPatchRec_Delete(taBase* obj, const String& val) {
 }
 
 bool Patch::ApplyPatch(taProject* proj) {
+  last_before_path = "";
+  last_obj_added_path = "";
   proj->StructUpdate(true);
   bool rval = true;
   FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch_recs) {

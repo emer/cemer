@@ -83,7 +83,7 @@ void iDialogObjDiffBrowser::accept() {
   inherited::accept();
   // here is where we execute actions!
   if(!isModal()) {
-    // odl->>DoDiffEdits(NULL, NULL);
+    odl->GeneratePatches(false); // todo: need a flag for whether to do it immediately
     delete odl;                   // all done!
   }
   odl = NULL;

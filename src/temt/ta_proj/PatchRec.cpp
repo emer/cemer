@@ -109,13 +109,17 @@ bool PatchRec::ApplyPatch_assign(taProject* proj) {
   taBase* obj = FindPathRobust(proj);
   if(!obj) return false;
   if(mbr_path.nonempty()) {
-    MemberDef* md = obj->GetTypeDef()->members.FindName(mbr_path);
+    TypeDef* own_td = obj->GetTypeDef();
+    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    MemberDef* md = TypeDef::FindMemberPathStatic
+      (own_td, net_base_off, net_mbr_off, mbr_path, false); // no warn
     if(!md) {
       taMisc::Info("could not find member:",mbr_path,"in object",
                    obj->DisplayPath());
       return false;
     }
-    md->SetValStr(value, obj, TypeDef::SC_STREAMING, false);
+    void* addr = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
+    md->type->SetValStr(value, addr);
     taMisc::Info("ASSIGN of:", obj->DisplayPath() + "." + mbr_path, "to:" + value);
   }
   else {
@@ -146,15 +150,14 @@ bool PatchRec::ApplyPatch_replace(taProject* proj) {
 }
   
 bool PatchRec::ApplyPatch_insert(taProject* proj) {
-  // todo: need a new routine to find the owner here..
-  taBase* obj = FindPathRobust(proj);
-  if(!obj) return false;
-  taBase* own = obj->GetOwner();
+  taBase* own = FindPathRobust(proj);
   if(!own) return false;
   TypeDef* new_typ = taMisc::FindTypeName(new_obj_type, true);
   if(!new_typ) return false;
   taBase* tok = taBase::MakeToken(new_typ);
-  taBase* new_guy = own->CopyChildBefore(tok, obj);
+
+  // todo: get before, after and also track any last_before_path etc
+  taBase* new_guy = own->CopyChildBefore(tok, NULL);
   if(!new_guy) {
     return false;
   }
