@@ -319,9 +319,11 @@ bool ClusterManager::CheckPrefs() {
     return false;
   }
   if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
-    taMisc::Error(
-      "Please define at least one cluster and repository in "
-      "preferences/options");
+    int choice = taMisc::Choice("There is no cluster or repository defined. Please define at least one cluster and repository in options/preferences,\
+                                and/or alternatively add a public cluster/repository (https://grey.colorado.edu/emergent/index.php/NSG_public)", "OK", "Add public cluster (NSG)");
+    if (choice == 1) {
+      SetupPublicNSGCluster();
+    }
     return false;
   }
   return true;
@@ -1263,9 +1265,12 @@ String
 ClusterManager::ChooseCluster(const String& prompt) {
   // Make sure there's at least one repository defined.
   if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
-    taMisc::Error(
-      "Please define at least one cluster and repository in "
-      "preferences/options");
+    int choice = taMisc::Choice("There is no cluster or repository defined. Please define at least one cluster and repository in options/preferences,\
+                   and/or alternatively add a public cluster/repository (https://grey.colorado.edu/emergent/index.php/NSG_public)", "OK", "Add public cluster (NSG)");
+    if (choice == 1) {
+        SetupPublicNSGCluster();
+    }
+    
     return false;
   }
 
@@ -1352,5 +1357,122 @@ ClusterManager::ChooseCluster(const String& prompt) {
   m_cluster_run.UpdateAfterEdit();
   m_do_svn_update = checkbox->checkState();
   return rval;
+}
+
+/***
+ * Add the public Neuroscience Gateway portal cluster to the config settings
+ * https://grey.colorado.edu/emergent/index.php/NSG_public
+ * https://www.nsgportal.org/overview.html
+ * As this is an external computing resource, the details may
+ * change over time, and its availability could disappare at any
+ * time.
+ **/
+bool
+ClusterManager::SetupPublicNSGCluster() {
+  int repo_size = taMisc::svn_repos.size;
+  bool repoAlreadyPresent = false;
+  bool clusterAlreadyPresent = false;
+  taString svnRepoName = "nsg_public";
+  taString svnRepoUrl = "https://grey.colorado.edu/svn/clusterun_public/";
+  
+  NameVar nv = NameVar(svnRepoName, svnRepoUrl);
+  
+  //Check first to see if we already have this repo in our list before trying to add.
+  for (int i = 0; i < repo_size; i++) {
+    if (taMisc::svn_repos[i].value == svnRepoUrl) {
+      repoAlreadyPresent = true;
+    }
+  }
+
+  if (!repoAlreadyPresent) {
+    switch (repo_size) {
+      case 0:
+        taMisc::svn_repo1_url.name = svnRepoName;
+        taMisc::svn_repo1_url.url = svnRepoUrl;
+        break;
+      case 1:
+        taMisc::svn_repo2_url.name = svnRepoName;
+        taMisc::svn_repo2_url.url = svnRepoUrl;
+        break;
+      case 2:
+        taMisc::svn_repo3_url.name = svnRepoName;
+        taMisc::svn_repo3_url.url = svnRepoUrl;
+        break;
+      case 3:
+        taMisc::svn_repo4_url.name = svnRepoName;
+        taMisc::svn_repo4_url.url = svnRepoUrl;
+        break;
+      case 4:
+        taMisc::svn_repo5_url.name = svnRepoName;
+        taMisc::svn_repo5_url.url = svnRepoUrl;
+        break;
+      case 5:
+        taMisc::svn_repo6_url.name = svnRepoName;
+        taMisc::svn_repo6_url.url = svnRepoUrl;
+        break;
+      default:
+        taMisc::Error("Could not add the nsg_public cluster, as there are more than 6 repos already");
+    }
+    //In addition to the above way of entering the repo into the
+    //options dialog, there is also an internal list of repositories,
+    //that is normally automatically generated from the above list,
+    //but as we are directly writing to the preferences, we need
+    //to update the list version our selves
+    taMisc::svn_repos.Add(nv);
+  }
+  
+  //Set the properties for the XSEDE SDSC cluster named Comet
+  //The actual cluster has way more nodes than defined here,
+  //but as we don't want to run through the allocation that
+  //NSG has available, limit it to 10 nodes for now.
+  ClusterSpecs cs;
+  cs.name = "comet";
+  cs.by_node = false;
+  cs.gpus = 0;
+  cs.nodes = 10;
+  cs.procs_per_node = 24;
+  cs.max_jobs = 10;
+  cs.max_time = 48;
+  cs.max_procs = 240;
+  cs.max_ram = 128;
+  cs.min_procs = 0;
+  cs.mpi = true;
+  
+  //Check that this cluster hasn't previously been added to the preferences already
+  int clusterSize = taMisc::clusters.size;
+  for (int i = 0; i < clusterSize; i++) {
+    if (taMisc::clusters[i].name == cs.name) {
+      clusterAlreadyPresent = true;
+    }
+  }
+  if (!clusterAlreadyPresent) {
+    switch(clusterSize) {
+      case 0:
+        taMisc::cluster1 = cs;
+        break;
+      case 1:
+        taMisc::cluster2 = cs;
+        break;
+      case 2:
+        taMisc::cluster3 = cs;
+        break;
+      case 3:
+        taMisc::cluster4 = cs;
+        break;
+      case 4:
+        taMisc::cluster5 = cs;
+        break;
+      case 5:
+        taMisc::cluster6 = cs;
+        break;
+      default:
+        taMisc::Error("Could not add the nsg_public cluster, as there are more than 6 clusters already");
+        
+    }
+    taMisc::clusters.Add(cs);
+    taMisc::cluster_names.Add(cs.name);
+  }
+  
+  return true;
 }
 

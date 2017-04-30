@@ -172,6 +172,7 @@ public:
   void SaveExtraFiles();
   void SaveDoneTable();
   void DeleteFile(const String &filename);
+  static bool SetupPublicNSGCluster();
 
   ClusterRun& m_cluster_run;
   ClusterManager_UpdtThr* m_updtThr;
