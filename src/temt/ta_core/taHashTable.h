@@ -32,8 +32,8 @@ class TA_API taHashTable : public taPtrList<taHashBucket> {
 protected:
   void  El_Done_(void* it) override     { delete (taHashBucket*)it; }
 public:
-  static int    n_bucket_primes[]; // prime numbers for number of buckets
-  static int    n_primes;        // number of prime numbers (86)
+  static int    n_bucket_primes[]; // #NO_SAVE #READ_ONLY prime numbers for number of buckets
+  static int    n_primes;        // #NO_SAVE #READ_ONLY number of prime numbers (86)
 
   int           bucket_max;     // maximum size of any bucket
   KeyType       key_type;       // type of key to use by default (name/string or pointer)

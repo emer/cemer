@@ -612,8 +612,9 @@ bool ObjDiff::DoDiffEdits(Patch* patch_a, Patch* patch_b) {
   return true;
 }
 
-/*
-static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec,
+
+
+/* static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec,
                                    Patch* patch) {
   MemberDef* md;
   taBase* new_guy = par_obj->FindFromPath(srec->value, md);

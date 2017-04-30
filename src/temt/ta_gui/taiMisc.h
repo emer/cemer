@@ -403,9 +403,9 @@ public:
   static iTopLevelWindow_List    delayed_updateui; // #IGNORE windows to do updateui on in wait proc
   static iNetworkAccessManager*  net_access_mgr; // #IGNORE network access manager for web browser
     
-  static int            busy_count; // levels of busy
-
-  static TypeSpace      arg_types;      // list of all taiArgTypes
+  static int            busy_count; // #HIDDEN #NO_SAVE levels of busy
+  static TypeSpace      arg_types;  // #HIDDEN #NO_SAVE list of all taiArgTypes
+  
   static void           (*Update_Hook)(taBase*);
   // #IGNORE called after apply in a dialog, etc. obj is the object that was edited
 #ifndef __MAKETA__
@@ -413,7 +413,7 @@ public:
 
 #endif
   static taBase_PtrList unopened_windows;
-  // #HIDDEN unopened windows waiting to be opened
+  // #HIDDEN #NO_SAVE unopened windows waiting to be opened
 
 #ifndef __MAKETA__
   static void           GetWindowList(iWidget_List& rval);

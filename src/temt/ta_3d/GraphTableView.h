@@ -90,7 +90,7 @@ public:
   float                 depth;          // how deep to make the display (height is always 1.0)
 
   float                 axis_font_size; // #DEF_0.05 size to render axis text
-  static float          tick_size;      // #DEF_0.05 size of tick marks
+  static float          tick_size;      // #HIDDEN #NO_SAVE #DEF_0.05 size of tick marks
   float                 label_font_size;// #DEF_0.04 size to render value/string labels
   float                 x_axis_label_rot; // rotation angle in degrees for the x axis labels
 

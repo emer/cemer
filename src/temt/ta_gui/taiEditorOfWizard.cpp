@@ -94,7 +94,7 @@ void taiEditorOfWizard::Constr_Strings() {
 /*TODO*/
 }
 
-void taiEditorOfWizard::Enum_Members() {
+void taiEditorOfWizard::Constr_Members() {
   if (!typ) return; // class browser or such
   page_names.Reset();
   membs.Reset();

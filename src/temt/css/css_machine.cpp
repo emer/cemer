@@ -988,6 +988,7 @@ int cssEl::GetMemberNo_impl(TypeDef* typ, const String& memb) const {
   if(!typ) return -1;
   int mdx = typ->members.FindNameIdx(memb);     // just 1st order search
   return mdx;
+  // note: can't deal with static members here so just fail
 }
 
 cssEl* cssEl::GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const {
@@ -1009,8 +1010,9 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const String& memb)
     return &cssMisc::Void;
   }
   MemberDef* md = typ->members.FindName(memb);  // just 1st order search
-//   void* mbr = NULL;
-//   MemberDef* md = typ->members.FindNameAddrR(memb, base, mbr);       // skips paths!
+  if(!md) {
+    md = typ->static_members.FindName(memb);
+  }
   if(!md) {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ->name);
     return &cssMisc::Void;
@@ -1121,6 +1123,11 @@ cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const String& memb) const
   }
 
   MemberDef* md = typ->members.FindName(memb);
+  if(md) {
+    return GetMemberEl_impl(typ, base, md);
+  }
+  
+  md = typ->static_members.FindName(memb);
   if(md) {
     return GetMemberEl_impl(typ, base, md);
   }

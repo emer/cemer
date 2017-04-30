@@ -180,15 +180,23 @@ void taiEditorOfClass::ClearBody_impl() {
 void taiEditorOfClass::Constr_impl() {
   inline_mode = (typ && typ->it->requiresInline());
   if (!inline_mode) {
-    Enum_Members();
+    Constr_Members();
   }
   inherited::Constr_impl();
 }
 
-void taiEditorOfClass::Enum_Members() {
+void taiEditorOfClass::Constr_Members() {
   if (membs.def_size <= 0) return; // not handling anything
   if (!typ) return; // class browser or such
-  MemberSpace& ms = typ->members;
+  if(typ->HasOption("STATIC_MEMBERS")) {
+    Constr_Members_impl(typ->static_members);
+  }
+  else {
+    Constr_Members_impl(typ->members);
+  }
+}
+
+void taiEditorOfClass::Constr_Members_impl(MemberSpace& ms) {
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp

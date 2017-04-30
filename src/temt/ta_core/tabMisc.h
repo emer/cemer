@@ -36,7 +36,7 @@ class TA_API tabMisc {
   friend class taList_impl;
 public:
   static taRootBase*    root;
-  // root of the structural object hierarchy
+  // #NO_SAVE #READ_ONLY root of the structural object hierarchy
   static taBase*        cur_undo_save_top;
   // #READ_ONLY #NO_SAVE the object under which everything is being saved for the purposes of an undo record -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state
   static taBase*        cur_undo_mod_obj;
@@ -44,7 +44,8 @@ public:
   static taBase*        cur_undo_save_owner;
   // #READ_ONLY #NO_SAVE for actions that alter the structural hierarchy (adding, moving, deleting items), this is the list or group that owns the objects being modified -- every object that has special is_undo_saving optimizations should check for this being non-null, and check if IsChildOf(undo_save_owner) -- if true, they should save!
   
-  static ContextFlag    in_wait_proc; // context -- don't do WaitProc
+  static ContextFlag    in_wait_proc;
+  // #NO_SAVE #READ_ONLY context -- don't do WaitProc
 
   static taBase*        RootFindFromPath(const String& path, MemberDef*& ret_md);
   // find an object based on its path relative to either root or a project-relative path from taBase::GetPathFromProj -- looks at the start of the path -- if it starts with .projects then root is used as the parent, otherwise taProjects::cur_proj is used as the parent (if non-null) -- use this for all generic path finding, and use GetPathFromProj for most path saving

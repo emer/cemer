@@ -35,7 +35,7 @@ public:
         bool modal_ = false, QObject* parent = 0);
   ~taiEditOfDefaultDataHost();
 protected:
-  void         Enum_Members() override; // called by Constr_impl to fill memb_el[]
+  void     Constr_Members() override; // called by Constr_impl to fill memb_el[]
 private:
   explicit taiEditOfDefaultDataHost(taiEditOfDefaultDataHost&)      { }; // avoid copy constr bug
 };
@@ -56,11 +56,24 @@ taiEditOfDefaultDataHost::~taiEditOfDefaultDataHost(){
   mspace.Reset();
 }
 
-void taiEditOfDefaultDataHost::Enum_Members() {
-  for (int i = 0; i < typ->members.size; ++i){
-    MemberDef* md = new MemberDef(*(typ->members.FastEl(i)));
+void taiEditOfDefaultDataHost::Constr_Members() {
+  for (int i = 0; i < typ->static_members.size; ++i){
+    MemberDef* org_md = typ->static_members.FastEl(i);
+    MemberDef* md = new MemberDef(*org_md);
     mspace.Add(md);
-    md->im = typ->members.FastEl(i)->im;        // set this here
+    md->im = org_md->im;        // set this here
+    if (md->im != NULL) {
+      taiMemberOfTypeDefault* tdm = new taiMemberOfTypeDefault(md, typ);
+      tdm->bid = md->im->bid + 1;
+      tdm->AddMember(md);
+    }
+    memb_el(0).Add(md);
+  }
+  for (int i = 0; i < typ->members.size; ++i){
+    MemberDef* org_md = typ->members.FastEl(i);
+    MemberDef* md = new MemberDef(*org_md);
+    mspace.Add(md);
+    md->im = org_md->im;        // set this here
     if (md->im != NULL) {
       taiMemberOfTypeDefault* tdm = new taiMemberOfTypeDefault(md, typ);
       tdm->bid = md->im->bid + 1;

@@ -58,7 +58,7 @@ protected:
      taiWidget_List* dl);
   void         Constr_RegNotifies() override;
 //  void       DoConstr_Dialog(iDialogEditor*& dlg) override;
-  virtual void         Enum_Members(); // called by Constr_impl to fill memb_el[]
+  virtual void Constr_Members(); // called by Constr_impl to fill memb_el[]
   void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) override;
   void         Ok_impl() override;
 };

@@ -55,7 +55,7 @@ protected: //
   // we maintain several lists to simply mgt and notify handling
   taBase_RefList        refs; // the data members from the Program
   taBase_RefList        refs_struct; // structural guys: arg and var lists themselves, gp
-  void         Enum_Members() override;
+  void         Constr_Members() override;
   void         Constr_Widget_Labels() override;
   void         Cancel_impl() override;
   MemberDef*   GetMemberPropsForSelect(int sel_idx, taBase** base,

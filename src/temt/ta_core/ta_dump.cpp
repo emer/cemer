@@ -304,7 +304,12 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
 
 int TypeDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent) {
   if(IsActualClassNoEff()) {
-    return members.Dump_Save_PathR(strm, base, par, indent);
+    if(HasOption("STATIC_MEMBERS")) {
+      return static_members.Dump_Save_PathR(strm, base, par, indent);
+    }
+    else {
+      return members.Dump_Save_PathR(strm, base, par, indent);
+    }
   }
   return false;
 }
@@ -321,7 +326,12 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
     }
     else {
       strm << " {\n";
-      members.Dump_Save(strm, base, par, indent+1);
+      if(HasOption("STATIC_MEMBERS")) {
+        static_members.Dump_Save(strm, base, par, indent+1);
+      }
+      else {
+        members.Dump_Save(strm, base, par, indent+1);
+      }
     }
   } //NOTE: shouldn't this never happen???
   else {
@@ -971,7 +981,12 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
       taMisc::Warning("Missing '{' in dump file for type:",name);
       return false;
     }
-    return members.Dump_Load(strm, base, par);
+    if(HasOption("STATIC_MEMBERS")) {
+      return static_members.Dump_Load(strm, base, par);
+    }
+    else {
+      return members.Dump_Load(strm, base, par);
+    }
   }
   else {
     c = taMisc::skip_white(strm);

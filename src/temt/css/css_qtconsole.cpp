@@ -102,6 +102,11 @@ int QcssConsole::autocompletePath(String cmd_b4, String cmd, QStringList& lst) {
     if(md->name(0,len) == mb_name)
       lst.append(par_path + md->name);
   }
+  for(int i=0;i<par_td->static_members.size;i++) {
+    MemberDef* md = par_td->static_members.FastEl(i);
+    if(md->name(0,len) == mb_name)
+      lst.append(par_path + md->name);
+  }
   for(int i=0;i<par_td->methods.size;i++) {
     MethodDef* md = par_td->methods.FastEl(i);
     if(md->name(0,len) == mb_name)

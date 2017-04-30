@@ -49,9 +49,9 @@ class TA_API taRootBase: public taFBase {
   // ##CAT_Project ##EXPAND_DEF_2 base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taFBase)
 public:
-  static TypeDef*       root_type;      // set in Startup_Main
+  static TypeDef*       root_type;      // #READ_ONLY #NO_SAVE set in Startup_Main
   static taRootBase*    instance();
-  static bool           openProject;    // #NO_SHOW #NO_SAVE set to true if any project gets opened
+  static bool           openProject;    // #HIDDEN #NO_SAVE set to true if any project gets opened
 
   String                version;        // #READ_ONLY #SHOW current version number
   taBase_List           templates;      // #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!

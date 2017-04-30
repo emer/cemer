@@ -70,10 +70,10 @@ public:
     Y = 1,
   };
 
-  static float          mark_pts[160]; // [2*n] list of X,Y points used in markers
-  static int            mark_pts_n; // total number of mark_pts
-  static int            mark_start[16]; // [MarkerStyle_MAX] -- for each MakerStyle, starting index into mark_pts
-  static int            mark_n[16]; // [MarkerStyle_MAX] -- for each MakerStyle, number of mark_pts used
+  static float          mark_pts[160]; // #HIDDEN #NO_SAVE [2*n] list of X,Y points used in markers
+  static int            mark_pts_n; // #HIDDEN #NO_SAVE total number of mark_pts
+  static int            mark_start[16]; // #HIDDEN #NO_SAVE [MarkerStyle_MAX] -- for each MakerStyle, starting index into mark_pts
+  static int            mark_n[16]; // #HIDDEN #NO_SAVE [MarkerStyle_MAX] -- for each MakerStyle, number of mark_pts used
 
   bool                  value_color_mode;
   LineStyle             lineStyle;
@@ -188,10 +188,10 @@ public:
 
   static void		initClass();
 
-  static float          mark_pts[160]; // [2*n] list of X,Y points used in markers
-  static int            mark_pts_n; // total number of mark_pts
-  static int            mark_start[16]; // [MarkerStyle_MAX] -- for each MakerStyle, starting index into mark_pts
-  static int            mark_n[16]; // [MarkerStyle_MAX] -- for each MakerStyle, number of mark_pts used
+  static float          mark_pts[160]; // #HIDDEN #NO_SAVE [2*n] list of X,Y points used in markers
+  static int            mark_pts_n; // #HIDDEN #NO_SAVE total number of mark_pts
+  static int            mark_start[16]; // #HIDDEN #NO_SAVE [MarkerStyle_MAX] -- for each MakerStyle, starting index into mark_pts
+  static int            mark_n[16]; // #HIDDEN #NO_SAVE [MarkerStyle_MAX] -- for each MakerStyle, number of mark_pts used
 
   inline float          mark_pt(int idx, int xy)
   { return marker_size_ * mark_pts[idx * 2 + xy]; }

@@ -1001,6 +1001,11 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
     cssEl* tmp = GetMemberEl_impl(type_def, (void*)ths, md);
     ps->hard_vars.PushUniqNameNew(tmp);
   }
+  for(int i=0; i<type_def->static_members.size; i++) {
+    MemberDef* md = type_def->static_members.FastEl(i);
+    cssEl* tmp = GetMemberEl_impl(type_def, (void*)ths, md);
+    ps->hard_vars.PushUniqNameNew(tmp);
+  }
   for(int i=0; i<type_def->methods.size; i++) {
     MethodDef* md = type_def->methods.FastEl(i);
     cssEl* tmp = GetMethodEl_impl(type_def, (void*)ths, md);

@@ -31,8 +31,8 @@ class TA_API T3GraphViewNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
-  static float 		frame_margin; // = .05 size of margin around stage for frame
-  static float 		frame_width; // = .02 width of frame itself
+  static float 		frame_margin; // #HIDDEN #NO_SAVE = .05 size of margin around stage for frame
+  static float 		frame_width; // #HIDDEN #NO_SAVE = .02 width of frame itself
   static void		initClass();
 
   float                 width;
@@ -69,8 +69,8 @@ typedef T3NodeParent inherited;
   TA_SO_NODE_HEADER(T3GraphViewNode);
 #endif // def __MAKETA__
 public:
-  static float 		frame_margin; // = .05 size of margin around stage for frame
-  static float 		frame_width; // = .02 width of frame itself
+  static float 		frame_margin; // #HIDDEN #NO_SAVE = .05 size of margin around stage for frame
+  static float 		frame_width; // #HIDDEN #NO_SAVE = .02 width of frame itself
   static void		initClass();
 
   T3GraphViewNode(T3DataView* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);

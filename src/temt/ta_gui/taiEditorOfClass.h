@@ -128,7 +128,8 @@ protected:
 
   void                  InitGuiFields(bool virt = true) override;
   void                  Constr_impl() override;
-  virtual void          Enum_Members(); // called by Constr_impl to fill memb_el[]
+  virtual void          Constr_Members(); // called by Constr_impl to fill memb_el[]
+  virtual void          Constr_Members_impl(MemberSpace& ms);
   void                  Constr_Methods_impl() override;
   void                  ClearBody_impl() override;
   void                  Constr_Strings() override;

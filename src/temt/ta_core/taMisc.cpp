@@ -2107,6 +2107,20 @@ void taMisc::Init_Types_Gui(bool gui) {
           }
         }
       }
+      
+      for (int j=0; j < td->static_members.size; ++j) {
+        MemberDef* md = td->static_members.FastEl(j);
+        if (md->owner->owner != td) continue; // if we do not own this mdef, skip
+        for (int k=0; k < i_memb_space.size; ++k) {
+          taiMember* tim_i = (taiMember*) i_memb_space.FastEl(k)->GetInstance();
+          bid = tim_i->BidForMember(md,td);
+          if (bid > 0) {
+            taiMember* tim = tim_i->MembInst(md,td);
+            tim->bid = bid;
+            tim->AddMember(md);
+          }
+        }
+      }
 
       for(int j=0; j < td->sub_types.size; ++j) {
         TypeDef* subt = td->sub_types.FastEl(j);

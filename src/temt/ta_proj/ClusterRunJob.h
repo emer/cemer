@@ -30,7 +30,7 @@ class TA_API ClusterRunJob : public taNBase {
   // contains information about a single cluster run job -- data typically maintained in tables in ClusterRun -- available here for currently running job if running on a cluster
 INHERITED(taNBase)
 public:
-  static        ClusterRunJob*  cur_job; // #NO_SAVE current job data if this emergent process is running on a cluster at the current time, and GetCurJob() method has been run successfully
+  static        ClusterRunJob*  cur_job; // #NO_SAVE #HIDDEN current job data if this emergent process is running on a cluster at the current time, and GetCurJob() method has been run successfully
   
   String        tag;            // unique tag id for this job -- all files etc are named according to this tag
   String        label;          // label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run

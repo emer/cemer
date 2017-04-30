@@ -52,8 +52,8 @@ friend class FrameView_List;
 friend class DockView_List;
 //friend class WindowState;
 public:
-  static TypeDef*       def_browser_type; // type of the default browser, us unless replaced
-  static TypeDef*       def_viewer_type; // type of the default viewer, us unless replaced
+  static TypeDef*       def_browser_type; // #HIDDEN #NO_SAVE type of the default browser, us unless replaced
+  static TypeDef*       def_viewer_type; // #HIDDEN #NO_SAVE type of the default viewer, us unless replaced
 
   static MainWindowViewer* NewBrowser(taBase* root, MemberDef* root_md = NULL, bool is_root = false);
     // makes a standard 2-pane taBase browser

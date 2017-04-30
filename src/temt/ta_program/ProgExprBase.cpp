@@ -1957,14 +1957,20 @@ void ProgExprBase::GetGlobalVars(taBase_List* tokens, taBase* scope, TypeDef* sc
 
 void ProgExprBase::GetMembersForType(TypeDef *td, MemberSpace* members, bool just_static) {
   if (td == NULL || members == NULL) return;
-  
-  MemberSpace* mbs = &td->members;
-  for (int i = 0; i < mbs->size; ++i) {
-    MemberDef* mbr = mbs->FastEl(i);
-    if (just_static && !mbr->is_static) {
-      continue;
+
+  if(just_static) {
+    MemberSpace* mbs = &td->static_members;
+    for (int i = 0; i < mbs->size; ++i) {
+      MemberDef* mbr = mbs->FastEl(i);
+      members->Link(mbr);
     }
-    members->Link(mbr);
+  }
+  else {
+    MemberSpace* mbs = &td->members;
+    for (int i = 0; i < mbs->size; ++i) {
+      MemberDef* mbr = mbs->FastEl(i);
+      members->Link(mbr);
+    }
   }
   members->Sort();
 }

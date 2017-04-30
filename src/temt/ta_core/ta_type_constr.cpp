@@ -161,7 +161,26 @@ void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
       MemberDef* md;
       md = new MemberDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
 			 dt->off, dt->is_static, dt->addr, dt->fun_ptr);
-      tp.members.AddUniqNameNew(md);
+      if(dt->is_static) {
+        tp.static_members.AddUniqNameNew(md);
+        // todo: when we clean this up..
+        // if(md->HasOption("NO_SHOW")) {
+        //     taMisc::Info("Member comment directive error: NO_SHOW is not supported -- use HIDDEN", tp.name, "::", md->name, dt->opts);
+        // }
+          
+        if(!tp.HasOption("STATIC_MEMBERS")) {
+          if(!md->HasOption("NO_SAVE")) {
+            taMisc::DebugInfo(tp.name, "::", md->name, dt->opts, "\nMember comment directive error: this static member is not marked as #NO_SAVE -- static members are not saved unless class is marked as STATIC_MEMBERS -- so #NO_SAVE is purely cosmetic but we force you to acknowledge this fact with this warning message :)");
+          }
+          if(!(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") || md->HasOption("NO_SHOW"))
+             || md->HasOption("SHOW")) {
+            taMisc::DebugInfo(tp.name, "::", md->name, dt->opts, "\nMember comment directive error: this static member is not marked as #READ_ONLY or #HIDDEN -- static members are not shown in editor unless class is marked as STATIC_MEMBERS -- so these comment directives are purely cosmetic but we force you to acknowledge this fact with this warning message :)");
+          }
+        }
+      }
+      else {
+        tp.members.AddUniqNameNew(md);
+      }
     }
     dt++;
   }

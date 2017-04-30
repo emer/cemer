@@ -141,6 +141,7 @@ public:
   EnumSpace     enum_vals;      // if type is an enum, these are the labels
   TypeSpace     sub_types;      // sub types scoped within class (incl enums)
   MemberSpace   members;        // member variables for class
+  MemberSpace   static_members; // static member variables for class
   PropertySpace properties;     // properties for class
   MethodSpace   methods;        // member functions (methods) for class
   String_PArray ignore_meths;   // methods to be ignored

@@ -32,8 +32,8 @@ class E_API T3UnitNode: public T3NodeLeaf {
   Q_OBJECT
   INHERITED(T3NodeLeaf)
 public:
-  static float	base_height; // #DEF_0.1 height when not active or empty
-  static float	max_height; // #DEF_0.8 height when fully active
+  static float	base_height; // #HIDDEN #NO_SAVE #DEF_0.1 height when not active or empty
+  static float	max_height; // #HIDDEN #NO_SAVE #DEF_0.8 height when fully active
 
   float         spacing;		      // unit spacing
   float	        disp_scale;		      // overall scaling
@@ -63,8 +63,8 @@ typedef T3NodeLeaf inherited;
 #endif
 friend class T3UnitGroupNode;
 public:
-  static float	base_height; // #DEF_0.1 height when not active or empty
-  static float	max_height; // #DEF_0.8 height when fully active
+  static float	base_height; // #HIDDEN #NO_SAVE #DEF_0.1 height when not active or empty
+  static float	max_height; // #HIDDEN #NO_SAVE #DEF_0.8 height when fully active
 
   static void	initClass();
 

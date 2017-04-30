@@ -77,7 +77,7 @@ class E_API ConGroup : public ConGroup_core {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE ##CAT_Network connection group -- manages one projection's worth of connections at a unit level -- can be either Recv or Send
 public:
   static float  null_rval;      // #IGNORE null return value for reference funs
-  static int    vec_chunk_targ; // #READ_ONLY #DEF_8 target chunk size for vectorized operations over connections -- is currently set to 8 for all types of processors so that the weight files have a consistent layout -- however it can be set dynamically prior to building the network to experiment with different values -- affects allocation modulus
+  static int    vec_chunk_targ; // #READ_ONLY #NO_SAVE #DEF_8 target chunk size for vectorized operations over connections -- is currently set to 8 for all types of processors so that the weight files have a consistent layout -- however it can be set dynamically prior to building the network to experiment with different values -- affects allocation modulus
 
   Projection*   prjn; // #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer to the projection which created these connections -- has the source con_type and con spec information
   ConSpec*      con_spec; // #IGNORE con spec that we use: controlled entirely by the projection!

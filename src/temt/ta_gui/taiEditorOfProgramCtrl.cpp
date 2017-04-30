@@ -65,7 +65,7 @@ void taiEditorOfProgramCtrl::Cancel_impl() {
   inherited::Cancel_impl();
 }
 
-void taiEditorOfProgramCtrl::Enum_Members() {
+void taiEditorOfProgramCtrl::Constr_Members() {
   // we show all sections
   for (int j = 0; j < MS_CNT; ++j) {
     show_set(j) = true;

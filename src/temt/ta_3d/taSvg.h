@@ -54,9 +54,9 @@ public:
     RIGHT,                      // right justified text
   };
 
-  static const float  res;      // resolution for generating output ( = 1000.0f)
-
-  static taSvgPtr cur_inst;       // current instance of svg for rendering
+  static const float  res;      // #HIDDEN #NO_SAVE resolution for generating output ( = 1000.0f)
+  static taSvgPtr cur_inst;     // #HIDDEN #NO_SAVE current instance of svg for rendering
+  
 #ifdef TA_QT3D
 
 #else // TA_QT3D

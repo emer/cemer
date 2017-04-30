@@ -78,6 +78,8 @@ void TypeDef::Initialize() {
   sub_types.owner = this;
   members.name = "members";
   members.owner = this;
+  static_members.name = "static_members";
+  static_members.owner = this;
   properties.name = "properties";
   properties.owner = this;
   methods.name = "methods";
@@ -192,6 +194,7 @@ void TypeDef::Copy_(const TypeDef& cp) {
   //  sub_types         = cp.sub_types;
   sub_types.Duplicate(cp.sub_types);// important: add to subtypes..
   members       = cp.members;
+  static_members = cp.static_members;
   properties    = cp.properties;
   methods       = cp.methods;
   templ_pars    = cp.templ_pars;
@@ -368,6 +371,11 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
     if(md->owner == &(old->members))
       members.ReplaceIdx(i, md->Clone());
   }
+  for(int i=0; i<static_members.size; i++) {
+    MemberDef* md = static_members.FastEl(i);
+    if(md->owner == &(old->static_members))
+      static_members.ReplaceIdx(i, md->Clone());
+  }
   for(int i=0; i<methods.size; i++) {
     MethodDef* md = methods.FastEl(i);
     if(md->owner == &(old->methods))
@@ -379,6 +387,26 @@ void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     if(md->owner != &members)   // only for members we own
+      continue;
+
+    for(int j=0; j<ol.size; j++) {
+      TypeDef* old_st = ol.FastEl(j);
+      TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
+
+      if(md->type == old_st)
+        md->type = new_st;
+      if(md->type->IsTemplInst()) {
+        if(md->type->templ_pars.ReplaceLinkAll(old_st, new_st)) {
+          // update name after replacing
+          md->type->name = md->type->name.before("_"); // todo: brazen hack
+          md->type->name = md->type->GetTemplInstName(md->type->templ_pars);
+        }
+      }
+    }
+  }
+  for(int i=0; i<static_members.size; i++) {
+    MemberDef* md = static_members.FastEl(i);
+    if(md->owner != &static_members)   // only for static_members we own
       continue;
 
     for(int j=0; j<ol.size; j++) {
@@ -814,6 +842,7 @@ TypeDef* TypeDef::AddParent(TypeDef* td, int p_off) {
   enum_vals.BorrowUniqNameOld(td->enum_vals);
   sub_types.BorrowUniqNameOld(td->sub_types);
   members.BorrowUniqNameOld(td->members);
+  static_members.BorrowUniqNameOld(td->static_members);
   properties.BorrowUniqNameOld(td->properties);
   methods.BorrowUniqNameOld(td->methods);
   return td;
@@ -866,6 +895,7 @@ void TypeDef::AddParentData() {
     enum_vals.BorrowUniqNameOldFirst(par->enum_vals);
     sub_types.BorrowUniqNameOldFirst(par->sub_types);
     members.BorrowUniqNameOldFirst(par->members);
+    static_members.BorrowUniqNameOldFirst(par->static_members);
     properties.BorrowUniqNameOldFirst(par->properties);
     methods.BorrowUniqNameOldFirst(par->methods);
   }
@@ -976,7 +1006,7 @@ void TypeDef::ComputeMembBaseOff() {
     TypeDef* mo = md->GetOwnerType();
 
     // fix the COMMENT_UPDATE_ONLY guys!!
-    if(md->off == NULL && !md->is_static && md->HasOption("COMMENT_UPDATE_ONLY")) {
+    if(md->off == NULL && md->HasOption("COMMENT_UPDATE_ONLY")) {
       MemberDef* par_md = NULL;
       for(int pi=0; pi<parents.size; pi++) {
         par_md = parents.FastEl(pi)->members.FindName(md->name);
@@ -1221,13 +1251,6 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
     int idx = pth.index('[', -1);
     String group_path = pth.before(idx);
     md = own_td->members.FindName(group_path);
-    if(md) {
-//      if (md->type) {
-//        if (md->type->DerivesFrom(&TA_taGroup_impl)) {
-//          
-//        }
-//      }
-    }
   }
   else {
     md = own_td->members.FindName(pth);
@@ -1519,7 +1542,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
         continue;
     }
     else {
-      if(md->is_static || md->HasOption("NO_SAVE"))
+      if(md->HasOption("NO_SAVE"))
         continue;
     }
     if(sc == SC_DISPLAY) {
@@ -3086,6 +3109,7 @@ String TypeDef::GetHTML(bool gendoc) const {
   rval.cat("<p>Index: <a href=\"#subtypes\">SubTypes</a>, ");
 
   rval.cat("<a href=\"#members\">Members</a>, ");
+  rval.cat("<a href=\"#static_members\">Static Members</a>, ");
   rval.cat("<a href=\"#methods\">Methods</a>, ");
   rval.cat("<a href=\"#expert_members\">Expert Members</a>, ");
   rval.cat("<a href=\"#expert_methods\">Expert Methods</a></p>");
@@ -3151,7 +3175,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     String_PArray meth_idx;
     for(int i=0;i<methods.size;i++) {
       MethodDef* md = methods[i];
-      if(md->HasOption("EXPERT")) continue;
+      if(md->HasOption("EXPERT") || md->is_static) continue;
 #ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
 #endif
@@ -3166,6 +3190,47 @@ String TypeDef::GetHTML(bool gendoc) const {
     rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "", "", gendoc));
   }
 
+  ///////////////////////////////////////////////////////
+  //    STATIC members and methods
+  {
+    rval.cat("<hr />\n");
+    rval.cat("<h2>Static Members Documentation</h2>\n");
+
+    /////////////////////////////////////////////////////////////////////
+    // collect the members and methods into string arrays for sorting
+    String_PArray memb_idx;
+    for(int i=0;i<static_members.size;i++) {
+      MemberDef* md = static_members[i];
+      if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT"))
+        continue;
+#ifndef NO_TA_BASE
+      if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+#endif
+      String cat = md->GetCat();
+      if(cat == "IGNORE") continue;
+      if(cat.empty()) cat = "_NoCategory";
+      String key = cat + ":" + md->name;
+      memb_idx.Add(key);
+    }
+    memb_idx.Sort();              // sorts by category then key, in effect
+
+    String_PArray meth_idx;
+    for(int i=0;i<methods.size;i++) {
+      MethodDef* md = methods[i];
+      if(md->HasOption("EXPERT") || !md->is_static) continue;
+#ifndef NO_TA_BASE
+      if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+#endif
+      String cat = md->GetCat();
+      if(cat == "IGNORE") continue;
+      if(cat.empty()) cat = "_NoCategory";
+      String key = cat + ":" + md->name;
+      meth_idx.Add(key);
+    }
+    meth_idx.Sort();              // sorts by category then key, in effect
+    rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "", "", gendoc));
+  }
+  
   ///////////////////////////////////////////////////////
   //    EXPERT members and methods
   {

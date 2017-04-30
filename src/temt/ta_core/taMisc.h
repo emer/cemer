@@ -197,7 +197,7 @@ public:
 taTypeDef_Of(taMisc);
 
 class TA_API taMisc {
-  // #NO_TOKENS #INSTANCE ##STATIC_COMPLETION global parameters and functions for the application
+  // #NO_TOKENS #INSTANCE ##STATIC_COMPLETION ##STATIC_MEMBERS global parameters and functions for the application
 friend class InitProcRegistrar;
 public:
 

@@ -121,7 +121,7 @@ void iDialogObjDiffBrowser::Constr() {
 
   QHBoxLayout* lay = new QHBoxLayout();
   btnAllA = new QPushButton("Toggle All &A's", this);
-  btnAllA->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the selectable actions for the A item -- i.e., make the A equivalent to the B"));
+  btnAllA->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the visible actions for the A item -- i.e., make the A equivalent to the B -- collapse parts you don't want to set"));
   btnAllA->setDefault(false);
   btnAllA->setAutoDefault(false);
   lay->addWidget(btnAllA);
@@ -134,7 +134,7 @@ void iDialogObjDiffBrowser::Constr() {
   lay->addStretch();
 
   btnAllB = new QPushButton("Toggle All &B's", this);
-  btnAllB->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection all the selectable actions for the B item -- i.e., make the B equivalent to the A"));
+  btnAllB->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the svisible actions for the B item -- i.e., make the B equivalent to the A -- collapse parts you don't want to set"));
   btnAllB->setDefault(false);
   btnAllB->setAutoDefault(false);
   lay->addWidget(btnAllB);

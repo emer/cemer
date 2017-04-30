@@ -55,7 +55,7 @@ public:
   static void           GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
   // #IGNORE get file properties for given type
   static String_Array   image_exts;
-  // #HIDDEN list of image extensions in one-to-one correspondence with ImageFormat enum
+  // #HIDDEN #NO_SAVE list of image extensions in one-to-one correspondence with ImageFormat enum
 
   bool                  visible; // #HIDDEN whether toolbar window is being shown to user
 

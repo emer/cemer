@@ -35,8 +35,8 @@ class E_API T3UnitGroupNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
-  static float		height; // nominal amount of height, so doesn't vanish
-  static float		inset; // amount inset from the layer
+  static float		height; // #HIDDEN #NO_SAVE nominal amount of height, so doesn't vanish
+  static float		inset; // #HIDDEN #NO_SAVE amount inset from the layer
 
   iVec2i		geom; //note, not a field
   float			disp_scale;
@@ -67,8 +67,8 @@ typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3UnitGroupNode);
 #endif // def __MAKETA__
 public:
-  static float		height; // nominal amount of height, so doesn't vanish
-  static float		inset; // amount inset from the layer
+  static float		height; // #HIDDEN #NO_SAVE nominal amount of height, so doesn't vanish
+  static float		inset; // #HIDDEN #NO_SAVE amount inset from the layer
 
   static void		initClass();
 #ifndef __MAKETA__

@@ -49,11 +49,11 @@ public:
   };
 
  static int            lookup_levels;
- // #DEF_64 number of levels to use for lookup tables, per dimension (e.g., R,G,B) -- cubic growth with increasing levels -- be careful!
+ // #HIDDEN #NO_SAVE #DEF_64 number of levels to use for lookup tables, per dimension (e.g., R,G,B) -- cubic growth with increasing levels -- be careful!
  static int            lookup_levels_m1;
  // #IGNORE ll - 1
  static bool            use_lookup;
- // #DEF_true use the lookup function to make things faster
+ // #HIDDEN #NO_SAVE #DEF_true use the lookup function to make things faster
  
  static float_Matrix   srgb_to_oppo;
  // #HIDDEN #NO_SAVE lookup table for srgb to opponent colors, dims: [N_OP_C][R][G][B]
