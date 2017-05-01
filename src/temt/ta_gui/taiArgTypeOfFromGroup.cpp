@@ -112,6 +112,9 @@ MemberDef* taiArgTypeOfFromGroup::GetFromMd() {
     mb_nm = GetOptionAfter("FROM_LIST_");
   if (!mb_nm.empty()) {
     from_md = typ->members.FindName(mb_nm);
+    if(!from_md) {
+      from_md = typ->static_members.FindName(mb_nm);
+    }
   }
   return from_md;
 }

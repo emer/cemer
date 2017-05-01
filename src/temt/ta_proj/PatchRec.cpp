@@ -70,9 +70,29 @@ taBase* PatchRec::FindPathRobust(taProject* proj) {
     return CheckObjType(proj, rval, obj_path_idx);
   }
   // todo: more fancy stuff here..
+
+  if(TestWarning(!rval, "FindPathRobust",
+                 "unable to find key object using following paths -- failing:\n",
+                 obj_path_names, "\n",
+                 obj_path_idx)) {
+    return NULL;
+  }
   return rval;
 }
 
+taList_impl* PatchRec::FindPathRobust_List(taProject* proj) {
+  taBase* obj = FindPathRobust(proj);
+  if(!obj) return NULL;
+  if(TestWarning(!obj->InheritsFrom(&TA_taList_impl), "FindPathRobust_List",
+                 "key object found at path is not of a List / Group type as required -- paths:\n",
+                 obj_path_names, "\n",
+                 obj_path_idx, "\nFound Obj Path and Type:",
+                 obj->DisplayPath(), "type:", obj->GetTypeDef()->name)) {
+    return NULL;
+  }
+  return (taList_impl*)obj;
+}
+  
 bool PatchRec::ApplyPatch(taProject* proj) {
   bool rval = false;
   switch(action) {
@@ -100,8 +120,8 @@ bool PatchRec::ApplyPatch(taProject* proj) {
   failed = !rval;
   if(failed) {
     taMisc::Warning("Apply of patch:", GetDisplayName(), "FAILED");
-    SigEmitUpdated();
   }
+  SigEmitUpdated();
   return rval;
 }
 
@@ -150,19 +170,41 @@ bool PatchRec::ApplyPatch_replace(taProject* proj) {
 }
   
 bool PatchRec::ApplyPatch_insert(taProject* proj) {
-  taBase* own = FindPathRobust(proj);
+  taList_impl* own = FindPathRobust_List(proj);
   if(!own) return false;
   TypeDef* new_typ = taMisc::FindTypeName(new_obj_type, true);
   if(!new_typ) return false;
   taBase* tok = taBase::MakeToken(new_typ);
 
-  // todo: get before, after and also track any last_before_path etc
-  taBase* new_guy = own->CopyChildBefore(tok, NULL);
-  if(!new_guy) {
-    return false;
+  int before = 0;
+  int after = 1;
+  if(path_before.contains("[")) {
+    before = path_before.between("[", "]").toInt();
   }
-  new_guy->Load_String(value);
-  taMisc::Info("INSERT of:", new_guy->DisplayPath());
+  if(path_after.contains("[")) {
+    after = path_after.between("[", "]").toInt();
+  }
+  // todo: not sure what to do with both before and after here??
+
+  
+  // todo: track any last_before_path etc -- but not really sure we need to
+  // because source should have proper indexes!!??
+  // Patch* pat = GET_MY_OWNER(Patch);
+  // String cur_own_path = own->GetPathFromProj();
+  // if((cur_own_path == pat->last_insert_own_path && last_before_idx == before) {
+  
+  if(before >= 0 && own->size > before) {
+    own->Insert(tok, before+1);
+  }
+  else if(after >= 1 && own->size >= after) {
+    own->Insert(tok, after-1);
+  }
+  else {
+    own->Add(tok);
+  }
+  
+  tok->Load_String(value);
+  taMisc::Info("INSERT of:", tok->DisplayPath());
   return true;
 }
 

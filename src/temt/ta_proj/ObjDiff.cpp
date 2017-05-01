@@ -620,6 +620,8 @@ void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
     String mbr_path;
     if(rec->a_obj != rec->a_indep_obj) {
       mbr_path = rec->a_obj->GetPath(rec->a_indep_obj) + ".";
+      if(mbr_path.startsWith('.'))
+        mbr_path = mbr_path.after('.');
     }
     mbr_path += rec->mdef->name;
     pr->mbr_path = mbr_path;
@@ -630,7 +632,8 @@ void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
       PatchRec* pr = patch->NewPatchRec_Assign(rec->a_indep_obj, tmp_save_str);
     }
     else {                      // replace
-      PatchRec* pr = patch->NewPatchRec_Replace(rec->a_indep_obj, tmp_save_str);
+      PatchRec* pr = patch->NewPatchRec_Replace(rec->a_indep_obj, tmp_save_str,
+                                                rec->b_indep_obj);
     }
   }
   // todo: value!
@@ -642,6 +645,8 @@ void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
     String mbr_path;
     if(rec->b_obj != rec->b_indep_obj) {
       mbr_path = rec->b_obj->GetPath(rec->b_indep_obj) + ".";
+      if(mbr_path.startsWith('.'))
+        mbr_path = mbr_path.after('.');
     }
     mbr_path += rec->mdef->name;
     pr->mbr_path = mbr_path;
@@ -652,7 +657,8 @@ void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
       PatchRec* pr = patch->NewPatchRec_Assign(rec->b_indep_obj, tmp_save_str);
     }
     else {                      // replace
-      PatchRec* pr = patch->NewPatchRec_Replace(rec->b_indep_obj, tmp_save_str);
+      PatchRec* pr = patch->NewPatchRec_Replace(rec->b_indep_obj, tmp_save_str,
+                                                rec->a_indep_obj);
     }
   }
   // todo: value!
@@ -678,7 +684,7 @@ void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsObjects()) {
     rec->a_indep_obj->Save_String(tmp_save_str);
 
-    taList_impl* own_obj = (taList_impl*)rec->par_rec->b_indep_obj.ptr(); // where to add in b
+    taList_impl* own_obj = (taList_impl*)rec->par_rec->b_obj; // where to add in b
     if(!own_obj || !own_obj->InheritsFrom(&TA_taList_impl)) {
       taMisc::Warning("for Add B to A action, owning object not a list!",
                       own_obj->GetPathNames());
@@ -704,7 +710,7 @@ void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsObjects()) {
     rec->b_indep_obj->Save_String(tmp_save_str);
 
-    taList_impl* own_obj = (taList_impl*)rec->par_rec->a_indep_obj.ptr(); // where to add in a
+    taList_impl* own_obj = (taList_impl*)rec->par_rec->a_obj; // where to add in a
     if(!own_obj || !own_obj->InheritsFrom(&TA_taList_impl)) {
       taMisc::Warning("for Add B to A action, owning object not a list!",
                       own_obj->GetPathNames());

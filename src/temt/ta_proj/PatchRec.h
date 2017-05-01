@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class taProject; //
+class taList_impl; //
 
 taTypeDef_Of(PatchRec);
 
@@ -63,6 +64,8 @@ public:
 
   virtual taBase* FindPathRobust(taProject* proj);
   // find the object on the path robustly
+  virtual taList_impl* FindPathRobust_List(taProject* proj);
+  // find the object on the path robustly -- must be a taList_impl obj
   virtual taBase* CheckObjType(taProject* proj, taBase* obj, const String& path_used);
   // check that object is of the right type -- if not, do something..
 

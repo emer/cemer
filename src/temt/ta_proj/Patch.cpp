@@ -56,9 +56,10 @@ PatchRec* Patch::NewPatchRec_Assign(taBase* obj, const String& val) {
   return rval;
 }
 
-PatchRec* Patch::NewPatchRec_Replace(taBase* obj, const String& val) {
+PatchRec* Patch::NewPatchRec_Replace(taBase* obj, const String& val, taBase* new_obj) {
   PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
   rval->action = PatchRec::REPLACE;
+  rval->new_obj_type = new_obj->GetTypeDef()->name;
   return rval;
 }
 
@@ -90,8 +91,9 @@ PatchRec* Patch::NewPatchRec_Delete(taBase* obj, const String& val) {
 }
 
 bool Patch::ApplyPatch(taProject* proj) {
-  last_before_path = "";
-  last_obj_added_path = "";
+  last_insert_own_path = "";
+  last_before_idx = -1;
+  last_obj_added_idx = -1;
   proj->StructUpdate(true);
   bool rval = true;
   FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch_recs) {

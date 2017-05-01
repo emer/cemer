@@ -56,7 +56,8 @@ public:
   virtual PatchRec*  NewPatchRec_Assign(taBase* obj, const String& val);
   // #IGNORE 
 
-  virtual PatchRec*  NewPatchRec_Replace(taBase* obj, const String& val);
+  virtual PatchRec*  NewPatchRec_Replace(taBase* obj, const String& val,
+                                         taBase* new_obj);
   // #IGNORE 
 
   virtual PatchRec*  NewPatchRec_Insert
@@ -70,8 +71,9 @@ public:
   
   TA_SIMPLE_BASEFUNS(Patch);
 protected:
-  String             last_before_path; // for an insert, the last full before path
-  String             last_obj_added_path; // for an insert, the last object added for the last_before path -- becomes the new before...
+  String             last_insert_own_path; // for an insert, the last before owner path
+  int                last_before_idx; // for an insert, the last before index
+  int                last_obj_added_idx; // for an insert, the last object added for the last_before path -- becomes the new before...
     
 private:
   void Initialize()  { };
