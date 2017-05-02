@@ -36,3 +36,7 @@ void Program_TopGroup::UpdateAfterEdit_impl() {
   gp.SetBaseType(&TA_Program_Group); // don't make us, make regular groups..
   gp.el_typ = &TA_Program_Group;
 }  
+
+bool Program_TopGroup::DiffCompare(taBase* cmp_obj) {
+  return inherited::DiffCompare(cmp_obj);
+}

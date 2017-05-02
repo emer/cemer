@@ -221,8 +221,8 @@ bool taList_impl::MakeElNamesUnique() {
       if(nm2 == nm1) {
         String orig = nm2;
         nm2 = nm2 + "_" + (String)j;
-        taMisc::Warning("taList_impl::MakeElNamesUnique",
-                "names of items on the list must be unique -- renaming:",el2->DisplayPath(),"to:",nm2);
+        // taMisc::Warning("taList_impl::MakeElNamesUnique",
+        //         "names of items on the list must be unique -- renaming:",el2->DisplayPath(),"to:",nm2);
         el2->SetName(nm2);
         el2->UpdateAfterEdit(); // trigger update so visible
         unique = false;
@@ -266,8 +266,8 @@ bool taList_impl::MakeElNameUnique(taBase* itm) {
     if(itmnm == nm1) {
       String orig = itmnm;
       itmnm = itmnm + "_" + (String)FindEl_(itm);
-      taMisc::Warning("taList_impl::MakeElNameUnique",
-                      "names of items on the list must be unique -- renaming:",itm->DisplayPath(),"to:",itmnm);
+      // taMisc::Warning("taList_impl::MakeElNameUnique",
+      //                 "names of items on the list must be unique -- renaming:",itm->DisplayPath(),"to:",itmnm);
       itm->SetName(itmnm);
       itm->UpdateAfterEdit();   // trigger update so visible
       unique = false;

@@ -29,6 +29,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTreeWidget>
+#include <QCheckBox>
 
 iDialogObjDiffBrowser* iDialogObjDiffBrowser::New(ObjDiff* diffs,
                                           int font_type, QWidget* par_window_) {
@@ -52,11 +53,13 @@ iDialogObjDiffBrowser::iDialogObjDiffBrowser(const String& caption_, QWidget* pa
   add_color = new QBrush(QColor("pale green"));
   del_color = new QBrush(QColor("pink"));
   chg_color = new QBrush(Qt::yellow);
+  ctxt_color = new QBrush(QColor("LightYellow"));
 
   int darkness = 125;
   add_color_lt = new QBrush(add_color->color().darker(darkness));
   del_color_lt = new QBrush(del_color->color().darker(darkness));
   chg_color_lt = new QBrush(chg_color->color().darker(darkness));
+  ctxt_color_lt = new QBrush(ctxt_color->color().darker(darkness));
 
   off_color = new QBrush(Qt::lightGray);
 
@@ -73,9 +76,11 @@ iDialogObjDiffBrowser::~iDialogObjDiffBrowser() {
   delete add_color;
   delete del_color;
   delete chg_color;
+  delete ctxt_color;
   delete add_color_lt;
   delete del_color_lt;
   delete chg_color_lt;
+  delete ctxt_color_lt;
   delete off_color;
 }
 
@@ -83,7 +88,7 @@ void iDialogObjDiffBrowser::accept() {
   inherited::accept();
   // here is where we execute actions!
   if(!isModal()) {
-    odl->GeneratePatches(false); // todo: need a flag for whether to do it immediately
+    odl->GeneratePatches();
     delete odl;                   // all done!
   }
   odl = NULL;
@@ -120,6 +125,11 @@ void iDialogObjDiffBrowser::Constr() {
   //  layOuter->addSpacing(taiM->vsep_c);
 
   QHBoxLayout* lay = new QHBoxLayout();
+
+  chkApplyA = new QCheckBox("Apply A Changes", this);
+  chkApplyA->setToolTip(taiMisc::ToolTipPreProcess("Apply changes to the A object immediately after generating the patches, when Ok is pressed (Cancel does nothing)"));
+  lay->addWidget(chkApplyA);
+  
   btnAllA = new QPushButton("Toggle All &A's", this);
   btnAllA->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the visible actions for the A item -- i.e., make the A equivalent to the B -- collapse parts you don't want to set"));
   btnAllA->setDefault(false);
@@ -131,8 +141,13 @@ void iDialogObjDiffBrowser::Constr() {
   btnFiltA->setDefault(false);
   btnFiltA->setAutoDefault(false);
   lay->addWidget(btnFiltA);
+
   lay->addStretch();
 
+  chkApplyB = new QCheckBox("Apply B Changes", this);
+  chkApplyB->setToolTip(taiMisc::ToolTipPreProcess("Apply changes to the B object immediately after generating the patches, when Ok is pressed (Cancel does nothing)"));
+  lay->addWidget(chkApplyB);
+  
   btnAllB = new QPushButton("Toggle All &B's", this);
   btnAllB->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the svisible actions for the B item -- i.e., make the B equivalent to the A -- collapse parts you don't want to set"));
   btnAllB->setDefault(false);
@@ -144,6 +159,7 @@ void iDialogObjDiffBrowser::Constr() {
   btnFiltB->setDefault(false);
   btnFiltB->setAutoDefault(false);
   lay->addWidget(btnFiltB);
+
   lay->addStretch();
 
   layOuter->addLayout(lay);
@@ -198,6 +214,9 @@ void iDialogObjDiffBrowser::Constr() {
 
   connect(btnFiltA, SIGNAL(clicked()), this, SLOT(setFilteredA()) );
   connect(btnFiltB, SIGNAL(clicked()), this, SLOT(setFilteredB()) );
+
+  connect(chkApplyA, SIGNAL(clicked()), this, SLOT(applyAclick()) );
+  connect(chkApplyB, SIGNAL(clicked()), this, SLOT(applyBclick()) );
 
   connect(items, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
           SLOT(itemClicked(QTreeWidgetItem*,int)));
@@ -347,6 +366,12 @@ void iDialogObjDiffBrowser::AddItems() {
       witm->setCheckState(COL_B_FLG, Qt::Unchecked);
       witm->setText(COL_A_FLG, lbl_a);
       witm->setText(COL_B_FLG, lbl_b);
+    }
+    else if(rec->IsContext()) {
+      witm->setBackground(COL_A_VAL, a_off ? *ctxt_color_lt : *ctxt_color);
+      witm->setBackground(COL_A_NM, a_off ? *ctxt_color_lt : *ctxt_color);
+      witm->setBackground(COL_B_VAL, b_off ? *ctxt_color_lt : *ctxt_color);
+      witm->setBackground(COL_B_NM, b_off ? *ctxt_color_lt : *ctxt_color);
     }
   }
 
@@ -520,4 +545,12 @@ void iDialogObjDiffBrowser::setFilteredB() {
                 filter_dlg->chg, filter_dlg->nm_not, filter_dlg->nm_contains,
                 filter_dlg->val_not, filter_dlg->val_contains);
   }
+}
+
+void iDialogObjDiffBrowser::applyAclick() {
+  odl->modify_a = chkApplyA->isChecked();
+}
+
+void iDialogObjDiffBrowser::applyBclick() {
+  odl->modify_b = chkApplyB->isChecked();
 }

@@ -1079,7 +1079,7 @@ bool taProject::SvnCommitDialog(String& commit_msg, bool& updt_change_log,
   return false;
 }
 
-void taProject::SvnDiffPatch() {
+void taProject::SvnDiff() {
 }
 
 bool taProject::DiffCompare(taBase* cmp_obj) {

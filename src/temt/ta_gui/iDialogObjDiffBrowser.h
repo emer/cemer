@@ -32,6 +32,7 @@ class QTreeWidget; //
 class QTreeWidgetItem; //
 class QPushButton; //
 class QBrush; //
+class QCheckBox; //
 
 class TA_API iDialogObjDiffBrowser : public iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list
@@ -64,8 +65,10 @@ public:
   QTreeWidget*            items;        // list of items
   QPushButton*              btnAllA;
   QPushButton*              btnFiltA;
+  QCheckBox*                chkApplyA;
   QPushButton*              btnAllB;
   QPushButton*              btnFiltB;
+  QCheckBox*                chkApplyB;
   QPushButton*              btnOk;
   QPushButton*              btnCancel;
   QBrush*                   add_color;
@@ -75,6 +78,8 @@ public:
   QBrush*                   del_color_lt;
   QBrush*                   chg_color_lt;
   QBrush*                   off_color;
+  QBrush*                   ctxt_color;
+  QBrush*                   ctxt_color_lt;
 
   virtual bool  Browse(bool modal);
   // main user interface: this actually puts up the dialog -- if non-modal, will return immediately with true, otherwise returns after user selects ok or not (returns true if OK)
@@ -101,6 +106,8 @@ protected slots:
   virtual  void         setFilteredA();
   virtual  void         toggleAllB();
   virtual  void         setFilteredB();
+  virtual  void         applyAclick();
+  virtual  void         applyBclick();
   void                  itemClicked(QTreeWidgetItem* itm, int column);
 };
 

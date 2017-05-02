@@ -41,6 +41,10 @@ String PatchRec::GetDisplayName() const {
   return rval;
 }
 
+String PatchRec::GetDesc() const {
+  return obj_path_names;
+}
+
 int PatchRec::GetEnabled() const {
   return (action != NO_APPLY);
 }
@@ -95,6 +99,11 @@ taList_impl* PatchRec::FindPathRobust_List(taProject* proj) {
 }
   
 bool PatchRec::ApplyPatch(taProject* proj) {
+  if(action == NO_APPLY)
+    return true;
+
+  // todo: need some way of managing the updates from partial changes?
+  
   bool rval = false;
   switch(action) {
   case NO_APPLY: {

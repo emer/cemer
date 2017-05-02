@@ -38,10 +38,12 @@ TA_BASEFUNS_CTORS_DEFN(ObjDiff);
 
 #include <taMisc>
 #include <taiMisc>
+#include <tabMisc>
 
 void ObjDiff::Initialize() {
+  modify_a = false;
+  modify_b = false;
 }
-
 
 bool ObjDiff::DisplayDialog(bool modal_dlg) {
   iDialogObjDiffBrowser* odb = iDialogObjDiffBrowser::New(this, taiMisc::defFontSize);
@@ -94,6 +96,38 @@ int ObjDiff::DiffObjs(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
   return n_diffs;
 }
 
+
+ObjDiffRec* ObjDiff::AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_bef, int b_bef) {
+  int a_ok_idx = FastIdxFind(a_ok, a_idx);
+  int a_b4_idx = -1;
+  if(a_ok_idx > a_bef) {
+    a_b4_idx = a_ok[a_ok_idx-a_bef];
+  }
+  int b_ok_idx = FastIdxFind(b_ok, b_idx);
+  int b_b4_idx = -1;
+  if(b_ok_idx > b_bef) {
+    b_b4_idx = b_ok[b_ok_idx-b_bef];
+  }
+  taBase* a_obj = NULL;
+  if(a_b4_idx >= 0)
+    a_obj = (taBase*)list_a->SafeEl_(a_b4_idx);
+  taBase* b_obj = NULL;
+  if(b_b4_idx >= 0)
+    b_obj = (taBase*)list_b->SafeEl_(b_b4_idx);
+  if(!a_obj && !b_obj) {
+    return NULL;
+  }
+  ObjDiffRec* rec = NewRec(par_rec, ObjDiffRec::CONTEXT_B1, a_b4_idx, b_b4_idx, a_obj, b_obj);
+  if(a_obj && a_obj->InheritsFrom(&TA_taOBase)) {
+    rec->a_indep_obj = a_obj;
+  }
+  if(b_obj && b_obj->InheritsFrom(&TA_taOBase)) {
+    rec->b_indep_obj = b_obj;
+  }
+  rec->n_diffs = 0;
+  return rec;
+}
+
 int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* list_b) {
   taStringDiff str_diff;
 
@@ -114,6 +148,10 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
     taStringDiffItem& df = str_diff.diffs[i];
     
     if(df.delete_a == df.insert_b) {
+      AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                            a_ok, b_ok, 2, 2);
+      AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                            a_ok, b_ok, 1, 1);
       for(int l=0; l<df.delete_a; l++) {
         ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_B_DIFF, list_a, df.start_a+l,
                                       list_b, df.start_b+l);
@@ -121,6 +159,10 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
     }
     else {
       if(df.delete_a > 0) {     // a records exist, b do not..
+        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                              a_ok, b_ok, 2, 2);
+        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                              a_ok, b_ok, 1, 1);
         for(int l=0; l<df.delete_a; l++) {
           ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_NOT_B, list_a, df.start_a + l,
                                         list_b, df.start_b);
@@ -128,6 +170,10 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
         }
       }
       if(df.insert_b > 0) {     // b records exist, a do not..
+        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                              a_ok, b_ok, 2, 2);
+        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                              a_ok, b_ok, 1, 1);
         for(int l=0; l<df.insert_b; l++) {
           ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::B_NOT_A, list_a, df.start_a,
                                         list_b, df.start_b + l);
@@ -535,6 +581,17 @@ void ObjDiff::FastIdxRemove(int_Array& ary, int idx) {
   }
 }
 
+int ObjDiff::FastIdxFind(int_Array& ary, int idx) {
+  int st = MIN(idx, ary.size-1); // always less than or equal to idx pos
+  while(st >= 0) {
+    if(ary.FastEl(st) == idx) {
+      return st;
+    }
+    st--;
+  }
+  return -1;
+}
+
 void ObjDiff::RollBack(int rollback) {
   while(diffs.size > rollback) {
     diffs.Pop();
@@ -683,7 +740,24 @@ void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch) {
 }
 
 
-int ObjDiff::GeneratePatches(bool apply_immed) {
+void ObjDiff::SetCurSubgp(taBase* obj, Patch* pat, taProject* proj) {
+  Patch::cur_subgp = "Project";
+  if(!obj) return;
+  TypeDef* td = proj->GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFrom(&TA_taGroup_impl) && !md->HasOption("NO_SAVE") &&
+       !md->HasOption("NO_DIFF")) {
+      taGroup_impl* gp = (taGroup_impl*)md->GetOff(proj);
+      if(gp->IsParentOf(obj)) {
+        Patch::cur_subgp = md->name;
+        break;
+      }
+    }
+  }
+}
+
+int ObjDiff::GeneratePatches() {
   if(!a_top || !b_top) return -1; // nothing
   taProject* proj_a = (taProject*)a_top.ptr()->GetThisOrOwner(&TA_taProject);
   taProject* proj_b = (taProject*)b_top.ptr()->GetThisOrOwner(&TA_taProject);
@@ -699,7 +773,14 @@ int ObjDiff::GeneratePatches(bool apply_immed) {
   patch_a->SetName(a_top->GetName() + "_from_" + b_top->GetName());
   patch_b->SetName(b_top->GetName() + "_from_" + a_top->GetName());
 
+  Patch::cur_subgp = "";
+  
   int n_patches = 0;
+
+  bool proj_diff = false;
+  if(a_top == proj_a) {
+    proj_diff = true;
+  }
   
   for(int i=0; i < diffs.size; i++) {
     ObjDiffRec* rec = diffs[i];
@@ -709,7 +790,12 @@ int ObjDiff::GeneratePatches(bool apply_immed) {
     }
     n_patches++;
 
-    // todo: set cur_subgp if possible!  look for proj a_top and then major group in there.
+    if(proj_diff) {
+      if(rec->a_indep_obj)
+        SetCurSubgp(rec->a_indep_obj, patch_a, proj_a);
+      else
+        SetCurSubgp(rec->b_indep_obj, patch_b, proj_b);
+    }
     
     //////////////////////////////////
     // Copy
@@ -752,6 +838,20 @@ int ObjDiff::GeneratePatches(bool apply_immed) {
   
   patch_a->SigEmitUpdated();
   patch_b->SigEmitUpdated();
+
+  if(modify_a) {
+    patch_a->ApplyPatch(proj_a);
+  }
+  else {
+    tabMisc::DelayedFunCall_gui(patch_a, "BrowserSelectMe");
+  }
+  if(modify_b) {
+    patch_b->ApplyPatch(proj_b);
+  }
+  else {
+    tabMisc::DelayedFunCall_gui(patch_b, "BrowserSelectMe");
+  }
+  
   return n_patches;
 }
 

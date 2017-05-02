@@ -86,7 +86,9 @@ public:
   virtual bool  NewRec_Insert
     (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
   // #IGNORE 
-  
+
+  String        GetDesc() const override;
+  String        GetName() const override { return GetDisplayName(); }
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ControlPanel"; }
   int           GetEnabled() const override;

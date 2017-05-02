@@ -39,6 +39,8 @@ INHERITED(taNBase)
 public:
   taBaseRef             a_top;  // top-level A object for comparison
   taBaseRef             b_top;  // top-level B object for comparison
+  bool                  modify_a; // apply changes to A after generating patches?
+  bool                  modify_b; // apply changes to B after generating patches?
   
   ObjDiffRec_List       diffs;
   // #NO_SAVE diff records, in a parallel, side-by-side format
@@ -49,8 +51,8 @@ public:
   virtual bool  DisplayDialog(bool modal_dlg);
   // display a dialog showing the differences -- returns true if user said Ok to apply changes -- if non-modal, then dialog manages everything and does the diffs itself
 
-  virtual int  GeneratePatches(bool apply_immed);
-  // generate Patch records to implement selected actions in these diffs -- if apply_immed set, then patches are immediately applied -- otherwise they are just saved in the Project patches group -- returns number of patch records generated
+  virtual int   GeneratePatches();
+  // generate Patch records to implement selected actions in these diffs -- if modify_a, b flags are set, then patches are immediately applied -- otherwise they are just saved in the Project patches group -- returns number of patch records generated
 
   //////////////////////////////////////////////
   //    IMPL below
@@ -60,6 +62,8 @@ public:
   
   virtual int  DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* list_b);
   // generate diffs based on two lists
+  virtual ObjDiffRec* AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_bef, int b_bef);
+    // context items before list diffs
   
   virtual int  DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj);
   // generate diffs for members of given objects, EXCLUDING any lists
@@ -119,7 +123,10 @@ public:
 
   void FastIdxRemove(int_Array& ary, int idx);
   // fast remove of index from array -- starts at idx and moves backward
+  int FastIdxFind(int_Array& ary, int idx);
+  // fast find of index from array -- starts at idx and moves backward
 
+  virtual void SetCurSubgp(taBase* obj, Patch* pat, taProject* proj);
 
   virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch);

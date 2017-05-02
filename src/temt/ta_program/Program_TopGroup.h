@@ -30,7 +30,10 @@ class TA_API Program_TopGroup : public Program_Group {
   // top-level program group -- this one lives in the project -- has all the breakpoints
 INHERITED(Program_Group)
 public:
-  ProgBrkPt_List        break_points;
+  bool                  DiffCompare(taBase* cmp_obj) override;
+  // #BUTTON #MENU_ON_Svn #CAT_File compare this group of programs against another, pulling up a diff browser where the differences can be viewed, and then any changes selected to generate a Pach for each project that will convert from one into the other -- this is very robust and operates on separate major groups of objects -- strongly recommended for recording and communicating changes between projects
+
+ ProgBrkPt_List        break_points;
   // #NO_SAVE a list of breakpoints each associated with a Program and ProgLine where the program will be stopped if the breakpoint is enabled
 
   void  InitLinks() override;
