@@ -24,8 +24,7 @@ TA_BASEFUNS_CTORS_DEFN(Patch);
 
 String Patch::cur_subgp;
 
-PatchRec* Patch::NewPatchRec_impl(taBase* obj, const String& val,
-                                  const String& subgp) {
+PatchRec* Patch::NewRec_impl(const String& subgp) {
   PatchRec* rval = NULL;
   if(subgp.empty()) {
     rval = (PatchRec*)patch_recs.NewEl(1);
@@ -38,55 +37,38 @@ PatchRec* Patch::NewPatchRec_impl(taBase* obj, const String& val,
     }
     rval = (PatchRec*)sub->NewEl(1);
   }
-  if(obj) {
-    rval->obj_path_names = obj->GetPathFromProj();
-    rval->obj_path_idx = obj->GetPath(obj->GetOwner(&TA_taProject));
-    rval->obj_type = obj->GetTypeDef()->name;
-  }
-  else {
-    taMisc::Warning("Null obj in patch -- shouldn't happen!");
-  }
-  rval->value = val;
   return rval;
 }
 
-PatchRec* Patch::NewPatchRec_Assign(taBase* obj, const String& val) {
-  PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
-  rval->action = PatchRec::ASSIGN;
+PatchRec* Patch::NewRec_AssignMbr
+(taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val) {
+  PatchRec* rval = NewRec_impl(cur_subgp);
+  rval->NewRec_AssignMbr(trg_indep_obj, trg_mbr_obj, md, val);
   return rval;
 }
 
-PatchRec* Patch::NewPatchRec_Replace(taBase* obj, const String& val, taBase* new_obj) {
-  PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
-  rval->action = PatchRec::REPLACE;
-  rval->new_obj_type = new_obj->GetTypeDef()->name;
+PatchRec* Patch::NewRec_AssignObj(taBase* trg_obj, taBase* src_obj) {
+  PatchRec* rval = NewRec_impl(cur_subgp);
+  rval->NewRec_AssignObj(trg_obj, src_obj);
   return rval;
 }
 
-PatchRec* Patch::NewPatchRec_Insert
-(taBase* add_obj, taBase* own_obj, taBase* bef_obj, taBase* aft_obj, const String& val) {
-  PatchRec* rval = NewPatchRec_impl(own_obj, val, cur_subgp);
-  rval->action = PatchRec::INSERT;
-  rval->new_obj_type = add_obj->GetTypeDef()->name;
-
-  if(bef_obj) {
-    rval->path_before = bef_obj->GetPathNames(own_obj);
-  }
-  else {
-    rval->path_before = "NULL";
-  }
-  if(aft_obj) {
-    rval->path_after = aft_obj->GetPathNames(own_obj);
-  }
-  else {
-    rval->path_after = "NULL";
-  }
+PatchRec* Patch::NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj) {
+  PatchRec* rval = NewRec_impl(cur_subgp);
+  rval->NewRec_Replace(own_obj, trg_obj, src_obj);
   return rval;
 }
 
-PatchRec* Patch::NewPatchRec_Delete(taBase* obj, const String& val) {
-  PatchRec* rval = NewPatchRec_impl(obj, val, cur_subgp);
-  rval->action = PatchRec::DELETE;
+PatchRec* Patch::NewRec_Delete(taBase* obj) {
+  PatchRec* rval = NewRec_impl(cur_subgp);
+  rval->NewRec_Delete(obj);
+  return rval;
+}
+
+PatchRec* Patch::NewRec_Insert
+(taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj) {
+  PatchRec* rval = NewRec_impl(cur_subgp);
+  rval->NewRec_Insert(own_obj, add_obj, aft_obj, bef_obj);
   return rval;
 }
 

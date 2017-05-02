@@ -129,9 +129,6 @@ public:
   virtual void GenPatch_AddB(ObjDiffRec* rec, Patch* patch);
   
   TA_SIMPLE_BASEFUNS(ObjDiff);
-protected:
-  String tmp_save_str;     // shared string for saving large string files into
-
 private:
   void Initialize();
   void Destroy()     { };

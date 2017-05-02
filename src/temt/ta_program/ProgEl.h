@@ -87,6 +87,7 @@ public:
     NO_CODE             = 0x4000, // #NO_SHOW some program elements don't have code
   };
 
+  String                name; // #READ_ONLY the name of the program element -- generated automatically from the type name and content and used for finding elements
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
   String                code_string; // #AKA_orig_prog_code #READ_ONLY #SHOW most recently uncompiled program code -- used for reverting
@@ -185,7 +186,7 @@ public:
   // #IGNORE called after object has been moved from one location to another in the object hierarchy (i.e., list Transfer fun) -- actual functions should be put in the _impl version which should call inherited:: etc just as for UAE -- use for updating pointers etc
   // void                 UpdatePointersAfterCopy_(const taBase& cp) override;
 
-  virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
+  virtual void  UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
   // update our progvar elements after change in scope (move, copy)
   
   int           ReplaceValStr
@@ -196,7 +197,13 @@ public:
   FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
                             const taBase* par_obj, MemberDef* md) const override;
   void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
-  
+
+  virtual String GenProgName() const;
+  // generate name from program element
+  bool         HasName() const override { return true; }
+  bool         SetName(const String& nm) override;
+  String       GetName() const           override { return name; }
+
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
@@ -219,7 +226,7 @@ public:
   void         ClearBreakpoint();
   // #IGNORE just sets the flags
   
-  virtual bool          InDebugMode();
+  virtual bool InDebugMode();
   // test whether we are in debug mode or not -- calls this method on parent program group
 
   String StringFieldLookupFun(const String& cur_txt, int cur_pos,

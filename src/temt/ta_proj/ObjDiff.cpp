@@ -245,6 +245,7 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
     par_rec->b_val = b_val;
     par_rec->n_diffs = 1;
     par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
+    par_rec->SetDiffFlag(ObjDiffRec::OBJECTS);
     par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
     // this record is the only case of an A_B_DIFF with no mdef set!
     return 1;
@@ -616,24 +617,15 @@ ObjDiffRec* ObjDiff::NewRec
 
 void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsMembers()) {
-    PatchRec* pr = patch->NewPatchRec_Assign(rec->a_indep_obj, rec->b_val);
-    String mbr_path;
-    if(rec->a_obj != rec->a_indep_obj) {
-      mbr_path = rec->a_obj->GetPath(rec->a_indep_obj) + ".";
-      if(mbr_path.startsWith('.'))
-        mbr_path = mbr_path.after('.');
-    }
-    mbr_path += rec->mdef->name;
-    pr->mbr_path = mbr_path;
+    patch->NewRec_AssignMbr(rec->a_indep_obj, rec->a_obj, rec->mdef, rec->b_val);
   }
   else if(rec->IsObjects()) {
-    rec->b_indep_obj->Save_String(tmp_save_str);
     if(rec->a_indep_obj->GetTypeDef() == rec->b_indep_obj->GetTypeDef()) { // just diff name
-      PatchRec* pr = patch->NewPatchRec_Assign(rec->a_indep_obj, tmp_save_str);
+      patch->NewRec_AssignObj(rec->a_indep_obj, rec->b_indep_obj);
     }
     else {                      // replace
-      PatchRec* pr = patch->NewPatchRec_Replace(rec->a_indep_obj, tmp_save_str,
-                                                rec->b_indep_obj);
+      taList_impl* own_obj = (taList_impl*)rec->par_rec->a_obj; // where to replace in a
+      patch->NewRec_Replace(own_obj, rec->a_indep_obj, rec->b_indep_obj);
     }
   }
   // todo: value!
@@ -641,24 +633,15 @@ void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
 
 void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsMembers()) {
-    PatchRec* pr = patch->NewPatchRec_Assign(rec->b_indep_obj, rec->a_val);
-    String mbr_path;
-    if(rec->b_obj != rec->b_indep_obj) {
-      mbr_path = rec->b_obj->GetPath(rec->b_indep_obj) + ".";
-      if(mbr_path.startsWith('.'))
-        mbr_path = mbr_path.after('.');
-    }
-    mbr_path += rec->mdef->name;
-    pr->mbr_path = mbr_path;
+    patch->NewRec_AssignMbr(rec->b_indep_obj, rec->b_obj, rec->mdef, rec->a_val);
   }
   else if(rec->IsObjects()) {
-    rec->a_indep_obj->Save_String(tmp_save_str);
     if(rec->b_indep_obj->GetTypeDef() == rec->a_indep_obj->GetTypeDef()) { // just diff name
-      PatchRec* pr = patch->NewPatchRec_Assign(rec->b_indep_obj, tmp_save_str);
+      patch->NewRec_AssignObj(rec->b_indep_obj, rec->a_indep_obj);
     }
     else {                      // replace
-      PatchRec* pr = patch->NewPatchRec_Replace(rec->b_indep_obj, tmp_save_str,
-                                                rec->a_indep_obj);
+      taList_impl* own_obj = (taList_impl*)rec->par_rec->b_obj; // where to replace in b
+      patch->NewRec_Replace(own_obj, rec->b_indep_obj, rec->a_indep_obj);
     }
   }
   // todo: value!
@@ -666,68 +649,35 @@ void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
 
 void ObjDiff::GenPatch_DelA(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsObjects()) {
-    rec->a_indep_obj->Save_String(tmp_save_str);
-    PatchRec* pr = patch->NewPatchRec_Delete(rec->a_indep_obj, tmp_save_str);
+    patch->NewRec_Delete(rec->a_indep_obj);
   }
   // todo: value!
 }
 
 void ObjDiff::GenPatch_DelB(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsObjects()) {
-    rec->b_indep_obj->Save_String(tmp_save_str);
-    PatchRec* pr = patch->NewPatchRec_Delete(rec->b_indep_obj, tmp_save_str);
+    patch->NewRec_Delete(rec->b_indep_obj);
   }
   // todo: value!
 }
 
 void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsObjects()) {
-    rec->a_indep_obj->Save_String(tmp_save_str);
-
     taList_impl* own_obj = (taList_impl*)rec->par_rec->b_obj; // where to add in b
-    if(!own_obj || !own_obj->InheritsFrom(&TA_taList_impl)) {
-      taMisc::Warning("for Add B to A action, owning object not a list!",
-                      own_obj->GetPathNames());
-      return;
-    }
-    taBase* bef_obj = rec->b_indep_obj; // right before where obj should be inserted
-    // TODO: patch apply needs to detect if same before obj record repeats on multiple inserts, and update to last add!
-    taBase* aft_obj = NULL;
-    if(bef_obj) {
-      int bef_idx = own_obj->FindEl(bef_obj);
-      if(bef_idx >= 0) {
-        aft_obj = (taBase*)own_obj->SafeEl_(bef_idx + 1);
-      }
-    }
-  
-    PatchRec* pr = patch->NewPatchRec_Insert
-      (rec->a_indep_obj, own_obj, bef_obj, aft_obj, tmp_save_str);
+    taBase* aft_obj = NULL;     // todo: needs context!
+    taBase* bef_obj = rec->b_obj;
+    patch->NewRec_Insert(own_obj, rec->a_indep_obj, aft_obj, bef_obj);
   }
   // todo: value!
 }
 
 void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch) {
   if(rec->IsObjects()) {
-    rec->b_indep_obj->Save_String(tmp_save_str);
-
     taList_impl* own_obj = (taList_impl*)rec->par_rec->a_obj; // where to add in a
-    if(!own_obj || !own_obj->InheritsFrom(&TA_taList_impl)) {
-      taMisc::Warning("for Add B to A action, owning object not a list!",
-                      own_obj->GetPathNames());
-      return;
-    }
-    taBase* bef_obj = rec->a_indep_obj; // right before where obj should be inserted
-    // TODO: patch apply needs to detect if same before obj record repeats on multiple inserts, and update to last add!
-    taBase* aft_obj = NULL;
-    if(bef_obj) {
-      int bef_idx = own_obj->FindEl(bef_obj);
-      if(bef_idx >= 0) {
-        aft_obj = (taBase*)own_obj->SafeEl_(bef_idx + 1);
-      }
-    }
-  
-    PatchRec* pr = patch->NewPatchRec_Insert
-      (rec->b_indep_obj, own_obj, bef_obj, aft_obj, tmp_save_str);
+    taBase* aft_obj = NULL; // todo: needs context!
+    taBase* bef_obj = rec->a_obj;
+
+    patch->NewRec_Insert(own_obj, rec->b_indep_obj, aft_obj, bef_obj);
   }
   // todo: value!
 }
@@ -754,7 +704,9 @@ int ObjDiff::GeneratePatches(bool apply_immed) {
   for(int i=0; i < diffs.size; i++) {
     ObjDiffRec* rec = diffs[i];
     if(!rec->HasAct()) continue;
-    if(!rec->IsValid()) continue;
+    if(!rec->IsValid()) {
+      continue;
+    }
     n_patches++;
 
     // todo: set cur_subgp if possible!  look for proj a_top and then major group in there.
@@ -798,6 +750,8 @@ int ObjDiff::GeneratePatches(bool apply_immed) {
     }
   }
   
+  patch_a->SigEmitUpdated();
+  patch_b->SigEmitUpdated();
   return n_patches;
 }
 

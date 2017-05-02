@@ -45,21 +45,25 @@ public:
   String        obj_path_idx;   // #EDIT_DIALOG project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the OWNER list to insert a new object in
   String        obj_type;       // type of object to be found at given obj_path -- for double-checking path finding
   String        mbr_path;       // path to a member of object, if relevant (for ASSIGN only)
-  String        path_before;    // #CONDSHOW_ON_action:INSERT #EDIT_DIALOG for INSERT, OWNER-relative path for object BEFORE an insertion using names (NULL if first item in list)
-  String        path_after;     // #CONSDHOW_ON_action:INSERT #EDIT_DIALOG for INSERT OWNER-relative path for object AFTER the one to be inserted (NULL = end of list)
+  int           targ_idx;       // #CONDSHOW_ON_action:INSERT,REPLACE insert / replace item at this index in the owner list (owner is obj_path)
+  String        replace_name;   // #CONDSHOW_ON_action:REPLACE name of item to replace
+  String        insert_after;   // #CONDSHOW_ON_action:INSERT insert new item after item with this name in owner list (owner is obj_path) -- blank means first item
+  String        insert_before;  // #CONDSHOW_ON_action:INSERT insert new item before item with this name in owner list (owner is obj_path) -- blank means last item
   String        new_obj_type;   // for REPLACE and INSERT, the type name of the new object to create 
   String        value;          // #EDIT_DIALOG string encoded value of object for assign and insert -- also has info about the object that should be deleted, to provide a match
 
   virtual bool ApplyPatch(taProject* proj);
   // #BUTTON apply this patch record to given project -- can also apply at level of entire patch
 
-  virtual bool ApplyPatch_assign(taProject* proj);
+  virtual bool ApplyPatch_Assign(taProject* proj);
   // #IGNORE
-  virtual bool ApplyPatch_replace(taProject* proj);
+  virtual bool ApplyPatch_Replace(taProject* proj);
   // #IGNORE
-  virtual bool ApplyPatch_insert(taProject* proj);
+  virtual bool ApplyPatch_Insert(taProject* proj);
   // #IGNORE
-  virtual bool ApplyPatch_delete(taProject* proj);
+    virtual int ApplyPatch_Insert_GetIdx(taList_impl* own);
+    // #IGNORE
+  virtual bool ApplyPatch_Delete(taProject* proj);
   // #IGNORE
 
   virtual taBase* FindPathRobust(taProject* proj);
@@ -69,6 +73,20 @@ public:
   virtual taBase* CheckObjType(taProject* proj, taBase* obj, const String& path_used);
   // check that object is of the right type -- if not, do something..
 
+  virtual bool  NewRec_impl(taBase* obj, const String& val);
+  // #IGNORE
+  virtual bool  NewRec_AssignMbr(taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val);
+  // #IGNORE 
+  virtual bool  NewRec_AssignObj(taBase* trg_obj, taBase* src_obj);
+  // #IGNORE 
+  virtual bool  NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj);
+  // #IGNORE 
+  virtual bool  NewRec_Delete(taBase* obj);
+  // #IGNORE 
+  virtual bool  NewRec_Insert
+    (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
+  // #IGNORE 
+  
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ControlPanel"; }
   int           GetEnabled() const override;

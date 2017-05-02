@@ -49,22 +49,19 @@ public:
   ////////////////////////////////////////
   // Patch generation API
 
-  virtual PatchRec*  NewPatchRec_impl(taBase* obj, const String& val,
-                                      const String& subgp = _nilString);
+  virtual PatchRec*  NewRec_impl(const String& subgp = _nilString);
   // #IGNORE
-  
-  virtual PatchRec*  NewPatchRec_Assign(taBase* obj, const String& val);
+  virtual PatchRec*  NewRec_AssignMbr
+    (taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val);
   // #IGNORE 
-
-  virtual PatchRec*  NewPatchRec_Replace(taBase* obj, const String& val,
-                                         taBase* new_obj);
+  virtual PatchRec*  NewRec_AssignObj(taBase* trg_obj, taBase* src_obj);
   // #IGNORE 
-
-  virtual PatchRec*  NewPatchRec_Insert
-    (taBase* add_obj, taBase* own_obj, taBase* bef_obj, taBase* aft_obj, const String& val);
+  virtual PatchRec*  NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj);
   // #IGNORE 
-
-  virtual PatchRec*  NewPatchRec_Delete(taBase* obj, const String& val);
+  virtual PatchRec*  NewRec_Delete(taBase* obj);
+  // #IGNORE 
+  virtual PatchRec*  NewRec_Insert
+    (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
   // #IGNORE 
   
   String             GetTypeDecoKey() const override { return "ControlPanel"; }

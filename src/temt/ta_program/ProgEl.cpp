@@ -39,6 +39,8 @@
 TA_BASEFUNS_CTORS_DEFN(ProgEl);
 SMARTREF_OF_CPP(ProgEl);
 
+const int max_progel_name_length = 32;
+
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   if (!var_)                    // this should never happen
     return false;
@@ -155,6 +157,7 @@ void ProgEl::UpdateAfterEdit_impl() {
       }
     }
   }
+  name = GenProgName();
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
@@ -299,6 +302,17 @@ const String ProgEl::GenListing_this(int indent_level) const {
   String rval = Program::GetDescString(desc, indent_level);
   rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
   return rval;
+}
+
+String ProgEl::GenProgName() const {
+  String nm = taMisc::StringCVar(BrowserEditString());
+  nm.gsub("_", "");             // compactify
+  nm = taMisc::StringCVar(nm.elidedTo(max_progel_name_length));
+  return GetTypeDef()->name + "_" + nm;
+}
+
+bool ProgEl::SetName(const String& nm) {
+  return false;
 }
 
 int ProgEl::GetEnabled() const {
