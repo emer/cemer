@@ -726,6 +726,15 @@ ClusterManager::SetPaths(bool updt_wc) {
   String prv_path = m_wc_path;
 
   if(!CheckPrefs()) return false;
+  if(m_cluster_run.cluster.empty()) {
+    int selectChoice = taMisc::Choice("Your project has no cluster selected yet. Do you want to select a cluster now?", "Select Cluster", "Cancel");
+    if (selectChoice == 0) {
+      String cluster = ChooseCluster("Select a cluster to use for this project:");
+      m_cluster_run.cluster = cluster;
+    }
+  }
+  m_cluster_run.AddCluster(m_cluster_run.cluster);
+  m_cluster_run.AddUser(GetUsername());
   if(!HasBasicData(true)) return false; // this triggers err output -- if you don't want it, then test HasBasicData(false) in advance of calling SetPaths
 
   String username = GetUsername();

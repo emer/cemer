@@ -166,8 +166,7 @@ bool ClusterRun::InitClusterManager(bool check_prefs) {
     m_cm = new ClusterManager(*this);
   else
     m_cm->Init();
-  AddCluster(cluster);
-  AddUser(m_cm->GetUsername());
+  
   return true;
 }
 
@@ -210,6 +209,8 @@ void ClusterRun::Run() {
 bool ClusterRun::Update() {
   if(!InitClusterManager())
     return false;
+  AddCluster(cluster);
+  AddUser(m_cm->GetUsername());
   m_cm->InitiateBackgroundSVNUpdate();
   return true;
 }
