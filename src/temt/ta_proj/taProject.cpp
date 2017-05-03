@@ -28,6 +28,7 @@
 #include <Program>
 #include <iSubversionBrowser>
 #include <iSvnFileListModel>
+#include <SubversionClient>
 #include <iDialogChoice>
 #include <ctime>
 #include <ObjDiff>
@@ -1080,6 +1081,65 @@ bool taProject::SvnCommitDialog(String& commit_msg, bool& updt_change_log,
 }
 
 void taProject::SvnDiff() {
+  SubversionClient* svn_client = new SubversionClient();
+  try {
+    svn_client->SetWorkingCopyPath(proj_dir);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in setting working copy\n", ex.what());
+    return;
+  }
+  String fnm = taMisc::GetFileFmPath(file_name);
+  if(fnm.empty()) {
+    taMisc::Error("file name for project is empty!");
+    return;
+  }
+  int rev = 0;
+  int kind = 0;
+  String root_url;
+  int last_change_rev = 0;
+  int last_changed_date = 0;
+  String last_changed_author;
+  int64_t sz = 0;
+  try {
+    svn_client->GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
+                        last_changed_author, sz);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetInfo\n", ex.what());
+    return;
+  }
+
+  String change_str = taDateTime::fmTimeToString(last_changed_date,
+                                                 "yyyy_MM_dd_hh_mm_ss");
+  
+  taMisc::Info("Doing DiffCompare on file:", fnm, "svn revision last changed:",
+               String(last_change_rev), "on:", change_str, "by:", last_changed_author);
+  String rev_fnm = fnm.before(".proj") + "_" + String(last_change_rev) + ".proj";
+
+  String url;
+  try {
+    svn_client->GetUrlFromPath(url, fnm);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetUrl\n", ex.what());
+    return;
+  }
+  
+  try {
+    svn_client->SaveFile(url, rev_fnm, last_change_rev);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in SaveFile\n", ex.what());
+    return;
+  }
+
+  int pidx = tabMisc::root->projects.size;
+  tabMisc::root->projects.Load(rev_fnm);
+  taProject* proj = tabMisc::root->projects.SafeEl(pidx);
+  if(proj) {
+    DiffCompare(proj);
+  }
 }
 
 bool taProject::DiffCompare(taBase* cmp_obj) {

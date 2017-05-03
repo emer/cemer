@@ -80,6 +80,10 @@ public:
   };
 
   static taProject*     cur_proj; // #NO_SAVE #HIDDEN #READ_ONLY current active project -- gui actions and program running updates this and also updates the active directory to the proj_dir
+
+#ifdef __MAKETA__
+  String      name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #NO_DIFF #CAT_taBase name of the project
+#endif
   
   String                proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
   String                tags;      // #EDIT_DIALOG list of comma separated tags (use initial letter uppercase) that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded

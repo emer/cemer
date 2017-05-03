@@ -56,6 +56,7 @@ public:
     CONTEXT = CONTEXT_B1 | CONTEXT_B2 | CONTEXT_A1 | CONTEXT_A2, // #NO_BIT
   };
 
+  int           chunk;          // increasing index that is the same for a sequence of diffs affecting a sequential chunk of changes
   DiffFlags     flags;          // flags for diff status
   int           nest_level;     // our computed nest level
   int           a_idx;          // index on a, for list objects

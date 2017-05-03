@@ -72,6 +72,7 @@ public:
   // is this pointing to the same item as the other guy?
   
   String       GetName() const override { return label; }
+  bool         HasName() const override { return true; }
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   String       GetDesc() const override;
   TA_BASEFUNS(ControlPanelItem);

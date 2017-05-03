@@ -97,27 +97,31 @@ int ObjDiff::DiffObjs(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
 }
 
 
-ObjDiffRec* ObjDiff::AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_bef, int b_bef) {
+ObjDiffRec* ObjDiff::NewListContext(ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_off, int b_off, int chunk) {
+  int a_c_idx = -1; 
+  int b_c_idx = -1;
   int a_ok_idx = FastIdxFind(a_ok, a_idx);
-  int a_b4_idx = -1;
-  if(a_ok_idx > a_bef) {
-    a_b4_idx = a_ok[a_ok_idx-a_bef];
+  if(a_ok_idx >= 0) {
+    int nidx = a_ok_idx + a_off;
+    if(nidx >= 0 && nidx < a_ok.size)
+      a_c_idx = a_ok[nidx];
   }
   int b_ok_idx = FastIdxFind(b_ok, b_idx);
-  int b_b4_idx = -1;
-  if(b_ok_idx > b_bef) {
-    b_b4_idx = b_ok[b_ok_idx-b_bef];
+  if(b_ok_idx >= 0) {
+    int nidx = b_ok_idx + b_off;
+    if(nidx >= 0 && nidx < b_ok.size)
+      b_c_idx = b_ok[nidx];
   }
   taBase* a_obj = NULL;
-  if(a_b4_idx >= 0)
-    a_obj = (taBase*)list_a->SafeEl_(a_b4_idx);
+  if(a_c_idx >= 0)
+    a_obj = (taBase*)list_a->SafeEl_(a_c_idx);
   taBase* b_obj = NULL;
-  if(b_b4_idx >= 0)
-    b_obj = (taBase*)list_b->SafeEl_(b_b4_idx);
+  if(b_c_idx >= 0)
+    b_obj = (taBase*)list_b->SafeEl_(b_c_idx);
   if(!a_obj && !b_obj) {
     return NULL;
   }
-  ObjDiffRec* rec = NewRec(par_rec, ObjDiffRec::CONTEXT_B1, a_b4_idx, b_b4_idx, a_obj, b_obj);
+  ObjDiffRec* rec = NewRec(par_rec, flags, a_c_idx, b_c_idx, a_obj, b_obj);
   if(a_obj && a_obj->InheritsFrom(&TA_taOBase)) {
     rec->a_indep_obj = a_obj;
   }
@@ -125,7 +129,22 @@ ObjDiffRec* ObjDiff::AddListContext_Before(ObjDiffRec* par_rec, taList_impl* lis
     rec->b_indep_obj = b_obj;
   }
   rec->n_diffs = 0;
+  rec->chunk = chunk;
   return rec;
+}
+
+void ObjDiff::AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int chunk) {
+  NewListContext(par_rec, ObjDiffRec::CONTEXT_B2, list_a, a_idx, list_b, b_idx,
+                 a_ok, b_ok, -2, -2, chunk);
+  NewListContext(par_rec, ObjDiffRec::CONTEXT_B2, list_a, a_idx, list_b, b_idx,
+                 a_ok, b_ok, -1, -1, chunk);
+}
+
+void ObjDiff::AddListContext_After(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int chunk) {
+  NewListContext(par_rec, ObjDiffRec::CONTEXT_A1, list_a, a_idx, list_b, b_idx,
+                 a_ok, b_ok, 0, 0, chunk);
+  NewListContext(par_rec, ObjDiffRec::CONTEXT_A2, list_a, a_idx, list_b, b_idx,
+                 a_ok, b_ok, 1, 1, chunk);
 }
 
 int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* list_b) {
@@ -143,42 +162,63 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
   int_Array b_ok;
   a_ok.SetSize(list_a->size);  a_ok.FillSeq();
   b_ok.SetSize(list_b->size);  b_ok.FillSeq();
-  
+
+  // first update lists of valid indexes
   for(int i=0;i<n_diffs;i++) {
     taStringDiffItem& df = str_diff.diffs[i];
-    
-    if(df.delete_a == df.insert_b) {
-      AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
-                            a_ok, b_ok, 2, 2);
-      AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
-                            a_ok, b_ok, 1, 1);
-      for(int l=0; l<df.delete_a; l++) {
-        ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_B_DIFF, list_a, df.start_a+l,
-                                      list_b, df.start_b+l);
-      }
-    }
-    else {
+    if(df.delete_a != df.insert_b) {
       if(df.delete_a > 0) {     // a records exist, b do not..
-        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
-                              a_ok, b_ok, 2, 2);
-        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
-                              a_ok, b_ok, 1, 1);
         for(int l=0; l<df.delete_a; l++) {
-          ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_NOT_B, list_a, df.start_a + l,
-                                        list_b, df.start_b);
           FastIdxRemove(a_ok, df.start_a + l); // don't sub-process A
         }
       }
       if(df.insert_b > 0) {     // b records exist, a do not..
-        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
-                              a_ok, b_ok, 2, 2);
-        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
-                              a_ok, b_ok, 1, 1);
         for(int l=0; l<df.insert_b; l++) {
-          ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::B_NOT_A, list_a, df.start_a,
-                                        list_b, df.start_b + l);
           FastIdxRemove(b_ok, df.start_b + l); // don't sub-process B
         }
+      }
+    }
+  }
+
+  // a_ok and b_ok MUST have same size at this point!
+  if(a_ok.size != b_ok.size) {
+    taMisc::Error("DiffList error -- remaining list items not same size!");
+    return n_diffs;
+  }
+
+  for(int i=0;i<n_diffs;i++) {
+    taStringDiffItem& df = str_diff.diffs[i];
+    
+    if(df.delete_a == df.insert_b) {
+      AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b, a_ok, b_ok, i);
+      for(int l=0; l<df.delete_a; l++) {
+        ObjDiffRec* rec = NewListDiff(par_rec, ObjDiffRec::A_B_DIFF, list_a, df.start_a+l,
+                                      list_b, df.start_b+l, i);
+        rec->chunk = i;
+      }
+      AddListContext_After(par_rec, list_a, df.start_a + df.delete_a, list_b,
+                           df.start_b + df.delete_a, a_ok, b_ok, i);
+    }
+    else {
+      if(df.delete_a > 0) {     // a records exist, b do not..
+        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                              a_ok, b_ok, i);
+        for(int l=0; l<df.delete_a; l++) {
+          NewListDiff(par_rec, ObjDiffRec::A_NOT_B, list_a, df.start_a + l,
+                                        list_b, df.start_b, i);
+        }
+        AddListContext_After(par_rec, list_a, df.start_a + df.delete_a, list_b, df.start_b,
+                             a_ok, b_ok, i);
+      }
+      if(df.insert_b > 0) {     // b records exist, a do not..
+        AddListContext_Before(par_rec, list_a, df.start_a, list_b, df.start_b,
+                              a_ok, b_ok, i);
+        for(int l=0; l<df.insert_b; l++) {
+          NewListDiff(par_rec, ObjDiffRec::B_NOT_A, list_a, df.start_a,
+                      list_b, df.start_b + l, i);
+        }
+        AddListContext_After(par_rec, list_a, df.start_a, list_b, df.start_b + df.insert_b,
+                             a_ok, b_ok, i);
       }
     }
   }
@@ -622,7 +662,7 @@ ObjDiffRec* ObjDiff::NewParRec(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj
 
 ObjDiffRec* ObjDiff::NewListDiff
 (ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx,
- taList_impl* list_b, int b_idx) {
+ taList_impl* list_b, int b_idx, int chunk) {
   taBase* a_obj = (taBase*)list_a->SafeEl_(a_idx);
   taBase* b_obj = (taBase*)list_b->SafeEl_(b_idx);
   if(a_obj && a_obj->GetOwner() != list_a) // don't want these!
@@ -638,6 +678,7 @@ ObjDiffRec* ObjDiff::NewListDiff
   }
   rec->SetDiffFlag(ObjDiffRec::OBJECTS);
   rec->n_diffs = 1;
+  rec->chunk = chunk;
   return rec;
 }
 
@@ -718,22 +759,39 @@ void ObjDiff::GenPatch_DelB(ObjDiffRec* rec, Patch* patch) {
   // todo: value!
 }
 
-void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch) {
+void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) {
   if(rec->IsObjects()) {
     taList_impl* own_obj = (taList_impl*)rec->par_rec->b_obj; // where to add in b
-    taBase* aft_obj = NULL;     // todo: needs context!
+
+    taBase* aft_obj = NULL;
+    if(prv_rec) {
+      if(prv_rec->IsContext()) {
+        aft_obj = prv_rec->b_indep_obj;
+      }
+      else if(prv_rec->HasDiffFlag(ObjDiffRec::ACT_ADD_A)) {
+        aft_obj = prv_rec->a_indep_obj; // A that will be added..
+      }
+    }
     taBase* bef_obj = rec->b_obj;
     patch->NewRec_Insert(own_obj, rec->a_indep_obj, aft_obj, bef_obj);
   }
   // todo: value!
 }
 
-void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch) {
+void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) {
   if(rec->IsObjects()) {
     taList_impl* own_obj = (taList_impl*)rec->par_rec->a_obj; // where to add in a
-    taBase* aft_obj = NULL; // todo: needs context!
+    
+    taBase* aft_obj = NULL;
+    if(prv_rec) {
+      if(prv_rec->IsContext()) {
+        aft_obj = prv_rec->a_indep_obj;
+      }
+      else if(prv_rec->HasDiffFlag(ObjDiffRec::ACT_ADD_B)) {
+        aft_obj = prv_rec->b_indep_obj; // B that will be added..
+      }
+    }
     taBase* bef_obj = rec->a_obj;
-
     patch->NewRec_Insert(own_obj, rec->b_indep_obj, aft_obj, bef_obj);
   }
   // todo: value!
@@ -781,11 +839,12 @@ int ObjDiff::GeneratePatches() {
   if(a_top == proj_a) {
     proj_diff = true;
   }
-  
+
+  ObjDiffRec* prv_rec = NULL;
   for(int i=0; i < diffs.size; i++) {
     ObjDiffRec* rec = diffs[i];
-    if(!rec->HasAct()) continue;
-    if(!rec->IsValid()) {
+    if(!rec->HasAct() || !rec->IsValid()) {
+      prv_rec= rec;
       continue;
     }
     n_patches++;
@@ -813,7 +872,7 @@ int ObjDiff::GeneratePatches() {
         GenPatch_DelA(rec, patch_a);
       }
       if(rec->HasDiffFlag(ObjDiffRec::ACT_ADD_A)) {
-        GenPatch_AddA(rec, patch_b);
+        GenPatch_AddA(rec, patch_b, prv_rec);
       }
       if(rec->HasDiffFlag(ObjDiffRec::ACT_DEL_B) ||
          rec->HasDiffFlag(ObjDiffRec::ACT_ADD_B)) {
@@ -826,7 +885,7 @@ int ObjDiff::GeneratePatches() {
         GenPatch_DelB(rec, patch_b);
       }
       if(rec->HasDiffFlag(ObjDiffRec::ACT_ADD_B)) {
-        GenPatch_AddB(rec, patch_a);
+        GenPatch_AddB(rec, patch_a, prv_rec);
       }
       if(rec->HasDiffFlag(ObjDiffRec::ACT_DEL_A) ||
          rec->HasDiffFlag(ObjDiffRec::ACT_ADD_A)) {
@@ -834,6 +893,7 @@ int ObjDiff::GeneratePatches() {
                         rec->GetDisplayName());
       }
     }
+    prv_rec = rec;
   }
   
   patch_a->SigEmitUpdated();

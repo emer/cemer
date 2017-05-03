@@ -34,9 +34,12 @@
 #include <MethodDef>
 #include <taiWidgetMenu>
 #include <QPoint>
+#include <taRootBase>
+#include <taProject>
 
 #include <taMisc>
 #include <taiMisc>
+#include <tabMisc>
 
 iSubversionBrowser* iSubversionBrowser::OpenBrowser(const String& url,
                                                     const String& wc_path) {
@@ -83,33 +86,63 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   main_tb = new QToolBar;
   lay_bd->addWidget(main_tb);
 
-  a_log_file =  main_tb->addAction("Log Of File");
+  a_log_file =  main_tb->addAction("Log");
+  a_log_file->setToolTip(taiMisc::ToolTipPreProcess("Use currently-selected file as target to display in Svn Revision Log panel -- only shows svn commits that affected this file"));
   connect(a_log_file, SIGNAL(triggered()), this, SLOT(a_log_file_do()));
+
   a_view_file = main_tb->addAction("View File");
+  a_view_file->setToolTip(taiMisc::ToolTipPreProcess("Display currently-selected file contents in a simple text editor"));
   connect(a_view_file, SIGNAL(triggered()), this, SLOT(a_view_file_do()));
+  
   a_view_diff = main_tb->addAction("View Diff");
+  a_view_diff->setToolTip(taiMisc::ToolTipPreProcess("Display diffs for currently-selected file relative to prior revision"));
   connect(a_view_diff, SIGNAL(triggered()), this, SLOT(a_view_diff_do()));
-  a_save_file = main_tb->addAction("Save File");
+
+  a_save_file = main_tb->addAction("Save");
+  a_save_file->setToolTip(taiMisc::ToolTipPreProcess("Save currently-selected file to a new file name in local working copy -- prompts for new file name"));
   connect(a_save_file, SIGNAL(triggered()), this, SLOT(a_save_file_do()));
-  a_add_file =  main_tb->addAction("Add File");
+  
+  a_add_file =  main_tb->addAction("Add");
+  a_add_file->setToolTip(taiMisc::ToolTipPreProcess("Add currently-selected Working Copy file to SVN version control management"));
   connect(a_add_file, SIGNAL(triggered()), this, SLOT(a_add_file_wc_do()));
-  a_rm_file =   main_tb->addAction("Del File");
+  
+  a_rm_file =   main_tb->addAction("Delete");
+  a_rm_file->setToolTip(taiMisc::ToolTipPreProcess("Delete currently-selected file"));
   connect(a_rm_file, SIGNAL(triggered()), this, SLOT(a_rm_file_do()));
-  a_cp_file =   main_tb->addAction("Copy File");
+  
+  a_cp_file =   main_tb->addAction("Copy");
+  a_cp_file->setToolTip(taiMisc::ToolTipPreProcess("Copy currently-selected file to a new file name -- prompets for new file name"));
   connect(a_cp_file, SIGNAL(triggered()), this, SLOT(a_cp_file_do()));
-  a_mv_file =   main_tb->addAction("Rename File");
+  
+  a_mv_file =   main_tb->addAction("Rename");
+  a_mv_file->setToolTip(taiMisc::ToolTipPreProcess("Move currently-selected file to a new file name -- prompts for a new file name"));
   connect(a_mv_file, SIGNAL(triggered()), this, SLOT(a_mv_file_do()));
-  a_rev_file =   main_tb->addAction("Revert File");
+  
+  a_rev_file =   main_tb->addAction("Revert");
+  a_rev_file->setToolTip(taiMisc::ToolTipPreProcess("Revert currently-selected Working copy file to the last-saved revision in svn repository"));
   connect(a_rev_file, SIGNAL(triggered()), this, SLOT(a_rev_file_do()));
+  
+  main_tb->addSeparator();
+  
+  a_diffcmp =   main_tb->addAction("DiffCompare Proj");
+  a_diffcmp->setToolTip(taiMisc::ToolTipPreProcess("Perform a Diff Compare on currently-selected repository .proj project file, at currently-selected revision, against a current project -- saves the file to a file_rev.proj filename, loads it, and runs DiffCompare"));
+  connect(a_diffcmp, SIGNAL(triggered()), this, SLOT(a_diffcmp_do()));
 
   main_tb->addSeparator();
   a_update    = main_tb->addAction("Update");
+  a_update->setToolTip(taiMisc::ToolTipPreProcess("Update Working Copy files based on current repository"));
   connect(a_update, SIGNAL(triggered()), this, SLOT(a_update_do()));
+  
   a_commit    = main_tb->addAction("Commit");
+  a_commit->setToolTip(taiMisc::ToolTipPreProcess("Commit current changes in Working Copy to repository"));
   connect(a_commit, SIGNAL(triggered()), this, SLOT(a_commit_do()));
+  
   a_checkout  = main_tb->addAction("Checkout");
+  a_checkout->setToolTip(taiMisc::ToolTipPreProcess("Check out repository to Working Copy -- prompts for a location for the new working copy files"));
   connect(a_checkout, SIGNAL(triggered()), this, SLOT(a_checkout_do()));
+  
   a_cleanup  = main_tb->addAction("Cleanup");
+  a_cleanup->setToolTip(taiMisc::ToolTipPreProcess("Cleanup the current Working Copy SVN metadata etc -- often needed after a failed action"));
   connect(a_cleanup, SIGNAL(triggered()), this, SLOT(a_cleanup_do()));
 
   // main_tb->addSeparator();
@@ -798,6 +831,8 @@ void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos
                       iAction::int_act, this, SLOT(a_cp_file_do()), 1);
   act = menu->AddItem("&Rename File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_mv_file_do()), 1);
+  act = menu->AddItem("DiffCompare Project", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_diffcmp_do()), 1);
 
   menu->exec(file_table->mapToGlobal(pos));
   delete menu;
@@ -1168,5 +1203,27 @@ void iSubversionBrowser::a_cleanup_do() {
 
 void iSubversionBrowser::a_list_mod_do() {
 
+}
+
+void iSubversionBrowser::a_diffcmp_do() {
+  int rev = 0;
+  String fnm = selSvnFile(rev);
+  if(fnm.empty()) {
+    taMisc::Error("No file selected for diff compare");
+    return;
+  }
+  if(!fnm.endsWith(".proj")) {
+    taMisc::Error("DiffCompare only works on .proj files");
+    return;
+  }
+
+  String new_fnm = fnm.before(".proj", -1) + "_" + String(rev) + ".proj";
+  svn_file_model->saveFile(fnm, new_fnm, rev);
+  int pidx = tabMisc::root->projects.size;
+  tabMisc::root->projects.Load(new_fnm);
+  taProject* proj = tabMisc::root->projects.SafeEl(pidx);
+  if(proj) {
+    proj->CallFun("DiffCompare");
+  }
 }
 

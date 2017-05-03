@@ -22,7 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(PatchRec);
 
 void PatchRec::Initialize() {
   action = NO_APPLY;
-  failed = false;
+  status = NO_STATUS;
   targ_idx = 0;
 }
 
@@ -30,13 +30,15 @@ String PatchRec::GetDisplayName() const {
   MemberDef* md = GetTypeDef()->members.FindName("action");
   String rval = md->type->Get_C_EnumString(action, false);
   if(action == INSERT) {
-    rval += "_" + new_obj_type;
+    rval += "_" + new_obj_type + " " + targ_name;
   }
   else if(action == REPLACE) {
     rval += "_" + obj_type + "->" + new_obj_type;
   }
   else {
     rval += "_" + obj_type;
+    if(mbr_path.nonempty())
+      rval += "." + mbr_path;
   }
   return rval;
 }
@@ -50,7 +52,9 @@ int PatchRec::GetEnabled() const {
 }
 
 int PatchRec::GetSpecialState() const {
-  if(failed) return 4;          // red
+  if(status == FAIL) return 4;          // red
+  if(status == SUCCESS) return 3;       // green
+  if(status == WARN) return 2;        // yellow
   return 0;
 }
 
@@ -62,6 +66,16 @@ taBase* PatchRec::CheckObjType(taProject* proj, taBase* obj, const String& path_
                  obj_type, "at path:", path_used);
   }
   return obj;
+}
+
+void PatchRec::ApplyInfo(const String& a, const String& b, const String& c, const String& d,
+                         const String& e, const String& f, const String& g, const String& h, const String& i) {
+  taMisc::Info(a, b, c, d, e, f, g, h, i);
+  String msg = taMisc::SuperCat(a, b, c, d, e, f, g, h, i);
+  if(apply_info.nonempty()) {
+    apply_info += "\n";
+  }
+  apply_info += msg;
 }
 
 taBase* PatchRec::FindPathRobust(taProject* proj) {
@@ -76,10 +90,10 @@ taBase* PatchRec::FindPathRobust(taProject* proj) {
   }
   // todo: more fancy stuff here..
 
-  if(TestWarning(!rval, "FindPathRobust",
-                 "unable to find key object using following paths -- failing:\n",
-                 obj_path_names, "\n",
-                 obj_path_idx)) {
+  if(!rval) {
+    ApplyInfo("unable to find key object using following paths -- failing:\n",
+              obj_path_names, "\n",
+              obj_path_idx);
     return NULL;
   }
   return rval;
@@ -88,11 +102,11 @@ taBase* PatchRec::FindPathRobust(taProject* proj) {
 taList_impl* PatchRec::FindPathRobust_List(taProject* proj) {
   taBase* obj = FindPathRobust(proj);
   if(!obj) return NULL;
-  if(TestWarning(!obj->InheritsFrom(&TA_taList_impl), "FindPathRobust_List",
-                 "key object found at path is not of a List / Group type as required -- paths:\n",
-                 obj_path_names, "\n",
-                 obj_path_idx, "\nFound Obj Path and Type:",
-                 obj->DisplayPath(), "type:", obj->GetTypeDef()->name)) {
+  if(!obj->InheritsFrom(&TA_taList_impl)) {
+    ApplyInfo("key object found at path is not of a List / Group type as required -- paths:\n",
+              obj_path_names, "\n",
+              obj_path_idx, "\nFound Obj Path and Type:",
+              obj->DisplayPath(), "type:", obj->GetTypeDef()->name);
     return NULL;
   }
   return (taList_impl*)obj;
@@ -102,7 +116,8 @@ bool PatchRec::ApplyPatch(taProject* proj) {
   if(action == NO_APPLY)
     return true;
 
-  // todo: need some way of managing the updates from partial changes?
+  taMisc::Info("Applying Patch:", GetDisplayName());
+  status = SUCCESS;           // assume. apply can override with warnings 
   
   bool rval = false;
   switch(action) {
@@ -127,8 +142,8 @@ bool PatchRec::ApplyPatch(taProject* proj) {
     break;
   }
   }
-  failed = !rval;
-  if(failed) {
+  if(!rval) {
+    status = FAIL;
     taMisc::Warning("Apply of patch:", GetDisplayName(), "FAILED");
   }
   SigEmitUpdated();
@@ -144,18 +159,18 @@ bool PatchRec::ApplyPatch_Assign(taProject* proj) {
     MemberDef* md = TypeDef::FindMemberPathStatic
       (own_td, net_base_off, net_mbr_off, mbr_path, false); // no warn
     if(!md) {
-      taMisc::Info("could not find member:",mbr_path,"in object",
+      ApplyInfo("could not find member:",mbr_path,"in object",
                    obj->DisplayPath());
       return false;
     }
     void* addr = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
     md->type->SetValStr(value, addr);
-    taMisc::Info("ASSIGN target:", obj_path_names, "Mbr:\n",
+    ApplyInfo("ASSIGN target:", obj_path_names, "Mbr:\n",
                  obj->DisplayPath() + "." + mbr_path, "= " + value);
   }
   else {
     obj->Load_String(value);
-    taMisc::Info("ASSIGN target:", obj_path_names, "Obj:\n",
+    ApplyInfo("ASSIGN target:", obj_path_names, "Obj:\n",
                  obj->DisplayPath());
   }
   obj->UpdateAfterEdit();
@@ -169,10 +184,10 @@ bool PatchRec::ApplyPatch_Replace(taProject* proj) {
   if(!new_typ) return false;
 
   taBase* repl_obj = (taBase*)own->SafeEl_(targ_idx);
-  if(!repl_obj || (repl_obj->GetName() != replace_name)) {
-    repl_obj = (taBase*)own->FindName_(replace_name);
+  if(!repl_obj || (repl_obj->GetName() != targ_name)) {
+    repl_obj = (taBase*)own->FindName_(targ_name);
     if(!repl_obj) {
-      taMisc::Warning("Replace patch cannot find object of name:", replace_name,
+      taMisc::Warning("Replace patch cannot find object of name:", targ_name,
                       "or by index:", String(targ_idx), "failing");
       return false;
     }
@@ -182,7 +197,7 @@ bool PatchRec::ApplyPatch_Replace(taProject* proj) {
   taBase* tok = taBase::MakeToken(new_typ);
   own->ReplaceIdx(act_idx, tok);
   tok->Load_String(value);
-  taMisc::Info("REPLACE target:", obj_path_names, "\n",
+  ApplyInfo("REPLACE target:", obj_path_names, "\n",
                old_path, "now ->", tok->DisplayPath());
   return true;
 }
@@ -190,13 +205,27 @@ bool PatchRec::ApplyPatch_Replace(taProject* proj) {
 bool PatchRec::ApplyPatch_Delete(taProject* proj) {
   taBase* obj = FindPathRobust(proj);
   if(!obj) return false;
-  taMisc::Info("DELETE target:", obj_path_names, "\n",
+  ApplyInfo("DELETE target:", obj_path_names, "\n",
                obj->DisplayPath());
   obj->Close();
   return true;
 }
 
 int PatchRec::ApplyPatch_Insert_GetIdx(taList_impl* own) {
+  if(targ_name.nonempty()) {
+    if(own->size > targ_idx) {   // does target index and insert_before match??
+      taBase* trg_obj = (taBase*)own->FastEl_(targ_idx);
+      if(trg_obj->GetName() == targ_name) {
+        ApplyInfo("  Fail: Name of object at target index already matches one to be inserted -- has this patch already been applied?  Name:", targ_name);
+        return -1;              // fail
+      }
+    }
+    int find_idx = own->FindNameIdx(targ_name); // now try to find by name
+    if(find_idx >= 0) {
+      ApplyInfo("  Warning: name of object to be inserted already exists here, but at a different index -- patch could have already been applied");
+      status = WARN;
+    }
+  }
   if(insert_before.nonempty()) { // we can check this
     if(own->size > targ_idx) {   // does target index and insert_before match??
       taBase* bef_obj = (taBase*)own->FastEl_(targ_idx);
@@ -206,6 +235,7 @@ int PatchRec::ApplyPatch_Insert_GetIdx(taList_impl* own) {
     }
     int bef_idx = own->FindNameIdx(insert_before); // now try to find by name
     if(bef_idx >= 0) {
+      ApplyInfo("  Name fallback -- inserting before:", insert_before, "at idx:", String(bef_idx));
       return bef_idx;           // trust the name more than the original target index
     }
   }
@@ -213,13 +243,19 @@ int PatchRec::ApplyPatch_Insert_GetIdx(taList_impl* own) {
   if(insert_after.nonempty()) {
     int aft_idx = own->FindNameIdx(insert_after);
     if(aft_idx >= 0) {
+      ApplyInfo("  Warning: Name fallback -- inserting after:", insert_after, "at idx:", String(aft_idx+1), "this is the least confident match");
+      status = WARN;
       return aft_idx+1;       // probably better than original index.. but.. maybe not..
     }
   }
   // ok, go with targ_idx in absence of any other info
   if(targ_idx > own->size) {
+    ApplyInfo("  Warning: Target index exceeds current list size, and insert_before or insert_after information was not applicable -- not very confident but proceeding.");
+    status = WARN;
     return own->size;       // can't go bigger than that
   }
+  ApplyInfo("  Warning: both insert_before and insert_after information were not applicable -- using original target index -- not very confident but proceeding.");
+  status = WARN;
   return targ_idx;
 }
 
@@ -228,18 +264,23 @@ bool PatchRec::ApplyPatch_Insert(taProject* proj) {
   if(!own) return false;
   TypeDef* new_typ = taMisc::FindTypeName(new_obj_type, true);
   if(!new_typ) return false;
-  taBase* tok = taBase::MakeToken(new_typ);
+  taBase* tok = NULL;
 
   static taList_impl* last_own = NULL;
   static int last_idx = -1;
   static int use_idx = -1;
 
   if(last_own == own && targ_idx == last_idx) {
+    tok = taBase::MakeToken(new_typ);
     own->Insert(tok, use_idx);
     use_idx++;
   }
   else {
     int act_idx = ApplyPatch_Insert_GetIdx(own);
+    if(act_idx < 0) {
+      return false;             // fail
+    }
+    tok = taBase::MakeToken(new_typ);
     own->Insert(tok, act_idx);
     use_idx = act_idx+1;        // next guy comes after us
   }
@@ -248,7 +289,7 @@ bool PatchRec::ApplyPatch_Insert(taProject* proj) {
   last_idx = targ_idx;
     
   tok->Load_String(value);
-  taMisc::Info("INSERT target:", obj_path_names, String(targ_idx), new_obj_type, "\n",
+  ApplyInfo("INSERT target:", obj_path_names, String(targ_idx), new_obj_type, "\n",
                tok->DisplayPath());
   return true;
 }
@@ -261,7 +302,7 @@ bool PatchRec::ApplyPatch_Insert(taProject* proj) {
 bool PatchRec::NewRec_impl(taBase* obj, const String& val) {
   if(obj) {
     obj_path_names = obj->GetPathFromProj();
-    obj_path_idx = obj->GetPath(obj->GetOwner(&TA_taProject));
+    obj_path_idx = obj->GetPath(obj->GetThisOrOwner(&TA_taProject));
     obj_type = obj->GetTypeDef()->name;
   }
   else {
@@ -310,7 +351,7 @@ bool PatchRec::NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src
   action = PatchRec::REPLACE;
   new_obj_type = src_obj->GetTypeDef()->name;
   targ_idx = own_obj->FindEl(trg_obj); //
-  replace_name = trg_obj->GetName();
+  targ_name = trg_obj->GetName();
   return rval;
 }
 
@@ -338,6 +379,7 @@ bool PatchRec::NewRec_Insert
   action = PatchRec::INSERT;
   new_obj_type = add_obj->GetTypeDef()->name;
 
+  targ_name = add_obj->GetName();
   // NOTE: we typically have the "insert before" object or nothing (right now!)
   
   if(bef_obj) {

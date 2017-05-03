@@ -17,6 +17,10 @@
 #include <Patch>
 #include <taProject>
 #include <taDateTime>
+#include <taFiler>
+#include <iHelpBrowser>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Patch_Group);
 
@@ -28,8 +32,42 @@ void Patch_Group::LoadPatch() {
   CallFun("Load");              // args etc
 }
 
-void Patch_Group::FindPatches() {
-  // todo: same code as program library??  browser locations..
+void Patch_Group::FindPatches(PatchLibs patch_library) {
+  String local_path;
+  String web_name;
+  switch(patch_library) {
+  case USER_LIB: {
+    local_path = taMisc::prog_lib_paths.GetVal("UserLib").toString();
+    break;
+  }
+  case SYSTEM_LIB: {
+    local_path = taMisc::prog_lib_paths.GetVal("SystemLib").toString();
+    break;
+  }
+  case WEB_APP_LIB: {
+    web_name = taMisc::plib_app_wiki;
+    break;
+  }
+  case WEB_SCI_LIB: {
+    web_name = taMisc::plib_sci_wiki;
+    break;
+  }
+  case WEB_USER_LIB: {
+    web_name = taMisc::plib_user_wiki;
+    break;
+  }
+  }
+
+  if(local_path.nonempty()) {
+    taFiler* flr = StatGetFiler(&TA_Patch, ".patch");
+    flr->SetFileName(local_path);
+    flr->Open();
+  }
+  else {
+    String wiki_url = taMisc::GetWikiURL(web_name);
+    String url = wiki_url + "PatchList";
+    iHelpBrowser::StatLoadUrl(url);
+  }
 }
 
 Patch* Patch_Group::NewPatch() {

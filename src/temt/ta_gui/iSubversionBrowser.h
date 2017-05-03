@@ -126,6 +126,7 @@ protected slots:
   void    a_cp_file_do();
   void    a_mv_file_do();
   void    a_rev_file_do();
+  void    a_diffcmp_do();
   
   void    a_log_file_wc_do();
   void    a_view_file_wc_do();
@@ -168,6 +169,7 @@ protected:
   QAction*              a_cp_file;
   QAction*              a_mv_file;
   QAction*              a_rev_file;
+  QAction*              a_diffcmp;
 
   QAction*              a_update;
   QAction*              a_commit;

@@ -62,7 +62,9 @@ public:
   
   virtual int  DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* list_b);
   // generate diffs based on two lists
-  virtual ObjDiffRec* AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_bef, int b_bef);
+  virtual void AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int chunk);
+    // context items before list diffs
+  virtual void AddListContext_After(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int chunk);
     // context items before list diffs
   
   virtual int  DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj);
@@ -86,7 +88,7 @@ public:
   
   virtual ObjDiffRec* NewListDiff
     (ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx,
-     taList_impl* list_b, int b_idx);
+     taList_impl* list_b, int b_idx, int chunk);
   // new diff record of objects on a list
   
   virtual ObjDiffRec* NewMatrixDiff
@@ -96,6 +98,11 @@ public:
   virtual ObjDiffRec* NewArrayDiff
     (ObjDiffRec* par_rec, int flags, taArray_base* a_mat, int a_idx, taArray_base* b_mat, int b_idx);
   // new diff record on array values
+  
+  virtual ObjDiffRec* NewListContext
+    (ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx,
+     taList_impl* list_b, int b_idx, int_Array& a_ok,
+     int_Array& b_ok, int a_off, int b_off, int chunk);
 
   virtual int DiffMemberStrings
     (ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, MemberDef* md,
@@ -131,9 +138,9 @@ public:
   virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_DelA(ObjDiffRec* rec, Patch* patch);
-  virtual void GenPatch_AddA(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_DelB(ObjDiffRec* rec, Patch* patch);
-  virtual void GenPatch_AddB(ObjDiffRec* rec, Patch* patch);
+  virtual void GenPatch_AddA(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec);
+  virtual void GenPatch_AddB(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec);
   
   TA_SIMPLE_BASEFUNS(ObjDiff);
 private:

@@ -22,6 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(ObjDiffRec);
 
 
 void ObjDiffRec::Initialize() {
+  chunk = 0;
   flags = DF_NONE;
   nest_level = 0;
   a_idx = -1;

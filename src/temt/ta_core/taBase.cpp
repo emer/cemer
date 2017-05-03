@@ -497,8 +497,8 @@ taProject* taBase::GetMyProj() const {
   return (taProject*)GetOwner(&TA_taProject);
 }
 
-taBase* taBase::GetThisOrOwner(TypeDef* td) {
-  if (InheritsFrom(td)) return this;
+taBase* taBase::GetThisOrOwner(TypeDef* td) const {
+  if (InheritsFrom(td)) return const_cast<taBase*>(this);
   return GetOwner(td);
 }
 
@@ -1185,7 +1185,8 @@ String taBase::GetPathNames_impl(taBase* ta, taBase* par_stop) const {
 }
 
 String taBase::GetPathFromProj() const {
-  return GetPathNames(GetOwner(&TA_taProject));
+  taProject* proj = (taProject*)GetThisOrOwner(&TA_taProject);
+  return GetPathNames(proj);
 }
 
 String taBase::DisplayPath() const {

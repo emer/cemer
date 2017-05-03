@@ -31,11 +31,18 @@ class TA_API Patch_Group : public taGroup<Patch> {
   // ##CAT_Patch ##EXPAND_DEF_1 a group of patches, where each patch is a set of edits to change a project based on changes (diffs) generated from other projects
 INHERITED(taGroup<Patch>)
 public:
+  enum PatchLibs {              // patch library locations
+    USER_LIB,                   // user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent patch_lib)
+    SYSTEM_LIB,                 // local system library, installed with software, in /usr/local/share/Emergent/patch_lib
+    WEB_APP_LIB,                // web-based application-specific library (e.g., emergent)
+    WEB_SCI_LIB,                // web-based scientifically oriented library (e.g., CCN)
+    WEB_USER_LIB,               // web-based user's library (e.g., from lab wiki)
+  };
 
   virtual void  LoadPatch();
   // #BUTTON load a patch from local file system
-  virtual void  FindPatches();
-  // #BUTTON browse for patches on web  
+  virtual void  FindPatches(PatchLibs patch_library);
+  // #BUTTON browse for patches on web in given patch library location 
   
   virtual Patch*  NewPatch();
   // get a new patch record

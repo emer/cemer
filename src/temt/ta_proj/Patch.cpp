@@ -73,14 +73,28 @@ PatchRec* Patch::NewRec_Insert
 }
 
 bool Patch::ApplyPatch(taProject* proj) {
+  if(!proj) return false;
+  proj->undo_mgr.SaveUndo(proj, "ApplyPatch", NULL, false, proj); // global save
   last_insert_own_path = "";
   last_before_idx = -1;
   last_obj_added_idx = -1;
   proj->StructUpdate(true);
+  bool fail_prompt = true;
   bool rval = true;
   FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch_recs) {
     bool ok = pat->ApplyPatch(proj);
-    if(!ok) rval = false;
+    if(!ok) {
+      rval = false;
+      if(fail_prompt) {
+        int chs = taMisc::Choice("Last patch failed!", "Continue -- Prompt Again", "Continue -- No More Prompts", "Abort");
+        if(chs == 1) {
+          fail_prompt = false;
+        }
+        if(chs == 2) {
+          break;
+        }
+      }
+    }
   }
   proj->StructUpdate(false);
   return rval;

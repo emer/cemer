@@ -156,7 +156,7 @@ private:
 taTypeDef_Of(ControlPanelMember);
 
 class TA_API ControlPanelMember: public ControlPanelItem {
-  // #AKA_EditMbrItem a member control panel item -- allows editing of just one member from a class
+  // #AKA_EditMbrItem ##DIFF_STRING a member control panel item -- allows editing of just one member from a class
   INHERITED(ControlPanelItem)
 public:
   static bool           member_activating; // #IGNORE flag for when a member is activating -- prevents any prompting about that..
@@ -263,7 +263,7 @@ public:
   FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
                             const taBase* par_obj, MemberDef* md) const override;
   void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
-  
+
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMember);
   void  InitLinks() override;
