@@ -259,6 +259,12 @@ DataTable Cell Value Should Roughly Equal
     Should Be True     ${value} > (${target_value} - ${margin})		"${err_msg}: ${value} is not roughly equal to ${target_value}+-${margin}"
     Should Be True     ${value} < (${target_value} + ${margin})		"${err_msg}: ${value} is not roughly equal to ${target_value}+-${margin}"
 
+DataTable Cell Value Should Be Less Than
+    [Arguments]         ${table_path}	${row_from}	${col}	${value}
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
+    Status OK 			           ${output}
+    ${result} =         Get Json Value    ${output}    /result/columns/0/values/0
+    Should Be True	 ${result} < ${value}		       "${col} in row ${row_from} of ${table_path} is not less than ${value}" 
 
 Restart Emergent
     [Arguments]         ${other_args}=""

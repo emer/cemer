@@ -1,0 +1,1113 @@
+// ta_Dump File v3.0 -- code v8.0.7.0 rev10686
+LeabraProject .projects[0] { 
+ Doc_Group @.docs = [0] {
+ };
+
+ Wizard_Group @.wizards = [1] {
+  LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+    UserDataItem @[1] { };
+   };
+  };
+ };
+
+ ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [0] {
+   };
+
+   ControlPanelMethod_Group @.mths = [0] {
+   };
+  };
+  ClusterRun @[1] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [0] {
+   };
+
+   ControlPanelMethod_Group @.mths = [0] {
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+ };
+
+ ParamSet_Group @.active_params = [0] {
+ };
+
+ ArchivedParams_Group @.archived_params = [0] {
+ };
+
+ DataTable_Group @.data = [0] {
+  DataTable_Group @.gp[0] { 
+  };
+  DataTable_Group @.gp[1] { 
+  };
+  DataTable_Group @.gp[2] { 
+  };
+ };
+
+ Program_TopGroup @.programs = [2] {
+  Program @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [5] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[3] { };
+    PrintVar @[4] { };
+   };
+  };
+  Program @[1] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+ };
+
+ taViewer_List @.viewers = [1] {
+  MainWindowViewer @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+    UserDataItem @[1] { };
+    UserDataItem @[2] { };
+    UserDataItem @[3] { };
+    UserDataItem @[4] { };
+    UserDataItem @[5] { };
+   };
+
+   ToolBar_List @.toolbars = [1] {
+    ToolBar @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   FrameViewer_List @.frames = [3] {
+    BrowseViewerTaBase @[0] { };
+    PanelViewer @[1] { };
+    T3PanelViewer @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+
+     T3Panel_List @.panels = [1] {
+      T3Panel @[0] { 
+       T3DataView_List @.root_view.children = [0] {
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @[0] { };
+	T3SavedView @[1] { };
+	T3SavedView @[2] { };
+	T3SavedView @[3] { };
+	T3SavedView @[4] { };
+	T3SavedView @[5] { };
+	T3SavedView @[6] { };
+	T3SavedView @[7] { };
+	T3SavedView @[8] { };
+	T3SavedView @[9] { };
+       };
+      };
+     };
+    };
+   };
+
+   DockViewer_List @.docks = [1] {
+    ToolBoxDockViewer @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+      UserDataItem @[2] { };
+      UserDataItem @[3] { };
+      UserDataItem @[4] { };
+      UserDataItem @[5] { };
+     };
+    };
+   };
+  };
+ };
+
+ Network_Group @.networks = [0] {
+ };
+};
+LeabraProject .projects[0] {
+ user_data_=NULL;
+ name="TestProjectOperations";
+ desc=;
+ tags=;
+ version {
+  user_data_=NULL;
+  major=0;
+  minor=0;
+  step=0;
+ };
+ author="Kai Krueger";
+ email="kai.krueger@colorado.edu";
+ license {
+  user_data_=NULL;
+  license=GPLv2;
+  owner_name=;
+  org=;
+  year="2017";
+  custom=;
+ };
+ pub_cite=;
+ wiki {
+  user_data_=NULL;
+  wiki=;
+  page_name=;
+ };
+ docs {
+  user_data_=NULL;
+  name="docs";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  user_data_=NULL;
+  name="wizards";
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name="UserDataItem_List_6";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     user_data_=NULL;
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @[1] {
+     user_data_=NULL;
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="LeabraWizard_0";
+  };
+ };
+ ctrl_panels {
+  user_data_=NULL;
+  name="ctrl_panels";
+  el_typ=ControlPanel;
+  el_def=0;
+  master_and_clones=0;
+  ControlPanel @[0] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     user_data_=NULL;
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ControlPanel";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc=;
+   mbrs {
+    user_data_=NULL;
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+   };
+   mths {
+    user_data_=NULL;
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+  };
+  ClusterRun @[1] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     user_data_=NULL;
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ClusterRun";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc=;
+   mbrs {
+    user_data_=NULL;
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+   };
+   mths {
+    user_data_=NULL;
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   search_algos {
+    user_data_=NULL;
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   use_search_algo=0;
+   cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
+   last_submit_time=;
+   notes=;
+   label=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   queue=;
+   run_time=;
+   exe_cmd="emergent";
+   ram_gb=0;
+   n_threads=1;
+   use_mpi=0;
+   mpi_nodes=10;
+   mpi_per_node=1;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_n_batches_per=1;
+   nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=0;
+  };
+ };
+ active_params {
+  user_data_=NULL;
+  name="active_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
+ };
+ archived_params {
+  user_data_=NULL;
+  name="archived_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
+ };
+ data {
+  user_data_=NULL;
+  name="data";
+  el_typ=DataTable;
+  el_def=0;
+  save_tables=1;
+  DataTable_Group @.gp[0] {
+   user_data_=NULL;
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp[1] {
+   user_data_=NULL;
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp[2] {
+   user_data_=NULL;
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+ };
+ programs {
+  user_data_=NULL;
+  name="programs";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+  debug_mode=0;
+  Program @[0] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {
+     user_data_=NULL;
+     name="DocLink";
+     doc=.projects[0].programs[0].doc$$;
+    };
+   };
+   name="createLeabraFlexProject";
+   short_nm="crLbFl";
+   tags=;
+   desc=;
+   version {
+    user_data_=NULL;
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    user_data_=NULL;
+    expr=;
+   };
+   objs {
+    user_data_=NULL;
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+   };
+   types {
+    user_data_=NULL;
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    user_data_=NULL;
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    user_data_=NULL;
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     user_data_=NULL;
+     name="project_group";
+     var_type=T_Object;
+     object_type=Project_Group;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     user_data_=NULL;
+     name="new_project";
+     var_type=T_Object;
+     object_type=LeabraProject;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    user_data_=NULL;
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    user_data_=NULL;
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    user_data_=NULL;
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     user_data_=NULL;
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     local_vars {
+      user_data_=NULL;
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    AssignExpr @[1] {
+     user_data_=NULL;
+     name="AssignExpr_projectgroupprojects";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="project_group = .projects";
+     result_var=.projects[0].programs[0].vars[0]$$;
+     expr {
+      user_data_=NULL;
+      expr=".projects";
+     };
+    };
+    MethodCall @[2] {
+     user_data_=NULL;
+     name="MethodCall_projectgroupNewF_yNameLeabraFlex";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="project_group->NewFromTemplateByName(\"LeabraFlex\")";
+     result_var=NULL;
+     obj=$.projects[0].programs[0].vars[0]$;
+     method=Project_Group::NewFromTemplateByName;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       user_data_=NULL;
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="proj_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="\"LeabraFlex\"";
+       };
+      };
+     };
+     meth_sig="taProject_ptr NewFromTemplateByName(taString& proj_nm)";
+     meth_desc=" create a new project from a library of existing project templates, looking up by name (NULL if name not found)";
+    };
+    AssignExpr @[3] {
+     user_data_=NULL;
+     name="AssignExpr_newprojectprojects1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="new_project = .projects[1]";
+     result_var=.projects[0].programs[0].vars[1]$$;
+     expr {
+      user_data_=NULL;
+      expr=".projects[1]";
+     };
+    };
+    PrintVar @[4] {
+     user_data_=NULL;
+     name="PrintVar_Printnewproject";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print  new_project";
+     message=;
+     print_var=$.projects[0].programs[0].vars[1]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     debug=0;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    user_data_=NULL;
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+   };
+  };
+  Program @[1] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {
+     user_data_=NULL;
+     name="DocLink";
+     doc=.projects[0].programs[1].doc$$;
+    };
+   };
+   name="saveProject";
+   short_nm="sPrjct";
+   tags=;
+   desc=;
+   version {
+    user_data_=NULL;
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    user_data_=NULL;
+    expr=;
+   };
+   objs {
+    user_data_=NULL;
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+   };
+   types {
+    user_data_=NULL;
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    user_data_=NULL;
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    user_data_=NULL;
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     user_data_=NULL;
+     name="new_project";
+     var_type=T_Object;
+     object_type=LeabraProject;
+     object_scope=NULL;
+     objs_ptr=0;
+     flags=USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    user_data_=NULL;
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    user_data_=NULL;
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    user_data_=NULL;
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     user_data_=NULL;
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     local_vars {
+      user_data_=NULL;
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    AssignExpr @[1] {
+     user_data_=NULL;
+     name="AssignExpr_newprojectprojects1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="new_project = .projects[1]";
+     result_var=.projects[0].programs[1].vars[0]$$;
+     expr {
+      user_data_=NULL;
+      expr=".projects[1]";
+     };
+    };
+    MethodCall @[2] {
+     user_data_=NULL;
+     name="MethodCall_newprojectSaveAs_dProjectTmpproj";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="new_project->SaveAs(\"TestSavedProjectTmp.proj\")";
+     result_var=NULL;
+     obj=$.projects[0].programs[1].vars[0]$;
+     method=taProject::SaveAs;
+     meth_args {
+      user_data_=NULL;
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       user_data_=NULL;
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	user_data_=NULL;
+	expr="\"TestSavedProjectTmp.proj\"";
+       };
+      };
+     };
+     meth_sig="int SaveAs(taString& fname)";
+     meth_desc=" Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    user_data_=NULL;
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+   };
+  };
+ };
+ viewers {
+  user_data_=NULL;
+  name="viewers";
+  el_typ=MainWindowViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   UserDataItem_List @*(.user_data_) {
+    user_data_=NULL;
+    name="UserDataItem_List_102";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     user_data_=NULL;
+     name="view_win_lft";
+     value 8 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @[1] {
+     user_data_=NULL;
+     name="view_win_top";
+     value 8 0=0.0009460738;
+     val_type_fixed=0;
+    };
+    UserDataItem @[2] {
+     user_data_=NULL;
+     name="view_win_wd";
+     value 8 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @[3] {
+     user_data_=NULL;
+     name="view_win_ht";
+     value 8 0=0.7994323;
+     val_type_fixed=0;
+    };
+    UserDataItem @[4] {
+     user_data_=NULL;
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @[5] {
+     user_data_=NULL;
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=";
+     val_type_fixed=0;
+    };
+   };
+   name="Browser2";
+   m_data=.projects[0]$$;
+   cur_font_size=12;
+   visible=1;
+   win_name=".projects[\"TestProjectOperations\"] - TestProjectOperations.proj";
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   revert_to_tab_no=-1;
+   toolbars {
+    user_data_=NULL;
+    name="toolbars";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_103";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       user_data_=NULL;
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Application";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    user_data_=NULL;
+    name="frames";
+    el_typ=BrowseViewerTaBase;
+    el_def=0;
+    BrowseViewerTaBase @[0] {
+     user_data_=NULL;
+     name="Navigator";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$.projects[0]$;
+    };
+    PanelViewer @[1] {
+     user_data_=NULL;
+     name="Editor";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+    };
+    T3PanelViewer @[2] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_104";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       user_data_=NULL;
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Visualizer";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     panels {
+      user_data_=NULL;
+      name="panels";
+      el_typ=T3Panel;
+      el_def=0;
+      T3Panel @[0] {
+       user_data_=NULL;
+       name="Frame1";
+       m_data=NULL;
+       cur_font_size=12;
+       visible=1;
+       root_view {
+	user_data_=NULL;
+	name="root_view";
+	m_data=NULL;
+	cur_font_size=12;
+	m_transform=NULL;
+	children {
+	 user_data_=NULL;
+	 name="children";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {
+	user_data_=NULL;
+	field_of_view=45;
+	near_distance=0.1;
+	focal=5;
+	far_distance=1000;
+       };
+       stereo_view=STEREO_NONE;
+       saved_views {
+	user_data_=NULL;
+	name="saved_views";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 user_data_=NULL;
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=-0.4765596: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=3.52344;
+	};
+	T3SavedView @[1] {
+	 user_data_=NULL;
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 user_data_=NULL;
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 user_data_=NULL;
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 user_data_=NULL;
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 user_data_=NULL;
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[6] {
+	 user_data_=NULL;
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[7] {
+	 user_data_=NULL;
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[8] {
+	 user_data_=NULL;
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[9] {
+	 user_data_=NULL;
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    user_data_=NULL;
+    name="docks";
+    el_typ=ToolBoxDockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     UserDataItem_List @*(.user_data_) {
+      user_data_=NULL;
+      name="UserDataItem_List_105";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       user_data_=NULL;
+       name="view_win_lft";
+       value 8 0=-0.002087683;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       user_data_=NULL;
+       name="view_win_top";
+       value 8 0=0.001892148;
+       val_type_fixed=0;
+      };
+      UserDataItem @[2] {
+       user_data_=NULL;
+       name="view_win_wd";
+       value 8 0=0.04279749;
+       val_type_fixed=0;
+      };
+      UserDataItem @[3] {
+       user_data_=NULL;
+       name="view_win_ht";
+       value 8 0=0.7360454;
+       val_type_fixed=0;
+      };
+      UserDataItem @[4] {
+       user_data_=NULL;
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @[5] {
+       user_data_=NULL;
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Tools";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     win_name=;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ save_view=1;
+ save_as_only=0;
+ auto_name=1;
+ last_change_desc=;
+ tree_state{ .;.patches;.ctrl_panels;.active_params;.data;.programs;.programs[0];.programs[0].objs;.programs[0].types;.programs[0].args;.programs[0].vars;.programs[0].functions;.programs[0].init_code;.programs[0].prog_code;.programs[0].prog_code[0];.programs[1];.programs[1].objs;.programs[1].types;.programs[1].args;.programs[1].vars;.programs[1].functions;.programs[1].init_code;.programs[1].prog_code;.programs[1].prog_code[0];.networks; };
+ networks {
+  user_data_=NULL;
+  name="networks";
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};
