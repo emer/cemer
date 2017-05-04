@@ -157,7 +157,21 @@ void ProgEl::UpdateAfterEdit_impl() {
       }
     }
   }
-  name = GenProgName();
+  String nw_nm = GenProgName();
+  if(name != nw_nm) {
+    if(name.startsWith(nw_nm)) {
+      String aft_nm = name.after(nw_nm);
+      if(aft_nm.startsWith('_') && aft_nm.after('_').isInt()) {
+        // current name is a unique version of name -- don't set!
+      }
+      else {
+        name = nw_nm;
+      }
+    }
+    else {
+      name = nw_nm;
+    }
+  }
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {

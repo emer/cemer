@@ -21,7 +21,8 @@
 TA_BASEFUNS_CTORS_DEFN(PatchRec);
 
 void PatchRec::Initialize() {
-  action = NO_APPLY;
+  off = false;
+  action = NO_ACTION;
   status = NO_STATUS;
   targ_idx = 0;
 }
@@ -48,7 +49,7 @@ String PatchRec::GetDesc() const {
 }
 
 int PatchRec::GetEnabled() const {
-  return (action != NO_APPLY);
+  return !off && (action != NO_ACTION);
 }
 
 int PatchRec::GetSpecialState() const {
@@ -113,7 +114,7 @@ taList_impl* PatchRec::FindPathRobust_List(taProject* proj) {
 }
   
 bool PatchRec::ApplyPatch(taProject* proj) {
-  if(action == NO_APPLY)
+  if(off || (action == NO_ACTION))
     return true;
 
   taMisc::Info("Applying Patch:", GetDisplayName());
@@ -121,10 +122,6 @@ bool PatchRec::ApplyPatch(taProject* proj) {
   
   bool rval = false;
   switch(action) {
-  case NO_APPLY: {
-    rval = true;                // nop
-    break;
-  }
   case ASSIGN: {
     rval = ApplyPatch_Assign(proj);
     break;
@@ -141,6 +138,8 @@ bool PatchRec::ApplyPatch(taProject* proj) {
     rval = ApplyPatch_Delete(proj);
     break;
   }
+  default:                      // compiler food
+    break;
   }
   if(!rval) {
     status = FAIL;

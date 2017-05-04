@@ -28,40 +28,55 @@ void Else::Initialize() {
 
 void Else::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  CheckAfterIf();
+  // if check happens in GenProgName
 }
 
-bool Else::CheckAfterIf() {
-  if(!owner) return false;
-  if(!owner->InheritsFrom(&TA_ProgEl_List)) return false;
+String Else::GenProgName() const {
+  CondBase* prv = FindPriorIf(true); // this is called in UAE so this is source of errors
+  String nm;
+  if(prv) {
+    nm = prv->name;
+  }
+  return GetTypeDef()->name + "_" + nm;
+}
+
+CondBase* Else::FindPriorIf(bool err_msgs) const {
+  if(!owner) return NULL;
+  if(!owner->InheritsFrom(&TA_ProgEl_List)) return NULL;
   ProgEl_List* own = (ProgEl_List*)owner;
   int idx = own->FindEl(this);
-  if(TestError(idx == 0, "CheckAfterIf",
-               "else statement is first element in code list -- must come after an if")) {
-    return false;
+  if(idx == 0) {
+    TestError(err_msgs, "FindPriorIf",      
+              "else statement is first element in code list -- must come after an if");
+    return NULL;
   }
   ProgEl* prv = own->SafeEl(idx-1);
-  if(TestError(!prv, "CheckAfterIf",
-               "else statement comes after a NULL previous element -- must come after an if")) {
-    return false;
+  if(!prv) {
+    TestError(err_msgs, "FindPriorIf",
+              "else statement comes after a NULL previous element -- must come after an if");
+    return NULL;
   }
-  if(TestError(!prv->InheritsFrom(&TA_If) && !prv->InheritsFrom(&TA_ElseIf),
-               "CheckAfterIf",
-               "else statement does not come after an If or ElseIf -- it must -- instead it comes after a:", prv->GetTypeDef()->name)) {
-    return false;
+  if(!(prv->InheritsFrom(&TA_If) || prv->InheritsFrom(&TA_ElseIf))) {
+    TestError(err_msgs, "FindPriorIf",
+              "else statement does not come after an If or ElseIf -- it must -- instead it comes after a:", prv->GetTypeDef()->name);
+    return NULL;
   }
   ProgEl* post = own->SafeEl(idx+1);
   if (post) {
-    if(TestError(post->InheritsFrom(&TA_Else) || post->InheritsFrom(&TA_ElseIf), "CheckNotBeforeElse", "Else can not precede another Else or ElseIf")) {
-      return false;
+    if(post->InheritsFrom(&TA_Else) || post->InheritsFrom(&TA_ElseIf)) {
+      TestError(err_msgs, "CheckNotBeforeElse",
+                "Else can not precede another Else or ElseIf");
     }
   }
-  return true;
+  return (CondBase*)prv;
 }
 
 void Else::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  rval = CheckAfterIf();
+  CondBase* prv = FindPriorIf(true);
+  if(!prv) {
+    rval = false;
+  }
 }
 
 void Else::CheckChildConfig_impl(bool quiet, bool& rval) {

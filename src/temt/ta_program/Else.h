@@ -30,14 +30,15 @@ class ProgVar; //
 taTypeDef_Of(Else);
 
 class TA_API Else: public CondBase {
-  // ##DEF_CHILD_true_code the other half of a conditional If test element: must come after an If or an ElseIf element, and is run if the condition there is false
+  // the other half of a conditional If test element: must come after an If or an ElseIf element, and is run if the condition there is false
 INHERITED(CondBase)
 public:
   bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool          CvtFmCode(const String& code) override;
-  virtual bool  CheckAfterIf();
-  // check if comes after if or else if
+  virtual CondBase*  FindPriorIf(bool err_msgs = true) const;
+  // find the preceding If or ElseIf for this Else
 
+  String        GenProgName() const override;
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgCtrl"; }
   ProgVar*      FindVarName(const String& var_nm) const override;

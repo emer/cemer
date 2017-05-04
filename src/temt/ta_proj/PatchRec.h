@@ -39,13 +39,14 @@ public:
   };
   
   enum PatchActions { // patch actions to perform
-    NO_APPLY,         // #COLOR_grey choose this to disable application of this patch element
+    NO_ACTION,        // #COLOR_grey no action defined yet
     ASSIGN,           // #COLOR_purple assign object at given path to given value
     REPLACE,          // #COLOR_darkblue replace object at given path with new one of a different type from saved value
     INSERT,           // #COLOR_green insert new object between path and path_after to given value
     DELETE,           // #COLOR_red delete object at given path -- should hopefully match value -- prompt if not
   };
 
+  bool          off;            // turn off this patch record -- don't apply
   PatchActions  action;         // action that this patch record performs
   PatchStatus   status;         // #READ_ONLY #SHOW #NO_SAVE status of the last attempt to apply this patch -- see also apply_info
   String        apply_info;     // #EDIT_DIALOG #READ_ONLY #SHOW #NO_SAVE information about what happened during the application of this record -- see also status
@@ -60,6 +61,9 @@ public:
   String        new_obj_type;   // for REPLACE and INSERT, the type name of the new object to create 
   String        value;          // #EDIT_DIALOG string encoded value of object for assign and insert -- also has info about the object that should be deleted, to provide a match
 
+  virtual void ToggleOff()      { off = !off; SigEmitUpdated(); }
+  // #DYN1 toggle the off flag for this record -- whether to apply or not
+  
   virtual bool ApplyPatch(taProject* proj);
   // #BUTTON apply this patch record to given project -- can also apply at level of entire patch
 
