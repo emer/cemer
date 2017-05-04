@@ -67,7 +67,7 @@ TestSaveProject
      Ensure Emergent Free
      Run Process		/bin/rm		./test-projects/TestSavedProjectTmp.proj
      Run Emergent Program	saveProject
-     #Restart Emergent
+     Restart Emergent
      ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test-projects/TestSavedProjectTmp.proj"}   300 sec
      Status OK No Result        ${output}
      Run Emergent Program	.projects[\\\"TestSavedProjectTmp\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterTrain\\\"]
