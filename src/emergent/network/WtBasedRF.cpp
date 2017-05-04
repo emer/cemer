@@ -118,7 +118,7 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
   *marker_matrix = 1;
   count_matrix->SetGeom(2, dt_trg_rf_count_col->GetCellGeom(0), dt_trg_rf_count_col->GetCellGeom(1));
   
-//    for (int wts_row=0; wts_row<1; wts_row++) {
+//    for (int wts_row=0; wts_row<1; wts_row++) {  // for debug
   for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
     taVector2i snd_layer_units;
@@ -140,10 +140,7 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
               LeabraUnit* snd_unit = (LeabraUnit*)snd_layer->UnitAtCoord(col, row);
               float snd_act = snd_unit->act();
               float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
-              if (weight != 0) {
-                if (weight < wt_threshold) {
-                  weight = 0;
-                }
+              if (weight > wt_threshold) {
                 if (row % 2 == 0) { // 2 for on-center/off-center
                   *tmp_matrix = filter[col % filter_angles] * (weight * snd_act);
                 }
