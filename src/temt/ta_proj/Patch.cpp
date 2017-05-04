@@ -86,7 +86,8 @@ bool Patch::ApplyPatch(taProject* proj) {
     if(!ok) {
       rval = false;
       if(fail_prompt) {
-        int chs = taMisc::Choice("Last patch failed!", "Continue -- Prompt Again", "Continue -- No More Prompts", "Abort");
+        int chs = taMisc::Choice("Last patch failed with message: " + pat->apply_info,
+                                 "Continue -- Prompt Again", "Continue -- No More Prompts", "Abort");
         if(chs == 1) {
           fail_prompt = false;
         }

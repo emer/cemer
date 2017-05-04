@@ -226,7 +226,13 @@ int PatchRec::ApplyPatch_Insert_GetIdx(taList_impl* own) {
       status = WARN;
     }
   }
-  if(insert_before.nonempty()) { // we can check this
+  if(insert_before.empty()) { // empty insert_before means at the end of the list!!
+    if(own->size == targ_idx) { // this is desired target -- add
+      return targ_idx;          // good!
+    }
+    // otherwise, we're not quite sure that the target index is right -- use insert after..
+  }
+  else {
     if(own->size > targ_idx) {   // does target index and insert_before match??
       taBase* bef_obj = (taBase*)own->FastEl_(targ_idx);
       if(bef_obj->GetName() == insert_before) {
@@ -243,8 +249,14 @@ int PatchRec::ApplyPatch_Insert_GetIdx(taList_impl* own) {
   if(insert_after.nonempty()) {
     int aft_idx = own->FindNameIdx(insert_after);
     if(aft_idx >= 0) {
-      ApplyInfo("  Warning: Name fallback -- inserting after:", insert_after, "at idx:", String(aft_idx+1), "this is the least confident match");
-      status = WARN;
+      if(insert_before.empty()) { // ok..
+      ApplyInfo("  Name fallback -- inserting after:", insert_after, "at idx:",
+                String(aft_idx+1));
+      }
+      else {
+        ApplyInfo("  Warning: Name fallback -- inserting after:", insert_after, "at idx:", String(aft_idx+1), "this is the least confident match");
+        status = WARN;
+      }
       return aft_idx+1;       // probably better than original index.. but.. maybe not..
     }
   }
@@ -387,7 +399,7 @@ bool PatchRec::NewRec_Insert
     targ_idx = own_obj->FindEl(bef_obj);
   }
   else {
-    targ_idx = 0;
+    targ_idx = own_obj->size;   // at end
     insert_before = "";
   }
   if(aft_obj) {

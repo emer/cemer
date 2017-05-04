@@ -129,6 +129,11 @@ void ControlPanelItem::UpdateAfterEdit_impl() {
   // prv_label = label;
 }
 
+bool ControlPanelItem::SetName(const String& nm) {
+  label = nm;
+  return true;
+}
+
 void ControlPanelItem::SetLabel(const String& new_label, bool custom_lbl, bool sht_label) {
   label = new_label;
   short_label = sht_label;

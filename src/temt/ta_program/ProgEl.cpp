@@ -312,7 +312,8 @@ String ProgEl::GenProgName() const {
 }
 
 bool ProgEl::SetName(const String& nm) {
-  return false;
+  name = nm;
+  return true;
 }
 
 int ProgEl::GetEnabled() const {

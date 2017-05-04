@@ -100,17 +100,13 @@ int ObjDiff::DiffObjs(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
 ObjDiffRec* ObjDiff::NewListContext(ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_off, int b_off, int chunk) {
   int a_c_idx = -1; 
   int b_c_idx = -1;
-  int a_ok_idx = FastIdxFind(a_ok, a_idx);
+  int a_ok_idx = FastIdxFind(a_ok, a_idx + a_off);
   if(a_ok_idx >= 0) {
-    int nidx = a_ok_idx + a_off;
-    if(nidx >= 0 && nidx < a_ok.size)
-      a_c_idx = a_ok[nidx];
+    a_c_idx = a_idx + a_off;
   }
-  int b_ok_idx = FastIdxFind(b_ok, b_idx);
+  int b_ok_idx = FastIdxFind(b_ok, b_idx + b_off);
   if(b_ok_idx >= 0) {
-    int nidx = b_ok_idx + b_off;
-    if(nidx >= 0 && nidx < b_ok.size)
-      b_c_idx = b_ok[nidx];
+    b_c_idx = b_idx + b_off;
   }
   taBase* a_obj = NULL;
   if(a_c_idx >= 0)

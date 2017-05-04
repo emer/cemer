@@ -597,7 +597,7 @@ bool taProject::SetFileName(const String& val) {
 }
 
 int taProject::Save_strm(ostream& strm, taBase* par, int indent) {
-  taMisc::save_use_name_paths = true; // project is one guy that DOES use name paths!
+  taMisc::save_use_name_paths = false; // actually NO! 
   if(!file_name.contains("proj_templates")) { // exclude new from template guys
     SaveSetAuthor();
   }

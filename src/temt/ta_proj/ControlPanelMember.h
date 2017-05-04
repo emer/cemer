@@ -156,7 +156,7 @@ private:
 taTypeDef_Of(ControlPanelMember);
 
 class TA_API ControlPanelMember: public ControlPanelItem {
-  // #AKA_EditMbrItem ##DIFF_STRING a member control panel item -- allows editing of just one member from a class
+  // #AKA_EditMbrItem a member control panel item -- allows editing of just one member from a class
   INHERITED(ControlPanelItem)
 public:
   static bool           member_activating; // #IGNORE flag for when a member is activating -- prevents any prompting about that..

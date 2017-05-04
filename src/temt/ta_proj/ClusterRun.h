@@ -66,14 +66,14 @@ public:
 
   DataTable     jobs_submit;    // #NO_SAVE #EXPERT current set of jobs to submit
   DataTable     jobs_submitted; // #NO_SAVE #EXPERT jobs submitted -- just a local copy of jobs_submit
-  DataTable     jobs_running;   // #SHOW_TREE #EXPERT jobs that are currently running
-  DataTable     jobs_done;      // #SHOW_TREE #EXPERT jobs that have finished running
-  DataTable     jobs_deleted;   // #SHOW_TREE #EXPERT jobs that have been deleted -- they can be recovered if needed..
-  DataTable     jobs_archive;   // #SHOW_TREE #EXPERT jobs that have been archived -- already analyzed but possibly still relevant to look at
-  DataTable     file_list;      // #SHOW_TREE #EXPERT list of files -- used for various operations -- transferring and deleting
-  DataTable     cluster_info;   // #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
-  DataTable     clusterscript_timestamp;   // #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
-  DataTable     jobs_running_tmp;  // #NO_SAVE #HIDDEN temporary jobs_running, for each specific directory
+  DataTable     jobs_running;   // #NO_SAVE #SHOW_TREE #EXPERT jobs that are currently running
+  DataTable     jobs_done;      // #NO_SAVE #SHOW_TREE #EXPERT jobs that have finished running
+  DataTable     jobs_deleted;   // #NO_SAVE #SHOW_TREE #EXPERT jobs that have been deleted -- they can be recovered if needed..
+  DataTable     jobs_archive;   // #NO_SAVE #SHOW_TREE #EXPERT jobs that have been archived -- already analyzed but possibly still relevant to look at
+  DataTable     file_list;      // #NO_SAVE #SHOW_TREE #EXPERT list of files -- used for various operations -- transferring and deleting
+  DataTable     cluster_info;   // #NO_SAVE #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
+  DataTable     clusterscript_timestamp;   // #NO_SAVE #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
+  DataTable     jobs_running_tmp;  // #NO_SAVE #NO_SAVE #HIDDEN temporary jobs_running, for each specific directory
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN temporary jobs_done, for each specific directory
   DataTable     jobs_deleted_tmp;  // #NO_SAVE #HIDDEN temporary jobs_done, for each specific directory
   DataTable     jobs_archive_tmp;  // #NO_SAVE #HIDDEN temporary jobs_done, for each specific directory
