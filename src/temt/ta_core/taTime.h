@@ -27,7 +27,7 @@
 taTypeDef_Of(taTime);
 
 class TA_API taTime : public taBase {
-  // #STEM_BASE ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
+  // #STEM_BASE ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Program raw time information
 INHERITED(taBase)
 public:
   double        usr;            // #HIDDEN user clock ticks -- time spent on this process

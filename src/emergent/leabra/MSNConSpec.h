@@ -29,7 +29,7 @@
 eTypeDef_Of(MSNTraceSpec);
 
 class E_API MSNTraceSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for trace-based learning in the MSN's
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for trace-based learning in the MSN's
 INHERITED(SpecMemberBase)
 public:
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
@@ -57,7 +57,7 @@ private:
 eTypeDef_Of(MSNTraceThalLrates);
 
 class E_API MSNTraceThalLrates : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gains for trace-based thalamic gated learning in the MSN's -- learning is also modulated typically by msn*(1-msn) activation of msn receiving units, to drive learning most in the sensitive middle range of activations (see msn_deriv option)
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra gains for trace-based thalamic gated learning in the MSN's -- learning is also modulated typically by msn*(1-msn) activation of msn receiving units, to drive learning most in the sensitive middle range of activations (see msn_deriv option)
 INHERITED(SpecMemberBase)
 public:
   bool          full_params;    // #DEF_false use the full set of 2x2x2=8 parameters for all combinations of gating, go/nogo, and positive/negative dopamine -- otherwise just use the two key parameters that typically matter (other values are all 1.0f)

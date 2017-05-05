@@ -23,26 +23,6 @@
 #include <taSigLink>
 #endif
 
-const String TypeItem::opt_show("SHOW");
-const String TypeItem::opt_no_show("NO_SHOW");
-const String TypeItem::opt_hidden("HIDDEN");
-const String TypeItem::opt_read_only("READ_ONLY");
-const String TypeItem::opt_expert("EXPERT");
-const String TypeItem::opt_edit_show("EDIT_SHOW");
-const String TypeItem::opt_edit_no_show("EDIT_NO_SHOW");
-const String TypeItem::opt_edit_hidden("EDIT_HIDDEN");
-const String TypeItem::opt_edit_read_only("EDIT_READ_ONLY");
-const String TypeItem::opt_edit_detail("EDIT_DETAIL");
-const String TypeItem::opt_edit_expert("EDIT_EXPERT");
-const String TypeItem::opt_APPLY_IMMED("APPLY_IMMED");
-const String TypeItem::opt_NO_APPLY_IMMED("NO_APPLY_IMMED");
-const String TypeItem::opt_inline("INLINE");
-const String TypeItem::opt_edit_inline("EDIT_INLINE");
-const String TypeItem::opt_EDIT_DIALOG("EDIT_DIALOG");
-
-const String TypeItem::opt_bits("BITS");
-const String TypeItem::opt_instance("INSTANCE");
-
 TypeItem::TypeItem()
 :inherited()
 {

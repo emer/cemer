@@ -70,28 +70,25 @@ public:
     DNF_NO_UPDATE_NAME  = 0x200 // for root items that don't have a md, we autoset UPDATE_NAME unless this flag is set
   };
 
-  int                   dn_flags; // any of DataNodeFlags
-  String                given_name; // name given to the obj during init or setName -- used as default for col0
+  int            dn_flags; // any of DataNodeFlags
+  String         given_name; // name given to the obj during init or setName -- used as default for col0
 
-  bool         canAcceptDrop(const QMimeData* mime) const override;
-  void*                 linkData() const;
-  virtual void          setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
-  iTreeViewItem*        parent() const; // strongly typed version of base
-  iTreeView*            treeView() const;
+  bool           canAcceptDrop(const QMimeData* mime) const override;
+  void*          linkData() const;
+  virtual void   setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
+  iTreeViewItem* parent() const; // strongly typed version of base
+  iTreeView*     treeView() const;
 
   virtual const String  GetColText(int col, const String& def = _nilString) const;
 
-  void         CreateChildren() override;
-  void                  SigEmit(int sls, void* op1, void* op2)
+  void          CreateChildren() override;
+  void          SigEmit(int sls, void* op1, void* op2)
   { SigEmit_impl(sls, op1, op2); }
   // primarily to support Refresh
-  virtual void          DecorateDataNode();
+  virtual void  DecorateDataNode();
   // sets icon and other visual attributes, based on state of node
-  bool                  ShowNode(int show) const
-  { return ShowNode_impl(show, _nilString); }
-  // whether to show the node, given the context
-  bool                  ShowNode(int show, const String& context) const
-  { return ShowNode_impl(show, context); }
+  virtual bool  ShowNode() const;
+  // whether to show the node
 
   iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeViewItem* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
@@ -100,16 +97,16 @@ public:
   ~iTreeViewItem();
 
 public: // qt3 compatability functions, for convenience
-  bool                  dragEnabled() const {return flags() & Qt::ItemIsDragEnabled;}
-  void                  setDragEnabled(bool value) {Qt::ItemFlags f = flags(); if (value)
+  bool         dragEnabled() const {return flags() & Qt::ItemIsDragEnabled;}
+  void         setDragEnabled(bool value) {Qt::ItemFlags f = flags(); if (value)
     setFlags(f | Qt::ItemIsDragEnabled); else setFlags(f & ~Qt::ItemIsDragEnabled);}
 
-  bool                  dropEnabled() const {return flags() & Qt::ItemIsDropEnabled;}
-  void                  setDropEnabled(bool value) {Qt::ItemFlags f = flags(); if (value)
+  bool         dropEnabled() const {return flags() & Qt::ItemIsDropEnabled;}
+  void         setDropEnabled(bool value) {Qt::ItemFlags f = flags(); if (value)
     setFlags(f | Qt::ItemIsDropEnabled); else setFlags(f & ~Qt::ItemIsDropEnabled);}
 
-  void                  moveChild(int fm_idx, int to_idx); //note: to_idx is based on before
-  void                  swapChildren(int n1_idx, int n2_idx);
+  void         moveChild(int fm_idx, int to_idx); //note: to_idx is based on before
+  void         swapChildren(int n1_idx, int n2_idx);
 
 public: // ITypedObject interface
   void*        This() override {return (void*)this;}
@@ -128,7 +125,7 @@ public: // ISelectable interface
   ISelectable* par() const override;
   ISelectableHost* host() const override;
   iClipData*   GetClipDataSingle(int src_edit_action, bool for_drag,
-                                          GuiContext sh_typ = GC_DEFAULT) const override;
+                                 GuiContext sh_typ = GC_DEFAULT) const override;
   iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const override;
 protected:
@@ -140,17 +137,16 @@ protected:
 
 #ifndef __MAKETA__
 protected:
-  MemberDef*            m_md; // for members, the MemberDef (otherwise NULL)
+  MemberDef*   m_md; // for members, the MemberDef (otherwise NULL)
 
   void         dropped(const QMimeData* mime, const QPoint& pos,
                                 int key_mods, WhereIndicator where) override;
-  virtual void          SigEmit_impl(int sls, void* op1, void* op2);
+  virtual void SigEmit_impl(int sls, void* op1, void* op2);
   // called for each node when the data item has changed, esp. ex lists and groups
   void         itemExpanded(bool value) override;
 
-  virtual bool          ShowNode_impl(int show, const String& context) const;
 private:
-  void                  init(const String& tree_name, taiSigLink* link_,
+  void         init(const String& tree_name, taiSigLink* link_,
     MemberDef* md_, int dn_flags_); // #IGNORE
 #endif
 };

@@ -422,7 +422,7 @@ void MTA::FixClassTypes(TypeDef* td) {
   }
   else if(td->InheritsFromName("taBase")) {
     td->SetType(TypeDef::TABASE);
-    td->AddOption(TypeDef::opt_instance);       // ta_bases always have an instance
+    td->AddOption("INSTANCE");       // ta_bases always have an instance
   }
 }
 

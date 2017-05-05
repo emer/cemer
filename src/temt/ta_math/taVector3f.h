@@ -40,7 +40,7 @@ class taVector3i; //
 taTypeDef_Of(taVector3f);
 
 class TA_API taVector3f : public taVector2f {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a real value in 3D coordinate space
+  // a real value in 3D coordinate space
   INHERITED(taVector2f)
 public:
   float         z;              // depth

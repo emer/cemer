@@ -30,8 +30,8 @@ class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER
 INHERITED(taArray_base)
 public:
-  T*            el;             // #NO_SHOW #NO_SAVE Pointer to actual array memory
-  T             err;            // #NO_SHOW what is returned when out of range; MUST INIT IN CONSTRUCTOR
+  T*            el;             // #HIDDEN #NO_SAVE Pointer to actual array memory
+  T             err;            // #HIDDEN what is returned when out of range; MUST INIT IN CONSTRUCTOR
 
   ////////////////////////////////////////////////
   //    functions that return the type          //

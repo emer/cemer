@@ -83,12 +83,11 @@ const Variant PropertyDef::GetValVar(const void* base) const {
   else return _nilVariant;
 }
 
-bool PropertyDef::isReadOnly() const {
-  return (prop_set == NULL);
-}
-
-bool PropertyDef::isGuiReadOnly() const {
-  return isReadOnly();
+void PropertyDef::InitOptsFlags() {
+  if(prop_set == NULL) {
+    SetOptFlag(READ_ONLY);
+  }
+  inherited::InitOptsFlags();
 }
 
 void PropertyDef::SetValVar(const Variant& val, void* base, void* par) {
@@ -96,7 +95,7 @@ void PropertyDef::SetValVar(const Variant& val, void* base, void* par) {
     prop_set(base, val);
 }
 
-bool PropertyDef::ValIsDefault(const void* base, int for_show) const {
+bool PropertyDef::ValIsDefault(const void* base) const {
   String defval = OptionAfter("DEF_");
   Variant val = GetValVar(base);
   // if it has an explicit default, compare using the string

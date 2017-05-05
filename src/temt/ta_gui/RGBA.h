@@ -28,7 +28,7 @@ class iColor; //
 taTypeDef_Of(RGBA);
 
 class TA_API RGBA : public taNBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color specification
+  // ##INLINE ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color specification
 INHERITED(taNBase)
 public:
 #ifdef __MAKETA__

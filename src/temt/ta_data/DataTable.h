@@ -93,7 +93,7 @@ public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE             = 0, // #NO_BIT
     SAVE_ROWS           = 0x0001, // Store this DataTable's row-data directly in the project file.  Uncheck for the option to store row-data externally.  Note: the DataTable's schema (column names, types, and other configuration information) is always saved directly in the project.
-    HAS_CALCS           = 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
+    HAS_CALCS           = 0x0002, // #HIDDEN at least one of the columns has CALC flag set
     AUTO_CALC           = 0x0004, // Automatically calculate columns.
     SAVE_FILE           = 0x0008, // If an AUTO_LOAD filename is set, this option causes row-data to be saved to that file whenever the project is saved.
     LOG_HEADER_OUT      = 0x0010, // #NO_BIT log file header has been output -- used to only output the header at the last possible moment when data first written to the log, to minimize possible pmismatch between data and header
@@ -130,7 +130,6 @@ public:
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   int_Matrix            row_indexes;     // #EXPERT #NO_DIFF #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
-  // #READ_ONLY #HIDDEN The number of rows of actual data (visible or hidden)
   cssProgSpace*         calc_script;
   // #IGNORE script object for performing column calculations
   taFiler*              log_file;

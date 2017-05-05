@@ -211,7 +211,7 @@ void taiWidgetEnumStaticChooser::BuildChooser_4(iDialogItemChooser* ic) {
   MemberSpace* mbs = &targ_typ->members;
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
-    if(!mbr->HasOption("EXPERT")) continue;
+    if(!mbr->HasExpert()) continue;
     cat = mbr->OptionAfter("CAT_");
     if(cat == "IGNORE") continue;
     cat = "member: " + cat;
@@ -256,20 +256,19 @@ const String taiWidgetEnumStaticChooser::labelNameNonNull() const {
 }
 
 bool taiWidgetEnumStaticChooser::ShowEnum(EnumDef* enm) {
-  if(enm->HasOption("EXPERT")) {
-    if(taMisc::show_gui & TypeItem::NO_EXPERT) return false;
-  }
+  if(enm->HasOption("EXPERT"))
+    return false;
   return (ShowItemFilter(NULL, enm, enm->name));
 }
 
 bool taiWidgetEnumStaticChooser::ShowMethod(MethodDef* mth) {
   if(!mth->is_static) return false;
-  return (ShowItemFilter(NULL, mth, mth->name) &&  mth->ShowMethod());
+  return (ShowItemFilter(NULL, mth, mth->name)  &&  mth->ShowMethod());
 }
 
 bool taiWidgetEnumStaticChooser::ShowMember(MemberDef* mbr) {
   if(!mbr->is_static) return false;
-  return (ShowItemFilter(NULL, mbr, mbr->name) &&  mbr->ShowMember());
+  return (ShowItemFilter(NULL, mbr, mbr->name) &&  !mbr->IsEditorHidden());
 }
 
 const String taiWidgetEnumStaticChooser::viewText(int index) const {

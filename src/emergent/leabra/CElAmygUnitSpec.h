@@ -26,7 +26,7 @@
 eTypeDef_Of(CElAmygDaMod);
 
 class E_API CElAmygDaMod : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in CEl central amygdala lateral learning
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in CEl central amygdala lateral learning
 INHERITED(SpecMemberBase)
 public:
   float         burst_da_gain;  // #MIN_0 #DEF_0;0.04 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!

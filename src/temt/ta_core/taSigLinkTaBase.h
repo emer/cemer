@@ -30,12 +30,12 @@ taTypeDef_Of(taSigLinkTaBase);
 class TA_API taSigLinkTaBase: public taiSigLink { // SigLink for taBase objects
 INHERITED(taiSigLink)
 public:
-  taBase*               data() {return (taBase*)m_data;}
-  taBase*               data() const {return (taBase*)m_data;}
+  taBase*      data() {return (taBase*)m_data;}
+  taBase*      data() const {return (taBase*)m_data;}
   bool         isBase() const override {return true;}
   int          checkConfigFlags() const override; // we call CheckConfig
   bool         isEnabled() const override;
-  taiSigLink* ownLink() const override;
+  taiSigLink*  ownLink() const override;
 
 
   bool         GetIcon(int bmf, int& flags_supported, QIcon& ic) override;
@@ -49,7 +49,6 @@ public:
   String       GetName() const override;
   String       GetDisplayName(bool desc_ok = true) const override;
   void         Search(iDialogSearch* dlg) override;
-  bool         ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const override; // asks this type if we should show the md member
   String       GetColText(const KeyString& key, int itm_idx = -1) const override; // #IGNORE
   const QVariant GetColData(const KeyString& key, int role) const override;
 

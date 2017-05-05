@@ -33,7 +33,7 @@ class TA_API DataOpBaseSpec : public taNBase {
   // #STEM_BASE ##CAT_Data ##DEF_CHILD_ops ##DEF_CHILDNAME_Operators a datatable operation specification -- contains a list of operation elements associated with different data columns
 INHERITED(taNBase)
 public:
-  DataOpList	ops;		// #SHOW_TREE the list of operation elements, associated with different data columns
+  DataOpList	ops;		// #TREE_SHOW the list of operation elements, associated with different data columns
 
   virtual void 	SetDataTable(DataTable* dt) { ops.SetDataTable(dt); }
   // #CAT_DataOp set the data table to enable looking up columns

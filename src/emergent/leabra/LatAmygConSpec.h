@@ -27,7 +27,7 @@
 eTypeDef_Of(LatAmygGains);
 
 class E_API LatAmygGains : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for lateral amygdala learning
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for lateral amygdala learning
 INHERITED(SpecMemberBase)
 public:
   enum DAReceptor {             // type of dopamine receptor expressed

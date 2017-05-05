@@ -39,7 +39,7 @@ public:
     GT_MENU             // make a menu for the methods (subgroups only)
   };
 
-  bool                  is_root; // #NO_SHOW #READ_ONLY #NO_SAVE is this the first group within the ControlPanel?
+  bool                  is_root; // #HIDDEN #READ_ONLY #NO_SAVE is this the first group within the ControlPanel?
   MthGroupType          group_type; // #GHOST_ON_is_root how to organize and display the methods in this group
 
   void                  SetGroupType(MthGroupType group_type);
@@ -58,7 +58,7 @@ public:
   void  InitLinks() override;
   TA_BASEFUNS(ControlPanelMethod_Group);
 #ifdef __MAKETA__ // dummy to supress New
-  taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
+  taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #HIDDEN
 #endif
 private:
   void  Initialize();

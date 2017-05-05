@@ -32,35 +32,16 @@ taiWidgetPoly* taiWidgetPoly::New(bool add_members, TypeDef* typ_, IWidgetHost* 
   return rval;
 }
 
-bool taiWidgetPoly::ShowMemberStat(MemberDef* md, int show) {
-  if (md->HasOption("HIDDEN_INLINE") ||
-    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE"))
-    )
-    return false;
-  else
-    return md->ShowMember((TypeItem::ShowMembs)show);
-}
-
 taiWidgetPoly::taiWidgetPoly(TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                          QWidget* gui_parent_, int flags_)
   : inherited(typ_, host_, par, gui_parent_, flags_)
 {
   if (HasFlag(flgFlowLayout))
     lay_type = LT_Flow;
-  if (host_) {
-    show = host_->show();
-  }
-  else {
-    show = taMisc::show_gui;
-  }
 }
 
 taiWidgetPoly::~taiWidgetPoly() {
   widget_el.Reset();
-}
-
-bool taiWidgetPoly::ShowMember(MemberDef* md) const {
-  return ShowMemberStat(md, show);
 }
 
 void taiWidgetPoly::AddChildMember(MemberDef* md, int column) {
@@ -72,7 +53,8 @@ void taiWidgetPoly::AddTypeMembers() {
   InitLayout();
   for (int i = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
-    if (!ShowMember(md))
+    // todo: could add an option for seeing expert, but really, not..
+    if(md->IsEditorHidden() || md->HasHiddenInline() || md->HasExpert())
       continue;
     AddChildMember(md);
   }

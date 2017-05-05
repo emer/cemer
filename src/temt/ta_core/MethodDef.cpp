@@ -43,7 +43,6 @@ void MethodDef::Initialize() {
 
   arg_types.name = "arg_types";
   arg_types.owner = (TypeDef*)this; // this isn't quite right, is it..
-  show_any = 0;
 }
 
 MethodDef::MethodDef()
@@ -109,7 +108,6 @@ void MethodDef::Copy(const MethodDef& cp) {
   arg_defs = cp.arg_defs;
   arg_vals = cp.arg_vals;
   stubp = cp.stubp;
-  show_any = 0; //rebuild
 }
 
 bool MethodDef::CheckList(const String_PArray& lst) const {
@@ -223,75 +221,80 @@ const String MethodDef::prototype() const {
   return rval;
 }
 
-bool MethodDef::ShowMethod(int show) const {
-  if (show & TypeItem::USE_SHOW_GUI_DEF)
-    show = taMisc::show_gui;
-
-  // check if cache has been done yet
-  if (show_any == 0) ShowMethod_CalcCache();
-  int show_eff = show_any;
-
-  // our show_eff is the positives (what it is) so if there is nothing there, then
-  // we clearly can't show
-  // if there is something (a positive) then bit-AND with the
-  // show, which is negatives (what not to show), and if anything remains, don't show!
-  show_eff &= TypeItem::SHOW_CHECK_MASK;
-  return (show_eff) && !(show_eff & show);
+bool MethodDef::ShowMethod() const {
+  return true;                  // don't think exclude based on anything really
 }
 
-void MethodDef::ShowMethod_CalcCache() const {
-  // note that "normal" is a special case, which depends both on context and
-  // on whether other bits are set, so we calc those individually
-  show_any = TypeItem::IS_NORMAL; // the default for any
-  ShowMethod_CalcCache_impl(show_any);
 
-}
+// bool MethodDef::ShowMethod(int show) const {
+//   if (show & TypeItem::USE_SHOW_GUI_DEF)
+//     show = taMisc::show_gui;
 
-void MethodDef::ShowMethod_CalcCache_impl(int& show) const {
-  show |= 0x80; // set the "done" flag
+//   // check if cache has been done yet
+//   if (show_any == 0) ShowMethod_CalcCache();
+//   int show_eff = show_any;
 
-  //note: keep in mind that these show bits are the opposite of the show flags,
-  // i.e show flags are all negative, whereas these are all positive (bit = is that type)
+//   // our show_eff is the positives (what it is) so if there is nothing there, then
+//   // we clearly can't show
+//   // if there is something (a positive) then bit-AND with the
+//   // show, which is negatives (what not to show), and if anything remains, don't show!
+//   show_eff &= TypeItem::SHOW_CHECK_MASK;
+//   return (show_eff) && !(show_eff & show);
+// }
 
-  //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
-  //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
-  //MethodDef note: SHOW is implied in any of: MENU BUTTON or MENU_CONTEXT
-  bool typ_show = type->HasOption("METH_SHOW");
-  bool typ_no_show = type->HasOption("METH_NO_SHOW") || type->HasOption("METH_NO_SHOW");
-  bool mth_show = HasOption("SHOW") || HasOption("MENU") ||
-    HasOption("BUTTON") || HasOption("MENU_CONTEXT") || HasOption("MENU_BUTTON");
-  bool mth_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
+// void MethodDef::ShowMethod_CalcCache() const {
+//   // note that "normal" is a special case, which depends both on context and
+//   // on whether other bits are set, so we calc those individually
+//   show_any = TypeItem::IS_NORMAL; // the default for any
+//   ShowMethod_CalcCache_impl(show_any);
 
-  // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
-  // you can't "undo" type-level specials, but you can always mark SHOW on the mth
+// }
 
-  // the following are all cumulative, not mutually exclusive
-  if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
-    show |= TypeItem::IS_HIDDEN;
-  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mth_show)
-    show |= TypeItem::IS_HIDDEN;
-  if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
-    show |= TypeItem::IS_EXPERT;
+// void MethodDef::ShowMethod_CalcCache_impl(int& show) const {
+//   show |= 0x80; // set the "done" flag
 
-//   String cat = OptionAfter("CAT_");
-//   if(cat.contains("Xpert"))  // special code for expert -- no need for redundant #EXPERT flag
+//   //note: keep in mind that these show bits are the opposite of the show flags,
+//   // i.e show flags are all negative, whereas these are all positive (bit = is that type)
+
+//   //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
+//   //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
+//   //MethodDef note: SHOW is implied in any of: MENU BUTTON or MENU_CONTEXT
+//   bool typ_show = type->HasOption("METH_SHOW");
+//   bool typ_no_show = type->HasOption("METH_NO_SHOW") || type->HasOption("METH_NO_SHOW");
+//   bool mth_show = HasOption("SHOW") || HasOption("MENU") ||
+//     HasOption("BUTTON") || HasOption("MENU_CONTEXT") || HasOption("MENU_BUTTON");
+//   bool mth_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
+
+//   // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
+//   // you can't "undo" type-level specials, but you can always mark SHOW on the mth
+
+//   // the following are all cumulative, not mutually exclusive
+//   if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
+//     show |= TypeItem::IS_HIDDEN;
+//   if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mth_show)
+//     show |= TypeItem::IS_HIDDEN;
+//   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
 //     show |= TypeItem::IS_EXPERT;
 
-  // if NO_SHOW and no SHOW or explicit other, then never shows
-  if (mth_no_show || (typ_no_show && (!mth_show || (show & TypeItem::NORM_MEMBS)))) {
-    show &= (0x80 | ~TypeItem::SHOW_CHECK_MASK);
-    return;
-  }
+// //   String cat = OptionAfter("CAT_");
+// //   if(cat.contains("Xpert"))  // special code for expert -- no need for redundant #EXPERT flag
+// //     show |= TypeItem::IS_EXPERT;
 
-  // if any of the special guys are set, we unset NORMAL (which may
-  //   or may not have been already set by default)
-  if (show & TypeItem::NORM_MEMBS) // in "any" context, default is "normal"
-    show &= ~TypeItem::IS_NORMAL;
-  else // no non-NORMAL set
-    // SHOW is like an explicit NORMAL if nothing else applies
-    if (mth_show || typ_show)
-      show |= TypeItem::IS_NORMAL;
-}
+//   // if NO_SHOW and no SHOW or explicit other, then never shows
+//   if (mth_no_show || (typ_no_show && (!mth_show || (show & TypeItem::NORM_MEMBS)))) {
+//     show &= (0x80 | ~TypeItem::SHOW_CHECK_MASK);
+//     return;
+//   }
+
+//   // if any of the special guys are set, we unset NORMAL (which may
+//   //   or may not have been already set by default)
+//   if (show & TypeItem::NORM_MEMBS) // in "any" context, default is "normal"
+//     show &= ~TypeItem::IS_NORMAL;
+//   else // no non-NORMAL set
+//     // SHOW is like an explicit NORMAL if nothing else applies
+//     if (mth_show || typ_show)
+//       show |= TypeItem::IS_NORMAL;
+// }
 
 String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
   STRING_BUF(rval, (short_fmt ? 100 : 300)); // extends if needed

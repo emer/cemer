@@ -70,13 +70,13 @@ void iProgramEditor::Init() {
 
   m_changing = 0;
   read_only = false;
+  show_expert = false;
   m_modified = false;
   warn_clobber = false;
   apply_req = false;
 //  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
   row = 0;
-  m_show = (TypeItem::ShowMembs)(taMisc::show_gui & TypeItem::SHOW_CHECK_MASK);
   sel_item_mbr = NULL;
   sel_item_base = NULL;
 
@@ -266,10 +266,6 @@ QWidget* iProgramEditor::firstTabFocusWidget() {
   return items;
 }
 
-bool iProgramEditor::ShowMember(MemberDef* md) {
-  return taiWidgetPoly::ShowMemberStat(md, show());
-}
-
 void iProgramEditor::Base_Add() {
   if(!base) return;
   base->AddSigClient(this);
@@ -325,7 +321,8 @@ void iProgramEditor::Controls_Add() {
   int mbr_cnt = 0;
   for (int i = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
-    if (ShowMember(md)) ++mbr_cnt;
+    if(!md->IsEditorHidden() && !md->HasHiddenInline())
+      ++mbr_cnt;
   }
   if (md_desc) {
     --mbr_cnt; // don't double count
@@ -348,7 +345,8 @@ void iProgramEditor::Controls_Add() {
   int tmbr_cnt = mbr_cnt; // temp, this loop
   for (int i = 0, i_ln = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
-    if (!ShowMember(md)) continue;
+    if(md->IsEditorHidden() || md->HasHiddenInline())
+      continue;
     if (md->name == "desc" || md->name == "code_string") continue;
     if (md_opc && md->name == "flags") continue; // only for prog el -- opc is check for that
     // these are all on separate line at end
@@ -473,9 +471,6 @@ bool iProgramEditor::miniEditVisible() {
 
 void iProgramEditor::showEvent(QShowEvent* e) {
   inherited::showEvent(e);
-  if(taMisc::program_editor_mode == taMisc::EXPERT) {
-    propsCodeSplitter->collapseToggle(0);
-  }
 }
 
 void iProgramEditor::customEvent(QEvent* ev_) {
@@ -836,18 +831,12 @@ void iProgramEditor::setEditNode(taBase* value, bool autosave) {
   }
 }
 
-void iProgramEditor::setShow(int value) {
-  value = (value & TypeItem::SHOW_CHECK_MASK);
-  if (m_show == value) return;
-  m_show = (TypeItem::ShowMembs)value;
-  Refresh();
-}
-
 void iProgramEditor::UpdateButtons() {
   if (base && m_modified) {
     btnApply->setEnabled(true);
     btnRevert->setEnabled(true);
-  } else {
+  }
+  else {
     btnApply->setEnabled(false);
     btnRevert->setEnabled(false);
   }

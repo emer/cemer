@@ -27,7 +27,7 @@
 eTypeDef_Of(PFCGateSpec);
 
 class E_API PFCGateSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for PFC gating functions
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for PFC gating functions
 INHERITED(SpecMemberBase)
 public:
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
@@ -50,7 +50,7 @@ private:
 eTypeDef_Of(PFCMaintSpec);
 
 class E_API PFCMaintSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for PFC maintenance functions
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for PFC maintenance functions
 INHERITED(SpecMemberBase)
 public:
   float         s_mnt_min;      // #DEF_0.3 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal -- 0.25 is generally minimum to support maintenance -- this is the minimum amount to add as a function of the strength of afferent netinput (less maint current with stronger afferents) -- see
@@ -90,7 +90,7 @@ public:
   PFCGateSpec   gate;           // PFC specifications for gating-related parameters
   PFCMaintSpec  maint;          // PFC specifications for maintenance-related parameters
   int           n_dyns;         // number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
-  DataTable     dyn_table;      // #SHOW_TREE #EXPERT table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_ctxt is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
+  DataTable     dyn_table;      // #TREE_SHOW #EXPERT table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_ctxt is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
 
 
   static int    PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_cyc);

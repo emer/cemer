@@ -678,13 +678,14 @@ bool ControlPanel::AddMemberPrompt(taBase* base, MemberDef* mbr, bool short_labe
     TypeDef* mbr_base_td = mbr_base->GetTypeDef();
     for (int i=0; i<mbr_td->members.size; i++) {
       mbr_base->FindMembeR(mbr_base_td->members.SafeEl(i)->name, mbr_md);
-      if (mbr_md->isReadOnly() || mbr_md->HasOption("HIDDEN") || mbr_md->HasOption("HIDDEN_INLINE")) {
+      if (mbr_md->IsGuiReadOnly() || mbr_md->HasHidden() ||
+          mbr_md->HasHiddenInline()) {
         continue;
       }
       if (mbr_md->name == "user_data_") {
         continue;
       }
-      if (!mbr_md->GetCondOptTest("CONDSHOW", mbr_td, mbr_base)) {
+      if (mbr_md->HasCondShow() && !mbr_md->GetCondOptTest("CONDSHOW", mbr_td, mbr_base)) {
         continue;
       }
       String complete_lbl;

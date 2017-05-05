@@ -27,7 +27,7 @@
 eTypeDef_Of(BLAmygLearnSpec);
 
 class E_API BLAmygLearnSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for gain factors and other learning parameters in Basal Lateral Amygdala learning
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for gain factors and other learning parameters in Basal Lateral Amygdala learning
 INHERITED(SpecMemberBase)
 public:
   float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier

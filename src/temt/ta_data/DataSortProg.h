@@ -32,7 +32,7 @@ class TA_API DataSortProg : public DataSrcDestProg {
   // sorts src_data into dest_data according to sort_spec
 INHERITED(DataSrcDestProg)
 public:
-  DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
+  DataSortSpec		sort_spec; // #TREE_SHOW data sorting specification
 
   virtual DataOpEl* AddColumn(const String& col_name) { return sort_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on

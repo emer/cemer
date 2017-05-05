@@ -16,6 +16,7 @@
 #include "TypeDef.h"
 #include <MemberDef>
 #include <MethodDef>
+#include <PropertyDef>
 #include <EnumDef>
 #include <taHashTable>
 #include <BuiltinTypeDefs>
@@ -832,7 +833,7 @@ TypeDef* TypeDef::AddParent(TypeDef* td, int p_off) {
   // note: type flags are set explicitly prior to calling AddParent!
 
   if(IsTaBase())
-    AddOption(opt_instance);       // ta_bases always have an instance
+    AddOption("INSTANCE");       // ta_bases always have an instance
 
 #ifndef NO_TA_BASE
   CleanupCats(false);           // save first guy for add parent!
@@ -874,7 +875,7 @@ TypeDef* TypeDef::AddParentName(const String& nm, int p_off) {
   // note: type flags are set explicitly prior to calling AddParent!
 
   if(IsTaBase())
-    AddOption(opt_instance);       // ta_bases always have an instance
+    AddOption("INSTANCE");       // ta_bases always have an instance
 
 #ifndef NO_TA_BASE
   CleanupCats(false);           // save first guy for add parent!
@@ -988,6 +989,32 @@ void TypeDef::CacheParents() {
     parents.FastEl(i)->CacheParents_impl(this);
   }
   par_cache.BuildHashTable(par_cache.size + 2, taHashTable::KT_PTR); // little extra, cache on pointer vals
+
+  if(HasOption("EDIT_INLINE") || HasOption("INLINE")) {
+    SetType(EDIT_INLINE);
+  }
+  if(HasOption("SAVE_INLINE") || HasOption("INLINE")) {
+    SetType(SAVE_INLINE);
+  }
+  if(HasOption("INLINE_DUMP")) {
+    if(IsActualClass()) {
+      taMisc::DebugInfo("INLINE_DUMP is no longer used -- use SAVE_INLINE, and plain INLINE implies SAVE_INLINE", name);
+    }
+  }
+  
+  for(int i=0; i<members.size; i++) {
+    MemberDef* md = members.FastEl(i);
+    md->InitOptsFlags();
+  }
+  for(int i=0; i<static_members.size; i++) {
+    MemberDef* md = static_members.FastEl(i);
+    md->InitOptsFlags();
+  }
+  for(int i=0; i<properties.size; i++) {
+    PropertyDef* md = (PropertyDef*)properties.FastEl(i);
+    md->InitOptsFlags();
+  }
+  
   SetInitFlag(IF_CACHE_HASH);
 }
 
@@ -1371,7 +1398,7 @@ const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope, StrContext
   }
 
   // If this enum type is marked #BITS, then render the set of enabled bits.
-  if (HasOption(opt_bits)) {
+  if (HasOption("BITS")) {
     for (int i = 0; i < enum_vals.size; ++i) {
       EnumDef* ed = enum_vals[i];
       if (ed->HasOption("NO_BIT")) continue;
@@ -1536,20 +1563,31 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     if (sc == SC_STREAMING) {
       if (!md->DumpMember(base))
         continue;
+#ifndef NO_TA_BASE
+      if(md->type->DerivesFrom(TA_taList_impl)) { // can't save any lists inline!
+        taMisc::DebugInfo("Warning: taList in an inline class won't save properly -- use EDIT_INLINE instead of INLINE, so it saves normally. Type:", name, "member:", md->name,
+                          "note: if member is user_data_ then this means that user data was actually set for this inline member -- this will not be saved!");
+        continue;
+      }
+#endif
     }
     else if (sc == SC_DISPLAY) {
-      if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, SC_EDIT, TypeItem::SHOW_CHECK_MASK))
+      if (md->IsEditorHidden())
         continue;
     }
     else {
-      if(md->HasOption("NO_SAVE"))
+      if(md->HasNoSave())
         continue;
     }
     if(sc == SC_DISPLAY) {
-      bool condshow = md->GetCondOptTest("CONDSHOW", this, base);
-      if(!condshow) continue;
-      bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
-      if(!condedit) continue;
+      if(md->HasCondShow()) {
+        if(!md->GetCondOptTest("CONDSHOW", this, base))
+          continue;
+      }
+      if(md->HasCondEdit()) {
+        if(!md->GetCondOptTest("CONDEDIT", this, base))
+          continue;
+      }
       bool non_def = false;
       if(md->GetDefaultStatus(base) == MemberDef::NOT_DEF) {
         non_def = true;
@@ -1678,7 +1716,13 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if(IsAtomicEff()) {
       if(IsString()) {
-	return *((String*)base);
+        String rval = *((String*)base);
+        if(sc == SC_STREAMING) {
+          return rval.quote_esc();
+        }
+        else {
+          return rval;
+        }
       }
       else if (IsVariant()) { // in general, Variant is handled by recalling this routine on its rep's typdef
 
@@ -1747,8 +1791,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return name;
     }
 #endif
-    else if(IsClass() &&
-            (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
+    else if(IsClass() && (force_inline || IsSaveInline()))
       {
         return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
       }
@@ -1869,14 +1912,23 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
       st_pos++;
       next_val = next_val.after(0);
       next_val_len--;
+      int prev_c = '\0';
       c = next_val[pos];
-      while((c != '\"') && (pos < next_val_len)) c = next_val[++pos]; // "
+      while(!(c == '\"' && prev_c != '\\') && (pos < next_val_len)) {
+        prev_c = c;
+        c = next_val[++pos]; // "
+      }
     }
     else {
+      bool in_quote = false;
+      int prev_c = '\0';
       int depth = 0;
-      while(!(((c == ':') || (c == '}')) && (depth <= 0)) && (pos < next_val_len)) {
+      while(!(((c == ':') || (c == '}')) && (depth <= 0 && !in_quote)) &&
+            (pos < next_val_len)) {
         if(c == '{')  depth++;
         if(c == '}')  depth--;
+        if(c == '"' && prev_c != '\\') in_quote = !in_quote;
+        prev_c = c;
         c = next_val[++pos];
       }
     }
@@ -1957,7 +2009,13 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
     else if(IsAtomicEff()) {
       if(IsString()) {
-        *((String*)base) = val;
+        if(sc == SC_STREAMING) {
+          String unes = val;
+          *((String*)base) = unes.quote_unesc();
+        }
+        else {
+          *((String*)base) = val;
+        }
       }
       else if (IsVariant()) {
         TypeDef* typ;
@@ -2035,8 +2093,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
         gp->InitFromString(val);
     }
 #endif
-    else if(IsClass() &&
-            (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
+    else if(IsClass() && (force_inline || IsSaveInline())) {
       SetValStr_class_inline(val, base, par, memb_def, sc, force_inline);
     }
   }
@@ -2125,18 +2182,22 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
         continue;
     }
     else if (sc == SC_DISPLAY) {
-      if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, SC_EDIT, TypeItem::SHOW_CHECK_MASK))
+      if (md->IsEditorHidden())
         continue;
     }
     else {
-      if(md->HasOption("NO_SAVE"))
+      if(md->HasNoSave())
         continue;
     }
     if(sc == SC_DISPLAY) {
-      bool condshow = md->GetCondOptTest("CONDSHOW", this, base);
-      if(!condshow) continue;
-      bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
-      if(!condedit) continue;
+      if(md->HasCondShow()) {
+        if(!md->GetCondOptTest("CONDSHOW", this, base))
+          continue;
+      }
+      if(md->HasCondEdit()) {
+        if(!md->GetCondOptTest("CONDEDIT", this, base))
+          continue;
+      }
     }
     rval += md->type->ReplaceValStr(srch, repl, mbr_filt, md->GetOff(base), base, this, md, sc, replace_deep);
   }
@@ -2321,27 +2382,6 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
   return _nilVariant;
 }
 
-bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
-    int for_show) const
-{
-  // some cases are simple, for non-class values
-  if ((InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) ||
-      (IsAnyPtr()) || !IsActualClassNoEff()) {
-    return ValIsEmpty(base, memb_def); // note: show not used for single guy
-  }
-  else { // instance of a class, so must recursively determine
-    // just find all eligible guys, and return true if none fail
-    for (int i = 0; i < members.size; ++i) {
-      MemberDef* md = members.FastEl(i);
-      if (!md || !md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
-        for_show)) continue;
-      if (!md->ValIsDefault(base, for_show))
-        return false;
-    }
-    return true;
-  }
-}
-
 bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
@@ -2446,7 +2486,7 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
   }
   else if(IsPointer()) {
     void* ptr_val = *((void**)base);
-    if(!ptr_val) return false;
+    if(!ptr_val) return true;   // definitely empty!
 #ifndef NO_TA_BASE
     if(DerivesFrom(TA_taList_impl)) { // multiple inheritance != PtrList!
       return (((taList_impl*)ptr_val)->size == 0);
@@ -2781,22 +2821,6 @@ void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
 void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
   if(memb_no < members.size) {
     members[memb_no]->CopyFromSameType(trg_base, src_base);
-  }
-}
-
-bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
-                              voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                              void* trg_base, void* src_base,
-                              int show_forbidden, int show_allowed, bool no_ptrs,
-                              bool test_only) {
-  if(IsActualClassNoEff()) {
-    return members.CompareSameType(mds, base_types, trg_bases, src_bases,
-                                   this, trg_base, src_base,
-                                   show_forbidden, show_allowed, no_ptrs, test_only);
-  }
-  else {
-    taMisc::Error("CompareSameType called on non-class object -- does not work!");
-    return false;
   }
 }
 
@@ -3159,7 +3183,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     String_PArray memb_idx;
     for(int i=0;i<members.size;i++) {
       MemberDef* md = members[i];
-      if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT"))
+      if(md->IsEditorHidden() || md->HasExpert())
         continue;
 #ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
@@ -3201,7 +3225,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     String_PArray memb_idx;
     for(int i=0;i<static_members.size;i++) {
       MemberDef* md = static_members[i];
-      if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT"))
+      if(md->IsEditorHidden() || md->HasExpert())
         continue;
 #ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
@@ -3242,7 +3266,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     String_PArray memb_idx;
     for(int i=0;i<members.size;i++) {
       MemberDef* md = members[i];
-      if(!(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT")))
+      if(!(md->IsEditorHidden() || md->HasExpert()))
         continue;
 #ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;

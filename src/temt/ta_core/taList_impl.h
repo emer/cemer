@@ -52,8 +52,8 @@ typedef taNBase inherited_taBase;
 typedef taPtrList_base<taBase> inherited_taPtrList;
 #endif
 public:
-  TypeDef*      el_base;        // #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group
-  TypeDef*      el_typ;         // #TYPE_ON_el_base #NO_SHOW_TREE #CAT_taList Default type for objects in group
+  TypeDef*      el_base;        // #EXPERT #TREE_HIDDEN #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group
+  TypeDef*      el_typ;         // #TYPE_ON_el_base #TREE_HIDDEN #CAT_taList Default type for objects in group
   int           el_def;         // #EXPERT #CAT_taList Index of default element in group
   taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
   IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taList what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
@@ -90,6 +90,7 @@ public:
   void Close() override;
   bool Close_Child(taBase* obj) override;
   bool CloseLater_Child(taBase* obj) override;
+  void UpdateAll() override;
   void ChildUpdateAfterEdit(taBase* child, bool& handled) override;
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
@@ -128,12 +129,6 @@ public:
                      bool obj_name = true, bool obj_type = true,
                      bool obj_desc = true, bool obj_val = true,
                      bool mbr_name = true, bool type_desc = false) override;
-  void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                        voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                        taBase* cp_base,
-                        int show_forbidden=TypeItem::NO_HIDDEN,
-                        int show_allowed=TypeItem::SHOW_CHECK_MASK, 
-                        bool no_ptrs = true) override;
   int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
   int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;

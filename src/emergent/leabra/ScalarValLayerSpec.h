@@ -38,7 +38,7 @@
 eTypeDef_Of(ScalarValSpec);
 
 class E_API ScalarValSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
 INHERITED(SpecMemberBase)
 public:
   enum	RepType {
@@ -85,7 +85,7 @@ private:
 eTypeDef_Of(ScalarValBias);
 
 class E_API ScalarValBias : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units

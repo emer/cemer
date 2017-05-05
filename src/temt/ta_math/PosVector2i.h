@@ -27,7 +27,7 @@
 taTypeDef_Of(PosVector2i);
 
 class TA_API PosVector2i : public taVector2i {
-  // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 2D coordinate space
+  // positive-only value in 2D coordinate space
   INHERITED(taVector2i)
 public:
   TA_BASEFUNS_LITE(PosVector2i);

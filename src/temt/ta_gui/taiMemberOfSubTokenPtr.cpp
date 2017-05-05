@@ -39,8 +39,7 @@ taiWidget* taiMemberOfSubTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidg
     flags_ |= taiWidget::flgNullOk;
   if (!mbr->HasOption("NO_EDIT"))
     flags_ |= taiWidget::flgEditOk;
-  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
+  flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   taiWidgetSubTokenPtrMenu* rval =
     new taiWidgetSubTokenPtrMenu( taiWidgetMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
   return rval;

@@ -137,8 +137,7 @@ void taiEditorOfUserData::Constr_Widget_Labels() {
     for (int i = 0; i < grp->size; ++i) {
       int item_flags = 0;
       UserDataItemBase* item_ = grp->FastEl(i);
-      // normally don't show invisible guys, unless HIDDEN is selected
-      if (!item_->isVisible() && (show() & TypeItem::NO_HIDDEN)) continue;
+      if (!item_->isVisible()) continue;
 
       tw->setRowCount(row + 1);
       QTableWidgetItem* twi = NULL;

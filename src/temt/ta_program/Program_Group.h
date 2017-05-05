@@ -35,11 +35,11 @@ class TA_API Program_Group : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
   
+  static CollectionProgLib prog_lib; // #TREE_HIDDEN #HIDDEN #NO_SAVE library of available programs
+  
   String                tags;
   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String                desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
-  
-  static CollectionProgLib prog_lib; // #NO_SHOW_TREE #HIDDEN #NO_SAVE library of available programs
   
   bool                  debug_mode; // ProgEls can check this to conditionally turn on/off elements
 

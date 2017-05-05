@@ -34,7 +34,7 @@ class ActrProduction; //
 eTypeDef_Of(ActrActVals);
 
 class E_API ActrActVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_ActR actr activation values associated with a given chunk
+  // ##INLINE ##NO_TOKENS ##CAT_ActR actr activation values associated with a given chunk
 INHERITED(taOBase)
 public:
   float                 act;     // overall chunk activation = act_base + act_spread + act_match + act_noise + inst_noise
@@ -63,7 +63,7 @@ private:
 eTypeDef_Of(ActrActTimeVals);
 
 class E_API ActrActTimeVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_ActR actr activation timing values associated with a given chunk
+  // ##INLINE ##NO_TOKENS ##CAT_ActR actr activation timing values associated with a given chunk
 INHERITED(taOBase)
 public:
   float                 n_act;      // number of times chunk has been activated
@@ -96,7 +96,7 @@ public:
   ChunkFlags            flags;      // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW flags indicating state of the chunk
   ActrActVals           act;        // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW activation values for the chunk
   ActrActTimeVals       time;       // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW activation timing values for the chunk -- when created, accessed, etc
-  ActrSlot_List         slots;      // #NO_EXPAND_ALL #SHOW_TREE the slot values -- same number as slots in chunk_type
+  ActrSlot_List         slots;      // #NO_EXPAND_ALL #TREE_SHOW the slot values -- same number as slots in chunk_type
 
   inline void           SetChunkFlag(ChunkFlags flg)
   { flags = (ChunkFlags)(flags | flg); }

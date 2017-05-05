@@ -31,7 +31,8 @@ typedef void (*ta_prop_set_fun)(void*, const Variant&);
 
 taTypeDef_Of(PropertyDef);
 
-class TA_API PropertyDef : public MemberDefBase { //  defines a class member
+class TA_API PropertyDef : public MemberDefBase {
+  //  defines a class member
 INHERITED(MemberDefBase)
 public:
 
@@ -44,15 +45,12 @@ public:
   ta_prop_get_fun       prop_get; // stub function to get the property (as Variant)
   ta_prop_set_fun       prop_set; // stub function to set the property (as Variant)
 
-  bool         isReadOnly() const override;
-  bool         isGuiReadOnly() const override;
-  void                  setType(TypeDef* typ); // use this, to check for consistency between the various source -- should NOT be null!
+  void         setType(TypeDef* typ); // use this, to check for consistency between the various source -- should NOT be null!
   TypeInfoKinds TypeInfoKind() const override {return TIK_PROPERTY;}
   void*        This() override {return this;}
   TypeDef*     GetTypeDef() const override {return &TA_PropertyDef;}
-  bool         ValIsDefault(const void* base,
-                            int for_show) const override; // = taMisc::IS_EXPERT
-  // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+  bool         ValIsDefault(const void* base) const override;
+  // true if the member contains its default value, either DEF_ or the implicit default
 
   void                  Copy(const PropertyDef& cp);
   PropertyDef();
@@ -72,6 +70,8 @@ public:
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
+  void  InitOptsFlags() override;
+  
 private:
   void          Initialize();
   void          Copy_(const PropertyDef& cp);

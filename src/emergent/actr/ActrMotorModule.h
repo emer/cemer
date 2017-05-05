@@ -32,7 +32,7 @@
 eTypeDef_Of(ActrMotorParams);
 
 class E_API ActrMotorParams : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR motor parameters
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR motor parameters
 INHERITED(taOBase)
 public:
   bool          cursor_noise;  // #DEF_false :cursor-noise in ACT-R -- add noise to the final cursor position relative to the target position
@@ -50,7 +50,7 @@ private:
 eTypeDef_Of(ActrMotorTimeParams);
 
 class E_API ActrMotorTimeParams : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR motor timing parameters
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR motor timing parameters
 INHERITED(taOBase)
 public:
   float         feat_prep;  // #DEF_0.05 :motor-feature-prep-time in ACT-R -- Time in seconds required to prepare each movement feature

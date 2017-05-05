@@ -61,24 +61,24 @@ public:
   taViewer_List         viewers;        // #NO_SAVE viewer display settings for the root object only
   taViewer_List         viewers_tmp;    // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers
   taPlugin_List         plugins;        // available plugins
-  taBase_List           plugin_state;   // #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
-  taPluginBase_List     plugin_deps;    // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
-  taiMimeFactory_List   mime_factories; // #NO_SAVE #HIDDEN_TREE extensible list of mime factories
+  taBase_List           plugin_state;   // #NO_SAVE #HIDDEN #TREE_HIDDEN state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
+  taPluginBase_List     plugin_deps;    // #TREE_HIDDEN #NO_SAVE  dynamic list, populated in presave
+  taiMimeFactory_List   mime_factories; // #NO_SAVE #TREE_HIDDEN extensible list of mime factories
   ColorScaleSpec_Group  colorspecs;     // global list of color specs for displaying values in terms of colors
-  taBase_List           objs;           // #SHOW_TREE #EXPERT_TREE #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
-  String_Array          recent_files;   // #NO_SHOW recently loaded files
-  String_Array          recent_paths;   // #NO_SHOW recently used paths
-  String_Array          sidebar_paths;  // #NO_SHOW for the file chooser dialog -- sidebar paths that are saved and reloaded
-  taVector2f            rootview_pos;   // #NO_SHOW position for the root viewer
-  taVector2f            rootview_size;   // #NO_SHOW size for the root viewer
-  String                rootview_splits; // #NO_SHOW splitter config in root viewer
-  String                startupwiz_splits; // #NO_SHOW splitter config in startup wizard
-  String                startupwiz_ls_splits; // #NO_SHOW splitter config in startup wizard, left size
-  taVector2f            console_pos;    // #NO_SHOW position for the css console window
-  taVector2f            console_size;   // #NO_SHOW size for the the css console window
-  bool                  console_locked; // #NO_SHOW should the console be locked or unlocked by default?
-  char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
-  taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
+  taBase_List           objs;           // #TREE_HIDDEN #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
+  String_Array          recent_files;   // #HIDDEN recently loaded files
+  String_Array          recent_paths;   // #HIDDEN recently used paths
+  String_Array          sidebar_paths;  // #HIDDEN for the file chooser dialog -- sidebar paths that are saved and reloaded
+  taVector2f            rootview_pos;   // #HIDDEN position for the root viewer
+  taVector2f            rootview_size;   // #HIDDEN size for the root viewer
+  String                rootview_splits; // #HIDDEN splitter config in root viewer
+  String                startupwiz_splits; // #HIDDEN splitter config in startup wizard
+  String                startupwiz_ls_splits; // #HIDDEN splitter config in startup wizard, left size
+  taVector2f            console_pos;    // #HIDDEN position for the css console window
+  taVector2f            console_size;   // #HIDDEN size for the the css console window
+  bool                  console_locked; // #HIDDEN should the console be locked or unlocked by default?
+  char_Array            filedlg_setary; // #HIDDEN settings for the file dialog -- persisted
+  taVector2i            filedlg_size;   // #HIDDEN size for the file dialog -- persisted
 
   void          OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application

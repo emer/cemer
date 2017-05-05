@@ -51,7 +51,7 @@ public:
   taPlugin* 		plugin_rep; // nulled if pl deletes
   LoadState		load_state; // true once probed, for enumeration
   String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
-  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
+  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #HIDDEN time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
     
   IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed probes
   

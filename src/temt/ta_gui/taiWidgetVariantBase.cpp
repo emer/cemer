@@ -139,14 +139,6 @@ void taiWidgetVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(tiVal);
 }
 
-/*
-bool taiWidgetVariantBase::ShowMember(MemberDef* md) {
-  if (md->HasOption("HIDDEN_INLINE"))
-    return false;
-  else
-    return md->ShowMember((taMisc::ShowMembs)show);
-} */
-
 void taiWidgetVariantBase::cmbVarType_itemChanged(int itm) {
   if (m_updating != 0) return;
   ++m_updating;

@@ -52,7 +52,7 @@ public:
     OFF                 = 0x0001, // turn this object off -- do not include in the virtual world
     FM_FILE             = 0x0002, // load object image features from Inventor (iv) object file
     EULER_ROT           = 0x0004, // use euler rotation angles instead of axis and angle
-    CUR_FM_FILE         = 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
+    CUR_FM_FILE         = 0x0020, // #HIDDEN #READ_ONLY current flag setting load object image features from Inventor (iv) object file
 
     INIT_WAS_ABS        = 0x1000, // #NO_BIT init vals were specified in abs coords last time (not rel)
   };

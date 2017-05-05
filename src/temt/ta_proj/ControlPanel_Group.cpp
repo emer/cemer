@@ -59,6 +59,7 @@ void ControlPanel_Group::SigEmit(int sls, void* op1, void* op2) {
 }
 
 void ControlPanel_Group::MasterClonesUpdate() {
+  if(isDestroying()) return;
   ControlPanel* master = NULL;
   if(master_and_clones) {
     if(TestWarning(size == 0, "MasterClonesUpdate",

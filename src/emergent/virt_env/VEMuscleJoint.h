@@ -31,10 +31,10 @@ class E_API VEMuscleJoint : public VEJoint {
   // a Lambda-model (Gribble et al, 1998) arm joint -- updates forces at every time step, in GetVAlsFromODE, applies them using SetForce
 INHERITED(VEJoint)
 public:
-  VELambdaMuscle        flexor; // #SHOW_TREE flexor muscle
-  VELambdaMuscle        extensor; // #SHOW_TREE extensor muscle
-  VELambdaMuscle        flexor2; // #SHOW_TREE flexor muscle for joint 2
-  VELambdaMuscle        extensor2; // #SHOW_TREE extensor muscle for joint 2
+  VELambdaMuscle        flexor; // #TREE_SHOW flexor muscle
+  VELambdaMuscle        extensor; // #TREE_SHOW extensor muscle
+  VELambdaMuscle        flexor2; // #TREE_SHOW flexor muscle for joint 2
+  VELambdaMuscle        extensor2; // #TREE_SHOW extensor muscle for joint 2
 
   float                 targ_norm_angle; // #READ_ONLY #SHOW current target normalized angle
   float                 targ_angle; // #READ_ONLY #SHOW current target raw angle

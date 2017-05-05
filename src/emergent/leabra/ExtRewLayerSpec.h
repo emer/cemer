@@ -26,7 +26,7 @@
 eTypeDef_Of(OutErrSpec);
 
 class E_API OutErrSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
 INHERITED(SpecMemberBase)
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
@@ -48,7 +48,7 @@ private:
 eTypeDef_Of(ExtRewSpec);
 
 class E_API ExtRewSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
 INHERITED(SpecMemberBase)
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)

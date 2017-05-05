@@ -26,7 +26,7 @@
 eTypeDef_Of(DRN5htSpec);
 
 class E_API DRN5htSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DRN 5ht parameters
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DRN 5ht parameters
 INHERITED(SpecMemberBase)
 public:
   float         se_out_gain;    // #DEF_0:2 #MIN_0 multiplier for 5HT serotonin values as they are sent to other layers

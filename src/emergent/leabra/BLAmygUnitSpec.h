@@ -26,7 +26,7 @@
 eTypeDef_Of(BLAmygDaMod);
 
 class E_API BLAmygDaMod : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in BL Amygdala learning
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for da_mod gain factors and other learning parameters in BL Amygdala learning
 INHERITED(SpecMemberBase)
 public:
   float         pct_act;        // #DEF_1;0.8 proportion of activation used for computing dopamine modulation value -- 1-pct_act comes from net-input -- activation is more differentiated and leads to more differentiated representations, but if there is no activation then dopamine modulation has no effect, so it depends on having that activation signal
@@ -49,7 +49,7 @@ private:
 eTypeDef_Of(BLAmygAChMod);
 
 class E_API BLAmygAChMod : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for ach_mod gain factors
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for ach_mod gain factors
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // whether to modulate activations as a function of ach levels

@@ -32,7 +32,7 @@ class taVector2f; //
 taTypeDef_Of(taVector2i);
 
 class TA_API taVector2i : public taBase {
-  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
+  // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math a value in 2D coordinate space
 INHERITED(taBase)
 public:
   int           x;              // horizontal

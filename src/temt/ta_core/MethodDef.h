@@ -29,7 +29,8 @@ class taiMethod; //
 
 taTypeDef_Of(MethodDef);
 
-class TA_API MethodDef : public TypeItem {// defines a class method
+class TA_API MethodDef : public TypeItem {
+  // defines a class method
 #ifndef __MAKETA__
 typedef TypeItem inherited;
 #endif
@@ -70,6 +71,9 @@ public:
   MethodDef(const MethodDef& md);       // copy constructor
   ~MethodDef();
 
+  bool          ShowMethod() const;
+  // check that this is not a hidden method
+  
   const String  prototype() const; // text depiction of fun, ex "void MyFun(int p)"
 
   MethodDef*    Clone()         { return new MethodDef(*this); }
@@ -78,20 +82,14 @@ public:
   const String  GetPathName() const override;
   bool          CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one
-  bool                  CompareArgs(MethodDef* it) const;       // true if same, false if not
+  bool          CompareArgs(MethodDef* it) const;       // true if same, false if not
   void          PrintType(String& col1, String& col2) const;
   void          CallFun(void* base, const String& arg_str = "") const;
   // call the function, using args as comma-separated simple literal expressions for argument values, or using gui dialog if need to get args 
   const String  ParamsAsString() const; // returns what would be in () for a definition
-  bool          ShowMethod(int show = USE_SHOW_GUI_DEF) const;
 
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
-
-protected:
-  mutable int   show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
-  void          ShowMethod_CalcCache() const; // called when show_any=0, ie, not configured yet
-  void          ShowMethod_CalcCache_impl(int& show) const;
 };
 
 

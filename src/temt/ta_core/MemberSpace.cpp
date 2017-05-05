@@ -173,27 +173,6 @@ void MemberSpace::CopyOnlySameType(void* trg_base, void* src_base) {
   }
 }
 
-bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
-                                  voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                  TypeDef* base_typ, void* trg_base, void* src_base,
-                                  int show_forbidden, int show_allowed, bool no_ptrs,
-                                  bool test_only) {
-  bool some_diff = false;
-  int i;
-  for(i=0; i<size; i++) {
-    MemberDef* md = FastEl(i);
-    if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed)) {
-      if(no_ptrs && (md->type->IsAnyPtr() || md->type->HasOption("SMART_POINTER")))
-        continue;
-      some_diff |= md->CompareSameType(mds, base_types, trg_bases, src_bases,
-                                       base_typ, trg_base, src_base,
-                                       show_forbidden, show_allowed, no_ptrs, test_only);
-    }
-  }
-  return some_diff;
-}
-
-
 String& MemberSpace::PrintType(String& strm, int indent) const {
   taMisc::IndentString(strm, indent) << "// members\n";
   String_PArray col1;
@@ -211,8 +190,7 @@ String& MemberSpace::Print(String& strm, void* base, int indent) const {
   String_PArray col2;
   for(int i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
-    if(!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
-                       TypeItem::SHOW_CHECK_MASK)) continue;
+    if(md->IsEditorHidden()) continue;
     String c1; String c2;
     md->Print(c1, c2, base, indent);
     col1.Add(c1); col2.Add(c2);

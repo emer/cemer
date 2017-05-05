@@ -73,11 +73,11 @@ public:
   static MainWindowViewer* GetDefaultProjectViewer(taProject* proj = NULL);
     // get the default pv for given project, or whatever one is current if NULL -- for 3-pane B==V for 2x2 B is the tree guy V is the T3 guy
 
-  bool                  m_is_root; // #READ_ONLY #SAVE #NO_SHOW
-  bool                  m_is_viewer_xor_browser; // #READ_ONLY #SAVE #NO_SHOW (weird, for compat w <=4.0.6)
-  bool                  m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
-  bool                  m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
-  int                   revert_to_tab_no; // #READ_ONLY #NO_SHOW tab number to revert to in wait proc..
+  bool                  m_is_root; // #READ_ONLY #HIDDEN
+  bool                  m_is_viewer_xor_browser; // #READ_ONLY #HIDDEN (weird, for compat w <=4.0.6)
+  bool                  m_is_proj_viewer; // #READ_ONLY #HIDDEN
+  bool                  m_is_dialog; // #READ_ONLY #HIDDEN when we use the viewer as an edit dialog
+  int                   revert_to_tab_no; // #READ_ONLY #HIDDEN tab number to revert to in wait proc..
 
 #ifdef TA_GUI
   taiWidgetActions_List* ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)

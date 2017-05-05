@@ -55,7 +55,6 @@ public: // IWidgetHost i/f
   const iColor  colorOfCurRow() const override { return bgColor(); }
   const iColor  backgroundColor() const override { return bg_color; }
   const iColor  backgroundColorDark() const override { return bg_color_dark; }
-  TypeItem::ShowMembs  show() const override;
   bool         HasChanged() override {return modified;}
   bool         isConstructed() override {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}

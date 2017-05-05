@@ -27,7 +27,7 @@ class LeabraLayerSpec; //
 eTypeDef_Of(LeabraInhibVals);
 
 class E_API LeabraInhibVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for computed inhibition
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for computed inhibition
 INHERITED(taOBase)
 public:
   float         ffi;            // computed feedforward inhibition

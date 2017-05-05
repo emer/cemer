@@ -62,7 +62,7 @@ public:
   int           dt_cell;       // #CONDSHOW_ON_cond_src:DATA_CELL cell index within data row,column within data table cell to obtain value from
   Relation::Relations  rel;    // #CONDSHOW_OFF_cond_src:BUFFER_EQ,BUFFER_QUERY relationship between source value and comparison value
   String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value -- for query std options are buffer: full, empty, requested, unrequested, state (or preparation, processor, execution): busy, free, error -- can chain multiple with ; separator
-  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #CONDTREE_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
+  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #CONDTREE_ON_cond_src:BUFFER_EQ #TREE_SHOW comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
 
   inline void           SetCondFlag(CondFlags flg)
   { flags = (CondFlags)(flags | flg); }

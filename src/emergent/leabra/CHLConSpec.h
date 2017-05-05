@@ -26,7 +26,7 @@
 eTypeDef_Of(ChlSpecs);
 
 class E_API ChlSpecs : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
 INHERITED(SpecMemberBase)
 public:
   bool		use;	        // use CHL learning instead of standard XCAL learning -- allows easy exploration of CHL vs. XCAL

@@ -255,7 +255,7 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
       // don't copy read only or hidden members! (usually set automatically
       // and might depend on local variables)
       if(!GetUnique(memb_no) &&
-         !(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") ||
+         !(md->HasReadOnly() || md->HasHidden() ||
            md->HasOption("NO_INHERIT")))
       {
         if(md->type->InheritsFrom(TA_taList_impl)) {

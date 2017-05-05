@@ -267,7 +267,7 @@ bool taSigLinkTaBase::HasChildItems() {
   MemberSpace* ms = &GetDataTypeDef()->members;
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
-    if (ShowMember(md, TypeItem::SC_TREE)) return true;
+    if(!md->IsTreeHidden()) return true;
   }
   return false;
 }
@@ -394,7 +394,10 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) continue;
+      if(!(sd->options() & iDialogSearch::SO_ALL_MEMBS)) {
+        if(md->IsEditorHidden()) continue;
+        // todo: what about excluding NO_SEARCH??
+      }
       probed = md->name;
       if (IsHit(targs, kicks, probed, ci)) {
         ++n; AddHit(item_type, probed, hits);
@@ -419,9 +422,8 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) continue;
-      if (md->is_static) continue;
-      if (md->HasOption("NO_FIND")) continue;
+      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && md->IsEditorHidden()) continue;
+      if (md->HasNoFind()) continue;
       if (md->type->IsNotPtr()) {
         // a list or greater is never a "value"
         if (md->type->InheritsFrom(TA_taList_impl)) continue;
@@ -431,8 +433,7 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
           // non-owned values can't be browsed, and must be handled inline, below
           if (own) {
             // if owned, could browsable child -- we do that as recursive
-            if (md->ShowMember(TypeItem::USE_SHOW_GUI_DEF,
-                               TypeItem::SC_TREE)) continue;
+            if (!md->IsTreeHidden()) continue;
           }
         }
         // have to force getting an inline value, since default is often the path
@@ -465,13 +466,12 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   for(int m=0; m<td->members.size;m++) {
     if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
-    if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) {
+    if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && md->IsEditorHidden()) {
       // def children are excluded from show, but should not be from search!!
       if (md->name != def_child)
         continue;
     }
-    if (md->is_static) continue;
-    if (md->HasOption("NO_SEARCH")) continue;
+    if (md->HasNoSearch()) continue;
 
     taBase* chld = NULL;
     // we are only handling owned browsable taBase guys here
@@ -480,8 +480,7 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
     // if guy is not a list or greater, must be browsable taBase
     if (!md->type->InheritsFrom(TA_taList_impl)) {
       if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) &&            
-          !md->ShowMember(TypeItem::USE_SHOW_GUI_DEF,
-          TypeItem::SC_TREE)) continue;
+          md->IsTreeHidden()) continue;
     }
 
     if (md->type->IsNotPtr()) {
@@ -524,13 +523,5 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
 
 void taSigLinkTaBase::Search(iDialogSearch* dlg) {
   taSigLinkTaBase::SearchStat(data(), dlg);
-}
-
-bool taSigLinkTaBase::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
-  TypeDef* td = md->type;
-  if (td == NULL) return false; // shouldn't happen...
-  // should just be able to completely delegate to the memberdef...
-
-  return md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, show_context);
 }
 

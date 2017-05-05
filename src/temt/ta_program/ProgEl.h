@@ -58,8 +58,6 @@ class TA_API ProgEl: public taOBase {
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:
-  int          edit_move_after; // #IGNORE where to move after browser edit effects
-
   // Signature of following functions must match that of the item_filter_fun typedef.
   static bool           StdProgVarFilter(void* base, void* var);
   // #CAT_IGNORE generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
@@ -79,18 +77,20 @@ public:
     NEW_EL              = 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
     VERBOSE             = 0x0008, // print informative message about the operation of this program element to std output (e.g., css console or during -nogui startup) -- useful for debugging and for logging key steps during startup
     QUIET               = 0x0010, // turn off warning messages if they are not relevant
-    PROG_ERROR          = 0x0200, // #NO_SHOW css error was triggered at this prog el
-    WARNING             = 0x0400, // #NO_SHOW css warning was triggered at this prog el
-    CAN_REVERT_TO_CODE  = 0x0800, // #NO_SHOW can revert to program code string -- computes whether this prog el can revert back to a ProgCode -- used for enabling button
-    BREAKPOINT_ENABLED  = 0x1000, // #NO_SHOW breakpoint (ENABLED & DISABLED are mutually exclusive)
-    BREAKPOINT_DISABLED = 0x2000, // #NO_SHOW breakpoint exists but is currently disabled
-    NO_CODE             = 0x4000, // #NO_SHOW some program elements don't have code
+    PROG_ERROR          = 0x0200, // #HIDDEN css error was triggered at this prog el
+    WARNING             = 0x0400, // #HIDDEN css warning was triggered at this prog el
+    CAN_REVERT_TO_CODE  = 0x0800, // #HIDDEN can revert to program code string -- computes whether this prog el can revert back to a ProgCode -- used for enabling button
+    BREAKPOINT_ENABLED  = 0x1000, // #HIDDEN breakpoint (ENABLED & DISABLED are mutually exclusive)
+    BREAKPOINT_DISABLED = 0x2000, // #HIDDEN breakpoint exists but is currently disabled
+    NO_CODE             = 0x4000, // #HIDDEN some program elements don't have code
   };
 
   String                name; // #READ_ONLY the name of the program element -- generated automatically from the type name and content and used for finding elements
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
   String                code_string; // #AKA_orig_prog_code #READ_ONLY #SHOW most recently uncompiled program code -- used for reverting
+  int                   edit_move_after; // #IGNORE where to move after browser edit effects
+  
   virtual ProgEl*       parent() const
   { return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl); }
   Program*              program() { return GET_MY_OWNER(Program); }
@@ -200,6 +200,7 @@ public:
 
   virtual String GenProgName() const;
   // generate name from program element
+  virtual bool UpdateProgName(); // update name from new generated program name, called in UAE
   bool         HasName() const override { return true; }
   bool         SetName(const String& nm) override;
   String       GetName() const           override { return name; }

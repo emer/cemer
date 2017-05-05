@@ -817,7 +817,7 @@ void cssEl::operator=(const Variant& val) {
 
 cssEl* cssEl::GetElFromVar(const Variant& var, const String& nm, MemberDef* md,
                           cssEl* class_parent) {
-  bool ro = md && md->HasOption("READ_ONLY");
+  bool ro = md && md->HasReadOnly();
   TypeDef* td;
   void* itm_ptr;
   var.GetRepInfo(td, itm_ptr);

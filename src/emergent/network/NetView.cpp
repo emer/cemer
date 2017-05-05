@@ -801,8 +801,7 @@ void NetView::GetMembs() {
 
     for(int m=0; m<td->members.size; m++) {
       MemberDef* md = td->members.FastEl(m);
-      if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
-          md->HasOption("READ_ONLY")))
+      if((md->HasHidden() || md->HasReadOnly() || md->HasOption("NO_VIEW")))
         continue;
       if(md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double)) {
         MemberDef* nmd = md->Clone();
@@ -842,8 +841,7 @@ void NetView::GetMembs() {
         for (k=0; k<td->members.size; k++) {
           MemberDef* smd = td->members.FastEl(k);
           if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-                smd->HasOption("READ_ONLY")))
+            if((smd->HasHidden() || smd->HasReadOnly() || smd->HasOption("NO_VIEW")))
               continue;
             String nm = "r." + smd->name;
             if(membs.FindName(nm)==NULL) {

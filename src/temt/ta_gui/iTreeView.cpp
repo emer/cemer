@@ -91,7 +91,6 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
   tree_state_restored = false;
-  m_show = (TypeItem::ShowMembs)(TypeItem::USE_SHOW_GUI_DEF | taMisc::show_gui);
   m_decorate_enabled = true;
   italic_font = NULL;
   in_mouse_press = 0;
@@ -1075,12 +1074,6 @@ void iTreeView::setDecorateEnabled(bool value) {
   m_decorate_enabled = value;
 }
 
-void iTreeView::setShow(TypeItem::ShowMembs value) {
-  if (m_show == value) return;
-  m_show = value;
-  Show_impl();
-}
-
 void iTreeView::itemWasEdited(const QModelIndex& index) const {
   inherited::itemWasEdited(index);
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
@@ -1221,7 +1214,7 @@ void iTreeView::showEvent(QShowEvent* ev) {
 
 bool iTreeView::ShowNode(iTreeViewItem* item) const {
   if (!item) return false; // bad caller!
-  return item->ShowNode(show(), m_show_context);
+  return item->ShowNode();
 }
 
 void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiWidgetActions* menu) {

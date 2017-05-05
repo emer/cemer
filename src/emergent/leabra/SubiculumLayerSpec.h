@@ -26,7 +26,7 @@
 eTypeDef_Of(SubiculumNoveltySpec);
 
 class E_API SubiculumNoveltySpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra how to compute novelty from normalized error, and then modulate learning rate as a function of novelty
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute novelty from normalized error, and then modulate learning rate as a function of novelty
 INHERITED(SpecMemberBase)
 public:
   float		max_norm_err;	// #MAX_1 #MIN_0 maximum effective norm err value for computing novelty -- novelty is linear between 0 and this max value, renormalized to 0-1 range

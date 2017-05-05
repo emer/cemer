@@ -28,7 +28,7 @@ int taiTypeOfClass::BidForType(TypeDef* td) {
 taiWidget* taiTypeOfClass::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                   taiType* parent_type_, int flags_, MemberDef* mbr)
 {
-  if (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"))
+  if (typ->IsEditInline())
     flags_ |= taiWidget::flgInline;
   return inherited::GetWidgetRep(host_, par, gui_parent_, parent_type_, flags_, mbr);
 }

@@ -70,8 +70,8 @@ public:
     ACCEPTED,
     CANCELED,
     ZOMBIE, // for when gui stuff deleted before we did
-    STATE_MASK          = 0x0F, // #NO_SHOW
-    SHOW_CHANGED        = 0x80  // #NO_SHOW flag to indicate what to show was changed, reconstruct!
+    STATE_MASK          = 0x0F, // #HIDDEN
+    SHOW_CHANGED        = 0x80  // #HIDDEN flag to indicate what to show was changed, reconstruct!
   };
 
   enum HostType {

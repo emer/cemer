@@ -30,7 +30,7 @@ class CircMatrix;
 eTypeDef_Of(VisRegionParams);
 
 class E_API VisRegionParams : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region
+  // #STEM_BASE ##INLINE ##CAT_Image basic params for a visual region
 INHERITED(taOBase)
 public:
   enum Ocularity {		// ocularity configuration
@@ -72,7 +72,7 @@ public:
 eTypeDef_Of(VisRegionSizes);
 
 class E_API VisRegionSizes : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters
+  // #STEM_BASE ##INLINE ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters
 INHERITED(taOBase)
 public:
   taVector2i	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
@@ -90,7 +90,7 @@ protected:
 eTypeDef_Of(VisAdaptation);
 
 class E_API VisAdaptation : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image how responsiveness adapts over time
+  // #STEM_BASE ##INLINE ##CAT_Image how responsiveness adapts over time
 INHERITED(taOBase)
 public:
   bool		on;		// apply adaptation?

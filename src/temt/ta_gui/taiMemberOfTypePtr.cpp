@@ -33,8 +33,7 @@ taiWidget* taiMemberOfTypePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* 
 {
   if (mbr->HasOption("NULL_OK"))
     flags_ |= taiWidget::flgNullOk;
-  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
+  flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   taiWidgetTypeDefChooser* rval =
     new taiWidgetTypeDefChooser(mbr->type, host_, par, gui_parent_, flags_);
   return rval;

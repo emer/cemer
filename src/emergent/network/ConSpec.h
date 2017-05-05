@@ -50,7 +50,7 @@ class Projection; //
 eTypeDef_Of(WeightLimits);
 
 class E_API WeightLimits : public taOBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
+  // ##NO_TOKENS ##INLINE #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
 INHERITED(taOBase)
 public:
   enum LimitType {

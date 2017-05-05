@@ -36,7 +36,7 @@ class Network; //
 eTypeDef_Of(RenormInitWtsSpec);
 
 class E_API RenormInitWtsSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Projection parameters for renormalizing initial weight values
+  // #STEM_BASE ##INLINE ##CAT_Projection parameters for renormalizing initial weight values
 INHERITED(taOBase)
 public:
   bool          on;             // renormalize initial weight values

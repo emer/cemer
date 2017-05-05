@@ -35,7 +35,7 @@ INHERITED(ProgEl)
 public:
   ProgVarRef        switch_var;	 // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
 
-  ProgEl_List       cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
+  ProgEl_List       cases; 	// #TREE_SHOW variable value and code to execute for each case (list of CaseBlock objects)
   int               ProgElChildrenCount() const override { return cases.size; }
 
   virtual void	    AddCase();

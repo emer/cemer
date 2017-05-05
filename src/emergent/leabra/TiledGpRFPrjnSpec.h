@@ -29,7 +29,7 @@
 eTypeDef_Of(GaussInitWtsSpec);
 
 class E_API GaussInitWtsSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Projection parameters for initializing gaussian projection weights
+  // #STEM_BASE ##INLINE ##CAT_Projection parameters for initializing gaussian projection weights
 INHERITED(taOBase)
 public:
   bool          on;             // initialize gaussian weights at this level scale
@@ -46,7 +46,7 @@ private:
 eTypeDef_Of(SigmoidInitWtsSpec);
 
 class E_API SigmoidInitWtsSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Projection parameters for initializing sigmoid projection weights
+  // #STEM_BASE ##INLINE ##CAT_Projection parameters for initializing sigmoid projection weights
 INHERITED(taOBase)
 public:
   bool          on;             // initialize sigmoid weights at this level scale

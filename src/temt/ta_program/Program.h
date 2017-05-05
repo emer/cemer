@@ -96,10 +96,10 @@ public:
     SR_ERROR,                   // some form of runtime error occurred -- stop_msg has text
   };
 
-  static ProgLib*       prog_lib; // #NO_SHOW_TREE #NO_SAVE #NO_FIND #HIDDEN library of available programs
+  static ProgLib*       prog_lib; // #TREE_HIDDEN #NO_SAVE #NO_FIND #HIDDEN library of available programs
 
   Program_Group*        prog_gp;
-  // #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER #HIDDEN #CAT_IGNORE our owning program group
+  // #HIDDEN #READ_ONLY #NO_SAVE #NO_SET_POINTER #HIDDEN #CAT_IGNORE our owning program group
 
   RunState              run_state;
   // #READ_ONLY #NO_SAVE this program's run state

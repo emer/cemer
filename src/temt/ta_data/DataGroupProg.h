@@ -32,7 +32,7 @@ class TA_API DataGroupProg : public DataSrcDestProg {
   // groups src_data into dest_data according to group_spec
 INHERITED(DataSrcDestProg)
 public:
-  DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
+  DataGroupSpec		group_spec; // #TREE_SHOW data grouping specification
 
   virtual DataOpEl* AddColumn(const String& col_name) { return group_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on

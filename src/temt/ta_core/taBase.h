@@ -1025,6 +1025,8 @@ public:
   // #CAT_ObjectMgmt (aka UAE) called after editing, or any user change to members (eg. in the interface, script)
   virtual void          UpdateAfterEdit_NoGui();
   // #CAT_ObjectMgmt does any object-related updates based on changes, but does NOT trigger any gui updates -- use this for updating members inside of an object's UAE
+  virtual void          UpdateAll();
+  // #CAT_ObjectMgmt call UpdateAfterEdit on this object and all of its members and sub-objects, recursively, unless the class has the NO_UPDATE_AFTER flag set
   virtual void          ChildUpdateAfterEdit(taBase* child, bool& handled);
   // #IGNORE called by a child in its UAE routine; provides child notifications  NOTE: only member objects are detected; subclasses that want to notify on owned taBase* members must override and check for those instances manually
   virtual void          UpdateAfterMove(taBase* old_owner);
@@ -1397,14 +1399,6 @@ public:
                                             MemberDef* md = NULL);
   // #IGNORE Search test for just this one taBase item (no recursion) according to criteria
 
-  virtual void          CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                           taBase* cp_base,
-                           int show_forbidden=TypeItem::NO_HIDDEN,
-                           int show_allowed=TypeItem::SHOW_CHECK_MASK, 
-                           bool no_ptrs = true);
-  // #IGNORE compare all member values from object of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists -- recursive -- will also check members of lists/groups that I own
-
   virtual String        GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
   // #CAT_ObjectMgmt get the name corresponding to given enum value in enum type enum_tp_nm
@@ -1641,7 +1635,7 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   //            Misc Impl stuff
 
-  mutable BaseFlags     base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY #CAT_taBase base_flags for ta system
+  mutable BaseFlags     base_flags; // #HIDDEN #NO_SAVE #READ_ONLY #CAT_taBase base_flags for ta system
 protected:
   taAtomicInt            refn;   // number of references to this object
 private:

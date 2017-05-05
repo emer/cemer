@@ -38,7 +38,6 @@ public:
   virtual bool          isConstructed() = 0;
   virtual bool          isModal() = 0;
   virtual bool          isReadOnly() = 0;
-  virtual TypeItem::ShowMembs show() const = 0;
   virtual iMainWindowViewer* viewerWindow() const {return NULL;} // used to set cliphandler
   virtual bool          HasChanged() = 0; // 'true' if has changed
   virtual void*         Root() const = 0; // root of the object

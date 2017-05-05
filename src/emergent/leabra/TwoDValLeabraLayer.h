@@ -51,7 +51,7 @@ public:
     TWOD_N,			// number of val types to encode
   };
   
-  float_Matrix		twod_vals; // #SHOW_TREE matrix of layer-encoded values, dimensions: [gp_y][gp_x][n_vals][TWOD_N][TWOD_XY] (outer to inner) -- gp_y and gp_x are group indices, size 1,1, for a layer with no unit groups
+  float_Matrix		twod_vals; // #TREE_SHOW matrix of layer-encoded values, dimensions: [gp_y][gp_x][n_vals][TWOD_N][TWOD_XY] (outer to inner) -- gp_y and gp_x are group indices, size 1,1, for a layer with no unit groups
 
   inline float	GetTwoDVal(TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
     return twod_vals.SafeElAsFloat(xy, val_typ, val_no, gp_x, gp_y);

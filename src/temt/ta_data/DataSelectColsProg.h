@@ -32,7 +32,7 @@ class TA_API DataSelectColsProg : public DataSrcDestProg {
   // ##DEF_CHILD_select_spec ##DEF_CHILDNAME_Select_Spec selects rows from src_data into dest_data according to select_spec
 INHERITED(DataSrcDestProg)
 public:
-  DataOpList		select_spec; // #SHOW_TREE columns to select
+  DataOpList		select_spec; // #TREE_SHOW columns to select
 
   virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on

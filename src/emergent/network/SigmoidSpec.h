@@ -28,7 +28,7 @@
 eTypeDef_Of(SigmoidSpec);
 
 class E_API SigmoidSpec : public taOBase {
-// ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
+// ##NO_TOKENS ##INLINE ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 INHERITED(taOBase) //
 public:
 #ifndef __MAKETA__

@@ -27,7 +27,7 @@ class MinMax;
 taTypeDef_Of(FixedMinMax);
 
 class TA_API FixedMinMax : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values with toggles for usage
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum values with toggles for usage
 INHERITED(taBase)
 public:
   bool          fix_min;        // use fixed minimum value?

@@ -37,7 +37,7 @@ public:
   ProgramRef    program;
   // the program where the break point is set
   ProgElRef     prog_el;
-  // #HIDDEN #SHOW_TREE the program element on which the break is set
+  // #HIDDEN #TREE_SHOW the program element on which the break is set
   String        desc;
   // #READ_ONLY #SHOW describes the line of code where the breakpoint is set
 

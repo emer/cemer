@@ -89,11 +89,10 @@ void FlatTreeEl_List::GetFlatTreeMembers(FlatTreeEl* obj_fel, const taBase* obj)
   TypeDef* td = obj_fel->type;
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
-    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
-       md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN"))
+    if(md->HasNoSave() || md->IsEditorHidden())
       continue;
     if(obj_fel->mdef) { // object is a member
-      if(md->HasOption("HIDDEN_INLINE")) continue;
+      if(md->HasHiddenInline()) continue;
     }
     if(md->HasOption("DIFF_LAST")) {
       last_md = md;
@@ -119,11 +118,10 @@ void FlatTreeEl_List::GetFlatTreeMembers_ListsOnly(FlatTreeEl* obj_fel, const ta
     MemberDef* md = td->members.FastEl(i);
     if(!md->type->InheritsFrom(&TA_taList_impl)) // key diff -- only lists!
       continue;
-    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
-       md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN"))
+    if(md->HasNoSave() || md->IsEditorHidden())
       continue;
     if(obj_fel->mdef) { // object is a member
-      if(md->HasOption("HIDDEN_INLINE")) continue;
+      if(md->HasHiddenInline()) continue;
     }
     if(md->HasOption("DIFF_LAST")) {
       last_md = md;

@@ -293,7 +293,7 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
       taBase* mb = (taBase*)md->GetOff(this);
       mb->CutLinks();
     }
-    else if(md->type->IsPointer() && !md->HasOption("NO_SET_POINTER")) {
+    else if(md->type->IsPointer() && !md->HasNoSetPointer()) {
       taBase** mb = (taBase**)md->GetOff(this);
       taBase::DelPointer(mb);
     }
@@ -435,7 +435,14 @@ TypeDef* taBase::StatTypeDef(int) {
 bool taBase::isDestroying() const {
   if(HasBaseFlag(DESTROYING)) return true;
   taBase* own = GetOwner();
-  if(own && own != this) return own->isDestroying();
+  if(own && own != this) {
+    if(this->IsParentOf(own)) {
+      taMisc::Error("parent-child loop in:", GetName());
+    }
+    else {
+      return own->isDestroying();
+    }
+  }
   return false;
 }
 
@@ -1818,7 +1825,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
                     "of type:",nw_el->GetTypeDef()->name,"is not the right type:",
                       ld_el_typ->name,", attempting to create new one");
     }
-    if(el_md && (el_md->HasOption("OWN_POINTER") || !el_md->HasOption("NO_SET_POINTER"))) {
+    if(el_md && (el_md->HasOwnPointer() || !el_md->HasNoSetPointer())) {
       taBase::DelPointer(nw_el_ptr);
     }
     else {
@@ -1836,7 +1843,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
                       el_path,"in parent object:",DisplayPath());
       return NULL;
     }
-    if(el_md && el_md->HasOption("OWN_POINTER")) { // note: this was not in original!
+    if(el_md && el_md->HasOwnPointer()) { // note: this was not in original!
       taBase::Own(nw_el,this);
     }
     else {
@@ -1882,7 +1889,7 @@ String taBase::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
     sc = (taMisc::is_saving) ? TypeDef::SC_STREAMING : TypeDef::SC_VALUE;
 
   TypeDef* td = GetTypeDef();
-  if(force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")) {
+  if(force_inline || td->IsSaveInline()) {
     return td->GetValStr_class_inline(this, par, memb_def, sc, force_inline);
   }
   else {
@@ -1918,8 +1925,8 @@ bool taBase::SetValStr(const String& val, void* par, MemberDef* memb_def,
   if (sc == TypeDef::SC_DEFAULT)
     sc = (taMisc::is_saving) ? TypeDef::SC_STREAMING : TypeDef::SC_VALUE;
 
-  if(force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")) {
-    TypeDef* td = GetTypeDef();
+  TypeDef* td = GetTypeDef();
+  if(force_inline || td->IsSaveInline()) {
     td->SetValStr_class_inline(val, this, par, memb_def, sc, force_inline);
     if (sc != TypeDef::SC_STREAMING)
       UpdateAfterEdit();        // only when not loading (else will happen after)
@@ -1960,14 +1967,14 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
       }
     }
   }
-  if (memb_def && memb_def->HasOption("OWN_POINTER")) {
+  if (memb_def && memb_def->HasOwnPointer()) {
     if(!par)
       taMisc::Warning("*** NULL parent for owned pointer:",val);
     else
       taBase::OwnPointer((taBase**)base, bs, (taBase*)par);
   }
   else {
-    if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
+    if (memb_def && memb_def->HasNoSetPointer())
       (*(taBase**)base) = bs;
     else
       taBase::SetPointer((taBase**)base, bs);
@@ -2045,6 +2052,18 @@ void taBase::UpdateAfterEdit() {
 void taBase::UpdateAfterEdit_NoGui() {
   if (isDestroying()) return;
   UpdateAfterEdit_impl();
+}
+
+void taBase::UpdateAll() {
+  UpdateAfterEdit();
+  TypeDef* td = GetTypeDef();
+  for (int i=0;i<td->members.size;i++) {
+    MemberDef* md = td->members.FastEl(i);
+    if(md->HasNoSave() || !md->type->IsActualTaBase()) continue;
+    if(md->type->HasOption("NO_UPDATE_AFTER")) continue;
+    taBase* md_tab = (taBase*)md->GetOff(this);
+    md_tab->UpdateAfterEdit();
+  }
 }
 
 void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
@@ -2136,7 +2155,7 @@ void taBase::SetMember(const String& member, const String& value) {
   int base_off = 0;
   MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, mbr_off,
                                                  member, false); // no warn
-  if(mbr_def && !mbr_def->isGuiReadOnly()) {
+  if(mbr_def && !mbr_def->IsGuiReadOnly()) {
     void* address = MemberDef::GetOff_static(this, base_off, mbr_off);
     mbr_def->type->SetValStr(value, address, NULL, mbr_def);
     UpdateAfterEdit();
@@ -2518,7 +2537,7 @@ void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   // then check for taBase items, checking object name and type (breadth first)
   for(int i=0; i < td->members.size; i++) {
     md = td->members[i];
-    if(!md->type->IsActualTaBase() || md->HasOption("NO_FIND"))
+    if(!md->type->IsActualTaBase() || md->HasNoFind())
       continue;
     taBase* mobj = (taBase*)md->GetOff((void*)this);
     if(mobj->FindCheck(nm) || md->type->InheritsFromName(nm)) {
@@ -2530,7 +2549,7 @@ void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   // then do a depth-recursive search
   for(int i=0; i < td->members.size; i++) {
     md = td->members[i];
-    if(!md->type->IsActualTaBase() || md->HasOption("NO_FIND"))
+    if(!md->type->IsActualTaBase() || md->HasNoFind())
       continue;
     taBase* mobj = (taBase*)md->GetOff((void*)this);
     void* rval = mobj->FindMembeR(nm, ret_md);
@@ -2548,8 +2567,8 @@ void taBase::Search(const String& srch, taBase_PtrList& items,
                     bool obj_name, bool obj_type,
                     bool obj_desc, bool obj_val,
                     bool mbr_name, bool type_desc) {
-  if(TestError(srch.empty(), "Search",
-               "search string is empty!")) {
+  if(TestWarning(srch.empty(), "Search",
+                 "search string is empty!")) {
     return;
   }
   String srch_act = srch;
@@ -2747,9 +2766,9 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
     // first pass: just look at our guys
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE")
-         || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) continue;
       if(!md->type->IsActualTaBase()) continue;
+      if(md->IsEditorHidden() || md->HasTreeHidden() || md->HasNoFind() || md->HasExpert())
+        continue;
       taBase* obj = (taBase*)md->GetOff(this);
       if(!obj) continue;
       if(obj->SearchTestItem_impl(srch, text_only, contains, case_sensitive, obj_name, obj_type,
@@ -2762,9 +2781,9 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
   // second pass: recurse
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE")
-       || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) continue;
     if(!md->type->IsActualTaBase()) continue;
+    if(md->IsEditorHidden() || md->HasTreeHidden() || md->HasNoFind() || md->HasExpert())
+      continue;
     taBase* obj = (taBase*)md->GetOff(this);
     obj->SearchIn_impl(srch, items, owners, text_only, contains, case_sensitive, obj_name, obj_type,
                        obj_desc, obj_val, mbr_name, type_desc);
@@ -2772,29 +2791,6 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
   
   if(owners && (items.size > st_sz)) { // we added somebody somewhere..
     owners->Link(this);
-  }
-}
-
-void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                              voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                              taBase* cp_base, int show_forbidden,
-                              int show_allowed, bool no_ptrs) {
-  if(!cp_base) return;
-  TypeDef* td = GetTypeDef();
-  if(td != cp_base->GetTypeDef()) return; // must be same type..
-  // search our guy:
-  td->CompareSameType(mds, base_types, trg_bases, src_bases, (void*)this, (void*)cp_base,
-                      show_forbidden, show_allowed, no_ptrs);
-  // then recurse..
-  for(int m=0;m<td->members.size;m++) {
-    MemberDef* md = td->members[m];
-    if(md->type->IsAnyPtr() || !md->type->IsActualTaBase()) continue;
-    if(md->type->HasOption("EDIT_INLINE") || md->type->HasOption("INLINE")) continue;
-    if(md->HasOption("HIDDEN")) continue; // categorically don't look at hidden objects for diffs
-    taBase* obj = (taBase*)md->GetOff(this);
-    taBase* cp_obj = (taBase*)md->GetOff(cp_base);
-    obj->CompareSameTypeR(mds, base_types, trg_bases, src_bases,
-                          cp_obj, show_forbidden, show_allowed, no_ptrs);
   }
 }
 
@@ -3258,7 +3254,7 @@ void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& v
 bool taBase::IsMemberEditable(const String& memb_name) const {
   MemberDef* md = GetTypeDef()->members.FindName(memb_name);
   if(!md) return false;
-  return !md->isGuiReadOnly();
+  return !md->IsGuiReadOnly();
 }
 
 
@@ -3684,12 +3680,11 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int mychg = 0;                // my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->is_static || md->HasOption("NO_UPDATE_POINTER")) continue;
-    if((md->type->IsPointer()) && md->type->IsTaBase() &&
-       !md->HasOption("OWN_POINTER") && 
-       (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
+    if(md->HasOption("NO_UPDATE_POINTER")) continue;
+    if((md->type->IsPointer()) && md->type->IsTaBase() && !md->HasOwnPointer() && 
+       (!md->HasReadOnly() || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
-      if(md->HasOption("NO_SET_POINTER")) {
+      if(md->HasNoSetPointer()) {
         int chg = UpdatePointers_NewPar_PtrNoSet(ptr, old_par, new_par);
         nchg += chg; mychg += chg;
       }
@@ -3864,12 +3859,11 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   int mychg = 0;                // my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->is_static) continue;
-    if((md->type->IsPointer()) && md->type->IsTaBase() &&
-       !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
-       (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
+    if(md->HasOption("NO_UPDATE_POINTER")) continue;
+    if((md->type->IsPointer()) && md->type->IsTaBase() && !md->HasOwnPointer() && 
+       (!md->HasReadOnly() || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
-      if(md->HasOption("NO_SET_POINTER")) {
+      if(md->HasNoSetPointer()) {
         int chg = taBase::UpdatePointers_NewParType_PtrNoSet(ptr, par_typ, new_par);
         nchg += chg; mychg += chg;
       }
@@ -3982,11 +3976,11 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int mychg = 0;                // my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if((md->type->IsPointer()) && md->type->IsTaBase() &&
-       !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
-       (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
+    if(md->HasOption("NO_UPDATE_POINTER")) continue;
+    if((md->type->IsPointer()) && md->type->IsTaBase() && !md->HasOwnPointer() &&
+       (!md->HasReadOnly() || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
-      if(md->HasOption("NO_SET_POINTER")) {
+      if(md->HasNoSetPointer()) {
         int chg = taBase::UpdatePointers_NewObj_PtrNoSet(ptr, this, old_ptr, new_ptr);
         nchg += chg; mychg += chg;
       }

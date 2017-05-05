@@ -52,7 +52,7 @@ public:
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   TA_BASEFUNS_NOCOPY(ControlPanelMember_Group);
 #ifdef __MAKETA__ // dummy to supress New
-  taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
+  taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #HIDDEN
 #endif
 
 private:

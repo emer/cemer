@@ -163,7 +163,7 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_3(iDialogItemChooser* ic) {
   MemberSpace* mbs = &targ_typ->members;
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
-    if(!mbr->HasOption("EXPERT")) continue;
+    if(!mbr->HasExpert()) continue;
     cat = mbr->OptionAfter("CAT_");
     if(cat == "IGNORE") continue;
     cat = "member: " + cat;
@@ -215,7 +215,7 @@ bool taiWidgetMemberMethodDefChooser::ShowMember(MemberDef* mbr) {
   // and often you need to see things that are otherwise hidden
   // TODO: should have a ShowContext::SC_CHOOSER or something like that context
   // where it adjudicates these things..
-  return (ShowItemFilter(NULL, mbr, mbr->name)); //  &&  mbr->ShowMember());
+  return (ShowItemFilter(NULL, mbr, mbr->name)); //  &&  !mbr->IsEditorHidden());
 }
 
 const String taiWidgetMemberMethodDefChooser::viewText(int index) const {

@@ -34,7 +34,7 @@ class float_Matrix;
 eTypeDef_Of(ColorSpace);
 
 class E_API ColorSpace : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image transform RGB colors into CIE XYZ and LMS perceptual space, including color opponents, and back -- note that we use 0-1 normalized XYZ and LMS values throughout - not the 0-100 as is sometimes standard it seems..
+  // #STEM_BASE ##INLINE ##CAT_Image transform RGB colors into CIE XYZ and LMS perceptual space, including color opponents, and back -- note that we use 0-1 normalized XYZ and LMS values throughout - not the 0-100 as is sometimes standard it seems..
 INHERITED(taOBase)
 public:
   enum  OppComp {               // opponent coding components

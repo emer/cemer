@@ -452,7 +452,7 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
 void cssTA::operator=(const String& s) {
   if(!ROCheck()) return;
   if(ptr_cnt == 0) {
-    if(type_def->HasOption("INLINE") || type_def->InheritsFrom(TA_taList_impl)
+    if(type_def->IsSaveInline() || type_def->InheritsFrom(TA_taList_impl)
        || type_def->InheritsFrom(TA_taArray_base)
        || type_def->InheritsFrom(TA_taArray_impl) || type_def->InheritsFrom(TA_void))
     {

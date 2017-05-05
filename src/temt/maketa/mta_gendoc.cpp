@@ -204,8 +204,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 // 	if(!MemberSpace_Filter_Member(mems, md))
 // 	  continue;
 
-// 	if(md->HasOption("NO_SHOW") || md->HasOption("NO_SHOW_EDIT") ||
-// 	   md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE"))
+// 	if(md->IsEditorHidden() || md->HasTreeHidden())
 // 	  continue;
 
 // 	if(first_one) {

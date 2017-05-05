@@ -36,7 +36,7 @@ public:
   String	yes_label;	// label to display for the Yes/Ok answer
   String	no_label;	// label to display for the No/Cancel answer
 
-  ProgEl_List	yes_code; 	// #SHOW_TREE items to execute if user says Yes/Ok to prompt in gui mode, or to always execute in nogui mode
+  ProgEl_List	yes_code; 	// #TREE_SHOW items to execute if user says Yes/Ok to prompt in gui mode, or to always execute in nogui mode
 
   int 		ProgElChildrenCount() const override { return yes_code.size; }
 

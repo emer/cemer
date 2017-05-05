@@ -37,7 +37,7 @@ class float_Matrix; //
 taTypeDef_Of(taQuaternion);
 
 class TA_API taQuaternion: public taBase {
-  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a quaternion representation of 3D rotation 
+  // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math a quaternion representation of 3D rotation 
   INHERITED(taBase)
 public:
   float         s; // scalar, real component

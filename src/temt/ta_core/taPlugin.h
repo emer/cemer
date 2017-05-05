@@ -42,7 +42,7 @@ public:
   bool			loaded; // #DEF_true #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
   bool			up_to_date; // #DEF_true #READ_ONLY #SHOW #NO_SAVE set if the plugin file is up-to-date relative to the executable -- if this is false then the plugin will not be loaded, and must be recompiled
   String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
-  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
+  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #HIDDEN time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
   
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)

@@ -66,11 +66,10 @@ void taiWidgetBitBox::SetEnumType(TypeDef* enum_typ, bool force) {
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       EnumDef* ed = typ->enum_vals.FastEl(i);
       if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
-          ed->HasOption("NO_SHOW"))
+          ed->HasOption("HIDDEN"))
         continue;
       // auto apply if entire guy marked, or if item is marked
-      bool auto_apply = ((flags() & taiWidget::flgAutoApply)
-                         || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
+      bool auto_apply = (flags() & taiWidget::flgAutoApply);
       AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc,
                   ed->HasOption("READ_ONLY"));
     }

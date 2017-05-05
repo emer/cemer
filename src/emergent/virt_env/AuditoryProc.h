@@ -35,7 +35,7 @@ class taSound; //
 eTypeDef_Of(AudInputSpec);
 
 class E_API AudInputSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound definition of sound input parameters for auditory processing
+  // #STEM_BASE ##INLINE ##CAT_Sound definition of sound input parameters for auditory processing
 INHERITED(taOBase)
 public:
   float         win_msec;       // #DEF_25 input window -- number of milliseconds worth of sound to filter at a time
@@ -75,7 +75,7 @@ private:
 eTypeDef_Of(AudDftSpec);
 
 class E_API AudDftSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound DFT (discrete fourier transform) specifications
+  // #STEM_BASE ##INLINE ##CAT_Sound DFT (discrete fourier transform) specifications
 INHERITED(taOBase)
 public:
   float         prv_smooth;    // #DEF_0 how much of the previous step's power value to include in this one -- smooths out the power spectrum which can be artificially bumpy due to discrete window samples
@@ -97,7 +97,7 @@ private:
 eTypeDef_Of(MelFBankSpec);
 
 class E_API MelFBankSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency feature bank sampling parameters
+  // #STEM_BASE ##INLINE ##CAT_Sound mel frequency feature bank sampling parameters
 INHERITED(taOBase)
 public:
   bool          on;            // perform mel-frequency filtering of the fft input
@@ -134,7 +134,7 @@ private:
 eTypeDef_Of(AudRenormSpec);
 
 class E_API AudRenormSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound auditory renormalization parameters
+  // #STEM_BASE ##INLINE ##CAT_Sound auditory renormalization parameters
 INHERITED(taOBase)
 public:
   bool          on;            // perform renormalization of this level of the auditory signal
@@ -154,7 +154,7 @@ private:
 eTypeDef_Of(AudGaborSpec);
 
 class E_API AudGaborSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound params for auditory gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters -- horizontal tuning is different from V1 version -- has elongated frequency-band specific tuning, not a parallel horizontal tuning -- and has multiple of these
+  // #STEM_BASE ##INLINE ##CAT_Sound params for auditory gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters -- horizontal tuning is different from V1 version -- has elongated frequency-band specific tuning, not a parallel horizontal tuning -- and has multiple of these
 INHERITED(taOBase)
 public:
   bool          on;             // use this gabor filtering of the time-frequency space filtered input (time in terms of steps of the DFT transform, and discrete frequency factors based on the FFT window and input sample rate)
@@ -194,7 +194,7 @@ private:
 eTypeDef_Of(MelCepstrumSpec);
 
 class E_API MelCepstrumSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency sampling parameters
+  // #STEM_BASE ##INLINE ##CAT_Sound mel frequency sampling parameters
 INHERITED(taOBase)
 public:
   bool          on;            // perform cepstrum discrete cosine transform (dct) of the mel-frequency filter bank features

@@ -56,7 +56,7 @@ void taiEditorOfListCompact::Constr_Strings() {
 
 // don't check for null im ptr here
 bool taiEditorOfListCompact::ShowMember(MemberDef* md) const {
-  return md->ShowMember(show());
+  return !md->IsEditorHidden();
 }
 
 void taiEditorOfListCompact::Constr_ElWidget() {

@@ -110,7 +110,7 @@ public:
 
 
 class E_API CritParam : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat stopping criteria params
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_v3Compat stopping criteria params
 INHERITED(taBase)
 public:
   enum Relations {
@@ -141,7 +141,7 @@ public:
 
 #ifdef TA_GUI
 class E_API CtrlPanelData : public taOBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_v3Compat data for the control panel
+  // ##NO_TOKENS ##INLINE ##CAT_v3Compat data for the control panel
 INHERITED(taOBase)
 public:
   bool		active;		// is panel active (save this state)
@@ -155,7 +155,7 @@ public:
 #endif
 
 class E_API V3ScriptFile : public taOBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_v3Compat V3 compat format for reading script files
+  // ##NO_TOKENS ##INLINE ##CAT_v3Compat V3 compat format for reading script files
 INHERITED(taOBase)
 public:
   String	fname;
@@ -270,7 +270,7 @@ public:
 
 
 class E_API DataItem : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat source of a piece of data
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_v3Compat source of a piece of data
 INHERITED(taOBase)
 public:
 
@@ -295,7 +295,7 @@ public:
 
 
 class E_API StatVal : public DataItem {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat Statistic value
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_v3Compat Statistic value
 INHERITED(DataItem)
 public:
   float		val;		// value of statistic
@@ -319,7 +319,7 @@ public:
 
 
 class E_API StatValAgg : public Aggregate {
-  // #INLINE #INLINE_DUMP ##CAT_v3Compat Aggregation for StatVal-based values
+  // #INLINE ##CAT_v3Compat Aggregation for StatVal-based values
 INHERITED(Aggregate)
 public:
 
@@ -329,7 +329,7 @@ public:
 };
 
 class E_API AggStat : public StatValAgg {
-  // #INLINE #INLINE_DUMP Aggregate statistics over time (processing levels)
+  // ##INLINE Aggregate statistics over time (processing levels)
 INHERITED(StatValAgg)
 public:
   Stat*		real_stat;	// #READ_ONLY #NO_SAVE the 'real' (non-agg) stat
@@ -413,7 +413,7 @@ public:
 
 
 class E_API Counter : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds the value of a loop counter
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds the value of a loop counter
 INHERITED(taBase)
 public:
   String	name;			// #HIDDEN not an taNBase to hide name
@@ -429,7 +429,7 @@ public:
 
 
 class E_API StepParams : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds steping process parameters
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds steping process parameters
 INHERITED(taBase)
 public:
   SchedProcess* owner;		// #READ_ONLY #NO_SAVE use this to find the subtypes
@@ -470,13 +470,13 @@ public:
   SchedProcess*	sub_proc;		// Sub-process called by this
   StepParams	step;			// #CONTROL_PANEL Which process to step and n_steps
 
-  Stat_Group	loop_stats;  		// #IN_GPMENU #SHOW_TREE Statistics Computed in Loop
-  Stat_Group	final_stats;  		// #IN_GPMENU #SHOW_TREE Statistics Computed after Loop
-  Process_Group	init_procs;		// #IN_GPMENU #SHOW_TREE Misc procs run when process is initialized
-  Process_Group loop_procs;		// #IN_GPMENU #SHOW_TREE Misc procs run in the loop, using mod based on loop counter
-  Process_Group	final_procs;		// #IN_GPMENU #SHOW_TREE Misc procs run after process is finished
-//obs  WinView_Group	displays;	// #LINK_GROUP #HIDDEN  #SHOW_TREE views to update
-  taBase_Group	logs;			// #LINK_GROUP #HIDDEN  #SHOW_TREE Logs to log to NOTE: was PDPLog_Group in v3
+  Stat_Group	loop_stats;  		// #IN_GPMENU #TREE_SHOW Statistics Computed in Loop
+  Stat_Group	final_stats;  		// #IN_GPMENU #TREE_SHOW Statistics Computed after Loop
+  Process_Group	init_procs;		// #IN_GPMENU #TREE_SHOW Misc procs run when process is initialized
+  Process_Group loop_procs;		// #IN_GPMENU #TREE_SHOW Misc procs run in the loop, using mod based on loop counter
+  Process_Group	final_procs;		// #IN_GPMENU #TREE_SHOW Misc procs run after process is finished
+//obs  WinView_Group	displays;	// #LINK_GROUP #HIDDEN  #TREE_SHOW views to update
+  taBase_Group	logs;			// #LINK_GROUP #HIDDEN  #TREE_SHOW Logs to log to NOTE: was PDPLog_Group in v3
   bool		log_loop;		// Log the loop state (instead of final state)
   bool		log_counter;		// Log the counter values for this process
 

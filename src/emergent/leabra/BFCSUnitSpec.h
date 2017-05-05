@@ -27,7 +27,7 @@ class LeabraLayer; //
 eTypeDef_Of(BFCSAChSpec);
 
 class E_API BFCSAChSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra basal forebrain cholinergic system (BFCS) specs for ach computation 
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra basal forebrain cholinergic system (BFCS) specs for ach computation 
 INHERITED(SpecMemberBase)
 public:
   float         tonic_ach;      // #DEF_0.5 set a tonic basline level of ach

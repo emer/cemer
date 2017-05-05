@@ -314,17 +314,6 @@ iClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items,
 void iTreeViewItem::itemExpanded(bool value) {
   inherited::itemExpanded(value); // creates children
   DecorateDataNode();
-//  taBase* tab = link()->taData();
-//  if(tab) {
-//    if(value) {
-//      if(tab)
-//        tab->SetBaseFlag(taBase::TREE_EXPANDED);
-//    }
-//    else {
-//      if(tab)
-//        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-//    }
-//  }
 }
 
 void* iTreeViewItem::linkData() const {
@@ -370,13 +359,11 @@ void iTreeViewItem::setName(const String& value) {
   this->setText(0, value);
 }
 
-bool iTreeViewItem::ShowNode_impl(int show, const String&) const
-{
+bool iTreeViewItem::ShowNode() const {
   // if not a member, then we just always show, since it must be a list element,
   // or standalone item whose visibility will be controlled by a parent member somewhere
   if (!m_md) return true;
-  //TODO: note, context is ignored for now
-  return m_md->ShowMember((TypeItem::ShowMembs)show, TypeItem::SC_TREE);
+  return !m_md->IsTreeHidden();
 }
 
 void iTreeViewItem::swapChildren(int n1_idx, int n2_idx) {

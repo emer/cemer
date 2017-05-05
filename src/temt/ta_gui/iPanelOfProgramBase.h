@@ -31,10 +31,10 @@ class TA_API iPanelOfProgramBase: public iPanel {
 INHERITED(iPanel)
   Q_OBJECT
 public:
-  iProgramEditor*       pe;
+  iProgramEditor*  pe;
 
   bool         HasChanged_impl() override; // 'true' if user has unsaved changes
-  void                  FillList();
+  void         FillList();
   QWidget*     firstTabFocusWidget() override;
 
   iPanelOfProgramBase(taiSigLink* dl_);
@@ -51,8 +51,8 @@ protected:
   void         showEvent(QShowEvent* ev) override;
 
 protected slots:
-  void                  mb_Expert(bool checked); // expert button on minibar
-  void                  mb_Lines(int val); // lines spin on minibar
+  void         mb_Expert(bool checked); // expert button on minibar
+  void         mb_Lines(int val); // lines spin on minibar
 };
 
 #endif // iPanelOfProgramBase_h

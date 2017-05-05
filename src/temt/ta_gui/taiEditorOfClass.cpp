@@ -200,8 +200,8 @@ void taiEditorOfClass::Constr_Members_impl(MemberSpace& ms) {
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
-    if (md->ShowMember(~TypeItem::IS_NORMAL, TypeItem::SC_EDIT, TypeItem::IS_NORMAL)) {
-      if (md->isGuiReadOnly()) {
+    if (!md->IsEditorHidden() && !md->HasExpert()) {
+      if (md->IsGuiReadOnly()) {
         memb_el(MS_NORM_RO).Add(md);
       }
       else {
@@ -212,17 +212,14 @@ void taiEditorOfClass::Constr_Members_impl(MemberSpace& ms) {
 
     if (membs.def_size <= MS_EXPT) continue;
     // set the show_set guys at this point to default to app values
-    if (!(show() & TypeItem::NO_EXPERT))
-      show_set(MS_EXPT) = true;
-    if (md->ShowMember(0, TypeItem::SC_EDIT, TypeItem::IS_EXPERT)) {
+    show_set(MS_EXPT) = false;
+    if (!md->IsEditorHidden() && md->HasExpert()) {
       memb_el(MS_EXPT).Add(md);
       continue;
     }
     if (membs.def_size <= MS_HIDD) continue;
-    if (!(show() & TypeItem::NO_HIDDEN))
-      show_set(MS_HIDD) = true;
-    if (md->ShowMember(~TypeItem::IS_HIDDEN & ~TypeItem::IS_NORMAL,
-      TypeItem::SC_EDIT, TypeItem::IS_HIDDEN)) {
+    show_set(MS_HIDD) = false;
+    if (md->IsEditorHidden()) {
       memb_el(MS_HIDD).Add(md);
       continue;
     }
@@ -765,7 +762,8 @@ void taiEditorOfClass::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
 }
 
 bool taiEditorOfClass::ShowMember(MemberDef* md) const {
-  return (md->ShowMember(show(), TypeItem::SC_EDIT) && (md->im != NULL));
+  if(md->im == NULL) return false;
+  return !md->IsEditorHidden();
 }
 
 void taiEditorOfClass::SetCurMenu(MethodDef* md) {

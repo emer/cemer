@@ -66,19 +66,19 @@ public:
 
   DataTable     jobs_submit;    // #NO_SAVE #EXPERT current set of jobs to submit
   DataTable     jobs_submitted; // #NO_SAVE #EXPERT jobs submitted -- just a local copy of jobs_submit
-  DataTable     jobs_running;   // #NO_SAVE #SHOW_TREE #EXPERT jobs that are currently running
-  DataTable     jobs_done;      // #NO_SAVE #SHOW_TREE #EXPERT jobs that have finished running
-  DataTable     jobs_deleted;   // #NO_SAVE #SHOW_TREE #EXPERT jobs that have been deleted -- they can be recovered if needed..
-  DataTable     jobs_archive;   // #NO_SAVE #SHOW_TREE #EXPERT jobs that have been archived -- already analyzed but possibly still relevant to look at
-  DataTable     file_list;      // #NO_SAVE #SHOW_TREE #EXPERT list of files -- used for various operations -- transferring and deleting
-  DataTable     cluster_info;   // #NO_SAVE #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
-  DataTable     clusterscript_timestamp;   // #NO_SAVE #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
+  DataTable     jobs_running;   // #NO_SAVE #TREE_SHOW #EXPERT jobs that are currently running
+  DataTable     jobs_done;      // #NO_SAVE #TREE_SHOW #EXPERT jobs that have finished running
+  DataTable     jobs_deleted;   // #NO_SAVE #TREE_SHOW #EXPERT jobs that have been deleted -- they can be recovered if needed..
+  DataTable     jobs_archive;   // #NO_SAVE #TREE_SHOW #EXPERT jobs that have been archived -- already analyzed but possibly still relevant to look at
+  DataTable     file_list;      // #NO_SAVE #TREE_SHOW #EXPERT list of files -- used for various operations -- transferring and deleting
+  DataTable     cluster_info;   // #NO_SAVE #TREE_SHOW #EXPERT cluster status information and list of jobs currently running, etc
+  DataTable     clusterscript_timestamp;   // #NO_SAVE #TREE_SHOW #EXPERT cluster status information and list of jobs currently running, etc
   DataTable     jobs_running_tmp;  // #NO_SAVE #NO_SAVE #HIDDEN temporary jobs_running, for each specific directory
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN temporary jobs_done, for each specific directory
   DataTable     jobs_deleted_tmp;  // #NO_SAVE #HIDDEN temporary jobs_done, for each specific directory
   DataTable     jobs_archive_tmp;  // #NO_SAVE #HIDDEN temporary jobs_done, for each specific directory
   DataTable     jobs_running_cmd;  // #NO_SAVE #HIDDEN reads jobs_running_cmd.dat file for commands sent to running job
-  ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
+  ParamSearchAlgo_List search_algos; // #TREE_SHOW #EXPERT Possible search algorithms to run on the cluster
   bool          use_search_algo;     // use search algorithm to explore across parameters -- if false, then just the current values will be used -- must also set cur_search_algo
   ParamSearchAlgoRef cur_search_algo; // #CONDEDIT_ON_use_search_algo The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching -- see also use_search_algo
 

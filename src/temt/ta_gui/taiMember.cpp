@@ -54,8 +54,7 @@ void taiMember::EndScript(const void* base) {
 bool taiMember::isReadOnly(taiWidget* dat, IWidgetHost* host_) {
   // ReadOnly if parent type is RO, or par is RO, OR directives state RO
   bool rval = taiType::isReadOnly(dat, host_);
-  rval = rval || mbr->HasOption("READ_ONLY") || //note: 'IV' only for legacy support
-    mbr->HasOption("IV_READ_ONLY") || mbr->HasOption("GUI_READ_ONLY");
+  rval = rval || mbr->IsGuiReadOnly();
   return rval;
 }
 
@@ -71,18 +70,9 @@ taiWidget* taiMember::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* 
   //TODO: probably should also use parent_type in determining ro, as base class does
   if (ro)
     flags_ |= taiWidget::flgReadOnly;
-  if (((mbr->HasOption(TypeItem::opt_inline)) ||
-       (mbr->HasOption(TypeItem::opt_edit_inline)))
-    && mbr->type->it->allowsInline())
-    flags_ |= taiWidget::flgInline;
-  if (mbr->HasOption(TypeItem::opt_EDIT_DIALOG)) // if a string field, puts up an editor button
+
+  if (mbr->HasOption("EDIT_DIALOG")) // if a string field, puts up an editor button
     flags_ |= taiWidget::flgEditDialog;
-  if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
-    flags_ |= taiWidget::flgAutoApply;
-  if (mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ = flags_ & ~taiWidget::flgAutoApply;
-  if (mbr->HasOption("NO_EDIT_APPLY_IMMED"))
-    flags_ |= taiWidget::flgNoEditDialogAutoApply; // just in case this is needed
   if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
     flags_ |= taiWidget::flgNoAlpha; // just in case this is needed
 
@@ -155,8 +145,8 @@ void taiMember::CheckProcessCondEnum(taiTypeOfEnum* et, taiWidget* dat,
   if (!bb) return;
   for (int i = 0; i < mbr->type->enum_vals.size; ++i) {
     EnumDef* ed = mbr->type->enum_vals.FastEl(i);
-    if (ed->OptionAfter("COND").empty() || ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
-      ed->HasOption("NO_SHOW"))
+    if (ed->OptionAfter("COND").empty() || ed->HasOption("NO_BIT") ||
+        ed->HasOption("IGNORE") || ed->HasOption("HIDDEN"))
       continue;
 
     bool is_visible = ed->GetCondOptTest("CONDSHOW", typ, base);

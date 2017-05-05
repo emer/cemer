@@ -26,15 +26,13 @@ taTypeDef_Of(taList_impl);
 #endif
 
 void MemberDefBase::Initialize() {
+  opt_flags = (MemberOpts)0;
   owner = NULL;
   type = NULL;
   is_static = false;
 #ifdef TA_GUI
   im = NULL;
 #endif
-  show_any = 0; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
-  show_edit = 0;
-  show_tree = 0;
 }
 
 MemberDefBase::MemberDefBase()
@@ -93,10 +91,6 @@ void MemberDefBase::Copy_(const MemberDefBase& cp) {
   is_static = cp.is_static;
 // don't copy because delete is not ref counted
 //  im = cp.im;
-// always invalidate show bits, so they get redone in our new context
-  show_any = 0; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
-  show_edit = 0;
-  show_tree = 0;
 }
 
 MemberDefBase::~MemberDefBase() {
@@ -124,109 +118,114 @@ bool MemberDefBase::CheckList(const String_PArray& lst) const {
   return false;
 }
 
-bool MemberDefBase::ShowMember(
-  int show_forbidden,
-  TypeItem::ShowContext show_context,
-  int show_allowed) const
-{
-  //note: require exact match to special flag, so boolean operations don't match it
-  if (show_forbidden == TypeItem::USE_SHOW_GUI_DEF)
-    show_forbidden = taMisc::show_gui;
+void MemberDefBase::InitOptsFlags() {
 
-  // check if cache has been done yet
-  if (show_any == 0) ShowMember_CalcCache();
-  byte show_eff = 0;
-  // default viewability for edit is "any OR edit"
-  // default viewability for tree is "tree", ie, any not good enough
-  switch (show_context) {
-  case SC_ANY: show_eff = show_any; break;
-  case SC_EDIT: show_eff = show_edit; break;
-  case SC_TREE: show_eff = show_tree; break;
-  //note: should be no default, let compiler complain if any added
+  if(HasOptFlag(OPTS_SET)) return;
+  SetOptFlag(OPTS_SET);
+  
+  TypeDef* own_typ = GetOwnerType();
+  
+  if(HasOption("HIDDEN"))
+    SetOptFlag(HIDDEN);
+  if(HasOption("HIDDEN_INLINE"))
+    SetOptFlag(HIDDEN_INLINE);
+  if(HasOption("READ_ONLY"))
+    SetOptFlag(READ_ONLY);
+  if(HasOption("GUI_READ_ONLY"))
+    SetOptFlag(GUI_READ_ONLY);
+  if(HasOption("SHOW"))
+    SetOptFlag(SHOW);
+  if(HasOption("EXPERT"))
+    SetOptFlag(EXPERT);
+  if(HasOption("NO_SAVE"))
+    SetOptFlag(NO_SAVE);
+  if(HasOption("TREE_HIDDEN"))
+    SetOptFlag(TREE_HIDDEN);
+  if(HasOption("TREE_SHOW"))
+    SetOptFlag(TREE_SHOW);
+  if(OptionAfter("CONDSHOW_").nonempty())
+    SetOptFlag(CONDSHOW);
+  if(OptionAfter("CONDEDIT_").nonempty())
+    SetOptFlag(CONDEDIT);
+  if(OptionAfter("CONDTREE_").nonempty())
+    SetOptFlag(CONDTREE);
+  if(HasOption("NO_FIND"))
+    SetOptFlag(NO_FIND);
+  if(HasOption("NO_SEARCH"))
+    SetOptFlag(NO_SEARCH);
+  if(HasOption("NO_DIFF"))
+    SetOptFlag(NO_DIFF);
+  if(HasOption("OWN_POINTER"))
+    SetOptFlag(OWN_POINTER);
+  if(HasOption("NO_SET_POINTER"))
+    SetOptFlag(NO_SET_POINTER);
+
+  bool is_def_child = false;
+
+  // expert is like SHOW
+  if(!HasExpert() && !HasShow() && (HasHidden() || HasReadOnly() || HasGuiReadOnly())) {
+    SetOptFlag(IS_EDITOR_HIDDEN);
   }
-  // our show_eff is the positives (what it is) so if there is nothing there, then
-  // we clearly can't show
-  // if there is something (a positive) then bit-AND with the
-  // show, which is negatives (what not to show), and if anything remains, don't show!
-//  show_eff &= TypeItem::SHOW_CHECK_MASK;
-//  return (show_eff) && !(show_eff & show);
-  return 0 != (show_eff & show_allowed & ~show_forbidden);
-}
-
-void MemberDefBase::ShowMember_CalcCache() const {
 #ifndef NO_TA_BASE
-  // default children are never shown
-  TypeDef* par_typ = GetOwnerType();
-  if (par_typ && par_typ->DerivesFrom(&TA_taOBase) &&
-   !par_typ->DerivesFrom(&TA_taList_impl))
-  {
-    String mbr = par_typ->OptionAfter("DEF_CHILD_");
-    if (mbr.nonempty() && (mbr == name)) {
-    show_tree = 0x80; // set the "done" flag
-    show_any = 0x80;
-    show_edit = 0x80;
-    return;
+  if(type->IsActualTaBase() && type->InheritsFrom(&TA_taList_impl)) {
+    String def_child = own_typ->OptionAfter("DEF_CHILD_");
+    if(def_child == name) {
+      is_def_child = true;
+      SetOptFlag(IS_TREE_HIDDEN); // we actually hide on tree b/c it will be shown automatically
+      if(!HasShow() && !HasExpert()) {
+        SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
+      }
+    }
+    else {
+      if(HasTreeHidden() || (IsEditorHidden() && !HasTreeShow())) {
+        SetOptFlag(IS_TREE_HIDDEN);
+      }
+      else {
+        if(!HasShow() && !HasExpert()) {
+          SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
+        }
+      }
+    }
+  }
+  else {
+    if(!HasTreeShow()) {
+      SetOptFlag(IS_TREE_HIDDEN);
+    }
+    else {
+      if(!HasShow() && !HasExpert()) {
+        SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
+      }
     }
   }
 #endif
 
-  // note that "normal" is a special case, which depends both on context and
-  // on whether other bits are set, so we calc those individually
-  show_any = TypeItem::IS_NORMAL; // the default for any
-  ShowMember_CalcCache_impl(show_any, _nilString);
-
-  show_edit = show_any; // start with the "any" settings
-  ShowMember_CalcCache_impl(show_edit, "_EDIT");
-
-#ifndef NO_TA_BASE
-  if(HasOption("SHOW_TREE"))
-    show_tree = TypeItem::IS_NORMAL; // if show tree, we only listen to _TREE options, not regular ones, which otherwise just affect the behavior in editors etc
-  else
-    show_tree = show_any; // otherwise, use the editor behavior by default for tree
-  // for trees, we only browse lists/groups by default
-  if (!type->DerivesFrom(&TA_taList_impl))
-    show_tree &= ~TypeItem::NO_NORMAL;
-#endif
-  ShowMember_CalcCache_impl(show_tree, "_TREE");
-  //NOTE: lists/groups, we only show by default in lists/groups, embedded lists/groups
-}
-
-void MemberDefBase::ShowMember_CalcCache_impl(int& show, const String& suff) const {
-  show |= 0x80; // set the "done" flag
-
-  //note: keep in mind that these show bits are the opposite of the show flags,
-  // i.e show flags are all negative, whereas these are all positive (bit = is that type)
-
-  //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
-  //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
-  bool typ_show = type->HasOption("MEMB_SHOW" + suff);
-  bool typ_no_show = type->HasOption("MEMB_NO_SHOW") || type->HasOption("MEMB_NO_SHOW" + suff);
-  bool mbr_show = HasOption("SHOW" + suff);
-  bool mbr_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW" + suff);
-
-  // the following are all cumulative, not mutually exclusive
-  if (HasOption("HIDDEN" + suff) || type->HasOption("MEMB_HIDDEN" + suff))
-    show |= TypeItem::IS_HIDDEN;
-  // RO are HIDDEN unless explicitly marked SHOW
-  // note: no type-level, makes no sense
-  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !HasOption("SHOW"))
-    show |= TypeItem::IS_HIDDEN;
-  if (HasOption("EXPERT" + suff) || type->HasOption("MEMB_EXPERT" + suff))
-    show |= TypeItem::IS_EXPERT;
-
-  // if NO_SHOW and no SHOW or explicit other, then never shows
-  if (mbr_no_show || (typ_no_show && (!mbr_show || (show & TypeItem::NORM_MEMBS)))) {
-    show &= (0x80 | ~TypeItem::SHOW_CHECK_MASK);
-    return;
+  // signal various errors and antiquated usage
+  
+  if(HasOption("NO_SHOW")) {
+    taMisc::DebugInfo("Member comment directive error: NO_SHOW is not supported -- use HIDDEN", GetOwnerType()->name, "::", name);
   }
-
-  // if any of the special guys are set, we unset NORMAL (which may
-  //   or may not have been already set by default)
-  if (show & TypeItem::NORM_MEMBS) // in "any" context, default is "normal"
-    show &= ~TypeItem::IS_NORMAL;
-  else // no non-NORMAL set
-    // SHOW is like an explicit NORMAL if nothing else applies
-    if (mbr_show || typ_show)
-      show |= TypeItem::IS_NORMAL;
+  if(HasOption("SHOW_TREE")) {
+    taMisc::DebugInfo("Member comment directive error: SHOW_TREE changed to TREE_SHOW",
+                      GetOwnerType()->name, "::", name);
+  }
+  if(HasOption("HIDDEN_TREE")) {
+    taMisc::DebugInfo("Member comment directive error: HIDDEN_TREE changed to TREE_HIDDEN",
+                      GetOwnerType()->name, "::", name);
+  }
+  if(!is_def_child) {
+    if(HasShow() && HasHidden()) {
+      taMisc::DebugInfo("Member comment directive error: can't have SHOW and HIDDEN",
+                        GetOwnerType()->name, "::", name);
+    }
+    if(HasExpert() && HasHidden()) {
+      taMisc::DebugInfo("Member comment directive error: can't have both EXPERT and HIDDEN",
+                        GetOwnerType()->name, "::", name);
+    }
+  }
+  // note: this is OK really -- expert items NEVER show up inline, but they can show
+  // up in other views and docs under the expert setting..
+  // if(own_typ->IsEditInline() && HasExpert()) {
+  //   taMisc::DebugInfo("Member comment directive error: can't have EXPERT on INLINE -- either make it HIDDEN or not!",
+  //                     GetOwnerType()->name, "::", name);
+  // }
 }
-

@@ -30,7 +30,7 @@ class DataCol; //
 taTypeDef_Of(DataOpEl);
 
 class TA_API DataOpEl : public taOBase {
-  // #STEM_BASE ##NO_TOKENS ##INLINE ##CAT_Data base class for data operations spec element
+  // #STEM_BASE ##NO_TOKENS ##EDIT_INLINE ##CAT_Data base class for data operations spec element
   INHERITED(taOBase)
 public:
   DataTableRef		data_table;

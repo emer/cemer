@@ -37,7 +37,7 @@ class TA_API FixedWidthSpec: public taNBase {
 INHERITED(taNBase)
 public:
   int           n_skip_lines; // #MIN_0 skip this many header lines
-  FixedWidthColSpec_List col_specs; // #SHOW_TREE
+  FixedWidthColSpec_List col_specs; // #TREE_SHOW specifications for each column
 
   void  Load_Init(DataTable* dat); // #IGNORE called once before load
   void  AddRow(const String& ln); // add the row based on ln

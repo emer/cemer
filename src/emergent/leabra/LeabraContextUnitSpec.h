@@ -26,7 +26,7 @@
 eTypeDef_Of(CtxtUpdateSpec);
 
 class E_API CtxtUpdateSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
 INHERITED(SpecMemberBase)
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
@@ -48,7 +48,7 @@ private:
 eTypeDef_Of(CtxtNSpec);
 
 class E_API CtxtNSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context counting specifications
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context counting specifications
 INHERITED(SpecMemberBase)
 public:
   int		n_trials;	// #MIN_1 update every n trials

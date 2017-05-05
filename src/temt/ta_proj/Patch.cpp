@@ -80,6 +80,7 @@ bool Patch::ApplyPatch(taProject* proj) {
   last_obj_added_idx = -1;
   proj->StructUpdate(true);
   ++taMisc::is_loading;         // prevent lots of error messages etc -- patching is like loading
+  taMisc::loading_version = taMisc::version_bin;
   bool fail_prompt = true;
   bool rval = true;
   FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch_recs) {

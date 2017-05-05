@@ -52,8 +52,7 @@ taiWidget* taiMemberOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget*
       flags_ |= taiWidget::flgEditDialog;
   }
 
-  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
+  flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
 /*TODO: prob can't have disabling for no keep tokens, because sometimes
   we don't know the type

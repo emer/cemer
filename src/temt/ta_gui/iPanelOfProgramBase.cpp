@@ -81,13 +81,8 @@ bool iPanelOfProgramBase::HasChanged_impl() {
 }
 
 void iPanelOfProgramBase::mb_Expert(bool checked) {
-  int show = pe->show();
-  if (checked) {
-    show = show & ~TypeItem::NO_EXPERT;
-  } else {
-    show = show | TypeItem::NO_EXPERT;
-  }
-  pe->setShow(show);
+  pe->show_expert = checked;
+  // todo: update?
 }
 
 void iPanelOfProgramBase::mb_Lines(int val) {

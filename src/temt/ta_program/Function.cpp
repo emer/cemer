@@ -54,6 +54,14 @@ void Function::CutLinks() {
   inherited::CutLinks();
 }
 
+String Function::GenProgName() const {
+  return name;
+}
+
+bool Function::UpdateProgName() {
+  return false;
+}
+
 void Function::SetDefaultName() {
   if(taMisc::not_constr || taMisc::in_init)
     return;

@@ -88,12 +88,15 @@ public:
     
     POINTER  = 0x00100000, // a pointer to the data value as specified above -- this is a first-order pointer -- see PTR_PTR for a pointer to a pointer (these two are mutex)
     PTR_PTR  = 0x00200000, // a pointer to a pointer to a data value as specified above -- this is mutex with a first-order POINTER
-    REFERENCE=0x00400000,  // a reference type -- an implicit pointer to a data value -- can modify a POINTER or PTR_PTR type as well
+    REFERENCE= 0x00400000,  // a reference type -- an implicit pointer to a data value -- can modify a POINTER or PTR_PTR type as well
     ARRAY    = 0x00800000, // an explicitly delimited array of data values of a specific length
     CONST    = 0x01000000, // a constant data value -- not modifiable
     SUBTYPE  = 0x02000000, // is a subtype defined within scope of a parent class
 
     TI_ARGS_NOTINST = 0x04000000, // template instantiation that still has non-instantiated args -- this is true e.g., for a template instantiated within a template  with the param of the parent template that has yet to be instantiated
+
+    EDIT_INLINE =     0x08000000, // edit this class in a single line instead of as a separate object -- also set by INLINE
+    SAVE_INLINE =     0x10000000, // save this class in a single string instead of as a separate object -- also set by INLINE
 
     ANY_PTR = POINTER | PTR_PTR,
     ATOMIC = BOOL | INTEGER | ENUM | FLOAT, // fully atomic classes -- support bitwise copy, etc
@@ -222,6 +225,8 @@ public:
   inline bool   IsSigned() const { return HasType(SIGNED); }
   inline bool   IsUnSigned() const { return HasType(UNSIGNED); }
   bool   IsSubType() const;
+  inline bool   IsEditInline() const { return HasType(EDIT_INLINE); }
+  inline bool   IsSaveInline() const { return HasType(SAVE_INLINE); }
 
   bool          IsBasePointerType() const;
   // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
@@ -242,9 +247,9 @@ public:
   { return (init_flag & iflg); }
   // check if init_flag is set
 
-       TypeInfoKinds TypeInfoKind() const override {return TIK_TYPE;}
-  void*        This() override {return this;}
-  TypeDef*     GetTypeDef() const override {return &TA_TypeDef;}
+  TypeInfoKinds TypeInfoKind() const override {return TIK_TYPE;}
+  void*         This() override {return this;}
+  TypeDef*      GetTypeDef() const override {return &TA_TypeDef;}
   void          Copy(const TypeDef& cp);
   TypeDef();
   TypeDef(const String& nm);
@@ -523,9 +528,6 @@ public:
   void          SetValVar(const Variant& val, void* base, void* par = NULL,
                           MemberDef* memb_def = NULL);
   // sets value from a Variant representation; primarily for value types (int, etc.);
-  bool          ValIsDefault(const void* base, const MemberDef* memb_def,
-                             int for_show) const; // = taMisc::IS_EXPERT
-  // true if the type contains its defaults
   bool          ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
   // true only if value is empty, ex 0 or ""
 
@@ -540,12 +542,6 @@ public:
   // copy only those members from same type (no inherited)
   void          MemberCopyFrom(int memb_no, void* trg_base, void* src_base);
   // copy a particular member from same type
-  bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
-                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                           void* trg_base, void* src_base,
-                           int show_forbidden=NO_HIDDEN, int show_allowed=SHOW_CHECK_MASK, 
-                           bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   /////////////////////////////////////////////////////////////
   // 		Value printing

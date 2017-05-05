@@ -163,11 +163,6 @@ void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
 			 dt->off, dt->is_static, dt->addr, dt->fun_ptr);
       if(dt->is_static) {
         tp.static_members.AddUniqNameNew(md);
-        // todo: when we clean this up..
-        // if(md->HasOption("NO_SHOW")) {
-        //     taMisc::Info("Member comment directive error: NO_SHOW is not supported -- use HIDDEN", tp.name, "::", md->name, dt->opts);
-        // }
-          
         if(!tp.HasOption("STATIC_MEMBERS")) {
           if(!md->HasOption("NO_SAVE")) {
             taMisc::DebugInfo(tp.name, "::", md->name, dt->opts, "\nMember comment directive error: this static member is not marked as #NO_SAVE -- static members are not saved unless class is marked as STATIC_MEMBERS -- so #NO_SAVE is purely cosmetic but we force you to acknowledge this fact with this warning message :)");

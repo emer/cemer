@@ -43,7 +43,7 @@ taiWidget* taiTypeOfEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       EnumDef* ed = typ->enum_vals.FastEl(i);
       if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
-        ed->HasOption("NO_SHOW"))
+          ed->HasOption("HIDDEN"))
         continue;
       if (ed->OptionAfter("COND").nonempty()) {
         m_is_cond = true;
@@ -51,9 +51,7 @@ taiWidget* taiTypeOfEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
       }
     }
   }
-  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED)) {
-    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
-  }
+  flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   if (isBit) {
     return new taiWidgetBitBox(true, typ, host_, par, gui_parent_, flags_);
   }

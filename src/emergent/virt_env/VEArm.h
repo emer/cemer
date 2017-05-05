@@ -32,7 +32,7 @@
 eTypeDef_Of(VEArmLengths);
 
 class E_API VEArmLengths : public taOBase {
-  // #INLINE #INLINE_DUMP lengths of arm parameters
+  // ##INLINE lengths of arm parameters
 INHERITED(taOBase)
 public:
   float         humerus;        // #DEF_0.28 length of humerus bone (upper arm)
@@ -73,7 +73,7 @@ private:
 eTypeDef_Of(VEArmAngles);
 
 class E_API VEArmAngles : public taOBase {
-  // #INLINE #INLINE_DUMP lengths of arm parameters
+  // ##INLINE lengths of arm parameters
 INHERITED(taOBase)
 public:
   float  vert_axis_rot;	// angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
@@ -104,7 +104,7 @@ private:
 eTypeDef_Of(VEArmDelays);
 
 class E_API VEArmDelays : public taOBase {
-  // #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm -- the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
+  // ##INLINE delay parameters -- used to delay inputs/outputs to VEArm -- the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
 INHERITED(taOBase)
 public:
   float         pro_ms; // #DEF_35 proprioceptive delay period in msec for muscle length feedback from periphery
@@ -129,7 +129,7 @@ private:
 eTypeDef_Of(VEArmGains);
 
 class E_API VEArmGains : public taOBase {
-  // #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
+  // ##INLINE gain parameters -- used to scale forces applied to muscle insertion points in VEArm
 INHERITED(taOBase)
 public:
   float         stim;            // #DEF_200 gain factor in translating control signals into stimuli -- just an overall gain multiplier so that the other gains don't have to be quite so big
@@ -147,7 +147,7 @@ private:
 eTypeDef_Of(VEArmPID);
 
 class E_API VEArmPID : public taOBase {
-  // #INLINE #INLINE_DUMP PID control parameters for proportional, integral, derivative control signal that is typically used for online control of the arm
+  // ##INLINE PID control parameters for proportional, integral, derivative control signal that is typically used for online control of the arm
 INHERITED(taOBase)
 public:
   float         p;               // #DEF_40 P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
@@ -165,7 +165,7 @@ private:
 eTypeDef_Of(VEArmIOErr);
 
 class E_API VEArmIOErr : public taOBase {
-  // #INLINE #INLINE_DUMP error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
+  // ##INLINE error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
 INHERITED(taOBase)
 public:
   float         ra_dt;       // #DEF_1;0.3 #MAX_1 time constant for computing running average of temporal derivatives -- values < 1 result in smoother derivative estimates -- the averaged temporal derivative is key signal in driving IO error
@@ -181,7 +181,7 @@ private:
 eTypeDef_Of(VEArmDamping);
 
 class E_API VEArmDamping : public taOBase {
-  // #INLINE #INLINE_DUMP damping parameters -- used to reduce oscillations in arm movements
+  // ##INLINE damping parameters -- used to reduce oscillations in arm movements
 INHERITED(taOBase)
 public:
   float         fac;             // angular damping factor

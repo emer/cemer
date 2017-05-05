@@ -33,7 +33,7 @@ class V1RetinaProc; //
 eTypeDef_Of(V1GaborSpec);
 
 class E_API V1GaborSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
+  // #STEM_BASE ##INLINE ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
 INHERITED(taOBase)
 public:
   bool          on;             // is this filter active?
@@ -65,7 +65,7 @@ private:
 eTypeDef_Of(V1sNeighInhib);
 
 class E_API V1sNeighInhib : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
+  // #STEM_BASE ##INLINE ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
 INHERITED(taOBase)
 public:
   bool		on;		// whether to use neighborhood inhibition
@@ -85,7 +85,7 @@ private:
 eTypeDef_Of(V1MotionSpec);
 
 class E_API V1MotionSpec : public V1GaborSpec {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells -- based on gabor spatio-temporal pattern -- motion gabor is applied along direction perpendicular to the orientation tuning -- n_angles represents speeds and divides the 90 degree quadrant into n_angles space-time angles -- should use odd polarity gabors, and motion_frames determines size available for input, so size here must match that!
+  // #STEM_BASE ##INLINE ##CAT_Image params for v1 motion coding by simple cells -- based on gabor spatio-temporal pattern -- motion gabor is applied along direction perpendicular to the orientation tuning -- n_angles represents speeds and divides the 90 degree quadrant into n_angles space-time angles -- should use odd polarity gabors, and motion_frames determines size available for input, so size here must match that!
 INHERITED(V1GaborSpec)
 public:
   bool		r_only;		// #DEF_true perform motion computation only on right eye signals -- this is the dominant eye and often all that is needed
@@ -105,7 +105,7 @@ private:
 eTypeDef_Of(V1SquareGroup);
 
 class E_API V1SquareGroup : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for square grouping of v1s features -- simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
+  // #STEM_BASE ##INLINE ##CAT_Image params for square grouping of v1s features -- simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
 INHERITED(taOBase)
 public:
   bool          on;             // perform square grouping of v1s features -- simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
@@ -126,7 +126,7 @@ private:
 eTypeDef_Of(V1ComplexSpec);
 
 class E_API V1ComplexSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
+  // #STEM_BASE ##INLINE ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
   bool          on;             // if true, compute complex features, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors -- at least length sum MUST be computed, and end_stop is optional -- order of output rows is: length sum (1 row, polarity indep), end stop (2 rows), then v1s at end if add_v1s (2 polarity rows and optionally colors depending on v1s_color)
@@ -149,7 +149,7 @@ private:
 eTypeDef_Of(VisSpatIntegSpec);
 
 class E_API VisSpatIntegSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
+  // #STEM_BASE ##INLINE ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
 INHERITED(taOBase)
 public:
 

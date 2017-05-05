@@ -221,11 +221,6 @@ public:
     PRETTY                      // dump files should be more readable by humans
   };
 
-  enum NoviceExpert {
-    NOVICE,                      // novice mode -- default, for starting out
-    EXPERT,                      // expert mode -- select this to enable expert behavior 
-  };
-
   enum LoadVerbosity {
     QUIET,                      // don't say anything except errors
     VERSION_SKEW,               // display mismatches in names of objects in loading file that are likely due to changes in newer versions of the software
@@ -292,22 +287,22 @@ public:
 #ifdef TA_OS_MAC
     GS_MACINTOSH,       // #LABEL_Macintosh only available on a macintosh!
 #else
-    GS_MACINTOSH,       // #NO_SHOW
+    GS_MACINTOSH,       // #HIDDEN
 #endif
     GS_WINDOWS,         // #LABEL_Windows standard old-school Microsoft Windows (pre XP)
 #ifdef TA_OS_WIN
     GS_WINDOWSXP,       // #LABEL_WindowsXP Windows XP look -- only available on Windows XP or higher
     GS_WINDOWSVISTA,    // #LABEL_WindowsVista Windows Vista look -- only available on Windows Vista or higher
 #else
-    GS_WINDOWSXP,       // #NO_SHOW
-    GS_WINDOWSVISTA,    // #NO_SHOW
+    GS_WINDOWSXP,       // #HIDDEN
+    GS_WINDOWSVISTA,    // #HIDDEN
 #endif
   };
   
   enum AppToolbarStyle { // some of the options offered by Qt
     TB_ICON_ONLY = 0,   // #LABEL_Icon_Only
     TB_TEXT_ONLY = 1,   // #LABEL_Text_Only
-    TB_TEXT_BESIDE_ICON = 2,   // #NO_SHOW
+    TB_TEXT_BESIDE_ICON = 2,   // #HIDDEN
     TB_TEXT_UNDER_ICON = 3  // #LABEL_Text_Under_Icon
   };
 
@@ -335,7 +330,7 @@ public:
   //  #READ_ONLY #NO_SAVE #EXPERT #CAT_App version number of ta/css
   static String         svn_rev;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number
-  static int64_t        exe_mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for executable file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild plugins, for example
+  static int64_t        exe_mod_time_int; // #READ_ONLY #NO_SAVE #HIDDEN time stamp for executable file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild plugins, for example
   static String         exe_mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the executable file was last modified (installed)
   static const BuildType build_type;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App build type, mostly for determining plugin subfolders to search
@@ -396,7 +391,6 @@ public:
   static int            css_gui_event_interval; // #SAVE #CAT_GUI #DEF_200 #EXPERT how many milliseconds between processing of gui events in css -- lower number = more responsive interface, but worse performance, while things are running
   static bool           delete_prompts;  //  #SAVE #CAT_GUI #EXPERT should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
   static int            tree_indent;    // #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
-  static NoviceExpert   program_editor_mode;  // #SAVE #CAT_GUI #EXPERT mode for program editor behavior -- EXPERT mode hides the top mini-editor by default (just double-click on the splitter to get it back) and other advanced settings and behavior
   static int            program_editor_lines;   // #SAVE #CAT_GUI #EXPERT #MIN_4 #MAX_20 default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
 
   static HelpDetail     help_detail;    // #SAVE #CAT_GUI #EXPERT level of detail to display in the help system
@@ -410,15 +404,14 @@ public:
   static EditOptions    edit_options;  // #SAVE #CAT_GUI #EXPERT misc options for how editing behaves 
 #ifndef NO_TA_BASE
 //NOTE: following not keeping tokens so cannot be viewed in any mode
-  static ViewColor_List* view_colors;   // #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
-  static ViewBackground_List* view_backgrounds;   // #NO_SAVE #NO_SHOW backgrounds to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
-  static KeyBindings_List* key_binding_lists;   // #NO_SAVE #NO_SHOW a list of key binding sets; each set has bindings for various contexts (for shortcuts and keyPressEvent)
+  static ViewColor_List* view_colors;   // #NO_SAVE #HIDDEN colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
+  static ViewBackground_List* view_backgrounds;   // #NO_SAVE #HIDDEN backgrounds to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
+  static KeyBindings_List* key_binding_lists;   // #NO_SAVE #HIDDEN a list of key binding sets; each set has bindings for various contexts (for shortcuts and keyPressEvent)
 #endif
 
   static KeyBindingSet  current_key_bindings;  // #NO_SAVE #HIDDEN key bindings are always set to KEY_BINDINGS_CUSTOM -- default is just used for revert etc -- otherwise it is potentially confusing which bindings are in effect, esp when user edits custom set..
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
-  static TypeItem::ShowMembs show_gui;       // #IGNORE #CAT_GUI #EXPERT what to show in the gui -- set in main window viewer
   static TypeInfo       type_info_;     // #SAVE #CAT_GUI #EXPERT #LABEL_type_info what to show when displaying type information
   //note: 'type_info' is a reserved word in C++, it is the type of rtti data
   static KeepTokens     keep_tokens;    // #SAVE #CAT_GUI #EXPERT default for keeping tokens
@@ -444,19 +437,19 @@ public:
 
   static bool           project_log;  // #SAVE save a project-level log file (.plog), which contains a record of all the css console messages, and other debugging and event logging information, which can be useful for reporting bugs when the software crashes unexpectedly -- e.g., if you attach the .plog file to a bug report, it can be helpful in diagonsing what is causing the problem.  if this is NOT selected, a generic log file is still saved in the user's library directory (~/lib/emergent/log on linux, ~/Library/Emergent/log on mac) as default_project_log.plog
   static bool           ext_messages; // #SAVE #EXPERT display to the console the stdout and stderr messages from external libraries outside of the emergent system -- these can be useful for diagnosing problems -- even if not selected for display to console here, these messages will be saved in the project_log (see project_log option for details)
-  static LoadVerbosity  verbose_load;   // #SAVE #CAT_File #DEF_QUIET #EXPERT report the names of things during loading -- for debugging the loading process
+  static LoadVerbosity  verbose_load;   // #NO_SAVE #CAT_File #DEF_QUIET #EXPERT report the names of things during loading -- for debugging the loading process
   
   ////////////////////////////////////////////////////////
   //    File/Paths Info
 
   static int            strm_ver;       // #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
-  static bool           save_compress;  // #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
+  static bool           save_compress;  // #SAVE #EXPERT #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
   static String         app_dir;
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch
   static String         app_plugin_dir;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed system plugins
   static String         app_dir_default;
-  // #OBSOLETE #NO_SHOW #READ_ONLY #NO_SAVE #CAT_File obs as of 4.0.19 -- nuke at some point
+  // #OBSOLETE #HIDDEN #READ_ONLY #NO_SAVE #CAT_File obs as of 4.0.19 -- nuke at some point
   static String         user_dir;
   // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
   static String         prefs_dir;
@@ -548,8 +541,8 @@ public:
 
   static String         compress_sfx;   // #SAVE #CAT_File #EXPERT suffix to use for compressing files
 
-  static bool           record_on;      // #CAT_File #NO_SAVE are we recording?
-  static String         record_script;  // #CAT_File #NO_SAVE string to use for recording a script of interface activity (NULL if no record)
+  static bool           record_on;      // #CAT_File #NO_SAVE #HIDDEN are we recording?
+  static String         record_script;  // #CAT_File #NO_SAVE #HIDDEN string to use for recording a script of interface activity (NULL if no record)
 
   static String         edit_cmd;       // #SAVE #CAT_File how to run editor
 #ifdef TA_OS_WIN
@@ -586,62 +579,62 @@ public:
   ////////////////////////////////////////////////////////
   //    Global State, Flags Etc
 
-  static TypeSpace      types;          // #READ_ONLY #NO_SAVE #NO_SHOW list of all the active types
-  static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #NO_SHOW list of types that have AKA for other types that are no longer supported
-  static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #NO_SHOW registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
-  static TypeSpace      static_collection; // #READ_ONLY #NO_SAVE #NO_SHOW list of classes with statics that we add to the completer popup list
+  static TypeSpace      types;          // #READ_ONLY #NO_SAVE #HIDDEN list of all the active types
+  static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #HIDDEN list of types that have AKA for other types that are no longer supported
+  static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #HIDDEN registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
+  static TypeSpace      static_collection; // #READ_ONLY #NO_SAVE #HIDDEN list of classes with statics that we add to the completer popup list
   static TypeDef*       default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization
 
-  static bool           in_init;        // #READ_ONLY #NO_SAVE #NO_SHOW true if in ta initialization function
-  static bool           in_event_loop;  // #READ_ONLY #NO_SAVE #NO_SHOW true when in the main event loop (ex. now ok to do ProcessEvents)
-  static signed char    quitting;       // #READ_ONLY #NO_SAVE #NO_SHOW true, via one of QuitFlag values, once we are quitting
-  static bool           not_constr;     // #READ_ONLY #NO_SAVE #NO_SHOW true if ta types are not yet constructed (or are destructed)
+  static bool           in_init;        // #READ_ONLY #NO_SAVE #HIDDEN true if in ta initialization function
+  static bool           in_event_loop;  // #READ_ONLY #NO_SAVE #HIDDEN true when in the main event loop (ex. now ok to do ProcessEvents)
+  static signed char    quitting;       // #READ_ONLY #NO_SAVE #HIDDEN true, via one of QuitFlag values, once we are quitting
+  static bool           not_constr;     // #READ_ONLY #NO_SAVE #HIDDEN true if ta types are not yet constructed (or are destructed)
 
-  static bool           use_gui;        // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT  whether the user has specified to use the gui or not (default = true)
-  static bool           gui_active;     // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
-  static bool           interactive;    // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if the system is in an interactive mode of operation, otherwise in batch mode running in the background -- determines whether to prompt user ever
-  static bool           gui_no_win;     // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
-  static bool           in_dev_exe;     // #READ_ONLY #NO_SAVE #NO_SHOW are we running a development executable -- running out of the build directory of the source code -- do some things differently in this case (e.g., no plugins)
-  static bool           use_plugins;    // #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
-  static bool           server_active;  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if remote server has been started up or not
-  static bool           cluster_run;    // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if this process is executing as a result of a ClusterRun job submission -- set by -cluster_run arg passed by ClusterRun
-  static ContextFlag    is_loading;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
+  static bool           use_gui;        // #READ_ONLY #NO_SAVE #EXPERT  whether the user has specified to use the gui or not (default = true)
+  static bool           gui_active;     // #READ_ONLY #NO_SAVE #EXPERT if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
+  static bool           interactive;    // #READ_ONLY #NO_SAVE #EXPERT if the system is in an interactive mode of operation, otherwise in batch mode running in the background -- determines whether to prompt user ever
+  static bool           gui_no_win;     // #READ_ONLY #NO_SAVE #EXPERT an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
+  static bool           in_dev_exe;     // #READ_ONLY #NO_SAVE #HIDDEN are we running a development executable -- running out of the build directory of the source code -- do some things differently in this case (e.g., no plugins)
+  static bool           use_plugins;    // #READ_ONLY #NO_SAVE #HIDDEN whether to use plugins
+  static bool           server_active;  // #READ_ONLY #NO_SAVE #EXPERT if remote server has been started up or not
+  static bool           cluster_run;    // #READ_ONLY #NO_SAVE #EXPERT if this process is executing as a result of a ClusterRun job submission -- set by -cluster_run arg passed by ClusterRun
+  static ContextFlag    is_loading;     // #READ_ONLY #NO_SAVE #HIDDEN true if currently loading an object
   static taVersion      loading_version;
   //  #READ_ONLY #NO_SAVE #EXPERT version number associated with file currently being loaded
-  static ContextFlag    is_post_loading;// #READ_ONLY #NO_SAVE #NO_SHOW true if currently in the post load routine (DUMP_POST_LOAD)
-  static ContextFlag    is_saving;      // #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
-  static bool           save_use_name_paths; // #READ_ONLY #NO_SAVE #NO_SHOW use name-based paths (GetPathNames) for saving paths
-  static ContextFlag    is_undo_saving; // #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object for undo data -- objects with extensive "leaf" level data (i.e., having no signficant undoable data under them, e.g., data table rows) should NOT save that data in this context
-  static ContextFlag    is_auto_saving; // #READ_ONLY #NO_SAVE #NO_SHOW true if currently auto-saving the project -- some types may optimize saving for auto save
-  static ContextFlag    is_undo_loading;// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object from undo data
-  static ContextFlag    is_duplicating; // #READ_ONLY #NO_SAVE #NO_SHOW true if currently duplicating an object
-  static ContextFlag    is_changing_type;       // #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing a ChangeType on object
-  static ContextFlag    is_checking;    // #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing batch CheckConfig on objects
-  static ContextFlag    in_gui_call;    // #READ_ONLY #NO_SAVE #NO_SHOW true if we are running a function call from the gui (used to modalize warning dialogs)
-  static ContextFlag    in_gui_multi_action; // #READ_ONLY #NO_SAVE #NO_SHOW we are currently in a gui multiple item action (e.g., drag/drop or cut/paste multiple items) -- good to suspend various update actions that might otherwise occur at this time.  The last item in the sequence does NOT have this flag set, so it can trigger relevant updates etc
-  static ContextFlag    in_plugin_init; // #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading typeinfo for a plugin
-  static ContextFlag    in_shutdown;    // #READ_ONLY #NO_SAVE #NO_SHOW true if currently shutting down and cleaning up
-  static ContextFlag    in_waitproc; // #READ_ONLY #NO_SAVE #NO_SHOW true if we are inside a delayed wait processing function and thus should NOT do ProcessEvents or other async operations
-  static ContextFlag    in_eventproc; // #READ_ONLY #NO_SAVE #NO_SHOW true if we are inside a process events or run pending function and thus should NOT do wait proc events..
-  static ContextFlag    no_auto_expand; // #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
-  static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
+  static ContextFlag    is_post_loading;// #READ_ONLY #NO_SAVE #HIDDEN true if currently in the post load routine (DUMP_POST_LOAD)
+  static ContextFlag    is_saving;      // #READ_ONLY #NO_SAVE #HIDDEN true if currently saving an object
+  static bool           save_use_name_paths; // #READ_ONLY #NO_SAVE #HIDDEN use name-based paths (GetPathNames) for saving paths
+  static ContextFlag    is_undo_saving; // #READ_ONLY #NO_SAVE #HIDDEN true if currently saving an object for undo data -- objects with extensive "leaf" level data (i.e., having no signficant undoable data under them, e.g., data table rows) should NOT save that data in this context
+  static ContextFlag    is_auto_saving; // #READ_ONLY #NO_SAVE #HIDDEN true if currently auto-saving the project -- some types may optimize saving for auto save
+  static ContextFlag    is_undo_loading;// #READ_ONLY #NO_SAVE #HIDDEN true if currently loading an object from undo data
+  static ContextFlag    is_duplicating; // #READ_ONLY #NO_SAVE #HIDDEN true if currently duplicating an object
+  static ContextFlag    is_changing_type;       // #READ_ONLY #NO_SAVE #HIDDEN true if currently doing a ChangeType on object
+  static ContextFlag    is_checking;    // #READ_ONLY #NO_SAVE #HIDDEN true if currently doing batch CheckConfig on objects
+  static ContextFlag    in_gui_call;    // #READ_ONLY #NO_SAVE #HIDDEN true if we are running a function call from the gui (used to modalize warning dialogs)
+  static ContextFlag    in_gui_multi_action; // #READ_ONLY #NO_SAVE #HIDDEN we are currently in a gui multiple item action (e.g., drag/drop or cut/paste multiple items) -- good to suspend various update actions that might otherwise occur at this time.  The last item in the sequence does NOT have this flag set, so it can trigger relevant updates etc
+  static ContextFlag    in_plugin_init; // #READ_ONLY #NO_SAVE #HIDDEN true if currently loading typeinfo for a plugin
+  static ContextFlag    in_shutdown;    // #READ_ONLY #NO_SAVE #HIDDEN true if currently shutting down and cleaning up
+  static ContextFlag    in_waitproc; // #READ_ONLY #NO_SAVE #HIDDEN true if we are inside a delayed wait processing function and thus should NOT do ProcessEvents or other async operations
+  static ContextFlag    in_eventproc; // #READ_ONLY #NO_SAVE #HIDDEN true if we are inside a process events or run pending function and thus should NOT do wait proc events..
+  static ContextFlag    no_auto_expand; // #READ_ONLY #NO_SAVE #HIDDEN true to suppress auto-expanding (esp during code that makes a lot of objs)
+  static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #HIDDEN the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
-  static bool           err_cancel;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently canceling error messages
-  static int64_t        err_cancel_time; // #READ_ONLY #NO_SAVE #NO_SHOW time point at which error cancel was last activated (internal seconds since jan 1 1970 time units)
-  static int            err_cancel_time_thr; // #NO_SAVE #NO_SHOW threshold for how long to wait in seconds between error events to consider it part of the same sequence of errors, and thus reset the err_waitproc_cnt back to 0
-  static int            err_waitproc_cnt; // #READ_ONLY #NO_SAVE #NO_SHOW count of number of times through the waitproc during err_cancel -- if enough times through, then we lift the err cancel (see err_waitproc_thr)
-  static int            err_waitproc_thr; // #NO_SAVE #NO_SHOW threshold number of times through the waitproc to lift an err cancel
+  static bool           err_cancel;     // #READ_ONLY #NO_SAVE #HIDDEN true if currently canceling error messages
+  static int64_t        err_cancel_time; // #READ_ONLY #NO_SAVE #HIDDEN time point at which error cancel was last activated (internal seconds since jan 1 1970 time units)
+  static int            err_cancel_time_thr; // #NO_SAVE #HIDDEN threshold for how long to wait in seconds between error events to consider it part of the same sequence of errors, and thus reset the err_waitproc_cnt back to 0
+  static int            err_waitproc_cnt; // #READ_ONLY #NO_SAVE #HIDDEN count of number of times through the waitproc during err_cancel -- if enough times through, then we lift the err cancel (see err_waitproc_thr)
+  static int            err_waitproc_thr; // #NO_SAVE #HIDDEN threshold number of times through the waitproc to lift an err cancel
   static String         last_err_msg;
-  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Error function
+  // #READ_ONLY #NO_SAVE #EXPERT last message from the taMisc::Error function
   static String         last_warn_msg;
-  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Warning function
+  // #READ_ONLY #NO_SAVE #EXPERT last message from the taMisc::Warning function
 
   static String         last_check_msg; // #READ_ONLY #NO_SAVE #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
-  static taBase_PtrList check_error_objects;
 #ifndef NO_TA_BASE
-  static String_Array   check_error_messages;
+  static taBase_PtrList check_error_objects; // #READ_ONLY #NO_SAVE objects that have check config errors on them
+  static String_Array   check_error_messages; // #READ_ONLY #NO_SAVE error messages corresponding to the check error objects
 #endif
   static bool           check_quiet;    // #IGNORE mode we are in; set by CheckConfigStart
   static bool           check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart

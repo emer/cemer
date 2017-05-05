@@ -35,7 +35,11 @@ class voidptr_PArray; //
 
 taTypeDef_Of(MemberDef);
 
-class TA_API MemberDef : public MemberDefBase { //  defines a class member
+// IMPORTANT: see MemberDefBase for many important methods and properties esp
+// for convenience functions for handling options for visibility etc
+
+class TA_API MemberDef : public MemberDefBase {
+  //  defines a class member
 INHERITED(MemberDefBase)
 public:
   enum DefaultStatus { //#BITS  status of default value comparison
@@ -54,15 +58,11 @@ public:
   void*         addr;           // address of static member
   bool          fun_ptr;        // true if this is a pointer to a function
 
-  bool         isReadOnly() const override;
-  bool         isGuiReadOnly() const override;
-
   void*        This() override {return this;}
   TypeDef*     GetTypeDef() const override {return &TA_MemberDef;}
   TypeInfoKinds TypeInfoKind() const override {return TIK_MEMBER;}
 
-  bool ValIsDefault(const void* base,
-                    int for_show=IS_EXPERT) const override;
+  bool ValIsDefault(const void* base) const override;
   // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void          Copy(const MemberDef& cp);
@@ -100,12 +100,6 @@ public:
   // copy all members from same type
   void          CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members from same type (no inherited)
-  bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
-                            voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                            TypeDef* base_typ, void* trg_base, void* src_base,
-                            int show_forbidden=NO_HIDDEN, int show_allowed=SHOW_CHECK_MASK,
-                            bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   void          PrintType(String& col1, String& col2) const;
   void          Print(String& col1, String& col2, void* base, int indent=0) const;

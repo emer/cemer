@@ -27,7 +27,7 @@
 taTypeDef_Of(taBaseItr);
 
 class TA_API taBaseItr : public taBase {
-  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP base class for iterators over containers
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE base class for iterators over containers
 INHERITED(taBase)
 public:
   int           count;          // count number of iterations through foreach -- always goes 0..end sequentially

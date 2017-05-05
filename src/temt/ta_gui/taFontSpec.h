@@ -27,7 +27,7 @@
 taTypeDef_Of(taFontSpec);
 
 class TA_API taFontSpec : public taOBase, public iFont {
- // #INLINE #INLINE_DUMP ##CAT_Display a specification of a font (for Unix - X logical font description)
+ // ##INLINE ##CAT_Display a specification of a font (for Unix - X logical font description)
 INHERITED(taOBase)
 public:
   String                pattern; // #READ_ONLY #NO_SAVE DEPRECATED the name of the font

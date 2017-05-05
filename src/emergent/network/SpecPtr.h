@@ -27,7 +27,7 @@
 eTypeDef_Of(SpecPtr_impl);
 
 class E_API SpecPtr_impl : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
+  // ##INLINE ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
 INHERITED(taOBase)
 public:
   TypeDef*	base_type;	// #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field

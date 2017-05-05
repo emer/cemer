@@ -461,7 +461,7 @@ void taCodeUtils::CreateAllNewSrcFiles() {
       i++;
       continue;
     }
-    if(typ->HasOption("INLINE")) {
+    if(typ->IsSaveInline()) {
       // if(dbg) taMisc::Info("fail inline");
       i++;
       continue;

@@ -31,7 +31,7 @@
 eTypeDef_Of(AvgMaxValsRaw);
 
 class E_API AvgMaxValsRaw {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra raw average and max values -- not a taBase object -- for thread-specific memory 
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra raw average and max values -- not a taBase object -- for thread-specific memory 
 public:
   float		avg;		// #DMEM_AGG_SUM average value
   float		max;		// #DMEM_AGG_SUM maximum value
@@ -59,7 +59,7 @@ public:
 eTypeDef_Of(AvgMaxVals);
 
 class E_API AvgMaxVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
 INHERITED(taOBase)
 public:
   bool		cmpt;		// whether to compute these values or not -- only for optional values

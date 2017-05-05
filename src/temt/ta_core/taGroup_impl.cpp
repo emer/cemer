@@ -194,6 +194,11 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
   gp.Copy_Borrow(cp.gp);
 }
 
+void taGroup_impl::UpdateAll() {
+  inherited::UpdateAll();
+  gp.UpdateAll();
+}
+
 void taGroup_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
                                  taBase_PtrList* owners, bool text_only,
                                  bool contains, bool case_sensitive,
@@ -214,19 +219,6 @@ void taGroup_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items
   }
 }
 
-
-void taGroup_impl::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                                    voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                    taBase* cp_base,
-                                    int show_forbidden, int show_allowed, bool no_ptrs) {
-  if(!cp_base) return;
-  if(GetTypeDef() != cp_base->GetTypeDef()) return; // must be same type..
-  inherited::CompareSameTypeR(mds, base_types, trg_bases, src_bases, cp_base, show_forbidden,
-                              show_allowed, no_ptrs);
-  taGroup_impl* cp_gp = (taGroup_impl*)cp_base;
-  gp.CompareSameTypeR(mds, base_types, trg_bases, src_bases, &(cp_gp->gp),
-                      show_forbidden, show_allowed, no_ptrs);
-}
 
 // if gp.Upd... not needed then method not needed
 int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {

@@ -47,8 +47,7 @@ taiWidget* taiTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* p
     flags_ |= taiWidget::flgNoTokenDlg; // no dialog
   flags_ |= (taiWidget::flgNullOk);
 
-  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
+  flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   taiWidgetTokenChooser* rval = new taiWidgetTokenChooser(npt, host_, par, gui_parent_, flags_);
   return rval;

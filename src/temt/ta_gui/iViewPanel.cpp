@@ -25,10 +25,6 @@
 #include <QKeyEvent>
 
 
-TypeItem::ShowMembs iViewPanel::show() const {
-  return taMisc::show_gui;
-}
-
 iViewPanel::iViewPanel(taDataView* dv_)
 :inherited((taiSigLink*)dv_->GetSigLink()) //NOTE: link not created yet during loads
 {

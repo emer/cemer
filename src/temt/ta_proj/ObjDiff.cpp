@@ -349,9 +349,8 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
   MemberDef* last_md = NULL;    // special option for putting one member after others!
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members[i];
-    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
-       md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN") ||
-       md->HasOption("NO_DIFF") || md->type->HasOption("NO_DIFF") || md->is_static)
+    if(md->HasNoSave() || md->IsEditorHidden() || md->HasNoDiff()
+       || md->type->HasOption("NO_DIFF"))
       continue;
     if(md->type->InheritsFrom(&TA_taList_impl)) { // not now
       continue;
@@ -384,9 +383,8 @@ int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) 
     if(!md->type->InheritsFrom(&TA_taList_impl)) { // now
       continue;
     }
-    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
-       md->HasOption("GUI_READ_ONLY") || md->HasOption("HIDDEN") ||
-       md->HasOption("NO_DIFF") || md->type->HasOption("NO_DIFF") || md->is_static)
+    if(md->HasNoSave() || md->IsEditorHidden() || md->HasNoDiff()
+       || md->type->HasOption("NO_DIFF"))
       continue;
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..

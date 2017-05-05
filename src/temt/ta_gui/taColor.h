@@ -27,10 +27,10 @@
 taTypeDef_Of(taColor);
 
 class TA_API taColor : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color value
+  // ##INLINE ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color value
 INHERITED(taBase)
 public:
-  bool    no_a; // #NO_SHOW #NO_SAVE control using a, by context
+  bool    no_a; // #HIDDEN #NO_SAVE control using a, by context
   float   r; // red
   float   g; // green
   float   b; // blue
@@ -64,7 +64,7 @@ private:
 taTypeDef_Of(taColorPhong);
 
 class TA_API taColorPhong : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display phong-type color parameters -- ambient downscaling of regular diffuse color, plus specular brightness and shininess
+  // ##INLINE ##NO_TOKENS ##CAT_Display phong-type color parameters -- ambient downscaling of regular diffuse color, plus specular brightness and shininess
 INHERITED(taBase)
 public:
    float        ambient;        // how much to diminish the color values to create ambient color -- always based off of basic color -- a value of 0 means ambient is black

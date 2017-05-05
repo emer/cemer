@@ -57,8 +57,7 @@ taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, t
     new_flags |= taiWidget::flgEditOk;
   if(!mbr->HasOption("GROUP_OPT_OK"))
     new_flags |= taiWidget::flgNoList;
-  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    new_flags |= taiWidget::flgAutoApply; // default is to auto-apply!
+  new_flags |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
     dat_typ = "subgp";

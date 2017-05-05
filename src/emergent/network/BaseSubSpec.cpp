@@ -128,8 +128,7 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
       // don't copy read only or hidden members! (usually set automatically
       // and might depend on local variables)
       if(!GetUnique(memb_no) &&
-         !(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") ||
-           md->HasOption("NO_INHERIT")))
+         !(md->HasReadOnly() || md->HasHidden() || md->HasOption("NO_INHERIT")))
       {
         MemberCopyFrom(memb_no, from);
         // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains

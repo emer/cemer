@@ -36,7 +36,7 @@ public:
   static TypeInfoBrowser*     New(void* root, TypeDef* root_typ, MemberDef* root_md = NULL);
     // accepts any TypeItem or XxxSpace guy
 
-  String                root_str; // #READ_ONLY #NO_SHOW a string version, so we can stream the guy
+  String                root_str; // #READ_ONLY #HIDDEN a string version, so we can stream the guy
 
   void*        root() override {return m_root;}
   void                  setRoot(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); // use this to set the root

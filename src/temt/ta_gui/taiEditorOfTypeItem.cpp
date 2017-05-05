@@ -71,11 +71,11 @@ void taiEditorOfTypeItem::Constr_Widget_Labels() {
     AddNameWidget(row++, "is_static", "static (non-instance) member/property",
      chk, NULL, NULL, true);
     // read-only
-    chk = new iCheckBox(md->isReadOnly(), body);
+    chk = new iCheckBox(md->HasReadOnly(), body);
     chk->setReadOnly(true);
     AddNameWidget(row++, "readOnly", "member/property is read-only (including in CSS/programs)", chk, NULL, NULL, true);
     // gui read-only
-    chk = new iCheckBox(md->isGuiReadOnly(), body);
+    chk = new iCheckBox(md->HasGuiReadOnly(), body);
     chk->setReadOnly(true);
     AddNameWidget(row++, "guiReadOnly", "member/property is read-only in the gui (but may be writable in CSS/programs)", chk, NULL, NULL, true);
   }

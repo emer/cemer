@@ -106,6 +106,7 @@ public:
 #endif
 
   bool                  read_only; // set true if we are
+  bool                  show_expert; // set to true if we show expert items
 #ifndef __MAKETA__
   QPointer<iMainWindowViewer> m_window; // set this so cliphandler can be set for controls
 #endif
@@ -114,7 +115,6 @@ public:
   void                  setEditNode(taBase* value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void                  setEditBgColor(const iColor& value); // set bg for edit, null for default
   void                  defEditBgColor(); // set default color
-  void                  setShow(int value); // only used by expert toggle
   iTreeViewItem*        AssertBrowserItem(taiSigLink* link);
   virtual void          Refresh(); // manual refresh
   virtual QWidget*      firstTabFocusWidget();
@@ -148,9 +148,6 @@ public: // IWidgetHost i/f -- some delegate up to mommy
   bool                  isConstructed() override {return true;}
   bool                  isModal() override {return false;} // never for us
   bool                  isReadOnly() override {return read_only;}
-#ifndef __MAKETA__
-  TypeItem::ShowMembs   show() const override {return m_show;}
-#endif
     // used by polydata
   iMainWindowViewer*    window() const;
   void*                 Root() const override {return (void*)base;} // base of the object
@@ -176,7 +173,6 @@ protected:
   taiMemberWidgets_List          membs; // the member items, one set per line
 
   int                   row;
-  TypeItem::ShowMembs   m_show;
   MemberDef*            sel_item_mbr; // used (and only valid!) for context menus
   taBase*               sel_item_base; // used (and only valid!) for context menus
 
@@ -187,7 +183,6 @@ protected:
 
   virtual void          Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void          Base_Add(); // adds controls etc for base
-  bool                  ShowMember(MemberDef* md);
 
   void                  InternalSetModified(bool value); // does all the gui config
   void                  UpdateButtons();

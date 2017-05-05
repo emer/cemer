@@ -292,8 +292,7 @@ void BrainView::GetMembs() {
 
       for(int m=0; m<td->members.size; m++) {
         MemberDef* md = td->members.FastEl(m);
-        if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
-            md->HasOption("READ_ONLY")))
+        if((md->HasOption("NO_VIEW") || md->HasHidden() || md->HasReadOnly()))
           continue;
         if((md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double))
            && (membs.FindName(md->name)==NULL))
@@ -316,8 +315,7 @@ void BrainView::GetMembs() {
           for(k=0; k<nptd->members.size; k++) {
             MemberDef* smd = nptd->members.FastEl(k);
             if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-              if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-                  smd->HasOption("READ_ONLY")))
+              if((smd->HasOption("NO_VIEW") || smd->HasHidden() || smd->HasReadOnly()))
                 continue;
               String nm = md->name + "." + smd->name;
               if(membs.FindName(nm)==NULL) {
@@ -337,8 +335,8 @@ void BrainView::GetMembs() {
 //        for(int k=0; k<td->members.size; k++) {
 //          MemberDef* smd = td->members.FastEl(k);
 //          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-//            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-//                smd->HasOption("READ_ONLY")))
+//            if((smd->HasOption("NO_VIEW") || smd->HasHidden() ||
+//                smd->HasReadOnly()))
 //              continue;
 //            String nm = "bias." + smd->name;
 //            if(membs.FindName(nm)==NULL) {
@@ -365,8 +363,8 @@ void BrainView::GetMembs() {
 //        for (k=0; k<td->members.size; k++) {
 //          MemberDef* smd = td->members.FastEl(k);
 //          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-//            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-//                smd->HasOption("READ_ONLY")))
+//            if((smd->HasOption("NO_VIEW") || smd->HasHidden() ||
+//                smd->HasReadOnly()))
 //              continue;
 //            String nm = "r." + smd->name;
 //            if(membs.FindName(nm)==NULL) {

@@ -56,8 +56,9 @@ void taiTreeNode::CreateChildren_impl() {
 /*TODO: replace filters, or nuke    // check for member/type-based filter
     if (tree->HasFilter(md->type)) continue;
     if (tree->HasFilter(md)) continue; */
-    // we make everything that isn't NO_SHOW, then hide if not visible now
-    if (!md->ShowMember(TypeItem::ALL_MEMBS, TypeItem::SC_TREE)) continue;
+    if (md->IsTreeHidden()) {
+      continue;
+    }
     if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(linkData()); //note: GetSigLink automatically derefs typ and el if pointers
@@ -82,10 +83,7 @@ void taiTreeNode::willHaveChildren_impl(bool& will) const {
   MemberSpace* ms = &(base_typ->members);
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
-    //NOTE: this code is only valid for the **current** view state
-    // lazy children would need to be rerun for all nodes if view state changed
-    // we make everything that isn't NO_SHOW, then hide if not visible now
-    if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, TypeItem::SC_TREE)) continue;
+    if (md->IsTreeHidden()) continue;
     if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     will = true;
     break;

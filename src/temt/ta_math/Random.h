@@ -32,7 +32,7 @@
 taTypeDef_Of(Random);
 
 class TA_API Random : public taINBase {
-  // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math ##NO_TOKENS ##STATIC_COMPLETION Random Number Generation
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_Math ##NO_TOKENS ##STATIC_COMPLETION Random Number Generation
 INHERITED(taINBase)
 public:
   enum Type {

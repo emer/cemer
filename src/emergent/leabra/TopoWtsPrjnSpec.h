@@ -30,7 +30,7 @@
 eTypeDef_Of(IndexByGps);
 
 class E_API IndexByGps: public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra whether to us send, recv gps for indexing, and if so which dimension, or both?
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra whether to us send, recv gps for indexing, and if so which dimension, or both?
   INHERITED(SpecMemberBase)
     public:
 

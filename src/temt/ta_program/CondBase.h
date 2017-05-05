@@ -32,7 +32,7 @@ class TA_API CondBase : public ProgEl {
   INHERITED(ProgEl)
 public:
   ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
-  ProgEl_List	  true_code; 	// #AKA_else_code #SHOW_TREE items to execute if condition true
+  ProgEl_List	  true_code; 	// #AKA_else_code #TREE_SHOW items to execute if condition true
   
   int           ProgElChildrenCount() const override { return true_code.size; }
 

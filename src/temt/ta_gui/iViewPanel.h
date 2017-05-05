@@ -99,8 +99,6 @@ public: // IWidgetHost i/f -- some delegate up to mommy
   bool          isConstructed() override {return true;}
   bool          isModal() override {return false;} // never for us
   bool          isReadOnly() override {return read_only;}
-  TypeItem::ShowMembs   show() const override;
-    // used by polydata
   iMainWindowViewer*    window() const {return (tabView()) ? tabView()->viewerWindow() : NULL;}
   void*         Root() const override {return (void*)m_dv;} // (typical, could replace)
   taBase*       Base() const override {return m_dv;} // (typical, could replace)

@@ -47,7 +47,7 @@ class float_Matrix; //
 eTypeDef_Of(VocalTractConfig);
 
 class E_API VocalTractConfig : public taOBase {
-  // #STEM_BASE ##CAT_Audio #INLINE #INLINE_DUMP global configuration information for Vocal Tract
+  // #STEM_BASE ##CAT_Audio ##INLINE global configuration information for Vocal Tract
   INHERITED(taOBase)
 public:
   enum WaveForm {
@@ -88,7 +88,7 @@ private:
 eTypeDef_Of(VoiceParams);
 
 class E_API VoiceParams : public taOBase {
-  // #STEM_BASE ##CAT_Audio #INLINE #INLINE_DUMP global configuration information for Vocal Tract
+  // #STEM_BASE ##CAT_Audio ##INLINE global configuration information for Vocal Tract
   INHERITED(taOBase)
 public:
   enum  VoiceDefs {             // default voice configurations
@@ -158,7 +158,7 @@ private:
 eTypeDef_Of(VocalTractCtrl);
 
 class E_API VocalTractCtrl : public taOBase {
-  // #STEM_BASE ##CAT_Audio #INLINE #INLINE_DUMP control parameters for driving a given sound from the vocal tract -- there are different such parameters for each "phoneme" etc.
+  // #STEM_BASE ##CAT_Audio ##INLINE control parameters for driving a given sound from the vocal tract -- there are different such parameters for each "phoneme" etc.
   INHERITED(taOBase)
 public:
   enum ParamIndex {         // parameter indexes for reading from matrix data
@@ -351,9 +351,9 @@ public:
   VocalTractCtrl        del_max;
   // #NO_SAVE maximum delta values for each parameter -- vocal system cannot change faster than this!
   DataTable             phone_table;
-  // #SHOW_TREE #NO_SAVE #HIDDEN table of standard phonemes containing posture configurations for each phoneme
+  // #TREE_SHOW #NO_SAVE #HIDDEN table of standard phonemes containing posture configurations for each phoneme
   DataTable             dict_table;
-  // #SHOW_TREE #NO_SAVE #HIDDEN dictionary with pronunciation rules for words in terms of phones described in phone_table -- not loaded by default as it is large
+  // #TREE_SHOW #NO_SAVE #HIDDEN dictionary with pronunciation rules for words in terms of phones described in phone_table -- not loaded by default as it is large
 
   virtual void InitSynth();
   // #BUTTON #CAT_VocalTract initialize the synthesizer -- call this after changing any of the basic sound / voice config parameters -- also call InitBuffers first if you want a different sample rate than the default 16000

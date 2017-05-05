@@ -69,7 +69,7 @@ int MemberSpace::Dump_Save_PathR(ostream& strm, void* base, void* par, int inden
 }
 
 bool MemberDef::DumpMember(void* par) {
-  if ((is_static && !HasOption("SAVE")) || HasOption("NO_SAVE"))
+  if ((is_static && !HasOption("SAVE")) || HasNoSave())
     return false;
   // if taBase, query it for member save
   TypeDef* par_typ = GetOwnerType();
@@ -82,20 +82,9 @@ bool MemberDef::DumpMember(void* par) {
   } 
   
   // first, check explicit rules
-  if (HasOption("SAVE")) {
-    return true;
-  }
-  else if (HasOption("NO_SAVE")) {
-    return false;
-  }
-  else if (HasOption("NO_SAVE_EMPTY")) {
+  if (HasOption("NO_SAVE_EMPTY")) {
     void* new_base = GetOff(par);
     return !(type->ValIsEmpty(new_base, this));
-  }
-  else if (HasOption("NO_SAVE_DEF")) {
-    // note: if no DEF then this will behave like NO_SAVE_EMPTY
-//    void* new_base = GetOff(par);
-    return !(ValIsDefault(par, TypeItem::SHOW_CHECK_MASK));
   }
   // embedded types (simple or objects) get saved by default
   else if (type->IsNotPtr()) {
@@ -153,11 +142,12 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       return tap->Dump_Save_impl(strm, (taBase*)base, indent);
     }
     if((tap != NULL) && (tap->GetOwner() == NULL) && (tap != taRootBase::instance())) { // no owner, fake path name
-      strm << tap->GetTypeDef()->name << " @*(." << name << ")";
+      TypeDef* td = tap->GetTypeDef();
+      strm << td->name << " @*(." << name << ")";
       tap->Dump_Save_Value(strm, (taBase*)base, indent);
 //NOTE: HACK ALERT...      
 // we only need the extra "};" when not saving a INLINE object 
-      if (!(tap->HasOption("INLINE_DUMP") && !tap->HasUserDataList()))
+      if (!td->IsSaveInline())
         taMisc::indent(strm, indent, 1) << "};\n";
       return true;
     }
@@ -316,11 +306,7 @@ int TypeDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent) {
 
 int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
   if (IsActualClassNoEff()) {
-    // semi-hack to not do INLINE if taBase has user data
-    bool inline_dump = HasOption("INLINE_DUMP");
-    if (inline_dump && DerivesFrom(&TA_taOBase) && IsNotPtr()) {
-      inline_dump = !((taOBase*)base)->HasUserDataList();
-    }
+    bool inline_dump = IsSaveInline();
     if(inline_dump) {
       strm << " " << GetValStr(base, par, NULL, TypeDef::SC_STREAMING) << ";\n";
     }
@@ -365,10 +351,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_Value(strm, base, par, indent);
   }
   if(IsActualClassNoEff()) {
-    bool inline_dump = HasOption("INLINE_DUMP");
-    if (inline_dump && DerivesFrom(&TA_taOBase) && IsNotPtr()) {
-      inline_dump = !((taOBase*)base)->HasUserDataList();
-    }
+    bool inline_dump = IsSaveInline();
     if (!inline_dump) {
       if(IsActualTaBase()) {
         taBase* rbase = (taBase*)base;
@@ -403,7 +386,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   }
   // note: we don't do our INLINE hack here, because this code only looks
   // for *non* INLINE guys in this context...
-  if(IsActualClassNoEff() && !HasOption("INLINE_DUMP")) {
+  if(IsActualClassNoEff() && !IsSaveInline()) {
     if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       rbase->Dump_SaveR(strm, rbase, indent+1);
@@ -957,7 +940,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   // semi-hack to properly load taBase INLINE types that have user data
   // in that case, we streamed out as if no INLINE, and the cheat to detect
   // this is that the { doesn't have the member right after, but a newline
-  bool inline_dump = HasOption("INLINE_DUMP");
+  bool inline_dump = IsSaveInline();
   if (inline_dump) {
     // note: pre 4.0.19 streams had a space after { in path sections
     char cc = strm.peek();

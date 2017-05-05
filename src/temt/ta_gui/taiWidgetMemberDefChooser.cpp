@@ -94,7 +94,7 @@ void taiWidgetMemberDefChooser::BuildChooser_1(iDialogItemChooser* ic) {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
-    if(!mbr->HasOption("EXPERT")) continue;
+    if(!mbr->HasExpert()) continue;
     cat = mbr->OptionAfter("CAT_");
     if(cat == "IGNORE") continue;
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
@@ -129,7 +129,7 @@ bool taiWidgetMemberDefChooser::ShowMember(MemberDef* mbr) {
   // and often you need to see things that are otherwise hidden
   // TODO: should have a ShowContext::SC_CHOOSER or something like that context
   // where it adjudicates these things..
-  return (ShowItemFilter(NULL, mbr, mbr->name)); // && mbr->ShowMember());
+  return (ShowItemFilter(NULL, mbr, mbr->name)); // && mbr->IsEditorHidden());
 }
 
 const String taiWidgetMemberDefChooser::viewText(int index) const {

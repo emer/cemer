@@ -43,7 +43,7 @@ public:
   T3Annotation_List     annotations;
   // extra annotations (lines, arrows, text, etc) to add to the 3d view
   T3DataView_List       annote_children;
-  // #SHOW #READ_ONLY #SHOW_TREE annotation view children -- keep separate from other kids so they don't interfere
+  // #SHOW #READ_ONLY #TREE_SHOW annotation view children -- keep separate from other kids so they don't interfere
   bool                  render_svg;
   // #IGNORE true if currently rendering an SVG output file
   String                svg_str;

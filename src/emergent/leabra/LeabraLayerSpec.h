@@ -35,7 +35,7 @@ eTypeDef_Of(LeabraUnGpData);
 eTypeDef_Of(LeabraInhibSpec);
 
 class E_API LeabraInhibSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average (or maximum) netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average (or maximum) netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable this form of inhibition (layer or unit group) -- if only using inhibitory interneurons, both can be turned off
@@ -77,7 +77,7 @@ private:
 eTypeDef_Of(LeabraMultiGpSpec);
 
 class E_API LeabraMultiGpSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how to combine multiple unit groups for multi-group inhibition
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how to combine multiple unit groups for multi-group inhibition
 INHERITED(SpecMemberBase)
 public:
   taVector2i    size;         // total number of unit groups to combine together into a common pool of multi unit-group inhibition
@@ -99,7 +99,7 @@ private:
 eTypeDef_Of(LayerAvgActSpec);
 
 class E_API LayerAvgActSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used for computing running-average computation that is then used for netinput scaling (also specifies time constant for updating average), and for the target value for adapting inhibition in inhib_adapt
 INHERITED(SpecMemberBase)
 public:
   float		targ_init;	    // #AKA_init #MIN_0 [typically 0.1 - 0.2] target value for adapting inhibition (see inhib_adapt params) and initial estimated average activity level in the layer -- used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_p_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_p_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter
@@ -125,7 +125,7 @@ private:
 eTypeDef_Of(LeabraAdaptInhib);
 
 class E_API LeabraAdaptInhib : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt the overal inhibitory gain value (adapt_gi on layer) to keep overall layer activation within a given target range as specified by avg_act.targ_init
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt the overal inhibitory gain value (adapt_gi on layer) to keep overall layer activation within a given target range as specified by avg_act.targ_init
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable adaptive inhibition function to adapt overall layer inhibition gain as stored in layer adapt_gi value
@@ -159,7 +159,7 @@ private:
 eTypeDef_Of(LeabraActMargin);
 
 class E_API LeabraActMargin : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra marginal activation computation -- detects those units that are on the edges of an attractor and focuses extra learning on them
 INHERITED(SpecMemberBase)
 public:
   float         pct_marg;       // #DEF_0.3 proportion of the total number of active units (defined by layer acts_p_avg value) that should fit between the low and high marginal thresholds, on average -- hi_thr is adapted over time to hit this target on average (actually (1-pct_marg) * acts_p_avg above the hi thr, to remove dependence on low_thr), while low_thr is adapted to capture the full set of acts_p_avg units, and med_thr is adapted to roughly split the pct_marg proportion in half
@@ -213,7 +213,7 @@ private:
 eTypeDef_Of(LeabraInhibMisc);
 
 class E_API LeabraInhibMisc : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system -- these apply across layer and unit group levels
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system -- these apply across layer and unit group levels
 INHERITED(SpecMemberBase)
 public:
   float		net_thr;	// #DEF_0;0.2 threshold on net input for inclusion in the computation of the average netinput, which in turn drives feedforward inhibition -- this is important for preventing units that don't have any significant input from diluting the overall level of inhibition -- prior to version 7.8.7 this was effectively 0 -- set to 0.2 if inhibition is being inappropriately diluted by these off units (not all such cases benefit from this filtering -- experiment) -- see also thr_rel and thr_act options for whether this is a relative vs. absolute threshold, and whether it applies to activations or not
@@ -239,7 +239,7 @@ private:
 eTypeDef_Of(LeabraClampSpec);
 
 class E_API LeabraClampSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping external inputs on INPUT or TARGET layers
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping external inputs on INPUT or TARGET layers
 INHERITED(SpecMemberBase)
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of quarter) or do soft clamping where ext is added into net input (net += gain * ext)
@@ -265,7 +265,7 @@ private:
 eTypeDef_Of(LayerDecaySpec);
 
 class E_API LayerDecaySpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values and other layer-level time constants
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values and other layer-level time constants
 INHERITED(SpecMemberBase)
 public:
   float		trial;		// #AKA_event #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between trials -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
@@ -282,7 +282,7 @@ private:
 eTypeDef_Of(LeabraDelInhib);
 
 class E_API LeabraDelInhib : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable delayed inhibition 

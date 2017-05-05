@@ -65,7 +65,7 @@ public:
   int           dt_cell;        // #CONDSHOW_ON_action:DATA_CELL cell index within data row,column within data table cell to obtain value from
   String        val;            // #CONDSHOW_OFF_action:UPDATE,REQUEST,CLEAR,STOP,PROG_RUN value to print out or to set program variable to -- can use =var for outputting variable values -- just uses string replace of =var with current bound value -- can intersperse other literal information
   String        params;         // #CONDSHOW_ON_action:UPDATE,REQUEST extra module-specific parameters for UPDATE and REQUEST actions -- these are prefixed with a colon : in ACT-R -- do not include the colon here, and separate with commas if multiple -- refer to specific module docs for available options
-  ActrChunk     chunk;          // #CONDSHOW_ON_action:UPDATE,REQUEST #SHOW_TREE #CONDTREE_ON_action:UPDATE,REQUEST chunk information for the action
+  ActrChunk     chunk;          // #CONDSHOW_ON_action:UPDATE,REQUEST #TREE_SHOW #CONDTREE_ON_action:UPDATE,REQUEST chunk information for the action
   
 
   inline void           SetActionFlag(ActionFlags flg)

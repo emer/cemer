@@ -28,7 +28,7 @@
 eTypeDef_Of(TwoDValSpec);
 
 class E_API TwoDValSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
 INHERITED(SpecMemberBase)
 public:
   enum	RepType {
@@ -82,7 +82,7 @@ private:
 eTypeDef_Of(TwoDValBias);
 
 class E_API TwoDValBias : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units

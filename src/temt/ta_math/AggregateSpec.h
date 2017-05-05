@@ -27,7 +27,7 @@
 taTypeDef_Of(AggregateSpec);
 
 class TA_API AggregateSpec : public Aggregate {
-  //  Basic aggregation operations -- use this for inline members (hides name field)
+  // Basic aggregation operations -- use this for inline members (hides name field)
   INHERITED(Aggregate)
 public:
 #ifdef __MAKETA__

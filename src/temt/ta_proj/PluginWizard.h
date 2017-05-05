@@ -47,9 +47,9 @@ public:
   PluginType            plugin_type;
   // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows systems, you will need administrator rights to install a system plugin
   bool                  validated;
-  // #NO_SHOW passed validation test
+  // #HIDDEN passed validation test
   bool                  created;
-  // #NO_SHOW create plugin was run
+  // #HIDDEN create plugin was run
   String                plugin_location;
   // folder where to create the plugin (folder name should usually be same as plugin_name)
   String                desc;

@@ -258,7 +258,7 @@ void ControlPanelMember::UpdateAfterEdit_impl() {
 
   data.is_numeric = false;
   data.is_single = false;
-  if(mbr && !mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY")) {
+  if(mbr && !mbr->IsGuiReadOnly()) {
     if(mbr->type->IsAtomic() || mbr->type->IsAtomicEff()) {
       data.is_single = true;
       if(mbr->type->IsInt() || mbr->type->IsFloat()) {

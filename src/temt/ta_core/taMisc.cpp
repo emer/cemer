@@ -327,7 +327,6 @@ bool    taMisc::delete_prompts = false;
 //bool  taMisc::delete_prompts = true;
 int     taMisc::tree_indent = 12; // 12 is necessary in 4.7 -- otherwise widgets cut off
 taMisc::HelpDetail taMisc::help_detail = taMisc::HD_DEFAULT;
-taMisc::NoviceExpert taMisc::program_editor_mode = taMisc::NOVICE;
 int     taMisc::program_editor_lines = 5;
 int     taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int     taMisc::search_depth = 4;
@@ -346,7 +345,6 @@ KeyBindings_List* taMisc::key_binding_lists = NULL;
 int     taMisc::antialiasing_level = 4;
 float   taMisc::text_complexity = .2f;
 
-TypeItem::ShowMembs     taMisc::show_gui = TypeItem::NORM_MEMBS;
 taMisc::TypeInfo        taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens      taMisc::keep_tokens = taMisc::Tokens;
 bool                    taMisc::auto_edit = false;
@@ -555,8 +553,8 @@ bool    taMisc::check_quiet = false;
 bool    taMisc::check_confirm_success = true;
 bool    taMisc::check_ok = true;
 
-taBase_PtrList  taMisc::check_error_objects;
 #ifndef NO_TA_BASE
+taBase_PtrList  taMisc::check_error_objects;
 String_Array    taMisc::check_error_messages;
 #endif
 
@@ -1550,9 +1548,9 @@ void taMisc::CheckConfigStart(bool confirm_success, bool quiet) {
   if (!taMisc::is_checking) {
     // always clear last msg, so there is no confusion after running Check
     taMisc::last_check_msg = _nilString;
-    taMisc::check_error_objects.Reset();  // this is a list of objects with errors
 #ifndef NO_TA_BASE
-   taMisc::check_error_messages.Reset();  // this is a list corresponding ( 1 for 1 ) error messages
+    taMisc::check_error_objects.Reset();  // this is a list of objects with errors
+    taMisc::check_error_messages.Reset();  // this is a list corresponding ( 1 for 1 ) error messages
 #endif
     check_ok = true;
     check_quiet = quiet;
@@ -1991,8 +1989,9 @@ void taMisc::Init_Types() {
     }
 
     typ->members.BuildHashTable(typ->members.size);
+    typ->static_members.BuildHashTable(typ->static_members.size);
     typ->methods.BuildHashTable(typ->methods.size);
-    typ->CacheParents();
+    typ->CacheParents();        // also does InitOptsFlags for members
   }
 
   Init_Types_Gui(taMisc::use_gui);
@@ -2211,7 +2210,7 @@ void taMisc::Init_Types_Gui(bool gui) {
   
   for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
     td = types.FastEl(i);
-    if(td->HasOption("STATIC_COMPLETION") && td->IsActualClass()) {
+    if(td->IsActualClass() && td->HasOption("STATIC_COMPLETION")) {
       static_collection.Link(td);
     }
   }
@@ -3793,22 +3792,28 @@ int taMisc::read_till_rbracket(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   LexBuf = "";
   int depth = 0;
+  bool in_quote = false;
+  int prev_c = '\0';
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0 && !in_quote))) {
       ConsoleOutputChars((char)c, true);
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
     if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
-    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0 && !in_quote))) {
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
   }
   if(!peek)
@@ -3820,22 +3825,28 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   LexBuf = "";
   int depth = 0;
+  bool in_quote = false;
+  int prev_c = '\0';
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0 && !in_quote))) {
       ConsoleOutputChars((char)c, true);
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
     if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
-    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
+    while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0 && !in_quote))) {
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
+      if(c == '"' && prev_c != '\\') in_quote = !in_quote;
       strm.get();
+      prev_c = c;
     }
   }
   if(!peek) {

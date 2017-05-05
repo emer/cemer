@@ -157,21 +157,7 @@ void ProgEl::UpdateAfterEdit_impl() {
       }
     }
   }
-  String nw_nm = GenProgName();
-  if(name != nw_nm) {
-    if(name.startsWith(nw_nm)) {
-      String aft_nm = name.after(nw_nm);
-      if(aft_nm.startsWith('_') && aft_nm.after('_').isInt()) {
-        // current name is a unique version of name -- don't set!
-      }
-      else {
-        name = nw_nm;
-      }
-    }
-    else {
-      name = nw_nm;
-    }
-  }
+  UpdateProgName();
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
@@ -316,6 +302,26 @@ const String ProgEl::GenListing_this(int indent_level) const {
   String rval = Program::GetDescString(desc, indent_level);
   rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
   return rval;
+}
+
+bool ProgEl::UpdateProgName() {
+  String nw_nm = GenProgName();
+  if(name == nw_nm)
+    return false;
+  
+  if(name.startsWith(nw_nm)) {
+    String aft_nm = name.after(nw_nm);
+    if(aft_nm.startsWith('_') && aft_nm.after('_').isInt()) {
+      // current name is a unique version of name -- don't set!
+    }
+    else {
+      name = nw_nm;
+    }
+  }
+  else {
+    name = nw_nm;
+  }
+  return true;
 }
 
 String ProgEl::GenProgName() const {

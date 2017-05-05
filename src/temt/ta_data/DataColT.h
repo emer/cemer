@@ -37,7 +37,7 @@ public:
   { ar.CutLinks(); DataCol::CutLinks(); }
   TA_TMPLT_ABSTRACT_BASEFUNS(DataColT, T); //
 public: //DO NOT ACCESS DIRECTLY
-  T             ar;             // #NO_SHOW  the array itself
+  T             ar;             // #HIDDEN the array itself
 private:
   void  Copy_(const DataColT<T>& cp)
   { UnSetMatrixViewMode(); ar = cp.ar; SetMatrixViewMode(); }

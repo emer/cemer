@@ -27,7 +27,7 @@
 eTypeDef_Of(CElAmygLearnSpec);
 
 class E_API CElAmygLearnSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for gain factors and other learning parameters in CEl central amygdala lateral learning
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifications for gain factors and other learning parameters in CEl central amygdala lateral learning
 INHERITED(SpecMemberBase)
 public:
   float         dalr_gain;      // #DEF_1 gain multiplier on abs(da) learning rate multiplier

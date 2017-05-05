@@ -61,7 +61,7 @@
 taTypeDef_Of(MTRndPar);
 
 class TA_API MTRndPar : public taBase {
-  // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_MATH one mersenne twister pseudo-random number generator, with dynamically generated parameters -- these can be dynamically created for parallel use by separate threads
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_MATH one mersenne twister pseudo-random number generator, with dynamically generated parameters -- these can be dynamically created for parallel use by separate threads
 INHERITED(taBase)
 public:
   uint32_t aaa;

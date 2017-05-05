@@ -35,11 +35,11 @@ class TA_API StaticMethodCall: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef            result_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser result variable (optional -- can be NULL)
-  TypeDef*              min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
+  TypeDef*              min_type; // #HIDDEN #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
   TypeDef*              object_type; // #TYPE_ON_min_type The object type to look for methods on
   MethodDef*            method; //  #TYPE_ON_object_type the method to call
   ProgArg_List          meth_args;
-  // #SHOW_TREE arguments to be passed to the method
+  // #TREE_SHOW arguments to be passed to the method
 
   bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool         CvtFmCode(const String& code) override;

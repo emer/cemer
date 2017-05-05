@@ -31,35 +31,16 @@ taiWidgetMashup* taiWidgetMashup::New(bool add_members, TypeDef* typ_, IWidgetHo
   return rval;
 }
 
-bool taiWidgetMashup::ShowMemberStat(MemberDef* md, int show) {
-  if (md->HasOption("HIDDEN_INLINE") ||
-    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE"))
-    )
-    return false;
-  else
-    return md->ShowMember((TypeItem::ShowMembs)show);
-}
-
 taiWidgetMashup::taiWidgetMashup(TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                          QWidget* gui_parent_, int flags_)
   : inherited(typ_, host_, par, gui_parent_, flags_)
 {
   if (HasFlag(flgFlowLayout))
     lay_type = LT_Flow;
-  if (host_) {
-    show = host_->show();
-  }
-  else {
-    show = taMisc::show_gui;
-  }
 }
 
 taiWidgetMashup::~taiWidgetMashup() {
   widget_el.Reset();
-}
-
-bool taiWidgetMashup::ShowMember(MemberDef* md) const {
-  return ShowMemberStat(md, show);
 }
 
 void taiWidgetMashup::AddChildMember(MemberDef* md, int column) {  // column for grid layout
@@ -98,7 +79,7 @@ void taiWidgetMashup::AddTypeMembers() {
   InitLayout();
   for (int i = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
-    if (!ShowMember(md))
+    if(md->IsEditorHidden() || md->HasHiddenInline())
       continue;
     AddChildMember(md);
   }

@@ -45,9 +45,9 @@ public:
 
 public:
   int           leaves;         // #READ_ONLY #NO_SAVE #CAT_taList total number of leaves
-  taSubGroup    gp;             // #NO_SHOW #NO_FIND #NO_SAVE #CAT_taList sub-groups within this one
-  taGroup_impl*        super_gp;       // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList super-group above this
-  taGroup_impl*        root_gp;        // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList the root group, 'this' for root group itself; never NULL
+  taSubGroup    gp;             // #HIDDEN #NO_FIND #NO_SAVE #CAT_taList sub-groups within this one
+  taGroup_impl*        super_gp;       // #READ_ONLY #HIDDEN #NO_SAVE #NO_SET_POINTER #CAT_taList super-group above this
+  taGroup_impl*        root_gp;        // #READ_ONLY #HIDDEN #NO_SAVE #NO_SET_POINTER #CAT_taList the root group, 'this' for root group itself; never NULL
 
   bool          IsEmpty() const override { return (leaves == 0) ? true : false; }
   bool          IsRoot() const { return (root_gp == this); } // 'true' if this is the root
@@ -261,18 +261,13 @@ public:
   int  Dump_Save_PathR_impl(std::ostream& strm, taBase* par=NULL, int indent=0) override;
 #endif
 
+  void UpdateAll() override;
   void SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
                      taBase_PtrList* owners = NULL, bool text_only = true,
                      bool contains = true, bool case_sensitive = false,
                      bool obj_name = true, bool obj_type = true,
                      bool obj_desc = true, bool obj_val = true,
                      bool mbr_name = true, bool type_desc = false) override;
-  void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                        voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                        taBase* cp_base,
-                        int show_forbidden=TypeItem::NO_HIDDEN,
-                        int show_allowed=TypeItem::SHOW_CHECK_MASK, 
-                        bool no_ptrs = true) override;
   int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
   int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;

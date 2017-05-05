@@ -32,7 +32,7 @@ class TA_API T3DataViewPar: public T3DataView {
 typedef T3DataView inherited;
 #endif
 public:
-  T3DataView_List       children; // #SHOW #READ_ONLY #SHOW_TREE child view objects
+  T3DataView_List       children; // #SHOW #READ_ONLY #TREE_SHOW child view objects
   bool         hasChildren() const override {return (children.size > 0);}
 
   void         OnWindowBind(iT3Panel* vw) override;

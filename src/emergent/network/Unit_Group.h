@@ -33,7 +33,7 @@ class E_API Unit_Group: public taGroup<Unit> {
   // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL ##UNDO_BARRIER ##NO_UNIQUE_NAMES ##NO_DIFF a group of units -- manages structural but not computational functions
 INHERITED(taGroup<Unit>)
 public:
-  Layer*        own_lay;        // #READ_ONLY #NO_SAVE #NO_SHOW #NO_SET_POINTER layer owner
+  Layer*        own_lay;        // #READ_ONLY #NO_SAVE #HIDDEN #NO_SET_POINTER layer owner
   PosVector3i   pos;            // #CAT_Structure position of group relative to the layer -- for display purposes
   String        output_name;    // #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   int           idx;

@@ -23,10 +23,6 @@ taBase* taGuiEditor::Base() const {
   return gui_owner;
 }
 
-TypeItem::ShowMembs taGuiEditor::show() const {
-  return taMisc::show_gui;
-}
-
 taGuiEditor::taGuiEditor(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
   : taiEditor(&TA_taGuiDialog, read_only_, modal_, parent) {
   gui_owner = own;

@@ -109,7 +109,7 @@ void taiEditorOfWizard::Constr_Members() {
       continue;
 
     // we only show Normal guys in Wizards, sorry charlie!
-    if (!md->ShowMember(~TypeItem::IS_NORMAL, TypeItem::SC_EDIT, TypeItem::IS_NORMAL)) {
+    if (!md->IsEditorHidden()) {
       continue;
     }
 

@@ -26,7 +26,7 @@
 eTypeDef_Of(TANActSpec);
 
 class E_API TANActSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for TAN activation 
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for TAN activation 
 INHERITED(SpecMemberBase)
 public:
   bool          plus_fm_pv_vs;  // #DEF_true drive plus phase activation from the MAX sending activation over any MarkerConSpec inputs -- allows TAN's to learn to fire for expected or actual outcomes conveyed from PV and VSPatch outcome-predicting neurons

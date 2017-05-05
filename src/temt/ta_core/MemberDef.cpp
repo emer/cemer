@@ -36,13 +36,12 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
     dsc_str += "<br>";
   dsc_str += desc;
   // NOTE: this is a bad idea -- makes desc too massive!
-  // if(md->type->IsActualClassNoEff() &&
-  //    (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
+  // if(md->type->IsActualClassNoEff() && md->type->IsEditInline()) {
   //   indent += "  ";
   //   for (int i=0; i < md->type->members.size; ++i) {
   //     MemberDef* smd = md->type->members.FastEl(i);
   //     if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT, TypeItem::SHOW_CHECK_MASK) ||
-  //         smd->HasOption("HIDDEN_INLINE"))
+  //         smd->HasHiddenInline())
   //       continue;
   //     GetMembDesc(smd, dsc_str, indent);
   //   }
@@ -181,19 +180,13 @@ MemberDef::DefaultStatus MemberDef::GetDefaultStatus(const void* base) {
 }
 
 
-bool MemberDef::isReadOnly() const {
-  return HasOption("READ_ONLY");
-}
-
-bool MemberDef::isGuiReadOnly() const {
-  return (HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY"));
-}
-
 void MemberDef::SetValVar(const Variant& val, void* base, void* par) {
   return type->SetValVar(val, GetOff(base), par, this);
 }
 
-bool MemberDef::ValIsDefault(const void* base, int for_show) const {
+bool MemberDef::ValIsDefault(const void* base) const {
+  // note: this is not currently called by taiMember, which uses
+  // GetValStr and doesn't work about recursion!!
   String defval = OptionAfter("DEF_");
   void* mbr_base = GetOff(base);
   // if it has an explicit default, compare using the string
@@ -204,7 +197,21 @@ bool MemberDef::ValIsDefault(const void* base, int for_show) const {
   }
   // otherwise, delegate to the type -- objects recurse into us
   // if a default value was specified, compare and set the highlight accordingly
-  return type->ValIsDefault(mbr_base, this, for_show);
+  // some cases are simple, for non-class values
+  if ((type->InheritsFrom(TA_void) || (fun_ptr != 0)) ||
+      (type->IsAnyPtr()) || !type->IsActualClassNoEff()) {
+    return type->ValIsEmpty(base, this); // note: show not used for single guy
+  }
+  else { // instance of a class, so must recursively determine
+    // just find all eligible guys, and return true if none fail
+    for (int i = 0; i < type->members.size; ++i) {
+      MemberDef* md = type->members.FastEl(i);
+      if(md->IsEditorHidden()) continue; // todo: something about HasExpert here?? not sure
+      if (!md->ValIsDefault(mbr_base))
+        return false;
+    }
+  }
+  return true;
 }
 
 
@@ -243,44 +250,6 @@ void MemberDef::CopyFromSameType(void* trg_base, void* src_base) {
 
 void MemberDef::CopyOnlySameType(void* trg_base, void* src_base) {
   type->CopyOnlySameType(GetOff(trg_base), GetOff(src_base), this);
-}
-
-bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
-                                voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                TypeDef* base_typ, void* trg_base, void* src_base,
-                                int show_forbidden, int show_allowed, bool no_ptrs,
-                                bool test_only) {
-  bool some_diff = false;
-  if(type->IsActualClassNoEff()) {
-    if(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE")) {
-      // check the members
-      some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
-                                        GetOff(trg_base), GetOff(src_base),
-                                        show_forbidden, show_allowed,
-                                        no_ptrs, true); // test only!
-      if(some_diff && !test_only) {                     // not already testing, add it
-        mds.Link(this); base_types.Link(base_typ);
-        trg_bases.Add(trg_base); src_bases.Add(src_base);
-      }
-    }
-    else {
-      some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
-                                        GetOff(trg_base), GetOff(src_base),
-                                        show_forbidden, show_allowed, no_ptrs);
-    }
-  }
-  else {
-    // actually do the comparison, based on string value
-    if(type->GetValStr(GetOff(trg_base), trg_base, this) !=
-       type->GetValStr(GetOff(src_base), src_base, this)) {
-      if(!test_only) {
-        mds.Link(this); base_types.Link(base_typ);
-        trg_bases.Add(trg_base); src_bases.Add(src_base);
-      }
-      some_diff = true;
-    }
-  }
-  return some_diff;
 }
 
 void MemberDef::PrintType(String& col1, String& col2) const {

@@ -27,7 +27,7 @@
 taTypeDef_Of(RelationFloat);
 
 class TA_API RelationFloat : public taINBase {
-  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math counting criteria params
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_Math counting criteria params
   INHERITED(taINBase)
 public:
   enum Relations {

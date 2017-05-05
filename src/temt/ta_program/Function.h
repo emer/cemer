@@ -36,8 +36,9 @@ class TA_API Function: public ProgEl {
   // a user-defined function that can be called within the program where it is defined -- must live in the functions of a Program, not in init_code or prog_code
 INHERITED(ProgEl)
 public:
-  String                name;
-  // The function name
+#ifdef __MAKETA__
+  String                name; // the name of the function
+#endif
   ProgVar::VarType      return_type;
   // The return type for the function -- what kind of variable does it return
   TypeDef*              object_type;    // #CONDSHOW_ON_return_type:T_Object #NO_NULL #TYPE_taBase for Object* return types, the type of object to return
@@ -75,6 +76,8 @@ public:
   String       GetToolbarName() const override { return "function"; }
   String       GetStateDecoKey() const override;
 
+  String       GenProgName() const override;
+  bool         UpdateProgName() override;
   // below from taNBase for name:
   bool	       HasName() const override { return true; }
   bool         SetName(const String& nm) override;

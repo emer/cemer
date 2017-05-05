@@ -3989,8 +3989,8 @@ bool Network::ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md) {
   if (base_td->members.FindName(spec_md->name)) {
     return false;
   }
-  if (spec_md->isReadOnly() || spec_md->HasOption("HIDDEN") ||
-      spec_md->HasOption("HIDDEN_INLINE")) {
+  if (spec_md->HasReadOnly() || spec_md->HasHidden() ||
+      spec_md->HasHiddenInline()) {
     return false;
   }
   if (spec_md->name.contains("lrate_sched")) {
@@ -4000,8 +4000,8 @@ bool Network::ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md) {
   if (spec_member_md == NULL) {
     return true;
   }
-  if (spec_member_md->isReadOnly() || spec_member_md->HasOption("HIDDEN") ||
-      spec_member_md->HasOption("HIDDEN_INLINE")) {
+  if (spec_member_md->HasReadOnly() || spec_member_md->HasHidden() ||
+      spec_member_md->HasHiddenInline()) {
     return false;
   }
   if (spec_member_md->name == "user_data_") {

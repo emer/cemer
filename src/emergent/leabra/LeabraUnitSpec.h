@@ -42,7 +42,7 @@ class LeabraInhib; //
 eTypeDef_Of(LeabraActFunSpec);
 
 class E_API LeabraActFunSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
 INHERITED(SpecMemberBase)
 public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
@@ -64,7 +64,7 @@ private:
 eTypeDef_Of(LeabraActMiscSpec);
 
 class E_API LeabraActMiscSpec : public SpecMemberBase {
-  //##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra miscellaneous activation computation parameters and specs
+  //##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra miscellaneous activation computation parameters and specs
 INHERITED(SpecMemberBase)
 public:
   bool          rec_nd;         // record the act_nd non-depressed activation variable (instead of act_eq) for the act_q* quarter-trial and phase (act_m, act_p) activation state variables -- these are used primarily for statistics, or possibly for specialized learning mechanisms
@@ -96,7 +96,7 @@ private:
 eTypeDef_Of(SpikeFunSpec);
 
 class E_API SpikeFunSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
 INHERITED(SpecMemberBase)
 public:
   float         rise;                // #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
@@ -171,7 +171,7 @@ private:
 eTypeDef_Of(OptThreshSpec);
 
 class E_API OptThreshSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
 INHERITED(SpecMemberBase)
 public:
   float         send;                   // #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
@@ -192,7 +192,7 @@ private:
 eTypeDef_Of(LeabraInitSpec);
 
 class E_API LeabraInitSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial values for key network state variables -- initialized at start of trial with Init_Acts or DecayState
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial values for key network state variables -- initialized at start of trial with Init_Acts or DecayState
 INHERITED(SpecMemberBase)
 public:
   float       v_m;        // #DEF_0.4 initial membrane potential -- see e_rev.l for the resting potential (typically .3) -- often works better to have a somewhat elevated initial membrane potential relative to that
@@ -211,7 +211,7 @@ private:
 eTypeDef_Of(LeabraDtSpec);
 
 class E_API LeabraDtSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
 INHERITED(SpecMemberBase)
 public:
   float         integ;                // #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary).  MUST also coordinate this with network.time_inc variable to ensure that global network.time reflects simulated time accurately
@@ -237,7 +237,7 @@ private:
 eTypeDef_Of(LeabraActAvgSpec);
 
 class E_API LeabraActAvgSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- only used in XCAL learning rules
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- only used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
   float         ss_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale
@@ -265,7 +265,7 @@ private:
 eTypeDef_Of(LeabraAvgLSpec);
 
 class E_API LeabraAvgLSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units -- it is computed as a running average of the (gain multiplied) medium-time-scale average activation at the end of the trial
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units -- it is computed as a running average of the (gain multiplied) medium-time-scale average activation at the end of the trial
 INHERITED(SpecMemberBase)
 public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
@@ -305,7 +305,7 @@ private:
 eTypeDef_Of(LeabraAvgL2Spec);
 
 class E_API LeabraAvgL2Spec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra additional parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra additional parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
 INHERITED(SpecMemberBase)
 public:
   bool          err_mod;        // #DEF_true if true, then we multiply avg_l_lrn factor by layer.cos_diff_avg_lrn to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers), so the effective lrn value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this error level tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- see LeabraLayerSpec cos_diff.avg_tau rate constant for integrating cos_diff_avg value
@@ -327,7 +327,7 @@ private:
 eTypeDef_Of(LeabraChannels);
 
 class E_API LeabraChannels : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
 INHERITED(taOBase)
 public:
   float         e;                // excitatory (sodium (Na) channel), synaptic glutamate AMPA activated
@@ -379,7 +379,7 @@ private:
 eTypeDef_Of(ShortPlastSpec);
 
 class E_API ShortPlastSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate -- rate code uses generated spike var to drive this
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate -- rate code uses generated spike var to drive this
 INHERITED(SpecMemberBase)
 public:
   bool          on;                // synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
@@ -433,7 +433,7 @@ private:
 eTypeDef_Of(DeepSpec);
 
 class E_API DeepSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
 INHERITED(SpecMemberBase)
 public:
   enum DeepRole {          // what role do these neurons play in the deep layer network dynamics -- determines what function the deep_net plays
@@ -500,7 +500,7 @@ private:
 eTypeDef_Of(DaModSpec);
 
 class E_API DaModSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
 INHERITED(SpecMemberBase)
 public:
   bool          on;               // whether to add dopamine factor to net input
@@ -521,7 +521,7 @@ private:
 eTypeDef_Of(NoiseAdaptSpec);
 
 class E_API NoiseAdaptSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
 INHERITED(SpecMemberBase)
 public:
   enum AdaptMode {

@@ -39,11 +39,11 @@ public:
   ProgVarRef      obj;
   // #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*        obj_type;
-  // #NO_SHOW #NO_SAVE temp copy of obj.object_type
+  // #HIDDEN #NO_SAVE temp copy of obj.object_type
   MethodDef*      method;
   // #TYPE_ON_obj_type the method to call on object obj
   ProgArg_List		meth_args;
-  // #SHOW_TREE arguments to be passed to the method
+  // #TREE_SHOW arguments to be passed to the method
   String          meth_sig;
   // #READ_ONLY #SHOW signature of the method, for reference
   String          meth_desc;

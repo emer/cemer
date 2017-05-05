@@ -27,7 +27,7 @@
 taTypeDef_Of(SimpleMathSpec);
 
 class TA_API SimpleMathSpec : public taINBase {
-  // #STEM_BASE ##INLINE ##INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
+  // #STEM_BASE ##INLINE ##NO_UPDATE_AFTER ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
   INHERITED(taINBase)
 public:
   enum MathOpr {

@@ -103,7 +103,7 @@ public:
   ParamSet_Group        active_params; // #AKA_param_sets actively used sets of parameters with values that can be used to restore a particular set of parameters -- best to organize into groups, which default to a Master / Clone relationship to enforce consistent set of parameters across multiple different sets that can be used
   ArchivedParams_Group  archived_params; // archived sets of parameters with values to record the history of different parameters over time -- one use the Archive button on active params to automatically save a copy here -- typically organized by date with newest on top
   DataTable_Group       data;   // data, such as patterns for network input
-  taBase_Group          data_proc; // #NO_DIFF #HIDDEN_TREE #NO_SAVE objects that perform data processing operations (functions collected on objects for different kinds of operations)
+  taBase_Group          data_proc; // #NO_DIFF #TREE_HIDDEN #NO_SAVE objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_TopGroup      programs; // Gui-based programs to run simulations and other processing
   taViewer_List         viewers; // #NO_DIFF a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
   taViewer_List         viewers_tmp; // #NO_DIFF #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)

@@ -413,10 +413,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   editMenu = menu->AddSubMenu("&Edit");
   connect(editMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(editMenu_aboutToShow()));
   viewMenu = menu->AddSubMenu("&View");
-  show_menu = menu->AddSubMenu("&Show");
   ctrlMenu = menu->AddSubMenu("&Control");
-  
-  connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
   
   toolsMenu = menu->AddSubMenu("&Tools");
   connect(toolsMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(toolsMenu_aboutToShow()));
@@ -440,7 +437,6 @@ void iMainWindowViewer::Constr_Menu_impl()
   Constr_FileMenu();
   Constr_EditMenu();
   Constr_ViewMenu();
-  Constr_ShowMenu();
   Constr_ControlMenu();
   Constr_DataMenu();
   Constr_ToolsMenu();
@@ -853,25 +849,6 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect(viewScreenInfoAction, SIGNAL(Action()), this, SLOT(viewScreenInfo()));
   connect(viewConsoleFrontAction, SIGNAL(Action()), this, SLOT(ConsoleToFront()));
   connect(signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
-}
-
-void iMainWindowViewer::Constr_ShowMenu()
-{
-  // These two items are presets for the other toggle flags.
-  show_menu->AddItem("Normal &only", taiWidgetMenu::normal, iAction::men_act,
-      this, SLOT(ShowChange(iAction*)), 0);
-  show_menu->AddItem("&All", taiWidgetMenu::normal, iAction::men_act,
-      this, SLOT(ShowChange(iAction*)), 1);
-
-  // Toggle flags.
-  // Note: correct toggles are set dynamically when user drops down menu.
-  show_menu->AddSep();
-  show_menu->AddItem("&Normal", taiWidgetMenu::toggle, iAction::men_act,
-      this, SLOT(ShowChange(iAction*)), 2);
-  show_menu->AddItem("E&xpert", taiWidgetMenu::toggle, iAction::men_act,
-      this, SLOT(ShowChange(iAction*)), 3);
-  show_menu->AddItem("&Hidden", taiWidgetMenu::toggle, iAction::men_act,
-      this, SLOT(ShowChange(iAction*)), 4);
 }
 
 void iMainWindowViewer::Constr_WindowMenu()
@@ -2817,38 +2794,6 @@ iMainWindowViewer* iMainWindowViewer::GetViewerForObj(taBase* obj) {
     return imwv;
   }
   return NULL;
-}
-
-void iMainWindowViewer::ShowChange(iAction* sender) {
-  int show = taMisc::show_gui;
-  int new_show;
-  if (sender->usr_data == 0)
-    new_show = TypeItem::NORM_MEMBS;
-  else if (sender->usr_data == 1)
-    new_show = TypeItem::ALL_MEMBS;
-  else {
-    int mask;
-    switch (sender->usr_data.toInt()) {
-    case 2: mask = TypeItem::NO_NORMAL; break;
-    case 3: mask = TypeItem::NO_EXPERT; break;
-    case 4: mask = TypeItem::NO_HIDDEN; break;
-    default: mask = 0; break; // should never happen
-    }
-    new_show = sender->isChecked() ? show & ~mask : show | mask;
-  }
-  if (new_show != taMisc::show_gui) {
-    taMisc::show_gui = (TypeItem::ShowMembs)new_show;
-    viewRefresh();
-  }
-}
-
-void iMainWindowViewer::showMenu_aboutToShow() {
-  int value = taMisc::show_gui;
-  if (!show_menu) return;
-  //note: nothing to do for the command items
-  (*show_menu)[2]->setChecked(!(value & TypeItem::NO_NORMAL));
-  (*show_menu)[3]->setChecked(!(value & TypeItem::NO_EXPERT));
-  (*show_menu)[4]->setChecked(!(value & TypeItem::NO_HIDDEN));
 }
 
 void iMainWindowViewer::toolsMenu_aboutToShow() {

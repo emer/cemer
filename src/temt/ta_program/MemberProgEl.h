@@ -36,7 +36,7 @@ public:
   ProgVarRef		obj;
   // #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
-  // #NO_SHOW #NO_SAVE object lookup type -- set to be the last element on the path that is suitable for lookup
+  // #HIDDEN #NO_SAVE object lookup type -- set to be the last element on the path that is suitable for lookup
   String		path;
   // path to the member -- can just be member name (use Ctrl+L or member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
   MemberDef*		member_lookup;

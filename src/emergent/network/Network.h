@@ -108,7 +108,7 @@ class Network_cuda; // #IGNORE
 eTypeDef_Of(NetTiming);
 
 class E_API NetTiming : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Network timers for different network functions
+  // ##EDIT_INLINE ##NO_TOKENS ##CAT_Network timers for different network functions
 INHERITED(taOBase)
 public:
   TimeUsedHR   netin;  // Compute_Netin net input
@@ -253,7 +253,7 @@ public:
     N_NetThrLayStats,
   };
 
-  static taBrainAtlas_List* brain_atlases;  // #HIDDEN #READ_ONLY #NO_SAVE #NO_SHOW_TREE atlases available
+  static taBrainAtlas_List* brain_atlases;  // #HIDDEN #READ_ONLY #NO_SAVE #TREE_HIDDEN atlases available
   
   DataTable_Group spec_tables;  // #CAT_Structure #NO_SAVE Tables comparing parent and child specs
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters

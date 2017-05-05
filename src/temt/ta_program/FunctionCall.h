@@ -38,7 +38,7 @@ public:
   FunctionRef           fun;
   // the function to be called
   ProgArg_List          fun_args;
-  // #SHOW_TREE arguments to the function: passed when called
+  // #TREE_SHOW arguments to the function: passed when called
 
   virtual void          UpdateArgs();
   // #BUTTON updates the argument list based on the function being called

@@ -415,10 +415,6 @@ bool taiEditorWidgets::ReShow(bool force) {
   return true;
 }
 
-TypeItem::ShowMembs taiEditorWidgets::show() const {
-  return taMisc::show_gui;
-}
-
 void taiEditorWidgets::SetRevert(){
   if (updating || (taMisc::is_loading)) return;
   if (!revert_but) return;

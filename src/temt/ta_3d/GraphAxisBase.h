@@ -35,7 +35,7 @@ class T3Axis; //
 taTypeDef_Of(GraphAxisBase);
 
 class TA_API GraphAxisBase : public T3DataView {
-  // ##INLINE base class for data about axis on a graph
+  // ##EDIT_INLINE base class for data about axis on a graph
 INHERITED(T3DataView)
 public:
   enum AxisType { X, Y, Z };

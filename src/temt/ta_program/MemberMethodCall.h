@@ -39,7 +39,7 @@ public:
   MethodDef*      method;
   // #TYPE_ON_obj_type the method to call on the member object that is at obj->path
   ProgArg_List		meth_args;
-  // #SHOW_TREE arguments to be passed to the method
+  // #TREE_SHOW arguments to be passed to the method
   String          meth_sig;
   // #READ_ONLY #SHOW signature of the method, for reference
   String          meth_desc;

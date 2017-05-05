@@ -209,6 +209,7 @@ bool taList_impl::MakeElNamesUnique() {
       el1->SetName(nm1);
       el1->UpdateAfterEdit();   // trigger update so visible
     }
+    int ndupe = 0;
     for(int j=i+1; j<size; j++) {
       taBase* el2 = (taBase*)FastEl_(j);
       if (!el2 || (el2->GetOwner() != this)) continue;
@@ -220,7 +221,8 @@ bool taList_impl::MakeElNamesUnique() {
       }
       if(nm2 == nm1) {
         String orig = nm2;
-        nm2 = nm2 + "_" + (String)j;
+        ndupe++;
+        nm2 = nm2 + "_" + (String)ndupe;
         taMisc::Warning("taList_impl::MakeElNamesUnique",
                         "names of items on the list must be unique -- renaming:",el2->DisplayPath(),"to:",nm2);
         el2->SetName(nm2);
@@ -258,6 +260,7 @@ bool taList_impl::MakeElNameUnique(taBase* itm) {
     itm->UpdateAfterEdit();     // trigger update so visible
   }
 
+  int ndupe = 0;
   for(int i=0; i<size; i++) {
     taBase* el1 = (taBase*)FastEl_(i);
     if (!el1 || (el1->GetOwner() != this)) continue;
@@ -265,7 +268,8 @@ bool taList_impl::MakeElNameUnique(taBase* itm) {
     String nm1 = el1->GetName();
     if(itmnm == nm1) {
       String orig = itmnm;
-      itmnm = itmnm + "_" + (String)FindEl_(itm);
+      ndupe++;
+      itmnm = itmnm + "_" + (String)ndupe;
       taMisc::Warning("taList_impl::MakeElNameUnique",
                       "names of items on the list must be unique -- renaming:",itm->DisplayPath(),"to:",itmnm);
       itm->SetName(itmnm);
@@ -273,6 +277,7 @@ bool taList_impl::MakeElNameUnique(taBase* itm) {
       unique = false;
     }
   }
+  
   in_process = false;
   return unique;
 }
@@ -290,6 +295,16 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
+void taList_impl::UpdateAll() {
+  inherited_taBase::UpdateAll();
+  for (int i = 0; i < size; ++i) {
+    taBase* child = (taBase*)FastEl_(i);
+    // we only include owned items, not linked
+    if (!child || (child->GetOwner() != this))
+      continue;
+    child->UpdateAfterEdit();
+  }
+}
 
 void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   inherited_taBase::ChildUpdateAfterEdit(child, handled);
@@ -1395,30 +1410,6 @@ void taList_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
   }
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
     owners->Link(this);
-  }
-}
-
-void taList_impl::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                                   voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                   taBase* cp_base, int show_forbidden,
-                                   int show_allowed, bool no_ptrs) {
-  if(!cp_base) return;
-  if(GetTypeDef() != cp_base->GetTypeDef()) return; // must be same type..
-
-  taOBase::CompareSameTypeR(mds, base_types, trg_bases, src_bases, cp_base,
-                            show_forbidden, show_allowed, no_ptrs);
-  // then recurse..
-  taList_impl* cp_lst = (taList_impl*)cp_base;
-  int mxsz = MIN(size, cp_lst->size);
-  for(int i=0; i<mxsz; i++) {
-    taBase* itm = (taBase*)FastEl_(i);
-    taBase* cp_itm = (taBase*)cp_lst->FastEl_(i);
-    if(!itm || !cp_itm) continue;
-    if((itm->GetOwner() == this) && (cp_itm->GetOwner() == cp_lst)) {
-       // for guys we own (not links; prevents loops)
-      itm->CompareSameTypeR(mds, base_types, trg_bases, src_bases, cp_itm,
-                            show_forbidden, show_allowed, no_ptrs);
-    }
   }
 }
 

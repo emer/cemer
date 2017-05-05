@@ -388,8 +388,6 @@ public slots:
   virtual void  editCallMethod(QString method);
 
   virtual void  ShowHideFrames(int combo);
-  virtual void  showMenu_aboutToShow();
-  virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
 
   void          toolsDiffProjects();
   void          toolsDiffPrograms();
@@ -515,7 +513,6 @@ private:
   void Constr_FileMenu();
   void Constr_EditMenu();
   void Constr_ViewMenu();
-  void Constr_ShowMenu();
   void Constr_ControlMenu();
   void Constr_DataMenu();
   void Constr_ToolsMenu();

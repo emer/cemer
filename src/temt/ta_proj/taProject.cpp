@@ -75,11 +75,12 @@ class SimLogEditDialog: public taiEditorOfClass {
 public:
   bool ShowMember(MemberDef* md) const override {
     // just show a small subset of the members
-    bool rval = (md->ShowMember(show()) && (md->im != NULL));
+    bool rval = (!md->IsEditorHidden() && (md->im != NULL));
     if (!rval) return rval;
 // note: we also include a couple of members we know are in taProject
-    if (!(md->name.contains("desc") || (md->name == "version") || (md->name == "save_rmv_units")
-         || (md->name == "file_name"))) return false;
+    if (!(md->name.contains("desc") || (md->name == "version") ||
+          (md->name == "save_rmv_units")
+          || (md->name == "file_name"))) return false;
     return true;
   }
   void Constr_Methods_impl() override { }       // suppress methods

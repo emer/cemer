@@ -31,11 +31,9 @@ class TA_API taiWidgetMashup : public taiWidgetComposite {
 public:
   static taiWidgetMashup*   New(bool add_members, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags = 0); // set add_members false to manually add members, otherwise all eligible typ members added
-  static bool           ShowMemberStat(MemberDef* md, int show); // primarily for ProgEdit so we can use the exact same algorithm
 
   Member_List           memb_el;        // member elements (1:1 with widget_el)
   taBase_PtrList        memb_bases;     // the bases in 1:1 with widget_el
-  int                   show;
 
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
   bool                  fillHor() override {return true;}
@@ -61,7 +59,6 @@ protected:
   using inherited::GetImage_impl;
   void                  GetImage_impl(const void* base) override;
   void                  GetValue_impl(void* base) const override;
-  virtual bool          ShowMember(MemberDef* md) const;
   taiWidgetMashup(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
 };
 

@@ -33,7 +33,7 @@ class TA_API ProgBrkPt_List : public taList<ProgBrkPt> {
 INHERITED(taList<ProgBrkPt> )
 public:
 #ifdef __MAKETA__ // dummy to supress New
-  taBase*         New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
+  taBase*         New_gui(int n_objs=1, TypeDef* typ = NULL); // #HIDDEN
 #endif
   
   ProgBrkPt*      AddBrkPt(ProgEl* prog_el, ProgLine* codeline);

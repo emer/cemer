@@ -32,10 +32,7 @@ class TA_API taiWidgetPoly : public taiWidgetComposite {
 public:
   static taiWidgetPoly*   New(bool add_members, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags = 0); // set add_members false to manually add members, otherwise all eligible typ members added
-  static bool           ShowMemberStat(MemberDef* md, int show); // primarily for ProgEdit so we can use the exact same algorithm
-
   Member_List           memb_el;        // member elements (1:1 with widget_el)
-  int                   show;
 
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
   bool                  fillHor() override {return true;}
@@ -45,13 +42,12 @@ public:
   ~taiWidgetPoly();
 
 protected:
-  void                  Constr(QWidget* gui_parent_);
-  void                  AddTypeMembers(); // called to add all typ members
+  void         Constr(QWidget* gui_parent_);
+  void         AddTypeMembers(); // called to add all typ members
   void         ChildRemove(taiWidget* child) override; // remove from memb_el too
   using inherited::GetImage_impl;
   void         GetImage_impl(const void* base) override;
   void         GetValue_impl(void* base) const override;
-  virtual bool          ShowMember(MemberDef* md) const;
   taiWidgetPoly(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
 };
 

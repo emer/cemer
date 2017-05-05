@@ -28,7 +28,7 @@
 taTypeDef_Of(Aggregate);
 
 class TA_API Aggregate : public taINBase {
-  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Basic aggregation operations
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##CAT_Math Basic aggregation operations
   INHERITED(taINBase)
 public:
   enum Operator {               // Aggregate Operators

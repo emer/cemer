@@ -27,7 +27,7 @@
 eTypeDef_Of(ActrVisParams);
 
 class E_API ActrVisParams : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR vision parameters
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR vision parameters
 INHERITED(taOBase)
 public:
   int           n_finst;       // #DEF_4 :visual-num-finsts in ACT-R -- number of 'fingers of instantiation' for visual system
@@ -46,7 +46,7 @@ private:
 eTypeDef_Of(ActrAttnParams);
 
 class E_API ActrAttnParams : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR attention parameters
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR attention parameters
 INHERITED(taOBase)
 public:
   bool          auto_attend;    // :auto-attend in ACT-R -- if true, visual-location requests result in an automatic move-attention action to the found location, at a latency of 50ms -- saves one additional production
