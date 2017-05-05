@@ -1971,7 +1971,7 @@ void Program::SaveScript(ostream& strm) {
 void Program::GlobalTrace() {
   if(taMisc::gui_active) {
     TypeDef* td = &TA_Program;
-    MemberDef* md = td->members.FindName("global_trace");
+    MemberDef* md = td->static_members.FindName("global_trace");
     taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, false, true);
     // args are: read_only, modal, parent, line_nos, rich_text
     host_->Constr("Global Trace of Programs Called to last Stop");
