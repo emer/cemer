@@ -1412,20 +1412,22 @@ void taProject::ParamSetComparePeers(ParamSet* key_set, ParamSet* peer_set) {
   String table_name = "param_table";
   DataTable* param_table = (DataTable*)dgp->FindLeafName_(table_name);
   
-  if (!param_table) {  // create new table, add member column and key_spec column
-    param_table = dgp->NewEl(1, NULL);   // add a new data table to the group
-    param_table->SetName(table_name);
-    param_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
-    param_table->StructUpdate(true);
-
-    DataCol* dc_member = (DataCol*)param_table->FindMakeCol("Member", taBase::VT_STRING);
-    dc_member->SetColFlag(DataCol::READ_ONLY);
-    
-    DataCol* dc_spec = (DataCol*)param_table->FindMakeCol(key_set->name, taBase::VT_STRING);
-    dc_spec->SetColFlag(DataCol::READ_ONLY);
-    param_table->StructUpdate(false);
-    param_table->RefreshViews();
+  if (param_table) {
+    dgp->RemoveEl(param_table);
   }
+  
+  param_table = dgp->NewEl(1, NULL);   // add a new data table to the group
+  param_table->SetName(table_name);
+  param_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
+  param_table->StructUpdate(true);
+  
+  DataCol* dc_member = (DataCol*)param_table->FindMakeCol("Member", taBase::VT_STRING);
+  dc_member->SetColFlag(DataCol::READ_ONLY);
+  
+  DataCol* dc_spec = (DataCol*)param_table->FindMakeCol(key_set->name, taBase::VT_STRING);
+  dc_spec->SetColFlag(DataCol::READ_ONLY);
+  param_table->StructUpdate(false);
+  param_table->RefreshViews();
   
   WriteParamMbrNamesToTable(param_table, key_set);
   WriteParamSavedValsToTable(param_table, key_set);
