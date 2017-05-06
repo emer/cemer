@@ -59,7 +59,7 @@ TestCreateLeabraFlexProject
 TestRunLeabraFlexProject
      Ensure Emergent Free
      Run Emergent Program	.projects[\\\"projects_1\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterTrain\\\"]
-     DataTable Cell Value Should Be Less Than	.projects[\\\"projects_1\\\"].data.gp[\\\"OutputData\\\"][\\\"EpochOutputData\\\"]  10  cnt_err  1
+     DataTable Cell Value Should Be Less Than	.projects[\\\"projects_1\\\"].data.gp[\\\"OutputData\\\"][\\\"EpochOutputData\\\"]  25  cnt_err  1
 
 
 
@@ -71,7 +71,7 @@ TestSaveProject
      ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test-projects/TestSavedProjectTmp.proj"}   300 sec
      Status OK No Result        ${output}
      Run Emergent Program	.projects[\\\"TestSavedProjectTmp\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterTrain\\\"]
-     DataTable Cell Value Should Be Less Than	.projects[\\\"TestSavedProjectTmp\\\"].data.gp[\\\"OutputData\\\"][\\\"EpochOutputData\\\"]  10  cnt_err  1
+     DataTable Cell Value Should Be Less Than	.projects[\\\"TestSavedProjectTmp\\\"].data.gp[\\\"OutputData\\\"][\\\"EpochOutputData\\\"]  25  cnt_err  1
      Run Process		/bin/rm		./test-projects/TestSavedProjectTmp.proj
      
 
