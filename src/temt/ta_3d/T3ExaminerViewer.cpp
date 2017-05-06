@@ -1067,7 +1067,6 @@ void T3ExaminerViewer::viewAll() {
   quarter->seek();  // stop the rotation
   cam->orientation.setValue(SbVec3f(-1.0f, 0.0f, 0.0f), 0.0f);
   quarter->viewAll();
-  zoomView(-.35f);              // zoom in !!
 #endif
 }
 
@@ -1521,6 +1520,10 @@ bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
   if((ev_->type() == QEvent::MouseMove) || (ev_->type() == QEvent::MouseButtonPress) ||
      (ev_->type() == QEvent::Enter) || (ev_->type() == QEvent::FocusIn)) {
     syncViewerMode();
+  }
+  
+  if(ev_->type() == QEvent::MouseButtonDblClick) {
+    quarter->seek();
   }
   
   if(ev_->type() == QEvent::MouseButtonPress) {
