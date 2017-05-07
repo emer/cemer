@@ -198,11 +198,13 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layColorScale->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
   chkAutoScale = new QCheckBox("Auto\nScale  ", widg);
+  chkAutoScale->setToolTip(taiMisc::ToolTipPreProcess("Set the colorscale based on the min/max data values of all visible columns and make symmetric around zero"));
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScale->addWidget(chkAutoScale);
   layColorScale->addSpacing(taiM->hsep_c);
 
   chkPerColumn = new QCheckBox("Per\nColumn  ", widg);
+  chkPerColumn->setToolTip(taiMisc::ToolTipPreProcess("If auto scaling - do it for each column using the column's data range rather than the range for all visible columns"));
   connect(chkPerColumn, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScale->addWidget(chkPerColumn);
   layColorScale->addSpacing(taiM->hsep_c);
