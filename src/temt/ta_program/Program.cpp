@@ -2344,9 +2344,6 @@ iPanelOfProgramBase* Program::FindMyProgramPanel() {
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
   
-  itm->taBase::BrowserSelectMe();
-  taMisc::ProcessEvents();
-
   this->taBase::BrowserSelectMe(); // first, select the program in main tree
   taMisc::ProcessEvents();
   
@@ -2397,6 +2394,9 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
                                                        Qt::MetaModifier));
       }
     }
+    itm->taBase::BrowserSelectMe();  // some cases (e.g. editor panel has program group) where this is needed to ensure correct selection
+    taMisc::ProcessEvents();
+    
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
   }
