@@ -13,37 +13,30 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef WikiProgLib_h
-#define WikiProgLib_h 1
+#ifndef taiWidgetObjLibElChooser_h
+#define taiWidgetObjLibElChooser_h 1
 
 // parent includes:
-#include <taNBase>
-#include <ProgLib>
+#include <taiWidgetListElChooser>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(WikiProgLib);
-
-class TA_API WikiProgLib : public ProgLib {
-  // program library for programs located on a wiki
-INHERITED(ProgLib)
+class TA_API taiWidgetObjLibElChooser : public taiWidgetListElChooser {
+  // for obj lib items
+INHERITED(taiWidgetListElChooser)
 public:
-  String   wiki_name;            // name of wiki -- looked up in taMisc::wiki_url's
+  int          columnCount(int view) const override;
+  const String headerText(int index, int view) const override;
+  const String titleText() override;
 
-  void  FindPrograms() override;
-  bool  SaveProgToProgLib(Program* prg, ProgLibs library) override;
-  bool  SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) override;
-
-  virtual String        GetLocalCacheDir();
-  // get the local file cache dir for programs downloaded from this wiki
-  
-  WikiProgLib(const String& wiki_name, const String& lib_name);
-  TA_SIMPLE_BASEFUNS(WikiProgLib);
-private:
-  void Initialize();
-  void Destroy()     { };
+  taiWidgetObjLibElChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
+                      QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
+protected:
+  void         BuildCategories_impl() override;
+  int          BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
+                                       QTreeWidgetItem* top_item) override;
 };
 
-#endif // WikiProgLib_h
+#endif // taiWidgetObjLibElChooser_h

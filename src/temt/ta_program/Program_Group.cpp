@@ -26,7 +26,7 @@ SMARTREF_OF_CPP(Program_Group); // Program_GroupRef
 
 using namespace std;
 
-CollectionProgLib Program_Group::prog_lib;
+ProgLib Program_Group::prog_lib;
 
 void Program_Group::Initialize() {
   SetBaseType(&TA_Program);
@@ -45,10 +45,6 @@ void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
 }
 
-void Program_Group::SaveToProgLib(ProgLib::ProgLibs library) {
-  Program_Group::prog_lib.SaveProgGrpToProgLib(this, library);
-}
-
 void Program_Group::SetProgsStale() {
   //obs: WARNING: this will cause us to also receive setStale for each prog call
   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
@@ -56,35 +52,31 @@ void Program_Group::SetProgsStale() {
   }
 }
 
-void Program_Group::InitProgLib() {
-  if(!prog_lib.init) {
-    prog_lib.FindPrograms();
-  }
+void Program_Group::BuildProgLib() {
+  prog_lib.BuildLibrary();
 }
 
-taBase* Program_Group::AddFromProgLib(ProgLibEl* prog_type) {
-  return prog_lib.NewProgram(prog_type, this);
+taBase* Program_Group::AddFromProgLib(ObjLibEl* prog_lib_item) {
+  return prog_lib.NewProgram(this, prog_lib_item);
 }
 
 taBase* Program_Group::AddFromProgLibByName(const String& prog_nm) {
-  InitProgLib();
-  return prog_lib.NewProgramFmName(prog_nm, this);
+  return prog_lib.NewProgramFmName(this, prog_nm);
+}
+
+void Program_Group::BrowseProgLib(ProgLib::LibLocs location) {
+  prog_lib.BrowseLibrary(location);
+}
+
+void Program_Group::UpdateFromProgLib(ObjLibEl* prog_lib_item) {
+  if(TestError(!prog_lib_item, "UpdateFromProgLib", "program type to load is null")) return;
+  prog_lib.UpdateProgramGroup(this, prog_lib_item);
 }
 
 Variant Program_Group::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "UpdateFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
-  ProgLibEl* pel = prog_lib.FindName(name); // find our name
+  ObjLibEl* pel = prog_lib.library.FindName(name); // find our name
   return Variant(pel);
-}
-
-void Program_Group::UpdateFromProgLib(ProgLibEl* prog_type) {
-  if(TestError(!prog_type, "UpdateFromProgLib", "program type to load is null")) return;
-  if(TestError(!prog_type->is_group, "UpdateFromProgLib",
-               "cannot load a single program file into a program group!")) return;
-//   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
-//     prog->Reset();
-//   }
-  prog_type->LoadProgramGroup(this);
 }
 
 void Program_Group::ToggleTrace() {

@@ -119,8 +119,9 @@ void Program::Initialize() {
   prog_code.check_with_parent = false; // stop here
   init_code.check_with_parent = false; // stop here
 
-  if(!prog_lib)
+  if(!prog_lib) {
     prog_lib = &Program_Group::prog_lib;
+  }
 }
 
 void Program::Destroy() {
@@ -1878,18 +1879,31 @@ void  Program::UpdateProgVars() {
   }
 }
 
-void Program::InitProgLib() {
-  if(!prog_lib->init) {
-    prog_lib->FindPrograms();
-  }
+void Program::BuildProgLib() {
+  prog_lib->BuildLibrary();
 }
 
-void Program::SaveToProgLib(ProgLib::ProgLibs library) {
-  prog_lib->SaveProgToProgLib(this, library);
+void Program::SaveToProgLib(ProgLib::LibLocs location) {
+  prog_lib->SaveToLibrary(location, this);
 }
 
-taBase* Program::AddFromProgLib(ProgLibEl* prog_type) {
-  return prog_gp->AddFromProgLib(prog_type);
+void Program::UpdateFromProgLib(ObjLibEl* prog_lib_item) {
+  if(TestError(!prog_lib_item, "UpdateFromProgLib", "program library item is null")) return;
+  prog_lib->UpdateProgram(this, prog_lib_item);
+}
+
+void Program::UpdateFromProgLibByName(const String& prog_nm) {
+  if(TestError(prog_nm.empty(), "UpdateFromProgLibByName", "program name is empty")) return;
+  BuildProgLib();
+  prog_lib->UpdateProgramFmName(this, prog_nm);
+}
+
+taBase* Program::AddFromProgLib(ObjLibEl* prog_lib_item) {
+  return prog_gp->AddFromProgLib(prog_lib_item);
+}
+
+void Program::BrowseProgLib(ProgLib::LibLocs location) {
+  prog_lib->BrowseLibrary(location);
 }
 
 void Program::AddMeAsAuthor(bool sole_author) {
@@ -1921,7 +1935,7 @@ Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "UpdateFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   if(!prog_lib) return  _nilVariant;
   //  return _nilVariant;                            // return nil anyway!
-  ProgLibEl* pel = prog_lib->FindName(name); // find our name
+  ObjLibEl* pel = prog_lib->library.FindName(name); // find our name
   return Variant(pel);
 }
 
@@ -1930,20 +1944,6 @@ int Program::GetSpecialState() const {
   if(HasProgFlag(STARTUP_RUN)) return 3; // green
   if(HasProgFlag(NO_STOP_STEP)) return 2; // may not want this one -- might be too much color..
   return 0;
-}
-
-void Program::UpdateFromProgLib(ProgLibEl* prog_type) {
-  if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
-  if(TestError(prog_type->is_group, "LoadFromProgLib",
-               "cannot load a program group file into a single program! Select a program group and choose 'Add From Prog Lib'")) return;
-  //   Reset();
-  prog_type->LoadProgram(this);
-}
-
-void Program::UpdateFromProgLibByName(const String& prog_nm) {
-  if(TestError(prog_nm.empty(), "UpdateFromProgLibByName", "program name is empty")) return;
-  InitProgLib();
-  prog_lib->UpdateProgramFmName(prog_nm, this);
 }
 
 void Program::SigEmit(int sls, void* op1, void* op2) {

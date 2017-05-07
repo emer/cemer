@@ -13,33 +13,33 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiWidgetProgLibElChooser.h"
+#include "taiWidgetObjLibElChooser.h"
 #include <String_Array>
-#include <ProgLib>
+#include <ObjLibEl>
 #include <iDialogItemChooser>
 
 #include <QTreeWidgetItem>
 
 
-taiWidgetProgLibElChooser::taiWidgetProgLibElChooser(TypeDef* typ_, IWidgetHost* host, taiWidget* par,
+taiWidgetObjLibElChooser::taiWidgetObjLibElChooser(TypeDef* typ_, IWidgetHost* host, taiWidget* par,
                                          QWidget* gui_parent_, int flags_)
  :inherited(typ_, host, par, gui_parent_, flags_)
 {
   // nop
 }
 
-int taiWidgetProgLibElChooser::columnCount(int view) const {
+int taiWidgetObjLibElChooser::columnCount(int view) const {
   switch (view) {
   case 0: return 6;
   default: return 0; // not supposed to happen
   }
 }
 
-const String taiWidgetProgLibElChooser::headerText(int index, int view) const {
+const String taiWidgetObjLibElChooser::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
     case 0: return "Name";
-    case 1: return "Type";
+    case 1: return "Location";
     case 2: return "Tags";
     case 3: return "Description";
     case 4: return "Date Modified";
@@ -50,19 +50,19 @@ const String taiWidgetProgLibElChooser::headerText(int index, int view) const {
   return _nilString; // shouldn't happen
 }
 
-const String taiWidgetProgLibElChooser::titleText() {
+const String taiWidgetObjLibElChooser::titleText() {
   return "Please choose a program from the following in the available libraries";
 }
 
-void taiWidgetProgLibElChooser::BuildCategories_impl() {
+void taiWidgetObjLibElChooser::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
 
   if(!list) return;             // shouldn't happen
 
-  ProgLib* plib = (ProgLib*)list;
+  ObjLibEl_List* plib = (ObjLibEl_List*)list;
   for(int i=0;i<plib->size;i++) {
-    ProgLibEl* pel = plib->FastEl(i);
+    ObjLibEl* pel = plib->FastEl(i);
     for(int j=0;j<pel->tags_array.size;j++) {
       cats->AddUnique(pel->tags_array[j]);
     }
@@ -70,19 +70,19 @@ void taiWidgetProgLibElChooser::BuildCategories_impl() {
   cats->Sort(); // empty, if any, should sort to top
 }
 
-int taiWidgetProgLibElChooser::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
+int taiWidgetObjLibElChooser::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
                                         QTreeWidgetItem* top_item)
 {
   int rval = 0;
 
   ic->multi_cats = true;        // multiple categories
 
-  ProgLib* plib = (ProgLib*)top_lst;
+  ObjLibEl_List* plib = (ObjLibEl_List*)top_lst;
   for (int i = 0; i < plib->size; ++i) {
-    ProgLibEl* pel = plib->FastEl(i);
+    ObjLibEl* pel = plib->FastEl(i);
     QTreeWidgetItem* item = ic->AddItem(pel->tags, pel->GetDisplayName(),
                                         top_item, pel, pel->desc, 3);
-    item->setText(1, pel->lib_name); // GetColText(taBase::key_type));
+    item->setText(1, pel->lib_loc); // GetColText(taBase::key_type));
     item->setText(2, pel->tags);
     item->setText(4, pel->date);
     if(pel->URL.nonempty())

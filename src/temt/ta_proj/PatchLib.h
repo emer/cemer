@@ -13,31 +13,27 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiArgTypeOfProgLibEl_h
-#define taiArgTypeOfProgLibEl_h 1
+#ifndef PatchLib_h
+#define PatchLib_h 1
 
 // parent includes:
-#include <taiArgTypeOfFromGroup>
+#include <ObjLibrary>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
+taTypeDef_Of(PatchLib);
 
-taTypeDef_Of(taiArgTypeOfProgLibEl);
-
-class TA_API taiArgTypeOfProgLibEl : public taiArgTypeOfFromGroup {
-  // for ProgLibEl* ptr args
-  TAI_ARGTYPE_SUBCLASS(taiArgTypeOfProgLibEl, taiArgTypeOfFromGroup);
+class TA_API PatchLib : public ObjLibrary {
+  // A Library of Patch's available in various locations
+INHERITED(ObjLibrary)
 public:
-  int           BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) override;
-  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
-  void          GetImage_impl(taiWidget* dat, const void* base) override;
-  void          GetValue_impl(taiWidget* dat, void* base) override;
+
+  TA_SIMPLE_BASEFUNS(PatchLib);
 private:
-  void          Initialize() {}
-  void          Destroy() {}
+  void Initialize();
+  void Destroy()     { };
 };
 
-#endif // taiArgTypeOfProgLibEl_h
+#endif // PatchLib_h

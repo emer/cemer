@@ -13,30 +13,24 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgLibEl_List_h
-#define ProgLibEl_List_h 1
+#include "ObjLibEl.h"
 
-// parent includes:
-#include <ProgLibEl>
-#include <taList>
+TA_BASEFUNS_CTORS_DEFN(ObjLibEl);
+TA_BASEFUNS_CTORS_DEFN(ObjLibEl_List);
 
-// member includes:
+void ObjLibEl::Initialize() {
+  
+}
 
-// declare all other types mentioned but not required to include:
+void ObjLibEl::TagsToArray() {
+  tags_array.Reset();
+  tags_array.Split(tags, ",");
+  for(int i=0; i<tags_array.size; i++) {
+    tags_array[i].trim();       // nuke spaces
+  }
+}
 
+void ObjLibEl_List::Initialize() {
+  SetBaseType(&TA_ObjLibEl);
+}
 
-taTypeDef_Of(ProgLibEl_List);
-
-class TA_API ProgLibEl_List : public taList<ProgLibEl> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program library elements
-INHERITED(taList<ProgLibEl>)
-public:
-  TA_SIMPLE_BASEFUNS(ProgLibEl_List);
-protected:
-
-private:
-  void  Initialize();
-  void  Destroy() { Reset(); CutLinks(); }
-};
-
-#endif // ProgLibEl_List_h

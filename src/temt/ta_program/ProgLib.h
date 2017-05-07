@@ -17,72 +17,44 @@
 #define ProgLib_h 1
 
 // parent includes:
-#include <ProgLibEl_List>
+#include <ObjLibrary>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
-class ProgLibEl; // 
 class Program_Group; // 
 class Program; //
 
 taTypeDef_Of(ProgLib);
 
-class TA_API ProgLib: public ProgLibEl_List {
-  // #VIRT_BASE program library virtual base class
-INHERITED(ProgLibEl_List)
+class TA_API ProgLib : public ObjLibrary {
+  // program library -- library of programs
+INHERITED(ObjLibrary)
 public:
-  enum ProgLibs {               // program library locations: must be sync'd with Program
-    USER_LIB,                   // user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib)
-    SYSTEM_LIB,                 // local system library, installed with software, in /usr/local/share/Emergent/prog_lib
-    WEB_APP_LIB,                // web-based application-specific library (e.g., emergent)
-    WEB_SCI_LIB,                // web-based scientifically oriented library (e.g., CCN)
-    WEB_USER_LIB,               // web-based user's library (e.g., from lab wiki)
-  };
 
-  bool  init; // has list been initialized yet?
-
-  virtual taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
-  virtual taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
+  virtual taBase* NewProgram(Program_Group* new_owner, ObjLibEl* lib_el);
+  // create a new program in new_owner of based on given lib element (return value could be a Program or a Program_Group);  new_owner is group where program will be created
+  virtual taBase* NewProgramFmName(Program_Group* new_owner, const String& prog_nm);
   // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
-  virtual bool    UpdateProgramFmName(const String& prog_nm, Program* prog);
-  // update given program from program element lookup by name
 
-  virtual void  FindPrograms() {};
-  // search paths to find all available programs in this library
-  virtual bool SaveProgToProgLib(Program* prg, ProgLibs library)
-  { return false; }
-  // save a program to a program library -- defined for specific subtypes
-  virtual bool SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library)
-  { return false; }
-  // save a program group to a program library -- defined for specific subtypes
+  virtual bool  UpdateProgram(Program* prog, ObjLibEl* lib_el);
+  // #CAT_ObjLib load into given program; true if loaded, false if not
+  virtual bool  UpdateProgramFmName(Program* prog, const String& prog_nm);
+  // #CAT_ObjLib update given program from program element lookup by name
+  virtual bool  UpdateProgramGroup(Program_Group* prog_gp, ObjLibEl* lib_el);
+  // #CAT_ObjLib load into given program; true if loaded, false if not
 
-  TA_SIMPLE_BASEFUNS(ProgLib);
-protected:
-
-
+  bool  SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path) override;
+  void  SetWikiInfoToObj(taBase* obj, const String& wiki_name) override;
+  void  GetWikiInfoFromObj
+    (taBase* obj, String*& tags, String*& desc, taProjVersion*& version, String*& author,
+     String*& email, String*& pub_cite) override;
+  
+  
+  TA_BASEFUNS_NOCOPY(ProgLib);
 private:
   void  Initialize();
-  void  Destroy() { CutLinks(); }
+  void  Destroy()  { }
 };
-
-taTypeDef_Of(ProgLib_List);
-
-class TA_API ProgLib_List : public taList<ProgLib> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program libraries
-INHERITED(taList<ProgLib>)
-public:
-  TA_SIMPLE_BASEFUNS(ProgLib_List);
-protected:
-
-private:
-  void  Initialize() { };
-  void  Destroy() { Reset(); CutLinks(); }
-};
-
-
-
 
 #endif // ProgLib_h

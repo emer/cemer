@@ -140,7 +140,7 @@ set(ta_gui_HEADS_MAKETA_NOMOC
   taiArgTypeOfListOnObjBasePtr.h
   taiArgTypeOfFromGroup.h
   taiArgTypeOfProjTemplateEl.h
-  taiArgTypeOfProgLibEl.h
+  taiArgTypeOfObjLibEl.h
 
   taiEdit.h
   taiEditOfDefault.h
@@ -474,7 +474,7 @@ set(ta_gui_HEADS_NOMAKETA_NOMOC
   taiWidgetListElChooser.h
   taiWidgetGroupElChooser.h
   taiWidgetProjTemplateElChooser.h
-  taiWidgetProgLibElChooser.h
+  taiWidgetObjLibElChooser.h
   taiWidgetNameVarArrayChooser.h
 
   taiWidgetTaBaseMenu.h
@@ -649,7 +649,7 @@ set(ta_gui_SRCS_MAKETA
   taiArgTypeOfListOnObjBasePtr.cpp
   taiArgTypeOfFromGroup.cpp
   taiArgTypeOfProjTemplateEl.cpp
-  taiArgTypeOfProgLibEl.cpp
+  taiArgTypeOfObjLibEl.cpp
 
   taiEdit.cpp
   taiEditOfDefault.cpp
@@ -966,7 +966,7 @@ set(ta_gui_SRCS_NOMAKETA
   taiWidgetListElChooser.cpp
   taiWidgetGroupElChooser.cpp
   taiWidgetProjTemplateElChooser.cpp
-  taiWidgetProgLibElChooser.cpp
+  taiWidgetObjLibElChooser.cpp
   taiWidgetNameVarArrayChooser.cpp
 
   taiWidgetTaBaseMenu.cpp

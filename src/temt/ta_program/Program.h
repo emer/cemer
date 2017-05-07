@@ -42,10 +42,9 @@
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
 class cssTA_Base; // 
-class ProgLib; //
 class Program_Group; // 
 class MemberDef; // 
-class ProgLibEl; // 
+class ObjLibEl; // 
 class ProgVar; // 
 class ProgramCallBase; //
 class iPanelOfProgram; //
@@ -329,17 +328,20 @@ public:
   virtual void          Reset();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
-  virtual void          InitProgLib();
-  // initialize the program library -- find all the programs -- called just-in-time when needed
-  virtual void          SaveToProgLib(ProgLib::ProgLibs library = ProgLib::USER_LIB);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #PRE_CALL_InitProgLib #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
+  virtual void          BuildProgLib();
+  // #CAT_IGNORE initialize the program library -- find all the programs -- called just-in-time when needed
+  virtual void          SaveToProgLib(ProgLib::LibLocs location = ProgLib::USER_LIB);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CAT_ProgLib save the program to given program library location -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
  
-  virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #PRE_CALL_InitProgLib #CAT_ProgLib (re)load the program from the program library element of given type
+  virtual void          UpdateFromProgLib(ObjLibEl* prog_lib_item);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildProgLib #CAT_ProgLib (re)load the program from the selected program library element
   virtual void          UpdateFromProgLibByName(const String& prog_nm);
   // (re)load the program from the program library -- lookup by given name
-  taBase*               AddFromProgLib(ProgLibEl* prog_type) ;
-  // #MENU #MENU_ON_Object #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #PRE_CALL_InitProgLib #CAT_Program adds a program from a library of existing program types
+  taBase*               AddFromProgLib(ObjLibEl* prog_lib_item) ;
+  // #MENU #MENU_ON_Object #FROM_LIST_prog_lib.library #NO_SAVE_ARG_VAL #PRE_CALL_BuildProgLib #CAT_Program adds a new program in this program's group from selected item from a library of existing programs
+  virtual void          BrowseProgLib(ProgLib::LibLocs location = ProgLib::WEB_APP_LIB);
+  // #MENU #MENU_ON_Object #CAT_ProgLib browse given program library location using web browser (or file browser for local files -- less useful) -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
+  
   virtual void          AddMeAsAuthor(bool sole_author);
   // #MENU #MENU_ON_Object #MENU_CONTEXT update the author and email information to your default information as set in the preferences (update preferences first if not otherwise set!)
   virtual void          SaveSetAuthor();

@@ -38,8 +38,7 @@ public:
   void          GetImage_impl(taiWidget* dat, const void* base) override;
   void          GetValue_impl(taiWidget* dat, void* base) override;
 
-  virtual MemberDef*    GetFromMd();
-  virtual taList_impl*       GetList(MemberDef* from_md, const void* base);
+  virtual taList_impl*  GetList(const void* base);
 
 private:
   void          Initialize() {}

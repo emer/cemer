@@ -26,6 +26,7 @@
 #else
 class QDateTime; // #IGNORE
 class QTime; // #IGNORE
+class QString; // #IGNORE
 #endif
 
 // declare all other types mentioned but not required to include:
@@ -39,6 +40,11 @@ INHERITED(taNBase)
 public:
   int64_t       secs_1jan_1970; // internal storage unit: seconds since january 1st, 1970, UTC
 
+  // our standard format strings
+  static QString DateTimeStampFormat; // #IGNORE "yyyy_MM_dd_hh_mm_ss"
+  static QString DateStampFormat; // #IGNORE "yyyy_MM_dd"
+  static QString TimeStampFormat; // #IGNORE "hh_mm_ss"
+ 
 #ifndef __MAKETA__
   QDateTime qDateTime() const { return QDateTime::fromTime_t((uint)secs_1jan_1970); }
   // #IGNORE

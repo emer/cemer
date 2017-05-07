@@ -19,6 +19,10 @@
 
 TA_BASEFUNS_CTORS_DEFN(taDateTime);
 
+QString taDateTime::DateTimeStampFormat = "yyyy_MM_dd_hh_mm_ss";
+QString taDateTime::DateStampFormat = "yyyy_MM_dd";
+QString taDateTime::TimeStampFormat = "hh_mm_ss";
+
 void taDateTime::Initialize() {
   secs_1jan_1970 = 0;
 }
@@ -43,13 +47,13 @@ String taDateTime::SecondsToDHM(uint64_t duration)  // duration is in seconds
 }
 
 String taDateTime::CurrentDateTimeStampString() {
-  return (String)QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+  return (String)QDateTime::currentDateTime().toString(DateTimeStampFormat);
 }
 
 String taDateTime::CurrentDateStampString() {
-  return (String)QDateTime::currentDateTime().toString("yyyy_MM_dd");
+  return (String)QDateTime::currentDateTime().toString(DateStampFormat);
 }
 
 String taDateTime::CurrentTimeStampString() {
-  return (String)QDateTime::currentDateTime().toString("hh_mm_ss");
+  return (String)QDateTime::currentDateTime().toString(TimeStampFormat);
 }

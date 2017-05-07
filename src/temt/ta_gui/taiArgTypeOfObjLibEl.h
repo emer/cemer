@@ -13,37 +13,31 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef FileProgLib_h
-#define FileProgLib_h 1
+#ifndef taiArgTypeOfObjLibEl_h
+#define taiArgTypeOfObjLibEl_h 1
 
 // parent includes:
-#include <ProgLib>
+#include <taiArgTypeOfFromGroup>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
-class ProgLibEl; // 
-class Program_Group; // 
-class Program; //
 
-taTypeDef_Of(FileProgLib);
 
-class TA_API FileProgLib: public ProgLib {
-  // program library for programs located in file system
-INHERITED(ProgLib)
+taTypeDef_Of(taiArgTypeOfObjLibEl);
+
+class TA_API taiArgTypeOfObjLibEl : public taiArgTypeOfFromGroup {
+  // for ObjLibEl* ptr args
+  TAI_ARGTYPE_SUBCLASS(taiArgTypeOfObjLibEl, taiArgTypeOfFromGroup);
 public:
-  String  path;                 // path to search for programs
- 
-  void  FindPrograms() override;
-  bool  SaveProgToProgLib(Program* prg, ProgLibs library) override;
-  bool  SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) override;
-
-  FileProgLib(const String& path, const String& lib_name);
-  TA_SIMPLE_BASEFUNS(FileProgLib);
+  int           BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 private:
-  void  Initialize();
-  void  Destroy() { CutLinks(); }
+  void          Initialize() {}
+  void          Destroy() {}
 };
 
-#endif // FileProgLib_h
+#endif // taiArgTypeOfObjLibEl_h

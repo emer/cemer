@@ -13,23 +13,21 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiArgTypeOfProgLibEl.h"
-#include <taiWidgetProgLibElChooser>
+#include "taiArgTypeOfObjLibEl.h"
+#include <taiWidgetObjLibElChooser>
 
-taTypeDef_Of(ProgLibEl);
+taTypeDef_Of(ObjLibEl);
 
 
-int taiArgTypeOfProgLibEl::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
-  if (!argt->IsPointer() || !argt->DerivesFrom(TA_ProgLibEl))
+int taiArgTypeOfObjLibEl::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
+  if (!argt->IsPointer() || !argt->DerivesFrom(TA_ObjLibEl))
     return 0;
   return taiArgTypeOfFromGroup::BidForArgType(aidx,argt,md,td)+1;
 }
 
-taiWidget* taiArgTypeOfProgLibEl::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiArgTypeOfObjLibEl::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_)
 {
-  MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)   return NULL;
   int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
     new_flags |= taiWidget::flgNullOk;
@@ -39,10 +37,10 @@ taiWidget* taiArgTypeOfProgLibEl::GetWidgetRep_impl(IWidgetHost* host_, taiWidge
   if (GetHasOption("NO_GROUP_OPT"))
     new_flags |= taiWidget::flgNoGroup; //aka flagNoList
 
-  return new taiWidgetProgLibElChooser(typ, host_, par, gui_parent_, new_flags);
+  return new taiWidgetObjLibElChooser(typ, host_, par, gui_parent_, new_flags);
 }
 
-void taiArgTypeOfProgLibEl::GetImage_impl(taiWidget* dat, const void* base) {
+void taiArgTypeOfObjLibEl::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)  return;
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
@@ -50,17 +48,15 @@ void taiArgTypeOfProgLibEl::GetImage_impl(taiWidget* dat, const void* base) {
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
-  MemberDef* from_md = GetFromMd();
-  if (from_md == NULL)  return;
-  taList_impl* lst = GetList(from_md, base);
-  taiWidgetProgLibElChooser* els = (taiWidgetProgLibElChooser*)dat;
+  taList_impl* lst = GetList(base);
+  taiWidgetObjLibElChooser* els = (taiWidgetObjLibElChooser*)dat;
   els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
 }
 
-void taiArgTypeOfProgLibEl::GetValue_impl(taiWidget* dat, void*) {
+void taiArgTypeOfObjLibEl::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiWidgetProgLibElChooser* els = (taiWidgetProgLibElChooser*)dat;
+  taiWidgetObjLibElChooser* els = (taiWidgetObjLibElChooser*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }

@@ -13,11 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "ProgLibEl_List.h"
+#include "PatchLib.h"
+#include <Patch>
 
-TA_BASEFUNS_CTORS_DEFN(ProgLibEl_List);
+TA_BASEFUNS_CTORS_DEFN(PatchLib);
 
-
-void ProgLibEl_List::Initialize() {
+void PatchLib::Initialize() {
+  file_subdir = "patch_lib";
+  file_ext = ".patch";
+  wiki_category = "PatchLibrary";
+  obj_type = &TA_Patch;
 }
 

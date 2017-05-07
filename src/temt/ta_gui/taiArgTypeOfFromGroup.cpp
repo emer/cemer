@@ -20,6 +20,8 @@
 
 #include <css_ta.h>
 
+#include <taMisc>
+
 taTypeDef_Of(taGroup_impl);
 
 int taiArgTypeOfFromGroup::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
@@ -34,9 +36,7 @@ int taiArgTypeOfFromGroup::BidForArgType(int aidx, const TypeDef* argt, const Me
 }
 
 cssEl* taiArgTypeOfFromGroup::GetElFromArg(const char* nm, void* base) {
-  MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)   return NULL;
-  taList_impl* lst = GetList(from_md, base);
+  taList_impl* lst = GetList(base);
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   if (lst != NULL)
     arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
@@ -48,8 +48,6 @@ cssEl* taiArgTypeOfFromGroup::GetElFromArg(const char* nm, void* base) {
 }
 
 taiWidget* taiArgTypeOfFromGroup::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)   return NULL;
   int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
     new_flags |= taiWidget::flgNullOk;
@@ -60,9 +58,14 @@ taiWidget* taiArgTypeOfFromGroup::GetWidgetRep_impl(IWidgetHost* host_, taiWidge
   if (GetHasOption("NO_GROUP_OPT"))
     new_flags |= taiWidget::flgNoGroup; //aka flagNoList
 
-  if (from_md->type->DerivesFrom(TA_taGroup_impl))
-     return new taiWidgetGroupElChooser(typ, host_, par, gui_parent_,
-                                  (new_flags | taiWidget::flgNoInGroup));
+  bool is_gp = false;
+  String fmgp = GetOptionAfter("FROM_GROUP_");
+  if(fmgp.nonempty())
+    is_gp = true;
+  
+  if (is_gp)
+    return new taiWidgetGroupElChooser(typ, host_, par, gui_parent_,
+                                       (new_flags | taiWidget::flgNoInGroup));
   else
     return new taiWidgetListElChooser(typ, host_, par, gui_parent_, new_flags);
 }
@@ -84,10 +87,18 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
       }
     }
   }
-  MemberDef* from_md = GetFromMd();
-  if (from_md == NULL)  return;
-  taList_impl* lst = GetList(from_md, base);
-  if (from_md->type->InheritsFrom(TA_taGroup_impl)) {
+  taList_impl* lst = GetList(base);
+  if(!lst) return;
+
+  bool is_gp = false;
+  String fmgp = GetOptionAfter("FROM_GROUP_");
+  if(fmgp.nonempty())
+    is_gp = true;
+  
+  if (is_gp) {
+    if(!lst->InheritsFrom(&TA_taGroup_impl)) {
+      taMisc::Warning("taiArgTypeOfFromGroup: member is not a group type -- change from FROM_GROUP_ to FROM_LIST_", fmgp);
+    }
     taiWidgetGroupElChooser* els = (taiWidgetGroupElChooser*)dat;
     els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
   }
@@ -105,27 +116,56 @@ void taiArgTypeOfFromGroup::GetValue_impl(taiWidget* dat, void*) {
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }
 
-MemberDef* taiArgTypeOfFromGroup::GetFromMd() {
+taList_impl* taiArgTypeOfFromGroup::GetList(const void* base) {
   MemberDef* from_md = NULL;
   String mb_nm = GetOptionAfter("FROM_GROUP_");
   if(mb_nm.empty())
     mb_nm = GetOptionAfter("FROM_LIST_");
-  if (!mb_nm.empty()) {
-    from_md = typ->members.FindName(mb_nm);
-    if(!from_md) {
-      from_md = typ->static_members.FindName(mb_nm);
+  if (mb_nm.empty()) {
+    taMisc::Warning("taiArgTypeOfFromGroup: no path after FROM_GROUP_ or FROM_LIST_ for method arg -- must fix!  will likely crash");
+    return NULL;
+  }
+  String submb_nm;
+  if(mb_nm.contains('.')) {
+    submb_nm = mb_nm.after('.');
+    mb_nm = mb_nm.before('.');
+  }
+  from_md = typ->members.FindName(mb_nm);
+  if(!from_md) {
+    from_md = typ->static_members.FindName(mb_nm);
+  }
+  if (!from_md) {
+    taMisc::Warning("taiArgTypeOfFromGroup: member name not found -- must fix!  will likely crash:", mb_nm);
+    return NULL;
+  }
+  taBase* mb_base;
+  if(from_md->type->InheritsFrom(&TA_taSmartRef))
+    mb_base = ((taSmartRef*)from_md->GetOff(base))->ptr();
+  else if(from_md->type->IsPointer())
+    mb_base = *((taBase**)from_md->GetOff(base));
+  else
+    mb_base = (taBase*)from_md->GetOff(base);
+  if(!mb_base) {
+    taMisc::Warning("taiArgTypeOfFromGroup: list is null at this member!", mb_nm);
+    return NULL;
+  }
+  if(submb_nm.nonempty()) {
+    TypeDef* td = mb_base->GetTypeDef();
+
+    ta_memb_ptr mbr_off = 0;
+    int base_off = 0;
+    MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, mbr_off,
+                                                       submb_nm, true); // warn
+    if(mbr_def) {
+      void* address = MemberDef::GetOff_static(mb_base, base_off, mbr_off);
+      mb_base = (taBase*)address;
     }
   }
-  return from_md;
-}
-
-taList_impl* taiArgTypeOfFromGroup::GetList(MemberDef* from_md, const void* base) {
-  if (from_md == NULL)
+  if(!mb_base->InheritsFrom(&TA_taList_impl)) {
+    taMisc::Warning("taiArgTypeOfFromGroup: resulting object is not a taList_impl",
+                    mb_base->GetTypeDef()->name);
     return NULL;
-  if(from_md->type->InheritsFrom(&TA_taSmartRef))
-    return (taList_impl*)((taSmartRef*)from_md->GetOff(base))->ptr();
-  else if(from_md->type->IsPointer())
-    return *((taList_impl**)from_md->GetOff(base));
-  else
-    return (taList_impl*)from_md->GetOff(base);
+  }
+  taList_impl* rval = (taList_impl*)mb_base;
+  return rval;
 }

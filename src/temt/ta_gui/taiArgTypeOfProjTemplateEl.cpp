@@ -28,8 +28,6 @@ int taiArgTypeOfProjTemplateEl::BidForArgType(int aidx, const TypeDef* argt, con
 taiWidget* taiArgTypeOfProjTemplateEl::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_)
 {
-  MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)	return NULL;
   int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
     new_flags |= taiWidget::flgNullOk;
@@ -50,9 +48,7 @@ void taiArgTypeOfProjTemplateEl::GetImage_impl(taiWidget* dat, const void* base)
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
-  MemberDef* from_md = GetFromMd();
-  if (from_md == NULL)	return;
-  taList_impl* lst = GetList(from_md, base);
+  taList_impl* lst = GetList(base);
   taiWidgetProjTemplateElChooser* els = (taiWidgetProjTemplateElChooser*)dat;
   els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
 }

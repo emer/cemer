@@ -475,12 +475,12 @@ public:
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url to search for and download published projects
   static String         pub_prog_page;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url to search for and download published programs
-  static String         plib_app_wiki;
-  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for program / project library for application-relevant items (e.g., emergent) -- wiki must be defined in wiki_url's
-  static String         plib_sci_wiki;
-  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for program / project library for scientifically-relevant items (e.g., CCN) -- wiki must be defined in wiki_url's
-  static String         plib_user_wiki;
-  // #SAVE #CAT_File user-maintained wiki name for program / project library items (e.g., for a specific lab's wiki for their own projects) -- wiki must be defined in wiki_url's
+  static String         obj_lib_app_wiki;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for object library for application-relevant items (e.g., emergent) -- wiki must be defined in wiki_url's
+  static String         obj_lib_sci_wiki;
+  // #SAVE #CAT_File wiki name for object library for scientifically-relevant items (e.g., CCN) -- wiki must be defined in wiki_url's
+  static String         obj_lib_user_wiki;
+  // #SAVE #CAT_File #AKA_plib_user_wiki user-maintained wiki name for object library items (e.g., for a specific lab's wiki for their own projects) -- wiki must be defined in wiki_url's
 
   static NamedURL       wiki1_url;
   // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
@@ -530,8 +530,6 @@ public:
   // #NO_SAVE #HIDDEN #CAT_File paths to be used for finding css files (e.g., in #include or load statements -- searched in order)
   static String_PArray  load_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths to be used for loading object files for the ta dump file system
-  static NameVar_PArray prog_lib_paths;
-  // #NO_SAVE #HIDDEN #CAT_File paths/url's for specific categories of program library files (e.g., UserLib, SystemLib, WebAppLib, WebSciLib, WebUserLib) -- for Web these are locations of local cache of downloaded programs
   static NameVar_PArray proj_template_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for collections of project template files (e.g., System, User, Web)
   static NameVar_PArray named_paths;

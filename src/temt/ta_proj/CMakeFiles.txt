@@ -69,6 +69,11 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   ObjDiff.h
   ObjDiffRec.h
   ObjDiffRec_List.h
+  
+  ObjLibrary.h
+  ObjLibEl.h
+  PatchLib.h
+  
   PatchRec.h
   PatchRec_Group.h
   Patch.h
@@ -188,6 +193,10 @@ set(ta_proj_SRCS
   ObjDiff.cpp
   ObjDiffRec.cpp
   ObjDiffRec_List.cpp
+
+  ObjLibrary.cpp
+  ObjLibEl.cpp
+  PatchLib.cpp
   PatchRec.cpp
   PatchRec_Group.cpp
   Patch.cpp
