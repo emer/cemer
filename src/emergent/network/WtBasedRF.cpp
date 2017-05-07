@@ -141,7 +141,7 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
               float snd_act = snd_unit->act();
               float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
               if (weight > wt_threshold) {
-                int filter_no = (col + 4) % filter_angles;
+                int filter_no = col % filter_angles;
                 if (row % 2 == 0) { // 2 for on-center/off-center
                   *tmp_matrix = filter[filter_no] * (weight * snd_act);
                 }
