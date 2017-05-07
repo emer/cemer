@@ -2010,8 +2010,14 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else if(IsAtomicEff()) {
       if(IsString()) {
         if(sc == SC_STREAMING) {
-          String unes = val;
-          *((String*)base) = unes.quote_unesc();
+          taVersion v808(8, 0, 8);
+          if(taMisc::is_loading && taMisc::loading_version < v808) {
+            *((String*)base) = val; // not quoted
+          }
+          else {
+            String unes = val;
+            *((String*)base) = unes.quote_unesc();
+          }
         }
         else {
           *((String*)base) = val;
