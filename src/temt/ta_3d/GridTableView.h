@@ -58,6 +58,7 @@ public:
   bool          mat_val_text;   // also display text values for matrix blocks
 
   ColorScale    colorscale;     // contains current min,max,range,zero,auto_scale
+  bool          scale_per_column;// #DEF_false for autoscale use scale range for each column
 
   float         grid_margin;    // #DEF_0.01 #MIN_0 size of margin between grid cells (in normalized units)
   float         grid_line_size; // #DEF_0.002 #MIN_0 size of grid lines (in normalized units)

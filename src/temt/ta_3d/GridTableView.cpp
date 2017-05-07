@@ -128,6 +128,7 @@ void GridTableView::Initialize() {
 
   colorscale.auto_scale = false;
   colorscale.SetMinMax(-1.0f, 1.0f);
+  scale_per_column = false;
 
   row_height = 0.1f; // non-zero dummy value
   head_height = .1f;
@@ -172,6 +173,7 @@ void GridTableView::Copy_(const GridTableView& cp) {
   two_d_font_scale = cp.two_d_font_scale;
   mat_val_text = cp.mat_val_text;
   colorscale = cp.colorscale;
+  scale_per_column = cp.scale_per_column;
 
   grid_margin = cp.grid_margin;
   grid_line_size = cp.grid_line_size;
@@ -733,21 +735,38 @@ void GridTableView::GetScaleRange() {
   }
   
   if (need_scale_update) {
-    bool got_one = false;
-    MinMax sc_rg;
-    for(int col = col_range.min; col<=col_range.max; ++col) {
-      GridColView* cvs = (GridColView*)colVis(col);
-      if(!cvs || !cvs->scale_on)
-        continue;
-      DataCol* da = cvs->dataCol();
-      if(!da->isNumeric() || !da->is_matrix) continue;
-      da->GetMinMaxScale(sc_rg);
-      sc_rg.SymRange();           // keep range symmetric around zero!
-      if(!got_one)
+    if (scale_per_column) {
+      MinMax sc_rg;
+      for(int col = col_range.min; col<=col_range.max; ++col) {
+        GridColView* cvs = (GridColView*)colVis(col);
+        if(!cvs || !cvs->scale_on)
+          continue;
+        DataCol* da = cvs->dataCol();
+        if(!da->isNumeric() || !da->is_matrix) continue;
+        da->GetMinMaxScale(sc_rg);
+        sc_rg.SymRange();           // keep range symmetric around zero!
+        cvs->scale_min = sc_rg.min;
+        cvs->scale_max = sc_rg.max;
         colorscale.SetMinMax(sc_rg.min, sc_rg.max);
-      else
-        colorscale.UpdateMinMax(sc_rg.min, sc_rg.max);
-      got_one = true;
+      }
+    }
+    else {
+      bool got_one = false;
+      MinMax sc_rg;
+      for(int col = col_range.min; col<=col_range.max; ++col) {
+        GridColView* cvs = (GridColView*)colVis(col);
+        if(!cvs || !cvs->scale_on)
+          continue;
+        DataCol* da = cvs->dataCol();
+        if(!da->isNumeric() || !da->is_matrix) continue;
+        da->GetMinMaxScale(sc_rg);
+        sc_rg.SymRange();           // keep range symmetric around zero!
+        if(!got_one)
+          colorscale.SetMinMax(sc_rg.min, sc_rg.max);
+        else
+          colorscale.UpdateMinMax(sc_rg.min, sc_rg.max);
+        got_one = true;
+      }
     }
     need_scale_update = false; // just did it
   }
@@ -1271,7 +1290,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     }
     ln->addChild(row_sep);
 #endif // TA_QT3D
-
+    
     if(render_svg) {
       svg_str << taSvg::Text(el, col_pos + .5f * col_wd_lst, 1.0f - (row_pos + y_offs),
                              0.0f, iColor(), font_scale, taSvg::CENTER);
@@ -1280,13 +1299,17 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   }
   for (int col = col_range.min; col <= col_range.max; col++) {
     GridColView* cvs = (GridColView*)colVis(col);
+    if (colorscale.auto_scale && scale_per_column) {
+      colorscale.min = cvs->scale_min;
+      colorscale.max = cvs->scale_max;
+    }
     if (!cvs) continue;
     DataCol* dc = cvs->dataCol();
-
+    
     //calculate the actual col row index, for the case of a jagged data table
     int act_idx; // <0 for null
     dt->idx(data_row, act_idx);
-
+    
     // translate the col to proper location
 #ifdef TA_QT3D
 #else // TA_QT3D

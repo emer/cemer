@@ -51,7 +51,11 @@ INHERITED(DataColView)
 friend class GridTableView;
 public:
   int           text_width;     // width of the column (or each matrix col) in chars; also the min width in chars
+  
   bool          scale_on;       // adjust overall colorscale to include this data (if it is a matrix type)
+  float         scale_min;      // min value if using per column min/max for colorscale rather than min/max for visible columns
+  float         scale_max;      // min value if using per column min/max for colorscale rather than min/max for visible columns
+  
   taMisc::MatrixView    mat_layout;     // #DEF_BOT_ZERO layout of matrix and image cells
   bool          mat_image;      // display matrix as an image instead of grid blocks
   bool          mat_odd_vert;   // how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)

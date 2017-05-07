@@ -202,6 +202,11 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layColorScale->addWidget(chkAutoScale);
   layColorScale->addSpacing(taiM->hsep_c);
 
+  chkPerColumn = new QCheckBox("Per\nColumn  ", widg);
+  connect(chkPerColumn, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layColorScale->addWidget(chkPerColumn);
+  layColorScale->addSpacing(taiM->hsep_c);
+
   cbar = new iHColorScaleBar(&tlv->colorscale, iColorScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
@@ -400,6 +405,9 @@ void iViewPanelOfGridTable::GetValue_impl() {
   glv->mat_block_height = (float)fldBlockHeight->GetValue();
   glv->mat_block_spc = (float)fldBlockSpace->GetValue();
   glv->setScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max());
+  glv->scale_per_column = chkPerColumn->isChecked();
+  chkPerColumn->setEnabled(chkAutoScale->isChecked());
+  
   glv->click_vals = chkClickVals->isChecked();
   glv->lmb_val = (float)fldLMBVal->GetValue();
   glv->mmb_val = (float)fldMMBVal->GetValue();
@@ -456,6 +464,8 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
 
   cbar->UpdateScaleValues();
   chkAutoScale->setChecked(glv->colorscale.auto_scale);
+  chkPerColumn->setChecked(glv->scale_per_column);
+  chkPerColumn->setEnabled(chkAutoScale->isChecked());
 
   chkClickVals->setChecked(glv->click_vals);
   fldLMBVal->GetImage((String)glv->lmb_val);

@@ -80,6 +80,7 @@ public:
 
   QHBoxLayout*              layColorScale;
   QCheckBox*                chkAutoScale;
+  QCheckBox*                chkPerColumn;     // scale color using range for each column
   iColorScaleBar*           cbar;             // colorbar
   QPushButton*              butSetColor;
   
