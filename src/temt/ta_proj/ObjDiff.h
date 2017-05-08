@@ -41,6 +41,7 @@ public:
   taBaseRef             b_top;  // top-level B object for comparison
   bool                  modify_a; // apply changes to A after generating patches?
   bool                  modify_b; // apply changes to B after generating patches?
+  bool                  a_only;   // only allow changes to a-side -- for diffing against a fixed B record -- affects the diff browser and patch creation
   
   ObjDiffRec_List       diffs;
   // #NO_SAVE diff records, in a parallel, side-by-side format
@@ -133,7 +134,7 @@ public:
   int FastIdxFind(int_Array& ary, int idx);
   // fast find of index from array -- starts at idx and moves backward
 
-  virtual void SetCurSubgp(taBase* obj, Patch* pat, taProject* proj);
+  virtual void SetCurSubgp(taBase* obj, taProject* proj);
   virtual void ReorderProjSubgps(Patch* pat);
   
   virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);

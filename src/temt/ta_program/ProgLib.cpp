@@ -90,6 +90,8 @@ bool ProgLib::DiffProgram(Program* prog, ObjLibEl* lib_el) {
   tmp_prog->RunLoadInitCode();
 
   ObjDiff* diff = new ObjDiff;
+  diff->a_only= true;
+  diff->modify_a = true;
   diff->Diff(prog, tmp_prog);      // compute the diffs
   diff->DisplayDialog(true);      // modal
   diff->GeneratePatches();

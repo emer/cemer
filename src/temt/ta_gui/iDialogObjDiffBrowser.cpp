@@ -127,6 +127,7 @@ void iDialogObjDiffBrowser::Constr() {
   QHBoxLayout* lay = new QHBoxLayout();
 
   chkApplyA = new QCheckBox("Apply A Changes", this);
+  chkApplyA->setChecked(odl->modify_a);
   chkApplyA->setToolTip(taiMisc::ToolTipPreProcess("Apply changes to the A object immediately after generating the patches, when Ok is pressed (Cancel does nothing)"));
   lay->addWidget(chkApplyA);
   
@@ -144,21 +145,28 @@ void iDialogObjDiffBrowser::Constr() {
 
   lay->addStretch();
 
-  chkApplyB = new QCheckBox("Apply B Changes", this);
-  chkApplyB->setToolTip(taiMisc::ToolTipPreProcess("Apply changes to the B object immediately after generating the patches, when Ok is pressed (Cancel does nothing)"));
-  lay->addWidget(chkApplyB);
+  if(odl->a_only) {
+    chkApplyB = NULL;
+    btnAllB = NULL;
+    btnFiltB = NULL;
+  }
+  else {
+    chkApplyB = new QCheckBox("Apply B Changes", this);
+    chkApplyB->setToolTip(taiMisc::ToolTipPreProcess("Apply changes to the B object immediately after generating the patches, when Ok is pressed (Cancel does nothing)"));
+    lay->addWidget(chkApplyB);
   
-  btnAllB = new QPushButton("Toggle All &B's", this);
-  btnAllB->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the svisible actions for the B item -- i.e., make the B equivalent to the A -- collapse parts you don't want to set"));
-  btnAllB->setDefault(false);
-  btnAllB->setAutoDefault(false);
-  lay->addWidget(btnAllB);
+    btnAllB = new QPushButton("Toggle All &B's", this);
+    btnAllB->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the svisible actions for the B item -- i.e., make the B equivalent to the A -- collapse parts you don't want to set"));
+    btnAllB->setDefault(false);
+    btnAllB->setAutoDefault(false);
+    lay->addWidget(btnAllB);
 
-  btnFiltB = new QPushButton("Set Filtered B's", this);
-  btnFiltB->setToolTip(taiMisc::ToolTipPreProcess("Set actions on or off for filtered subset of the selectable actions for the B item"));
-  btnFiltB->setDefault(false);
-  btnFiltB->setAutoDefault(false);
-  lay->addWidget(btnFiltB);
+    btnFiltB = new QPushButton("Set Filtered B's", this);
+    btnFiltB->setToolTip(taiMisc::ToolTipPreProcess("Set actions on or off for filtered subset of the selectable actions for the B item"));
+    btnFiltB->setDefault(false);
+    btnFiltB->setAutoDefault(false);
+    lay->addWidget(btnFiltB);
+  }
 
   lay->addStretch();
 
@@ -210,14 +218,15 @@ void iDialogObjDiffBrowser::Constr() {
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
 
   connect(btnAllA, SIGNAL(clicked()), this, SLOT(toggleAllA()) );
-  connect(btnAllB, SIGNAL(clicked()), this, SLOT(toggleAllB()) );
-
   connect(btnFiltA, SIGNAL(clicked()), this, SLOT(setFilteredA()) );
-  connect(btnFiltB, SIGNAL(clicked()), this, SLOT(setFilteredB()) );
-
   connect(chkApplyA, SIGNAL(clicked()), this, SLOT(applyAclick()) );
-  connect(chkApplyB, SIGNAL(clicked()), this, SLOT(applyBclick()) );
 
+  if(!odl->a_only) {
+    connect(btnAllB, SIGNAL(clicked()), this, SLOT(toggleAllB()) );
+    connect(btnFiltB, SIGNAL(clicked()), this, SLOT(setFilteredB()) );
+    connect(chkApplyB, SIGNAL(clicked()), this, SLOT(applyBclick()) );
+  }
+  
   connect(items, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
           SLOT(itemClicked(QTreeWidgetItem*,int)));
 
@@ -335,9 +344,11 @@ void iDialogObjDiffBrowser::AddItems() {
       witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
       witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
       witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
       witm->setText(COL_A_FLG, lbl_a);
-      witm->setText(COL_B_FLG, lbl_b);
+      if(!odl->a_only) {
+        witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+        witm->setText(COL_B_FLG, lbl_b);
+      }
     }
     else if(rec->IsBnotA()) {
       if(chk_a) witm->setBackground(COL_A_FLG, *add_color);
@@ -349,9 +360,11 @@ void iDialogObjDiffBrowser::AddItems() {
       witm->setExpanded(false);
       witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
       witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
       witm->setText(COL_A_FLG, lbl_a);
-      witm->setText(COL_B_FLG, lbl_b);
+      if(!odl->a_only) {
+        witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+        witm->setText(COL_B_FLG, lbl_b);
+      }
     }
     else if(rec->IsABDiff()) {
       if(chk_a) witm->setBackground(COL_A_FLG, *chg_color);
@@ -363,9 +376,11 @@ void iDialogObjDiffBrowser::AddItems() {
 
       witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
       witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
       witm->setText(COL_A_FLG, lbl_a);
-      witm->setText(COL_B_FLG, lbl_b);
+      if(!odl->a_only) {
+        witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+        witm->setText(COL_B_FLG, lbl_b);
+      }
     }
     else if(rec->IsContext()) {
       witm->setBackground(COL_A_VAL, a_off ? *ctxt_color_lt : *ctxt_color);

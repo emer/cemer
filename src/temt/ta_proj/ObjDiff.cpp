@@ -43,6 +43,7 @@ TA_BASEFUNS_CTORS_DEFN(ObjDiff);
 void ObjDiff::Initialize() {
   modify_a = false;
   modify_b = false;
+  a_only = false;
 }
 
 bool ObjDiff::DisplayDialog(bool modal_dlg) {
@@ -723,6 +724,7 @@ ObjDiffRec* ObjDiff::NewRec
 }
 
 void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
+  if(!patch) return;
   if(rec->IsMembers()) {
     patch->NewRec_AssignMbr(rec->a_indep_obj, rec->a_obj, rec->mdef, rec->b_val);
   }
@@ -739,6 +741,7 @@ void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
 }
 
 void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
+  if(!patch) return;
   if(rec->IsMembers()) {
     patch->NewRec_AssignMbr(rec->b_indep_obj, rec->b_obj, rec->mdef, rec->a_val);
   }
@@ -755,6 +758,7 @@ void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
 }
 
 void ObjDiff::GenPatch_DelA(ObjDiffRec* rec, Patch* patch) {
+  if(!patch) return;
   if(rec->IsObjects()) {
     patch->NewRec_Delete(rec->a_indep_obj);
   }
@@ -762,6 +766,7 @@ void ObjDiff::GenPatch_DelA(ObjDiffRec* rec, Patch* patch) {
 }
 
 void ObjDiff::GenPatch_DelB(ObjDiffRec* rec, Patch* patch) {
+  if(!patch) return;
   if(rec->IsObjects()) {
     patch->NewRec_Delete(rec->b_indep_obj);
   }
@@ -769,6 +774,7 @@ void ObjDiff::GenPatch_DelB(ObjDiffRec* rec, Patch* patch) {
 }
 
 void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) {
+  if(!patch) return;
   if(rec->IsObjects()) {
     taList_impl* own_obj = (taList_impl*)rec->par_rec->b_obj; // where to add in b
 
@@ -788,6 +794,7 @@ void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) 
 }
 
 void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) {
+  if(!patch) return;
   if(rec->IsObjects()) {
     taList_impl* own_obj = (taList_impl*)rec->par_rec->a_obj; // where to add in a
     
@@ -807,7 +814,7 @@ void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) 
 }
 
 
-void ObjDiff::SetCurSubgp(taBase* obj, Patch* pat, taProject* proj) {
+void ObjDiff::SetCurSubgp(taBase* obj, taProject* proj) {
   Patch::cur_subgp = "Project";
   if(!obj) return;
   TypeDef* td = proj->GetTypeDef();
@@ -825,6 +832,7 @@ void ObjDiff::SetCurSubgp(taBase* obj, Patch* pat, taProject* proj) {
 }
 
 void ObjDiff::ReorderProjSubgps(Patch* pat) {
+  if(!pat) return;
   // params need to have the stuff they point to in place already!
   taSubGroup& subgp = pat->patch_recs.gp;
   if(subgp.size < 2) return;
@@ -861,10 +869,14 @@ int ObjDiff::GeneratePatches() {
 
   // note: proj could be same!
   Patch* patch_a = proj_a->patches.NewPatch();
-  Patch* patch_b = proj_b->patches.NewPatch();
+  Patch* patch_b = NULL;
 
   patch_a->SetName(a_top->GetName() + "_from_" + b_top->GetName());
-  patch_b->SetName(b_top->GetName() + "_from_" + a_top->GetName());
+
+  if(!a_only) {
+    patch_b = proj_b->patches.NewPatch();
+    patch_b->SetName(b_top->GetName() + "_from_" + a_top->GetName());
+  }
 
   Patch::cur_subgp = "";
   
@@ -886,9 +898,9 @@ int ObjDiff::GeneratePatches() {
 
     if(proj_diff) {
       if(rec->a_indep_obj)
-        SetCurSubgp(rec->a_indep_obj, patch_a, proj_a);
+        SetCurSubgp(rec->a_indep_obj, proj_a);
       else
-        SetCurSubgp(rec->b_indep_obj, patch_b, proj_b);
+        SetCurSubgp(rec->b_indep_obj, proj_b);
     }
     
     //////////////////////////////////
@@ -931,11 +943,11 @@ int ObjDiff::GeneratePatches() {
     prv_rec = rec;
   }
 
-  if(patch_a->patch_recs.leaves == 0) {
+  if(patch_a && patch_a->patch_recs.leaves == 0) {
     patch_a->Close();
     patch_a = NULL;
   }
-  if(patch_b->patch_recs.leaves == 0) {
+  if(patch_b && patch_b->patch_recs.leaves == 0) {
     patch_b->Close();
     patch_b = NULL;
   }

@@ -1024,11 +1024,9 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
       taBase* rbase = (taBase*)base;
       rval = rbase->Dump_Load_Value(strm, (taBase*)par);
       if(rval==1) {
-	// if (rbase->HasOption("IMMEDIATE_UPDATE"))
-	//   rbase->UpdateAfterEdit();
-	if(!rbase->HasOption("NO_UPDATE_AFTER")) {
-	  dumpMisc::update_after.Link(rbase);
-	}
+	// if(!rbase->HasOption("NO_UPDATE_AFTER")) {
+	//   dumpMisc::update_after.Link(rbase);
+	// }
 	// post load is a separate option, compatible with IMMED or NO_UA
 	if (!taMisc::is_post_loading && rbase->HasOption("DUMP_LOAD_POST")) {
 	  dumpMisc::post_update_after.Link(rbase);

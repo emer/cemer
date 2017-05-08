@@ -98,9 +98,9 @@ public:
   MemberSpace           members;	// #IGNORE memberdefs
   voidptr_Array         ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
 
-  SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
-  SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
-  SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
+  SimpleMathSpec 	pre_proc_1;	// first step of pre-processing to perform -- applied prior to aggregation operations
+  SimpleMathSpec 	pre_proc_2;	// second step of pre-processing to perform -- applied prior to aggregation operations
+  SimpleMathSpec 	pre_proc_3;	// third step of pre-processing to perform -- applied prior to aggregation operations
 
   inline void           SetMonOption(MonOptions flg)
   { options = (MonOptions)(options | flg); }

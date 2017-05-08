@@ -99,7 +99,7 @@ void ObjLibrary::InitWikiData(const String& wiki_name, const String& lib_loc_nam
 
 ObjLibEl* ObjLibrary::NewLibRec(LibLocs lib_loc, const String& fname, const String& obj_nm) {
   ObjLibEl* lel = (ObjLibEl*)library.New(1);
-  lel->lib_loc = wiki_names[lib_loc];
+  lel->lib_loc = lib_loc_names[lib_loc];
   lel->lib_loc_no = lib_loc;
   lel->filename = fname;
   if(obj_nm.empty()) {
