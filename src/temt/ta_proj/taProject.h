@@ -199,7 +199,9 @@ public:
                                         const String& com_itm_str);
   // #IGNORE popup an svn commit dialog, return false if canceled.  commit_msg = msg
   virtual void          SvnDiff();
-  // #MENU_BUTTON #MENU_ON_Svn #CAT_File generate a new patch record based on differences between current project and prior svn checkin -- checks out the current version of the project as a tmp project file, loads it, runs a project-wide diff compare staged by each member of the project, and saves any marked changed to a new patch record in project
+  // #MENU_BUTTON #MENU_ON_Svn #CAT_File #CONFIRM compare differences between current working copy of project and the immediate prior svn checkin -- checks out the prior svn version of the project as a tmp project file, loads it, and runs a diff compare which then pulls up a browser of the differences -- you can select actions to generate a patch that will capture your changes so that others can replicate your changes on their own projects
+  virtual void          SvnPrevDiff();
+  // #MENU_BUTTON #MENU_ON_Svn #CAT_File #CONFIRM compare differences between last svn revision of project and the one immediately before that -- checks out the prior svn versions of the project as tmp project files, loads them, and runs a diff compare which then pulls up a browser of the differences -- you can select actions to generate a patch that will capture your changes so that others can replicate your changes on their own projects
   bool                  DiffCompare(taBase* cmp_obj) override;
   // #BUTTON #MENU_ON_Svn #CAT_File compare this project against another project, pulling up a diff browser where the differences can be viewed, and then any changes selected to generate a Pach for each project that will convert from one into the other -- this is very robust and operates on separate major groups of objects -- strongly recommended for recording and communicating changes between projects
   virtual void          UpdateChangeLog();

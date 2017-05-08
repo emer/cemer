@@ -1118,6 +1118,10 @@ void taProject::SvnDiff() {
                String(last_change_rev), "on:", change_str, "by:", last_changed_author);
   String rev_fnm = fnm.before(".proj") + "_" + String(last_change_rev) + ".proj";
 
+  if(taMisc::FileExists(rev_fnm)) {
+    taMisc::RemoveFile(rev_fnm);
+  }
+  
   String url;
   try {
     svn_client->GetUrlFromPath(url, fnm);
@@ -1138,8 +1142,134 @@ void taProject::SvnDiff() {
   int pidx = tabMisc::root->projects.size;
   tabMisc::root->projects.Load(rev_fnm);
   taProject* proj = tabMisc::root->projects.SafeEl(pidx);
+  taMisc::ProcessEvents();
   if(proj) {
-    DiffCompare(proj);
+    ObjDiff* diff = new ObjDiff;
+    diff->a_only = true;        // don't allow changes to B
+    diff->Diff(this, proj);      // compute the diffs
+    diff->DisplayDialog(false);  // non-modal -- dialog disposes of diff
+  }
+}
+
+void taProject::SvnPrevDiff() {
+  SubversionClient* svn_client = new SubversionClient();
+  try {
+    svn_client->SetWorkingCopyPath(proj_dir);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in setting working copy\n", ex.what());
+    return;
+  }
+  String fnm = taMisc::GetFileFmPath(file_name);
+  if(fnm.empty()) {
+    taMisc::Error("file name for project is empty!");
+    return;
+  }
+  int rev = 0;
+  int kind = 0;
+  String root_url;
+  int last_change_rev = 0;
+  int last_changed_date = 0;
+  String last_changed_author;
+  int64_t sz = 0;
+  try {
+    svn_client->GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
+                        last_changed_author, sz);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetInfo\n", ex.what());
+    return;
+  }
+
+  String change_str = taDateTime::fmTimeToString(last_changed_date,
+                                                 "yyyy_MM_dd_hh_mm_ss");
+  
+  taMisc::Info("Last SVN revision info for file:", fnm, "rev:",
+               String(last_change_rev), "on:", change_str, "by:", last_changed_author);
+  String rev_fnm = fnm.before(".proj") + "_" + String(last_change_rev) + ".proj";
+
+  if(taMisc::FileExists(rev_fnm)) {
+    taMisc::RemoveFile(rev_fnm);
+  }
+  
+  String url;
+  try {
+    svn_client->GetUrlFromPath(url, fnm);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetUrl\n", ex.what());
+    return;
+  }
+  
+  try {
+    svn_client->SaveFile(url, rev_fnm, last_change_rev);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in SaveFile\n", ex.what());
+    return;
+  }
+
+  // now try to find prior revision!
+  int_PArray    revs;            // one per rev -- revision number
+  String_PArray commit_msgs;     // one per rev -- the commit message
+  String_PArray authors;         // one per rev -- author of rev
+  int_PArray    times;           // one per rev -- time as secs since 1970
+  int_PArray    files_start_idx; // one per rev -- starting index in files/actions
+  int_PArray    files_n;    // one per rev -- number of files in files/actions
+  String_PArray files;      // raw list of all files for all logs
+  String_PArray actions; // one-to-one with files, mod action for each file
+
+  int prev_rev = last_change_rev-1;
+  int search_chunk = 100;
+  while(true) {
+    try {
+      svn_client->GetLogs(revs, commit_msgs, authors, times, files_start_idx, files_n,
+                          files, actions, url, prev_rev, search_chunk);
+    }
+    catch (const SubversionClient::Exception &ex) {
+      taMisc::Error("Error doing GetLog in SubversionClient.\n", ex.what());
+      return;
+    }
+    if(revs.size > 0) break;
+    prev_rev -= search_chunk;
+    if(prev_rev < search_chunk)
+      break;
+  }
+
+  if(revs.size == 0) {
+    taMisc::Error("No previous revision found!");
+    return;
+  }
+
+  change_str = taDateTime::fmTimeToString(times[0], "yyyy_MM_dd_hh_mm_ss");
+  prev_rev = revs[0];       // should be the last one
+  taMisc::Info("Prior SVN revision info for file: " + fnm + " rev:",
+               String(prev_rev), "on:", change_str, "by:", authors[0], "message:\n",
+               commit_msgs[0]);
+  String prev_fnm = fnm.before(".proj") + "_" + String(prev_rev) + ".proj";
+
+  if(taMisc::FileExists(prev_fnm)) {
+    taMisc::RemoveFile(prev_fnm);
+  }
+  try {
+    svn_client->SaveFile(url, prev_fnm, prev_rev);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in SaveFile\n", ex.what());
+    return;
+  }
+
+  int pidx = tabMisc::root->projects.size;
+  tabMisc::root->projects.Load(rev_fnm);
+  taProject* last_proj = tabMisc::root->projects.SafeEl(pidx);
+  taMisc::ProcessEvents();
+  tabMisc::root->projects.Load(prev_fnm);
+  taProject* prev_proj = tabMisc::root->projects.SafeEl(pidx+1);
+  taMisc::ProcessEvents();
+  if(last_proj && prev_proj) {
+    ObjDiff* diff = new ObjDiff;
+    diff->Diff(last_proj, prev_proj);      // compute the diffs
+    diff->DisplayDialog(false);  // non-modal -- dialog disposes of diff
   }
 }
 

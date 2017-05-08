@@ -3316,7 +3316,7 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
   
   ObjDiff* diff = new ObjDiff;
   diff->Diff(this, cmp_obj);      // compute the diffs
-  diff->DisplayDialog(false);                     // non-modal
+  diff->DisplayDialog(false);     // non-modal -- dialog disposes of diff
   return true;
 }
 
