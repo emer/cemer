@@ -1,4 +1,7 @@
-3/24/15 - rohrlich
+Last updated: May 9, 2017
+
+See this page for further details:
+https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation
 
 All of the wiki pages needed to support the Publish to Wiki feature of emergent are
 exported as a single XML file.

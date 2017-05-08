@@ -1359,7 +1359,13 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
 bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& publish_type, const String& file_name, const String& version, const String& emer_version) {
   String prefixed_filename = "File:" + file_name;
   String up_date = String(QDate::currentDate().toString("MMM d yyyy"));
-  String porp = publish_type == "Project" ? "Proj" : "Prog";
+  String porp;
+  if(publish_type == "Project")
+    porp = "Proj";
+  else if(publish_type == "Program")
+    porp = "Prog";
+  else if(publish_type == "Patch")
+    porp = "Patch";
   String content = "\n* [[Emer"+porp+"FileDate::"+ up_date + "]]" +
     " Version: [[Emer"+porp+"Version::" + version + "]]" +
     " Emergent version: [[EmerVersion::" + emer_version + "]]";
@@ -1379,6 +1385,8 @@ bool taMediaWiki::LinkFile(const String& wiki_name, const String& publish_type, 
     wiki_tag = "EmerProjName";
   else if(publish_type == "Program")
     wiki_tag = "EmerProgName";
+  else if(publish_type == "Patch")
+    wiki_tag = "EmerPatchName";
 
   String content = "[[" + wiki_tag + "::" + obj_name + "]]";
   return EditPage(wiki_name, prefixed_filename, content);
@@ -1525,11 +1533,13 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
     }
     dialog.SetVersion(version.GetString().toQString());
     QString psdef("citation in form Author1|Author2|Author3|EtAl|YY");
-    if(pub_cite.nonempty()) {
-      dialog.SetPubCite(pub_cite);
-    }
-    else {
-      dialog.SetPubCite(psdef);
+    if(publish_type == "Project") {
+      if(pub_cite.nonempty()) {
+        dialog.SetPubCite(pub_cite);
+      }
+      else {
+        dialog.SetPubCite(psdef);
+      }
     }
 
     if (dialog.exec()) {
@@ -1554,12 +1564,13 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
       }
       String ver_str = dialog.GetVersion();
       version.SetFromString(ver_str);
-      pub_cite = dialog.GetPubCite();
-      if(pub_cite == psdef) {
-        pub_cite = "";
-      }
-
+      
       if(publish_type == "Project") {
+        pub_cite = dialog.GetPubCite();
+        if(pub_cite == psdef) {
+          pub_cite = "";
+        }
+
         bool mk_doc = dialog.GetCreateDoc();
         if(mk_doc) {
           ((taProject*)obj)->docs.NewProjWikiDoc();

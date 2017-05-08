@@ -1,8 +1,9 @@
-<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.8/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.8/ http://www.mediawiki.org/xml/export-0.8.xsd" version="0.8" xml:lang="en">
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" version="0.10" xml:lang="en">
   <siteinfo>
-    <sitename>emergent-test</sitename>
-    <base>https://grey.colorado.edu/emergent-test/index.php/Main_Page</base>
-    <generator>MediaWiki 1.22.14</generator>
+    <sitename>emergent</sitename>
+    <dbname>pdpwiki</dbname>
+    <base>https://grey.colorado.edu/emergent/index.php/Main_Page</base>
+    <generator>MediaWiki 1.26.4</generator>
     <case>case-sensitive</case>
     <namespaces>
       <namespace key="-2" case="case-sensitive">Media</namespace>
@@ -11,8 +12,8 @@
       <namespace key="1" case="case-sensitive">Talk</namespace>
       <namespace key="2" case="first-letter">User</namespace>
       <namespace key="3" case="first-letter">User talk</namespace>
-      <namespace key="4" case="case-sensitive">Emergent-test</namespace>
-      <namespace key="5" case="case-sensitive">Emergent-test talk</namespace>
+      <namespace key="4" case="case-sensitive">emergent</namespace>
+      <namespace key="5" case="case-sensitive">emergent talk</namespace>
       <namespace key="6" case="case-sensitive">File</namespace>
       <namespace key="7" case="case-sensitive">File talk</namespace>
       <namespace key="8" case="first-letter">MediaWiki</namespace>
@@ -29,315 +30,1331 @@
       <namespace key="107" case="case-sensitive">Form talk</namespace>
       <namespace key="108" case="case-sensitive">Concept</namespace>
       <namespace key="109" case="case-sensitive">Concept talk</namespace>
+      <namespace key="460" case="case-sensitive">Campaign</namespace>
+      <namespace key="461" case="case-sensitive">Campaign talk</namespace>
       <namespace key="500" case="case-sensitive">EmergentProject</namespace>
       <namespace key="501" case="case-sensitive">EmergentProject talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
-    <title>PublishedProjects</title>
+    <title>PublishedProgramList</title>
     <ns>0</ns>
-    <id>160</id>
+    <id>2801</id>
     <revision>
-      <id>924</id>
-      <parentid>853</parentid>
-      <timestamp>2015-03-13T00:42:40Z</timestamp>
+      <id>11703</id>
+      <parentid>11702</parentid>
+      <timestamp>2016-07-28T09:16:45Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <text xml:space="preserve" bytes="446">__NOTOC__
-
-== Projects Recently Published or Updated - of {{PAGESINCATEGORY:PublishedProject|pages}} total ==
-
-&lt;DynamicPageList&gt;
-category             = PublishedProject
-count                 = 10
-order                  = descending
-order method     = lastedit
-&lt;/DynamicPageList&gt;
-
-== Search for a Project ==
-&lt;div style=&quot;left;width:0em&quot;&gt;
-&lt;inputbox&gt;
-type=fulltext
-break=no
-searchbuttonlabel=Search
-&lt;/inputbox&gt;
-&lt;/div&gt;
-
-{{#ask: [[EmerProjKeyword]] 
-}}</text>
-      <sha1>dgmemts2c03r2uifjs4f9vqmkj28kxu</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="429">This is a list of all published {{emergent}} programs on this wiki.
+
+By [[:Category:PublishedProgram]] category:
+
+{{#ask:
+ [[Category:PublishedProgram]]
+ | ?EmerProgName
+ | ?EmerProgFilename
+ | ?EmerProgAuthor
+ | ?EmerProgFirstPub
+ | ?EmerProgTags
+ | ?EmerProgDesc
+}}
+
+By File:s with file type of Program:
+
+{{#ask:
+ [[File:+]] [[EmerFileType::Program]]
+ | ?EmerProgName
+ | ?EmerProgFileDate
+ | ?EmerProgVersion
+ | ?EmerVersion
+}}</text>
+      <sha1>gyy8mpzsbvcd4swvk4wugmbkwjs6zoy</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>PublishedProjectList</title>
+    <ns>0</ns>
+    <id>2802</id>
+    <revision>
+      <id>12321</id>
+      <parentid>12320</parentid>
+      <timestamp>2016-08-31T10:26:24Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="490">This is a list of all published {{emergent}} projects on this wiki.
+
+See [[Demos]] page for an organized list of demo projects by category.
+
+By [[:Category:PublishedProject]] category:
+
+{{#ask: [[Category:PublishedProject]]
+| ?EmerProjName
+| ?EmerProjFilename
+| ?EmerProjAuthor
+| ?EmerProjFirstPub
+| ?EmerProjTags
+| ?EmerProjCite
+}}
+
+By File:s with file type of Project:
+
+{{#ask:
+ [[File:+]] [[EmerFileType::Project]]
+| ?EmerProjName
+| ?EmerProjFileDate
+| ?EmerProjVersion
+| ?EmerVersion
+}}</text>
+      <sha1>fw9g1w76pxxmg9xvlng4yp7ohwobdk1</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>PublishedPatchList</title>
+    <ns>0</ns>
+    <id>2987</id>
+    <revision>
+      <id>12947</id>
+      <parentid>12926</parentid>
+      <timestamp>2017-05-08T18:13:47Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="407">This is a list of all published {{emergent}} patches on this wiki.
+
+By [[:Category:PublishedPatch]] category:
+
+{{#ask:
+ [[Category:PublishedPatch]]
+ | ?EmerPatchName
+ | ?EmerPatchFilename
+ | ?EmerPatchAuthor
+ | ?EmerPatchTags
+ | ?EmerPatchDesc
+}}
+
+By File:s with file type of Patch:
+
+{{#ask:
+ [[File:+]] [[EmerFileType::Patch]]
+ | ?EmerPatchName
+ | ?EmerPatchFileDate
+ | ?EmerPatchVersion
+ | ?EmerVersion
+}}</text>
+      <sha1>0f9w0xw9j8otcc3d8w1mhaxiqp6hoo7</sha1>
     </revision>
   </page>
   <page>
     <title>Category:PublishedProject</title>
     <ns>14</ns>
-    <id>175</id>
+    <id>2787</id>
     <revision>
-      <id>975</id>
-      <parentid>615</parentid>
-      <timestamp>2015-03-18T01:04:25Z</timestamp>
+      <id>11634</id>
+      <parentid>11626</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <text xml:space="preserve" bytes="66">{{#default_form:form-name}}
-This is the PublishedProject category.</text>
-      <sha1>fzgapsev4fg4zp7l9wjecohzkiljdal</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="128">{{#default_form:PublishedProject}}
+This is the PublishedProject category. See [[PublishedProjectList]] for a more detailed list.</text>
+      <sha1>3htz9uba1gzt6brwrjj6herx4jg3gkw</sha1>
     </revision>
   </page>
   <page>
-    <title>Property:EmerFileType</title>
-    <ns>102</ns>
-    <id>257</id>
+    <title>Category:PublishedProgram</title>
+    <ns>14</ns>
+    <id>2773</id>
     <revision>
-      <id>932</id>
-      <timestamp>2015-03-13T15:21:25Z</timestamp>
+      <id>11636</id>
+      <parentid>11627</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="139">{{#default_form:PublishedProgram}}
+This is the PublishedProgram category. See [[PublishedProgramList]] for a more detailed list of programs</text>
+      <sha1>6leul6vg6nx0ae7jw43ouv3m78k8pbk</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Category:PublishedPatch</title>
+    <ns>14</ns>
+    <id>2986</id>
+    <revision>
+      <id>12925</id>
+      <timestamp>2017-05-08T16:36:11Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;{{#default_form:PublishedPatch}} This is the PublishedPatch category. See [[PublishedPatchList]] for a more detailed list of patches&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="132">{{#default_form:PublishedPatch}}
+This is the PublishedPatch category. See [[PublishedPatchList]] for a more detailed list of patches</text>
+      <sha1>iiwgf3km6lq9v5daswugv5oqp8j05rf</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjPage</title>
+    <ns>102</ns>
+    <id>2803</id>
+    <revision>
+      <id>11638</id>
+      <parentid>11562</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="86">This is a property of type [[Has type::Page]]. Contains {{emergent}} Project page name</text>
+      <sha1>dhyrzheiwdycvmz2ew07mfpy9lhskq0</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjFilename</title>
+    <ns>102</ns>
+    <id>2806</id>
+    <revision>
+      <id>11644</id>
+      <parentid>11568</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="87">This is a property of type [[Has type::Page]].  Contains {{emergent}} Project filename.</text>
+      <sha1>tafv9h1w2aisn0uhy13e3zx28aezbzw</sha1>
     </revision>
   </page>
   <page>
     <title>Property:EmerProjAuthor</title>
     <ns>102</ns>
-    <id>163</id>
+    <id>2789</id>
     <revision>
-      <id>595</id>
-      <timestamp>2015-02-24T02:55:25Z</timestamp>
+      <id>11735</id>
+      <parentid>11734</parentid>
+      <timestamp>2016-08-05T21:21:02Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="110">This is a property of type [[Has type::Text]].  It contains the name of the author of an {{emergent}} project.</text>
+      <sha1>65qip6nyttwqb3gr8z5zk7vuhtpaf9t</sha1>
     </revision>
   </page>
   <page>
     <title>Property:EmerProjEmail</title>
     <ns>102</ns>
-    <id>208</id>
+    <id>2790</id>
     <revision>
-      <id>704</id>
-      <timestamp>2015-03-04T23:05:09Z</timestamp>
+      <id>11652</id>
+      <parentid>11574</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Email]].&quot;</comment>
-      <text xml:space="preserve" bytes="47">This is a property of type [[Has type::Email]].</text>
-      <sha1>exzr75bcppvbrao1fwl2ozsn64zfgin</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="83">This is a property of type [[Has type::Email]]. Contains {{emergent}} Project email</text>
+      <sha1>gczadzewu0jesg0l53epkpinkjapm0x</sha1>
     </revision>
   </page>
   <page>
     <title>Property:EmerProjFirstPub</title>
     <ns>102</ns>
-    <id>223</id>
+    <id>2791</id>
     <revision>
-      <id>858</id>
-      <parentid>773</parentid>
-      <timestamp>2015-03-11T03:35:06Z</timestamp>
+      <id>11656</id>
+      <parentid>11655</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="97">This is a property of type [[Has type::Date]]. Contains {{emergent}} Project first published date</text>
+      <sha1>e4wg1o694a6vqzroxxwdz84jvgo0gwn</sha1>
     </revision>
   </page>
   <page>
-    <title>Property:EmerProjKeyword</title>
+    <title>Property:EmerProjTags</title>
     <ns>102</ns>
-    <id>164</id>
+    <id>2811</id>
     <revision>
-      <id>596</id>
-      <timestamp>2015-02-24T02:59:23Z</timestamp>
+      <id>11660</id>
+      <parentid>11582</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="82">This is a property of type [[Has type::Text]].  Contains {{emergent}} Project tags</text>
+      <sha1>49tmi8cpxza3vv5si8luzqm526ly27q</sha1>
     </revision>
   </page>
   <page>
-    <title>Property:EmerProjName</title>
+    <title>Property:EmerProjDesc</title>
     <ns>102</ns>
-    <id>166</id>
+    <id>2813</id>
     <revision>
-      <id>598</id>
-      <timestamp>2015-02-24T03:00:30Z</timestamp>
+      <id>11664</id>
+      <parentid>11586</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="90">This is a property of type [[Has type::Text]].  Contains {{emergent}} Project description.</text>
+      <sha1>92rfeiyt0xwybv52bxdpa7xjjx2vi4j</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjCite</title>
+    <ns>102</ns>
+    <id>2825</id>
+    <revision>
+      <id>11737</id>
+      <parentid>11736</parentid>
+      <timestamp>2016-08-05T21:21:02Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="391">This is a property of type [[Has type::Text]].  For a project that has been described in a publication, this is the citation key for that publication, in the form of Author1|Author2|Author3|EtAl|YY where Author is last name of given author -- e.g., OReillyMunakataFrankEtAl12 is the citation key for the online wiki textbook: http://ccnbook.colorado.edu -- See [[WikiCite]] for more details.</text>
+      <sha1>syuccjbr9c5wpp6wsvcfarcyv083b4y</sha1>
     </revision>
   </page>
   <page>
     <title>Property:EmerProjVersion</title>
     <ns>102</ns>
-    <id>165</id>
+    <id>2793</id>
     <revision>
-      <id>597</id>
-      <timestamp>2015-02-24T02:59:46Z</timestamp>
+      <id>11668</id>
+      <parentid>11590</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="92">This is a property of type [[Has type::Text]].  Contains {{emergent}} Project Version number</text>
+      <sha1>felqksi8fcwjbk5rcdq9v9jrx5tjx9m</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjFileDate</title>
+    <ns>102</ns>
+    <id>2819</id>
+    <revision>
+      <id>11672</id>
+      <parentid>11671</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="95">This is a property of type [[Has type::Date]].  Contains {{emergent}} Project file upload date.</text>
+      <sha1>pkm6rddwiql3ifl81n3opeogok60yo3</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgPage</title>
+    <ns>102</ns>
+    <id>2804</id>
+    <revision>
+      <id>11640</id>
+      <parentid>11564</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="86">This is a property of type [[Has type::Page]]. Contains {{emergent}} Program page name</text>
+      <sha1>0kwh10a4bi1z7z85y34frqh97t117xy</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgName</title>
+    <ns>102</ns>
+    <id>2805</id>
+    <revision>
+      <id>11642</id>
+      <parentid>11566</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="82">This is a property of type [[Has type::Text]].  Contains {{emergent}} Program name</text>
+      <sha1>azhxmddweoncus0rfoyhn7eb9nxgf0f</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgAuthor</title>
+    <ns>102</ns>
+    <id>2808</id>
+    <revision>
+      <id>11650</id>
+      <parentid>11572</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="84">This is a property of type [[Has type::Text]].  Contains {{emergent}} Program author</text>
+      <sha1>dcerysz4nysoa9ufyoemqw352zxicyk</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgEmail</title>
+    <ns>102</ns>
+    <id>2809</id>
+    <revision>
+      <id>11654</id>
+      <parentid>11576</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="84">This is a property of type [[Has type::Email]].  Contains {{emergent}} Program email</text>
+      <sha1>5onw9do21df9jeir7liaqrolevkgs19</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgFilename</title>
+    <ns>102</ns>
+    <id>2807</id>
+    <revision>
+      <id>11646</id>
+      <parentid>11570</parentid>
+      <timestamp>2016-07-28T09:12:16Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="87">This is a property of type [[Has type::Page]].  Contains {{emergent}} Program filename.</text>
+      <sha1>dkv7zpjby73ix7szt2knafnle8uxrmn</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgFirstPub</title>
+    <ns>102</ns>
+    <id>2810</id>
+    <revision>
+      <id>11658</id>
+      <parentid>11657</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="98">This is a property of type [[Has type::Date]].  Contains {{emergent}} Program first published date</text>
+      <sha1>0o5cr9yicta07wvjonjfxb26gd3yq0t</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgTags</title>
+    <ns>102</ns>
+    <id>2812</id>
+    <revision>
+      <id>11662</id>
+      <parentid>11584</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="82">This is a property of type [[Has type::Text]].  Contains {{emergent}} Program tags</text>
+      <sha1>ihsdhgeivmt78360dovj8eo0ub5mfqy</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgDesc</title>
+    <ns>102</ns>
+    <id>2814</id>
+    <revision>
+      <id>11666</id>
+      <parentid>11588</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="90">This is a property of type [[Has type::Text]].  Contains {{emergent}} Program description.</text>
+      <sha1>rfm2pk78f8gaaqsis06703v8r5t5z2z</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgVersion</title>
+    <ns>102</ns>
+    <id>2815</id>
+    <revision>
+      <id>11670</id>
+      <parentid>11592</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="92">This is a property of type [[Has type::Text]].  Contains {{emergent}} Program Version number</text>
+      <sha1>fmfnd1crrl3p109u4mark758isv4hd1</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProgFileDate</title>
+    <ns>102</ns>
+    <id>2820</id>
+    <revision>
+      <id>11674</id>
+      <parentid>11673</parentid>
+      <timestamp>2016-07-28T09:12:17Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="95">This is a property of type [[Has type::Date]].  Contains {{emergent}} Program file upload date.</text>
+      <sha1>jjsrt1j6bmuqbdv842x3nz0eivpxcyf</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchPage</title>
+    <ns>102</ns>
+    <id>2997</id>
+    <revision>
+      <id>12940</id>
+      <timestamp>2017-05-08T17:33:05Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Page]]. Contains {{emergent}} Patch page name&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="84">This is a property of type [[Has type::Page]]. Contains {{emergent}} Patch page name</text>
+      <sha1>9kp1tvhguh8snsvhve5mz0mhlg2ls52</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchName</title>
+    <ns>102</ns>
+    <id>2991</id>
+    <revision>
+      <id>12934</id>
+      <timestamp>2017-05-08T17:25:46Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchAuthor</title>
+    <ns>102</ns>
+    <id>2994</id>
+    <revision>
+      <id>12937</id>
+      <timestamp>2017-05-08T17:30:47Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].  Contains {{emergent}} Patch author&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="82">This is a property of type [[Has type::Text]].  Contains {{emergent}} Patch author</text>
+      <sha1>nbier423gxan1y24gnn28dci985y7n6</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchEmail</title>
+    <ns>102</ns>
+    <id>2993</id>
+    <revision>
+      <id>12936</id>
+      <timestamp>2017-05-08T17:29:05Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Email]].  Contains {{emergent}} Patch email&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="82">This is a property of type [[Has type::Email]].  Contains {{emergent}} Patch email</text>
+      <sha1>tkydqrtewz1x8o3qiqbud8lee34t3m4</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchFilename</title>
+    <ns>102</ns>
+    <id>2992</id>
+    <revision>
+      <id>12935</id>
+      <timestamp>2017-05-08T17:27:39Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Page]].  Contains {{emergent}} Patch filename.&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="85">This is a property of type [[Has type::Page]].  Contains {{emergent}} Patch filename.</text>
+      <sha1>8v26729y38j2erm7845dcgmt3grl84v</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchFirstPub</title>
+    <ns>102</ns>
+    <id>2996</id>
+    <revision>
+      <id>12939</id>
+      <timestamp>2017-05-08T17:32:34Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Date]].  Contains {{emergent}} Patch first published date&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="96">This is a property of type [[Has type::Date]].  Contains {{emergent}} Patch first published date</text>
+      <sha1>97iq6jwoxod53esovbjwcky4u47tyv2</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchTags</title>
+    <ns>102</ns>
+    <id>2998</id>
+    <revision>
+      <id>12941</id>
+      <timestamp>2017-05-08T17:33:41Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].  Contains {{emergent}} Patch tags&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="80">This is a property of type [[Has type::Text]].  Contains {{emergent}} Patch tags</text>
+      <sha1>hjxoupwgd93aiuowq8v4rh0q9wt22f7</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchDesc</title>
+    <ns>102</ns>
+    <id>2990</id>
+    <revision>
+      <id>12933</id>
+      <timestamp>2017-05-08T17:25:19Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchVersion</title>
+    <ns>102</ns>
+    <id>2999</id>
+    <revision>
+      <id>12942</id>
+      <timestamp>2017-05-08T17:34:14Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].  Contains {{emergent}} Patch Version number&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="90">This is a property of type [[Has type::Text]].  Contains {{emergent}} Patch Version number</text>
+      <sha1>bvat320h32dd92w6dr4zlqpdw7oy8td</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerPatchFileDate</title>
+    <ns>102</ns>
+    <id>2995</id>
+    <revision>
+      <id>12938</id>
+      <timestamp>2017-05-08T17:31:44Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Date]].  Contains {{emergent}} Patch file upload date.&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="93">This is a property of type [[Has type::Date]].  Contains {{emergent}} Patch file upload date.</text>
+      <sha1>bgx2bhrqflucnpa8pjcz7vh95qclx29</sha1>
     </revision>
   </page>
   <page>
     <title>Property:EmerVersion</title>
     <ns>102</ns>
-    <id>162</id>
+    <id>2794</id>
     <revision>
-      <id>593</id>
-      <timestamp>2015-02-24T02:54:30Z</timestamp>
+      <id>11676</id>
+      <parentid>11528</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
-      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
-      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
     </revision>
   </page>
   <page>
-    <title>Template:InfoboxEmerProject</title>
-    <ns>10</ns>
-    <id>206</id>
+    <title>Property:EmerFileType</title>
+    <ns>102</ns>
+    <id>2795</id>
     <revision>
-      <id>984</id>
-      <parentid>953</parentid>
-      <timestamp>2015-03-25T00:59:51Z</timestamp>
+      <id>11678</id>
+      <parentid>11530</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
       <minor/>
-      <comment>Rohrlich moved page [[Template:Infobox emergent project]] to [[Template:InfoboxEmerProject]] without leaving a redirect</comment>
-      <text xml:space="preserve" bytes="948">&lt;noinclude&gt;
-This is the &quot;Infobox emergent project&quot; template.
-It should be called in the following format:
-&lt;pre&gt;
-{{Infobox emergent project
-|author=
-|email=
-|project_version=
-|keyword=
-|first_pub=
-|emergent_version=
-}}
-&lt;/pre&gt;
-Edit the page to see the template text.
-&lt;/noinclude&gt;&lt;includeonly&gt;{| style=&quot;width: 30em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
-! style=&quot;text-align: center; background-color:#ccccff;&quot; colspan=&quot;2&quot; |&lt;big&gt;{{PAGENAME}}&lt;/big&gt;
-|-
-! Author
-|  [[EmerProjAuthor::{{{author|}}}]] 
-|-
-! Email
-|  [[EmerProjEmail::{{{email|}}}]] 
-|-
-! Version
-|  [[EmerProjVersion::{{{project_version|}}}]]
-|-
-! Emergent Version
-|  [[EmerVersion::{{{emergent_version|}}}]]
-|-
-! Keywords
-|  [[EmerProjKeyword::{{{keyword|}}}]]
-|-
-! First Published
-|  [[EmerProjFirstPub::{{{first_pub|}}}]]
-|}
-&lt;/includeonly&gt;</text>
-      <sha1>0t5xjlww1rknkx547oq3xr1xwv53com</sha1>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
     </revision>
   </page>
   <page>
     <title>Template:PublishedProject</title>
     <ns>10</ns>
-    <id>161</id>
+    <id>2770</id>
     <revision>
-      <id>985</id>
-      <parentid>974</parentid>
-      <timestamp>2015-03-25T01:05:03Z</timestamp>
+      <id>11739</id>
+      <parentid>11738</parentid>
+      <timestamp>2016-08-05T21:21:02Z</timestamp>
       <contributor>
-        <username>Rohrlich</username>
-        <id>2</id>
+        <username>Oreilly</username>
+        <id>3</id>
       </contributor>
-      <text xml:space="preserve" bytes="747">__NOTOC__
-
-&lt;includeonly&gt;
-{{InfoboxEmerProject
-| author={{{EmerProjAuthor|}}}
-| email={{{EmerProjEmail|}}}
-| project_version={{#show: File:{{ROOTPAGENAME}}.proj | ?EmerProjVersion }}
-| emergent_version={{#show: File:{{ROOTPAGENAME}}.proj | ?EmerVersion }}
-| keyword={{{EmerProjKeyword|}}}
-| first_pub={{{EmerProjFirstPub|}}}
-}}
-
-== Project Overview ==
-{{{emer_proj_overview|}}}
-
-== Release Notes &amp; Instructions ==
-Release note information - what has changed from one version to the next, etc.
-
-== Project File ==
-{{#ask:
-[[EmerProjName::{{ROOTPAGENAME}}]] [[EmerFileType::project]]
-| format=list
-}}
-
-== Other Files ==
-{{#ask:
-[[EmerProjName::{{ROOTPAGENAME}}]] [[EmerFileType::other]]
-| format=list
-}}
-
-[[Category:PublishedProject]]
-
-&lt;/includeonly&gt;</text>
-      <sha1>qtgs6pawh6fjpi6lfujns3oubaiglcq</sha1>
+      <minor/>
+      <comment>1 revision imported</comment>
       <model>wikitext</model>
       <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="1865">&lt;noinclude&gt;
+This is the &quot;published project&quot; template.  It should be called in the following format, 
+and ONLY creates an infobox, and sets the associated semantic media wiki property tags EmerProj*::
+&lt;pre&gt;
+{{PublishedProject
+| page_name=EmerProjPage::
+| obj_name= EmerProjName::
+| filename= EmerProjFilename::
+| author= EmerProjAuthor::
+| email= EmerProjEmail::
+| first_pub= EmerProjFirstPub::
+| tags= EmerProjTags::
+| desc=EmerProjDesc::
+| pub_cite=EmerProjCite::
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;&lt;includeonly&gt;[[Category:PublishedProject]] {{#set:EmerProjPage={{{page_name|}}}
+| EmerProjName={{{obj_name|}}}
+| EmerProjAuthor={{{author|}}} 
+| EmerProjEmail={{{email|}}}
+| EmerProjFirstPub={{{first_pub|}}}
+| EmerProjTags={{{tags|}}}
+| EmerProjDesc={{{desc|}}}
+| EmerProjCite={{{pub_cite|}}}
+}}
+{| style=&quot;width: 35em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
+! style=&quot;text-align: center; background-color:#ccccff;&quot; colspan=&quot;2&quot; |&lt;big&gt;{{PAGENAME}}&lt;/big&gt;
+|-
+! Project Name
+| {{{obj_name|}}}
+|-
+! Filename
+| [[EmerProjFilename::File:{{PAGENAMEE:{{{filename|}}}}}]] {{emerlink|.OpenProjectFromWeb({{PAGENAMEE:{{{filename|}}}}},{{canonicalurl:MainPage}})|Open Project in emergent}}
+|-
+! Author
+|  {{{author|}}}
+|-
+! Email
+| {{{email|}}}
+|-
+! Publication
+| {{cite|{{{pub_cite|none}}}}}
+|-
+! First Published
+| {{{first_pub|}}}
+|-
+! Tags
+|  {{{tags|}}}
+|-
+! Description
+|  {{{desc|}}}
+|-
+! Updated
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerProjFileDate }}
+|-
+! Versions
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerProjVersion }}
+|-
+! Emergent Versions
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerVersion }}
+|-
+! Other Files
+| {{#ask: [[EmerProjName::{{{obj_name|}}}]] [[EmerFileType::other]] }}
+|}
+&lt;/includeonly&gt;</text>
+      <sha1>snntm3j9gbgqsjtg8aefzeorbe4caxg</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:PublishedProgram</title>
+    <ns>10</ns>
+    <id>2771</id>
+    <revision>
+      <id>11682</id>
+      <parentid>11681</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="1730">&lt;noinclude&gt;
+This is the &quot;published program&quot; template. It should be called in the following format,
+and ONLY creates an infobox, and sets the associated semantic media wiki property tags EmerProg*::
+&lt;pre&gt;
+{{PublishedProgram
+| page_name=EmerProgPage::
+| obj_name= EmerProgName::
+| filename= EmerProgFilename::
+| author= EmerProgAuthor::
+| email= EmerProgEmail::
+| first_pub= EmerProgFirstPub::
+| tags= EmerProgTags::
+| desc=EmerProgDesc::
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;&lt;includeonly&gt;[[Category:PublishedProgram]] {{#set:EmerProgPage={{{page_name|}}}
+| EmerProgName={{{obj_name|}}}
+| EmerProgAuthor={{{author|}}} 
+| EmerProgEmail={{{email|}}}
+| EmerProgFirstPub={{{first_pub|}}}
+| EmerProgTags={{{tags|}}}
+| EmerProgDesc={{{desc|}}}
+}}
+{| style=&quot;width: 40em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
+! style=&quot;text-align: center; background-color:#ccccff;&quot; colspan=&quot;2&quot; |&lt;big&gt;{{PAGENAME}}&lt;/big&gt;
+|-
+! Program Name
+| {{{obj_name|}}}
+|-
+! Filename
+| [[EmerProgFilename::File:{{PAGENAMEE:{{{filename|}}}}}]]  {{emerlink|.programs.AddFromProgLibByName({{{obj_name}}})|Add to Project}} {{emerlink|.programs.{{{obj_name}}}.UpdateFromProgLibByName({{{obj_name}}})|Update existing program}}
+|-
+! Author
+| {{{author|}}}
+|-
+! Email
+| {{{email|}}}
+|-
+! First Published
+| {{{first_pub|}}}
+|-
+! Tags
+| {{{tags|}}}
+|-
+! Description
+| {{{desc|}}}
+|-
+! Updated
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerProgFileDate }}
+|-
+! Versions
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerProgVersion }}
+|-
+! Emergent Versions
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerVersion }}
+|}
+&lt;/includeonly&gt;</text>
+      <sha1>paafune9cb6nfkf0gj9h9nsei4t2a1i</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:PublishedPatch</title>
+    <ns>10</ns>
+    <id>3000</id>
+    <revision>
+      <id>12944</id>
+      <timestamp>2017-05-08T17:45:20Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt; This is the &quot;published patch&quot; template. It should be called in the following format, and ONLY creates an infobox, and sets the associated semantic media wiki prope...&quot;</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="1640">&lt;noinclude&gt;
+This is the &quot;published patch&quot; template. It should be called in the following format,
+and ONLY creates an infobox, and sets the associated semantic media wiki property tags EmerPatch*::
+&lt;pre&gt;
+{{PublishedPatch
+| page_name=EmerPatchPage::
+| obj_name= EmerPatchName::
+| filename= EmerPatchFilename::
+| author= EmerPatchAuthor::
+| email= EmerPatchEmail::
+| first_pub= EmerPatchFirstPub::
+| tags= EmerPatchTags::
+| desc=EmerPatchDesc::
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;&lt;includeonly&gt;[[Category:PublishedPatch]] {{#set:EmerPatchPage={{{page_name|}}}
+| EmerPatchName={{{obj_name|}}}
+| EmerPatchAuthor={{{author|}}} 
+| EmerPatchEmail={{{email|}}}
+| EmerPatchFirstPub={{{first_pub|}}}
+| EmerPatchTags={{{tags|}}}
+| EmerPatchDesc={{{desc|}}}
+}}
+{| style=&quot;width: 40em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
+! style=&quot;text-align: center; background-color:#ccccff;&quot; colspan=&quot;2&quot; |&lt;big&gt;{{PAGENAME}}&lt;/big&gt;
+|-
+! Patch Name
+| {{{obj_name|}}}
+|-
+! Filename
+| [[EmerPatchFilename::File:{{PAGENAMEE:{{{filename|}}}}}]]  {{emerlink|.patches.AddFromPatchLibByName({{{obj_name}}})|Add to Project}} 
+|-
+! Author
+| {{{author|}}}
+|-
+! Email
+| {{{email|}}}
+|-
+! First Published
+| {{{first_pub|}}}
+|-
+! Tags
+| {{{tags|}}}
+|-
+! Description
+| {{{desc|}}}
+|-
+! Updated
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerPatchFileDate }}
+|-
+! Versions
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerPatchVersion }}
+|-
+! Emergent Versions
+| {{#show: File:{{PAGENAMEE:{{{filename|}}}}} | ?EmerVersion }}
+|}
+&lt;/includeonly&gt;</text>
+      <sha1>stfg7a9sh544il9qvypodty2tv3p731</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:emerlink</title>
+    <ns>10</ns>
+    <id>2605</id>
+    <revision>
+      <id>11684</id>
+      <parentid>11598</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="141">[[{{{1}}}|&lt;span style=&quot;color:#000000;background-color:#C0C0C0;font-weight:bold; border:1px solid black; padding:0 3px 0 3px&quot;&gt;{{{2}}}&lt;/span&gt;]]</text>
+      <sha1>dq9y7nddsmltfxhmfqwytgf1a9xjoc9</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:emergent</title>
+    <ns>10</ns>
+    <id>2383</id>
+    <revision>
+      <id>11686</id>
+      <parentid>11600</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="12">''emergent''</text>
+      <sha1>nc6ylsef14hariva1ng4ik1fpdv325s</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:DocEditDialog</title>
+    <ns>10</ns>
+    <id>2603</id>
+    <revision>
+      <id>11806</id>
+      <parentid>11804</parentid>
+      <timestamp>2016-08-20T20:25:36Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="367">{{cmd|It is recommended that you {{emerlink|.docs.{{{1|ProjectDocs}}}.OpenInWindow()|click here to undock}} this document from the main project window. Use the Window menu to find this window if you lose it, and you can always return to this document by browsing to this document from the {{var|docs}} section in the left browser panel of the project's main window.}}</text>
+      <sha1>0od0ot4qdjaug3ewqrx94t9vo3lu3y8</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:DocQuit</title>
+    <ns>10</ns>
+    <id>2816</id>
+    <revision>
+      <id>11690</id>
+      <parentid>11604</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="285">{{cmd|You may now close the project (use the window manager close button on the project window or {{fun|File/Close Project}} menu item) and then open a new one, or just quit emergent entirely by doing {{fun|Quit emergent}} menu option or clicking the close button on the root window.}}</text>
+      <sha1>8jmpwwunbiu20bljil4fdmr9vy8di81</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:cmd</title>
+    <ns>10</ns>
+    <id>2604</id>
+    <revision>
+      <id>11692</id>
+      <parentid>11606</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="113">&lt;table cellpadding=&quot;10&quot;&gt;
+&lt;tr&gt;&lt;td style=&quot;background-color:#FFE0E0&quot;&gt; &lt;b&gt;&amp;rArr;&lt;/b&gt; {{{1}}} &lt;br&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</text>
+      <sha1>ski547hp9x20yfmwcowmvda5xsfh53t</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:eq</title>
+    <ns>10</ns>
+    <id>2817</id>
+    <revision>
+      <id>11694</id>
+      <parentid>11608</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="6">&amp;#x3d;</text>
+      <sha1>ai1p1xjvrwu0fdehgjjw6g3pbtp52bg</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:fun</title>
+    <ns>10</ns>
+    <id>2699</id>
+    <revision>
+      <id>11696</id>
+      <parentid>11610</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="80">&lt;span style=&quot;background:#E0E0E0;border:1px solid black;&quot;&gt;&lt;tt&gt;{{{1}}}&lt;/tt&gt;&lt;/span&gt;</text>
+      <sha1>a0xfiyr0qfmgbvx1bfssf85dyxkvmrc</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:hwq</title>
+    <ns>10</ns>
+    <id>2818</id>
+    <revision>
+      <id>11698</id>
+      <parentid>11612</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="139">&lt;hr&gt;
+&lt;table cellpadding=&quot;10&quot;&gt;
+&lt;tr&gt;&lt;td style=&quot;background-color:#90FF90;font-size:small&quot;&gt;&lt;b&gt;{{{1}}}:&lt;/b&gt; {{{2}}}&lt;br&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr&gt;</text>
+      <sha1>enoqumqk42datfzvfvzcvnx09fg20w0</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:var</title>
+    <ns>10</ns>
+    <id>2606</id>
+    <revision>
+      <id>11700</id>
+      <parentid>11614</parentid>
+      <timestamp>2016-07-28T09:12:18Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="63">&lt;span style=&quot;background:#FFFFD0&quot;&gt;&lt;tt&gt;&lt;b&gt;{{{1}}}&lt;/b&gt;&lt;/tt&gt;&lt;/span&gt;</text>
+      <sha1>t8zluao0nx9uq85vuw4dzpbe0p68ro5</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:cite</title>
+    <ns>10</ns>
+    <id>2826</id>
+    <revision>
+      <id>12582</id>
+      <parentid>11741</parentid>
+      <timestamp>2016-09-06T05:42:49Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="57">&lt;includeonly&gt;{{#cite: {{{1}}}|{{{2|apa}}}}}&lt;/includeonly&gt;</text>
+      <sha1>fsptwd2wjidmhjg376d0hqov7xojrs5</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:citet</title>
+    <ns>10</ns>
+    <id>2827</id>
+    <revision>
+      <id>12583</id>
+      <parentid>11743</parentid>
+      <timestamp>2016-09-06T05:43:06Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="58">&lt;includeonly&gt;{{#citet: {{{1}}}|{{{2|apa}}}}}&lt;/includeonly&gt;</text>
+      <sha1>0blqc7fyh7hf2gqk4qb1781z5rqdz2p</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:cite ref</title>
+    <ns>10</ns>
+    <id>2828</id>
+    <revision>
+      <id>11745</id>
+      <parentid>11744</parentid>
+      <timestamp>2016-08-05T21:21:03Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="58">&lt;includeonly&gt;{{#citeref: {{{1}}}|{{{2|b}}}}}&lt;/includeonly&gt;</text>
+      <sha1>qjck54woq5axq1hmv85ydkx0edy2qha</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:cite page</title>
+    <ns>10</ns>
+    <id>2829</id>
+    <revision>
+      <id>11747</id>
+      <parentid>11746</parentid>
+      <timestamp>2016-08-05T21:21:03Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="43">&lt;includeonly&gt;
+{{#citepage:}}
+&lt;/includeonly&gt;</text>
+      <sha1>lleo9zbq3z3mmil43vepr2qoi34ia1w</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>Template:incite</title>
+    <ns>10</ns>
+    <id>2830</id>
+    <revision>
+      <id>11749</id>
+      <parentid>11748</parentid>
+      <timestamp>2016-08-05T21:21:03Z</timestamp>
+      <contributor>
+        <username>Oreilly</username>
+        <id>3</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision imported</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="56">&lt;includeonly&gt;{{#citet: {{{1}}}|{{{2|b}}}}}&lt;/includeonly&gt;</text>
+      <sha1>8htox11a19z4nhl6kx4ul53mxowzhbf</sha1>
     </revision>
   </page>
 </mediawiki>
