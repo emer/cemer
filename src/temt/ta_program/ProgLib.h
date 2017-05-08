@@ -39,6 +39,8 @@ public:
 
   virtual bool  UpdateProgram(Program* prog, ObjLibEl* lib_el);
   // #CAT_ObjLib load into given program; true if loaded, false if not
+  virtual bool  DiffProgram(Program* prog, ObjLibEl* lib_el);
+  // #CAT_ObjLib diff compare program with program library version
   virtual bool  UpdateProgramFmName(Program* prog, const String& prog_nm);
   // #CAT_ObjLib update given program from program element lookup by name
   virtual bool  UpdateProgramGroup(Program_Group* prog_gp, ObjLibEl* lib_el);

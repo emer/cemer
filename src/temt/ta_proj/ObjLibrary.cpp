@@ -65,10 +65,10 @@ void ObjLibrary::BuildLibrary_impl() {
   library.Reset();  // clear existing
   int i;
   for(i=0; i< WEB_APP_LIB; i++) {
-    AddFromFiles(file_paths[i], lib_loc_names[i]);
+    AddFromFiles((LibLocs)i);
   }
   for(; i<N_LIB_LOCS; i++) {
-    AddFromWiki(wiki_names[i], file_paths[i], lib_loc_names[i]);
+    AddFromWiki((LibLocs)i);
   }
   is_built = true;
   taMisc::DoneBusy();
@@ -97,24 +97,49 @@ void ObjLibrary::InitWikiData(const String& wiki_name, const String& lib_loc_nam
 }
 
 
-void ObjLibrary::AddFromFiles(const String& path, const String& lib_loc) {
+ObjLibEl* ObjLibrary::NewLibRec(LibLocs lib_loc, const String& fname, const String& obj_nm) {
+  ObjLibEl* lel = (ObjLibEl*)library.New(1);
+  lel->lib_loc = wiki_names[lib_loc];
+  lel->lib_loc_no = lib_loc;
+  lel->filename = fname;
+  if(obj_nm.empty()) {
+    lel->name = fname.before(file_ext);
+  }
+  else {
+    lel->name = obj_nm;
+  }
+  lel->path = file_paths[lib_loc] + PATH_SEP + fname;
+  if(lib_loc < WEB_APP_LIB) {
+    lel->URL = "file:" + lel->path;
+  }
+  else {
+    lel->URL = taMisc::GetWikiURL(wiki_names[lib_loc]) + lel->name;
+  }
+  if(!SetLibElFromFile(lel)) {
+    library.Pop();          // get rid of last if set fails
+    return NULL;
+  }
+  return lel;
+}
+
+void ObjLibrary::AddFromFiles(LibLocs lib_loc) {
+  String path = file_paths[lib_loc];
   QDir dir(path);
   QStringList files = dir.entryList();
   for(int i=0;i<files.size();i++) {
     String fl = files[i];
     if(!fl.contains(file_ext))
       continue;
-    ObjLibEl* pe = (ObjLibEl*)library.New(1);
-    pe->lib_loc = lib_loc;
-    if(!SetLibElFromFile(pe, fl, path)) {
-      library.Pop();          // get rid of last if set fails
-    }
+    ObjLibEl* pe = NewLibRec(lib_loc, fl, ""); // gets name from filename
   }
 }
 
-void ObjLibrary::AddFromWiki(const String& wiki_name, const String& loc_path, const String& lib_loc) {
-  if(wiki_name.empty()) return;
+void ObjLibrary::AddFromWiki(LibLocs lib_loc) {
   if(!taMisc::InternetConnected()) return;
+  
+  String wiki_name = wiki_names[lib_loc];
+  String loc_path = file_paths[lib_loc];
+  String lib_loc_nm = lib_loc_names[lib_loc];
   DataTable obj_list;
   taMediaWiki::QueryPagesByCategory(&obj_list, wiki_name, wiki_category);
   DataCol* pt_col = obj_list.FindColName("PageTitle");
@@ -131,14 +156,23 @@ void ObjLibrary::AddFromWiki(const String& wiki_name, const String& loc_path, co
     String obj_name = obj_list.GetVal(pt_col, i).toString();
     String obj_file = obj_name + file_ext;
     String path = loc_path + PATH_SEP + obj_file;
-    // todo: could do a comparison of modification dates here and only download if newer!
-    taMediaWiki::DownloadFile(wiki_name, obj_name, path);
-    ObjLibEl* pe = (ObjLibEl*)library.New(1);
-    pe->lib_loc = lib_loc;
-    if(!SetLibElFromFile(pe, obj_file, loc_path)) {
-      library.Pop();          // get rid of last if set fails
+    QFileInfo qfi2(path);
+    if(!qfi2.exists()) {
+      // todo: could do a comparison of modification dates here and only download if newer!
+      // meanwhile, assuming that if you have it, it is good enough for the chooser
+      // but download if you actually want to use it!
+      taMediaWiki::DownloadFile(wiki_name, obj_name, path);
     }
+    ObjLibEl* pe = NewLibRec(lib_loc, obj_file, obj_name);
   }
+}
+
+bool ObjLibrary::EnsureDownloaded(ObjLibEl* lib_el) {
+  if(lib_el->lib_loc_no < WEB_APP_LIB)
+    return true;
+  // todo: need to get timestamp from server..
+  taMediaWiki::DownloadFile(wiki_names[lib_el->lib_loc_no], lib_el->name, lib_el->path);
+  return true;
 }
 
 int ObjLibrary::FindNameInLocIdx(LibLocs location, const String& el_name) {
@@ -168,16 +202,16 @@ ObjLibEl* ObjLibrary::FindNameInLocNmEl(const String& lib_loc, const String& el_
 bool ObjLibrary::SaveToLibrary(LibLocs location, taBase* obj) {
   BuildLibrary();
   if(location >= WEB_APP_LIB) {
-    return SaveToWiki(obj, file_paths[location], wiki_names[location],
-                      lib_loc_names[location]);
+    return SaveToWiki(location, obj);
   }
   else {
-    return SaveToFile(obj, file_paths[location], lib_loc_names[location]);
+    return SaveToFile(location, obj);
   }
 }
 
 
-bool ObjLibrary::SaveToFile(taBase* obj, const String& path, const String& lib_loc) {
+bool ObjLibrary::SaveToFile(LibLocs lib_loc, taBase* obj) {
+  String path = file_paths[lib_loc];
   QFileInfo qfi(path);
   if(!qfi.isDir()) {
     QDir qd;
@@ -195,16 +229,14 @@ bool ObjLibrary::SaveToFile(taBase* obj, const String& path, const String& lib_l
   obj->SaveAs(fpath);
   int cur_el_idx = FindNameInLocNmIdx(lib_loc, obj->GetName());
   if(cur_el_idx < 0) {
-    ObjLibEl* pe = (ObjLibEl*)library.New(1);
-    pe->lib_loc = lib_loc;
-    if(!SetLibElFromFile(pe, fname, path)) {
-      library.Pop();          // get rid of last if set fails
-    }
+    ObjLibEl* pe = NewLibRec(lib_loc, fname, obj->GetName());
   }
   return true;
 }
 
-bool ObjLibrary::SaveToWiki(taBase* obj, const String& wiki_name, const String& path, const String& lib_loc) {
+bool ObjLibrary::SaveToWiki(LibLocs lib_loc, taBase* obj) {
+  String wiki_name = wiki_names[lib_loc];
+  String path = file_paths[lib_loc];
   QFileInfo qfi(path);
   if(!qfi.isDir()) {
     QDir qd;
@@ -249,19 +281,13 @@ bool ObjLibrary::SaveToWiki(taBase* obj, const String& wiki_name, const String& 
 
   int cur_el_idx = FindNameInLocNmIdx(lib_loc, objnm);
   if(cur_el_idx < 0) {
-    ObjLibEl* pe = (ObjLibEl*)library.New(1);
-    pe->lib_loc = lib_loc;
-    if(!SetLibElFromFile(pe, fname, path)) {
-      library.Pop();          // get rid of last if set fails
-    }
+    ObjLibEl* pe = NewLibRec(lib_loc, fname, objnm);
   }
   return true;
 }
 
-bool ObjLibrary::SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path) {
-  lib_el->filename = fnm;
-  lib_el->URL = "file:" + path + "/" + lib_el->filename;
-  String openfnm = path + "/" + lib_el->filename;
+bool ObjLibrary::SetLibElFromFile(ObjLibEl* lib_el) {
+  String openfnm = lib_el->path;
   fstream strm;
   strm.open(openfnm, ios::in);
   if(strm.bad() || strm.eof()) {

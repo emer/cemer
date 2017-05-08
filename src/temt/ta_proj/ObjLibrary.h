@@ -67,15 +67,21 @@ public:
   
   virtual bool  SaveToLibrary(LibLocs location, taBase* obj);
   // #CAT_ObjLib save given object to given library location -- creates new program element too if it doesn't yet already exist
-  virtual bool  SaveToFile(taBase* obj, const String& path, const String& lib_loc);
+  virtual bool  SaveToFile(LibLocs lib_loc, taBase* obj);
   // #CAT_ObjLib save to file
-  virtual bool  SaveToWiki(taBase* obj, const String& wiki_name, const String& path, const String& lib_loc);
-  // #CAT_ObjLib save to file
+  virtual bool  SaveToWiki(LibLocs lib_loc, taBase* obj);
+  // #CAT_ObjLib save to wiki
 
-  virtual void  AddFromFiles(const String& path, const String& lib_loc);
+  virtual void  AddFromFiles(LibLocs lib_loc);
   // #CAT_ObjLib add items to library from given path
-  virtual void  AddFromWiki(const String& wiki_name, const String& loc_path, const String& lib_loc);
-  // #CAT_ObjLib add items to library from given wiki name
+  virtual void  AddFromWiki(LibLocs lib_loc);
+  // #CAT_ObjLib add items to library from given wiki location
+
+  virtual ObjLibEl* NewLibRec(LibLocs lib_loc, const String& fname, const String& obj_nm);
+  // #CAT_ObjLib create a new library record with initial info filled in automatically
+  
+  virtual bool  EnsureDownloaded(ObjLibEl* lib_el);
+  // #CAT_ObjLib ensure that the latest project file has been downloaded
   
   virtual void  BuildLibrary_impl();
   // #IGNORE impl of build library
@@ -88,7 +94,7 @@ public:
   // subclasses also need to init various members above for specific types -- see ProgLib
   // as example
 
-  virtual bool  SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path);
+  virtual bool  SetLibElFromFile(ObjLibEl* lib_el);
   // #IGNORE parse dump file for name, tags, desc info, to populate ObjLibEl -- should work for most classes..
   
   virtual void  SetWikiInfoToObj(taBase*obj, const String& wiki_name) { };

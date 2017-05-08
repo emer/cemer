@@ -33,8 +33,11 @@ public:
   bool                  DiffCompare(taBase* cmp_obj) override;
   // #BUTTON #MENU_ON_Svn #CAT_File compare this group of programs against another, pulling up a diff browser where the differences can be viewed, and then any changes selected to generate a Pach for each project that will convert from one into the other -- this is very robust and operates on separate major groups of objects -- strongly recommended for recording and communicating changes between projects
 
- ProgBrkPt_List        break_points;
+  ProgBrkPt_List        break_points;
   // #NO_SAVE a list of breakpoints each associated with a Program and ProgLine where the program will be stopped if the breakpoint is enabled
+
+  Program_Group         tmp_progs;
+  // #HIDDEN #TREE_HIDDEN #NO_SAVE #CAT_IGNORE temporary programs, e.g., for diff compare in program libs
 
   void  InitLinks() override;
   TA_BASEFUNS_NOCOPY(Program_TopGroup);

@@ -87,7 +87,7 @@ public:
 
   String                name; // #READ_ONLY the name of the program element -- generated automatically from the type name and content and used for finding elements
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
-  ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
+  ProgFlags             flags;  // #DIFF flags for modifying program element function or providing information about the status of this program element
   String                code_string; // #AKA_orig_prog_code #READ_ONLY #SHOW most recently uncompiled program code -- used for reverting
   int                   edit_move_after; // #IGNORE where to move after browser edit effects
   

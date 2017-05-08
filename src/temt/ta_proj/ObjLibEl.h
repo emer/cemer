@@ -34,8 +34,10 @@ public:
   String        tags;           // #EDIT_DIALOG list of comma-separated tags describing function of object
   String_Array  tags_array;     // #HIDDEN #READ_ONLY #NO_SAVE parsed version of the tags list, for internal use to actually operate on the tags
   String        lib_loc;        // #EDIT_DIALOG location within the library where this object is stored
+  int           lib_loc_no;     // #HIDDEN library location number -- corresponds to enum
   String        URL;            // #EDIT_DIALOG full URL to find this object
   String        filename;       // #EDIT_DIALOG file name given to this object
+  String        path;           // #EDIT_DIALOG full local file path where stored on local file system -- includes file name 
   String        date;           // #EDIT_DIALOG last modify date for this object
 
   virtual void  TagsToArray(); // split list of tags into tags_array

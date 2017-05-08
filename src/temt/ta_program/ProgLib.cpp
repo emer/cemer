@@ -16,6 +16,8 @@
 #include "ProgLib.h"
 #include <Program>
 #include <Program_Group>
+#include <Program_TopGroup>
+#include <ObjDiff>
 
 #include <taMisc>
 #include <tabMisc>
@@ -36,7 +38,7 @@ void ProgLib::Initialize() {
 }
 
 taBase* ProgLib::NewProgram(Program_Group* new_owner, ObjLibEl* lib_el) {
-  if(lib_el->URL.endsWith(".progp")) {
+  if(lib_el->filename.endsWith(".progp")) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
     UpdateProgramGroup(pg, lib_el);
     tabMisc::DelayedFunCall_gui(pg, "BrowserSelectFirstEl");
@@ -60,17 +62,39 @@ taBase* ProgLib::NewProgramFmName(Program_Group* new_owner, const String& prog_n
 }
 
 bool ProgLib::UpdateProgram(Program* prog, ObjLibEl* lib_el) {
-  String path = lib_el->URL;
-  if(path.contains("file:"))
-    path = path.after("file:");
-  if(path.endsWith(".progp")) {
+  if(lib_el->filename.endsWith(".progp")) {
     taMisc::Error("ProgLib::UpdateProgram -- cannot load a program group file into a single program!");
     return false;
   }
+  EnsureDownloaded(lib_el);
+  String path = lib_el->path;
   prog->Load(path);
   prog->UpdateAfterEdit();      // make sure
   prog->SigEmitUpdateAllMembers();
   prog->RunLoadInitCode();
+  return true;
+}
+
+bool ProgLib::DiffProgram(Program* prog, ObjLibEl* lib_el) {
+  if(lib_el->filename.endsWith(".progp")) {
+    taMisc::Error("ProgLib::DiffProgram -- cannot load a program group file into a single program!");
+    return false;
+  }
+  EnsureDownloaded(lib_el);
+  String path = lib_el->path;
+  Program_TopGroup* topgp = GET_OWNER(prog, Program_TopGroup);
+  Program* tmp_prog = (Program*)topgp->tmp_progs.NewEl(1, &TA_Program);
+  tmp_prog->Load(path);
+  tmp_prog->UpdateAfterEdit();      // make sure
+  tmp_prog->SigEmitUpdateAllMembers();
+  tmp_prog->RunLoadInitCode();
+
+  ObjDiff* diff = new ObjDiff;
+  diff->Diff(prog, tmp_prog);      // compute the diffs
+  diff->DisplayDialog(true);      // modal
+  diff->GeneratePatches();
+
+  tmp_prog->Close();
   return true;
 }
 
@@ -85,13 +109,12 @@ bool ProgLib::UpdateProgramFmName(Program* prog, const String& prog_nm) {
 }
 
 bool ProgLib::UpdateProgramGroup(Program_Group* prog_gp, ObjLibEl* lib_el) {
-  String path = lib_el->URL;
-  if(path.contains("file:"))
-    path = path.after("file:");
-  if(!path.endsWith(".progp")) {
-    taMisc::Error("ProgLib::LoadProgramGroup -- cannot load a single program file into a program group!");
+  if(!lib_el->filename.endsWith(".progp")) {
+    taMisc::Error("ProgLib::UpdateProgramGroup -- cannot load a single program file for program group!");
     return false;
   }
+  EnsureDownloaded(lib_el);
+  String path = lib_el->path;
   prog_gp->Load(path);
   prog_gp->UpdateAfterEdit_NoGui();
   for(int i=0;i<prog_gp->leaves;i++) {

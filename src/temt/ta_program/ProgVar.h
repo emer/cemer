@@ -70,7 +70,7 @@ public:
   TypeDef*      hard_enum_type; // #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
   DynEnum       dyn_enum_val;   // #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   bool          objs_ptr;       // #HIDDEN this is a pointer to a variable in the objs list of a program -- this flag is set by the ProgObjList object automatically
-  VarFlags      flags;          // flags controlling various things about how the variable appears and is used
+  VarFlags      flags;          // #DIFF flags controlling various things about how the variable appears and is used
   bool          reference;      // #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String        desc;           // #EDIT_DIALOG Description of what this variable is for
   ProgramRef    init_from;      // #CONDSHOW_OFF_flags:LOCAL_VAR,PGRM_ARG initialize this variable from one with the same name in another program -- value is initialized at the start of the Init and Run functions -- useful to maintain a set of global parameter variables that are used in various sub programs

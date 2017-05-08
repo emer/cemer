@@ -333,6 +333,8 @@ public:
   virtual void          SaveToProgLib(ProgLib::LibLocs location = ProgLib::USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CAT_ProgLib save the program to given program library location -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
  
+  virtual void          DiffFromProgLib(ObjLibEl* prog_lib_item);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildProgLib #CAT_ProgLib #NO_BUSY use DiffCompare to examine differences between program library version of a program, and the current one -- you can then select which changes to apply -- this is useful when you have made changes to your program that you want to preserve
   virtual void          UpdateFromProgLib(ObjLibEl* prog_lib_item);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildProgLib #CAT_ProgLib (re)load the program from the selected program library element
   virtual void          UpdateFromProgLibByName(const String& prog_nm);

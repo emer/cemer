@@ -40,9 +40,8 @@ Patch* PatchLib::NewPatch(Patch_Group* new_owner, ObjLibEl* lib_el) {
 }
 
 bool PatchLib::UpdatePatch(Patch* pat, ObjLibEl* lib_el) {
-  String path = lib_el->URL;
-  if(path.contains("file:"))
-    path = path.after("file:");
+  EnsureDownloaded(lib_el);
+  String path = lib_el->path;
   pat->Load(path);
   return true;
 }

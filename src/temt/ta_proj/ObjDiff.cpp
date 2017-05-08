@@ -319,24 +319,35 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
   // do NOT go into lists..
   TypeDef* td = a_obj->GetTypeDef();
 
+  int n_diffs = 0;
+  bool diff_string = false;
+  
   if(td->HasOption("DIFF_STRING")) {
+    diff_string = true;
     String a_val = a_obj->BrowserEditString();
     String b_val = b_obj->BrowserEditString();
-    if(a_val == b_val) return 0;
-    // co-opt the parent record now!
-    par_rec->a_val = a_val;
-    par_rec->b_val = b_val;
-    par_rec->n_diffs = 1;
-    par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
-    par_rec->SetDiffFlag(ObjDiffRec::OBJECTS);
-    par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
-    // this record is the only case of an A_B_DIFF with no mdef set!
-    return 1;
+    if(a_val != b_val) {
+      // co-opt the parent record now!
+      par_rec->a_val = a_val;
+      par_rec->b_val = b_val;
+      par_rec->n_diffs = 1;
+      par_rec->ClearDiffFlag(ObjDiffRec::PARENTS);
+      par_rec->SetDiffFlag(ObjDiffRec::OBJECTS);
+      par_rec->SetDiffFlag(ObjDiffRec::A_B_DIFF);
+      // this record is the only case of an A_B_DIFF with no mdef set!
+      return 1;
+    }
+    // otherwise, we can still trigger on diffs between members marked DIFF
   }
 
   // special cases for array / matrix cases
   if(td->InheritsFrom(&TA_DataCol)) {
-    return DiffMatrix(par_rec, ((DataCol*)a_obj)->AR(), ((DataCol*)b_obj)->AR());
+    DataCol* dc_a = (DataCol*)a_obj; 
+    DataCol* dc_b = (DataCol*)b_obj;
+    if(dc_a->rows() != dc_b->rows() && 
+       !a_top->InheritsFrom(&TA_DataTable) && !a_top->InheritsFrom(&TA_DataCol))
+      return 0;                 // row diffs already noted in DataTable
+    return DiffMatrix(par_rec, dc_a->AR(), dc_b->AR());
   }
   if(td->InheritsFrom(&TA_taMatrix)) {
     return DiffMatrix(par_rec, (taMatrix*)a_obj, (taMatrix*)b_obj);
@@ -345,15 +356,17 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
     return DiffArray(par_rec, (taArray_base*)a_obj, (taArray_base*)b_obj);
   }
 
-  int n_diffs = 0;
-  
   MemberDef* last_md = NULL;    // special option for putting one member after others!
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members[i];
-    if(md->HasNoSave() || md->IsEditorHidden() || md->HasNoDiff()
-       || md->type->HasOption("NO_DIFF"))
+    if(!md->HasOption("DIFF") && // positive diff overrides all..
+       (md->HasNoSave() || md->IsGuiReadOnly() || md->IsEditorHidden() || md->HasNoDiff()
+        || md->type->HasOption("NO_DIFF")))
       continue;
     if(md->type->InheritsFrom(&TA_taList_impl)) { // not now
+      continue;
+    }
+    if(diff_string && !md->HasOption("DIFF")) { // string diffs can still have sub-diffs
       continue;
     }
     if(md->HasOption("DIFF_LAST")) {
@@ -384,8 +397,9 @@ int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) 
     if(!md->type->InheritsFrom(&TA_taList_impl)) { // now
       continue;
     }
-    if(md->HasNoSave() || md->IsEditorHidden() || md->HasNoDiff()
-       || md->type->HasOption("NO_DIFF"))
+    if(!md->HasOption("DIFF") &&
+       (md->HasNoSave() || md->IsGuiReadOnly() || md->IsEditorHidden() || md->HasNoDiff()
+        || md->type->HasOption("NO_DIFF")))
       continue;
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..

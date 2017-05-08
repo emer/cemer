@@ -19,7 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(ObjLibEl);
 TA_BASEFUNS_CTORS_DEFN(ObjLibEl_List);
 
 void ObjLibEl::Initialize() {
-  
+  lib_loc_no = 0;
 }
 
 void ObjLibEl::TagsToArray() {

@@ -1892,6 +1892,11 @@ void Program::UpdateFromProgLib(ObjLibEl* prog_lib_item) {
   prog_lib->UpdateProgram(this, prog_lib_item);
 }
 
+void Program::DiffFromProgLib(ObjLibEl* prog_lib_item) {
+  if(TestError(!prog_lib_item, "DiffFromProgLib", "program library item is null")) return;
+  prog_lib->DiffProgram(this, prog_lib_item);
+}
+
 void Program::UpdateFromProgLibByName(const String& prog_nm) {
   if(TestError(prog_nm.empty(), "UpdateFromProgLibByName", "program name is empty")) return;
   BuildProgLib();
@@ -1932,7 +1937,9 @@ void Program::SaveSetAuthor() {
 }
 
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
-  if(fun_name != "UpdateFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
+  if(!(fun_name == "UpdateFromProgLib" || fun_name == "DiffFromProgLib")) {
+    return inherited::GetGuiArgVal(fun_name, arg_idx);
+  }
   if(!prog_lib) return  _nilVariant;
   //  return _nilVariant;                            // return nil anyway!
   ObjLibEl* pel = prog_lib->library.FindName(name); // find our name

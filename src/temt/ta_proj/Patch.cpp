@@ -114,7 +114,7 @@ bool Patch::ApplyPatch(taProject* proj) {
   proj->UpdateAll();            // big one!
   --taMisc::is_loading;
   proj->DelayedUpdateUi();
-  taMisc::Choice("The patch changes have now been applied.  Sometimes an additional F5 Update is needed to update the display completely.", "Ok");
+  taMisc::Choice("The patch changes have now been applied.  Sometimes an additional F5 Update is needed to update the display completely.  Individual PatchRec records show the status, and contain informative messages about the Patch application process -- examining failed and warning diff cases is recommended.", "Ok");
   return rval;
 }
 
