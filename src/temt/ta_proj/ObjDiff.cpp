@@ -399,8 +399,8 @@ int ObjDiff::DiffMemberLists(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) 
       continue;
     }
     if(!md->HasOption("DIFF") &&
-       (md->HasNoSave() || md->IsGuiReadOnly() || md->IsEditorHidden() || md->HasNoDiff()
-        || md->type->HasOption("NO_DIFF")))
+       (md->HasNoSave() || md->IsGuiReadOnly() || md->HasNoDiff() ||
+        md->type->HasOption("NO_DIFF")))
       continue;
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..
@@ -858,6 +858,22 @@ void ObjDiff::ReorderProjSubgps(Patch* pat) {
   }
 }
 
+void ObjDiff::NamePatch(Patch* patch, taBase* from_obj, taBase* to_obj) {
+  if(!patch) return;
+  String fmnm = from_obj->GetName();
+  String tonm = to_obj->GetName();
+  patch->from_name = fmnm;
+  patch->to_name = tonm;
+  String common = common_prefix(fmnm, tonm, 0);
+  if(common.nonempty()) {
+    tonm = tonm.after(common);
+    if(tonm.startsWith("_"))
+      tonm = tonm.after("_");
+  }
+  patch->SetName(fmnm + "_to_" + tonm);
+}
+
+
 int ObjDiff::GeneratePatches() {
   if(!a_top || !b_top) return -1; // nothing
   taProject* proj_a = (taProject*)a_top.ptr()->GetThisOrOwner(&TA_taProject);
@@ -871,11 +887,11 @@ int ObjDiff::GeneratePatches() {
   Patch* patch_a = proj_a->patches.NewPatch();
   Patch* patch_b = NULL;
 
-  patch_a->SetName(a_top->GetName() + "_from_" + b_top->GetName());
+  NamePatch(patch_a, a_top, b_top);
 
   if(!a_only) {
     patch_b = proj_b->patches.NewPatch();
-    patch_b->SetName(b_top->GetName() + "_from_" + a_top->GetName());
+    NamePatch(patch_b, b_top, a_top);
   }
 
   Patch::cur_subgp = "";

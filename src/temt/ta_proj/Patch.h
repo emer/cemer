@@ -34,16 +34,20 @@ public:
   static String         cur_subgp;      // #IGNORE new subgroup for creating new patch records -- if this is non-empty then NewPatchRec methods will create records in this subgroup
   static PatchLib*      patch_lib; // #TREE_HIDDEN #NO_SAVE #NO_FIND #HIDDEN library of available programs
  
-  String        desc;
-  // #EDIT_DIALOG description of what this patch does (used for searching to find patches -- be thorough!)
   String        tags;
   // #EDIT_DIALOG list of comma separated tags, initial letter capitalized, that indicate the applicability of this patch -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the patch library -- use Load from Patch Lib to see existing tags in use -- best to re-use where possible
+  String        desc;
+  // #EDIT_DIALOG description of what this patch does (used for searching to find patches -- be thorough!)
   String        author;
   // the patch author -- typically based on the project author from where the patch was generated, and defaults to the one saved in emergent preferences
   String        email;
   // email address for comments, questions about the project -- typically the author's email address -- by default the one saved in emergent preferences
   String        date;
   // date timestamp for when this patch was generated
+  String        from_name;
+  // name of the object on which changes were being applied, to transform into the to_name object
+  String        to_name;
+  // name of the object that was the source of changes, to transform the from_name object into this one
 
   PatchRec_Group patch_recs;    // patch records -- all the individual edits that make up this patch
 

@@ -174,6 +174,7 @@ void MemberDefBase::InitOptsFlags() {
       SetOptFlag(IS_TREE_HIDDEN); // we actually hide on tree b/c it will be shown automatically
       if(!HasShow() && !HasExpert()) {
         SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
+        SetOptFlag(IS_EDITOR_HIDDEN);
       }
     }
     else {
@@ -183,7 +184,8 @@ void MemberDefBase::InitOptsFlags() {
       else {
         if(!HasShow() && !HasExpert()) {
           SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
-        }
+          SetOptFlag(IS_EDITOR_HIDDEN);
+       }
       }
     }
   }
@@ -194,6 +196,7 @@ void MemberDefBase::InitOptsFlags() {
     else {
       if(!HasShow() && !HasExpert()) {
         SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
+        SetOptFlag(IS_EDITOR_HIDDEN);
       }
     }
   }

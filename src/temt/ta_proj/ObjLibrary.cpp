@@ -212,13 +212,23 @@ bool ObjLibrary::SaveToLibrary(LibLocs location, taBase* obj) {
 
 bool ObjLibrary::SaveToFile(LibLocs lib_loc, taBase* obj) {
   String path = file_paths[lib_loc];
+  if(lib_loc == SYSTEM_LIB && !taMisc::in_dev_exe) { // dev exe already loads from dev dir
+    // attempt to save to emergent build dir if that is found..
+    String try_path = taMisc::user_dir + PATH_SEP + taMisc::app_name + PATH_SEP +
+      file_subdir;
+    QFileInfo qfit(try_path);
+    if(qfit.isDir()) {
+      path = try_path;
+    }
+  }
   QFileInfo qfi(path);
   if(!qfi.isDir()) {
     QDir qd;
     qd.mkpath(path);          // attempt to make it..
     taMisc::Warning("Note: did mkdir for program library directory:", path);
   }
-  String fname = obj->GetName() + file_ext;
+  String objnm = obj->GetName();
+  String fname = objnm + file_ext;
   String fpath = path + PATH_SEP + fname;
   QFileInfo qfi2(fpath);
   if(qfi2.isFile()) {
@@ -227,9 +237,10 @@ bool ObjLibrary::SaveToFile(LibLocs lib_loc, taBase* obj) {
     if(chs == 1) return false;
   }
   obj->SaveAs(fpath);
-  int cur_el_idx = FindNameInLocNmIdx(lib_loc, obj->GetName());
+  taMisc::Info("Saved:", objnm, "to:", fpath);
+  int cur_el_idx = FindNameInLocNmIdx(lib_loc, objnm);
   if(cur_el_idx < 0) {
-    ObjLibEl* pe = NewLibRec(lib_loc, fname, obj->GetName());
+    ObjLibEl* pe = NewLibRec(lib_loc, fname, objnm);
   }
   return true;
 }

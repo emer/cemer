@@ -136,6 +136,7 @@ public:
 
   virtual void SetCurSubgp(taBase* obj, taProject* proj);
   virtual void ReorderProjSubgps(Patch* pat);
+  virtual void NamePatch(Patch* patch, taBase* from_obj, taBase* to_obj);
   
   virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch);

@@ -88,7 +88,7 @@ public:
   String                proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
   String                tags;      // #EDIT_DIALOG list of comma separated tags (use initial letter uppercase) that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion         version;
-  // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
+  // #NO_DIFF project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
   String                author;
   // the project author - by default the one saved in emergent preferences
   String                email;
@@ -115,7 +115,7 @@ public:
   bool                  m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool                  m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
   bool                  no_dialogs; // #HIDDEN #NO_SAVE -- UpdateAfterEdit methods can check to see if this is a good time to pop a dialog or if it should be skipped
-  String                last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
+  String                last_change_desc; // #NO_DIFF #EXPERT description of the last change made to the project -- used for change log
   String                view_plog;
   // #READ_ONLY #NO_SAVE current view of project log data
   String_Array          tree_state;  // #HIDDEN #READ_ONLY save!! this is the expand/collapse state of the navigator tree nodes

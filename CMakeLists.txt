@@ -225,6 +225,7 @@ add_custom_target(clean_system_plugins
 # share misc files
 add_subdirectory(prog_lib)
 add_subdirectory(proj_templates)
+add_subdirectory(patch_lib)
 add_subdirectory(3dobj_lib)
 add_subdirectory(css_lib)
 add_subdirectory(test)
