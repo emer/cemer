@@ -33,8 +33,10 @@ void ProgramCallVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!prog_group, quiet, rval, "prog_group is NULL");
   CheckError(!prog_name_var, quiet, rval, "prog_name_var is NULL");
-  CheckError(prog_name_var->var_type != ProgVar::T_String, quiet, rval,
-             "prog_name_var is not a String type -- must be");
+  if(prog_name_var) {
+    CheckError(prog_name_var->var_type != ProgVar::T_String, quiet, rval,
+               "prog_name_var is not a String type -- must be");
+  }
   // todo: check all args!
 }
 

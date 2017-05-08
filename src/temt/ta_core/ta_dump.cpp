@@ -1024,9 +1024,9 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
       taBase* rbase = (taBase*)base;
       rval = rbase->Dump_Load_Value(strm, (taBase*)par);
       if(rval==1) {
-	if (rbase->HasOption("IMMEDIATE_UPDATE"))
-	  rbase->UpdateAfterEdit();
-	else if(!rbase->HasOption("NO_UPDATE_AFTER")) {
+	// if (rbase->HasOption("IMMEDIATE_UPDATE"))
+	//   rbase->UpdateAfterEdit();
+	if(!rbase->HasOption("NO_UPDATE_AFTER")) {
 	  dumpMisc::update_after.Link(rbase);
 	}
 	// post load is a separate option, compatible with IMMED or NO_UA
@@ -1226,6 +1226,9 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 
   dumpMisc::vpus.Resolve(); 			// try to cache out references.
 
+#if 1
+  el->UpdateAll();
+#else
   for (int i=0; i<dumpMisc::update_after.size; i++) {
     taBase* tmp = dumpMisc::update_after.FastEl(i);
     if(taBase::GetRefn(tmp) == 0) {
@@ -1235,6 +1238,8 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     }
     tmp->UpdateAfterEdit();
   }
+#endif
+  
   rval = true;
   
 endload:

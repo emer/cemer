@@ -51,7 +51,7 @@ const String taiWidgetObjLibElChooser::headerText(int index, int view) const {
 }
 
 const String taiWidgetObjLibElChooser::titleText() {
-  return "Please choose a program from the following in the available libraries";
+  return "Please choose from the following in the available object libraries";
 }
 
 void taiWidgetObjLibElChooser::BuildCategories_impl() {

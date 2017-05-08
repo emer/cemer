@@ -2062,7 +2062,7 @@ void taBase::UpdateAll() {
     if(md->HasNoSave() || !md->type->IsActualTaBase()) continue;
     if(md->type->HasOption("NO_UPDATE_AFTER")) continue;
     taBase* md_tab = (taBase*)md->GetOff(this);
-    md_tab->UpdateAfterEdit();
+    md_tab->UpdateAll();
   }
 }
 

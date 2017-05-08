@@ -88,18 +88,16 @@ public:
   // subclasses also need to init various members above for specific types -- see ProgLib
   // as example
 
-  virtual bool  SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path)
-  { return false; }
-  // get object information from file into library element -- subclasses MUST override this!
-  
+  virtual bool  SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path);
+  // #IGNORE parse dump file for name, tags, desc info, to populate ObjLibEl -- should work for most classes..
   
   virtual void  SetWikiInfoToObj(taBase*obj, const String& wiki_name) { };
-  // #CAT_ObjLib subclasses must implement this to set wiki name if relevant into object, prior to uploading to wiki
+  // #IGNORE subclasses must implement this to set wiki name if relevant into object, prior to uploading to wiki
 
   virtual void  GetWikiInfoFromObj
     (taBase* obj, String*& tags, String*& desc, taProjVersion*& version, String*& author,
      String*& email, String*& pub_cite) { };
-  // #CAT_ObjLib subclasses must implement this to get wiki info from object, prior to uploading to wiki
+  // #IGNORE subclasses must implement this to get wiki info from object, prior to uploading to wiki
   
 
   

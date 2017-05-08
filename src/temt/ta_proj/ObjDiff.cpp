@@ -235,9 +235,10 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
 
   if(list_a->InheritsFrom(&TA_taGroup_impl)) {
     int rollback_idx = diffs.size; // rollback to here if no further diffs
-    ObjDiffRec* new_par = NewParRec(par_rec, list_a, list_b);
-    int n_gp_diffs = DiffLists(new_par, &(((taGroup_impl*)list_a)->gp),
-                               &(((taGroup_impl*)list_b)->gp));
+    taSubGroup* gp_a = &(((taGroup_impl*)list_a)->gp);
+    taSubGroup* gp_b = &(((taGroup_impl*)list_b)->gp);
+    ObjDiffRec* new_par = NewParRec(par_rec, gp_a, gp_b);
+    int n_gp_diffs = DiffLists(new_par, gp_a, gp_b);
     if(n_gp_diffs == 0) {
       RollBack(rollback_idx);
     }
@@ -809,6 +810,32 @@ void ObjDiff::SetCurSubgp(taBase* obj, Patch* pat, taProject* proj) {
   }
 }
 
+void ObjDiff::ReorderProjSubgps(Patch* pat) {
+  // params need to have the stuff they point to in place already!
+  taSubGroup& subgp = pat->patch_recs.gp;
+  if(subgp.size < 2) return;
+  int last_idx = subgp.size-1;
+  int n_moved = 0;
+  for(int i=0; i< subgp.size - n_moved; i++) {
+    Patch_Group* gp = (Patch_Group*)subgp[i];
+    if(gp->name == "ctrl_panels") {
+      subgp.MoveIdx(i, last_idx);
+      i--;
+      n_moved++;
+    }
+    else if(gp->name == "active_params") {
+      subgp.MoveIdx(i, last_idx);
+      i--;
+      n_moved++;
+    }
+    else if(gp->name == "archived_params") {
+      subgp.MoveIdx(i, last_idx);
+      i--;
+      n_moved++;
+    }
+  }
+}
+
 int ObjDiff::GeneratePatches() {
   if(!a_top || !b_top) return -1; // nothing
   taProject* proj_a = (taProject*)a_top.ptr()->GetThisOrOwner(&TA_taProject);
@@ -889,21 +916,40 @@ int ObjDiff::GeneratePatches() {
     }
     prv_rec = rec;
   }
-  
-  patch_a->SigEmitUpdated();
-  patch_b->SigEmitUpdated();
 
-  if(modify_a) {
-    patch_a->ApplyPatch(proj_a);
+  if(patch_a->patch_recs.leaves == 0) {
+    patch_a->Close();
+    patch_a = NULL;
   }
-  else {
-    tabMisc::DelayedFunCall_gui(patch_a, "BrowserSelectMe");
+  if(patch_b->patch_recs.leaves == 0) {
+    patch_b->Close();
+    patch_b = NULL;
   }
-  if(modify_b) {
-    patch_b->ApplyPatch(proj_b);
+
+  if(patch_a) {
+    if(proj_diff) {
+      ReorderProjSubgps(patch_a);
+    }
+    patch_a->SigEmitUpdated();
+    if(modify_a) {
+      patch_a->ApplyPatch(proj_a);
+    }
+    else {
+      tabMisc::DelayedFunCall_gui(patch_a, "BrowserSelectMe");
+    }
   }
-  else {
-    tabMisc::DelayedFunCall_gui(patch_b, "BrowserSelectMe");
+
+  if(patch_b) {
+    if(proj_diff) {
+      ReorderProjSubgps(patch_b);
+    }
+    patch_b->SigEmitUpdated();
+    if(modify_b) {
+      patch_b->ApplyPatch(proj_b);
+    }
+    else {
+      tabMisc::DelayedFunCall_gui(patch_b, "BrowserSelectMe");
+    }
   }
   
   return n_patches;

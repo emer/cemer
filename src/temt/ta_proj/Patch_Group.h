@@ -20,6 +20,7 @@
 #include <taGroup>
 
 // member includes:
+#include <PatchLib>
 
 // declare all other types mentioned but not required to include:
 class Patch; //
@@ -31,21 +32,21 @@ class TA_API Patch_Group : public taGroup<Patch> {
   // ##CAT_Patch ##EXPAND_DEF_1 a group of patches, where each patch is a set of edits to change a project based on changes (diffs) generated from other projects
 INHERITED(taGroup<Patch>)
 public:
-  enum PatchLibs {              // patch library locations
-    USER_LIB,                   // user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent patch_lib)
-    SYSTEM_LIB,                 // local system library, installed with software, in /usr/local/share/Emergent/patch_lib
-    WEB_APP_LIB,                // web-based application-specific library (e.g., emergent)
-    WEB_SCI_LIB,                // web-based scientifically oriented library (e.g., CCN)
-    WEB_USER_LIB,               // web-based user's library (e.g., from lab wiki)
-  };
+  static PatchLib patch_lib; // #TREE_HIDDEN #HIDDEN #NO_SAVE library of available patches
 
   virtual void  LoadPatch();
-  // #BUTTON load a patch from local file system
-  virtual void  FindPatches(PatchLibs patch_library);
-  // #BUTTON browse for patches on web in given patch library location 
+  // #BUTTON #CAT_Patch load a patch from local file system
   
+  virtual void    BuildPatchLib();
+  // #CAT_IGNORE build the patch library -- find all the patches -- called just-in-time when needed
+  
+  virtual Patch*  AddFromPatchLib(ObjLibEl* patch_lib_item);
+  // #BUTTON #MENU_CONTEXT #FROM_LIST_patch_lib.library #NO_SAVE_ARG_VAL #PRE_CALL_BuildPatchLib #CAT_PatchLib create a new patch from a library of existing patches
+  virtual void    BrowsePatchLib(PatchLib::LibLocs location = PatchLib::WEB_APP_LIB);
+  // #BUTTON #MENU_CONTEXT #CAT_PatchLib browse given patch library location using web browser (or file browser for local files -- less useful) -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent patch_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/patch_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
+
   virtual Patch*  NewPatch();
-  // get a new patch record
+  // #CAT_Patch get a new patch record
 
   String        GetTypeDecoKey() const override { return "ControlPanel"; }
 

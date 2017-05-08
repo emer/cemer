@@ -44,7 +44,6 @@ public:
   virtual bool  UpdateProgramGroup(Program_Group* prog_gp, ObjLibEl* lib_el);
   // #CAT_ObjLib load into given program; true if loaded, false if not
 
-  bool  SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path) override;
   void  SetWikiInfoToObj(taBase* obj, const String& wiki_name) override;
   void  GetWikiInfoFromObj
     (taBase* obj, String*& tags, String*& desc, taProjVersion*& version, String*& author,

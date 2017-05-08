@@ -42,14 +42,14 @@ public:
   bool                  debug_mode; // ProgEls can check this to conditionally turn on/off elements
 
   virtual void    BuildProgLib();
-  // build the program library -- find all the programs -- called just-in-time when needed
+  // #CAT_IGNORE build the program library -- find all the programs -- called just-in-time when needed
   
   virtual taBase* AddFromProgLib(ObjLibEl* prog_lib_item);
-  // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib.library #NO_SAVE_ARG_VAL #PRE_CALL_BuildProgLib #CAT_Program create a new program from a library of existing programs
+  // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib.library #NO_SAVE_ARG_VAL #PRE_CALL_BuildProgLib #CAT_PatchLib create a new program from a library of existing programs
   virtual taBase* AddFromProgLibByName(const String& prog_nm);
-  // #CAT_Program create a new program from a library of existing program types, looking up by name (NULL if name not found)
+  // #CAT_PatchLib create a new program from a library of existing program types, looking up by name (NULL if name not found)
    virtual void   UpdateFromProgLib(ObjLibEl* prog_lib_item);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildProgLib #CAT_Program (re)load the current program group from the selected program library element
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildProgLib #CAT_PatchLib (re)load the current program group from the selected program library element
   virtual void    BrowseProgLib(ProgLib::LibLocs location = ProgLib::WEB_APP_LIB);
   // #BUTTON #MENU_CONTEXT #CAT_ProgLib browse given program library location using web browser (or file browser for local files -- less useful) -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
 

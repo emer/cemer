@@ -21,6 +21,7 @@
 
 // member includes:
 #include <PatchRec_Group>
+#include <PatchLib>
 
 // declare all other types mentioned but not required to include:
 
@@ -30,9 +31,13 @@ class TA_API Patch : public taNBase {
   // ##CAT_Patch ##EXPAND_DEF_1 #STEM_BASE ##EXT_patch a patch is a set of edits to change a project based on changes (diffs) generated from other projects
 INHERITED(taNBase)
 public:
-  static String cur_subgp;      // #IGNORE new subgroup for creating new patch records -- if this is non-empty then NewPatchRec methods will create records in this subgroup
+  static String         cur_subgp;      // #IGNORE new subgroup for creating new patch records -- if this is non-empty then NewPatchRec methods will create records in this subgroup
+  static PatchLib*      patch_lib; // #TREE_HIDDEN #NO_SAVE #NO_FIND #HIDDEN library of available programs
  
-  String        desc;           // #EDIT_DIALOG description of what this patch does
+  String        desc;
+  // #EDIT_DIALOG description of what this patch does (used for searching to find patches -- be thorough!)
+  String        tags;
+  // #EDIT_DIALOG list of comma separated tags, initial letter capitalized, that indicate the applicability of this patch -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the patch library -- use Load from Patch Lib to see existing tags in use -- best to re-use where possible
   String        author;
   // the patch author -- typically based on the project author from where the patch was generated, and defaults to the one saved in emergent preferences
   String        email;
@@ -42,9 +47,18 @@ public:
 
   PatchRec_Group patch_recs;    // patch records -- all the individual edits that make up this patch
 
-  virtual bool   ApplyPatch(taProject* proj);
+  virtual bool          ApplyPatch(taProject* proj);
   // #BUTTON apply this patch to the selected project
 
+  virtual void          SavePatch();
+  // #BUTTON #CAT_Patch save patch locally to a local file
+  
+  virtual void          BuildPatchLib();
+  // #CAT_IGNORE initialize the patch library -- find all the patches -- called just-in-time when needed
+  virtual void          SaveToPatchLib(PatchLib::LibLocs location = PatchLib::USER_LIB);
+  // #BUTTON #MENU_CONTEXT #CAT_PatchLib save the patch to given patch library location -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent patch_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/patch_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
+  virtual void          UpdateFromPatchLib(ObjLibEl* patch_lib_item);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_patch_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildPatchLib #CAT_PatchLib (re)load the patch from the selected patch library element
 
   ////////////////////////////////////////
   // Patch generation API
@@ -73,7 +87,7 @@ protected:
   int                last_obj_added_idx; // for an insert, the last object added for the last_before path -- becomes the new before...
     
 private:
-  void Initialize()  { };
+  void Initialize();
   void Destroy()     { };
 };
 

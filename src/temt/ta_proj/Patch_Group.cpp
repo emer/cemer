@@ -24,15 +24,14 @@
 
 TA_BASEFUNS_CTORS_DEFN(Patch_Group);
 
+PatchLib Patch_Group::patch_lib;
+
 void Patch_Group::Initialize() {
   SetBaseType(&TA_Patch);
 }
 
 void Patch_Group::LoadPatch() {
   CallFun("Load");              // args etc
-}
-
-void Patch_Group::FindPatches(PatchLibs patch_library) {
 }
 
 Patch* Patch_Group::NewPatch() {
@@ -45,3 +44,16 @@ Patch* Patch_Group::NewPatch() {
   }
   return patch;
 }
+
+void Patch_Group::BuildPatchLib() {
+  patch_lib.BuildLibrary();
+}
+
+Patch* Patch_Group::AddFromPatchLib(ObjLibEl* patch_lib_item) {
+  return patch_lib.NewPatch(this, patch_lib_item);
+}
+
+void Patch_Group::BrowsePatchLib(PatchLib::LibLocs location) {
+  patch_lib.BrowseLibrary(location);
+}
+

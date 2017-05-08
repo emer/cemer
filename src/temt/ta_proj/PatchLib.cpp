@@ -15,13 +15,53 @@
 
 #include "PatchLib.h"
 #include <Patch>
+#include <Patch_Group>
+
+#include <taMisc>
+#include <tabMisc>
 
 TA_BASEFUNS_CTORS_DEFN(PatchLib);
+
+using namespace std;
 
 void PatchLib::Initialize() {
   file_subdir = "patch_lib";
   file_ext = ".patch";
-  wiki_category = "PatchLibrary";
+  wiki_category = "PublishedPatch";
   obj_type = &TA_Patch;
 }
 
+Patch* PatchLib::NewPatch(Patch_Group* new_owner, ObjLibEl* lib_el) {
+  Patch* pat = (Patch*)new_owner->NewEl(1);
+  UpdatePatch(pat, lib_el);
+  if(taMisc::gui_active)
+    tabMisc::DelayedFunCall_gui(pat, "BrowserSelectMe");
+  return pat;
+}
+
+bool PatchLib::UpdatePatch(Patch* pat, ObjLibEl* lib_el) {
+  String path = lib_el->URL;
+  if(path.contains("file:"))
+    path = path.after("file:");
+  pat->Load(path);
+  return true;
+}
+
+void PatchLib::SetWikiInfoToObj(taBase* obj, const String& wiki_name) {
+  Patch* pat = (Patch*)obj;
+  // pat->doc.wiki = wiki_name;
+  // pat->doc.url = pat->name;
+}
+
+void PatchLib::GetWikiInfoFromObj
+(taBase* obj, String*& tags, String*& desc, taProjVersion*& version, String*& author,
+ String*& email, String*& pub_cite) {
+  Patch* pat = (Patch*)obj;
+  tags = &pat->tags;
+  desc = &pat->desc;
+  //  version = &pat->version;
+  author = &pat->author;
+  email = &pat->email;
+  // nothing for pub_cite -- has a backup val so just leave
+}
+  

@@ -134,7 +134,8 @@ public:
   // fast find of index from array -- starts at idx and moves backward
 
   virtual void SetCurSubgp(taBase* obj, Patch* pat, taProject* proj);
-
+  virtual void ReorderProjSubgps(Patch* pat);
+  
   virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_DelA(ObjDiffRec* rec, Patch* patch);

@@ -17,12 +17,25 @@
 #include <PatchRec>
 #include <PatchRec_Group>
 #include <taProject>
+#include <Patch_Group>
 
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Patch);
 
 String Patch::cur_subgp;
+PatchLib* Patch::patch_lib = NULL;
+
+void Patch::Initialize() {
+  if(!patch_lib) {
+    patch_lib = &Patch_Group::patch_lib;
+  }
+}
+
+
+void Patch::SavePatch() {
+  CallFun("SaveAs");
+}
 
 PatchRec* Patch::NewRec_impl(const String& subgp) {
   PatchRec* rval = NULL;
@@ -78,7 +91,6 @@ bool Patch::ApplyPatch(taProject* proj) {
   last_insert_own_path = "";
   last_before_idx = -1;
   last_obj_added_idx = -1;
-  proj->StructUpdate(true);
   ++taMisc::is_loading;         // prevent lots of error messages etc -- patching is like loading
   taMisc::loading_version = taMisc::version_bin;
   bool fail_prompt = true;
@@ -99,8 +111,23 @@ bool Patch::ApplyPatch(taProject* proj) {
       }
     }
   }
+  proj->UpdateAll();            // big one!
   --taMisc::is_loading;
-  proj->StructUpdate(false);
+  proj->DelayedUpdateUi();
+  taMisc::Choice("The patch changes have now been applied.  Sometimes an additional F5 Update is needed to update the display completely.", "Ok");
   return rval;
+}
+
+void Patch::BuildPatchLib() {
+  patch_lib->BuildLibrary();
+}
+
+void Patch::SaveToPatchLib(PatchLib::LibLocs location) {
+  patch_lib->SaveToLibrary(location, this);
+}
+
+void Patch::UpdateFromPatchLib(ObjLibEl* patch_lib_item) {
+  if(TestError(!patch_lib_item, "UpdateFromPatchLib", "patch library item is null")) return;
+  patch_lib->UpdatePatch(this, patch_lib_item);
 }
 

@@ -19,6 +19,7 @@
 #include <taMediaWiki>
 #include <DataTable>
 #include <taProjVersion>
+#include <taDateTime>
 
 #include <taMisc>
 
@@ -27,6 +28,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(ObjLibrary);
 
+using namespace std;
 
 void ObjLibrary::Initialize() {
   is_built = false;
@@ -255,3 +257,45 @@ bool ObjLibrary::SaveToWiki(taBase* obj, const String& wiki_name, const String& 
   }
   return true;
 }
+
+bool ObjLibrary::SetLibElFromFile(ObjLibEl* lib_el, const String& fnm, const String& path) {
+  lib_el->filename = fnm;
+  lib_el->URL = "file:" + path + "/" + lib_el->filename;
+  String openfnm = path + "/" + lib_el->filename;
+  fstream strm;
+  strm.open(openfnm, ios::in);
+  if(strm.bad() || strm.eof()) {
+    taMisc::Error("ObjLibrary::SetLibElFromFile: could not open file name:", openfnm);
+    return false;
+  }
+  bool rval = false;
+  int c = taMisc::read_till_rb_or_semi(strm); // skips over entire path header!
+  while((c != EOF) && !strm.eof() && !strm.bad()) {
+    c = taMisc::read_till_eol(strm); // skip next line
+    if(c == EOF) break;
+    if(taMisc::LexBuf.contains("name=")) {
+      lib_el->name = taMisc::LexBuf.after("name=");
+      lib_el->name.gsub("\"", "");
+      if(lib_el->name.lastchar() == ';') lib_el->name = lib_el->name.before(';');
+    }
+    if(taMisc::LexBuf.contains("tags=")) {
+      lib_el->tags = taMisc::LexBuf.after("tags=");
+      lib_el->tags.gsub("\"", "");
+      if(lib_el->tags.lastchar() == ';') lib_el->tags = lib_el->tags.before(';');
+      lib_el->TagsToArray();
+    }
+    if(taMisc::LexBuf.contains("desc=")) {
+      lib_el->desc = taMisc::LexBuf.after("desc=");
+      lib_el->desc.gsub("\"", "");
+      if(lib_el->desc.lastchar() == ';') lib_el->desc = lib_el->desc.before(';');
+      rval = true;
+      break;
+    }
+  }
+  strm.close();
+  QFileInfo urlinfo(openfnm);
+  QDateTime mod = urlinfo.lastModified();
+  lib_el->date = mod.toString(taDateTime::DateTimeStampFormat);
+  return rval;
+}
+
