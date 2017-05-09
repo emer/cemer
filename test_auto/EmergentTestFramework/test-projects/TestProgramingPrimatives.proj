@@ -5425,7 +5425,7 @@ LeabraProject .projects[0] {
 	};
        };
        AssignExpr @[1] {
-	name="AssignExpr_param1Configurat_param1curconfig";
+	name="AssignExpr_param1configurat_param1curconfig";
 	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="param_1 = configurations[\\\"param_1\\\"][cur_config]";
@@ -5435,7 +5435,7 @@ LeabraProject .projects[0] {
 	};
        };
        AssignExpr @[2] {
-	name="AssignExpr_param2Configurat_param2curconfig";
+	name="AssignExpr_param2configurat_param2curconfig";
 	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="param_2 = configurations[\\\"param_2\\\"][cur_config]";
@@ -5580,7 +5580,7 @@ LeabraProject .projects[0] {
 	  };
 	 };
 	 MethodCall @[2] {
-	  name="MethodCall_InputDataEnforceRows1";
+	  name="MethodCall_inputdataEnforceRows1";
 	  desc="make sure we've got a row";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data->EnforceRows(1)";
@@ -5607,7 +5607,7 @@ LeabraProject .projects[0] {
 	  meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
 	 };
 	 MemberMethodCall @[3] {
-	  name="MemberMethodCall_InputDataInputInitVals00";
+	  name="MemberMethodCall_inputdataInputInitVals00";
 	  desc="initialize the values so we can write to them";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data.Input.InitVals(0.0)";
@@ -5635,7 +5635,7 @@ LeabraProject .projects[0] {
 	  meth_desc=" initialize all values in this column to given value";
 	 };
 	 CssExpr @[4] {
-	  name="CssExpr_InputDataInputunitval0110";
+	  name="CssExpr_inputdataInputunitval0110";
 	  desc="key advantage of enum: you can use them as a number (here as an index)";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data[\\\"Input\\\"][unit_val,0,-1] = 1.0;";
@@ -5644,7 +5644,7 @@ LeabraProject .projects[0] {
 	  };
 	 };
 	 CssExpr @[5] {
-	  name="CssExpr_InputDataName1Stringunitval";
+	  name="CssExpr_inputdataName1Stringunitval";
 	  desc="but *also* as a string -- here we tell it to use the name (string) form";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data[\\\"Name\\\"][-1] = (String)unit_val;";
@@ -5784,7 +5784,7 @@ LeabraProject .projects[0] {
 	  debug=0;
 	 };
 	 MethodCall @[7] {
-	  name="MethodCall_InputDataResetData";
+	  name="MethodCall_inputdataResetData";
 	  desc="clear out any existing rows";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data->ResetData()";
@@ -5800,7 +5800,7 @@ LeabraProject .projects[0] {
 	  meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
 	 };
 	 ForeachLoop @[8] {
-	  name="ForeachLoop_foreachiinTestOrdersEnumValsrow";
+	  name="ForeachLoop_foreachiintestordersEnumValsrow";
 	  desc="iterate over all the items listed in the cell";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="foreach(i in test_orders[\\\"EnumVals\\\"][:,row])";
@@ -5809,7 +5809,7 @@ LeabraProject .projects[0] {
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
-	    name="MethodCall_InputDataAddBlankRow";
+	    name="MethodCall_inputdataAddBlankRow";
 	    desc="add a new row";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data->AddBlankRow()";
@@ -5825,7 +5825,7 @@ LeabraProject .projects[0] {
 	    meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
 	   };
 	   CssExpr @[1] {
-	    name="CssExpr_InputDataInputi0110";
+	    name="CssExpr_inputdataInputi0110";
 	    desc="see RUN case above -- note we need ; at end when doing [ ] expressions on left-hand-side of =";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data[\\\"Input\\\"][i,0,-1] = 1.0;";
@@ -5834,7 +5834,7 @@ LeabraProject .projects[0] {
 	    };
 	   };
 	   CssExpr @[2] {
-	    name="CssExpr_InputDataName1StringUnitNamesi";
+	    name="CssExpr_inputdataName1StringUnitNamesi";
 	    desc="this is a fancy double-cast of the integer i first into the enum, and then into the string, to get the name";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data[\\\"Name\\\"][-1] = (String)(UnitNames)i;";
@@ -5853,7 +5853,7 @@ LeabraProject .projects[0] {
 	    debug=0;
 	   };
 	   MethodCall @[4] {
-	    name="MethodCall_InputDataWriteClose";
+	    name="MethodCall_inputdataWriteClose";
 	    desc="tells the gui etc that you're done writing to this row";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data->WriteClose()";
@@ -6160,12 +6160,12 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[6] {
-      name="PrintExpr_Printana";
+      name="PrintExpr_Printaa";
       desc="matricies have a pretty-print output (or pretty enough anyway)";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a:\\\\n\\\" << a";
+      code_string="Print \\\"a:\\n\\\" << a";
       expr {
-       expr="\\\"a:\\\\n\\\" << a";
+       expr="\\\"a:\\n\\\" << a";
       };
       debug=0;
      };
@@ -6185,22 +6185,22 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[9] {
-      name="PrintExpr_Printbshapeanbendl";
+      name="PrintExpr_Printbshapeabendl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"b = shape(a)\\\\n\\\" << b << endl";
+      code_string="Print \\\"b = shape(a)\\n\\\" << b << endl";
       expr {
-       expr="\\\"b = shape(a)\\\\n\\\" << b << endl";
+       expr="\\\"b = shape(a)\\n\\\" << b << endl";
       };
       debug=0;
      };
      PrintExpr @[10] {
-      name="PrintExpr_Printndimsanndimsaendl";
+      name="PrintExpr_Printndimsandimsaendl";
       desc="number of dimensions";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"ndims(a):\\\\n\\\" << ndims(a) << endl";
+      code_string="Print \\\"ndims(a):\\n\\\" << ndims(a) << endl";
       expr {
-       expr="\\\"ndims(a):\\\\n\\\" << ndims(a) << endl";
+       expr="\\\"ndims(a):\\n\\\" << ndims(a) << endl";
       };
       debug=0;
      };
@@ -6211,22 +6211,22 @@ LeabraProject .projects[0] {
       code_string="// == accessing cells in the matrix ==";
      };
      PrintExpr @[12] {
-      name="PrintExpr_Printa10na10endl";
+      name="PrintExpr_Printa10a10endl";
       desc="access a specific cell in a -- first idx is always inner-most dim (col)";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a[1,0]:\\\\n\\\" << a[1,0] << endl";
+      code_string="Print \\\"a[1,0]:\\n\\\" << a[1,0] << endl";
       expr {
-       expr="\\\"a[1,0]:\\\\n\\\" << a[1,0] << endl";
+       expr="\\\"a[1,0]:\\n\\\" << a[1,0] << endl";
       };
       debug=0;
      };
      PrintExpr @[13] {
-      name="PrintExpr_Printa0na0endl";
+      name="PrintExpr_Printa0a0endl";
       desc="if you put a : in for a dimension, you get the whole thing";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a[:,0]:\\\\n\\\" << a[:,0] << endl";
+      code_string="Print \\\"a[:,0]:\\n\\\" << a[:,0] << endl";
       expr {
-       expr="\\\"a[:,0]:\\\\n\\\" << a[:,0] << endl";
+       expr="\\\"a[:,0]:\\n\\\" << a[:,0] << endl";
       };
       debug=0;
      };
@@ -6237,12 +6237,12 @@ LeabraProject .projects[0] {
       code_string="// note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
      };
      PrintExpr @[15] {
-      name="PrintExpr_Printa021na021endl";
+      name="PrintExpr_Printa021a021endl";
       desc=": is actually a subset of full start:end:increment syntax for specifying a range";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a[0:2:1,:]:\\\\n\\\" << a[0:2:1,:] << endl";
+      code_string="Print \\\"a[0:2:1,:]:\\n\\\" << a[0:2:1,:] << endl";
       expr {
-       expr="\\\"a[0:2:1,:]:\\\\n\\\" << a[0:2:1,:] << endl";
+       expr="\\\"a[0:2:1,:]:\\n\\\" << a[0:2:1,:] << endl";
       };
       debug=0;
      };
@@ -6271,12 +6271,12 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[19] {
-      name="PrintExpr_Printb0a1nb";
+      name="PrintExpr_Printb0a1b";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"b[:,0] = a[:,1]:\\\\n\\\" << b";
+      code_string="Print \\\"b[:,0] = a[:,1]:\\n\\\" << b";
       expr {
-       expr="\\\"b[:,0] = a[:,1]:\\\\n\\\" << b";
+       expr="\\\"b[:,0] = a[:,1]:\\n\\\" << b";
       };
       debug=0;
      };
@@ -6290,12 +6290,12 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[21] {
-      name="PrintExpr_Printb3nbendl";
+      name="PrintExpr_Printb3bendl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"b=3:\\\\n\\\" << b << endl";
+      code_string="Print \\\"b=3:\\n\\\" << b << endl";
       expr {
-       expr="\\\"b=3:\\\\n\\\" << b << endl";
+       expr="\\\"b=3:\\n\\\" << b << endl";
       };
       debug=0;
      };
@@ -6309,12 +6309,12 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[23] {
-      name="PrintExpr_Printb102030nbendl";
+      name="PrintExpr_Printb102030bendl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"b = [10,20,30]:\\\\n\\\" << b << endl";
+      code_string="Print \\\"b = [10,20,30]:\\n\\\" << b << endl";
       expr {
-       expr="\\\"b = [10,20,30]:\\\\n\\\" << b << endl";
+       expr="\\\"b = [10,20,30]:\\n\\\" << b << endl";
       };
       debug=0;
      };
@@ -6325,12 +6325,12 @@ LeabraProject .projects[0] {
       code_string="// == making matricies out of matricies ==";
      };
      PrintExpr @[25] {
-      name="PrintExpr_Printaaaanaaaaendl";
+      name="PrintExpr_Printaaaaaaaaendl";
       desc="this is now a 4D matrix";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"[a,a; a,a]:\\\\n\\\" << [a,a; a,a] << endl";
+      code_string="Print \\\"[a,a; a,a]:\\n\\\" << [a,a; a,a] << endl";
       expr {
-       expr="\\\"[a,a; a,a]:\\\\n\\\" << [a,a; a,a] << endl";
+       expr="\\\"[a,a; a,a]:\\n\\\" << [a,a; a,a] << endl";
       };
       debug=0;
      };
@@ -6341,12 +6341,12 @@ LeabraProject .projects[0] {
       code_string="// == matrix math ==";
      };
      PrintExpr @[27] {
-      name="PrintExpr_Printaanaaendl";
+      name="PrintExpr_Printaaaaendl";
       desc="all your favorites are here.. * and / are element wise!!";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a+a:\\\\n\\\" << a+a << endl";
+      code_string="Print \\\"a+a:\\n\\\" << a+a << endl";
       expr {
-       expr="\\\"a+a:\\\\n\\\" << a+a << endl";
+       expr="\\\"a+a:\\n\\\" << a+a << endl";
       };
       debug=0;
      };
@@ -6360,62 +6360,62 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[29] {
-      name="PrintExpr_Printmatmultabnmatmultabendl";
+      name="PrintExpr_Printmatmultabmatmultabendl";
       desc="this is how you do full matrix multiplication";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"mat_mult(a,b):\\\\n\\\" << mat_mult(a,b) << endl";
+      code_string="Print \\\"mat_mult(a,b):\\n\\\" << mat_mult(a,b) << endl";
       expr {
-       expr="\\\"mat_mult(a,b):\\\\n\\\" << mat_mult(a,b) << endl";
+       expr="\\\"mat_mult(a,b):\\n\\\" << mat_mult(a,b) << endl";
       };
       debug=0;
      };
      PrintExpr @[30] {
-      name="PrintExpr_Printmaxanmaxaendl";
+      name="PrintExpr_Printmaxamaxaendl";
       desc="yes, min is avail too";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"max(a):\\\\n\\\" << max(a) << endl";
+      code_string="Print \\\"max(a):\\n\\\" << max(a) << endl";
       expr {
-       expr="\\\"max(a):\\\\n\\\" << max(a) << endl";
+       expr="\\\"max(a):\\n\\\" << max(a) << endl";
       };
       debug=0;
      };
      PrintExpr @[31] {
-      name="PrintExpr_Printmaxa2nmaxa2endl";
+      name="PrintExpr_Printmaxa2maxa2endl";
       desc="this is now an element-wise operator with the scalar";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"max(a,2):\\\\n\\\" << max(a,2) << endl";
+      code_string="Print \\\"max(a,2):\\n\\\" << max(a,2) << endl";
       expr {
-       expr="\\\"max(a,2):\\\\n\\\" << max(a,2) << endl";
+       expr="\\\"max(a,2):\\n\\\" << max(a,2) << endl";
       };
       debug=0;
      };
      PrintExpr @[32] {
-      name="PrintExpr_Printcosancosaendl";
+      name="PrintExpr_Printcosacosaendl";
       desc="sin, etc all here";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"cos(a):\\\\n\\\" << cos(a) << endl";
+      code_string="Print \\\"cos(a):\\n\\\" << cos(a) << endl";
       expr {
-       expr="\\\"cos(a):\\\\n\\\" << cos(a) << endl";
+       expr="\\\"cos(a):\\n\\\" << cos(a) << endl";
       };
       debug=0;
      };
      PrintExpr @[33] {
-      name="PrintExpr_Printpowa3npowa3endl";
+      name="PrintExpr_Printpowa3powa3endl";
       desc="element-wise to the 3rd power";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"pow(a,3):\\\\n\\\" << pow(a,3) << endl";
+      code_string="Print \\\"pow(a,3):\\n\\\" << pow(a,3) << endl";
       expr {
-       expr="\\\"pow(a,3):\\\\n\\\" << pow(a,3) << endl";
+       expr="\\\"pow(a,3):\\n\\\" << pow(a,3) << endl";
       };
       debug=0;
      };
      PrintExpr @[34] {
-      name="PrintExpr_Printa3na3endl";
+      name="PrintExpr_Printa3a3endl";
       desc="a shorter form";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a^3:\\\\n\\\" << (a^3) << endl";
+      code_string="Print \\\"a^3:\\n\\\" << (a^3) << endl";
       expr {
-       expr="\\\"a^3:\\\\n\\\" << (a^3) << endl";
+       expr="\\\"a^3:\\n\\\" << (a^3) << endl";
       };
       debug=0;
      };
@@ -6426,62 +6426,62 @@ LeabraProject .projects[0] {
       code_string="// == boolean operators etc ==";
      };
      PrintExpr @[36] {
-      name="PrintExpr_Printa3na3endl_1";
+      name="PrintExpr_Printa3a3endl";
       desc="element-wise true or false";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a>3:\\\\n\\\" << (a>3) << endl";
+      code_string="Print \\\"a>3:\\n\\\" << (a>3) << endl";
       expr {
-       expr="\\\"a>3:\\\\n\\\" << (a>3) << endl";
+       expr="\\\"a>3:\\n\\\" << (a>3) << endl";
       };
       debug=0;
      };
      PrintExpr @[37] {
-      name="PrintExpr_Printa10a00na10a00endl";
+      name="PrintExpr_Printa10a00a10a00endl";
       desc="if a single element indexed, just a normal bool op";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a[1,0] > a[0,0]:\\\\n\\\" << (a[1,0]>a[0,0]) << endl";
+      code_string="Print \\\"a[1,0] > a[0,0]:\\n\\\" << (a[1,0]>a[0,0]) << endl";
       expr {
-       expr="\\\"a[1,0] > a[0,0]:\\\\n\\\" << (a[1,0]>a[0,0]) << endl";
+       expr="\\\"a[1,0] > a[0,0]:\\n\\\" << (a[1,0]>a[0,0]) << endl";
       };
       debug=0;
      };
      PrintExpr @[38] {
-      name="PrintExpr_Printaa3naa3endl";
+      name="PrintExpr_Printaa3aa3endl";
       desc="use the bools as a filter on the original matrix, returning only the 1's";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a[a>3]:\\\\n\\\" << a[a>3] << endl";
+      code_string="Print \\\"a[a>3]:\\n\\\" << a[a>3] << endl";
       expr {
-       expr="\\\"a[a>3]:\\\\n\\\" << a[a>3] << endl";
+       expr="\\\"a[a>3]:\\n\\\" << a[a>3] << endl";
       };
       debug=0;
      };
      PrintExpr @[39] {
-      name="PrintExpr_Printfinda3nfinda3endl";
+      name="PrintExpr_Printfinda3finda3endl";
       desc="get the indexes of the cells that pass the test";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"find(a>3):\\\\n\\\" << find(a>3) << endl";
+      code_string="Print \\\"find(a>3):\\n\\\" << find(a>3) << endl";
       expr {
-       expr="\\\"find(a>3):\\\\n\\\" << find(a>3) << endl";
+       expr="\\\"find(a>3):\\n\\\" << find(a>3) << endl";
       };
       debug=0;
      };
      PrintExpr @[40] {
-      name="PrintExpr_Printafinda3nafinda3endl";
+      name="PrintExpr_Printafinda3afinda3endl";
       desc="get the values -- this is a different filter on a matrix, so the output is different from a[a>3] but otherwise behaves the same";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"a[find(a>3)]:\\\\n\\\" << a[find(a>3)] << endl";
+      code_string="Print \\\"a[find(a>3)]:\\n\\\" << a[find(a>3)] << endl";
       expr {
-       expr="\\\"a[find(a>3)]:\\\\n\\\" << a[find(a>3)] << endl";
+       expr="\\\"a[find(a>3)]:\\n\\\" << a[find(a>3)] << endl";
       };
       debug=0;
      };
      PrintExpr @[41] {
-      name="PrintExpr_Printflattenaa3nflattenaa3endl";
+      name="PrintExpr_Printflattenaa3flattenaa3endl";
       desc="use flatten to turn a subset of a matrix into its own proper whole matrix -- always 1D due to arbitrary list-like nature of elements";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"flatten(a[a>3]):\\\\n\\\" << flatten(a[a>3]) << endl";
+      code_string="Print \\\"flatten(a[a>3]):\\n\\\" << flatten(a[a>3]) << endl";
       expr {
-       expr="\\\"flatten(a[a>3]):\\\\n\\\" << flatten(a[a>3]) << endl";
+       expr="\\\"flatten(a[a>3]):\\n\\\" << flatten(a[a>3]) << endl";
       };
       debug=0;
      };
@@ -6492,62 +6492,62 @@ LeabraProject .projects[0] {
       code_string="// == handy initializers ==";
      };
      PrintExpr @[43] {
-      name="PrintExpr_Printzeros43nzeros43endl";
+      name="PrintExpr_Printzeros43zeros43endl";
       desc="make a new empty matrix of given dimensionality";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"zeros([4,3]):\\\\n\\\" << zeros([4,3]) << endl";
+      code_string="Print \\\"zeros([4,3]):\\n\\\" << zeros([4,3]) << endl";
       expr {
-       expr="\\\"zeros([4,3]):\\\\n\\\" << zeros([4,3]) << endl";
+       expr="\\\"zeros([4,3]):\\n\\\" << zeros([4,3]) << endl";
       };
       debug=0;
      };
      PrintExpr @[44] {
-      name="PrintExpr_Printeye3neye3endl";
+      name="PrintExpr_Printeye3eye3endl";
       desc="identity square matrix (1's along the diagonal, 0's elsewhere)";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"eye(3):\\\\n\\\" << eye(3) << endl";
+      code_string="Print \\\"eye(3):\\n\\\" << eye(3) << endl";
       expr {
-       expr="\\\"eye(3):\\\\n\\\" << eye(3) << endl";
+       expr="\\\"eye(3):\\n\\\" << eye(3) << endl";
       };
       debug=0;
      };
      PrintExpr @[45] {
-      name="PrintExpr_Printdiaga0ndiaga0endl";
+      name="PrintExpr_Printdiaga0diaga0endl";
       desc="put the elements from given matrix along diagonal of new square matrix";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"diag(a,0):\\\\n\\\" << diag(a,0) << endl";
+      code_string="Print \\\"diag(a,0):\\n\\\" << diag(a,0) << endl";
       expr {
-       expr="\\\"diag(a,0):\\\\n\\\" << diag(a,0) << endl";
+       expr="\\\"diag(a,0):\\n\\\" << diag(a,0) << endl";
       };
       debug=0;
      };
      PrintExpr @[46] {
-      name="PrintExpr_Printdiagdiaga01ndiagdiaga01endl";
+      name="PrintExpr_Printdiagdiaga01diagdiaga01endl";
       desc="get them back out!";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"diag(diag(a,0),1):\\\\n\\\" << diag(diag(a,0),1) << endl";
+      code_string="Print \\\"diag(diag(a,0),1):\\n\\\" << diag(diag(a,0),1) << endl";
       expr {
-       expr="\\\"diag(diag(a,0),1):\\\\n\\\" << diag(diag(a,0),1) << endl";
+       expr="\\\"diag(diag(a,0),1):\\n\\\" << diag(diag(a,0),1) << endl";
       };
       debug=0;
      };
      PrintExpr @[47] {
-      name="PrintExpr_Printrand43nrand43endl";
+      name="PrintExpr_Printrand43rand43endl";
       desc="uniform random 0-1 elements";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"rand([4,3]):\\\\n\\\" << rand([4,3]) << endl";
+      code_string="Print \\\"rand([4,3]):\\n\\\" << rand([4,3]) << endl";
       expr {
-       expr="\\\"rand([4,3]):\\\\n\\\" << rand([4,3]) << endl";
+       expr="\\\"rand([4,3]):\\n\\\" << rand([4,3]) << endl";
       };
       debug=0;
      };
      PrintExpr @[48] {
-      name="PrintExpr_Printlinspace133nlinspace133endl";
+      name="PrintExpr_Printlinspace133linspace133endl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"linspace(1,3,3):\\\\n\\\" << linspace(1,3,3) << endl";
+      code_string="Print \\\"linspace(1,3,3):\\n\\\" << linspace(1,3,3) << endl";
       expr {
-       expr="\\\"linspace(1,3,3):\\\\n\\\" << linspace(1,3,3) << endl";
+       expr="\\\"linspace(1,3,3):\\n\\\" << linspace(1,3,3) << endl";
       };
       debug=0;
      };
@@ -6555,9 +6555,9 @@ LeabraProject .projects[0] {
       name="PrintExpr_Printmeshgrid030_eshgrid0302endl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"meshgrid([0:3, 0:2]):\\\\n\\\" << meshgrid([0:3, 0:2])<< endl";
+      code_string="Print \\\"meshgrid([0:3, 0:2]):\\n\\\" << meshgrid([0:3, 0:2])<< endl";
       expr {
-       expr="\\\"meshgrid([0:3, 0:2]):\\\\n\\\" << meshgrid([0:3, 0:2])<< endl";
+       expr="\\\"meshgrid([0:3, 0:2]):\\n\\\" << meshgrid([0:3, 0:2])<< endl";
       };
       debug=0;
      };
@@ -6612,12 +6612,12 @@ LeabraProject .projects[0] {
       };
      };
      PrintExpr @[53] {
-      name="PrintExpr_Printsoftmaxofb123nbendl";
+      name="PrintExpr_Printsoftmaxofb123bendl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"softmax of b = [1,2,3]:\\\\n\\\" << b << endl";
+      code_string="Print \\\"softmax of b = [1,2,3]:\\n\\\" << b << endl";
       expr {
-       expr="\\\"softmax of b = [1,2,3]:\\\\n\\\" << b << endl";
+       expr="\\\"softmax of b = [1,2,3]:\\n\\\" << b << endl";
       };
       debug=0;
      };
@@ -6640,12 +6640,12 @@ LeabraProject .projects[0] {
       code_string="// either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
      };
      PrintExpr @[57] {
-      name="PrintExpr_Printvecsumanvecsumaendl";
+      name="PrintExpr_Printvecsumavecsumaendl";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"vec_sum(a):\\\\n\\\" << vec_sum(a) << endl";
+      code_string="Print \\\"vec_sum(a):\\n\\\" << vec_sum(a) << endl";
       expr {
-       expr="\\\"vec_sum(a):\\\\n\\\" << vec_sum(a) << endl";
+       expr="\\\"vec_sum(a):\\n\\\" << vec_sum(a) << endl";
       };
       debug=0;
      };
@@ -7055,7 +7055,7 @@ LeabraProject .projects[0] {
 	 code_string="// read from data table gets a value from one column only";
 	};
 	DataVarRead @[1] {
-	 name="DataVarRead_FromtabletableDe_eccurrowvarName";
+	 name="DataVarRead_Fromtabletablede_eccurrowvarName";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="From table:  table=demo_data  column=Name  row_spec=cur_row  var=Name ";
@@ -7078,7 +7078,7 @@ LeabraProject .projects[0] {
 	 code_string="// the column name and variable can be different";
 	};
 	DataVarRead @[4] {
-	 name="DataVarRead_FromtabletableDe_currowvaravalue";
+	 name="DataVarRead_Fromtabletablede_currowvaravalue";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="From table:  table=demo_data  column=Value  row_spec=cur_row  var=a_value ";
@@ -7315,7 +7315,7 @@ LeabraProject .projects[0] {
        code_string="// Notice that row_spec is set to row_num & the variable 'the_row' (arbitrary name) holds the row number of the row we want to access";
       };
       DataVarRead @[4] {
-       name="DataVarRead_FromtabletableDe_artherowvarName";
+       name="DataVarRead_Fromtabletablede_artherowvarName";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=demo_data  column=Name  row_spec=row_num  row_var=the_row  var=Name ";
@@ -7326,7 +7326,7 @@ LeabraProject .projects[0] {
        column_name="Name";
       };
       DataVarRead @[5] {
-       name="DataVarRead_FromtabletableDe_rtherowvarValue";
+       name="DataVarRead_Fromtabletablede_rtherowvarValue";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=demo_data  column=Value  row_spec=row_num  row_var=the_row  var=Value ";
@@ -7541,7 +7541,7 @@ LeabraProject .projects[0] {
        code_string="// Notice that row_spec is set to row_val & the variable 'Name' has the value of the row we want to retrieve";
       };
       DataVarRead @[3] {
-       name="DataVarRead_FromtabletableDe_varNamevarcount";
+       name="DataVarRead_Fromtabletablede_varNamevarcount";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=demo_data  column=Quantity  row_spec=row_val  row_var=Name  var=count ";
@@ -7682,7 +7682,7 @@ LeabraProject .projects[0] {
       el_typ=ProgCode;
       el_def=0;
       ResetDataRows @[0] {
-       name="ResetDataRows_ResetDataRowstableSomeTable";
+       name="ResetDataRows_ResetDataRowstablesometable";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="ResetDataRows:  table = some_table ";
@@ -7750,14 +7750,14 @@ LeabraProject .projects[0] {
 	 };
 	};
 	AddNewDataRow @[1] {
-	 name="AddNewDataRow_AddNewRowtableSomeTable";
+	 name="AddNewDataRow_AddNewRowtablesometable";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Add New Row:  table = some_table ";
 	 data_var=$.projects[0].programs.gp[2].gp[0][3].vars[0]$;
 	};
 	DataVarWrite @[2] {
-	 name="DataVarWrite_TotabletableSome_eccurrowvartext";
+	 name="DataVarWrite_Totabletablesome_eccurrowvartext";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="To table:  table=some_table  column=StringData  row_spec=cur_row  var=text ";
@@ -7779,7 +7779,7 @@ LeabraProject .projects[0] {
        };
       };
       MethodCall @[3] {
-       name="MethodCall_SomeTableOpenInWindow";
+       name="MethodCall_sometableOpenInWindow";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="some_table->OpenInWindow()";
@@ -8143,7 +8143,7 @@ LeabraProject .projects[0] {
 	 code_string="// Any variable whose name matches a column name will be retrieved";
 	};
 	DataVarProg @[2] {
-	 name="DataVarProg_DataFromtableMor_mallmatchestrue";
+	 name="DataVarProg_DataFromtablemor_mallmatchestrue";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Data From:  table=more_demo_data  row_spec=cur_row  set=from  all_matches=true ";
@@ -8953,7 +8953,7 @@ LeabraProject .projects[0] {
        meth_desc=" exports data in json format";
       };
       MethodCall @[3] {
-       name="MethodCall_DemoDataOrigExpo_taOrigExportcsv";
+       name="MethodCall_demodataorigExpo_taOrigExportcsv";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_orig->ExportData(\\\"DemoDataOrigExport.csv\\\", , , )";
@@ -9013,7 +9013,7 @@ LeabraProject .projects[0] {
        meth_desc=" exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)";
       };
       MethodCall @[4] {
-       name="MethodCall_DemoDataCopyJsonRemoveAllCols";
+       name="MethodCall_demodatacopyjsonRemoveAllCols";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_json->RemoveAllCols()";
@@ -9056,7 +9056,7 @@ LeabraProject .projects[0] {
        meth_desc=" exports data in json format";
       };
       MethodCall @[6] {
-       name="MethodCall_DemoDataCopyCSVRemoveAllCols";
+       name="MethodCall_demodatacopycsvRemoveAllCols";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_csv->RemoveAllCols()";
@@ -9072,7 +9072,7 @@ LeabraProject .projects[0] {
        meth_desc=" remove all columns (and data)";
       };
       MethodCall @[7] {
-       name="MethodCall_DemoDataCopyCSVI_taOrigExportcsv";
+       name="MethodCall_demodatacopycsvI_taOrigExportcsv";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_csv->ImportData(\\\"DemoDataOrigExport.csv\\\", , , )";
@@ -9393,7 +9393,7 @@ LeabraProject .projects[0] {
        code_string="// when the row changes the pointer will point to the matrix in the next row";
       };
       ForLoop @[7] {
-       name="ForLoop_fori0iDemoDatarowsi";
+       name="ForLoop_fori0idemodatarowsi";
        desc="i is a LocalVar";
        flags=CAN_REVERT_TO_CODE;
        code_string="for (i = 0; i < demo_data.rows; i++)";
@@ -9402,7 +9402,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_cellmatDemoDataG_lNameMatrixVali";
+	 name="MethodCall_cellmatdemodataG_lNameMatrixVali";
 	 desc="cell_mat will point to the matrix in the column named \\\"MatrixVal\\\" and the pointer will change as we go from row to row";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cell_mat = demo_data->GetValAsMatrixColName(\\\"MatrixVal\\\", i, )";
@@ -9476,7 +9476,7 @@ LeabraProject .projects[0] {
 	 };
 	};
 	MethodCall @[2] {
-	 name="MethodCall_DemoDataSetValcellavgMeansi";
+	 name="MethodCall_demodataSetValcellavgMeansi";
 	 desc="put the calculated value into the cell in row i of column \\\"Means\\\"";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="demo_data->SetVal(cell_avg, \\\"Means\\\", i)";
@@ -9765,32 +9765,32 @@ LeabraProject .projects[0] {
        code_string="// == accessing the data within a given column in various ways ==";
       };
       PrintExpr @[3] {
-       name="PrintExpr_Printfirstcolumn_emoDataNameendl";
+       name="PrintExpr_Printfirstcolumn_emodataNameendl";
        desc=": = all in given dimension -- row is last dimension, and only dimension for scalar columns";
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"first column (Name), all rows of data:  DemoData[\\\\\\\"Name\\\\\\\"][:] \\\\n\\\" <<demo_data[\\\"Name\\\"][:] << endl";
+       code_string="Print \\\"first column (Name), all rows of data:  DemoData[\\\\\\\"Name\\\\\\\"][:] \\n\\\" <<demo_data[\\\"Name\\\"][:] << endl";
        expr {
-	expr="\\\"first column (Name), all rows of data:  DemoData[\\\\\\\"Name\\\\\\\"][:] \\\\n\\\" <<demo_data[\\\"Name\\\"][:] << endl";
+	expr="\\\"first column (Name), all rows of data:  DemoData[\\\\\\\"Name\\\\\\\"][:] \\n\\\" <<demo_data[\\\"Name\\\"][:] << endl";
        };
        debug=0;
       };
       PrintExpr @[4] {
-       name="PrintExpr_Printfirst3rowsf_DemoData003endl";
+       name="PrintExpr_Printfirst3rowsf_demodata003endl";
        desc="full syntax is start : end : increment";
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"first 3 rows from first column:  DemoData[0][0:3]\\\\n\\\" << demo_data[0][0:3] << endl";
+       code_string="Print \\\"first 3 rows from first column:  DemoData[0][0:3]\\n\\\" << demo_data[0][0:3] << endl";
        expr {
-	expr="\\\"first 3 rows from first column:  DemoData[0][0:3]\\\\n\\\" << demo_data[0][0:3] << endl";
+	expr="\\\"first 3 rows from first column:  DemoData[0][0:3]\\n\\\" << demo_data[0][0:3] << endl";
        };
        debug=0;
       };
       PrintExpr @[5] {
-       name="PrintExpr_Printeveryotherr_moDatarows2endl";
+       name="PrintExpr_Printeveryotherr_modatarows2endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"every other row: DemoData[0][0:DemoData.rows:2]\\\\n\\\" << demo_data[0][0:demo_data.rows:2] << endl";
+       code_string="Print \\\"every other row: DemoData[0][0:DemoData.rows:2]\\n\\\" << demo_data[0][0:demo_data.rows:2] << endl";
        expr {
-	expr="\\\"every other row: DemoData[0][0:DemoData.rows:2]\\\\n\\\" << demo_data[0][0:demo_data.rows:2] << endl";
+	expr="\\\"every other row: DemoData[0][0:DemoData.rows:2]\\n\\\" << demo_data[0][0:demo_data.rows:2] << endl";
        };
        debug=0;
       };
@@ -9804,14 +9804,14 @@ LeabraProject .projects[0] {
        name="PrintExpr_Printfirstrowofm_aMatrixVal0endl";
        desc="first row of matrix";
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"first row of matrix data: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\\\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
+       code_string="Print \\\"first row of matrix data: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
        expr {
-	expr="\\\"first row of matrix data: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\\\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
+	expr="\\\"first row of matrix data: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
        };
        debug=0;
       };
       CssExpr @[8] {
-       name="CssExpr_DemoDataMatrixVa_oDataMatrixVal0";
+       name="CssExpr_demodataMatrixVa_odataMatrixVal0";
        desc="random numbers";
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data[\\\"MatrixVal\\\"][:,:,0] = rand(shape(demo_data[\\\"MatrixVal\\\"][:,:,0]));";
@@ -9823,9 +9823,9 @@ LeabraProject .projects[0] {
        name="PrintExpr_Printnowafterran_aMatrixVal0endl";
        desc="first row of matrix";
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"now after randomizing: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\\\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
+       code_string="Print \\\"now after randomizing: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
        expr {
-	expr="\\\"now after randomizing: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\\\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
+	expr="\\\"now after randomizing: DemoData[\\\\\\\"MatrixVal\\\\\\\"][:,:,0] \\n\\\" << demo_data[\\\"MatrixVal\\\"][:,:,0] << endl";
        };
        debug=0;
       };
@@ -9842,9 +9842,9 @@ LeabraProject .projects[0] {
        name="PrintExpr_Printverifyingac_MatrixVal21endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"verifying a cell in all rows after copying:\\\\n\\\" << demo_data[\\\"MatrixVal\\\"][2,1,:] << endl";
+       code_string="Print \\\"verifying a cell in all rows after copying:\\n\\\" << demo_data[\\\"MatrixVal\\\"][2,1,:] << endl";
        expr {
-	expr="\\\"verifying a cell in all rows after copying:\\\\n\\\" << demo_data[\\\"MatrixVal\\\"][2,1,:] << endl";
+	expr="\\\"verifying a cell in all rows after copying:\\n\\\" << demo_data[\\\"MatrixVal\\\"][2,1,:] << endl";
        };
        debug=0;
       };
@@ -9855,7 +9855,7 @@ LeabraProject .projects[0] {
        code_string="// == doing some scalar column math ==";
       };
       CssExpr @[13] {
-       name="CssExpr_DemoDataValue3De_eDemoDataValue2";
+       name="CssExpr_demodataValue3de_edemodataValue2";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data[\\\"Value3\\\"][:] = demo_data[\\\"Value\\\"][:] + demo_data[\\\"Value2\\\"][:];";
@@ -9864,22 +9864,22 @@ LeabraProject .projects[0] {
        };
       };
       PrintExpr @[14] {
-       name="PrintExpr_Printvalue3value_oDataValue3endl";
+       name="PrintExpr_Printvalue3value_odataValue3endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"value3 = value + value2: \\\\n\\\" << demo_data[\\\"Value3\\\"][:] << endl";
+       code_string="Print \\\"value3 = value + value2: \\n\\\" << demo_data[\\\"Value3\\\"][:] << endl";
        expr {
-	expr="\\\"value3 = value + value2: \\\\n\\\" << demo_data[\\\"Value3\\\"][:] << endl";
+	expr="\\\"value3 = value + value2: \\n\\\" << demo_data[\\\"Value3\\\"][:] << endl";
        };
        debug=0;
       };
       PrintExpr @[15] {
-       name="PrintExpr_Printmeanofvalue_oDataValue3endl";
+       name="PrintExpr_Printmeanofvalue_odataValue3endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"mean of value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][:]) \\\\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][:]) << endl";
+       code_string="Print \\\"mean of value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][:]) \\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][:]) << endl";
        expr {
-	expr="\\\"mean of value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][:]) \\\\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][:]) << endl";
+	expr="\\\"mean of value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][:]) \\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][:]) << endl";
        };
        debug=0;
       };
@@ -9887,9 +9887,9 @@ LeabraProject .projects[0] {
        name="PrintExpr_Printmeanoffirst_ataValue303endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \\\"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][0:3]) \\\\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][0:3]) << endl";
+       code_string="Print \\\"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][0:3]) \\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][0:3]) << endl";
        expr {
-	expr="\\\"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][0:3]) \\\\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][0:3]) << endl";
+	expr="\\\"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\\\\\"Value3\\\\\\\"][0:3]) \\n\\\" << taMath_float::vec_mean(demo_data[\\\"Value3\\\"][0:3]) << endl";
        };
        debug=0;
       };
@@ -10128,7 +10128,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_NameDemoDataGetV_medataloopindex";
+	 name="MethodCall_NamedemodataGetV_medataloopindex";
 	 desc="read the value from the data table into variable";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Name = demo_data->GetVal(\\\"Name\\\", data_loop_index)";
@@ -10166,7 +10166,7 @@ LeabraProject .projects[0] {
 	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
 	};
 	MethodCall @[1] {
-	 name="MethodCall_ValueDemoDataGet_uedataloopindex";
+	 name="MethodCall_ValuedemodataGet_uedataloopindex";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Value = demo_data->GetVal(\\\"Value\\\", data_loop_index)";
@@ -10459,7 +10459,7 @@ LeabraProject .projects[0] {
        code_string="// Make values in one column twice their value in another";
       };
       DataCalcLoop @[2] {
-       name="DataCalcLoop_Calcloopsrctable_sttableTableTwo";
+       name="DataCalcLoop_Calcloopsrctable_sttabletabletwo";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Calc loop:  src table = table_one  dest table = table_two ";
@@ -10496,7 +10496,7 @@ LeabraProject .projects[0] {
 	 };
 	};
 	DataCalcSetSrcRow @[1] {
-	 name="DataCalcSetSrcRow_SetSrcRowinTableOne";
+	 name="DataCalcSetSrcRow_SetSrcRowintableone";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Set Src Row in: table_one";
@@ -10642,7 +10642,7 @@ LeabraProject .projects[0] {
        };
       };
       MethodCall @[5] {
-       name="MethodCall_TableTwoOpenInWindow";
+       name="MethodCall_tabletwoOpenInWindow";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="table_two->OpenInWindow()";
@@ -10961,7 +10961,7 @@ LeabraProject .projects[0] {
        };
       };
       DataSelectRowsProg @[3] {
-       name="DataSelectRowsProg_SelectRowssrctab_edRowscombopAND";
+       name="DataSelectRowsProg_SelectRowssrctab_edrowscombopAND";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="SelectRows:  src table = demo_data  dest table = selected_rows  comb_op = AND";
@@ -11286,7 +11286,7 @@ LeabraProject .projects[0] {
        code_string="// here we are calculating the mean and median for each category found in the DemoData table";
       };
       DataGroupProg @[4] {
-       name="DataGroupProg_Groupfromsrctabl_ttableDemoStats";
+       name="DataGroupProg_Groupfromsrctabl_ttabledemostats";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Group from:  src table = demo_data dest table = demo_stats";
@@ -11614,7 +11614,7 @@ LeabraProject .projects[0] {
        code_string="// or duplicate an existing column 'e.g. Name' and change the column name";
       };
       DataSortProg @[4] {
-       name="DataSortProg_SortsrctableDemo_tableSortedRows";
+       name="DataSortProg_Sortsrctabledemo_tablesortedrows";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Sort:  src table = demo_data  dest table = sorted_rows ";
@@ -12049,14 +12049,14 @@ LeabraProject .projects[0] {
        };
       };
       DataJoinProg @[1] {
-       name="DataJoinProg_JointablessrcaDe_tableJoinedData";
+       name="DataJoinProg_Jointablessrcade_tablejoineddata";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Join tables:  src_a = demo_data src_b = fruit_data dest table = joined_data";
        src_data_var=.projects[0].programs.gp[2].gp[2][5].vars[0]$$;
        dest_data_var=.projects[0].programs.gp[2].gp[2][5].vars[1]$$;
        src_b_data_var=.projects[0].programs.gp[2].gp[2][5].vars[2]$$;
-       join_spec {name="join_spec": col_a=.programs.gp["Data"].gp["DataOperations"]["DataJoin"].prog_code["DataJoinProg_JointablessrcaDe_tableJoinedData"].join_spec.col_a: col_b=.programs.gp["Data"].gp["DataOperations"]["DataJoin"].prog_code["DataJoinProg_JointablessrcaDe_tableJoinedData"].join_spec.col_b: type=INNER: nomatch_warn=1: };
+       join_spec {name="join_spec": col_a={col_name="Name": }: col_b={col_name="Name": }: type=INNER: nomatch_warn=1: };
       };
      };
      step_prog=NULL;
@@ -12299,7 +12299,7 @@ LeabraProject .projects[0] {
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_nameonevalueDemo_nedataloopindex";
+	 name="MethodCall_nameonevaluedemo_nedataloopindex";
 	 desc="read the value from the data table into variable";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="name_one_value = demo_data->GetVal(\\\"Name_One\\\", data_loop_index)";
@@ -12337,7 +12337,7 @@ LeabraProject .projects[0] {
 	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
 	};
 	MethodCall @[1] {
-	 name="MethodCall_nametwovalueDemo_wodataloopindex";
+	 name="MethodCall_nametwovaluedemo_wodataloopindex";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="name_two_value = demo_data->GetVal(\\\"Name_Two\\\", data_loop_index)";
@@ -12387,7 +12387,7 @@ LeabraProject .projects[0] {
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MethodCall @[0] {
-	   name="MethodCall_DemoDataSetVal1M_chdataloopindex";
+	   name="MethodCall_demodataSetVal1M_chdataloopindex";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="demo_data->SetVal(1, \\\"Match\\\", data_loop_index)";
@@ -12450,7 +12450,7 @@ LeabraProject .projects[0] {
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MethodCall @[0] {
-	   name="MethodCall_DemoDataSetVal0M_chdataloopindex";
+	   name="MethodCall_demodataSetVal0M_chdataloopindex";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="demo_data->SetVal(0, \\\"Match\\\", data_loop_index)";
@@ -12682,7 +12682,7 @@ LeabraProject .projects[0] {
       code_string="// Good for picking a random row of a data table because the first row is zero";
      };
      RandomCall @[3] {
-      name="RandomCall_rowRandomIntZeroNDemoDatarows";
+      name="RandomCall_rowRandomIntZeroNdemodatarows";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="row = Random::IntZeroN(demo_data.rows, )";
@@ -13972,7 +13972,7 @@ LeabraProject .projects[0] {
 	};
        };
        MethodCall @[1] {
-	name="MethodCall_dateObjectcurrentDateTime";
+	name="MethodCall_dateobjectcurrentDateTime";
 	desc="initialize the dateObject with the current date and time";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="date_object->currentDateTime()";
@@ -13988,7 +13988,7 @@ LeabraProject .projects[0] {
 	meth_desc=;
        };
        MethodCall @[2] {
-	name="MethodCall_currentyeardateObjectyear";
+	name="MethodCall_currentyeardateobjectyear";
 	desc="get the current year";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="current_year = date_object->year()";
@@ -14725,8 +14725,8 @@ LeabraProject .projects[0] {
     name="UserDataItem_List_91";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=-0.0005313496: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.06032285: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.05947324: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
@@ -16092,7 +16092,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=-0.01954121: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.04352441: val_type_fixed=0: };
       UserDataItem @[3] {name="view_win_ht": value=0.7638063: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
@@ -16112,7 +16112,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="Project updated on wiki: emergent changes: added doc";
- tree_state{ .;.docs;.docs[0];.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1][1].prog_code;.programs.gp[1][1].prog_code[2];.programs.gp[1][1].prog_code[2].cases[1];.programs.gp[2];.programs.gp[2].gp[0];.programs.gp[2].gp[1];.programs.gp[2].gp[2];.programs.gp[3];.programs.gp[3][0].prog_code;.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.docs[0];.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[2].gp[0];.programs.gp[2].gp[1];.programs.gp[2].gp[2];.programs.gp[2].gp[2][5];.programs.gp[2].gp[2][5].objs;.programs.gp[2].gp[2][5].functions;.programs.gp[2].gp[2][5].prog_code;.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

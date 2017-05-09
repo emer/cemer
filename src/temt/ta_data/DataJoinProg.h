@@ -34,7 +34,7 @@ class TA_API DataJoinProg : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
   ProgVarRef		src_b_data_var;	// #ITEM_FILTER_DataProgVarFilter variable pointing to second source data for operation
-  DataJoinSpec		join_spec; 	// #TREE_SHOW data grouping specification
+  DataJoinSpec		join_spec; 	// data grouping specification
 
   virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
 

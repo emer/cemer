@@ -1777,7 +1777,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       if(rbase) {
-        return rbase->GetValStr(par, memb_def, sc, force_inline);
+        return rbase->GetValStr(par, memb_def, sc, true); // at this point, we force inline
       }
     }
     else if(DerivesFrom(TA_taArray_impl)) {
@@ -1793,7 +1793,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 #endif
     else if(IsClass() && (force_inline || IsSaveInline()))
       {
-        return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
+        return GetValStr_class_inline(base_, par, memb_def, sc, true); // now forced inline
       }
     else if(IsStruct())
       return "struct " + name;
