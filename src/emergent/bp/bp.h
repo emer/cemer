@@ -367,7 +367,7 @@ private:
 eTypeDef_Of(NLXX1ActSpec);
 
 class E_API NLXX1ActSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra noisy linear XX1 activation function specifications
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra noisy linear XX1 activation function specifications
 INHERITED(SpecMemberBase)
 public:
   float         ramp_start;     // value of negative net input where the linear ramping function starts -- this should be a negative number, typically between -2 and -5
@@ -403,7 +403,7 @@ private:
 eTypeDef_Of(GaussActSpec);
 
 class E_API GaussActSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gaussian function
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra gaussian function
 INHERITED(SpecMemberBase)
 public:
   float         mean;           // mean of Gaussian

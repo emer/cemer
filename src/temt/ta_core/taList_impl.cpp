@@ -302,6 +302,8 @@ void taList_impl::UpdateAll() {
     // we only include owned items, not linked
     if (!child || (child->GetOwner() != this))
       continue;
+    if(child->HasOption("NO_UPDATE_AFTER"))
+      continue;
     child->UpdateAll();
   }
 }

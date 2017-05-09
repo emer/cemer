@@ -28,7 +28,7 @@ class DataTable; //
 taTypeDef_Of(DynEnumType);
 
 class TA_API DynEnumType : public DynEnumBase {
-//   #NO_UPDATE_AFTER  dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTableCol
+  // dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTableCol
 INHERITED(DynEnumBase)
 public:
   virtual DynEnumItem*  NewEnum();

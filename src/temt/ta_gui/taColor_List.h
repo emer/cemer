@@ -27,7 +27,7 @@
 taTypeDef_Of(taColor_List);
 
 class TA_API taColor_List : public taList<taColor> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of taColor objects
+  // ##NO_TOKENS ##CAT_Display list of taColor objects
 INHERITED(taList<taColor>)
 public:
   void  Initialize()            {SetBaseType(&TA_taColor); };

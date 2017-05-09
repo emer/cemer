@@ -27,7 +27,7 @@ taTypeDef_Of(taList);
 
 template<class T>
 class taList: public taList_impl {
-  // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER a base list template
+  // #NO_TOKENS #INSTANCE a base list template
 INHERITED(taList_impl)
 public:
   #ifndef __MAKETA__
@@ -103,7 +103,7 @@ private:
   void  Destroy()                       { };
 };
 
-// do not use this macro, since you typically will want ##NO_TOKENS, #NO_UPDATE_AFTER
+// do not use this macro, since you typically will want ##NO_TOKENS
 // which cannot be put inside the macro!
 //
 // #define taList_of(T)

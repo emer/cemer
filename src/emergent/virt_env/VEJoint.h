@@ -32,7 +32,7 @@ eTypeDef_Of(VEWorld);
 eTypeDef_Of(VEJointStops);
 
 class E_API VEJointStops : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint stop parameters
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv virtual env joint stop parameters
 INHERITED(taOBase)
 public:
   bool          stops_on;       // turn on stops -- otherwise not used
@@ -63,7 +63,7 @@ private:
 eTypeDef_Of(VEJointMotor);
 
 class E_API VEJointMotor : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the CurFromODE call, using the motor system (be sure to set f_max!)
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the CurFromODE call, using the motor system (be sure to set f_max!)
 INHERITED(taOBase)
 public:
   bool          motor_on;       // turn on motor mechanism, defined by subsequent parameters

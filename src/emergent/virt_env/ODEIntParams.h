@@ -28,7 +28,7 @@
 eTypeDef_Of(ODEIntParams);
 
 class E_API ODEIntParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv ODE integration parameters
 INHERITED(taOBase)
 public:
   float         erp;            // #DEF_0.2 (0-1, .1-.8 useful range) error reduction parameter: how much of the joint error is reduced at the next time step

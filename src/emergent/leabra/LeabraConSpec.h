@@ -41,7 +41,7 @@ class DataTable; //
 eTypeDef_Of(WtScaleSpec);
 
 class E_API WtScaleSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra weight scaling specification
 INHERITED(SpecMemberBase)
 public:
   float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
@@ -134,7 +134,7 @@ private:
 eTypeDef_Of(WtSigSpec);
 
 class E_API WtSigSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra sigmoidal weight function specification
 INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
@@ -192,7 +192,7 @@ private:
 eTypeDef_Of(DwtZoneSpec);
 
 class E_API DwtZoneSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
@@ -222,7 +222,7 @@ private:
 eTypeDef_Of(WtBalanceSpec);
 
 class E_API WtBalanceSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of extent to which weight average exceeds high threshold value (and vice-versa for low threshold) -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra weight balance soft renormalization spec: maintains overall weight balance by progressively penalizing weight increases as a function of extent to which weight average exceeds high threshold value (and vice-versa for low threshold) -- plugs into soft bounding function -- see network times.bal_int for interval in trials of updating
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // perform weight balance soft normalization?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which sum of weights exceed high threshold value -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial -- use renorm option to deal with overall weight decreases
@@ -265,7 +265,7 @@ private:
 eTypeDef_Of(AdaptWtScaleSpec);
 
 class E_API AdaptWtScaleSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the scale multiplier on weights, as a function of weight value
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters to adapt the scale multiplier on weights, as a function of weight value
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // turn on weight scale adaptation as function of weight values
@@ -303,7 +303,7 @@ private:
 eTypeDef_Of(SlowWtsSpec);
 
 class E_API SlowWtsSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // are slow weights enabled?  if not, then there is just one effective weight value at each synapse, updated using the current cur_lrate factor (based on lrate plus any learning rate schedule)  if so, then a slowly adapting swt factor is updated to track the faster weight changes
@@ -330,7 +330,7 @@ private:
 eTypeDef_Of(DeepLrateSpec);
 
 class E_API DeepLrateSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning rate specs for DeepLeabra -- effective learning rate can be enhanced for units receiving deep attentional modulation vs. those without
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra learning rate specs for DeepLeabra -- effective learning rate can be enhanced for units receiving deep attentional modulation vs. those without
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the deep attentional differential learning rates based on deep_lrn modulation signal
@@ -352,7 +352,7 @@ private:
 eTypeDef_Of(MarginLearnSpec);
 
 class E_API MarginLearnSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning specs as function of whether units are on the margin
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra learning specs as function of whether units are on the margin
 INHERITED(SpecMemberBase)
 public:
   bool          lrate_mod;      // enable the margin-based modulation of the learning rate -- marginal units have a learning rate of 1, while others are reduced

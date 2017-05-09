@@ -29,7 +29,7 @@ class LeabraUnit_Group; //
 eTypeDef_Of(V1FeatInhibSpec);
 
 class E_API V1FeatInhibSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for feature inhibition
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specifies inhibition parameters for feature inhibition
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// #DEF_true whether to use neighborhood inhibition

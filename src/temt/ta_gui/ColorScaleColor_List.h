@@ -27,7 +27,7 @@
 taTypeDef_Of(ColorScaleColor_List);
 
 class TA_API ColorScaleColor_List : public taList<ColorScaleColor> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ColorScaleColor objects
+  // ##NO_TOKENS ##CAT_Display list of ColorScaleColor objects
 INHERITED(taList<ColorScaleColor>)
 public:
   TA_BASEFUNS_NOCOPY(ColorScaleColor_List);

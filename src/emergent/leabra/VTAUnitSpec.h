@@ -27,7 +27,7 @@ class LeabraLayer; //
 eTypeDef_Of(PVLVDaSpec);
 
 class E_API PVLVDaSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for PVLV da parameters
 INHERITED(SpecMemberBase)
 public:
   float         tonic_da;       // #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
@@ -50,7 +50,7 @@ private:
 eTypeDef_Of(PVLVDaGains);
 
 class E_API PVLVDaGains : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for various VTA inputs
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra gains for various VTA inputs
 INHERITED(SpecMemberBase)
 public:
   float         da_gain;      // #DEF_0:2 #MIN_0 overall multiplier for dopamine values
@@ -76,7 +76,7 @@ private:
 eTypeDef_Of(LVBlockSpec);
 
 class E_API LVBlockSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 INHERITED(SpecMemberBase)
 public:
   float         pos_pv;   // #DEF_1 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block

@@ -31,7 +31,7 @@
 taTypeDef_Of(ViewBackground);
 
 class TA_API ViewBackground : public taNBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Display view background pattern specification -- name lookup of background pattern for view display
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display view background pattern specification -- name lookup of background pattern for view display
 INHERITED(taNBase)
 public:
   Qt::BrushStyle         style;  // the pattern for the background

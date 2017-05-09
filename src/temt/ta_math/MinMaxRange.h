@@ -26,8 +26,8 @@
 taTypeDef_Of(MinMaxRange);
 
 class TA_API MinMaxRange : public MinMax {
-  // min-max values plus scale and range
-  INHERITED(MinMax)
+  // ##UAE_IN_PROGRAM min-max values plus scale and range
+INHERITED(MinMax)
 public:
   float         range;          // #HIDDEN distance between min and max
   float         scale;          // #HIDDEN scale (1.0 / range)

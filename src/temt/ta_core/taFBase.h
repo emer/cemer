@@ -27,23 +27,23 @@
 taTypeDef_Of(taFBase);
 
 class TA_API taFBase: public taNBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename
+  // #NO_TOKENS named/owned base class of taBase, with filename
 public:
-  String                desc;      // #EDIT_DIALOG #CAT_taBase description of this object: what does it do, how should it be used, etc
-  String                file_name; // #READ_ONLY #NO_SAVE #EXPERT #CAT_taBase The most recent file saved or loaded in association with this object.
+  String       desc;      // #EDIT_DIALOG #CAT_taBase description of this object: what does it do, how should it be used, etc
+  String       file_name; // #READ_ONLY #NO_SAVE #EXPERT #CAT_taBase The most recent file saved or loaded in association with this object.
 
   String       GetDesc() const override { return desc; }
 
   bool         SetFileName(const String& val) override; // #IGNORE note: we canonicalize name first
   String       GetFileName() const override { return file_name; } // #IGNORE
 
-  void          SetDefaultName_impl(int idx) override;
+  void         SetDefaultName_impl(int idx) override;
 
   TA_BASEFUNS2(taFBase, taNBase)
 private:
-  void                  Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }
-  void                  Initialize() {}
-  void                  Destroy() {}
+  void         Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }
+  void         Initialize() {}
+  void         Destroy() {}
 };
 
 #endif // taFBase_h

@@ -27,7 +27,7 @@
 eTypeDef_Of(ActrMotorStyle_List);
 
 class E_API ActrMotorStyle_List : public taList<ActrMotorStyle> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_ActR list of ActR events
+  // ##NO_TOKENS ##CAT_ActR list of ActR events
 INHERITED(taList<ActrMotorStyle>)
 public:
 

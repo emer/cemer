@@ -26,7 +26,7 @@
 eTypeDef_Of(GPiMiscSpec);
 
 class E_API GPiMiscSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weighting of Go vs. NoGo inputs
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra weighting of Go vs. NoGo inputs
 INHERITED(SpecMemberBase)
 public:
   float         net_gain;        // #DEF_3 extra netinput gain factor to compensate for reduction in netinput from subtracting away nogo -- this is IN ADDITION to adding the nogo factor as an extra gain: net = (net_gain + nogo) * (go_in - nogo * nogo_in)

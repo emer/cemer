@@ -46,7 +46,7 @@ SMARTREF_OF(E_API, VEWorld); // VEWorldRef
 eTypeDef_Of(ODEWorldParams);
 
 class E_API ODEWorldParams : public ODEIntParams {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv ODE integration parameters
   INHERITED(ODEIntParams)
 public:
   float         max_cor_vel;    // #DEF_1e+06 maximum correcting velocity for contacts (how quickly they can pop things out of contact)
@@ -65,7 +65,7 @@ private:
 eTypeDef_Of(VEShadowParams);
 
 class E_API VEShadowParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv shadow parameters for virtual environment
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv shadow parameters for virtual environment
   INHERITED(taOBase)
 public:
   bool          on;             // turn on generation of shadows -- incurs a roughly 2x hit in rendering performance when this is turned on

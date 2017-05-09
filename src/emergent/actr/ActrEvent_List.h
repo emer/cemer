@@ -27,7 +27,7 @@
 eTypeDef_Of(ActrEvent_List);
 
 class E_API ActrEvent_List : public taList<ActrEvent> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_ActR list of ActR events
+  // ##NO_TOKENS ##CAT_ActR list of ActR events
 INHERITED(taList<ActrEvent>)
 public:
 

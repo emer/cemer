@@ -27,7 +27,7 @@ class AbstractScriptBase; //
 taTypeDef_Of(ScriptBase_List);
 
 class TA_API ScriptBase_List : public taPtrList<AbstractScriptBase> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER list of script base objects (doesn't own anything)
+  // ##NO_TOKENS list of script base objects (doesn't own anything)
 public:
   ~ScriptBase_List()    { Reset(); }
 };

@@ -28,7 +28,7 @@
 taTypeDef_Of(ParamSearchAlgo_List);
 
 class TA_API ParamSearchAlgo_List : public taList<ParamSearchAlgo> {
-  // #NO_TOKENS #NO_UPDATE_AFTER list of ParamSearchAlgo objects
+  // #NO_TOKENS list of ParamSearchAlgo objects
 INHERITED(taList<ParamSearchAlgo>)
 public:
   TA_BASEFUNS_NOCOPY(ParamSearchAlgo_List);

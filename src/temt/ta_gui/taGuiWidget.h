@@ -34,7 +34,7 @@ class taiWidget; //
 taTypeDef_Of(taGuiWidget);
 
 class TA_API taGuiWidget : public taNBase {
-  // ##CAT_Gui manages a qt widget for the taGui system
+  // ##CAT_Gui ##NO_TOKENS #NO_UPDATE_AFTER manages a qt widget for the taGui system
 INHERITED(taNBase)
 public:
 #ifndef __MAKETA__

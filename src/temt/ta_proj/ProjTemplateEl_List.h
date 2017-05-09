@@ -28,7 +28,7 @@
 taTypeDef_Of(ProjTemplateEl_List);
 
 class TA_API ProjTemplateEl_List : public taList<ProjTemplateEl> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Project list of project template elements
+  // ##NO_TOKENS ##CHILDREN_INLINE ##CAT_Project list of project template elements
 INHERITED(taList<ProjTemplateEl>)
 public:
   TA_SIMPLE_BASEFUNS(ProjTemplateEl_List);

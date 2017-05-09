@@ -26,7 +26,7 @@
 eTypeDef_Of(TDRewIntegSpec);
 
 class E_API TDRewIntegSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegUnitSpec
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc specs for TDRewIntegUnitSpec
 INHERITED(SpecMemberBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer

@@ -27,7 +27,7 @@ class LeabraLayer; //
 eTypeDef_Of(LHbRMTgSpecs);
 
 class E_API LHbRMTgSpecs : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs and params for LHbRMTg inputs
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc specs and params for LHbRMTg inputs
 INHERITED(SpecMemberBase)
 public:
   bool          patch_cur;      // #DEF_true use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
@@ -53,7 +53,7 @@ private:
 eTypeDef_Of(LHbRMTgGains);
 
 class E_API LHbRMTgGains : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for LHbRMTg inputs
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra gains for LHbRMTg inputs
 INHERITED(SpecMemberBase)
 public:
   float         all;            // #MIN_0 #DEF_1 final overall gain on everything

@@ -28,7 +28,7 @@
 eTypeDef_Of(BasAmygLearnSpec);
 
 class E_API BasAmygLearnSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra basal amygdala learning specs
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra basal amygdala learning specs
 INHERITED(SpecMemberBase)
 public:
   enum BaLearnRule {

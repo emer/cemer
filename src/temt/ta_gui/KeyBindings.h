@@ -29,7 +29,7 @@ class QKeySequence;
 taTypeDef_Of(KeyBindings);
 
 class TA_API KeyBindings : public taNBase {
-  // ##INLINE ##NO_TOKENS ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taNBase)
 public:
   KeyActionPair_PArray       menu_bindings; // #IGNORE

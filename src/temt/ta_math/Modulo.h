@@ -26,7 +26,7 @@
 taTypeDef_Of(Modulo);
 
 class TA_API Modulo : public taNBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math modulo for things that happen periodically
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math modulo for things that happen periodically
   INHERITED(taNBase)
 public:
   bool           flag;          // Modulo is active?

@@ -28,7 +28,7 @@
 eTypeDef_Of(VESurface);
 
 class E_API VESurface : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv surface properties for collisions
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv surface properties for collisions
 INHERITED(taOBase)
 public:
 

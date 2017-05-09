@@ -30,8 +30,8 @@ class taVector3f; //
 taTypeDef_Of(taVector3i);
 
 class TA_API taVector3i : public taVector2i {
-  // a value in 3D coordinate space
-  INHERITED(taVector2i)
+  // #NO_UPDATE_AFTER an integer value in 3D coordinate space
+INHERITED(taVector2i)
 public:
   int           z;              // depth
 

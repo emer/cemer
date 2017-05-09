@@ -28,7 +28,7 @@
 eTypeDef_Of(Weights_List);
 
 class E_API Weights_List : public taList<Weights> {
-  // #NO_TOKENS #NO_UPDATE_AFTER List of weights objects
+  // #NO_TOKENS List of weights objects
 INHERITED(taList<Weights>)
 public:
 

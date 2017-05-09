@@ -27,7 +27,7 @@
 taTypeDef_Of(ViewColor_List);
 
 class TA_API ViewColor_List : public taList<ViewColor> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ViewColor items
+  // ##NO_TOKENS ##CAT_Display list of ViewColor items
 INHERITED(taList<ViewColor>)
 public:
 

@@ -27,7 +27,7 @@
 eTypeDef_Of(CerebGranuleSpecs);
 
 class E_API CerebGranuleSpecs : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters for the cerebellar granule unit
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for the cerebellar granule unit
 INHERITED(SpecMemberBase)
 public:
   float         act_thr;        // #DEF_0.5 activation threshold for initiating eligibility for learning and triggering the inhibitory window

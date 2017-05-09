@@ -54,7 +54,7 @@
 eTypeDef_Of(ThetaPhaseSpecs);
 
 class E_API ThetaPhaseSpecs : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra ThetaPhase hippocampal dynamic specifications, affecting how the different inputs to the CA1 are modulated as a function of position within the theta phase cycle
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra ThetaPhase hippocampal dynamic specifications, affecting how the different inputs to the CA1 are modulated as a function of position within the theta phase cycle
 INHERITED(SpecMemberBase)
 public:
   bool          mod_ec_out;             // #DEF_true modulate ECout projection strength in same way as ECin projections -- i.e., when ECin is off and CA3 is on during recall mode, ECout projections to CA1 are also off 

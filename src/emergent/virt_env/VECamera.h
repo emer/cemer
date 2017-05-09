@@ -33,7 +33,7 @@ class SoPerspectiveCamera; // #IGNORE
 eTypeDef_Of(VECameraDists);
 
 class E_API VECameraDists : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv virtual env camera distances
 INHERITED(taOBase)
 public:
   float         near_distance;  // #DEF_0.1 near distance of camera -- closest things can be seen

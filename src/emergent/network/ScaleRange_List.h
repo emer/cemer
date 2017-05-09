@@ -28,7 +28,7 @@
 eTypeDef_Of(ScaleRange_List);
 
 class E_API ScaleRange_List : public taList<ScaleRange> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ScaleRange objects
+  // ##NO_TOKENS ##CAT_Display list of ScaleRange objects
 INHERITED(taList<ScaleRange>)
 public:
   void                  Initialize() {SetBaseType(&TA_ScaleRange);}

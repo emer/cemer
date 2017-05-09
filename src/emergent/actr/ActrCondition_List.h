@@ -27,7 +27,7 @@
 eTypeDef_Of(ActrCondition_List);
 
 class E_API ActrCondition_List : public taList<ActrCondition> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_ActR list of ActR conditions
+  // ##NO_TOKENS ##CAT_ActR list of ActR conditions
 INHERITED(taList<ActrCondition>)
 public:
 

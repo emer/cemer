@@ -32,7 +32,7 @@ class taGuiAction_QObj; // #IGNORE
 taTypeDef_Of(taGuiAction);
 
 class TA_API taGuiAction : public taNBase {
-  // ##CAT_Gui manages a qt action for the taGui system
+  // ##CAT_Gui #NO_UPDATE_AFTER ##NO_TOKENS manages a qt action for the taGui system
 INHERITED(taNBase)
 public:
 #ifndef __MAKETA__

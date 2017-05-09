@@ -26,7 +26,7 @@
 eTypeDef_Of(ActrActParams);
 
 class E_API ActrActParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR declarative memory activation parameters
+  // ##INLINE ##NO_TOKENS ##CAT_ActR declarative memory activation parameters
 INHERITED(taOBase)
 public:
   bool          learn;         // :bll != nil in ACT-R -- use base-level activation learning -- if not, then base activation is const init val
@@ -49,7 +49,7 @@ private:
 eTypeDef_Of(ActrRetrievalParams);
 
 class E_API ActrRetrievalParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR declarative memory activation parameters
+  // ##INLINE ##NO_TOKENS ##CAT_ActR declarative memory activation parameters
 INHERITED(taOBase)
 public:
   float         thresh;     // #DEF_0 :rt in ACT-R -- retrieval threshold -- minimum chunk activation to be able to be retrieved
@@ -74,7 +74,7 @@ private:
 eTypeDef_Of(ActrPartialParams);
 
 class E_API ActrPartialParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR declarative memory activation parameters
+  // ##INLINE ##NO_TOKENS ##CAT_ActR declarative memory activation parameters
 INHERITED(taOBase)
 public:
   bool          on;             // is partial matching enabled?  
@@ -93,7 +93,7 @@ private:
 eTypeDef_Of(ActrAssocParams);
 
 class E_API ActrAssocParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR declarative memory associative strength parameters
+  // ##INLINE ##NO_TOKENS ##CAT_ActR declarative memory associative strength parameters
 INHERITED(taOBase)
 public:
   bool          on;          // is spreading activation through associative strengths enabled?  

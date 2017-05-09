@@ -26,8 +26,8 @@
 taTypeDef_Of(MinMaxInt);
 
 class TA_API MinMaxInt : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum integer values
-  INHERITED(taBase)
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum integer values
+INHERITED(taBase)
 public:
   int           min;    // minimum value
   int           max;    // maximum value

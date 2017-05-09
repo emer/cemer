@@ -30,7 +30,7 @@ class QBoxLayout; //
 taTypeDef_Of(taGuiLayout);
 
 class TA_API taGuiLayout : public taNBase {
-  // ##CAT_Gui manages a qt layout for the taGui system
+  // ##CAT_Gui #NO_UPDATE_AFTER ##NO_TOKENS manages a qt layout for the taGui system
 INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 public:
 #ifndef __MAKETA__

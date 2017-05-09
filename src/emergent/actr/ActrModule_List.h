@@ -27,7 +27,7 @@
 eTypeDef_Of(ActrModule_List);
 
 class E_API ActrModule_List : public taList<ActrModule> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_ActR list of ActR modules
+  // ##NO_TOKENS ##CAT_ActR list of ActR modules
 INHERITED(taList<ActrModule>)
 public:
 

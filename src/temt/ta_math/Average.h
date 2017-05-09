@@ -26,7 +26,7 @@
 taTypeDef_Of(Average);
 
 class TA_API Average : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math encapsulates the sum and count values for computing an average value in an incremental fashion over time
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math encapsulates the sum and count values for computing an average value in an incremental fashion over time
 INHERITED(taOBase)
 public:
   float         avg;    // the computed average value that was last computed, as sum / n -- this may not reflect current sum, n values -- just depends on when GetAvg was computed -- see UpdtAvg versions of increment methods

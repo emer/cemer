@@ -28,7 +28,7 @@
 eTypeDef_Of(ActrProdUtilVals);
 
 class E_API ActrProdUtilVals : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR vision parameters
+  // ##INLINE ##NO_TOKENS ##CAT_ActR vision parameters
 INHERITED(taOBase)
 public:
   float                 init; // initial utility of this production -- if non-zero then this production will have a custom initial utility instead of the default one set in the procedural module
@@ -47,7 +47,7 @@ private:
 eTypeDef_Of(ActrProdTimeVals);
 
 class E_API ActrProdTimeVals : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR vision parameters
+  // ##INLINE ##NO_TOKENS ##CAT_ActR vision parameters
 INHERITED(taOBase)
 public:
   float                 act; // #DEF_0 action time associated with this production -- if this is non-zero, then it will be used instead of the default value

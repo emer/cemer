@@ -32,7 +32,7 @@ class taBase; //
 taTypeDef_Of(ProgType_List);
 
 class TA_API ProgType_List : public taList<ProgType> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables
+  // ##NO_TOKENS #CHILDREN_INLINE ##CAT_Program list of script variables
 INHERITED(taList<ProgType>)
 public:
   virtual void          GenCss(Program* prog) const; // generate css script code for the context

@@ -31,8 +31,8 @@ class float_Matrix; //
 taTypeDef_Of(MinMax);
 
 class TA_API MinMax : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum values
-  INHERITED(taOBase)
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum values
+INHERITED(taOBase)
 public:
   float         min;    // minimum value
   float         max;    // maximum value

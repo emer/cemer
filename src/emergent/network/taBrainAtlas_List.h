@@ -28,7 +28,7 @@
 eTypeDef_Of(taBrainAtlas_List);
 
 class E_API taBrainAtlas_List : public taList<taBrainAtlas> {
-  // #NO_TOKENS #NO_UPDATE_AFTER List of brain atlases.
+  // #NO_TOKENS List of brain atlases.
   INHERITED(taList<taBrainAtlas>)
 public:
   bool		not_init;	// list has not been initialized yet

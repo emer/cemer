@@ -42,7 +42,7 @@ class LeabraInhib; //
 eTypeDef_Of(LeabraActFunSpec);
 
 class E_API LeabraActFunSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
 INHERITED(SpecMemberBase)
 public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
@@ -64,7 +64,7 @@ private:
 eTypeDef_Of(LeabraActMiscSpec);
 
 class E_API LeabraActMiscSpec : public SpecMemberBase {
-  //##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra miscellaneous activation computation parameters and specs
+  //##INLINE ##NO_TOKENS ##CAT_Leabra miscellaneous activation computation parameters and specs
 INHERITED(SpecMemberBase)
 public:
   bool          rec_nd;         // record the act_nd non-depressed activation variable (instead of act_eq) for the act_q* quarter-trial and phase (act_m, act_p) activation state variables -- these are used primarily for statistics, or possibly for specialized learning mechanisms
@@ -96,7 +96,7 @@ private:
 eTypeDef_Of(SpikeFunSpec);
 
 class E_API SpikeFunSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
 INHERITED(SpecMemberBase)
 public:
   float         rise;                // #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
@@ -135,7 +135,7 @@ private:
 eTypeDef_Of(SpikeMiscSpec);
 
 class E_API SpikeMiscSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra misc spiking parameters 
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra misc spiking parameters 
 INHERITED(SpecMemberBase)
 public:
   enum ClampType {                // how to generate spikes during hard clamp conditions
@@ -171,7 +171,7 @@ private:
 eTypeDef_Of(OptThreshSpec);
 
 class E_API OptThreshSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra optimization thresholds for faster processing
 INHERITED(SpecMemberBase)
 public:
   float         send;                   // #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
@@ -192,7 +192,7 @@ private:
 eTypeDef_Of(LeabraInitSpec);
 
 class E_API LeabraInitSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial values for key network state variables -- initialized at start of trial with Init_Acts or DecayState
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra initial values for key network state variables -- initialized at start of trial with Init_Acts or DecayState
 INHERITED(SpecMemberBase)
 public:
   float       v_m;        // #DEF_0.4 initial membrane potential -- see e_rev.l for the resting potential (typically .3) -- often works better to have a somewhat elevated initial membrane potential relative to that
@@ -211,7 +211,7 @@ private:
 eTypeDef_Of(LeabraDtSpec);
 
 class E_API LeabraDtSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
 INHERITED(SpecMemberBase)
 public:
   float         integ;                // #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary).  MUST also coordinate this with network.time_inc variable to ensure that global network.time reflects simulated time accurately
@@ -327,7 +327,7 @@ private:
 eTypeDef_Of(LeabraChannels);
 
 class E_API LeabraChannels : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra channels used in Leabra
 INHERITED(taOBase)
 public:
   float         e;                // excitatory (sodium (Na) channel), synaptic glutamate AMPA activated
@@ -346,7 +346,7 @@ private:
 eTypeDef_Of(ActAdaptSpec);
 
 class E_API ActAdaptSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
 INHERITED(SpecMemberBase)
 public:
   bool          on;                // apply adaptation?
@@ -379,7 +379,7 @@ private:
 eTypeDef_Of(ShortPlastSpec);
 
 class E_API ShortPlastSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate -- rate code uses generated spike var to drive this
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate -- rate code uses generated spike var to drive this
 INHERITED(SpecMemberBase)
 public:
   bool          on;                // synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
@@ -412,7 +412,7 @@ private:
 eTypeDef_Of(SynDelaySpec);
 
 class E_API SynDelaySpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
 INHERITED(SpecMemberBase)
 public:
   bool          on;                // is synaptic delay active?
@@ -433,7 +433,7 @@ private:
 eTypeDef_Of(DeepSpec);
 
 class E_API DeepSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
 INHERITED(SpecMemberBase)
 public:
   enum DeepRole {          // what role do these neurons play in the deep layer network dynamics -- determines what function the deep_net plays
@@ -500,7 +500,7 @@ private:
 eTypeDef_Of(DaModSpec);
 
 class E_API DaModSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
 INHERITED(SpecMemberBase)
 public:
   bool          on;               // whether to add dopamine factor to net input
@@ -521,7 +521,7 @@ private:
 eTypeDef_Of(NoiseAdaptSpec);
 
 class E_API NoiseAdaptSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
 INHERITED(SpecMemberBase)
 public:
   enum AdaptMode {

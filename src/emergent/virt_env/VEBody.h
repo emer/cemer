@@ -44,7 +44,7 @@ class VEObject; //
 eTypeDef_Of(ODEDamping);
 
 class E_API ODEDamping : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE damping parameters
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv ODE damping parameters
 INHERITED(taOBase)
 public:
   bool          on;             // #DEF_false whether to use any of these damping parameters
@@ -63,7 +63,7 @@ private:
 eTypeDef_Of(ODEFiniteRotation);
 
 class E_API ODEFiniteRotation : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv finite rotation mode settings
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv finite rotation mode settings
 INHERITED(taOBase)
 public:
   bool          on;             // #DEF_false whether to enable finite rotation mode -- False: An "infinitesimal" orientation update is used. This is fast to compute, but it can occasionally cause inaccuracies for bodies that are rotating at high speed, especially when those bodies are joined to other bodies. True: A finite orientation update is used. This is more costly to compute, but will be more accurate for high speed rotations. Note however that high speed rotations can result in many types of error in a simulation, and this mode will only fix one of those sources of error.

@@ -28,7 +28,7 @@
 taTypeDef_Of(DynEnumItem_List);
 
 class TA_API DynEnumItem_List : public taList<DynEnumItem> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program ##SCOPE_Program list of dynamic enumerated type items
+  // ##NO_TOKENS ##CHILDREN_INLINE ##CAT_Program ##SCOPE_Program list of dynamic enumerated type items
 INHERITED(taList<DynEnumItem>)
 public:
 

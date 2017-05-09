@@ -136,7 +136,7 @@ taTypeDef_Of(taGroup);
 
 template<class T>
 class taGroup : public taGroup_impl {
-  // #INSTANCE #NO_UPDATE_AFTER
+  // #INSTANCE 
   INHERITED(taGroup_impl)
 public:
   #ifndef __MAKETA__
@@ -325,7 +325,7 @@ private:
   void  Destroy () {}
 };
 
-// do not use this macro, since you typically will want ##NO_TOKENS, #NO_UPDATE_AFTER
+// do not use this macro, since you typically will want ##NO_TOKENS
 // which cannot be put inside the macro!
 //
 // #define taGroup_of(T)

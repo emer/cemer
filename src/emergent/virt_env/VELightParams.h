@@ -29,7 +29,7 @@
 eTypeDef_Of(VELightParams);
 
 class E_API VELightParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
+  // ##INLINE ##NO_TOKENS ##CAT_VirtEnv virtual env light parameters
 INHERITED(taOBase)
 public:
   bool          on;             // is the light turned on?

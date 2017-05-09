@@ -27,7 +27,7 @@
 taTypeDef_Of(RGBA_List);
 
 class TA_API RGBA_List : public taList<RGBA> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of RGBA objects
+  // ##NO_TOKENS ##CAT_Display list of RGBA objects
 INHERITED(taList<RGBA>)
 public:
   void  Initialize()            {SetBaseType(&TA_RGBA); };

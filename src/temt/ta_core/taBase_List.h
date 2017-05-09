@@ -28,7 +28,7 @@
 taTypeDef_Of(taBase_List);
 
 class TA_API taBase_List : public taList<taBase> {
-  // #NO_TOKENS #NO_UPDATE_AFTER list of base objects
+  // #NO_TOKENS list of base objects
 INHERITED(taList<taBase>)
 public:
   TA_BASEFUNS(taBase_List);
