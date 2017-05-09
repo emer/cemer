@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10701
+// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
 LeabraProject .projects[1] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -3670,7 +3670,7 @@ LeabraProject .projects[1] {
  };
 };
 LeabraProject .projects[1] {
- name="LeabraFlex";
+ name="LeabraFlex_10713_v808";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
  version {
@@ -3707,8 +3707,235 @@ LeabraProject .projects[1] {
    url="LeabraFlexProgs";
    full_url="https://grey.colorado.edu/emergent/index.php/LeabraFlexProgs";
    text_size=1;
-   text="<html>\\n<head></head>\\n<body>\\n== Enter Title Here ==\\n</body>\\n</html>\\n";
-   html_text="<!DOCTYPE html><html lang=\\\"en\\\" dir=\\\"ltr\\\" class=\\\"client-js\\\"><head>\\n<meta charset=\\\"UTF-8\\\">\\n<title>LeabraFlex - emergent</title>\\n<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\\\s)client-nojs(\\\\s|$)/, \\\"$1client-js$2\\\" );</script>\\n<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {\\nmw.config.set({\\\"wgCanonicalNamespace\\\":\\\"\\\",\\\"wgCanonicalSpecialPageName\\\":!1,\\\"wgNamespaceNumber\\\":0,\\\"wgPageName\\\":\\\"LeabraFlex\\\",\\\"wgTitle\\\":\\\"LeabraFlex\\\",\\\"wgCurRevisionId\\\":11194,\\\"wgRevisionId\\\":11194,\\\"wgArticleId\\\":2315,\\\"wgIsArticle\\\":!0,\\\"wgIsRedirect\\\":!1,\\\"wgAction\\\":\\\"view\\\",\\\"wgUserName\\\":\\\"Oreilly\\\",\\\"wgUserGroups\\\":[\\\"bureaucrat\\\",\\\"svnadmins\\\",\\\"sysop\\\",\\\"*\\\",\\\"user\\\",\\\"autoconfirmed\\\"],\\\"wgCategories\\\":[],\\\"wgBreakFrames\\\":!1,\\\"wgPageContentLanguage\\\":\\\"en\\\",\\\"wgPageContentModel\\\":\\\"wikitext\\\",\\\"wgSeparatorTransformTable\\\":[\\\"\\\",\\\"\\\"],\\\"wgDigitTransformTable\\\":[\\\"\\\",\\\"\\\"],\\\"wgDefaultDateFormat\\\":\\\"dmy\\\",\\\"wgMonthNames\\\":[\\\"\\\",\\\"January\\\",\\\"February\\\",\\\"March\\\",\\\"April\\\",\\\"May\\\",\\\"June\\\",\\\"July\\\",\\\"August\\\",\\\"September\\\",\\\"October\\\",\\\"November\\\",\\\"December\\\"],\\\"wgMonthNamesShort\\\":[\\\"\\\",\\\"Jan\\\",\\\"Feb\\\",\\\"Mar\\\",\\\"Apr\\\",\\\"May\\\",\\\"Jun\\\",\\\"Jul\\\",\\\"Aug\\\",\\\"Sep\\\",\\\"Oct\\\",\\\"Nov\\\",\\\"Dec\\\"],\\\"wgRelevantPageName\\\":\\\"LeabraFlex\\\",\\\"wgRelevantArticleId\\\":2315,\\\"wgUserId\\\":3,\\\"wgUserEditCount\\\":2418,\\\"wgUserRegistration\\\":1178051527000,\\\"wgUserNewMsgRevisionId\\\":null,\\\"wgIsProbablyEditable\\\":!0,\\n\\\"wgRestrictionEdit\\\":[],\\\"wgRestrictionMove\\\":[],\\\"wgRedirectedFrom\\\":\\\"LeabraFlexProgs\\\",\\\"sfgAutocompleteValues\\\":[],\\\"sfgAutocompleteOnAllChars\\\":!1,\\\"sfgFieldProperties\\\":[],\\\"sfgDependentFields\\\":[],\\\"sfgShowOnSelect\\\":[],\\\"sfgScriptPath\\\":\\\"/emergent/extensions/SemanticForms\\\",\\\"wgSVGEditEditor\\\":\\\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\\\",\\\"wgHeaderTabsTabIndexes\\\":[],\\\"wgWikiEditorEnabledModules\\\":{\\\"toolbar\\\":!0,\\\"dialogs\\\":!0,\\\"preview\\\":!0,\\\"publish\\\":!1},\\\"wgCategoryTreePageCategoryOptions\\\":\\\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\\\",\\\"wgInternalRedirectTargetUrl\\\":\\\"/emergent/index.php/LeabraFlex\\\"});mw.loader.implement(\\\"user.options\\\",function($,jQuery){mw.user.options.set({\\\"ccmeonemails\\\":\\\"1\\\",\\\"enotifminoredits\\\":\\\"1\\\",\\\"imagesize\\\":\\\"0\\\",\\\"previewontop\\\":\\\"\\\",\\\"rows\\\":\\\"30\\\",\\\"thumbsize\\\":\\\"0\\\",\\\"underline\\\":\\\"0\\\",\\\"watchmoves\\\":\\\"1\\\",\\\"editsection\\\":\\\"1\\\",\\\"rememberpassword\\\":\\\"1\\\",\\\"timecorrection\\\":\\\"ZoneInfo|-360|America/Denver\\\",\\\"watchlisttoken\\\":\\\"14fd6c804d78e99930123181974c128b983adb9e\\\"});});mw.loader.implement(\\\"user.tokens\\\",function($,jQuery){mw.user.tokens.set({\\\"editToken\\\":\\\"0a88836d7a7345a895c33b77c32d4c75573565c5+\\\",\\\"patrolToken\\\":\\\"23ddb841cfc4d5ea0a31b9b98522b291573565c5+\\\",\\\"watchToken\\\":\\\"e09a6a8fb5e56280ca057cc6e9e63054573565c5+\\\"});});mw.loader.load([\\\"mediawiki.action.view.redirect\\\",\\\"ext.smw.style\\\",\\\"ext.smw.tooltips\\\",\\\"mediawiki.page.startup\\\",\\\"mediawiki.legacy.wikibits\\\",\\\"skins.vector.js\\\"]);\\n} );</script>\\n<link rel=\\\"stylesheet\\\" href=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\\\">\\n<link rel=\\\"stylesheet\\\" href=\\\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\\\">\\n<meta name=\\\"ResourceLoaderDynamicStyles\\\" content=\\\"\\\">\\n<link rel=\\\"stylesheet\\\" href=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\\\">\\n<style>a{text-decoration:none}</style>\\n<script async=\\\"\\\" src=\\\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\\\"></script>\\n<meta name=\\\"generator\\\" content=\\\"MediaWiki 1.26.2\\\">\\n<link rel=\\\"ExportRDF\\\" type=\\\"application/rdf+xml\\\" title=\\\"LeabraFlex\\\" href=\\\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\\\">\\n<link rel=\\\"alternate\\\" type=\\\"application/x-wiki\\\" title=\\\"Edit\\\" href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit\\\">\\n<link rel=\\\"edit\\\" title=\\\"Edit\\\" href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit\\\">\\n<link rel=\\\"shortcut icon\\\" href=\\\"/emergent/favicon.ico\\\">\\n<link rel=\\\"search\\\" type=\\\"application/opensearchdescription+xml\\\" href=\\\"/emergent/opensearch_desc.php\\\" title=\\\"emergent (en)\\\">\\n<link rel=\\\"EditURI\\\" type=\\\"application/rsd+xml\\\" href=\\\"https://grey.colorado.edu/emergent/api.php?action=rsd\\\">\\n<link rel=\\\"alternate\\\" type=\\\"application/atom+xml\\\" title=\\\"emergent Atom feed\\\" href=\\\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\\\">\\n<link rel=\\\"canonical\\\" href=\\\"https://grey.colorado.edu/emergent/index.php/LeabraFlex\\\">\\n<!--[if lt IE 7]><style type=\\\"text/css\\\">body{behavior:url(\\\"/emergent/skins/Vector/csshover.min.htc\\\")}</style><![endif]-->\\n</head>\\n<body class=\\\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view\\\">\\n\\t\\t<div id=\\\"mw-page-base\\\" class=\\\"noprint\\\"></div>\\n\\t\\t<div id=\\\"mw-head-base\\\" class=\\\"noprint\\\"></div>\\n\\t\\t<div id=\\\"content\\\" class=\\\"mw-body\\\" role=\\\"main\\\">\\n\\t\\t\\t<a id=\\\"top\\\"></a>\\n\\n\\t\\t\\t\\t\\t\\t<div class=\\\"mw-indicators\\\">\\n</div>\\n\\t\\t\\t<h1 id=\\\"firstHeading\\\" class=\\\"firstHeading\\\" lang=\\\"en\\\">LeabraFlex</h1>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"bodyContent\\\" class=\\\"mw-body-content\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"siteSub\\\">From emergent</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"contentSub\\\"><span class=\\\"mw-redirectedfrom\\\">(Redirected from <a href=\\\"/emergent/index.php?title=LeabraFlexProgs&amp;redirect=no\\\" title=\\\"LeabraFlexProgs\\\">LeabraFlexProgs</a>)</span></div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"jump-to-nav\\\" class=\\\"mw-jump\\\">\\n\\t\\t\\t\\t\\tJump to:\\t\\t\\t\\t\\t<a href=\\\"#mw-head\\\">navigation</a>, \\t\\t\\t\\t\\t<a href=\\\"#p-search\\\">search</a>\\n\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t<div id=\\\"mw-content-text\\\" lang=\\\"en\\\" dir=\\\"ltr\\\" class=\\\"mw-content-ltr\\\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\\\"/emergent/index.php/Leabra\\\" title=\\\"Leabra\\\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.\\n</p>\\n<div id=\\\"toc\\\" class=\\\"toc\\\"><div id=\\\"toctitle\\\"><h2>Contents</h2></div>\\n<ul>\\n<li class=\\\"toclevel-1 tocsection-1\\\"><a href=\\\"#ConfigData.2FConfigTable\\\"><span class=\\\"tocnumber\\\">1</span> <span class=\\\"toctext\\\">ConfigData/ConfigTable</span></a></li>\\n<li class=\\\"toclevel-1 tocsection-2\\\"><a href=\\\"#Program_Hierarchy\\\"><span class=\\\"tocnumber\\\">2</span> <span class=\\\"toctext\\\">Program Hierarchy</span></a></li>\\n<li class=\\\"toclevel-1 tocsection-3\\\"><a href=\\\"#UtilProgs\\\"><span class=\\\"tocnumber\\\">3</span> <span class=\\\"toctext\\\">UtilProgs</span></a></li>\\n<li class=\\\"toclevel-1 tocsection-4\\\"><a href=\\\"#DMem_.28MPI.29\\\"><span class=\\\"tocnumber\\\">4</span> <span class=\\\"toctext\\\">DMem (MPI)</span></a></li>\\n</ul>\\n</div>\\n\\n<h1><span class=\\\"mw-headline\\\" id=\\\"ConfigData.2FConfigTable\\\">ConfigData/ConfigTable</span><span class=\\\"mw-editsection\\\"><span class=\\\"mw-editsection-bracket\\\">[</span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\\\" title=\\\"Edit section: ConfigData/ConfigTable\\\">edit</a><span class=\\\"mw-editsection-bracket\\\">]</span></span></h1>\\n<p>The <a href=\\\"/emergent/index.php/DataTable\\\" title=\\\"DataTable\\\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.\\n</p>\\n<h1><span class=\\\"mw-headline\\\" id=\\\"Program_Hierarchy\\\">Program Hierarchy</span><span class=\\\"mw-editsection\\\"><span class=\\\"mw-editsection-bracket\\\">[</span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\\\" title=\\\"Edit section: Program Hierarchy\\\">edit</a><span class=\\\"mw-editsection-bracket\\\">]</span></span></h1>\\n<p>The call sequence is:\\n</p>\\n<ul><li> <b>MasterTrain</b></li></ul>\\n<dl><dd><ul><li> <b>InitProgs[init_prog]</b> (as spec'd in ConfigTable)</li>\\n<li> loop over <b>MasterRun</b> until stop_train is set to true</li></ul>\\n<dl><dd><ul><li> <b>RunProgs[run_prog]</b> (as spec'd in ConfigTable)</li></ul>\\n<dl><dd><ul><li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.</li></ul></dd></dl></dd></dl></dd></dl>\\n<p>MasterRun now has a <b>stop_step_grain</b> parameter that allows you to Step this program at different grain sizes (e.g., after an Epoch) and for different conditions -- this is completely extensible if you look at the underlying code, and very powerful.\\n</p>\\n<h1><span class=\\\"mw-headline\\\" id=\\\"UtilProgs\\\">UtilProgs</span><span class=\\\"mw-editsection\\\"><span class=\\\"mw-editsection-bracket\\\">[</span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\\\" title=\\\"Edit section: UtilProgs\\\">edit</a><span class=\\\"mw-editsection-bracket\\\">]</span></span></h1>\\n<p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.\\n</p>\\n<h1><span class=\\\"mw-headline\\\" id=\\\"DMem_.28MPI.29\\\">DMem (MPI)</span><span class=\\\"mw-editsection\\\"><span class=\\\"mw-editsection-bracket\\\">[</span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\\\" title=\\\"Edit section: DMem (MPI)\\\">edit</a><span class=\\\"mw-editsection-bracket\\\">]</span></span></h1>\\n<p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:\\n</p>\\n<ul><li> After version 8.0, you can add taMisc::dmem_proc to all calls to <a href=\\\"/emergent/index.php/Random\\\" title=\\\"Random\\\">Random</a> or various Permute etc functions that use random numbers and take a <b>thr_no</b> (thread number) argument -- as documented in <a href=\\\"/emergent/index.php/MTRnd\\\" title=\\\"MTRnd\\\">MTRnd</a>, this thr_no arg selects different random number sequences that are initialized from a single common seed, and will produce statistically independent sequences.  Thus, you can ensure that each node gets different random inputs and other parameters, as appropriate, without needing to have an entirely different seed for each node.  This also means that results can be fully replicable when starting from the same random seed, and that nodes can also generate the same random numbers as needed (if this is needed, it is a good idea to pass taMisc::dmem_proc + 1 to the Random calls, and reserve 0 for the common shared thread that should only be called identically from all processors -- otherwise it will diverge from the 0'th node relative to the others.</li></ul>\\n<ul><li> After common weight initialization etc, the <b>TrainStart</b> program has the option to generate a new random seed just before starting the Epoch -- see the <b>dmem_new_seed</b> flag -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.   See first note to alternative that avoids these consequences.</li></ul>\\n<ul><li> It is <b>essential</b> that the different nodes still end up calling <b>Compute_Weights</b> the same number of times, after roughly the same amount of overall computation -- this is where the weight changes are synchronized across processors -- the simulation will lock up and hang if these do not align.</li></ul>\\n<ul><li> The <b>epoch_trials</b> value gets divided by dmem_nprocs in StdGlobalsInit, such that each processor runs this reduced number of trials, <i>with the network-&gt;trial counter going from 0 to this lower epoch_trials value</i> -- it does not do the interleaving that is done in the hierarchical programs.  This also means that trial numbers will be duplicated if you merge separate trial log data tables into a single table, which is not necessarily a problem, but you may need to do things a bit differently in analyzing the data.</li></ul>\\n<ul><li> If you are using a traditional list of events in an input_data table, use ChoosePermutedEvent and it will work properly with dmem, just like the standard programs.  This program maintains its own internal counter, and simply iterates in a permuted order through the events and then repeats -- it does not need to be synchronized with the trial and epoch structure of the programs (to achieve this, simply ensure that the epoch_trials is the same as the number of rows in the input data table).</li></ul>\\n\\n<!-- \\nNewPP limit report\\nCached time: 20160512214138\\nCache expiry: 86400\\nDynamic content: false\\nCPU time usage: 0.024 seconds\\nReal time usage: 0.026 seconds\\nPreprocessor visited node count: 15/1000000\\nPreprocessor generated node count: 20/1000000\\nPost?expand include size: 0/2097152 bytes\\nTemplate argument size: 0/2097152 bytes\\nHighest expansion depth: 2/40\\nExpensive parser function count: 0/100\\n-->\\n\\n<!-- \\nTransclusion expansion time report (%,ms,calls,template)\\n100.00%    0.000      1 - -total\\n-->\\n\\n<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160512214138 and revision id 11194\\n -->\\n</div>\\t\\t\\t\\t\\t<div class=\\\"printfooter\\\">\\n\\t\\t\\t\\t\\t\\tRetrieved from \\\"<a dir=\\\"ltr\\\" href=\\\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\\\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\\\"\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t<div id=\\\"catlinks\\\" class=\\\"catlinks catlinks-allhidden\\\"></div>\\t\\t\\t\\t<div class=\\\"visualClear\\\"></div>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t<div id=\\\"mw-navigation\\\">\\n\\t\\t\\t<h2>Navigation menu</h2>\\n\\n\\t\\t\\t<div id=\\\"mw-head\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-personal\\\" role=\\\"navigation\\\" class=\\\"\\\" aria-labelledby=\\\"p-personal-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-personal-label\\\">Personal tools</h3>\\n\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t<li id=\\\"pt-userpage\\\"><a href=\\\"/emergent/index.php/User:Oreilly\\\" dir=\\\"auto\\\" title=\\\"Your user page [.]\\\" accesskey=\\\".\\\">Oreilly</a></li><li id=\\\"pt-mytalk\\\"><a href=\\\"/emergent/index.php/User_talk:Oreilly\\\" class=\\\"new\\\" title=\\\"Your talk page [n]\\\" accesskey=\\\"n\\\">Talk</a></li><li id=\\\"pt-preferences\\\"><a href=\\\"/emergent/index.php/Special:Preferences\\\" title=\\\"Your preferences\\\">Preferences</a></li><li id=\\\"pt-watchlist\\\"><a href=\\\"/emergent/index.php/Special:Watchlist\\\" title=\\\"A list of pages you are monitoring for changes [l]\\\" accesskey=\\\"l\\\">Watchlist</a></li><li id=\\\"pt-mycontris\\\"><a href=\\\"/emergent/index.php/Special:Contributions/Oreilly\\\" title=\\\"A list of your contributions [y]\\\" accesskey=\\\"y\\\">Contributions</a></li><li id=\\\"pt-logout\\\"><a href=\\\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlex\\\" title=\\\"Log out\\\">Log out</a></li>\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"left-navigation\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-namespaces\\\" role=\\\"navigation\\\" class=\\\"vectorTabs\\\" aria-labelledby=\\\"p-namespaces-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-namespaces-label\\\">Namespaces</h3>\\n\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-nstab-main\\\" class=\\\"selected\\\"><span><a href=\\\"/emergent/index.php/LeabraFlex\\\" title=\\\"View the content page [c]\\\" accesskey=\\\"c\\\">Page</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-talk\\\" class=\\\"new\\\"><span><a href=\\\"/emergent/index.php?title=Talk:LeabraFlex&amp;action=edit&amp;redlink=1\\\" title=\\\"Discussion about the content page [t]\\\" accesskey=\\\"t\\\" rel=\\\"discussion\\\">Discussion</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-variants\\\" role=\\\"navigation\\\" class=\\\"vectorMenu emptyPortlet\\\" aria-labelledby=\\\"p-variants-label\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-variants-label\\\">\\n\\t\\t\\t\\t\\t\\t\\t<span>Variants</span><a href=\\\"#\\\"></a>\\n\\t\\t\\t\\t\\t\\t</h3>\\n\\n\\t\\t\\t\\t\\t\\t<div class=\\\"menu\\\">\\n\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t<div id=\\\"right-navigation\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-views\\\" role=\\\"navigation\\\" class=\\\"vectorTabs\\\" aria-labelledby=\\\"p-views-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-views-label\\\">Views</h3>\\n\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-view\\\" class=\\\"selected\\\"><span><a href=\\\"/emergent/index.php/LeabraFlex\\\">Read</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-edit\\\"><span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=edit\\\" title=\\\"Edit this page [e]\\\" accesskey=\\\"e\\\">Edit</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-history\\\" class=\\\"collapsible\\\"><span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=history\\\" title=\\\"Past revisions of this page [h]\\\" accesskey=\\\"h\\\">View history</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-unwatch\\\" class=\\\"icon\\\"><span><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=f494f878fd49b9bc4a42d7984fd67370573565c5%2B%5C\\\" title=\\\"Remove this page from your watchlist [w]\\\" accesskey=\\\"w\\\">Unwatch</a></span></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-cactions\\\" role=\\\"navigation\\\" class=\\\"vectorMenu\\\" aria-labelledby=\\\"p-cactions-label\\\">\\n\\t\\t\\t\\t\\t\\t<h3 id=\\\"p-cactions-label\\\"><span>More</span><a href=\\\"#\\\"></a></h3>\\n\\n\\t\\t\\t\\t\\t\\t<div class=\\\"menu\\\">\\n\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-delete\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=delete\\\" title=\\\"Delete this page [d]\\\" accesskey=\\\"d\\\">Delete</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-move\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php/Special:MovePage/LeabraFlex\\\" title=\\\"Move this page [m]\\\" accesskey=\\\"m\\\">Move</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-protect\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=protect\\\" title=\\\"Protect this page [=]\\\" accesskey=\\\"=\\\">Protect</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"ca-purge\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=purge\\\">Refresh</a>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<div id=\\\"p-search\\\" role=\\\"search\\\">\\n\\t\\t\\t\\t\\t\\t<h3>\\n\\t\\t\\t\\t\\t\\t\\t<label for=\\\"searchInput\\\">Search</label>\\n\\t\\t\\t\\t\\t\\t</h3>\\n\\n\\t\\t\\t\\t\\t\\t<form action=\\\"/emergent/index.php\\\" id=\\\"searchform\\\">\\n\\t\\t\\t\\t\\t\\t\\t<div id=\\\"simpleSearch\\\">\\n\\t\\t\\t\\t\\t\\t\\t<input type=\\\"search\\\" name=\\\"search\\\" placeholder=\\\"Search\\\" title=\\\"Search emergent [f]\\\" accesskey=\\\"f\\\" id=\\\"searchInput\\\"><input type=\\\"hidden\\\" value=\\\"Special:Search\\\" name=\\\"title\\\"><input type=\\\"submit\\\" name=\\\"fulltext\\\" value=\\\"Search\\\" title=\\\"Search the pages for this text\\\" id=\\\"mw-searchButton\\\" class=\\\"searchButton mw-fallbackSearchButton\\\"><input type=\\\"submit\\\" name=\\\"go\\\" value=\\\"Go\\\" title=\\\"Go to a page with this exact name if it exists\\\" id=\\\"searchButton\\\" class=\\\"searchButton\\\">\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t</form>\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t</div>\\n\\t\\t\\t<div id=\\\"mw-panel\\\">\\n\\t\\t\\t\\t<div id=\\\"p-logo\\\" role=\\\"banner\\\"><a class=\\\"mw-wiki-logo\\\" href=\\\"/emergent/index.php/Main_Page\\\" title=\\\"Visit the main page\\\"></a></div>\\n\\t\\t\\t\\t\\t\\t<div class=\\\"portal\\\" role=\\\"navigation\\\" id=\\\"p-navigation\\\" aria-labelledby=\\\"p-navigation-label\\\">\\n\\t\\t\\t<h3 id=\\\"p-navigation-label\\\">Navigation</h3>\\n\\n\\t\\t\\t<div class=\\\"body\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t<li id=\\\"n-mainpage-description\\\"><a href=\\\"/emergent/index.php/Main_Page\\\" title=\\\"Visit the main page [z]\\\" accesskey=\\\"z\\\">Main page</a></li><li id=\\\"n-recentchanges\\\"><a href=\\\"/emergent/index.php/Special:RecentChanges\\\" title=\\\"A list of recent changes in the wiki [r]\\\" accesskey=\\\"r\\\">Recent changes</a></li><li id=\\\"n-Documentation\\\"><a href=\\\"/emergent/index.php/User_hub\\\">Documentation</a></li><li id=\\\"n-Submit-a-bug\\\"><a href=\\\"/emergent/index.php/How_to_submit_a_bug_report\\\">Submit a bug</a></li><li id=\\\"n-Bug-tracker\\\"><a href=\\\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\\\" rel=\\\"nofollow\\\">Bug tracker</a></li><li id=\\\"n-Mailing-list\\\"><a href=\\\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\\\" rel=\\\"nofollow\\\">Mailing list</a></li>\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t\\t<div class=\\\"portal\\\" role=\\\"navigation\\\" id=\\\"p-tb\\\" aria-labelledby=\\\"p-tb-label\\\">\\n\\t\\t\\t<h3 id=\\\"p-tb-label\\\">Tools</h3>\\n\\n\\t\\t\\t<div class=\\\"body\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t<li id=\\\"t-whatlinkshere\\\"><a href=\\\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\\\" title=\\\"A list of all wiki pages that link here [j]\\\" accesskey=\\\"j\\\">What links here</a></li><li id=\\\"t-recentchangeslinked\\\"><a href=\\\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\\\" title=\\\"Recent changes in pages linked from this page [k]\\\" accesskey=\\\"k\\\">Related changes</a></li><li id=\\\"t-upload\\\"><a href=\\\"/emergent/index.php/Special:Upload\\\" title=\\\"Upload files [u]\\\" accesskey=\\\"u\\\">Upload file</a></li><li id=\\\"t-specialpages\\\"><a href=\\\"/emergent/index.php/Special:SpecialPages\\\" title=\\\"A list of all special pages [q]\\\" accesskey=\\\"q\\\">Special pages</a></li><li id=\\\"t-permalink\\\"><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;oldid=11194\\\" title=\\\"Permanent link to this revision of the page\\\">Permanent link</a></li><li id=\\\"t-info\\\"><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;action=info\\\" title=\\\"More information about this page\\\">Page information</a></li><li id=\\\"t-smwbrowselink\\\"><a href=\\\"/emergent/index.php/Special:Browse/LeabraFlex\\\" rel=\\\"smw-browse\\\">Browse properties</a></li>\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t\\t<div class=\\\"portal\\\" role=\\\"navigation\\\" id=\\\"p-coll-print_export\\\" aria-labelledby=\\\"p-coll-print_export-label\\\">\\n\\t\\t\\t<h3 id=\\\"p-coll-print_export-label\\\">Print/export</h3>\\n\\n\\t\\t\\t<div class=\\\"body\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul>\\n\\t\\t\\t\\t\\t\\t<li id=\\\"coll-create_a_book\\\"><a href=\\\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\\\">Create a book</a></li><li id=\\\"coll-download-as-rl\\\"><a href=\\\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=11194&amp;writer=rl\\\">Download as PDF</a></li><li id=\\\"t-print\\\"><a href=\\\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\\\" title=\\\"Printable version of this page [p]\\\" accesskey=\\\"p\\\">Printable version</a></li>\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t\\t\\t</div>\\n\\t\\t</div>\\n\\t\\t<div id=\\\"footer\\\" role=\\\"contentinfo\\\">\\n\\t\\t\\t\\t\\t\\t\\t<ul id=\\\"footer-info\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"footer-info-lastmod\\\"> This page was last modified on 4 September 2015, at 02:19.</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t<ul id=\\\"footer-places\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"footer-places-about\\\"><a href=\\\"/emergent/index.php/emergent:About\\\" title=\\\"emergent:About\\\">About emergent</a></li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<ul id=\\\"footer-icons\\\" class=\\\"noprint\\\">\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t\\t<li id=\\\"footer-poweredbyico\\\">\\n\\t\\t\\t\\t\\t\\t\\t<a href=\\\"//www.mediawiki.org/\\\"><img src=\\\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\\\" alt=\\\"Powered by MediaWiki\\\" srcset=\\\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\\\" width=\\\"88\\\" height=\\\"31\\\"></a><a href=\\\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\\\"><img src=\\\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\\\" alt=\\\"Powered by Semantic MediaWiki\\\" width=\\\"88\\\" height=\\\"31\\\"></a>\\t\\t\\t\\t\\t\\t</li>\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t</ul>\\n\\t\\t\\t\\t\\t\\t<div style=\\\"clear:both\\\"></div>\\n\\t\\t</div>\\n\\t\\t<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {\\nmw.loader.state({\\\"user\\\":\\\"ready\\\",\\\"user.groups\\\":\\\"ready\\\"});mw.loader.load([\\\"mediawiki.toc\\\",\\\"mediawiki.action.view.postEdit\\\",\\\"site\\\",\\\"mediawiki.user\\\",\\\"mediawiki.hidpi\\\",\\\"mediawiki.page.ready\\\",\\\"mediawiki.searchSuggest\\\",\\\"mediawiki.page.watch.ajax\\\",\\\"ext.headertabs\\\"]);\\n} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {\\nmw.config.set({\\\"wgBackendResponseTime\\\":192});\\n} );</script>\\n\\t\\n\\n</body></html>";
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
+<meta charset=\"UTF-8\">
+<title>LeabraFlex - emergent</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2418,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"0a88836d7a7345a895c33b77c32d4c75573565c5+\\\\\",\"patrolToken\":\"23ddb841cfc4d5ea0a31b9b98522b291573565c5+\\\\\",\"watchToken\":\"e09a6a8fb5e56280ca057cc6e9e63054573565c5+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+} );</script>
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
+<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
+<style>a{text-decoration:none}</style>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
+<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlex\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
+<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<link rel=\"canonical\" href=\"https://grey.colorado.edu/emergent/index.php/LeabraFlex\">
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
+</head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
+		<div id=\"mw-head-base\" class=\"noprint\"></div>
+		<div id=\"content\" class=\"mw-body\" role=\"main\">
+			<a id=\"top\"></a>
+
+						<div class=\"mw-indicators\">
+</div>
+			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">LeabraFlex</h1>
+									<div id=\"bodyContent\" class=\"mw-body-content\">
+									<div id=\"siteSub\">From emergent</div>
+								<div id=\"contentSub\"><span class=\"mw-redirectedfrom\">(Redirected from <a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;redirect=no\" title=\"LeabraFlexProgs\">LeabraFlexProgs</a>)</span></div>
+												<div id=\"jump-to-nav\" class=\"mw-jump\">
+					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
+				</div>
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
+</p>
+<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2></div>
+<ul>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#ConfigData.2FConfigTable\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">ConfigData/ConfigTable</span></a></li>
+<li class=\"toclevel-1 tocsection-2\"><a href=\"#Program_Hierarchy\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Program Hierarchy</span></a></li>
+<li class=\"toclevel-1 tocsection-3\"><a href=\"#UtilProgs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">UtilProgs</span></a></li>
+<li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
+</ul>
+</div>
+
+<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
+</p>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The call sequence is:
+</p>
+<ul><li> <b>MasterTrain</b></li></ul>
+<dl><dd><ul><li> <b>InitProgs[init_prog]</b> (as spec'd in ConfigTable)</li>
+<li> loop over <b>MasterRun</b> until stop_train is set to true</li></ul>
+<dl><dd><ul><li> <b>RunProgs[run_prog]</b> (as spec'd in ConfigTable)</li></ul>
+<dl><dd><ul><li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.</li></ul></dd></dl></dd></dl></dd></dl>
+<p>MasterRun now has a <b>stop_step_grain</b> parameter that allows you to Step this program at different grain sizes (e.g., after an Epoch) and for different conditions -- this is completely extensible if you look at the underlying code, and very powerful.
+</p>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
+</p>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
+</p>
+<ul><li> After version 8.0, you can add taMisc::dmem_proc to all calls to <a href=\"/emergent/index.php/Random\" title=\"Random\">Random</a> or various Permute etc functions that use random numbers and take a <b>thr_no</b> (thread number) argument -- as documented in <a href=\"/emergent/index.php/MTRnd\" title=\"MTRnd\">MTRnd</a>, this thr_no arg selects different random number sequences that are initialized from a single common seed, and will produce statistically independent sequences.  Thus, you can ensure that each node gets different random inputs and other parameters, as appropriate, without needing to have an entirely different seed for each node.  This also means that results can be fully replicable when starting from the same random seed, and that nodes can also generate the same random numbers as needed (if this is needed, it is a good idea to pass taMisc::dmem_proc + 1 to the Random calls, and reserve 0 for the common shared thread that should only be called identically from all processors -- otherwise it will diverge from the 0'th node relative to the others.</li></ul>
+<ul><li> After common weight initialization etc, the <b>TrainStart</b> program has the option to generate a new random seed just before starting the Epoch -- see the <b>dmem_new_seed</b> flag -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.   See first note to alternative that avoids these consequences.</li></ul>
+<ul><li> It is <b>essential</b> that the different nodes still end up calling <b>Compute_Weights</b> the same number of times, after roughly the same amount of overall computation -- this is where the weight changes are synchronized across processors -- the simulation will lock up and hang if these do not align.</li></ul>
+<ul><li> The <b>epoch_trials</b> value gets divided by dmem_nprocs in StdGlobalsInit, such that each processor runs this reduced number of trials, <i>with the network-&gt;trial counter going from 0 to this lower epoch_trials value</i> -- it does not do the interleaving that is done in the hierarchical programs.  This also means that trial numbers will be duplicated if you merge separate trial log data tables into a single table, which is not necessarily a problem, but you may need to do things a bit differently in analyzing the data.</li></ul>
+<ul><li> If you are using a traditional list of events in an input_data table, use ChoosePermutedEvent and it will work properly with dmem, just like the standard programs.  This program maintains its own internal counter, and simply iterates in a permuted order through the events and then repeats -- it does not need to be synchronized with the trial and epoch structure of the programs (to achieve this, simply ensure that the epoch_trials is the same as the number of rows in the input data table).</li></ul>
+
+<!-- 
+NewPP limit report
+Cached time: 20160512214138
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.024 seconds
+Real time usage: 0.026 seconds
+Preprocessor visited node count: 15/1000000
+Preprocessor generated node count: 20/1000000
+Post?expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160512214138 and revision id 11194
+ -->
+</div>					<div class=\"printfooter\">
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
+							</div>
+		</div>
+		<div id=\"mw-navigation\">
+			<h2>Navigation menu</h2>
+
+			<div id=\"mw-head\">
+									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+						<h3 id=\"p-personal-label\">Personal tools</h3>
+						<ul>
+							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlex\" title=\"Log out\">Log out</a></li>						</ul>
+					</div>
+									<div id=\"left-navigation\">
+										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+						<h3 id=\"p-namespaces-label\">Namespaces</h3>
+						<ul>
+															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlex&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+												<h3 id=\"p-variants-label\">
+							<span>Variants</span><a href=\"#\"></a>
+						</h3>
+
+						<div class=\"menu\">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id=\"right-navigation\">
+										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+						<h3 id=\"p-views-label\">Views</h3>
+						<ul>
+															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
+															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=f494f878fd49b9bc4a42d7984fd67370573565c5%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
+
+						<div class=\"menu\">
+							<ul>
+																	<li id=\"ca-delete\">
+										<a href=\"/emergent/index.php?title=LeabraFlex&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
+									</li>
+																	<li id=\"ca-move\">
+										<a href=\"/emergent/index.php/Special:MovePage/LeabraFlex\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
+									</li>
+																	<li id=\"ca-protect\">
+										<a href=\"/emergent/index.php?title=LeabraFlex&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
+									</li>
+																	<li id=\"ca-purge\">
+										<a href=\"/emergent/index.php?title=LeabraFlex&amp;action=purge\">Refresh</a>
+									</li>
+															</ul>
+						</div>
+					</div>
+										<div id=\"p-search\" role=\"search\">
+						<h3>
+							<label for=\"searchInput\">Search</label>
+						</h3>
+
+						<form action=\"/emergent/index.php\" id=\"searchform\">
+							<div id=\"simpleSearch\">
+							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id=\"mw-panel\">
+				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+			<h3 id=\"p-navigation-label\">Navigation</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+			<h3 id=\"p-tb-label\">Tools</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=11194\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=11194&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+		<div id=\"footer\" role=\"contentinfo\">
+							<ul id=\"footer-info\">
+											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2015, at 02:19.</li>
+									</ul>
+							<ul id=\"footer-places\">
+											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
+									</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+											<li id=\"footer-poweredbyico\">
+							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
+									</ul>
+						<div style=\"clear:both\"></div>
+		</div>
+		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":192});
+} );</script>
+	
+
+</body></html>";
   };
   taDoc @[1] {
    name="ChangeLog";
@@ -3718,8 +3945,50 @@ LeabraProject .projects[1] {
    url="local";
    full_url="local";
    text_size=1;
-   text="<html>\\n<head>ChangeLog</head>\\n<body>\\n<h1>ChangeLog</h1>\\n<ul>\\n\\n\\n<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>\\nsvn rev: 10514 update startup program\\n\\n\\n\\n<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>\\nsvn rev: 10489 actually remove the config table finally\\n\\n\\n<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>\\nleabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant\\n</ul>\\n</body>\\n</html>\\n";
-   html_text="<html>\\n<head>ChangeLog</head>\\n<body>\\n<h1>ChangeLog</h1>\\n<ul>\\n<P>\\n<P>\\n<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>\\nsvn rev: 10514 update startup program\\n<P>\\n<P>\\n<P>\\n<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>\\nsvn rev: 10489 actually remove the config table finally\\n<P>\\n<P>\\n<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>\\nleabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant\\n</ul>\\n</body>\\n</html>\\n";
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+
+<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10514 update startup program
+
+
+
+<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10489 actually remove the config table finally
+
+
+<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<P>
+<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10514 update startup program
+<P>
+<P>
+<P>
+<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+svn rev: 10489 actually remove the config table finally
+<P>
+<P>
+<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
+leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant
+</ul>
+</body>
+</html>
+";
   };
  };
  wizards {
@@ -4175,7 +4444,7 @@ LeabraProject .projects[1] {
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_05_06_08_09_21";
+    date="2017_05_09_14_44_43";
    };
    ParamSet @[1] {
     name="RunConfig1";
@@ -4407,7 +4676,7 @@ LeabraProject .projects[1] {
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_05_06_08_09_21";
+    date="2017_05_09_14_44_43";
    };
    ParamSet @[1] {
     name="NetConfig1";
@@ -6558,7 +6827,9 @@ LeabraProject .projects[1] {
    name="MasterStartup";
    short_nm="Startup";
    tags="Leabra, Startup";
-   desc="run project in the background (replaces leabra_startup.css)\\n\\ncommand line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xxx]";
+   desc="run project in the background (replaces leabra_startup.css)
+
+command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xxx]";
    version {
     major=0;
     minor=0;
@@ -6722,9 +6993,9 @@ LeabraProject .projects[1] {
      name="PrintExpr_PrintLoadedproje_ojects0filename";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Print \\\"Loaded project: \\\" << .projects[0].file_name";
+     code_string="Print \"Loaded project: \" << .projects[0].file_name";
      expr {
-      expr="\\\"Loaded project: \\\" << .projects[0].file_name";
+      expr="\"Loaded project: \" << .projects[0].file_name";
      };
      debug=0;
     };
@@ -6738,10 +7009,10 @@ LeabraProject .projects[1] {
      name="AssignExpr_tag";
      desc="start with empty tag in all cases";
      flags=CAN_REVERT_TO_CODE;
-     code_string="tag = \\\"\\\"";
+     code_string="tag = \"\"";
      result_var=.projects[1].programs[0].vars[1]$$;
      expr {
-      expr="\\\"\\\"";
+      expr="\"\"";
      };
     };
     ProgVarFmArg @[4] {
@@ -6806,10 +7077,10 @@ LeabraProject .projects[1] {
      name="AssignExpr_tagMyClusterRunParamSetNamestag";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="tag = \\\"_\\\" +  config_id + tag";
+     code_string="tag = \"_\" +  config_id + tag";
      result_var=$.projects[1].programs[0].vars[1]$;
      expr {
-      expr="\\\"_\\\" + MyClusterRun->ParamSetNames() + tag";
+      expr="\"_\" + MyClusterRun->ParamSetNames() + tag";
      };
     };
     Comment @[10] {
@@ -6822,9 +7093,9 @@ LeabraProject .projects[1] {
      name="If_iftaMiscCheckArgByNamebatchstart";
      desc="set tag for starting batch (new code in v 8.0)";
      flags=CAN_REVERT_TO_CODE;
-     code_string="if (taMisc::CheckArgByName(\\\"batch_start\\\"))";
+     code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
      cond {
-      expr="taMisc::CheckArgByName(\\\"batch_start\\\")";
+      expr="taMisc::CheckArgByName(\"batch_start\")";
      };
      true_code {
       name="true_code";
@@ -6879,10 +7150,10 @@ LeabraProject .projects[1] {
        name="VarIncr_tagbatchstr";
        desc="add to tag for setting log file names";
        flags=CAN_REVERT_TO_CODE;
-       code_string="tag += \\\".\\\" + batch_str";
+       code_string="tag += \".\" + batch_str";
        var=$.projects[1].programs[0].vars[1]$;
        expr {
-	expr="\\\".\\\" + batch_str";
+	expr="\".\" + batch_str";
        };
       };
       If @[3] {
@@ -6901,7 +7172,7 @@ LeabraProject .projects[1] {
 	 name="MethodCall_logfilenmEpochOu_e001logdirfalse";
 	 desc="save args to file: last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\\\".args\\\", tag.before(\\\".00\\\",-1), log_dir, false)";
+	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 result_var=.projects[1].programs[0].vars[3]$$;
 	 obj=.projects[1].programs[0].vars[4]$$;
 	 method=taBase::GetFileNameFmProject;
@@ -6917,7 +7188,7 @@ LeabraProject .projects[1] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
-	    expr="\\\".args\\\"";
+	    expr="\".args\"";
 	   };
 	  };
 	  ProgArg @[1] {
@@ -6925,10 +7196,10 @@ LeabraProject .projects[1] {
 	   type="taString&";
 	   name="tag";
 	   required=0;
-	   def_val="\\\"\\\"";
+	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
-	    expr="tag.before(\\\".00\\\",-1)";
+	    expr="tag.before(\".00\",-1)";
 	   };
 	  };
 	  ProgArg @[2] {
@@ -6936,7 +7207,7 @@ LeabraProject .projects[1] {
 	   type="taString&";
 	   name="subdir";
 	   required=0;
-	   def_val="\\\"\\\"";
+	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
 	    expr="log_dir";
@@ -6974,7 +7245,7 @@ LeabraProject .projects[1] {
 	   type="taString&";
 	   name="fname";
 	   required=1;
-	   def_val="\\\"\\\"";
+	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
 	    expr="log_file_nm";
@@ -7002,7 +7273,7 @@ LeabraProject .projects[1] {
        name="MethodCall_logfilenmEpochOu_staglogdirfalse";
        desc="save args to file: last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
-       code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\\\".args\\\", tag, log_dir, false)";
+       code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        result_var=$.projects[1].programs[0].vars[3]$;
        obj=$.projects[1].programs[0].vars[4]$;
        method=taBase::GetFileNameFmProject;
@@ -7018,7 +7289,7 @@ LeabraProject .projects[1] {
 	 def_val=;
 	 prev_expr=;
 	 expr {
-	  expr="\\\".args\\\"";
+	  expr="\".args\"";
 	 };
 	};
 	ProgArg @[1] {
@@ -7026,7 +7297,7 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="tag";
 	 required=0;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
 	  expr="tag";
@@ -7037,7 +7308,7 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="subdir";
 	 required=0;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
 	  expr="log_dir";
@@ -7075,7 +7346,7 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="fname";
 	 required=1;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
 	  expr="log_file_nm";
@@ -7131,9 +7402,9 @@ LeabraProject .projects[1] {
      name="PrintExpr_PrintRunningbatchprogname";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Print \\\"Running: \\\" << batch_prog.name";
+     code_string="Print \"Running: \" << batch_prog.name";
      expr {
-      expr="\\\"Running: \\\" << batch_prog.name";
+      expr="\"Running: \" << batch_prog.name";
      };
      debug=0;
     };
@@ -7689,7 +7960,7 @@ LeabraProject .projects[1] {
       name="WtInitPrompt_ifguiDoyouwantto_eNetworkWeights";
       desc="don't initialize weights without checking";
       flags=CAN_REVERT_TO_CODE;
-      code_string="if (gui && \\\"Do you want to Initialize Network Weights\\\")";
+      code_string="if (gui && \"Do you want to Initialize Network Weights\")";
       prompt="Do you want to Initialize Network Weights";
       yes_label="Yes";
       no_label="No";
@@ -7733,9 +8004,9 @@ LeabraProject .projects[1] {
 	name="PrintExpr_Printnetworkname_ghtsInitialized";
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="Print network.name << \\\" Weights Initialized\\\"";
+	code_string="Print network.name << \" Weights Initialized\"";
 	expr {
-	 expr="network.name << \\\" Weights Initialized\\\"";
+	 expr="network.name << \" Weights Initialized\"";
 	};
 	debug=0;
        };
@@ -7783,10 +8054,10 @@ LeabraProject .projects[1] {
 	name="AssignExpr_tagcusttagcluste_amSetNamesfalse";
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="tag = \\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)";
+	code_string="tag = \"_\" + cust_tag + \"_\" + cluster_run->ParamSetNames(false)";
 	result_var=.projects[1].programs.gp[1][1].vars[7]$$;
 	expr {
-	 expr="\\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)";
+	 expr="\"_\" + cust_tag + \"_\" + cluster_run->ParamSetNames(false)";
 	};
        };
        OtherProgramVar @[1] {
@@ -8946,7 +9217,7 @@ LeabraProject .projects[1] {
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=2383: sys=356: tot=149402576445: }: end={usr=2383: sys=356: tot=149402576444: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=1214: sys=172: tot=149430868827: }: end={usr=1215: sys=172: tot=149430868827: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -9450,7 +9721,7 @@ LeabraProject .projects[1] {
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=1846: sys=268: tot=149402574332: }: end={usr=1847: sys=268: tot=149402574332: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=1217: sys=172: tot=149430868829: }: end={usr=1218: sys=172: tot=149430868829: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -10001,7 +10272,8 @@ LeabraProject .projects[1] {
       hard_enum_type=DataLoop::Order;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="controls the order in which events (rows of the input data datatable) are presented to the network\\n(SEQUENTIAL, PERMUTED, RANDOM)";
+      desc="controls the order in which events (rows of the input data datatable) are presented to the network
+(SEQUENTIAL, PERMUTED, RANDOM)";
       init_from=NULL;
      };
      ProgVar @[2] {
@@ -10039,7 +10311,7 @@ LeabraProject .projects[1] {
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=5;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10405,7 +10677,7 @@ LeabraProject .projects[1] {
      ProgVar @[1] {
       name="input_idx";
       var_type=T_Int;
-      int_val=3;
+      int_val=4;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12085,7 +12357,7 @@ LeabraProject .projects[1] {
 	name="MethodCall_leslaygpmatFmDelimStringlaygps";
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="les_laygp_mat->FmDelimString(laygps, \\\" \\\")";
+	code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
 	result_var=NULL;
 	obj=.projects[1].programs.gp[4][1].functions[1].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
@@ -12112,7 +12384,7 @@ LeabraProject .projects[1] {
 	  def_val=" ";
 	  prev_expr=;
 	  expr {
-	   expr="\\\" \\\"";
+	   expr="\" \"";
 	  };
 	 };
 	};
@@ -12172,7 +12444,7 @@ LeabraProject .projects[1] {
 	    name="MiscCall_taMiscErrorlayer_worknetworkname";
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error(\\\"layer group named:\\\", laygp_nm, \\\"not found in network:\\\", network.name, , , , , )";
+	    code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -12188,7 +12460,7 @@ LeabraProject .projects[1] {
 	      def_val=;
 	      prev_expr=;
 	      expr {
-	       expr="\\\"layer group named:\\\"";
+	       expr="\"layer group named:\"";
 	      };
 	     };
 	     ProgArg @[1] {
@@ -12196,7 +12468,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="b";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="laygp_nm";
@@ -12207,10 +12479,10 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="c";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
-	       expr="\\\"not found in network:\\\"";
+	       expr="\"not found in network:\"";
 	      };
 	     };
 	     ProgArg @[3] {
@@ -12218,7 +12490,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="d";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="network.name";
@@ -12229,7 +12501,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="e";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12240,7 +12512,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="f";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12251,7 +12523,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="g";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12262,7 +12534,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="h";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12273,7 +12545,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="i";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12477,7 +12749,7 @@ LeabraProject .projects[1] {
 	name="MethodCall_leslaysmatFmDelimStringlays";
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="les_lays_mat->FmDelimString(lays, \\\" \\\")";
+	code_string="les_lays_mat->FmDelimString(lays, \" \")";
 	result_var=NULL;
 	obj=.projects[1].programs.gp[4][1].functions[2].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
@@ -12504,7 +12776,7 @@ LeabraProject .projects[1] {
 	  def_val=" ";
 	  prev_expr=;
 	  expr {
-	   expr="\\\" \\\"";
+	   expr="\" \"";
 	  };
 	 };
 	};
@@ -12564,7 +12836,7 @@ LeabraProject .projects[1] {
 	    name="MiscCall_taMiscErrorlayer_worknetworkname";
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error(\\\"layer named:\\\", lay_nm, \\\"not found in network:\\\", network.name, , , , , )";
+	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -12580,7 +12852,7 @@ LeabraProject .projects[1] {
 	      def_val=;
 	      prev_expr=;
 	      expr {
-	       expr="\\\"layer named:\\\"";
+	       expr="\"layer named:\"";
 	      };
 	     };
 	     ProgArg @[1] {
@@ -12588,7 +12860,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="b";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="lay_nm";
@@ -12599,10 +12871,10 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="c";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
-	       expr="\\\"not found in network:\\\"";
+	       expr="\"not found in network:\"";
 	      };
 	     };
 	     ProgArg @[3] {
@@ -12610,7 +12882,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="d";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="network.name";
@@ -12621,7 +12893,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="e";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12632,7 +12904,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="f";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12643,7 +12915,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="g";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12654,7 +12926,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="h";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12665,7 +12937,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="i";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12891,7 +13163,7 @@ LeabraProject .projects[1] {
 	name="MethodCall_lesprjnsmatFmDelimStringprjns";
 	desc="get into easier to use matrix format";
 	flags=CAN_REVERT_TO_CODE;
-	code_string="les_prjns_mat->FmDelimString(prjns, \\\" \\\")";
+	code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
 	result_var=NULL;
 	obj=.projects[1].programs.gp[4][1].functions[3].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
@@ -12918,7 +13190,7 @@ LeabraProject .projects[1] {
 	  def_val=" ";
 	  prev_expr=;
 	  expr {
-	   expr="\\\" \\\"";
+	   expr="\" \"";
 	  };
 	 };
 	};
@@ -12938,9 +13210,9 @@ LeabraProject .projects[1] {
 	  name="If_ifprjnnmcontains";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="if (!prjn_nm.contains(\\\".\\\"))";
+	  code_string="if (!prjn_nm.contains(\".\"))";
 	  cond {
-	   expr="!prjn_nm.contains(\\\".\\\")";
+	   expr="!prjn_nm.contains(\".\")";
 	  };
 	  true_code {
 	   name="true_code";
@@ -12950,7 +13222,7 @@ LeabraProject .projects[1] {
 	    name="MiscCall_taMiscErrorproje_onasFmsendlayer";
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error(\\\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\\\", , , , , , , , )";
+	    code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -12966,7 +13238,7 @@ LeabraProject .projects[1] {
 	      def_val=;
 	      prev_expr=;
 	      expr {
-	       expr="\\\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\\\"";
+	       expr="\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\"";
 	      };
 	     };
 	     ProgArg @[1] {
@@ -12974,7 +13246,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="b";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12985,7 +13257,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="c";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -12996,7 +13268,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="d";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13007,7 +13279,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="e";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13018,7 +13290,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="f";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13029,7 +13301,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="g";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13040,7 +13312,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="h";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13051,7 +13323,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="i";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13074,7 +13346,7 @@ LeabraProject .projects[1] {
 	  name="MethodCall_laynmprjnnmbefore";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="lay_nm = prjn_nm->before(\\\".\\\", )";
+	  code_string="lay_nm = prjn_nm->before(\".\", )";
 	  result_var=.projects[1].programs.gp[4][1].functions[3].fun_code[0].local_vars[3]$$;
 	  obj=.projects[1].programs.gp[4][1].functions[3].fun_code[0].local_vars[2]$$;
 	  method=taString::before;
@@ -13090,7 +13362,7 @@ LeabraProject .projects[1] {
 	    def_val=;
 	    prev_expr=;
 	    expr {
-	     expr="\\\".\\\"";
+	     expr="\".\"";
 	    };
 	   };
 	   ProgArg @[1] {
@@ -13112,7 +13384,7 @@ LeabraProject .projects[1] {
 	  name="MethodCall_prjnnmprjnnmafter";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="prjn_nm = prjn_nm->after(\\\".\\\", )";
+	  code_string="prjn_nm = prjn_nm->after(\".\", )";
 	  result_var=$.projects[1].programs.gp[4][1].functions[3].fun_code[0].local_vars[2]$;
 	  obj=$.projects[1].programs.gp[4][1].functions[3].fun_code[0].local_vars[2]$;
 	  method=taString::after;
@@ -13128,7 +13400,7 @@ LeabraProject .projects[1] {
 	    def_val=;
 	    prev_expr=;
 	    expr {
-	     expr="\\\".\\\"";
+	     expr="\".\"";
 	    };
 	   };
 	   ProgArg @[1] {
@@ -13190,7 +13462,7 @@ LeabraProject .projects[1] {
 	    name="MiscCall_taMiscErrorlayer_worknetworkname";
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error(\\\"layer named:\\\", lay_nm, \\\"not found in network:\\\", network.name, , , , , )";
+	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -13206,7 +13478,7 @@ LeabraProject .projects[1] {
 	      def_val=;
 	      prev_expr=;
 	      expr {
-	       expr="\\\"layer named:\\\"";
+	       expr="\"layer named:\"";
 	      };
 	     };
 	     ProgArg @[1] {
@@ -13214,7 +13486,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="b";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="lay_nm";
@@ -13225,10 +13497,10 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="c";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
-	       expr="\\\"not found in network:\\\"";
+	       expr="\"not found in network:\"";
 	      };
 	     };
 	     ProgArg @[3] {
@@ -13236,7 +13508,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="d";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="network.name";
@@ -13247,7 +13519,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="e";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13258,7 +13530,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="f";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13269,7 +13541,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="g";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13280,7 +13552,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="h";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13291,7 +13563,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="i";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13336,7 +13608,7 @@ LeabraProject .projects[1] {
 	    name="MiscCall_taMiscErrorproje_dinlayerlayname";
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error(\\\"projection named:\\\", prjn_nm, \\\"not found in layer:\\\", lay.name, , , , , )";
+	    code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -13352,7 +13624,7 @@ LeabraProject .projects[1] {
 	      def_val=;
 	      prev_expr=;
 	      expr {
-	       expr="\\\"projection named:\\\"";
+	       expr="\"projection named:\"";
 	      };
 	     };
 	     ProgArg @[1] {
@@ -13360,7 +13632,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="b";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="prjn_nm";
@@ -13371,10 +13643,10 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="c";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
-	       expr="\\\"not found in layer:\\\"";
+	       expr="\"not found in layer:\"";
 	      };
 	     };
 	     ProgArg @[3] {
@@ -13382,7 +13654,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="d";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr="lay.name";
@@ -13393,7 +13665,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="e";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13404,7 +13676,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="f";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13415,7 +13687,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="g";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13426,7 +13698,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="h";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13437,7 +13709,7 @@ LeabraProject .projects[1] {
 	      type="taString&";
 	      name="i";
 	      required=0;
-	      def_val="\\\"\\\"";
+	      def_val="\"\"";
 	      prev_expr=;
 	      expr {
 	       expr=;
@@ -13686,9 +13958,9 @@ LeabraProject .projects[1] {
       name="PrintExpr_PrintConsnetwork_tsnetworknunits";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print \\\"Cons: \\\" << network.n_cons << \\\" Units: \\\" << network.n_units";
+      code_string="Print \"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
       expr {
-       expr="\\\"Cons: \\\" << network.n_cons << \\\" Units: \\\" << network.n_units";
+       expr="\"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
       };
       debug=0;
      };
@@ -14383,36 +14655,36 @@ LeabraProject .projects[1] {
 	  name="CssExpr_LayerLayoutLayer_1layergroupname";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"LayerGroup\\\"][-1] = layer_group.name;";
+	  code_string="LayerLayout[\"LayerGroup\"][-1] = layer_group.name;";
 	  expr {
-	   expr="LayerLayout[\\\"LayerGroup\\\"][-1] = layer_group.name;";
+	   expr="LayerLayout[\"LayerGroup\"][-1] = layer_group.name;";
 	  };
 	 };
 	 CssExpr @[2] {
 	  name="CssExpr_LayerLayoutXAbs1layergroupposx";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"X_Abs\\\"][-1] = layer_group.pos.x;";
+	  code_string="LayerLayout[\"X_Abs\"][-1] = layer_group.pos.x;";
 	  expr {
-	   expr="LayerLayout[\\\"X_Abs\\\"][-1] = layer_group.pos.x;";
+	   expr="LayerLayout[\"X_Abs\"][-1] = layer_group.pos.x;";
 	  };
 	 };
 	 CssExpr @[3] {
 	  name="CssExpr_LayerLayoutYAbs1layergroupposy";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"Y_Abs\\\"][-1] = layer_group.pos.y;";
+	  code_string="LayerLayout[\"Y_Abs\"][-1] = layer_group.pos.y;";
 	  expr {
-	   expr="LayerLayout[\\\"Y_Abs\\\"][-1] = layer_group.pos.y;";
+	   expr="LayerLayout[\"Y_Abs\"][-1] = layer_group.pos.y;";
 	  };
 	 };
 	 CssExpr @[4] {
 	  name="CssExpr_LayerLayoutZAbs1layergroupposz";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"Z_Abs\\\"][-1] = layer_group.pos.z;";
+	  code_string="LayerLayout[\"Z_Abs\"][-1] = layer_group.pos.z;";
 	  expr {
-	   expr="LayerLayout[\\\"Z_Abs\\\"][-1] = layer_group.pos.z;";
+	   expr="LayerLayout[\"Z_Abs\"][-1] = layer_group.pos.z;";
 	  };
 	 };
 	};
@@ -14460,9 +14732,9 @@ LeabraProject .projects[1] {
 	  name="CssExpr_LayerLayoutLayer_urrentlayername";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"LayerName\\\"][-1] = current_layer.name;";
+	  code_string="LayerLayout[\"LayerName\"][-1] = current_layer.name;";
 	  expr {
-	   expr="LayerLayout[\\\"LayerName\\\"][-1] = current_layer.name;";
+	   expr="LayerLayout[\"LayerName\"][-1] = current_layer.name;";
 	  };
 	 };
 	 If @[3] {
@@ -14481,9 +14753,9 @@ LeabraProject .projects[1] {
 	    name="CssExpr_LayerLayoutLayer_yerGetOwnername";
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="LayerLayout[\\\"LayerGroup\\\"][-1] = current_layer.GetOwner().name;";
+	    code_string="LayerLayout[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
 	    expr {
-	     expr="LayerLayout[\\\"LayerGroup\\\"][-1] = current_layer.GetOwner().name;";
+	     expr="LayerLayout[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
 	    };
 	   };
 	  };
@@ -14492,54 +14764,54 @@ LeabraProject .projects[1] {
 	  name="CssExpr_LayerLayoutXAbs1_entlayerposabsx";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"X_Abs\\\"][-1] = current_layer.pos_abs.x;";
+	  code_string="LayerLayout[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
 	  expr {
-	   expr="LayerLayout[\\\"X_Abs\\\"][-1] = current_layer.pos_abs.x;";
+	   expr="LayerLayout[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
 	  };
 	 };
 	 CssExpr @[5] {
 	  name="CssExpr_LayerLayoutYAbs1_entlayerposabsy";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"Y_Abs\\\"][-1] = current_layer.pos_abs.y;";
+	  code_string="LayerLayout[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
 	  expr {
-	   expr="LayerLayout[\\\"Y_Abs\\\"][-1] = current_layer.pos_abs.y;";
+	   expr="LayerLayout[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
 	  };
 	 };
 	 CssExpr @[6] {
 	  name="CssExpr_LayerLayoutZAbs1_entlayerposabsz";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"Z_Abs\\\"][-1] = current_layer.pos_abs.z;";
+	  code_string="LayerLayout[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
 	  expr {
-	   expr="LayerLayout[\\\"Z_Abs\\\"][-1] = current_layer.pos_abs.z;";
+	   expr="LayerLayout[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
 	  };
 	 };
 	 CssExpr @[7] {
 	  name="CssExpr_LayerLayoutXRel1currentlayerposx";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"X_Rel\\\"][-1] = current_layer.pos.x;";
+	  code_string="LayerLayout[\"X_Rel\"][-1] = current_layer.pos.x;";
 	  expr {
-	   expr="LayerLayout[\\\"X_Rel\\\"][-1] = current_layer.pos.x;";
+	   expr="LayerLayout[\"X_Rel\"][-1] = current_layer.pos.x;";
 	  };
 	 };
 	 CssExpr @[8] {
 	  name="CssExpr_LayerLayoutYRel1currentlayerposy";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"Y_Rel\\\"][-1] = current_layer.pos.y;";
+	  code_string="LayerLayout[\"Y_Rel\"][-1] = current_layer.pos.y;";
 	  expr {
-	   expr="LayerLayout[\\\"Y_Rel\\\"][-1] = current_layer.pos.y;";
+	   expr="LayerLayout[\"Y_Rel\"][-1] = current_layer.pos.y;";
 	  };
 	 };
 	 CssExpr @[9] {
 	  name="CssExpr_LayerLayoutZRel1currentlayerposz";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="LayerLayout[\\\"Z_Rel\\\"][-1] = current_layer.pos.z;";
+	  code_string="LayerLayout[\"Z_Rel\"][-1] = current_layer.pos.z;";
 	  expr {
-	   expr="LayerLayout[\\\"Z_Rel\\\"][-1] = current_layer.pos.z;";
+	   expr="LayerLayout[\"Z_Rel\"][-1] = current_layer.pos.z;";
 	  };
 	 };
 	};
@@ -14689,10 +14961,10 @@ LeabraProject .projects[1] {
 	  name="AssignExpr_layernameLayerLayoutLayerNamerow";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="layer_name = LayerLayout[\\\"LayerName\\\"][row]";
+	  code_string="layer_name = LayerLayout[\"LayerName\"][row]";
 	  result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[2]$$;
 	  expr {
-	   expr="LayerLayout[\\\"LayerName\\\"][row]";
+	   expr="LayerLayout[\"LayerName\"][row]";
 	  };
 	 };
 	 IfContinue @[1] {
@@ -14749,7 +15021,7 @@ LeabraProject .projects[1] {
 		name="MethodCall_currentlayerSetA_erLayoutZAbsrow";
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
-		code_string="current_layer->SetAbsPos(LayerLayout[\\\"X_Abs\\\"][row], LayerLayout[\\\"Y_Abs\\\"][row], LayerLayout[\\\"Z_Abs\\\"][row])";
+		code_string="current_layer->SetAbsPos(LayerLayout[\"X_Abs\"][row], LayerLayout[\"Y_Abs\"][row], LayerLayout[\"Z_Abs\"][row])";
 		result_var=NULL;
 		obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 		method=Layer::SetAbsPos;
@@ -14765,7 +15037,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="LayerLayout[\\\"X_Abs\\\"][row]";
+		   expr="LayerLayout[\"X_Abs\"][row]";
 		  };
 		 };
 		 ProgArg @[1] {
@@ -14776,7 +15048,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="LayerLayout[\\\"Y_Abs\\\"][row]";
+		   expr="LayerLayout[\"Y_Abs\"][row]";
 		  };
 		 };
 		 ProgArg @[2] {
@@ -14787,7 +15059,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="LayerLayout[\\\"Z_Abs\\\"][row]";
+		   expr="LayerLayout[\"Z_Abs\"][row]";
 		  };
 		 };
 		};
@@ -14813,10 +15085,10 @@ LeabraProject .projects[1] {
 		name="AssignExpr_groupnameLayerLa_utLayerGrouprow";
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
-		code_string="group_name = LayerLayout[\\\"LayerGroup\\\"][row]";
+		code_string="group_name = LayerLayout[\"LayerGroup\"][row]";
 		result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[4]$$;
 		expr {
-		 expr="LayerLayout[\\\"LayerGroup\\\"][row]";
+		 expr="LayerLayout[\"LayerGroup\"][row]";
 		};
 	       };
 	       If @[1] {
@@ -14835,7 +15107,7 @@ LeabraProject .projects[1] {
 		  name="MethodCall_lgrowLayerLayout_LayerGroup0true";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lgrow = LayerLayout->FindVal(group_name, \\\"LayerGroup\\\", 0, true)";
+		  code_string="lgrow = LayerLayout->FindVal(group_name, \"LayerGroup\", 0, true)";
 		  result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[5]$$;
 		  obj=$.projects[1].programs.gp[4][2].vars[0]$;
 		  method=DataTable::FindVal;
@@ -14862,7 +15134,7 @@ LeabraProject .projects[1] {
 		    def_val=;
 		    prev_expr=;
 		    expr {
-		     expr="\\\"LayerGroup\\\"";
+		     expr="\"LayerGroup\"";
 		    };
 		   };
 		   ProgArg @[2] {
@@ -14895,30 +15167,30 @@ LeabraProject .projects[1] {
 		  name="AssignExpr_lgxLayerLayoutXAbslgrow";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lg_x = LayerLayout[\\\"X_Abs\\\"][lgrow]";
+		  code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
 		  result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[6]$$;
 		  expr {
-		   expr="LayerLayout[\\\"X_Abs\\\"][lgrow]";
+		   expr="LayerLayout[\"X_Abs\"][lgrow]";
 		  };
 		 };
 		 AssignExpr @[2] {
 		  name="AssignExpr_lgyLayerLayoutYAbslgrow";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lg_y = LayerLayout[\\\"Y_Abs\\\"][lgrow]";
+		  code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
 		  result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[7]$$;
 		  expr {
-		   expr="LayerLayout[\\\"Y_Abs\\\"][lgrow]";
+		   expr="LayerLayout[\"Y_Abs\"][lgrow]";
 		  };
 		 };
 		 AssignExpr @[3] {
 		  name="AssignExpr_lgzLayerLayoutZAbslgrow";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lg_z = LayerLayout[\\\"Z_Abs\\\"][lgrow]";
+		  code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
 		  result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[8]$$;
 		  expr {
-		   expr="LayerLayout[\\\"Z_Abs\\\"][lgrow]";
+		   expr="LayerLayout[\"Z_Abs\"][lgrow]";
 		  };
 		 };
 		};
@@ -14971,7 +15243,7 @@ LeabraProject .projects[1] {
 		name="MethodCall_currentlayerSetA_erLayoutZRelrow";
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
-		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\\\"X_Rel\\\"][row], lg_y + LayerLayout[\\\"Y_Rel\\\"][row], lg_z + LayerLayout[\\\"Z_Rel\\\"][row])";
+		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
 		result_var=NULL;
 		obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 		method=Layer::SetAbsPos;
@@ -14987,7 +15259,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="lg_x + LayerLayout[\\\"X_Rel\\\"][row]";
+		   expr="lg_x + LayerLayout[\"X_Rel\"][row]";
 		  };
 		 };
 		 ProgArg @[1] {
@@ -14998,7 +15270,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="lg_y + LayerLayout[\\\"Y_Rel\\\"][row]";
+		   expr="lg_y + LayerLayout[\"Y_Rel\"][row]";
 		  };
 		 };
 		 ProgArg @[2] {
@@ -15009,7 +15281,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="lg_z + LayerLayout[\\\"Z_Rel\\\"][row]";
+		   expr="lg_z + LayerLayout[\"Z_Rel\"][row]";
 		  };
 		 };
 		};
@@ -15035,10 +15307,10 @@ LeabraProject .projects[1] {
 		name="AssignExpr_groupnameLayerLa_tLayoutGrouprow";
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
-		code_string="group_name = LayerLayout[\\\"LayoutGroup\\\"][row]";
+		code_string="group_name = LayerLayout[\"LayoutGroup\"][row]";
 		result_var=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[4]$;
 		expr {
-		 expr="LayerLayout[\\\"LayoutGroup\\\"][row]";
+		 expr="LayerLayout[\"LayoutGroup\"][row]";
 		};
 	       };
 	       If @[1] {
@@ -15057,7 +15329,7 @@ LeabraProject .projects[1] {
 		  name="MethodCall_lgrowLayerLayout_ayoutGroup0true";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lgrow = LayerLayout->FindVal(group_name, \\\"LayoutGroup\\\", 0, true)";
+		  code_string="lgrow = LayerLayout->FindVal(group_name, \"LayoutGroup\", 0, true)";
 		  result_var=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[5]$;
 		  obj=$.projects[1].programs.gp[4][2].vars[0]$;
 		  method=DataTable::FindVal;
@@ -15084,7 +15356,7 @@ LeabraProject .projects[1] {
 		    def_val=;
 		    prev_expr=;
 		    expr {
-		     expr="\\\"LayoutGroup\\\"";
+		     expr="\"LayoutGroup\"";
 		    };
 		   };
 		   ProgArg @[2] {
@@ -15117,30 +15389,30 @@ LeabraProject .projects[1] {
 		  name="AssignExpr_lgxLayerLayoutXAbslgrow";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lg_x = LayerLayout[\\\"X_Abs\\\"][lgrow]";
+		  code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
 		  result_var=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[6]$;
 		  expr {
-		   expr="LayerLayout[\\\"X_Abs\\\"][lgrow]";
+		   expr="LayerLayout[\"X_Abs\"][lgrow]";
 		  };
 		 };
 		 AssignExpr @[2] {
 		  name="AssignExpr_lgyLayerLayoutYAbslgrow";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lg_y = LayerLayout[\\\"Y_Abs\\\"][lgrow]";
+		  code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
 		  result_var=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[7]$;
 		  expr {
-		   expr="LayerLayout[\\\"Y_Abs\\\"][lgrow]";
+		   expr="LayerLayout[\"Y_Abs\"][lgrow]";
 		  };
 		 };
 		 AssignExpr @[3] {
 		  name="AssignExpr_lgzLayerLayoutZAbslgrow";
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
-		  code_string="lg_z = LayerLayout[\\\"Z_Abs\\\"][lgrow]";
+		  code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
 		  result_var=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[8]$;
 		  expr {
-		   expr="LayerLayout[\\\"Z_Abs\\\"][lgrow]";
+		   expr="LayerLayout[\"Z_Abs\"][lgrow]";
 		  };
 		 };
 		};
@@ -15193,7 +15465,7 @@ LeabraProject .projects[1] {
 		name="MethodCall_currentlayerSetA_erLayoutZRelrow";
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
-		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\\\"X_Rel\\\"][row], lg_y + LayerLayout[\\\"Y_Rel\\\"][row], lg_z + LayerLayout[\\\"Z_Rel\\\"][row])";
+		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
 		result_var=NULL;
 		obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 		method=Layer::SetAbsPos;
@@ -15209,7 +15481,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="lg_x + LayerLayout[\\\"X_Rel\\\"][row]";
+		   expr="lg_x + LayerLayout[\"X_Rel\"][row]";
 		  };
 		 };
 		 ProgArg @[1] {
@@ -15220,7 +15492,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="lg_y + LayerLayout[\\\"Y_Rel\\\"][row]";
+		   expr="lg_y + LayerLayout[\"Y_Rel\"][row]";
 		  };
 		 };
 		 ProgArg @[2] {
@@ -15231,7 +15503,7 @@ LeabraProject .projects[1] {
 		  def_val=;
 		  prev_expr=;
 		  expr {
-		   expr="lg_z + LayerLayout[\\\"Z_Rel\\\"][row]";
+		   expr="lg_z + LayerLayout[\"Z_Rel\"][row]";
 		  };
 		 };
 		};
@@ -15509,7 +15781,7 @@ LeabraProject .projects[1] {
       name="MethodCall_leslaymatFmDelim_inglesionlayers";
       desc="get into easier to use matrix format";
       flags=CAN_REVERT_TO_CODE;
-      code_string="les_lay_mat->FmDelimString(lesion_layers, \\\" \\\")";
+      code_string="les_lay_mat->FmDelimString(lesion_layers, \" \")";
       result_var=NULL;
       obj=.projects[1].programs.gp[4][3].vars[0]$$;
       method=String_Matrix::FmDelimString;
@@ -15536,7 +15808,7 @@ LeabraProject .projects[1] {
 	def_val=" ";
 	prev_expr=;
 	expr {
-	 expr="\\\" \\\"";
+	 expr="\" \"";
 	};
        };
       };
@@ -15623,7 +15895,7 @@ LeabraProject .projects[1] {
 	  name="MiscCall_taMiscErrorlayer_worknetworkname";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="taMisc::Error(\\\"layer group named:\\\", laygp_nm, \\\"not found in network:\\\", network.name, , , , , )";
+	  code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
 	  result_var=NULL;
 	  object_type=taMisc;
 	  method=taMisc::Error;
@@ -15639,7 +15911,7 @@ LeabraProject .projects[1] {
 	    def_val=;
 	    prev_expr=;
 	    expr {
-	     expr="\\\"layer group named:\\\"";
+	     expr="\"layer group named:\"";
 	    };
 	   };
 	   ProgArg @[1] {
@@ -15647,7 +15919,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="b";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr="laygp_nm";
@@ -15658,10 +15930,10 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="c";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
-	     expr="\\\"not found in network:\\\"";
+	     expr="\"not found in network:\"";
 	    };
 	   };
 	   ProgArg @[3] {
@@ -15669,7 +15941,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="d";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr="network.name";
@@ -15680,7 +15952,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="e";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr=;
@@ -15691,7 +15963,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="f";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr=;
@@ -15702,7 +15974,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="g";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr=;
@@ -15713,7 +15985,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="h";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr=;
@@ -15724,7 +15996,7 @@ LeabraProject .projects[1] {
 	    type="taString&";
 	    name="i";
 	    required=0;
-	    def_val="\\\"\\\"";
+	    def_val="\"\"";
 	    prev_expr=;
 	    expr {
 	     expr=;
@@ -16259,9 +16531,9 @@ LeabraProject .projects[1] {
       name="PrintExpr_Printnetworkname_ghtsInitialized";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print network.name << \\\" Weights Initialized\\\"";
+      code_string="Print network.name << \" Weights Initialized\"";
       expr {
-       expr="network.name << \\\" Weights Initialized\\\"";
+       expr="network.name << \" Weights Initialized\"";
       };
       debug=0;
      };
@@ -16294,7 +16566,7 @@ LeabraProject .projects[1] {
 	  type="taString&";
 	  name="fname";
 	  required=0;
-	  def_val="\\\"\\\"";
+	  def_val="\"\"";
 	  prev_expr=;
 	  expr {
 	   expr="weights_file";
@@ -16319,7 +16591,7 @@ LeabraProject .projects[1] {
 	name="PrintVar_Printloadedweigh_fileweightsfile";
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="Print  \\\"loaded weights file:\\\" weights_file";
+	code_string="Print  \"loaded weights file:\" weights_file";
 	message="loaded weights file:";
 	print_var=$.projects[1].programs.gp[4][4].vars[2]$;
 	print_var2=NULL;
@@ -16607,7 +16879,7 @@ LeabraProject .projects[1] {
       name="MethodCall_TrainSetVarstoptraintrue";
       desc="stop training!";
       flags=CAN_REVERT_TO_CODE;
-      code_string="Train->SetVar(\\\"stop_train\\\", true)";
+      code_string="Train->SetVar(\"stop_train\", true)";
       result_var=NULL;
       obj=.projects[1].programs.gp[4][5].vars[1]$$;
       method=Program::SetVar;
@@ -16623,7 +16895,7 @@ LeabraProject .projects[1] {
 	def_val=;
 	prev_expr=;
 	expr {
-	 expr="\\\"stop_train\\\"";
+	 expr="\"stop_train\"";
 	};
        };
        ProgArg @[1] {
@@ -18248,7 +18520,9 @@ LeabraProject .projects[1] {
     name="SaveWeights";
     short_nm="SWghts";
     tags="Weights, Specs";
-    desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values\\n\\nalso save specs.";
+    desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
+
+also save specs.";
     version {
      major=0;
      minor=0;
@@ -18465,17 +18739,17 @@ LeabraProject .projects[1] {
       name="AssignExpr_finaltagtagbatchstrepochstr";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="final_tag = tag + \\\".\\\" + batch_str + \\\"_\\\" + epoch_str";
+      code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
       result_var=.projects[1].programs.gp[4][15].vars[5]$$;
       expr {
-       expr="tag + \\\".\\\" + batch_str + \\\"_\\\" + epoch_str";
+       expr="tag + \".\" + batch_str + \"_\" + epoch_str";
       };
      };
      MethodCall @[4] {
       name="MethodCall_fnamenetworkGetF_gwtssubdirfalse";
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="fname = network->GetFileNameFmProject(\\\".wts.gz\\\", final_tag, wts_subdir, false)";
+      code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       result_var=.projects[1].programs.gp[4][15].vars[2]$$;
       obj=.projects[1].programs.gp[4][15].args[0]$$;
       method=taBase::GetFileNameFmProject;
@@ -18491,7 +18765,7 @@ LeabraProject .projects[1] {
 	def_val=;
 	prev_expr=;
 	expr {
-	 expr="\\\".wts.gz\\\"";
+	 expr="\".wts.gz\"";
 	};
        };
        ProgArg @[1] {
@@ -18499,7 +18773,7 @@ LeabraProject .projects[1] {
 	type="taString&";
 	name="tag";
 	required=0;
-	def_val="\\\"\\\"";
+	def_val="\"\"";
 	prev_expr=;
 	expr {
 	 expr="final_tag";
@@ -18510,7 +18784,7 @@ LeabraProject .projects[1] {
 	type="taString&";
 	name="subdir";
 	required=0;
-	def_val="\\\"\\\"";
+	def_val="\"\"";
 	prev_expr=;
 	expr {
 	 expr="wts_subdir";
@@ -18548,7 +18822,7 @@ LeabraProject .projects[1] {
 	type="taString&";
 	name="fname";
 	required=0;
-	def_val="\\\"\\\"";
+	def_val="\"\"";
 	prev_expr=;
 	expr {
 	 expr="fname";
@@ -18791,7 +19065,7 @@ LeabraProject .projects[1] {
        name="MethodCall_logfilenmepochou_ttaglogdirfalse";
        desc="last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
-       code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\\\".trn_epc.dat\\\", tag, log_dir, false)";
+       code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
        result_var=.projects[1].programs.gp[4].gp[0][0].vars[3]$$;
        obj=$.projects[1].programs.gp[4].gp[0][0].vars[4]$;
        method=taBase::GetFileNameFmProject;
@@ -18807,7 +19081,7 @@ LeabraProject .projects[1] {
 	 def_val=;
 	 prev_expr=;
 	 expr {
-	  expr="\\\".trn_epc.dat\\\"";
+	  expr="\".trn_epc.dat\"";
 	 };
 	};
 	ProgArg @[1] {
@@ -18815,7 +19089,7 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="tag";
 	 required=0;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
 	  expr="tag";
@@ -18826,7 +19100,7 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="subdir";
 	 required=0;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
 	  expr="log_dir";
@@ -18864,7 +19138,7 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="fname";
 	 required=0;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
 	  expr="log_file_nm";
@@ -18900,7 +19174,7 @@ LeabraProject .projects[1] {
        name="PrintVar_PrintSavingepoch_datatologfilenm";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print  \\\"Saving epoch log data to:\\\" log_file_nm";
+       code_string="Print  \"Saving epoch log data to:\" log_file_nm";
        message="Saving epoch log data to:";
        print_var=$.projects[1].programs.gp[4].gp[0][0].vars[3]$;
        print_var2=NULL;
@@ -18926,7 +19200,7 @@ LeabraProject .projects[1] {
 	 name="MethodCall_logfilenmtrialou_attaglogdirtrue";
 	 desc="last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\\\".trn_trl.dat\\\", tag, log_dir, true)";
+	 code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\".trn_trl.dat\", tag, log_dir, true)";
 	 result_var=$.projects[1].programs.gp[4].gp[0][0].vars[3]$;
 	 obj=.projects[1].programs.gp[4].gp[0][0].vars[5]$$;
 	 method=taBase::GetFileNameFmProject;
@@ -18942,7 +19216,7 @@ LeabraProject .projects[1] {
 	   def_val=;
 	   prev_expr=;
 	   expr {
-	    expr="\\\".trn_trl.dat\\\"";
+	    expr="\".trn_trl.dat\"";
 	   };
 	  };
 	  ProgArg @[1] {
@@ -18950,7 +19224,7 @@ LeabraProject .projects[1] {
 	   type="taString&";
 	   name="tag";
 	   required=0;
-	   def_val="\\\"\\\"";
+	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
 	    expr="tag";
@@ -18961,7 +19235,7 @@ LeabraProject .projects[1] {
 	   type="taString&";
 	   name="subdir";
 	   required=0;
-	   def_val="\\\"\\\"";
+	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
 	    expr="log_dir";
@@ -18999,7 +19273,7 @@ LeabraProject .projects[1] {
 	   type="taString&";
 	   name="fname";
 	   required=0;
-	   def_val="\\\"\\\"";
+	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
 	    expr="log_file_nm";
@@ -19035,7 +19309,7 @@ LeabraProject .projects[1] {
 	 name="PrintVar_PrintSavingtrial_datatologfilenm";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="Print  \\\"Saving trial log data to:\\\" log_file_nm";
+	 code_string="Print  \"Saving trial log data to:\" log_file_nm";
 	 message="Saving trial log data to:";
 	 print_var=$.projects[1].programs.gp[4].gp[0][0].vars[3]$;
 	 print_var2=NULL;
@@ -21743,7 +22017,7 @@ LeabraProject .projects[1] {
        name="MethodCall_epochmondataSetV_csepochtimetot1";
        desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
        flags=CAN_REVERT_TO_CODE;
-       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \\\"epoch_time_tot\\\", -1, )";
+       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
        result_var=NULL;
        obj=$.projects[1].programs.gp[4].gp[0][2].vars[0]$;
        method=DataTable::SetValColName;
@@ -21767,10 +22041,10 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="col_name";
 	 required=1;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
-	  expr="\\\"epoch_time_tot\\\"";
+	  expr="\"epoch_time_tot\"";
 	 };
 	};
 	ProgArg @[2] {
@@ -21803,7 +22077,7 @@ LeabraProject .projects[1] {
        name="MethodCall_epochmondataSetV_csepochtimeusr1";
        desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
        flags=CAN_REVERT_TO_CODE;
-       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \\\"epoch_time_usr\\\", -1, )";
+       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
        result_var=NULL;
        obj=$.projects[1].programs.gp[4].gp[0][2].vars[0]$;
        method=DataTable::SetValColName;
@@ -21827,10 +22101,10 @@ LeabraProject .projects[1] {
 	 type="taString&";
 	 name="col_name";
 	 required=1;
-	 def_val="\\\"\\\"";
+	 def_val="\"\"";
 	 prev_expr=;
 	 expr {
-	  expr="\\\"epoch_time_usr\\\"";
+	  expr="\"epoch_time_usr\"";
 	 };
 	};
 	ProgArg @[2] {
@@ -21877,9 +22151,31 @@ LeabraProject .projects[1] {
       };
       Comment @[7] {
        name="Comment_NOTEifdoingaTest_atablecorrectly";
-       desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:\\nhttp://grey.colorado.edu/emergent/index.php/Test_Programs\\nquick summary here:\\n* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.\\n* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,\\n  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false\\n* in original LeabraEpochMonitor, click OFF flag for WriteClose() line\\n* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.\\nThis will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,\\nand the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.\\n \\n";
+       desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
        flags=CAN_REVERT_TO_CODE;
-       code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:\\nhttp://grey.colorado.edu/emergent/index.php/Test_Programs\\nquick summary here:\\n* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.\\n* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,\\n  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false\\n* in original LeabraEpochMonitor, click OFF flag for WriteClose() line\\n* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.\\nThis will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,\\nand the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.\\n \\n";
+       code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
       };
      };
      step_prog=$.projects[1].programs.gp[4].gp[0][2]$;
@@ -24389,9 +24685,31 @@ LeabraProject .projects[1] {
       };
       Comment @[4] {
        name="Comment_NOTEifdoingaTest_atablecorrectly";
-       desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:\\nhttp://grey.colorado.edu/emergent/index.php/Test_Programs\\nquick summary here:\\n* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.\\n* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,\\n  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false\\n* in original LeabraEpochMonitor, click OFF flag for WriteClose() line\\n* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.\\nThis will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,\\nand the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.\\n \\n";
+       desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
        flags=CAN_REVERT_TO_CODE;
-       code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:\\nhttp://grey.colorado.edu/emergent/index.php/Test_Programs\\nquick summary here:\\n* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.\\n* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,\\n  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false\\n* in original LeabraEpochMonitor, click OFF flag for WriteClose() line\\n* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.\\nThis will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,\\nand the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.\\n \\n";
+       code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
       };
      };
      step_prog=$.projects[1].programs.gp[4].gp[0][4]$;
@@ -24420,10 +24738,10 @@ LeabraProject .projects[1] {
     name="UserDataItem_List_130";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.005841742: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.03483433: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9936272: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7519116: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0.005313496: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04502974: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=0.9941552: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -24431,7 +24749,7 @@ LeabraProject .projects[1] {
    m_data=.projects[1]$$;
    cur_font_size=12;
    visible=1;
-   win_name=".projects[\\\"LeabraFlex\\\"] - LeabraFlex.proj";
+   win_name=".projects[\"LeabraFlex_10713_v808\"] - LeabraFlex_10713_v808.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -26084,8 +26402,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
-      UserDataItem @[2] {name="view_win_wd": value=0.04354753: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.6881903: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7349193: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -26104,7 +26422,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -26180,7 +26498,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
-       margin {pct_marg=0.2: avg_tau=100: adapt_tau=2000: tol_pct=0.25: avg_act=0.8: low_thr=0.5: med_thr=0.505: hi_thr=0.51: avg_dt=0.01: adapt_dt=0.0005: };
+       margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
        lay_lrate=1;
        cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
        lstats {hog_thr=0.3: dead_thr=0.01: };
@@ -26197,7 +26515,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      clamp {hard=1: gain=0.2: avg=0: avg_gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
-     margin {pct_marg=0.2: avg_tau=100: adapt_tau=2000: tol_pct=0.25: avg_act=0.8: low_thr=0.5: med_thr=0.505: hi_thr=0.51: avg_dt=0.01: adapt_dt=0.0005: };
+     margin {pct_marg=0.3: avg_tau=100: adapt_tau=500: tol_pct=0.25: avg_act=0.8: low_thr=0.501: med_thr=0.506: hi_thr=0.508: avg_dt=0.01: adapt_dt=0.002: };
      lay_lrate=1;
      cos_diff {avg_tau=100: lrate_mod=0: lrmod_fm_trc=0: lrmod_z_thr=-1.5: set_net_unlrn=0: avg_dt=0.01: avg_dt_c=0.99: };
      lstats {hog_thr=0.3: dead_thr=0.01: };
@@ -26217,7 +26535,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects[1].networks[0].specs[2].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.5: gain=20: nvar=0.01: };
+     act {thr=0.5: gain=100: nvar=0.005: };
      act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
@@ -26229,7 +26547,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.1: i=1: };
+     g_bar {e=1: l=0.2: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
@@ -26538,7 +26856,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      n_recv_prjns=0;
      n_send_prjns=1;
      projections {
@@ -26570,12 +26888,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=.projects[1].networks[0].specs[0].children[0]$$: };
      adapt_gi=1;
-     margin_low_thr=0.5;
-     margin_med_thr=0.505;
-     margin_hi_thr=0.51;
+     margin_low_thr=0.501;
+     margin_med_thr=0.506;
+     margin_hi_thr=0.508;
      margin_low_avg=0.1875;
-     margin_med_avg=0.01875;
-     margin_hi_avg=0.15;
+     margin_med_avg=0.028125;
+     margin_hi_avg=0.13125;
     };
     LeabraLayer @[1] {
      name="Hidden";
@@ -26594,7 +26912,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      n_recv_prjns=2;
      n_send_prjns=1;
      projections {
@@ -26662,12 +26980,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=.projects[1].networks[0].specs[0]$$: };
      adapt_gi=1;
-     margin_low_thr=0.5;
-     margin_med_thr=0.505;
-     margin_hi_thr=0.51;
+     margin_low_thr=0.501;
+     margin_med_thr=0.506;
+     margin_hi_thr=0.508;
      margin_low_avg=0.1875;
-     margin_med_avg=0.01875;
-     margin_hi_avg=0.15;
+     margin_med_avg=0.028125;
+     margin_hi_avg=0.13125;
     };
     LeabraLayer @[2] {
      name="Output";
@@ -26686,7 +27004,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      n_recv_prjns=1;
      n_send_prjns=1;
      projections {
@@ -26736,12 +27054,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=$.projects[1].networks[0].specs[0].children[0]$: };
      adapt_gi=1;
-     margin_low_thr=0.5;
-     margin_med_thr=0.505;
-     margin_hi_thr=0.51;
+     margin_low_thr=0.501;
+     margin_med_thr=0.506;
+     margin_hi_thr=0.508;
      margin_low_avg=0.1875;
-     margin_med_avg=0.01875;
-     margin_hi_avg=0.15;
+     margin_med_avg=0.028125;
+     margin_hi_avg=0.13125;
     };
    };
    weights {

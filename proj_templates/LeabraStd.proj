@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10707
+// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -3414,7 +3414,7 @@ LeabraProject .projects[0] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=22;
       matrix_col_width=10;
      };
      float_Data @[38] {
@@ -3428,7 +3428,7 @@ LeabraProject .projects[0] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=23;
       matrix_col_width=10;
      };
      float_Data @[39] {
@@ -3442,7 +3442,7 @@ LeabraProject .projects[0] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=23;
       matrix_col_width=10;
      };
     };
@@ -5515,7 +5515,7 @@ LeabraProject .projects[0] {
       name="RndInitType";
       desc=;
       enums {
-       name=;
+       name="enums";
        el_typ=DynEnumItem;
        el_def=0;
        DynEnumItem @[0] {
@@ -7902,7 +7902,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
-      name="MethodCall_LayerWriter0SetD_nputdatanetwork";
+      name="MethodCall_layerwriter0SetD_nputdatanetwork";
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
@@ -7940,7 +7940,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
-      name="MethodCall_LayerWriter0AutoConfig";
+      name="MethodCall_layerwriter0AutoConfig";
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->AutoConfig()";
@@ -7967,7 +7967,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_desc=" do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed";
      };
      MethodCall @[2] {
-      name="MethodCall_LayerWriter0CheckConfigfalse";
+      name="MethodCall_layerwriter0CheckConfigfalse";
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->CheckConfig(false)";
@@ -7999,7 +7999,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
-      name="MethodCall_LayerWriter0SetD_nputdatanetwork";
+      name="MethodCall_layerwriter0SetD_nputdatanetwork";
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
@@ -8037,7 +8037,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
-      name="MethodCall_LayerWriter0ApplyInputData";
+      name="MethodCall_layerwriter0ApplyInputData";
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->ApplyInputData()";
@@ -16789,7 +16789,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.viewers[0];.viewers[0].frames[2];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -17097,7 +17097,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      n_recv_prjns=0;
      n_send_prjns=1;
      projections {
@@ -17153,7 +17153,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      n_recv_prjns=2;
      n_send_prjns=1;
      projections {
@@ -17245,7 +17245,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_spc {x=1: y=1: };
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      n_recv_prjns=1;
      n_send_prjns=1;
      projections {
