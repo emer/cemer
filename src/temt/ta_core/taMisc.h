@@ -1151,10 +1151,14 @@ public:
   // #CAT_Parse rbracket = } -- does depth counting to skip over intervening paired { }
   static int    read_till_rb_or_semi(std::istream& strm, bool peek = false);
   // #CAT_Parse rbracket } or ; -- does depth counting to skip over intervening paired { }
-  static int    read_till_end_quote(std::istream& strm, bool peek = false); // #CAT_Parse
+  static int    read_till_end_quote_unesc(std::istream& strm, bool peek = false);
   // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "
-  static int    read_till_end_quote_semi(std::istream& strm, bool peek = false);
+  static int    read_till_end_quote_semi_unesc(std::istream& strm, bool peek = false);
   // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
+  static int    read_till_end_quote(std::istream& strm, bool peek = false);
+  // #CAT_Parse read till end quote but does NOT unescape the string!
+  static int    read_till_end_quote_semi(std::istream& strm, bool peek = false);
+  // #CAT_Parse read till end quote but does NOT unescape the string!  looks for final semi
   static int    skip_past_err(std::istream& strm, bool peek = false);
   // #CAT_Parse skips to next rb or semi (robust)
   static int    skip_past_err_rb(std::istream& strm, bool peek = false);

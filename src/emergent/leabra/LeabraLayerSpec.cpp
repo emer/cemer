@@ -113,9 +113,9 @@ void LeabraActMargin::Defaults_init() {
   adapt_tau = 500.0f;
   tol_pct = 0.25f;
   avg_act = 0.8f;
-  low_thr = 0.5f;
-  med_thr = 0.505f;
-  hi_thr = 0.51f;
+  low_thr = 0.501f;
+  med_thr = 0.506f;
+  hi_thr = 0.508f;
 
   avg_dt = 1.0f / avg_tau;
   adapt_dt = 1.0f / adapt_tau;

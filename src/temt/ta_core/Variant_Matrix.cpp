@@ -55,7 +55,7 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
     //note: an empty string was not written
     c = taMisc::skip_till_start_quote_or_semi(strm);
     if (c == '\"') {
-      c = taMisc::read_till_end_quote_semi(strm);
+      c = taMisc::read_till_end_quote_semi_unesc(strm);
       val.updateFromString(taMisc::LexBuf);
     }
     break;
@@ -68,7 +68,7 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
     //note: an empty string was not written
     c = taMisc::skip_till_start_quote_or_semi(strm);
     if (c == '\"') {
-      c = taMisc::read_till_end_quote_semi(strm);
+      c = taMisc::read_till_end_quote_semi_unesc(strm);
       val.updateFromString(taMisc::LexBuf);
     }
     break;

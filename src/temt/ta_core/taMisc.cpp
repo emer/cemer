@@ -3862,8 +3862,7 @@ int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
   return c;
 }
 
-
-int taMisc::read_till_end_quote(istream& strm, bool peek) {
+int taMisc::read_till_end_quote_unesc(istream& strm, bool peek) {
   // don't skip initial whitespace because we're presumably reading a string literal
   int c;
   bool bs = false;
@@ -3897,6 +3896,43 @@ int taMisc::read_till_end_quote(istream& strm, bool peek) {
         bs = true;              // backslash-quoted character coming
       } else // if (c == '\"')
         break;
+    }
+  }
+  if (!peek)
+    strm.get(); // consume the "
+  return c;
+}
+
+int taMisc::read_till_end_quote_semi_unesc(istream& strm, bool peek) {
+  int c = read_till_end_quote_unesc(strm, peek);
+  if (c == EOF) return c;
+  if (peek) strm.get(); // consume the "
+  while (((c = strm.peek()) != EOF) && (c != ';'))
+    c = strm.get();
+  if (c == EOF) return c;
+  if (!peek)
+    strm.get(); // consume the ;
+  return c;
+}
+
+int taMisc::read_till_end_quote(istream& strm, bool peek) {
+  // don't skip initial whitespace because we're presumably reading a string literal
+  int c;
+  int prev_c = '\0';
+  LexBuf = "";
+  if (taMisc::verbose_load >= taMisc::SOURCE) {
+    while (((c = strm.peek()) != EOF) && !((c == '\"') && (prev_c != '\\')))  {
+      ConsoleOutputChars((char)c, true);
+      LexBuf += (char)c;
+      strm.get();
+      prev_c = c;
+    }
+  }
+  else {
+    while (((c = strm.peek()) != EOF) && !((c == '\"') && (prev_c != '\\')))  {
+      LexBuf += (char)c;
+      strm.get();
+      prev_c = c;
     }
   }
   if (!peek)

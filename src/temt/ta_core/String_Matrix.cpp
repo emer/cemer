@@ -32,7 +32,7 @@ int String_Matrix::defAlignment() const {
 int String_Matrix::Dump_Load_Item(istream& strm, int idx) {
   int c = taMisc::skip_till_start_quote_or_semi(strm);
   if (c == '\"') {
-    c = taMisc::read_till_end_quote_semi(strm);
+    c = taMisc::read_till_end_quote_semi_unesc(strm);
   }
   if (c != EOF) {
     FastEl_Flat(idx) = taMisc::LexBuf;

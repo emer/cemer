@@ -168,10 +168,13 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     String str = eff_type->GetValStr(new_base, base, this);
     strm << "=";
     if (eff_type->IsString()) {
-      // note: it won't stream an empty string
-      taMisc::write_quoted_string(strm, str);
-    } else {
-      strm << str;
+      if(str.nonempty())
+        strm << '\"';             // we are responsible for surrounding quotes!
+    }
+    strm << str;
+    if (eff_type->IsString()) {
+      if(str.nonempty())
+        strm << '\"';             // we are responsible for surrounding quotes!
     }
   }
   strm << ";\n";
@@ -698,9 +701,15 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     // in 4.x, we let the stream tell us if a quoted string is coming...
     if (c == '\"') {
       c = taMisc::skip_till_start_quote_or_semi(strm); // duh, has to succeed!
-      c = taMisc::read_till_end_quote_semi(strm); //
-      
-    } else {
+      taVersion v808(8, 0, 8);
+      if(taMisc::loading_version < v808) {
+        c = taMisc::read_till_end_quote_semi_unesc(strm); // previous version ONLY unesc here
+      }
+      else {
+        c = taMisc::read_till_end_quote_semi(strm); // does NOT unescape -- setval does that!
+      }
+    }
+    else {
       c = taMisc::read_till_rb_or_semi(strm);
     }
     

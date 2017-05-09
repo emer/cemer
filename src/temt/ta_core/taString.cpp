@@ -310,11 +310,7 @@ inline size_t tweak_alloc(size_t n) {
 
 #elif (defined(TA_OS_WIN))
 inline size_t tweak_alloc(size_t n) {
-#ifdef DEBUG
   return  (((n + 16) + 15) & ~((size_t)0xF)) - 16;
-#else
-  return  n;
-#endif
 }
 
 #elif defined(TA_OS_MAC)
@@ -721,8 +717,8 @@ int taString::_gsub_gt(const char* pat, int pl, const char* r, int rl) {
 }
 
 int taString::_gsub(const char* pat, int pl, const char* r, int rl) {
-  makeUnique(); // just to be safe
   if (mrep->len == 0)  return 0;
+  makeUnique(); // just to be safe
   if (pl < 0) pl = pat ? (int)strlen(pat) : 0;
   if (rl < 0) rl = r ? (int)strlen(r) : 0;
   if ((pl == 0) || (mrep->len < (uint)pl))
@@ -1646,22 +1642,39 @@ taString& taString::xml_unesc() {
 }
 
 taString& taString::quote_esc() {
-  makeUnique();
-  gsub("\\", "\\\\");
-  gsub("\"", "\\\"");
-  gsub("\n", "\\n");
-  gsub("\r", "\\r");
-  gsub("\t", "\\t");
+  taString src(this);
+  int len = src.length();
+  makeUnique(); // break from src
+  mrep->len = 0;                // start at 0
+  for(int i=0; i<len; i++) {
+    char c = src[i];
+    if(c == '\\' || c == '\"') {
+      cat('\\');
+    }
+    cat(c);
+  }
   return *this;
 }
 
 taString& taString::quote_unesc() {
-  makeUnique();
-  gsub("\\\\", "\\");
-  gsub("\\\"", "\"");
-  gsub("\\n", "\n");
-  gsub("\\r", "\r");
-  gsub("\\t", "\t");
+  taString src(this);
+  int len = src.length();
+  int lenm1 = len-1;
+  makeUnique(); // break from src
+  mrep->len = 0;                // start at 0
+  for(int i=0; i<len; i++) {
+    char c = src[i];
+    if(c == '\\') {
+      if(i < lenm1) {
+        char nxt = src[i+1];
+        if(nxt == '\"' || nxt == '\\') {
+          c = nxt;
+          i++;
+        }
+      }
+    }
+    cat(c);
+  }
   return *this;
 }
 

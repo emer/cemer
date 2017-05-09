@@ -381,7 +381,7 @@ void cssString::Save(ostream& strm) {
 void cssString::Load(istream& strm) {
   int c = taMisc::skip_till_start_quote_or_semi(strm);
   if (c == '\"')                          // "
-    c = taMisc::read_till_end_quote_semi(strm);// then till second followed by semi
+    c = taMisc::read_till_end_quote_semi_unesc(strm);// then till second followed by semi
 
   if(c != ';') {
     taMisc::Error("*** Missing ';' in dump file for string:", name);
