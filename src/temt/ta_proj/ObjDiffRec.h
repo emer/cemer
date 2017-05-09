@@ -130,6 +130,11 @@ public:
   virtual void  SetCurAction(int a_or_b, bool on_off);
   // set action for this guy, depending on its flag status, and a_or_b (a=0, b=1)
 
+  virtual bool  CompareRecObjs(const ObjDiffRec& cp) const;
+  // compare two records in terms of object-level members -- return true if same, else false
+  virtual bool  CompareRecsAll(const ObjDiffRec& cp) const;
+  // compare two records on everything -- return true if same, else false
+  
   String        GetDisplayName() const override;
 
   TA_BASEFUNS(ObjDiffRec);

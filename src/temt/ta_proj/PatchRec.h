@@ -18,12 +18,17 @@
 
 // parent includes:
 #include <taOBase>
+#include <taSmartRefT>
+#include <taSmartPtrT>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taProject; //
 class taList_impl; //
+class PatchRec; //
+
+TA_SMART_PTRS(TA_API, PatchRec); // PatchRecRef
 
 taTypeDef_Of(PatchRec);
 
@@ -47,19 +52,21 @@ public:
   };
 
   bool          off;            // turn off this patch record -- don't apply
+  bool          in_conflict;    // this patch is in conflict with another patch record (set by Patch_Group::MergePatches) -- delete / turn off one or the other of them to resolve the conflict
+  PatchRecRef   conflict;       // points to conflicting patch record for conflicts, and the source of the duplicate for duplicates (only the 2nd dupe has this)
   PatchActions  action;         // action that this patch record performs
   PatchStatus   status;         // #READ_ONLY #SHOW #NO_SAVE status of the last attempt to apply this patch -- see also apply_info
   String        apply_info;     // #EDIT_DIALOG #READ_ONLY #SHOW #NO_SAVE information about what happened during the application of this record -- see also status
   String        obj_path_names; // #EDIT_DIALOG project-relative path to object using names -- must be a taBase object -- for INSERT it is the path to the OWNER list to insert a new object in
   String        obj_path_idx;   // #EDIT_DIALOG project-relative path to object using indexes -- must be a taBase object -- for INSERT it is the path to the OWNER list to insert a new object in
   String        obj_type;       // type of object to be found at given obj_path -- for double-checking path finding
-  String        mbr_path;       // path to a member of object, if relevant (for ASSIGN only)
+  String        mbr_path;       // #CONDSHOW_ON_action:ASSIGN path to a member of object, if relevant (for ASSIGN only)
   int           targ_idx;       // #CONDSHOW_ON_action:INSERT,REPLACE insert / replace item at this index in the owner list (owner is obj_path)
   String        targ_name;      // #CONDSHOW_ON_action:INSERT,REPLACE name of item to insert, replace
   String        insert_after;   // #CONDSHOW_ON_action:INSERT insert new item after item with this name in owner list (owner is obj_path) -- blank means first item
   String        insert_before;  // #CONDSHOW_ON_action:INSERT insert new item before item with this name in owner list (owner is obj_path) -- blank means last item
   String        new_obj_type;   // for REPLACE and INSERT, the type name of the new object to create 
-  String        value;          // #EDIT_DIALOG string encoded value of object for assign and insert -- also has info about the object that should be deleted, to provide a match
+  String        value;          // #EDIT_DIALOG string encoded value of object for assign, insert, replace -- also has info about the object that should be deleted, to provide a match
 
   virtual void ToggleOff()      { off = !off; SigEmitUpdated(); }
   // #DYN1 toggle the off flag for this record -- whether to apply or not
@@ -104,6 +111,17 @@ public:
     (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
   // #IGNORE 
 
+
+  virtual int   CompareRecs(PatchRec* other);
+  // #IGNORE compare this with other record, returning a higher number for closer matches -- used by FindClosestRec -- goes by obj_path_names first, then action parameters etc
+  
+  virtual int   ConflictOrDupeCheck(PatchRec* other);
+  // #IGNORE conflict or duplicate check -- returns: 0 = nothing, 1 = conflict, 2 = dupe -- if conflict, then both are marked as conflicts of each other
+  virtual int   FlagConflict(PatchRec* other, const String& info);
+  // #IGNORE flag a conflict between two records -- sets apply info if non-empty, returns 1
+  virtual int   FlagDuplicate(PatchRec* other, const String& info = "");
+  // #IGNORE flag a duplicate between two records -- sets apply info if non-empty, returns 2
+  
   String        GetDesc() const override;
   String        GetName() const override { return GetDisplayName(); }
   String        GetDisplayName() const override;

@@ -81,6 +81,12 @@ public:
   virtual PatchRec*  NewRec_Insert
     (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
   // #IGNORE 
+
+  ////////////////////////////////////////
+  // Patch merging API
+
+  virtual PatchRec*  FindClosestRec(PatchRec* prec);
+  // #IGNORE find the patch rec here that has the closest match to given one, based on obj_path_names and other factors
   
   String             GetTypeDecoKey() const override { return "ControlPanel"; }
   

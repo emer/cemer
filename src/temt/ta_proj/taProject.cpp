@@ -51,6 +51,7 @@ taTypeDef_Of(taDataGen);
 #include <taGuiDialog>
 
 #include <QDir>
+#include <QStringList>
 #include <QFileInfo>
 #include <QFileDialog>
 #if (QT_VERSION >= 0x050000)
@@ -1270,6 +1271,49 @@ void taProject::SvnPrevDiff() {
     ObjDiff* diff = new ObjDiff;
     diff->Diff(last_proj, prev_proj);      // compute the diffs
     diff->DisplayDialog(false);  // non-modal -- dialog disposes of diff
+  }
+}
+
+void taProject::SvnMerge(taProject* vers1, taProject* vers2) {
+  ObjDiff* diff1 = new ObjDiff;
+  diff1->a_only = true;        // don't allow changes to B
+  diff1->Diff(this, vers1); // compute the diffs
+  diff1->DisplayDialog(false);  // non-modal -- dialog disposes of diff
+  
+  ObjDiff* diff2 = new ObjDiff;
+  diff2->a_only = true;        // don't allow changes to B
+  diff2->Diff(this, vers2); // compute the diffs
+  diff2->DisplayDialog(false);  // non-modal -- dialog disposes of diff
+}
+
+void taProject::SvnMergeFiles(const String& vers1_fname, const String& vers2_fname) {
+  int pidx = tabMisc::root->projects.size;
+  tabMisc::root->projects.Load(vers1_fname);
+  taProject* v1_proj = tabMisc::root->projects.SafeEl(pidx);
+  if(!v1_proj) return;
+  pidx++;
+  tabMisc::root->projects.Load(vers2_fname);
+  taProject* v2_proj = tabMisc::root->projects.SafeEl(pidx);
+  if(!v2_proj) return;
+
+  taMisc::ProcessEvents();
+  SvnMerge(v1_proj, v2_proj);
+}
+
+void taProject::CleanSvnProjs() {
+  QDir dir(proj_dir);
+  QStringList files = dir.entryList();
+  for(int i=0;i<files.size();i++) {
+    String fl = files[i];
+    if(!fl.startsWith(name) || !fl.endsWith(".proj"))
+      continue;
+    String aft = fl.after(name);
+    if(!aft.startsWith('_')) continue;
+    aft = aft.after('_');
+    aft = aft.before(".proj", -1);
+    if(!aft.isInt()) continue;
+    taMisc::Info("Removing svn project file:", fl);
+    taMisc::RemoveFile(fl);
   }
 }
 

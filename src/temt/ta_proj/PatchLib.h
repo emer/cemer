@@ -32,9 +32,11 @@ class TA_API PatchLib : public ObjLibrary {
 INHERITED(ObjLibrary)
 public:
 
-  Patch* NewPatch(Patch_Group* new_owner, ObjLibEl* lib_el);
+  virtual Patch*  NewPatch(Patch_Group* new_owner, ObjLibEl* lib_el);
   // create a new patch in given group, based on lib element
-  bool UpdatePatch(Patch* pat, ObjLibEl* lib_el);
+  virtual Patch* NewPatchFmName(Patch_Group* new_owner, const String& patch_nm);
+  // create a new patch in given group, (lookup by name) -- used by web interface to auto-load a patch
+  virtual bool UpdatePatch(Patch* pat, ObjLibEl* lib_el);
   // load patch at lib element into patch
 
   void  SetWikiInfoToObj(taBase* obj, const String& wiki_name) override;

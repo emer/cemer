@@ -35,14 +35,14 @@ public:
   virtual taBase* NewProgram(Program_Group* new_owner, ObjLibEl* lib_el);
   // create a new program in new_owner of based on given lib element (return value could be a Program or a Program_Group);  new_owner is group where program will be created
   virtual taBase* NewProgramFmName(Program_Group* new_owner, const String& prog_nm);
-  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
+  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created -- used by web interface to auto-load a new program
 
   virtual bool  UpdateProgram(Program* prog, ObjLibEl* lib_el);
   // #CAT_ObjLib load into given program; true if loaded, false if not
   virtual bool  DiffProgram(Program* prog, ObjLibEl* lib_el);
   // #CAT_ObjLib diff compare program with program library version
   virtual bool  UpdateProgramFmName(Program* prog, const String& prog_nm);
-  // #CAT_ObjLib update given program from program element lookup by name
+  // #CAT_ObjLib update given program from program element lookup by name -- used by web interface to auto-update a program
   virtual bool  UpdateProgramGroup(Program_Group* prog_gp, ObjLibEl* lib_el);
   // #CAT_ObjLib load into given program; true if loaded, false if not
 

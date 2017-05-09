@@ -15,6 +15,7 @@
 
 #include "Patch_Group.h"
 #include <Patch>
+#include <PatchRec>
 #include <taProject>
 #include <taDateTime>
 #include <taFiler>
@@ -53,7 +54,26 @@ Patch* Patch_Group::AddFromPatchLib(ObjLibEl* patch_lib_item) {
   return patch_lib.NewPatch(this, patch_lib_item);
 }
 
+Patch* Patch_Group::AddFromPatchLibByName(const String& patch_nm) {
+  return patch_lib.NewPatchFmName(this, patch_nm);
+}
+
 void Patch_Group::BrowsePatchLib(PatchLib::LibLocs location) {
   patch_lib.BrowseLibrary(location);
 }
 
+Patch* Patch_Group::MergePatches(Patch* patch1, Patch* patch2) {
+  Patch* merge = NewPatch();
+  merge->CopyFrom(patch1);
+  merge->name = "merge_" + patch1->name + "_" + patch2->name;
+  FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch2->patch_recs) {
+    PatchRec* closest = merge->FindClosestRec(pat);
+    taList_impl* clown = (taList_impl*)closest->GetOwner(); // could be in subgp
+    int clidx = clown->FindEl(closest);
+    PatchRec* newpat = (PatchRec*)pat->Clone();
+    clown->Insert(newpat, clidx+1); // insert after
+    closest->ConflictOrDupeCheck(newpat);
+  }
+  merge->SigEmitUpdated();
+  return merge;
+}

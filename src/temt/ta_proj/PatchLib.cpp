@@ -39,6 +39,16 @@ Patch* PatchLib::NewPatch(Patch_Group* new_owner, ObjLibEl* lib_el) {
   return pat;
 }
 
+Patch* PatchLib::NewPatchFmName(Patch_Group* new_owner, const String& patch_nm) {
+  ObjLibEl* el = library.FindName(patch_nm);
+  if(!el) {
+    taMisc::Error("NewPatchFmName: could not find patch of given name in library:",
+                  patch_nm);
+    return NULL;
+  }
+  return NewPatch(new_owner, el);
+}
+
 bool PatchLib::UpdatePatch(Patch* pat, ObjLibEl* lib_el) {
   EnsureDownloaded(lib_el);
   String path = lib_el->path;

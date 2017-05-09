@@ -99,25 +99,24 @@ int ObjDiff::DiffObjs(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
 
 
 ObjDiffRec* ObjDiff::NewListContext(ObjDiffRec* par_rec, int flags, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int a_off, int b_off, int chunk) {
+  taBase* a_obj = NULL;
+  taBase* b_obj = NULL;
   int a_c_idx = -1; 
   int b_c_idx = -1;
   int a_ok_idx = FastIdxFind(a_ok, a_idx + a_off);
   if(a_ok_idx >= 0) {
     a_c_idx = a_idx + a_off;
+    a_obj = (taBase*)list_a->SafeEl_(a_c_idx);
   }
   int b_ok_idx = FastIdxFind(b_ok, b_idx + b_off);
   if(b_ok_idx >= 0) {
     b_c_idx = b_idx + b_off;
-  }
-  taBase* a_obj = NULL;
-  if(a_c_idx >= 0)
-    a_obj = (taBase*)list_a->SafeEl_(a_c_idx);
-  taBase* b_obj = NULL;
-  if(b_c_idx >= 0)
     b_obj = (taBase*)list_b->SafeEl_(b_c_idx);
+  }
   if(!a_obj && !b_obj) {
     return NULL;
   }
+
   ObjDiffRec* rec = NewRec(par_rec, flags, a_c_idx, b_c_idx, a_obj, b_obj);
   if(a_obj && a_obj->InheritsFrom(&TA_taOBase)) {
     rec->a_indep_obj = a_obj;
@@ -127,13 +126,29 @@ ObjDiffRec* ObjDiff::NewListContext(ObjDiffRec* par_rec, int flags, taList_impl*
   }
   rec->n_diffs = 0;
   rec->chunk = chunk;
+
+  // don't do this because it can affect the rollback to delete guys -- there just will
+  // be some duplicated context!
+  // if(a_off < 0) {               // look for possible dupe against previous context, for before context only
+  //   int n_to_check = -a_off;    // 1 or 2
+  //   for(int i=n_to_check; i>=1; i--) {
+  //     if(diffs.size >= i + 1) {
+  //       int chk_idx = diffs.size - i - 1;
+  //       ObjDiffRec* last_rec = diffs.FastEl(chk_idx);
+  //       if(last_rec->IsContext() && last_rec->CompareRecObjs(*rec)) {
+  //         diffs.RemoveIdx(chk_idx); // get rid of after guy b/c before is more important
+  //         return rec;               // don't do any more!
+  //       }
+  //     }
+  //   }
+  // }
   return rec;
 }
 
 void ObjDiff::AddListContext_Before(ObjDiffRec* par_rec, taList_impl* list_a, int a_idx, taList_impl* list_b, int b_idx, int_Array& a_ok, int_Array& b_ok, int chunk) {
   NewListContext(par_rec, ObjDiffRec::CONTEXT_B2, list_a, a_idx, list_b, b_idx,
                  a_ok, b_ok, -2, -2, chunk);
-  NewListContext(par_rec, ObjDiffRec::CONTEXT_B2, list_a, a_idx, list_b, b_idx,
+  NewListContext(par_rec, ObjDiffRec::CONTEXT_B1, list_a, a_idx, list_b, b_idx,
                  a_ok, b_ok, -1, -1, chunk);
 }
 
@@ -218,12 +233,6 @@ int ObjDiff::DiffLists(ObjDiffRec* par_rec, taList_impl* list_a, taList_impl* li
                              a_ok, b_ok, i);
       }
     }
-  }
-
-  // a_ok and b_ok MUST have same size at this point!
-  if(a_ok.size != b_ok.size) {
-    taMisc::Error("DiffList error -- remaining list items not same size!");
-    return n_diffs;
   }
 
   int n_subs = a_ok.size;

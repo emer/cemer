@@ -240,3 +240,22 @@ void ObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
   }
 }
 
+bool ObjDiffRec::CompareRecObjs(const ObjDiffRec& cp) const {
+  if(nest_level != cp.nest_level) return false;
+  if(a_idx != cp.a_idx) return false;
+  if(b_idx != cp.b_idx) return false;
+  if(a_obj != cp.a_obj) return false;
+  if(b_obj != cp.b_obj) return false;
+  if(a_indep_obj.ptr() != cp.a_indep_obj.ptr()) return false;
+  if(b_indep_obj.ptr() != cp.b_indep_obj.ptr()) return false;
+  return true;
+}
+
+bool ObjDiffRec::CompareRecsAll(const ObjDiffRec& cp) const {
+  if(!CompareRecObjs(cp)) return false;
+  if(mdef != cp.mdef) return false;
+  if(a_val != cp.a_val) return false;
+  if(b_val != cp.b_val) return false;
+  if(flags != cp.flags) return false;
+  return true;
+}

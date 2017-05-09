@@ -18,6 +18,7 @@
 #include <PatchRec_Group>
 #include <taProject>
 #include <Patch_Group>
+#include <NameVar_Array>
 
 #include <taMisc>
 
@@ -131,3 +132,20 @@ void Patch::UpdateFromPatchLib(ObjLibEl* patch_lib_item) {
   patch_lib->UpdatePatch(this, patch_lib_item);
 }
 
+
+PatchRec* Patch::FindClosestRec(PatchRec* prec) {
+  NameVar_Array vals;
+  vals.SetSize(patch_recs.leaves);
+  int idx = 0;
+  FOREACH_ELEM_IN_GROUP(PatchRec, pat, patch_recs) {
+    int value = pat->CompareRecs(prec);
+    vals[idx].value = value;
+    vals[idx].name = String(idx);
+    idx++;
+  }
+  vals.Sort(true);              // descending, first is best
+  int closest_idx = vals[0].name.toInt();
+  PatchRec* closest = patch_recs.Leaf(closest_idx);
+  return closest;
+}
+  

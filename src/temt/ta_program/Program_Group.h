@@ -47,7 +47,7 @@ public:
   virtual taBase* AddFromProgLib(ObjLibEl* prog_lib_item);
   // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib.library #NO_SAVE_ARG_VAL #PRE_CALL_BuildProgLib #CAT_PatchLib create a new program from a library of existing programs
   virtual taBase* AddFromProgLibByName(const String& prog_nm);
-  // #CAT_PatchLib create a new program from a library of existing program types, looking up by name (NULL if name not found)
+  // #CAT_PatchLib create a new program from a library of existing program types, looking up by name (NULL if name not found) -- used by web interface to auto-load a new program
    virtual void   UpdateFromProgLib(ObjLibEl* prog_lib_item);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildProgLib #CAT_PatchLib (re)load the current program group from the selected program library element
   virtual void    BrowseProgLib(ProgLib::LibLocs location = ProgLib::WEB_APP_LIB);

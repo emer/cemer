@@ -19,6 +19,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(PatchRec);
+SMARTREF_OF_CPP(PatchRec);
 
 void PatchRec::Initialize() {
   off = false;
@@ -30,14 +31,20 @@ void PatchRec::Initialize() {
 String PatchRec::GetDisplayName() const {
   MemberDef* md = GetTypeDef()->members.FindName("action");
   String rval = md->type->Get_C_EnumString(action, false);
+  String obj_name;
+  if(obj_path_names.endsWith(']')) {
+    obj_name = obj_path_names.after('[',-1);
+    obj_name = obj_name.before(']');
+    obj_name.gsub("\"", "");
+  }
   if(action == INSERT) {
-    rval += "_" + new_obj_type + " " + targ_name;
+    rval += " " + new_obj_type + " " + targ_name + " in " + obj_name;
   }
   else if(action == REPLACE) {
-    rval += "_" + obj_type + "->" + new_obj_type;
+    rval += " " + obj_name + " (" + obj_type + ") ->" + new_obj_type;
   }
-  else {
-    rval += "_" + obj_type;
+  else {                        // ASSIGN or DELETE
+    rval += " " + obj_name + " (" + obj_type + ")";
     if(mbr_path.nonempty())
       rval += "." + mbr_path;
   }
@@ -56,6 +63,7 @@ int PatchRec::GetSpecialState() const {
   if(status == FAIL) return 4;          // red
   if(status == SUCCESS) return 3;       // green
   if(status == WARN) return 2;        // yellow
+  if(in_conflict) return 1;           // lavender?
   return 0;
 }
 
@@ -407,3 +415,133 @@ bool PatchRec::NewRec_Insert
   return rval;
 }
 
+int PatchRec::CompareRecs(PatchRec* other) {
+  int val = 0;
+  if(obj_path_names == other->obj_path_names) {
+    val = 1000;         // high val for exact match
+    if(in_conflict)
+      val -= 10;                // choose a diff record if possible
+    if(action == other->action) {
+      val += 500;           // bonus for same action
+      if(value == other->value)
+        val += 10;
+      if(action == INSERT) {
+        if(targ_idx == other->targ_idx)
+          val += 10;
+        if(targ_name == other->targ_name)
+          val += 10;
+        if(insert_after == other->insert_after)
+          val += 10;
+        if(insert_before == other->insert_before)
+          val += 10;
+        if(new_obj_type == other->new_obj_type)
+          val += 10;
+      }
+      if(action == REPLACE) {
+        if(targ_idx == other->targ_idx)
+          val += 10;
+        if(targ_name == other->targ_name)
+          val += 10;
+        if(new_obj_type == other->new_obj_type)
+          val += 10;
+      }
+      if(action == ASSIGN) {
+        if(mbr_path == other->mbr_path)
+          val += 10;
+      }
+    }
+  }
+  else {
+    String common = common_prefix(obj_path_names, other->obj_path_names, 0);
+    val = common.length();
+    if(in_conflict)
+      val -= 2;                // choose a diff record if possible, but small
+  }
+  return val;
+}
+
+int PatchRec::FlagConflict(PatchRec* other, const String& info) {
+  if(info.nonempty()) {
+    apply_info = info;
+    other->apply_info = info;
+  }
+  in_conflict = true;
+  other->in_conflict = true;
+  if(!conflict) conflict = other;
+  if(!other->conflict) other->conflict = this;
+  SigEmitUpdated();
+  other->SigEmitUpdated();
+  return 1;                     // conflict flag
+}
+
+int PatchRec::FlagDuplicate(PatchRec* other, const String& info) {
+  if(info.nonempty()) {
+    other->apply_info = info;
+  }
+  else {
+    other->apply_info = "duplicate of: " + GetDisplayName();
+  }
+  other->off = true;
+  if(!other->conflict) other->conflict = this;
+  other->SigEmitUpdated();
+  return 2;                     // duplicate flag
+}
+
+int PatchRec::ConflictOrDupeCheck(PatchRec* other) {
+  int rval = 0;                 // nothing
+  String info;
+  if(obj_path_names != other->obj_path_names)
+    return 0;                   // nothing
+  if(action == INSERT && other->action == INSERT) { // could be OK if different..
+    if(insert_after == other->insert_after && insert_before == other->insert_before) {
+      // now definitely a dupe or conflict
+      if(targ_name == other->targ_name && new_obj_type == other->new_obj_type) {
+        // this is looking very much like a dupe..
+        if(value == other->value) {
+          return FlagDuplicate(other);               // definitely a dupe!
+        }
+        // mark as conflict but enter in notes about how it could be a dupe..
+        info = "possible dupe -- only differs in value -- could just be minor diffs";
+      }
+      else {
+        info = "diff name or type being inserted in same location";
+      }
+      return FlagConflict(other, info);
+    }
+    return 0;                   // OK, inserting in diffrent places
+  }
+  if(action == DELETE && other->action == DELETE) {
+    // with same paths, this is a dupe!
+    return FlagDuplicate(other);
+  }
+  if(action == REPLACE && other->action == REPLACE) {
+    if(targ_name == other->targ_name && new_obj_type == other->new_obj_type) {
+      // this is looking very much like a dupe..
+      if(value == other->value) {
+        return FlagDuplicate(other);
+      }
+      // mark as conflict but enter in notes about how it could be a dupe..
+      info = "possible dupe -- only differs in value -- could just be minor diffs";
+    }
+    else {
+      info = "diff name or type being replaced in same location";
+    }
+    return FlagConflict(other, info);
+  }
+  if(action == ASSIGN && other->action == ASSIGN) {
+    if(mbr_path.nonempty()) {
+      if(mbr_path == other->mbr_path) {
+        if(value == other->value) {
+          return FlagDuplicate(other);
+        }
+        return FlagConflict(other, "assign to same member with diff vals -- could be dupe if vals are effectively equivalent");
+      }
+      return 0;                 // diff members, no problem!
+    }
+    if(value == other->value) {
+      return FlagDuplicate(other);
+    }
+    return FlagConflict(other, "assign to same obj with diff vals -- could be dupe if vals are effectively equivalent");
+  }
+  return FlagConflict(other, "different actions on same target object");
+}

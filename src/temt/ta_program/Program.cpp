@@ -2401,8 +2401,13 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
                                                        Qt::MetaModifier));
       }
     }
-    itm->taBase::BrowserSelectMe();  // some cases (e.g. editor panel has program group) where this is needed to ensure correct selection
-    taMisc::ProcessEvents();
+    // NO!!!! this causes the item in the left navigator browser to be selected
+    // instead of the one in the program panel!!  REALLY want to always get the
+    // one in the program panel even if it means that sometimes we don't actualy
+    // get it -- or figure out a way to make it work that doesn't cause selection
+    // in the navigator.  programming is done in the program editor!
+    // itm->taBase::BrowserSelectMe();  // some cases (e.g. editor panel has program group) where this is needed to ensure correct selection
+    // taMisc::ProcessEvents();
     
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
