@@ -1274,7 +1274,7 @@ void taProject::SvnPrevDiff() {
   }
 }
 
-void taProject::SvnMerge(taProject* vers1, taProject* vers2) {
+void taProject::DiffMerge(taProject* vers1, taProject* vers2) {
   ObjDiff* diff1 = new ObjDiff;
   diff1->a_only = true;        // don't allow changes to B
   diff1->Diff(this, vers1); // compute the diffs
@@ -1286,7 +1286,7 @@ void taProject::SvnMerge(taProject* vers1, taProject* vers2) {
   diff2->DisplayDialog(false);  // non-modal -- dialog disposes of diff
 }
 
-void taProject::SvnMergeFiles(const String& vers1_fname, const String& vers2_fname) {
+void taProject::DiffMergeFiles(const String& vers1_fname, const String& vers2_fname) {
   int pidx = tabMisc::root->projects.size;
   tabMisc::root->projects.Load(vers1_fname);
   taProject* v1_proj = tabMisc::root->projects.SafeEl(pidx);
@@ -1297,7 +1297,7 @@ void taProject::SvnMergeFiles(const String& vers1_fname, const String& vers2_fna
   if(!v2_proj) return;
 
   taMisc::ProcessEvents();
-  SvnMerge(v1_proj, v2_proj);
+  DiffMerge(v1_proj, v2_proj);
 }
 
 void taProject::CleanSvnProjs() {
