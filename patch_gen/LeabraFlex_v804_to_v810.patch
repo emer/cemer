@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Patch .projects[1].patches[0] { 
  PatchRec_Group @.patch_recs = [0] {
   PatchRec_Group @.gp[0] = [4] { 
@@ -190,7 +190,7 @@ Patch .projects[1].patches[0] {
  desc="Updates a LeabraFlex-based project from version 8.0.4 to 8.1.0, transitioning from ConfigTable to ParamSet-based configuration, and adding logging / tag code to Interactive runs";
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- date="2017_05_11_02_47_56";
+ date="2017_05_11_03_23_46";
  from_name="LeabraFlex_10389_v804";
  to_name="LeabraFlex_10713_v808";
  patch_recs {
@@ -215,7 +215,7 @@ Patch .projects[1].patches[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataTable_Group .projects[1].data.gp[3] { 
 };
 DataTable_Group .projects[1].data.gp[3] {
@@ -238,7 +238,7 @@ DataTable_Group .projects[1].data.gp[3] {
     insert_after="EpochOutputData";
     insert_before=;
     new_obj_type="DataTable";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataTable .projects[1].data.gp[1][2] { 
  DataTableCols @.data = [30] {
   int_Data @[0] { };
@@ -734,7 +734,7 @@ DataTable .projects[1].data.gp[1][2] {
     insert_after="TestTrialOutputData";
     insert_before=;
     new_obj_type="DataTable";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataTable .projects[1].data.gp[1][3] { 
  DataTableCols @.data = [32] {
   int_Data @[0] { };
@@ -1260,7 +1260,7 @@ DataTable .projects[1].data.gp[1][3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataTable .projects[0].data.gp[3][0] { 
  DataTableCols @.data = [16] {
   String_Data @[0] { };
@@ -1647,7 +1647,7 @@ DataTable .projects[0].data.gp[3][0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs[0].vars[2] { };
 ProgVar .projects[0].programs[0].vars[2] {
  name=\"config_id\";
@@ -1673,7 +1673,7 @@ ProgVar .projects[0].programs[0].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs[0].vars[3] { };
 ProgVar .projects[0].programs[0].vars[3] {
  name=\"param_set\";
@@ -1699,7 +1699,7 @@ ProgVar .projects[0].programs[0].vars[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs[0].vars[7] { };
 ProgVar .projects[0].programs[0].vars[7] {
  name=\"Config\";
@@ -1727,7 +1727,7 @@ ProgVar .projects[0].programs[0].vars[7] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs[0].vars[12] { };
 ProgVar .projects[0].programs[0].vars[12] {
  name=\"param_sets\";
@@ -1755,7 +1755,7 @@ ProgVar .projects[0].programs[0].vars[12] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs[0].vars[1] { };
 ProgVar .projects[1].programs[0].vars[1] {
  name=\"tag\";
@@ -1781,7 +1781,7 @@ ProgVar .projects[1].programs[0].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs[0].vars[3] { };
 ProgVar .projects[1].programs[0].vars[3] {
  name=\"log_file_nm\";
@@ -1807,7 +1807,7 @@ ProgVar .projects[1].programs[0].vars[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Function .projects[0].programs[0].functions[0] { 
  ProgVar_List @.args = [2] {
   ProgVar @[0] { };
@@ -1952,7 +1952,7 @@ Function .projects[0].programs[0].functions[0] {
     insert_after="Comment_Stdvariablesinst_upprogramitself";
     insert_before="ProgVarFmArg_SetVartaginProgr_artupfromArgtag";
     new_obj_type="AssignExpr";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 AssignExpr .projects[1].programs[0].prog_code[3] { };
 AssignExpr .projects[1].programs[0].prog_code[3] {
  name=\"AssignExpr_tag\";
@@ -1978,7 +1978,7 @@ AssignExpr .projects[1].programs[0].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVarFmArg .projects[0].programs[0].prog_code[5] { };
 ProgVarFmArg .projects[0].programs[0].prog_code[5] {
  name=\"ProgVarFmArg_SetVarparamsetin_fromArgparamset\";
@@ -2003,7 +2003,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[5] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVarFmArg .projects[0].programs[0].prog_code[6] { };
 ProgVarFmArg .projects[0].programs[0].prog_code[6] {
  name=\"ProgVarFmArg_SetVarbatchstart_omArgbatchstart\";
@@ -2028,7 +2028,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[6] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVarFmArg .projects[0].programs[0].prog_code[7] { };
 ProgVarFmArg .projects[0].programs[0].prog_code[7] {
  name=\"ProgVarFmArg_SetVarnbatchesin_fromArgnbatches\";
@@ -2053,7 +2053,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[7] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVarFmArg .projects[0].programs[0].prog_code[9] { };
 ProgVarFmArg .projects[0].programs[0].prog_code[9] {
  name=\"ProgVarFmArg_SetVarcurconfigi_infromArgconfig\";
@@ -2078,7 +2078,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[9] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVarFmArg .projects[0].programs[0].prog_code[10] { };
 ProgVarFmArg .projects[0].programs[0].prog_code[10] {
  name=\"ProgVarFmArg_SetVarconfigidin_infromArgconfig\";
@@ -2103,7 +2103,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[10] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 OtherProgramVar .projects[0].programs[0].prog_code[11] { };
 OtherProgramVar .projects[0].programs[0].prog_code[11] {
  name=\"OtherProgramVar_VarsFmprogramMas_gidvar2var3var4\";
@@ -2131,7 +2131,7 @@ OtherProgramVar .projects[0].programs[0].prog_code[11] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[0].programs[0].prog_code[12] { 
  ProgArg_List @.meth_args = [2] {
   ProgArg @[0] { };
@@ -2190,7 +2190,7 @@ MethodCall .projects[0].programs[0].prog_code[12] {
     insert_after="Comment_addourspecialargsfromcommandline";
     insert_before="ProgVarFmArg_SetVarcurconfigi_infromArgconfig";
     new_obj_type="MethodCall";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[1].programs[0].prog_code[7] { 
  ProgArg_List @.meth_args = [1] {
   ProgArg @[0] { };
@@ -2237,7 +2237,7 @@ MethodCall .projects[1].programs[0].prog_code[7] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[0].programs[0].prog_code[14] { 
  ProgEl_List @.true_code = [1] {
   MethodCall @[0] { 
@@ -2314,7 +2314,7 @@ If .projects[0].programs[0].prog_code[14] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Comment .projects[0].programs[0].prog_code[15] { };
 Comment .projects[0].programs[0].prog_code[15] {
  name=\"Comment_TODOAddyourprogr_eremultilinesok\";
@@ -2336,7 +2336,7 @@ Comment .projects[0].programs[0].prog_code[15] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Comment .projects[0].programs[0].prog_code[16] { };
 Comment .projects[0].programs[0].prog_code[16] {
  name=\"Comment_Addargstotagname\";
@@ -2358,7 +2358,7 @@ Comment .projects[0].programs[0].prog_code[16] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[0].programs[0].prog_code[17] { 
  ProgEl_List @.true_code = [1] {
   MiscCall @[0] { 
@@ -2517,7 +2517,7 @@ If .projects[0].programs[0].prog_code[17] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 AssignExpr .projects[0].programs[0].prog_code[18] { };
 AssignExpr .projects[0].programs[0].prog_code[18] {
  name=\"AssignExpr_tagconfigidtag\";
@@ -2543,7 +2543,7 @@ AssignExpr .projects[0].programs[0].prog_code[18] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Comment .projects[0].programs[0].prog_code[19] { };
 Comment .projects[0].programs[0].prog_code[19] {
  name=\"Comment_setanyparamsfromConfig\";
@@ -2565,7 +2565,7 @@ Comment .projects[0].programs[0].prog_code[19] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataColsFmArgs .projects[0].programs[0].prog_code[20] { };
 DataColsFmArgs .projects[0].programs[0].prog_code[20] {
  name=\"DataColsFmArgs_DataColsFmArgsta_lrowvarconfigid\";
@@ -2590,7 +2590,7 @@ DataColsFmArgs .projects[0].programs[0].prog_code[20] {
     insert_after="ControlPanelsFmArgs_CtrlPanelFmArgsvarMyClusterRun";
     insert_before="If_ifparamsetnonempty";
     new_obj_type="AssignExpr";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 AssignExpr .projects[1].programs[0].prog_code[9] { };
 AssignExpr .projects[1].programs[0].prog_code[9] {
  name=\"AssignExpr_tagMyClusterRunParamSetNamestag\";
@@ -2616,7 +2616,7 @@ AssignExpr .projects[1].programs[0].prog_code[9] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataVarProg .projects[0].programs[0].prog_code[26] { };
 DataVarProg .projects[0].programs[0].prog_code[26] {
  name=\"DataVarProg_DataFromtableCon_rogvar2var3var4\";
@@ -2676,7 +2676,7 @@ DataVarProg .projects[0].programs[0].prog_code[26] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 OtherProgramVar .projects[1].programs[0].prog_code[13] { };
 OtherProgramVar .projects[1].programs[0].prog_code[13] {
  name=\"OtherProgramVar_VarsToprogramSav_tagvar2var3var4\";
@@ -2704,7 +2704,7 @@ OtherProgramVar .projects[1].programs[0].prog_code[13] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[0][0].vars[0] { };
 ProgVar .projects[1].programs.gp[0][0].vars[0] {
  name=\"tag\";
@@ -2730,7 +2730,7 @@ ProgVar .projects[1].programs.gp[0][0].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][0].vars[2] { };
 ProgVar .projects[1].programs.gp[1][0].vars[2] {
  name=\"n_batches\";
@@ -2784,7 +2784,7 @@ ProgVar .projects[1].programs.gp[1][0].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DynEnumTableCol .projects[0].programs.gp[1][1].types[0] { 
  DynEnumItem_List @.enums = [1] {
   DynEnumItem @[0] { };
@@ -2821,7 +2821,7 @@ DynEnumTableCol .projects[0].programs.gp[1][1].types[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[0] { };
 ProgVar .projects[1].programs.gp[1][1].vars[0] {
  name=\"activate_params\";
@@ -2847,7 +2847,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[1] { };
 ProgVar .projects[1].programs.gp[1][1].vars[1] {
  name=\"run_params\";
@@ -2875,7 +2875,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[2] { };
 ProgVar .projects[1].programs.gp[1][1].vars[2] {
  name=\"net_params\";
@@ -2903,7 +2903,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
     insert_after="init_prog";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[5] { };
 ProgVar .projects[1].programs.gp[1][1].vars[5] {
  name=\"cluster_run\";
@@ -2931,7 +2931,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[5] {
     insert_after="cluster_run";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[6] { };
 ProgVar .projects[1].programs.gp[1][1].vars[6] {
  name=\"save_log_files_interactive\";
@@ -2957,7 +2957,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[6] {
     insert_after="save_log_files_interactive";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[7] { };
 ProgVar .projects[1].programs.gp[1][1].vars[7] {
  name=\"cust_tag\";
@@ -2983,7 +2983,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[7] {
     insert_after="cust_tag";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[8] { };
 ProgVar .projects[1].programs.gp[1][1].vars[8] {
  name=\"tag\";
@@ -3009,7 +3009,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[8] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[0] { };
 ProgVar .projects[1].programs.gp[1][1].vars[0] {
  name=\"activate_params\";
@@ -3035,7 +3035,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[1] { };
 ProgVar .projects[1].programs.gp[1][1].vars[1] {
  name=\"run_params\";
@@ -3063,7 +3063,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[2] { };
 ProgVar .projects[1].programs.gp[1][1].vars[2] {
  name=\"net_params\";
@@ -3119,7 +3119,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 AssignExpr .projects[0].programs.gp[1][1].init_code[1] { };
 AssignExpr .projects[0].programs.gp[1][1].init_code[1] {
  name=\"AssignExpr_configidcurconfig\";
@@ -3145,7 +3145,7 @@ AssignExpr .projects[0].programs.gp[1][1].init_code[1] {
     insert_after=;
     insert_before="AssignExpr_stoptrainfalse";
     new_obj_type="LocalVars";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 LocalVars .projects[1].programs.gp[1][1].prog_code[0] { 
  ProgVar_List @.local_vars = [0] {
  };
@@ -3175,7 +3175,7 @@ LocalVars .projects[1].programs.gp[1][1].prog_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 AssignExpr .projects[0].programs.gp[1][1].prog_code[1] { };
 AssignExpr .projects[0].programs.gp[1][1].prog_code[1] {
  name=\"AssignExpr_configidcurconfig\";
@@ -3201,7 +3201,7 @@ AssignExpr .projects[0].programs.gp[1][1].prog_code[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 DataVarProg .projects[0].programs.gp[1][1].prog_code[2] { };
 DataVarProg .projects[0].programs.gp[1][1].prog_code[2] {
  name=\"DataVarProg_DataFromtableCon_runprogvar3var4\";
@@ -3233,7 +3233,7 @@ DataVarProg .projects[0].programs.gp[1][1].prog_code[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[0].programs.gp[1][1].prog_code[3] { 
  ProgArg_List @.meth_args = [2] {
   ProgArg @[0] { };
@@ -3292,7 +3292,7 @@ MethodCall .projects[0].programs.gp[1][1].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCallVar .projects[0].programs.gp[1][1].prog_code[4] { 
  ProgArg_List @.prog_args = [2] {
   ProgArg @[0] { };
@@ -3348,7 +3348,7 @@ ProgramCallVar .projects[0].programs.gp[1][1].prog_code[4] {
     insert_after="AssignExpr_stoptrainfalse";
     insert_before="AssignExpr_configidcurconfig";
     new_obj_type="If";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[1][1].prog_code[2] { 
  ProgEl_List @.true_code = [3] {
   AssignExpr @[0] { };
@@ -3487,7 +3487,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
     insert_after="If_iftaMiscinteractive";
     insert_before="AssignExpr_configidcurconfig";
     new_obj_type="ProgramCallVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCallVar .projects[1].programs.gp[1][1].prog_code[3] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -3531,7 +3531,7 @@ ProgramCallVar .projects[1].programs.gp[1][1].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[1][1].prog_code[4].loop_code[0] { 
  ProgArg_List @.prog_args = [2] {
   ProgArg @[0] { };
@@ -3587,7 +3587,7 @@ ProgramCall .projects[1].programs.gp[1][1].prog_code[4].loop_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[1][1].prog_code[4].loop_code[0] { 
  ProgArg_List @.prog_args = [2] {
   ProgArg @[0] { };
@@ -3643,7 +3643,7 @@ ProgramCall .projects[1].programs.gp[1][1].prog_code[4].loop_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgArg .projects[0].programs.gp[1][1].prog_code[5].loop_code[0].prog_args[1] { };
 ProgArg .projects[0].programs.gp[1][1].prog_code[5].loop_code[0].prog_args[1] {
  arg_type=taString;
@@ -3698,7 +3698,7 @@ ProgArg .projects[0].programs.gp[1][1].prog_code[5].loop_code[0].prog_args[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[1][2].args[1] { };
 ProgVar .projects[0].programs.gp[1][2].args[1] {
  name=\"config_id\";
@@ -3738,7 +3738,7 @@ ProgVar .projects[0].programs.gp[1][2].args[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[1][2].vars[0] { };
 ProgVar .projects[0].programs.gp[1][2].vars[0] {
  name=\"Config\";
@@ -3766,7 +3766,7 @@ ProgVar .projects[0].programs.gp[1][2].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCallVar .projects[1].programs.gp[1][2].prog_code[0] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -3810,7 +3810,7 @@ ProgramCallVar .projects[1].programs.gp[1][2].prog_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCallVar .projects[1].programs.gp[1][2].prog_code[0] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -3854,7 +3854,7 @@ ProgramCallVar .projects[1].programs.gp[1][2].prog_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgArg .projects[0].programs.gp[1][2].prog_code[0].prog_args[1] { };
 ProgArg .projects[0].programs.gp[1][2].prog_code[0].prog_args[1] {
  arg_type=taString;
@@ -3909,7 +3909,7 @@ ProgArg .projects[0].programs.gp[1][2].prog_code[0].prog_args[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[1].gp[0][0].args[1] { };
 ProgVar .projects[0].programs.gp[1].gp[0][0].args[1] {
  name=\"config_id\";
@@ -3935,7 +3935,7 @@ ProgVar .projects[0].programs.gp[1].gp[0][0].args[1] {
     insert_after="prjn_unlesion_list";
     insert_before=;
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1].gp[0][0].vars[4] { };
 ProgVar .projects[1].programs.gp[1].gp[0][0].vars[4] {
  name=\"test_run\";
@@ -3961,7 +3961,7 @@ ProgVar .projects[1].programs.gp[1].gp[0][0].vars[4] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[0].programs.gp[1].gp[0][0].prog_code[0] { 
  ProgArg_List @.prog_args = [2] {
   ProgArg @[0] { };
@@ -4017,7 +4017,7 @@ ProgramCall .projects[0].programs.gp[1].gp[0][0].prog_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[1].gp[0][0].prog_code[2] { 
  ProgEl_List @.true_code = [1] {
   MemberAssign @[0] { };
@@ -4063,7 +4063,7 @@ If .projects[1].programs.gp[1].gp[0][0].prog_code[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Else .projects[1].programs.gp[1].gp[0][0].prog_code[3] { 
  ProgEl_List @.true_code = [1] {
   MemberAssign @[0] { };
@@ -4109,7 +4109,7 @@ Else .projects[1].programs.gp[1].gp[0][0].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[1].gp[0][0].prog_code[2] { 
  ProgEl_List @.true_code = [1] {
   MemberAssign @[0] { };
@@ -4183,7 +4183,7 @@ If .projects[1].programs.gp[1].gp[0][0].prog_code[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[1].gp[1][0].args[1] { };
 ProgVar .projects[0].programs.gp[1].gp[1][0].args[1] {
  name=\"config_id\";
@@ -4209,7 +4209,7 @@ ProgVar .projects[0].programs.gp[1].gp[1][0].args[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[1].gp[1][0].vars[0] { };
 ProgVar .projects[0].programs.gp[1].gp[1][0].vars[0] {
  name=\"trials_per_epoch\";
@@ -4235,7 +4235,7 @@ ProgVar .projects[0].programs.gp[1].gp[1][0].vars[0] {
     insert_after="train_epochs";
     insert_before="update_net_view";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1].gp[1][0].vars[1] { };
 ProgVar .projects[1].programs.gp[1].gp[1][0].vars[1] {
  name=\"trials_per_epoch_eff\";
@@ -4261,7 +4261,7 @@ ProgVar .projects[1].programs.gp[1].gp[1][0].vars[1] {
     insert_after="trials_per_epoch_eff";
     insert_before="update_net_view";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1].gp[1][0].vars[2] { };
 ProgVar .projects[1].programs.gp[1].gp[1][0].vars[2] {
  name=\"test_interval\";
@@ -4287,7 +4287,7 @@ ProgVar .projects[1].programs.gp[1].gp[1][0].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1].gp[1][0].vars[0] { };
 ProgVar .projects[1].programs.gp[1].gp[1][0].vars[0] {
  name=\"train_epochs\";
@@ -4313,7 +4313,7 @@ ProgVar .projects[1].programs.gp[1].gp[1][0].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[1].gp[1][0].prog_code[5] { 
  ProgEl_List @.true_code = [5] {
   ProgramCall @[0] { 
@@ -4521,7 +4521,7 @@ If .projects[1].programs.gp[1].gp[1][0].prog_code[5] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[1].gp[1][0].prog_code[5] { 
  ProgEl_List @.true_code = [5] {
   ProgramCall @[0] { 
@@ -4729,7 +4729,7 @@ If .projects[1].programs.gp[1].gp[1][0].prog_code[5] {
     insert_after="ProgramCall_EpochEndnetwork";
     insert_before="MemberAssign_networkepochnetworkepoch1";
     new_obj_type="If";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1] { 
  ProgEl_List @.true_code = [1] {
   ProgramCall @[0] { 
@@ -4791,7 +4791,7 @@ If .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1] {
     insert_after="BasicTrain";
     insert_before=;
     new_obj_type="Program";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Program .projects[1].programs.gp[2][1] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -5416,7 +5416,7 @@ Program .projects[1].programs.gp[2][1] {
     insert_after="BasicTest";
     insert_before=;
     new_obj_type="Program";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Program .projects[1].programs.gp[2][2] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -5844,7 +5844,7 @@ Program .projects[1].programs.gp[2][2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[3][0].vars[1] { };
 ProgVar .projects[1].programs.gp[3][0].vars[1] {
  name=\"input_idx\";
@@ -5870,7 +5870,7 @@ ProgVar .projects[1].programs.gp[3][0].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Program .projects[0].programs.gp[4][0] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -6244,7 +6244,7 @@ Program .projects[0].programs.gp[4][0] {
     insert_after=;
     insert_before="weights_file";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[0] { };
 ProgVar .projects[1].programs.gp[4][4].vars[0] {
  name=\"dmem_rnd_seed\";
@@ -6272,7 +6272,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[0] {
     insert_after="dmem_rnd_seed";
     insert_before="weights_file";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[1] { };
 ProgVar .projects[1].programs.gp[4][4].vars[1] {
  name=\"load_weights\";
@@ -6298,7 +6298,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[4][5].vars[1] { };
 ProgVar .projects[0].programs.gp[4][5].vars[1] {
  name=\"load_weights\";
@@ -6324,7 +6324,7 @@ ProgVar .projects[0].programs.gp[4][5].vars[1] {
     insert_after="lrs_step_epochs";
     insert_before="lrs_bump_step";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[5] { };
 ProgVar .projects[1].programs.gp[4][4].vars[5] {
  name=\"lrs_n_steps\";
@@ -6350,7 +6350,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[5] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[8] { };
 ProgVar .projects[1].programs.gp[4][4].vars[8] {
  name=\"save_log_files_interactive\";
@@ -6376,7 +6376,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[8] {
     insert_after="dmem_new_seed";
     insert_before=;
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[10] { };
 ProgVar .projects[1].programs.gp[4][4].vars[10] {
  name=\"train_epochs\";
@@ -6402,7 +6402,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[10] {
     insert_after="train_epochs";
     insert_before=;
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[11] { };
 ProgVar .projects[1].programs.gp[4][4].vars[11] {
  name=\"trials_per_epoch\";
@@ -6428,7 +6428,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[11] {
     insert_after="trials_per_epoch";
     insert_before=;
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[12] { };
 ProgVar .projects[1].programs.gp[4][4].vars[12] {
  name=\"trials_per_epoch_eff\";
@@ -6454,7 +6454,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[12] {
     insert_after="trials_per_epoch_eff";
     insert_before=;
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[13] { };
 ProgVar .projects[1].programs.gp[4][4].vars[13] {
  name=\"test_run\";
@@ -6480,7 +6480,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[13] {
     insert_after="test_run";
     insert_before=;
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[14] { };
 ProgVar .projects[1].programs.gp[4][4].vars[14] {
  name=\"test_interval\";
@@ -6506,7 +6506,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[14] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[2] { };
 ProgVar .projects[1].programs.gp[4][4].vars[2] {
  name=\"weights_file\";
@@ -6532,7 +6532,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[3] { };
 ProgVar .projects[1].programs.gp[4][4].vars[3] {
  name=\"load_st_epc\";
@@ -6558,7 +6558,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[4] { };
 ProgVar .projects[1].programs.gp[4][4].vars[4] {
  name=\"lrs_step_epochs\";
@@ -6584,7 +6584,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[4] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[6] { };
 ProgVar .projects[1].programs.gp[4][4].vars[6] {
  name=\"lrs_bump_step\";
@@ -6610,7 +6610,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[6] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[8] { };
 ProgVar .projects[1].programs.gp[4][4].vars[8] {
  name=\"save_log_files_interactive\";
@@ -6636,7 +6636,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[8] {
     insert_after=;
     insert_before=;
     new_obj_type="Function";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Function .projects[1].programs.gp[4][4].functions[0] { 
  ProgVar_List @.args = [0] {
  };
@@ -6760,7 +6760,7 @@ Function .projects[1].programs.gp[4][4].functions[0] {
     insert_after=;
     insert_before="ProgramCall_BatchRndSeednetwork";
     new_obj_type="FunctionCall";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 FunctionCall .projects[1].programs.gp[4][4].prog_code[0] { 
  ProgArg_List @.fun_args = [0] {
  };
@@ -6792,7 +6792,7 @@ FunctionCall .projects[1].programs.gp[4][4].prog_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[4][4].prog_code[3] { 
  ProgEl_List @.true_code = [1] {
   ProgramCall @[0] { 
@@ -6854,7 +6854,7 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[1].programs.gp[4][4].prog_code[7] { 
  ProgArg_List @.meth_args = [3] {
   ProgArg @[0] { };
@@ -6925,7 +6925,7 @@ MethodCall .projects[1].programs.gp[4][4].prog_code[7] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[4][4].prog_code[3] { 
  ProgEl_List @.true_code = [1] {
   ProgramCall @[0] { 
@@ -6987,7 +6987,7 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type="If";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[4][4].prog_code[6].true_code[2] { 
  ProgEl_List @.true_code = [1] {
   MemberAssign @[0] { };
@@ -7033,7 +7033,7 @@ If .projects[1].programs.gp[4][4].prog_code[6].true_code[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[1].programs.gp[4][4].prog_code[7] { 
  ProgArg_List @.meth_args = [3] {
   ProgArg @[0] { };
@@ -7104,7 +7104,7 @@ MethodCall .projects[1].programs.gp[4][4].prog_code[7] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgArg .projects[1].programs.gp[4][4].prog_code[7].meth_args[1] { };
 ProgArg .projects[1].programs.gp[4][4].prog_code[7].meth_args[1] {
  arg_type=int;
@@ -7131,7 +7131,7 @@ ProgArg .projects[1].programs.gp[4][4].prog_code[7].meth_args[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][5].vars[0] { };
 ProgVar .projects[1].programs.gp[4][5].vars[0] {
  name=\"save_final_wts\";
@@ -7157,7 +7157,7 @@ ProgVar .projects[1].programs.gp[4][5].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][7].vars[0] { };
 ProgVar .projects[1].programs.gp[4][7].vars[0] {
  name=\"save_wts_interval\";
@@ -7183,7 +7183,7 @@ ProgVar .projects[1].programs.gp[4][7].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][12].vars[0] { };
 ProgVar .projects[1].programs.gp[4][12].vars[0] {
  name=\"update_net_view\";
@@ -7237,7 +7237,7 @@ ProgVar .projects[1].programs.gp[4][12].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][13].vars[1] { };
 ProgVar .projects[1].programs.gp[4][13].vars[1] {
  name=\"update_net_view\";
@@ -7263,7 +7263,7 @@ ProgVar .projects[1].programs.gp[4][13].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][15].vars[0] { };
 ProgVar .projects[1].programs.gp[4][15].vars[0] {
  name=\"tag\";
@@ -7289,7 +7289,7 @@ ProgVar .projects[1].programs.gp[4][15].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][15].vars[2] { };
 ProgVar .projects[1].programs.gp[4][15].vars[2] {
  name=\"fname\";
@@ -7315,7 +7315,7 @@ ProgVar .projects[1].programs.gp[4][15].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][15].vars[5] { };
 ProgVar .projects[1].programs.gp[4][15].vars[5] {
  name=\"final_tag\";
@@ -7341,7 +7341,7 @@ ProgVar .projects[1].programs.gp[4][15].vars[5] {
     insert_after="LeabraEpochMonitor";
     insert_before=;
     new_obj_type="Program";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Program .projects[1].programs.gp[4].gp[0][3] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -8756,7 +8756,7 @@ Program .projects[1].programs.gp[4].gp[0][3] {
     insert_after="LeabraTestTrialMonitor";
     insert_before=;
     new_obj_type="Program";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Program .projects[1].programs.gp[4].gp[0][4] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -10121,7 +10121,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] { };
 ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] {
  name=\"tag\";
@@ -10147,7 +10147,7 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4].gp[0][0].vars[1] { };
 ProgVar .projects[1].programs.gp[4].gp[0][0].vars[1] {
  name=\"log_trials\";
@@ -10173,7 +10173,7 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] { };
 ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] {
  name=\"log_file_nm\";
@@ -10199,7 +10199,7 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] {
     insert_after=;
     insert_before=;
     new_obj_type="If";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 If .projects[1].programs.gp[4].gp[0][0].init_code[0] { 
  ProgEl_List @.true_code = [1] {
   MethodCall @[0] { 
@@ -10258,7 +10258,7 @@ If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[0].mbrs[0] { };
 ControlPanelMember .projects[1].ctrl_panels[0].mbrs[0] {
  label=\"run_params\";
@@ -10284,7 +10284,7 @@ ControlPanelMember .projects[1].ctrl_panels[0].mbrs[0] {
     insert_after="run_params";
     insert_before=;
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[0].mbrs[1] { };
 ControlPanelMember .projects[1].ctrl_panels[0].mbrs[1] {
  label=\"net_params\";
@@ -10310,7 +10310,7 @@ ControlPanelMember .projects[1].ctrl_panels[0].mbrs[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[0] { };
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[0] {
  label=\"cur_config\";
@@ -10336,7 +10336,7 @@ ControlPanelMember .projects[0].ctrl_panels[1].mbrs[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[1] { };
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[1] {
  label=\"mstr_run_stop_step_grain\";
@@ -10362,7 +10362,7 @@ ControlPanelMember .projects[0].ctrl_panels[1].mbrs[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[2] { };
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[2] {
  label=\"Cycle_update_net_view\";
@@ -10388,7 +10388,7 @@ ControlPanelMember .projects[0].ctrl_panels[1].mbrs[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[3] { };
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[3] {
  label=\"cycle_qtr\";
@@ -10414,7 +10414,7 @@ ControlPanelMember .projects[0].ctrl_panels[1].mbrs[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[4] { };
 ControlPanelMember .projects[0].ctrl_panels[1].mbrs[4] {
  label=\"leabra_con_spec_0_lrate\";
@@ -10440,7 +10440,7 @@ ControlPanelMember .projects[0].ctrl_panels[1].mbrs[4] {
     insert_after=;
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[0] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[0] {
  label=\"activate_params\";
@@ -10466,7 +10466,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[0] {
     insert_after="activate_params";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[1] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[1] {
  label=\"run_params\";
@@ -10492,7 +10492,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[1] {
     insert_after="run_params";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[2] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[2] {
  label=\"net_params\";
@@ -10518,7 +10518,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[2] {
     insert_after="net_params";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[3] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[3] {
  label=\"master_run_stop_step_grain\";
@@ -10544,7 +10544,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[3] {
     insert_after="master_run_stop_step_grain";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[4] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[4] {
  label=\"network_cycle_qtr\";
@@ -10570,7 +10570,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[4] {
     insert_after="network_cycle_qtr";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[5] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[5] {
  label=\"cycle_update_net_view\";
@@ -10596,7 +10596,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[5] {
     insert_after="cycle_update_net_view";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[6] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[6] {
  label=\"quarter_update_net_view\";
@@ -10622,7 +10622,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[6] {
     insert_after="quarter_update_net_view";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[7] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[7] {
  label=\"trial_update_net_view\";
@@ -10648,7 +10648,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[7] {
     insert_after="trial_update_net_view";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[8] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[8] {
  label=\"save_log_files_interactive\";
@@ -10674,7 +10674,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[8] {
     insert_after="save_log_files_interactive";
     insert_before="cur_config";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[9] { };
 ControlPanelMember .projects[1].ctrl_panels[1].mbrs[9] {
  label=\"cust_tag\";
@@ -10706,7 +10706,7 @@ ControlPanelMember .projects[1].ctrl_panels[1].mbrs[9] {
     insert_after=;
     insert_before=;
     new_obj_type="ParamSet_Group";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ParamSet_Group .projects[1].active_params.gp[0] { 
  ParamSet @[0] { 
   ControlPanelMember_Group @.mbrs = [18] {
@@ -11175,7 +11175,7 @@ ParamSet_Group .projects[1].active_params.gp[0] {
     insert_after="RunParams";
     insert_before=;
     new_obj_type="ParamSet_Group";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ParamSet_Group .projects[1].active_params.gp[1] { 
  ParamSet @[0] { 
   ControlPanelMember_Group @.mbrs = [1] {
@@ -11276,7 +11276,7 @@ ParamSet_Group .projects[1].active_params.gp[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 OtherProgramVar .projects[0].programs[0].prog_code[8] { };
 OtherProgramVar .projects[0].programs[0].prog_code[8] {
  name=\"OtherProgramVar_VarsFmprogramMas_ar1var2var3var4\";
@@ -11304,7 +11304,7 @@ OtherProgramVar .projects[0].programs[0].prog_code[8] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[0].programs[0].prog_code[9] { 
  ProgArg_List @.meth_args = [2] {
   ProgArg @[0] { };
@@ -11363,7 +11363,7 @@ MethodCall .projects[0].programs[0].prog_code[9] {
     insert_after=;
     insert_before=;
     new_obj_type="Comment";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Comment .projects[1].programs[0].prog_code[10] { };
 Comment .projects[1].programs[0].prog_code[10] {
  name=\"Comment_Setlogfiles\";
@@ -11385,7 +11385,7 @@ Comment .projects[1].programs[0].prog_code[10] {
     insert_after=;
     insert_before=;
     new_obj_type="Comment";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 Comment .projects[1].programs[0].prog_code[14] { };
 Comment .projects[1].programs[0].prog_code[14] {
  name=\"Comment_Callsubstartupprograms\";
@@ -11407,7 +11407,7 @@ Comment .projects[1].programs[0].prog_code[14] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[1] { };
 ProgVar .projects[1].programs.gp[1][1].vars[1] {
  name=\"run_params\";
@@ -11435,7 +11435,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[1][1].vars[2] { };
 ProgVar .projects[1].programs.gp[1][1].vars[2] {
  name=\"net_params\";
@@ -11463,7 +11463,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1].true_code[0] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -11507,7 +11507,7 @@ ProgramCall .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1].true_
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1].true_code[0] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -11551,7 +11551,7 @@ ProgramCall .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1].true_
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[2][1].prog_code[18] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -11595,7 +11595,7 @@ ProgramCall .projects[1].programs.gp[2][1].prog_code[18] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[2][1].prog_code[18] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -11639,7 +11639,7 @@ ProgramCall .projects[1].programs.gp[2][1].prog_code[18] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[2][2].prog_code[5] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -11683,7 +11683,7 @@ ProgramCall .projects[1].programs.gp[2][2].prog_code[5] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgramCall .projects[1].programs.gp[2][2].prog_code[5] { 
  ProgArg_List @.prog_args = [1] {
   ProgArg @[0] { };
@@ -11727,7 +11727,7 @@ ProgramCall .projects[1].programs.gp[2][2].prog_code[5] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[4][4].vars[0] { };
 ProgVar .projects[0].programs.gp[4][4].vars[0] {
  name=\"save_log_files_interactive\";
@@ -11753,7 +11753,7 @@ ProgVar .projects[0].programs.gp[4][4].vars[0] {
     insert_after="weights_file";
     insert_before="save_log_files_interactive";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[0] { };
 ProgVar .projects[1].programs.gp[4][4].vars[0] {
  name=\"dmem_rnd_seed\";
@@ -11781,7 +11781,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[0] {
     insert_after="dmem_rnd_seed";
     insert_before="save_log_files_interactive";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[1].programs.gp[4][4].vars[1] { };
 ProgVar .projects[1].programs.gp[4][4].vars[1] {
  name=\"load_weights\";
@@ -11807,7 +11807,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[1] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 ProgVar .projects[0].programs.gp[4][4].vars[2] { };
 ProgVar .projects[0].programs.gp[4][4].vars[2] {
  name=\"load_weights\";
@@ -11833,7 +11833,7 @@ ProgVar .projects[0].programs.gp[4][4].vars[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[1].programs.gp[4][4].prog_code[8].true_code[0] { 
  ProgArg_List @.meth_args = [0] {
  };
@@ -11868,7 +11868,7 @@ MethodCall .projects[1].programs.gp[4][4].prog_code[8].true_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
 MethodCall .projects[1].programs.gp[4][4].prog_code[8].true_code[0] { 
  ProgArg_List @.meth_args = [0] {
  };
@@ -11909,9 +11909,9 @@ MethodCall .projects[1].programs.gp[4][4].prog_code[8].true_code[0] {
     insert_after="log_trials";
     insert_before="weights_file";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
-ControlPanelMember .projects[1].active_params.gp[0][0].mbrs[10] { };
-ControlPanelMember .projects[1].active_params.gp[0][0].mbrs[10] {
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
+ControlPanelMember .projects[0].active_params.gp[0][0].mbrs[10] { };
+ControlPanelMember .projects[0].active_params.gp[0][0].mbrs[10] {
  label=\"load_weights\";
  short_label=1;
  cust_label=0;
@@ -11935,9 +11935,9 @@ ControlPanelMember .projects[1].active_params.gp[0][0].mbrs[10] {
     insert_after="log_trials";
     insert_before="weights_file";
     new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
-ControlPanelMember .projects[1].active_params.gp[0][1].mbrs[10] { };
-ControlPanelMember .projects[1].active_params.gp[0][1].mbrs[10] {
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10715
+ControlPanelMember .projects[0].active_params.gp[0][1].mbrs[10] { };
+ControlPanelMember .projects[0].active_params.gp[0][1].mbrs[10] {
  label=\"load_weights\";
  short_label=1;
  cust_label=0;
