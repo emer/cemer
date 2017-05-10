@@ -1956,6 +1956,8 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
   }
 }
 
+static taVersion v808(8, 0, 8);
+
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def,
                         StrContext sc, bool force_inline)
 {
@@ -2010,7 +2012,6 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else if(IsAtomicEff()) {
       if(IsString()) {
         if(sc == SC_STREAMING) {
-          taVersion v808(8, 0, 8);
           if(taMisc::is_loading && taMisc::loading_version < v808) {
             *((String*)base) = val; // not quoted
           }

@@ -30,7 +30,7 @@ taBase*		dumpMisc::dump_root = NULL;
 taProject*      dumpMisc::dump_proj = NULL;
 String		dumpMisc::dump_root_path;
 
-static taVersion v808(8, 0, 8);
+static taVersion v809(8, 0, 9);
 
 void dumpMisc::PostUpdateAfter() {
   taMisc::is_post_loading++;
@@ -43,7 +43,7 @@ void dumpMisc::PostUpdateAfter() {
 }  
 
 String dumpMisc::GetDumpPath(taBase* obj) {
-  if(taMisc::is_loading && taMisc::loading_version < v808) {
+  if(taMisc::is_loading && taMisc::loading_version < v809) {
     return obj->GetPath();
   }
   else {
@@ -61,7 +61,7 @@ String dumpMisc::GetDumpPath(taBase* obj) {
 
 taBase* dumpMisc::FindFromDumpPath(const String& path, MemberDef*& md) {
   taBase* rval = NULL;
-  if(taMisc::is_loading && taMisc::loading_version < v808) {
+  if(taMisc::is_loading && taMisc::loading_version < v809) {
     rval = tabMisc::root->FindFromPath(path, md);
   }
   else {
