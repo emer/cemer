@@ -2351,6 +2351,9 @@ iPanelOfProgramBase* Program::FindMyProgramPanel() {
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
   
+  itm->taBase::BrowserSelectMe();
+  taMisc::ProcessEvents();
+
   this->taBase::BrowserSelectMe(); // first, select the program in main tree
   taMisc::ProcessEvents();
   

@@ -1147,7 +1147,7 @@ void taProject::SvnDiff() {
   if(proj) {
     ObjDiff* diff = new ObjDiff;
     diff->a_only = true;        // don't allow changes to B
-    diff->Diff(this, proj);      // compute the diffs
+    diff->Diff(proj, this);      // compute the diffs
     diff->DisplayDialog(false);  // non-modal -- dialog disposes of diff
   }
 }
@@ -1269,7 +1269,7 @@ void taProject::SvnPrevDiff() {
   taMisc::ProcessEvents();
   if(last_proj && prev_proj) {
     ObjDiff* diff = new ObjDiff;
-    diff->Diff(last_proj, prev_proj);      // compute the diffs
+    diff->Diff(prev_proj, last_proj);      // compute the diffs
     diff->DisplayDialog(false);  // non-modal -- dialog disposes of diff
   }
 }
