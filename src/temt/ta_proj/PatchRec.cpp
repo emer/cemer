@@ -23,6 +23,7 @@ SMARTREF_OF_CPP(PatchRec);
 
 void PatchRec::Initialize() {
   off = false;
+  in_conflict = false;
   action = NO_ACTION;
   status = NO_STATUS;
   targ_idx = 0;

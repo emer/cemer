@@ -66,16 +66,14 @@ String DumpPathTokenList::GetPath(taBase* obj) {
     return FastEl(idx)->token_id;
 
   String path;
-  if(taMisc::save_use_name_paths)
-    path = obj->GetPathNames();
-  else
-    path = obj->GetPath();
+  path = dumpMisc::GetDumpPath(obj);
   DumpPathToken* tok = AddObjPath(obj, path);
   path += "$$";	// this marks this as a new token to be stored..
   // if obj is outside of root path, provide extra info about the object
   // that can be used during loading for finding object of correct type/name
   // even if it is not on the right path..
-  if(!path.startsWith(dumpMisc::dump_root_path)) {
+  // if(!path.startsWith(dumpMisc::dump_root_path)) {
+  if(!dumpMisc::dump_root->IsParentOf(obj)) {
     path += "<" + obj->GetTypeDef()->name + "," + obj->GetName() + ">";
   }
   return path;
@@ -163,7 +161,7 @@ taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
 
   dumpMisc::path_subs.FixPath(td, tabMisc::root, pat);
   MemberDef* md = NULL;
-  taBase* rval = tabMisc::root->FindFromPath(pat, md);
+  taBase* rval = dumpMisc::FindFromDumpPath(pat, md);
   if(rval && md && (md->type->IsPointer())) { // deref ptr
     rval = *((taBase**)rval);
   }

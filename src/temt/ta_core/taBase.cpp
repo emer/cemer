@@ -1689,7 +1689,6 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
 }
 
 int taBase::Save_strm(ostream& strm, taBase* par, int indent) {
-  taMisc::save_use_name_paths = false; // default is to NOT use name paths
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent);
   setDirty(false);
   return rval;

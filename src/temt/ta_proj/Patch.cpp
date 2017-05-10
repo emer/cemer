@@ -132,6 +132,16 @@ void Patch::UpdateFromPatchLib(ObjLibEl* patch_lib_item) {
   patch_lib->UpdatePatch(this, patch_lib_item);
 }
 
+void Patch::RemoveOffs() {
+  int n_leaves = patch_recs.leaves;
+  for(int i=n_leaves-1; i >= 0; i--) {
+    PatchRec* pat = patch_recs.Leaf(i);
+    if(pat->off) {
+      patch_recs.RemoveLeafIdx(i);
+    }
+  }
+}
+
 
 PatchRec* Patch::FindClosestRec(PatchRec* prec) {
   NameVar_Array vals;

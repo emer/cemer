@@ -21,8 +21,8 @@
 
 #include <taMisc>
 #include <tabMisc>
+#include <dumpMisc>
 #include <taRootBase>
-
 
 
 VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {
@@ -32,8 +32,7 @@ VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {
 
 taBase* VPUnref::Resolve() {
   MemberDef* md;
-  // note: loading paths can point outside of project -- use root directly
-  taBase* bs = tabMisc::root->FindFromPath(path, md);
+  taBase* bs = dumpMisc::FindFromDumpPath(path, md);
   if(!bs)
     return NULL;
   if(md) {
@@ -51,7 +50,8 @@ taBase* VPUnref::Resolve() {
   if (memb_def && memb_def->type->InheritsFrom(&TA_taSmartRef)) {
     taSmartRef& ref = *((taSmartRef*)base);
     ref = bs;
-  } else {// assume it is taBase_ptr or (binary-compat) taBasePtr
+  }
+  else {// assume it is taBase_ptr or (binary-compat) taBasePtr
     if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
       if(parent == NULL)
         taMisc::Warning("NULL parent for owned pointer:",path);

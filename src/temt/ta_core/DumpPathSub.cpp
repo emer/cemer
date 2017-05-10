@@ -20,6 +20,7 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <dumpMisc>
 
 
 DumpPathSub::DumpPathSub(TypeDef* td, taBase* par, const String& o, const String& n) {
@@ -58,7 +59,7 @@ void DumpPathSubList::AddPath(TypeDef* td, taBase* par, String& o, String& n) {
   DumpPathSub* nwsb = new DumpPathSub(td, par, *op, *np);
   Add(nwsb);
   if(par != tabMisc::root) {	// if local path, then add a global path fix too
-    String ppath = par->GetPath();
+    String ppath = dumpMisc::GetDumpPath(par);
     unFixPath(td, tabMisc::root, ppath); // un fix the parent if necessary
     String long_o = ppath + *op;
     String long_n = ppath + *np;

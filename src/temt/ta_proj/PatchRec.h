@@ -52,8 +52,8 @@ public:
   };
 
   bool          off;            // turn off this patch record -- don't apply
-  bool          in_conflict;    // this patch is in conflict with another patch record (set by Patch_Group::MergePatches) -- delete / turn off one or the other of them to resolve the conflict
-  PatchRecRef   conflict;       // points to conflicting patch record for conflicts, and the source of the duplicate for duplicates (only the 2nd dupe has this)
+  bool          in_conflict;    // #NO_SAVE this patch is in conflict with another patch record (set by Patch_Group::MergePatches) -- delete / turn off one or the other of them to resolve the conflict
+  PatchRecRef   conflict;       // #NO_SAVE points to conflicting patch record for conflicts, and the source of the duplicate for duplicates (only the 2nd dupe has this)
   PatchActions  action;         // action that this patch record performs
   PatchStatus   status;         // #READ_ONLY #SHOW #NO_SAVE status of the last attempt to apply this patch -- see also apply_info
   String        apply_info;     // #EDIT_DIALOG #READ_ONLY #SHOW #NO_SAVE information about what happened during the application of this record -- see also status

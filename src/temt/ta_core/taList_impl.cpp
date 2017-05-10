@@ -958,7 +958,7 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
           String lnk_path = taMisc::LexBuf;
           dumpMisc::path_subs.FixPath(eltd, tabMisc::root, lnk_path);
           MemberDef* md;
-          taBase* tp = tabMisc::root->FindFromPath(lnk_path, md); // loading, use root
+          taBase* tp = dumpMisc::FindFromDumpPath(lnk_path, md); // loading, use root
           if(idx < size)
             ReplaceLinkIdx(idx, tp); // if already room, replace it..
           else {

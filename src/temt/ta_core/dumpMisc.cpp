@@ -14,27 +14,23 @@
 //   Lesser General Public License for more details.
 
 #include "dumpMisc.h"
+#include <taProject>
 
 #include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <taVersion>
 
-
-
-/* Version 4.x Note on Error handling
-
-  Version 3.x had a mechanism whereby any taMisc::Error call with a non-
-  alphanum first character in the error msg would only print to cerr
-  not raise an error dialog. In v4.x we have added a taMisc::Warning
-  call for this purpose. So any call in the dump code that previously
-  did not raise a gui window has been converted to a Warning.
-
-*/
 taBase_PtrList 	dumpMisc::update_after;
 taBase_PtrList  dumpMisc::post_update_after;
 DumpPathSubList	dumpMisc::path_subs;
 DumpPathTokenList dumpMisc::path_tokens;
 VPUList 	dumpMisc::vpus;
-taBase*		dumpMisc::dump_root;
+taBase*		dumpMisc::dump_root = NULL;
+taProject*      dumpMisc::dump_proj = NULL;
 String		dumpMisc::dump_root_path;
+
+static taVersion v808(8, 0, 8);
 
 void dumpMisc::PostUpdateAfter() {
   taMisc::is_post_loading++;
@@ -45,3 +41,37 @@ void dumpMisc::PostUpdateAfter() {
   dumpMisc::post_update_after.Reset();
   taMisc::is_post_loading--;
 }  
+
+String dumpMisc::GetDumpPath(taBase* obj) {
+  if(taMisc::is_loading && taMisc::loading_version < v808) {
+    return obj->GetPath();
+  }
+  else {
+    if(dump_root->IsParentOf(obj)) {
+      return obj->GetPath(dump_root);
+    }
+    else if(dump_proj && dump_proj->IsParentOf(obj)) {
+      return obj->GetPath(dump_proj);
+    }
+    else {
+      return obj->GetPath();
+    }
+  }
+}
+
+taBase* dumpMisc::FindFromDumpPath(const String& path, MemberDef*& md) {
+  taBase* rval = NULL;
+  if(taMisc::is_loading && taMisc::loading_version < v808) {
+    rval = tabMisc::root->FindFromPath(path, md);
+  }
+  else {
+    rval = dump_root->FindFromPath(path, md);
+    if(!rval && dump_proj) {
+      rval = dump_proj->FindFromPath(path, md);
+    }
+    if(!rval) {
+      rval = tabMisc::root->FindFromPath(path, md);
+    }
+  }
+  return rval;
+}

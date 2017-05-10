@@ -26,6 +26,7 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <taiMiscCore>
+#include <taProject>
 
 #include <QTimer>
 #include <QLocale>
@@ -284,12 +285,12 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
       strm << "NULL";
     else {
       // its a relative path if you have a parent (period)
-      if(par != NULL)
-	strm << "@";
-      if(taMisc::save_use_name_paths)
-	strm << rbase->GetPathNames((taBase*)par);
-      else
-	strm << rbase->GetPath((taBase*)par);
+      if(par != NULL) {
+	strm << "@" << rbase->GetPath((taBase*)par);
+      }
+      else {
+        strm << dumpMisc::GetDumpPath(rbase);
+      }
     }
   }
   return true;
@@ -418,10 +419,8 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     taBase* rbase = (taBase*)base;
     
     dumpMisc::dump_root = rbase;
-    if(taMisc::save_use_name_paths)
-      dumpMisc::dump_root_path = rbase->GetPathNames();
-    else
-      dumpMisc::dump_root_path = rbase->GetPath();
+    dumpMisc::dump_proj = (taProject*)rbase->GetOwner(&TA_taProject);
+    dumpMisc::dump_root_path = rbase->GetPath(); // definitely root!
     
     rbase->Dump_Save_pre();
     if(!taMisc::is_undo_saving && !taMisc::is_auto_saving) {
@@ -442,12 +441,19 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     }
     
     // now, write out the object itself
-    rbase->Dump_Save_Path(strm, (taBase*)par, indent);
+    // rbase->Dump_Save_Path(strm, (taBase*)par, indent);
+    // note: always use full root path for first object!
+    strm << rbase->GetTypeDef()->name << " " << rbase->GetPath();
     strm << " { ";
     rbase->Dump_Save_PathR(strm, rbase, indent+1); // becomes self-par at this point
     taMisc::indent(strm, indent, 1);
     strm << "};\n";
-    rbase->Dump_Save_impl(strm, (taBase*)par, indent);
+    // now save for real -- this is basically Dump_Save_impl with fixed path to start:
+    strm << rbase->GetTypeDef()->name << " " << rbase->GetPath();
+    rbase->Dump_Save_Value(strm, (taBase*)par, indent);
+    rbase->Dump_SaveR(strm, rbase, indent+1);
+    taMisc::indent(strm, indent, 1) << "};\n";
+    // rbase->Dump_Save_impl(strm, (taBase*)par, indent);
   }
   else {
     Dump_Save_Path(strm, base, par, indent);
@@ -1219,10 +1225,12 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     new_path = el->GetPath();
   }
 
-  if(new_path != path)
+  if(new_path != path) {
     dumpMisc::path_subs.AddPath(td, tabMisc::root, path, new_path);
+  }
 
   dumpMisc::dump_root = el;
+  dumpMisc::dump_proj = (taProject*)el->GetOwner(&TA_taProject);
   dumpMisc::dump_root_path = new_path;
 
   rval = el->Dump_Load_Value(strm, (taBase*)par); // read it
@@ -1249,6 +1257,11 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 endload:
   --taMisc::is_loading;
 
+  if(taMisc::verbose_load >= taMisc::MESSAGES) {
+    taMisc::Info("path_subs count:", String(dumpMisc::path_subs.size));
+    taMisc::Info("path_tokens count:", String(dumpMisc::path_tokens.size));
+    taMisc::Info("vpus count:", String(dumpMisc::vpus.size));
+  }
   dumpMisc::update_after.Reset(); //note: don't reset post list!
   dumpMisc::path_subs.Reset();
   dumpMisc::path_tokens.Reset();

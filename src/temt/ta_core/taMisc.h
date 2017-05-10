@@ -603,7 +603,6 @@ public:
   //  #READ_ONLY #NO_SAVE #EXPERT version number associated with file currently being loaded
   static ContextFlag    is_post_loading;// #READ_ONLY #NO_SAVE #HIDDEN true if currently in the post load routine (DUMP_POST_LOAD)
   static ContextFlag    is_saving;      // #READ_ONLY #NO_SAVE #HIDDEN true if currently saving an object
-  static bool           save_use_name_paths; // #READ_ONLY #NO_SAVE #HIDDEN use name-based paths (GetPathNames) for saving paths
   static ContextFlag    is_undo_saving; // #READ_ONLY #NO_SAVE #HIDDEN true if currently saving an object for undo data -- objects with extensive "leaf" level data (i.e., having no signficant undoable data under them, e.g., data table rows) should NOT save that data in this context
   static ContextFlag    is_auto_saving; // #READ_ONLY #NO_SAVE #HIDDEN true if currently auto-saving the project -- some types may optimize saving for auto save
   static ContextFlag    is_undo_loading;// #READ_ONLY #NO_SAVE #HIDDEN true if currently loading an object from undo data

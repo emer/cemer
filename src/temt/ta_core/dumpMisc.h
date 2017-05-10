@@ -26,6 +26,7 @@
 #include <VPUList>
 
 // declare all other types mentioned but not required to include:
+class taProject; //
 
 class TA_API dumpMisc {
   // #NO_TOKENS ##NO_CSS ##NO_MEMBERS miscellaneous stuff for dump files
@@ -35,8 +36,14 @@ public:
   static DumpPathSubList 	path_subs;     // path substitutions
   static DumpPathTokenList	path_tokens;  // path tokens
   static VPUList 		vpus;	      // pointers that couldn't get cached out
-  static taBase*		dump_root;    // top-level object for load or save 
+  static taBase*		dump_root;    // top-level object for load or save
+  static taProject*             dump_proj;    // project scope for load or save
   static String			dump_root_path; // path of top-level object for load or save 
+
+  static String                 GetDumpPath(taBase* obj);
+  // special path function optimized for dump file saving
+  static taBase*                FindFromDumpPath(const String& path, MemberDef*& md);
+  // special path function optimized for dump file saving
   
   static void 		 	PostUpdateAfter(); // called by taiMiscCore when there were guys on pua list
 };

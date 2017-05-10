@@ -64,6 +64,9 @@ public:
   virtual void          UpdateFromPatchLib(ObjLibEl* patch_lib_item);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_patch_lib.library #ARG_VAL_FM_FUN #PRE_CALL_BuildPatchLib #CAT_PatchLib (re)load the patch from the selected patch library element
 
+  virtual void          RemoveOffs();
+  // #BUTTON #CAT_Patch #CONFIRM remove all the patch records that are currently turned off -- useful for cleaning up a merged or edited patch in preparation for sharing
+
   ////////////////////////////////////////
   // Patch generation API
 

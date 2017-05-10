@@ -599,14 +599,12 @@ bool taProject::SetFileName(const String& val) {
 }
 
 int taProject::Save_strm(ostream& strm, taBase* par, int indent) {
-  taMisc::save_use_name_paths = false; // actually NO! 
   if(!file_name.contains("proj_templates")) { // exclude new from template guys
     SaveSetAuthor();
   }
       
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent);
   setDirty(false);
-  taMisc::save_use_name_paths = false; // default is off, so restore to default for everything else
   return rval;
 }
 
@@ -1433,7 +1431,6 @@ String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext)
 }
 
 void taProject::SaveRecoverFile_strm(ostream& strm) {
-  taMisc::save_use_name_paths = false; // no name paths for recover files
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this);
   //  setDirty(false);  // definitely not
 }
@@ -1514,7 +1511,6 @@ bool taProject::AutoSave(bool force) {
     if(taMisc::undo_debug)
       taMisc::Info("Autosave start...");
     ++taMisc::is_auto_saving;
-    taMisc::save_use_name_paths = false; // don't use name paths for autosave!
     int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this);
     // note: not using Save_strm to preserve the dirty bit!
     --taMisc::is_auto_saving;
