@@ -48,13 +48,13 @@ String dumpMisc::GetDumpPath(taBase* obj) {
   }
   else {
     if(dump_root->IsParentOf(obj)) {
-      return obj->GetPath(dump_root);
+      return obj->GetPath(dump_root); // inside object, use numbers
     }
     else if(dump_proj && dump_proj->IsParentOf(obj)) {
-      return obj->GetPath(dump_proj);
+      return obj->GetPathNames(dump_proj); // outside, use names
     }
     else {
-      return obj->GetPath();
+      return obj->GetPathNames();    // way outside, definitely use names
     }
   }
 }
