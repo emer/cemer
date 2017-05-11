@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [1] {
   taDoc @[0] { 
@@ -3580,7 +3580,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc="configuration to run -- selects from configs in the Config data table";
      cust_desc=1;
-     base=.projects[0].programs.gp[1][1].vars[1].dyn_enum_val$$;
+     base=.programs.gp[1][1].vars[1].dyn_enum_val$$;
      mbr=DynEnum::value;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -3590,7 +3590,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=1;
      desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
      cust_desc=1;
-     base=.projects[0].programs.gp[1][2].vars[1].dyn_enum_val$$;
+     base=.programs.gp[1][2].vars[1].dyn_enum_val$$;
      mbr=DynEnum::value;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -3600,7 +3600,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=1;
      desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      cust_desc=1;
-     base=.projects[0].programs.gp[4][15].vars[0]$$;
+     base=.programs.gp[4][15].vars[0]$$;
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -3610,7 +3610,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
      cust_desc=0;
-     base=.projects[0].networks[0].times$$;
+     base=.networks[0].times$$;
      mbr=LeabraTimes::cycle_qtr;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -3620,7 +3620,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc="[Default: 0.04]  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor";
      cust_desc=0;
-     base=.projects[0].networks[0].specs[2]$$;
+     base=.networks[0].specs[2]$$;
      mbr=LeabraConSpec::lrate;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -3636,7 +3636,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
-     base=.projects[0].programs.gp[1][1]$$;
+     base=.programs.gp[1][1]$$;
      mth=Program::Init;
     };
     ControlPanelMethod @[1] {
@@ -3645,7 +3645,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
-     base=$.projects[0].programs.gp[1][1]$;
+     base=$.programs.gp[1][1]$;
      mth=Program::Run_Gui;
     };
     ControlPanelMethod @[2] {
@@ -3654,7 +3654,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
-     base=$.projects[0].programs.gp[1][1]$;
+     base=$.programs.gp[1][1]$;
      mth=Program::Step_Gui;
     };
     ControlPanelMethod @[3] {
@@ -3663,7 +3663,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
      cust_label=0;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
-     base=$.projects[0].programs.gp[1][1]$;
+     base=$.programs.gp[1][1]$;
      mth=Program::Stop;
     };
    };
@@ -5188,7 +5188,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="MasterStartup";
    short_nm="Startup";
@@ -5225,7 +5225,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
-     object_val=.projects[0].networks[0]$$;
+     object_val=.networks[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5242,7 +5242,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_prog";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs.gp[1][0]$$;
+     object_val=.programs.gp[1][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5304,7 +5304,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][1]$$;
+     object_val=.data.gp[1][1]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5316,7 +5316,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="Config";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[3][0]$$;
+     object_val=.data.gp[3][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5358,7 +5358,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="MyClusterRun";
      var_type=T_Object;
      object_type=ClusterRun;
-     object_val=.projects[0].ctrl_panels[0]$$;
+     object_val=.ctrl_panels[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5370,7 +5370,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="param_sets";
      var_type=T_Object;
      object_type=ParamSet_Group;
-     object_val=.projects[0].active_params$$;
+     object_val=.active_params$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5450,7 +5450,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CAN_REVERT_TO_CODE;
        code_string="lay->SetNUnits(n_units)";
        result_var=NULL;
-       obj=.projects[0].programs[0].functions[0].args[0]$$;
+       obj=.programs[0].functions[0].args[0]$$;
        method=Layer::SetNUnits;
        meth_args {
 	name="meth_args";
@@ -5529,7 +5529,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:tag in Program:MasterStartup from Arg:tag";
-     prog=.projects[0].programs[0]$$;
+     prog=.programs[0]$$;
      var_name="tag";
      arg_name="tag";
     };
@@ -5538,7 +5538,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:log_dir in Program:MasterStartup from Arg:log_dir";
-     prog=$.projects[0].programs[0]$;
+     prog=$.programs[0]$;
      var_name="log_dir";
      arg_name="log_dir";
     };
@@ -5547,7 +5547,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:param_set in Program:MasterStartup from Arg:param_set";
-     prog=$.projects[0].programs[0]$;
+     prog=$.programs[0]$;
      var_name="param_set";
      arg_name="param_set";
     };
@@ -5556,7 +5556,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="starting batch -- replaces b_start";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:batch_start in Program:MasterBatch from Arg:batch_start";
-     prog=$.projects[0].programs.gp[1][0]$;
+     prog=$.programs.gp[1][0]$;
      var_name="batch_start";
      arg_name="batch_start";
     };
@@ -5565,7 +5565,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="number of batches to run";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:n_batches in Program:MasterBatch from Arg:n_batches";
-     prog=$.projects[0].programs.gp[1][0]$;
+     prog=$.programs.gp[1][0]$;
      var_name="n_batches";
      arg_name="n_batches";
     };
@@ -5580,7 +5580,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:cur_config in Program:MasterTrain from Arg:config";
-     prog=$.projects[0].programs.gp[1][1]$;
+     prog=$.programs.gp[1][1]$;
      var_name="cur_config";
      arg_name="config";
     };
@@ -5589,7 +5589,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:config_id in Program:MasterTrain from Arg:config";
-     prog=$.projects[0].programs.gp[1][1]$;
+     prog=$.programs.gp[1][1]$;
      var_name="config_id";
      arg_name="config";
     };
@@ -5598,9 +5598,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Vars Fm:  program=MasterTrain set=from  var_1=config_id  var_2=?  var_3=?  var_4=? ";
-     other_prog=$.projects[0].programs.gp[1][1]$;
+     other_prog=$.programs.gp[1][1]$;
      set_other=0;
-     var_1=.projects[0].programs[0].vars[2]$$;
+     var_1=.programs[0].vars[2]$$;
      var_2=NULL;
      var_3=NULL;
      var_4=NULL;
@@ -5609,9 +5609,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="MethodCall_Configmethod";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
+     code_string="Config->method()";
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[7]$$;
+     obj=.programs[0].vars[7]$$;
      method=NULL;
      meth_args {
       name="meth_args";
@@ -5648,7 +5648,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     ctrl_panel_var=.projects[0].programs[0].vars[11]$$;
+     ctrl_panel_var=.programs[0].vars[11]$$;
     };
     If @[14] {
      name="If_ifparamsetnonempty";
@@ -5666,9 +5666,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="MethodCall_paramsetsActivat_aramSetparamset";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="param_sets->LoadParamSet(param_set)";
+       code_string="param_sets->ActivateParamSet(param_set, )";
        result_var=NULL;
-       obj=.projects[0].programs[0].vars[12]$$;
+       obj=.programs[0].vars[12]$$;
        method=ParamSet_Group::ActivateParamSet;
        meth_args {
 	name="meth_args";
@@ -5846,7 +5846,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tag = \"_\" +  config_id + tag";
-     result_var=.projects[0].programs[0].vars[1]$$;
+     result_var=.programs[0].vars[1]$$;
      expr {
       expr="\"_\" +  config_id + tag";
      };
@@ -5862,9 +5862,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Data Cols Fm Args:  table=Config  row_spec=row_val  row_var=config_id ";
-     data_var=$.projects[0].programs[0].vars[7]$;
+     data_var=$.programs[0].vars[7]$;
      row_spec=ROW_VAL;
-     row_var=$.projects[0].programs[0].vars[2]$;
+     row_var=$.programs[0].vars[2]$;
     };
     Comment @[21] {
      name="Comment_Setlogfiles";
@@ -5889,7 +5889,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="read in the arg to us too, so we can set file names based on it";
        flags=CAN_REVERT_TO_CODE;
        code_string="Set Var:batch_start in Program:MasterStartup from Arg:batch_start";
-       prog=$.projects[0].programs[0]$;
+       prog=$.programs[0]$;
        var_name="batch_start";
        arg_name="batch_start";
       };
@@ -5898,7 +5898,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="string version with leading zeros";
        flags=CAN_REVERT_TO_CODE;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
-       result_var=.projects[0].programs[0].vars[8]$$;
+       result_var=.programs[0].vars[8]$$;
        object_type=taMisc;
        method=taMisc::LeadingZeros;
        meth_args {
@@ -5934,7 +5934,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="add to tag for setting log file names";
        flags=CAN_REVERT_TO_CODE;
        code_string="tag += \".\" + batch_str";
-       var=$.projects[0].programs[0].vars[1]$;
+       var=$.programs[0].vars[1]$;
        expr {
 	expr="\".\" + batch_str";
        };
@@ -5956,8 +5956,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="save args to file: last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
-	 result_var=.projects[0].programs[0].vars[5]$$;
-	 obj=.projects[0].programs[0].vars[6]$$;
+	 result_var=.programs[0].vars[5]$$;
+	 obj=.programs[0].vars[6]$$;
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  name="meth_args";
@@ -6057,8 +6057,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="save args to file: last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
-       result_var=$.projects[0].programs[0].vars[5]$;
-       obj=$.projects[0].programs[0].vars[6]$;
+       result_var=$.programs[0].vars[5]$;
+       obj=$.programs[0].vars[6]$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name="meth_args";
@@ -6144,9 +6144,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-     other_prog=.projects[0].programs.gp[4][16]$$;
+     other_prog=.programs.gp[4][16]$$;
      set_other=1;
-     var_1=$.projects[0].programs[0].vars[1]$;
+     var_1=$.programs[0].vars[1]$;
      var_2=NULL;
      var_3=NULL;
      var_4=NULL;
@@ -6162,13 +6162,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=startup_prog  var_2=?  var_3=?  var_4=? ";
-     data_var=$.projects[0].programs[0].vars[7]$;
+     data_var=$.programs[0].vars[7]$;
      row_spec=ROW_VAL;
-     row_var=$.projects[0].programs[0].vars[2]$;
+     row_var=$.programs[0].vars[2]$;
      set_data=0;
      all_matches=0;
      quiet=0;
-     var_1=.projects[0].programs[0].vars[10]$$;
+     var_1=.programs[0].vars[10]$$;
      var_2=NULL;
      var_3=NULL;
      var_4=NULL;
@@ -6194,8 +6194,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     prog_group=.projects[0].programs.gp[0]$$;
-     prog_name_var=$.projects[0].programs[0].vars[10]$;
+     prog_group=.programs.gp[0]$$;
+     prog_name_var=$.programs[0].vars[10]$;
     };
     PrintExpr @[28] {
      name="PrintExpr_PrintRunningbatchprogname";
@@ -6228,11 +6228,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     target=$.projects[0].programs.gp[1][0]$;
+     target=$.programs.gp[1][0]$;
      targ_ld_init="*MasterBatch*";
     };
    };
-   step_prog=.projects[0].programs.gp[4][15]$$;
+   step_prog=.programs.gp[4][15]$$;
    step_n=1;
    doc {
     name="doc";
@@ -6258,7 +6258,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][0].doc$$: };
     };
     name="BasicStartup";
     short_nm="BsStrt";
@@ -6293,7 +6293,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
@@ -6314,7 +6314,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
       desc=;
-      init_from=$.projects[0].programs[0]$;
+      init_from=$.programs[0]$;
      };
     };
     functions {
@@ -6371,7 +6371,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][0].doc$$: };
     };
     name="MasterBatch";
     short_nm="MstBtc";
@@ -6406,7 +6406,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -6464,8 +6464,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initializes local batch counter and batch field on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
-      network_var=.projects[0].programs.gp[1][0].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[1][0].vars[0]$$;
+      network_var=.programs.gp[1][0].args[0]$$;
+      local_ctr_var=.programs.gp[1][0].vars[0]$$;
       counter=Network::batch;
       update_after=0;
      };
@@ -6500,7 +6500,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start at the start";
       flags=CAN_REVERT_TO_CODE;
       code_string="batch = batch_start";
-      result_var=$.projects[0].programs.gp[1][0].vars[0]$;
+      result_var=$.programs.gp[1][0].vars[0]$;
       expr {
        expr="batch_start";
       };
@@ -6510,7 +6510,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.batch = batch";
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       path="batch";
       expr {
        expr="batch";
@@ -6547,7 +6547,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[1][1]$;
+	target=$.programs.gp[1][1]$;
 	targ_ld_init="*MasterTrain*";
        };
        NetCounterIncr @[1] {
@@ -6555,8 +6555,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="increment the local batch counter and copy to network";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
-	network_var=$.projects[0].programs.gp[1][0].args[0]$;
-	local_ctr_var=$.projects[0].programs.gp[1][0].vars[0]$;
+	network_var=$.programs.gp[1][0].args[0]$;
+	local_ctr_var=$.programs.gp[1][0].vars[0]$;
 	counter=Network::batch;
 	update_after=0;
        };
@@ -6591,7 +6591,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][1].doc$$: };
     };
     name="MasterTrain";
     short_nm="MstTrn";
@@ -6631,7 +6631,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       bits=0;
-      src_table=$.projects[0].data.gp[3][0]$;
+      src_table=$.data.gp[3][0]$;
       src_column="config_id";
      };
     };
@@ -6643,7 +6643,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -6660,7 +6660,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="Config";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[3][0]$;
+      object_val=$.data.gp[3][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6674,7 +6674,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[1][1].types[0]$$;
+       enum_type=.programs.gp[1][1].types[0]$$;
        value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6737,7 +6737,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="stop_train = false";
-      result_var=.projects[0].programs.gp[1][1].vars[5]$$;
+      result_var=.programs.gp[1][1].vars[5]$$;
       expr {
        expr="false";
       };
@@ -6747,7 +6747,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="config_id = cur_config";
-      result_var=.projects[0].programs.gp[1][1].vars[2]$$;
+      result_var=.programs.gp[1][1].vars[2]$$;
       expr {
        expr="cur_config";
       };
@@ -6770,7 +6770,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Build()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[1][1].args[0]$$;
+	obj=.programs.gp[1][1].args[0]$$;
 	method=Network::Build;
 	meth_args {
 	 name="meth_args";
@@ -6786,7 +6786,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[1][1].args[0]$;
+	obj=$.programs.gp[1][1].args[0]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name="meth_args";
@@ -6818,7 +6818,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="stop_train = false";
-      result_var=$.projects[0].programs.gp[1][1].vars[5]$;
+      result_var=$.programs.gp[1][1].vars[5]$;
       expr {
        expr="false";
       };
@@ -6828,7 +6828,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="config_id = cur_config";
-      result_var=$.projects[0].programs.gp[1][1].vars[2]$;
+      result_var=$.programs.gp[1][1].vars[2]$;
       expr {
        expr="cur_config";
       };
@@ -6838,14 +6838,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=init_prog  var_2=run_prog  var_3=?  var_4=? ";
-      data_var=.projects[0].programs.gp[1][1].vars[0]$$;
+      data_var=.programs.gp[1][1].vars[0]$$;
       row_spec=ROW_VAL;
-      row_var=$.projects[0].programs.gp[1][1].vars[2]$;
+      row_var=$.programs.gp[1][1].vars[2]$;
       set_data=0;
       all_matches=0;
       quiet=0;
-      var_1=.projects[0].programs.gp[1][1].vars[4]$$;
-      var_2=.projects[0].programs.gp[1][1].vars[3]$$;
+      var_1=.programs.gp[1][1].vars[4]$$;
+      var_2=.programs.gp[1][1].vars[3]$$;
       var_3=NULL;
       var_4=NULL;
      };
@@ -6855,7 +6855,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="Config->method()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][1].vars[0]$;
+      obj=$.programs.gp[1][1].vars[0]$;
       method=NULL;
       meth_args {
        name="meth_args";
@@ -6919,8 +6919,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      prog_group=.projects[0].programs.gp[1].gp[0]$$;
-      prog_name_var=$.projects[0].programs.gp[1][1].vars[4]$;
+      prog_group=.programs.gp[1].gp[0]$$;
+      prog_name_var=$.programs.gp[1][1].vars[4]$;
      };
      WhileLoop @[5] {
       name="WhileLoop_whilestoptrain";
@@ -6974,7 +6974,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=.projects[0].programs.gp[1][2]$$;
+	target=.programs.gp[1][2]$$;
 	targ_ld_init="*MasterRun*";
        };
       };
@@ -6983,7 +6983,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    step_prog=$.projects[0].programs.gp[1][2]$;
+    step_prog=$.programs.gp[1][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -7002,7 +7002,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][2].doc$$: };
     };
     name="MasterRun";
     short_nm="MstrRn";
@@ -7067,7 +7067,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7104,7 +7104,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="Config";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[3][0]$;
+      object_val=$.data.gp[3][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
@@ -7118,7 +7118,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[1][2].types[0]$$;
+       enum_type=.programs.gp[1][2].types[0]$$;
        value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7163,7 +7163,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="switch(stop_step_grain)";
-	switch_var=.projects[0].programs.gp[1][2].vars[1]$$;
+	switch_var=.programs.gp[1][2].vars[1]$$;
 	cases {
 	 name="cases";
 	 el_typ=CaseBlock;
@@ -7310,8 +7310,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      prog_group=.projects[0].programs.gp[1].gp[1]$$;
-      prog_name_var=.projects[0].programs.gp[1][2].args[2]$$;
+      prog_group=.programs.gp[1].gp[1]$$;
+      prog_name_var=.programs.gp[1][2].args[2]$$;
      };
     };
     step_prog=NULL;
@@ -7340,7 +7340,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1].gp[0][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1].gp[0][0].doc$$: };
      };
      name="BasicInit";
      short_nm="BaseInit";
@@ -7375,7 +7375,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="network";
        var_type=T_Object;
        object_type=LeabraNetwork;
-       object_val=$.projects[0].networks[0]$;
+       object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7485,7 +7485,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
        };
-       target=.projects[0].programs.gp[4][0]$$;
+       target=.programs.gp[4][0]$$;
        targ_ld_init="*StdGlobalsInit*";
       };
       ProgramCall @[1] {
@@ -7553,7 +7553,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
        };
-       target=.projects[0].programs.gp[4][2]$$;
+       target=.programs.gp[4][2]$$;
        targ_ld_init="*ConfigNetwork*";
       };
       ProgramCall @[2] {
@@ -7577,7 +7577,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
        };
-       target=.projects[0].programs.gp[4][5]$$;
+       target=.programs.gp[4][5]$$;
        targ_ld_init="*TrainStart*";
       };
       If @[3] {
@@ -7597,7 +7597,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="set network to training mode";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="network.train_mode = LeabraNetwork::TEST";
-	 obj=.projects[0].programs.gp[1].gp[0][0].args[0]$$;
+	 obj=.programs.gp[1].gp[0][0].args[0]$$;
 	 path="train_mode";
 	 expr {
 	  expr="LeabraNetwork::TEST";
@@ -7623,7 +7623,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc="set network to training mode";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="network.train_mode = LeabraNetwork::TRAIN";
-	 obj=$.projects[0].programs.gp[1].gp[0][0].args[0]$;
+	 obj=$.programs.gp[1].gp[0][0].args[0]$;
 	 path="train_mode";
 	 expr {
 	  expr="LeabraNetwork::TRAIN";
@@ -7660,7 +7660,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1].gp[1][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1].gp[1][0].doc$$: };
      };
      name="BasicRun";
      short_nm="BaseRun";
@@ -7695,7 +7695,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="network";
        var_type=T_Object;
        object_type=LeabraNetwork;
-       object_val=$.projects[0].networks[0]$;
+       object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7726,7 +7726,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
-       init_from=$.projects[0].programs.gp[4][0]$;
+       init_from=$.programs.gp[4][0]$;
       };
       ProgVar @[1] {
        name="train_epochs";
@@ -7736,7 +7736,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
-       init_from=$.projects[0].programs.gp[4][0]$;
+       init_from=$.programs.gp[4][0]$;
       };
       ProgVar @[2] {
        name="update_net_view";
@@ -7752,7 +7752,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="StdInputData";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].data.gp[0][0]$$;
+       object_val=.data.gp[0][0]$$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7786,7 +7786,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="always in tick 0 for this -- only one step of processing";
        flags=CAN_REVERT_TO_CODE;
        code_string="network.tick = 0";
-       obj=.projects[0].programs.gp[1].gp[1][0].args[0]$$;
+       obj=.programs.gp[1].gp[1][0].args[0]$$;
        path="tick";
        expr {
 	expr="0";
@@ -7836,7 +7836,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
        };
-       target=.projects[0].programs.gp[2][0]$$;
+       target=.programs.gp[2][0]$$;
        targ_ld_init="*BasicTrain*";
       };
       Comment @[3] {
@@ -7850,7 +7850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="network.trial = network.trial + 1";
-       obj=$.projects[0].programs.gp[1].gp[1][0].args[0]$;
+       obj=$.programs.gp[1].gp[1][0].args[0]$;
        path="trial";
        expr {
 	expr="network.trial + 1";
@@ -7890,7 +7890,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	  };
 	 };
-	 target=.projects[0].programs.gp[4][8]$$;
+	 target=.programs.gp[4][8]$$;
 	 targ_ld_init="*EpochEnd*";
 	};
 	MemberAssign @[1] {
@@ -7898,7 +7898,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="network.epoch = network.epoch + 1";
-	 obj=$.projects[0].programs.gp[1].gp[1][0].args[0]$;
+	 obj=$.programs.gp[1].gp[1][0].args[0]$;
 	 path="epoch";
 	 expr {
 	  expr="network.epoch + 1";
@@ -7938,7 +7938,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	     };
 	    };
 	   };
-	   target=.projects[0].programs.gp[4][6]$$;
+	   target=.programs.gp[4][6]$$;
 	   targ_ld_init="*TrainEnd*";
 	  };
 	  ReturnExpr @[1] {
@@ -7973,7 +7973,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	  };
 	 };
-	 target=.projects[0].programs.gp[4][7]$$;
+	 target=.programs.gp[4][7]$$;
 	 targ_ld_init="*EpochStart*";
 	};
        };
@@ -8007,7 +8007,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2][0].doc$$: };
     };
     name="BasicTrain";
     short_nm="BscTrn";
@@ -8043,7 +8043,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -8055,7 +8055,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -8082,7 +8082,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="basic_train_time";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].programs.gp[2][0].objs[0]$$;
+      object_val=.programs.gp[2][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8106,7 +8106,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->ResetUsed()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[2][0].vars[0]$$;
+      obj=.programs.gp[2][0].vars[0]$$;
       method=TimeUsed::ResetUsed;
       meth_args {
        name="meth_args";
@@ -8127,7 +8127,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->StartTimer(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[2][0].vars[0]$;
+      obj=$.programs.gp[2][0].vars[0]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -8175,7 +8175,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4][9]$$;
+      target=.programs.gp[4][9]$$;
       targ_ld_init="*TrialStart*";
      };
      ProgramCall @[3] {
@@ -8221,7 +8221,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[3][0]$$;
+      target=.programs.gp[3][0]$$;
       targ_ld_init="*ChooseNextEvent*";
      };
      ProgramCall @[4] {
@@ -8256,7 +8256,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[3][2]$$;
+      target=.programs.gp[3][2]$$;
       targ_ld_init="*ApplyInputs*";
      };
      Comment @[5] {
@@ -8286,7 +8286,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4][11]$$;
+      target=.programs.gp[4][11]$$;
       targ_ld_init="*SettleMinus*";
      };
      MethodCall @[7] {
@@ -8295,7 +8295,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_PhaseStats()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[2][0].args[0]$$;
+      obj=.programs.gp[2][0].args[0]$$;
       method=LeabraNetwork::Compute_PhaseStats;
       meth_args {
        name="meth_args";
@@ -8310,8 +8310,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[2][0].args[0]$;
-      update_var=.projects[0].programs.gp[2][0].args[2]$$;
+      network_var=$.programs.gp[2][0].args[0]$;
+      update_var=.programs.gp[2][0].args[2]$$;
      };
      StopStepPoint @[9] {
       name="StopStepPoint_StopStepPoint";
@@ -8334,7 +8334,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[2][0].args[0]$;
+      obj=$.programs.gp[2][0].args[0]$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -8376,7 +8376,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=$.projects[0].programs.gp[3][2]$;
+      target=$.programs.gp[3][2]$;
       targ_ld_init="*ApplyInputs*";
      };
      ProgramCall @[13] {
@@ -8400,7 +8400,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4][12]$$;
+      target=.programs.gp[4][12]$$;
       targ_ld_init="*Settle*";
      };
      MethodCall @[14] {
@@ -8409,7 +8409,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_PhaseStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[2][0].args[0]$;
+      obj=$.programs.gp[2][0].args[0]$;
       method=LeabraNetwork::Compute_PhaseStats;
       meth_args {
        name="meth_args";
@@ -8424,8 +8424,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[2][0].args[0]$;
-      update_var=$.projects[0].programs.gp[2][0].args[2]$;
+      network_var=$.programs.gp[2][0].args[0]$;
+      update_var=$.programs.gp[2][0].args[2]$;
      };
      ProgramCall @[16] {
       name="ProgramCall_TrialEndnetwork";
@@ -8448,7 +8448,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4][10]$$;
+      target=.programs.gp[4][10]$$;
       targ_ld_init="*TrialEnd*";
      };
      MethodCall @[17] {
@@ -8457,7 +8457,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="basic_train_time->EndTimer()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[2][0].vars[0]$;
+      obj=$.programs.gp[2][0].vars[0]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -8488,11 +8488,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4].gp[0][1]$$;
+      target=.programs.gp[4].gp[0][1]$$;
       targ_ld_init="*LeabraTrialMonitor*";
      };
     };
-    step_prog=$.projects[0].programs.gp[4][15]$;
+    step_prog=$.programs.gp[4][15]$;
     step_n=1;
     doc {
      name="doc";
@@ -8519,7 +8519,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][0].doc$$: };
     };
     name="ChooseNextEvent";
     short_nm="ChNxEvt";
@@ -8592,7 +8592,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
@@ -8604,7 +8604,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -8661,7 +8661,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="perm_idx_table";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[3][0].objs[0]$$;
+      object_val=.programs.gp[3][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8718,7 +8718,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="dmem_rows = input_data.rows";
-	  result_var=.projects[0].programs.gp[3][0].vars[2]$$;
+	  result_var=.programs.gp[3][0].vars[2]$$;
 	  expr {
 	   expr="input_data.rows";
 	  };
@@ -8742,7 +8742,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="dmem_rows = input_data.rows / taMisc::dmem_nprocs";
-	  result_var=$.projects[0].programs.gp[3][0].vars[2]$;
+	  result_var=$.programs.gp[3][0].vars[2]$;
 	  expr {
 	   expr="input_data.rows / taMisc::dmem_nprocs";
 	  };
@@ -8761,7 +8761,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="dmem_rows += 1";
-	    var=$.projects[0].programs.gp[3][0].vars[2]$;
+	    var=$.programs.gp[3][0].vars[2]$;
 	    expr {
 	     expr="1";
 	    };
@@ -8807,7 +8807,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="cur_idx = -1";
-	result_var=.projects[0].programs.gp[3][0].vars[0]$$;
+	result_var=.programs.gp[3][0].vars[0]$$;
 	expr {
 	 expr="-1";
 	};
@@ -8908,7 +8908,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="ComputeDmemRows()";
 	result_var=NULL;
-	fun=.projects[0].programs.gp[3][0].functions[0]$$;
+	fun=.programs.gp[3][0].functions[0]$$;
 	fun_args {
 	 name="fun_args";
 	 el_typ=ProgArg;
@@ -8921,7 +8921,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="perm_idx_table->EnforceRows(dmem_rows)";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[3][0].vars[3]$$;
+	obj=.programs.gp[3][0].vars[3]$$;
 	method=DataTable::EnforceRows;
 	meth_args {
 	 name="meth_args";
@@ -8948,7 +8948,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="perm_idx_table->InitValsToRowNo(0)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[3][0].vars[3]$;
+	obj=$.programs.gp[3][0].vars[3]$;
 	method=DataTable::InitValsToRowNo;
 	meth_args {
 	 name="meth_args";
@@ -8975,7 +8975,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermuteIndexes()";
 	result_var=NULL;
-	fun=.projects[0].programs.gp[3][0].functions[1]$$;
+	fun=.programs.gp[3][0].functions[1]$$;
 	fun_args {
 	 name="fun_args";
 	 el_typ=ProgArg;
@@ -8995,7 +8995,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="InitIndexes()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[3][0].functions[2]$$;
+      fun=.programs.gp[3][0].functions[2]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -9007,7 +9007,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start at start -- index is incremented AFTER using";
       flags=CAN_REVERT_TO_CODE;
       code_string="cur_idx = 0";
-      result_var=$.projects[0].programs.gp[3][0].vars[0]$;
+      result_var=$.programs.gp[3][0].vars[0]$;
       expr {
        expr="0";
       };
@@ -9023,7 +9023,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="ComputeDmemRows()";
       result_var=NULL;
-      fun=$.projects[0].programs.gp[3][0].functions[0]$;
+      fun=$.programs.gp[3][0].functions[0]$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -9048,7 +9048,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="InitIndexes()";
 	result_var=NULL;
-	fun=$.projects[0].programs.gp[3][0].functions[2]$;
+	fun=$.programs.gp[3][0].functions[2]$;
 	fun_args {
 	 name="fun_args";
 	 el_typ=ProgArg;
@@ -9074,8 +9074,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = perm_idx_table->GetVal(0, cur_idx)";
-	result_var=.projects[0].programs.gp[3][0].vars[1]$$;
-	obj=$.projects[0].programs.gp[3][0].vars[3]$;
+	result_var=.programs.gp[3][0].vars[1]$$;
+	obj=$.programs.gp[3][0].vars[3]$;
 	method=DataTable::GetVal;
 	meth_args {
 	 name="meth_args";
@@ -9126,7 +9126,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = cur_idx";
-	result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+	result_var=$.programs.gp[3][0].vars[1]$;
 	expr {
 	 expr="cur_idx";
 	};
@@ -9150,7 +9150,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="for dmem, transform from virtual idx counter into actual row, unique to this processor";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="input_idx = taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
-	result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+	result_var=$.programs.gp[3][0].vars[1]$;
 	expr {
 	 expr="taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
 	};
@@ -9172,7 +9172,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_idx = Random::IntZeroN(input_data.rows, )";
-	  result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+	  result_var=$.programs.gp[3][0].vars[1]$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
 	  meth_args {
@@ -9213,7 +9213,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="input_data->ReadItem(input_idx)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][0].args[1]$$;
+      obj=.programs.gp[3][0].args[1]$$;
       method=DataTable::ReadItem;
       meth_args {
        name="meth_args";
@@ -9252,7 +9252,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="PermuteIndexes()";
 	result_var=NULL;
-	fun=$.projects[0].programs.gp[3][0].functions[1]$;
+	fun=$.programs.gp[3][0].functions[1]$;
 	fun_args {
 	 name="fun_args";
 	 el_typ=ProgArg;
@@ -9278,7 +9278,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="cur_idx += 1";
-	var=$.projects[0].programs.gp[3][0].vars[0]$;
+	var=$.programs.gp[3][0].vars[0]$;
 	expr {
 	 expr="1";
 	};
@@ -9305,7 +9305,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][1].doc$$: };
     };
     name="ChooseRandomEvent";
     short_nm="ChRndm";
@@ -9340,7 +9340,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -9383,7 +9383,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="event_idx = Random::IntZeroN(input_data.rows, taMisc::dmem_proc)";
-      result_var=.projects[0].programs.gp[3][1].vars[0]$$;
+      result_var=.programs.gp[3][1].vars[0]$$;
       object_type=Random;
       method=Random::IntZeroN;
       meth_args {
@@ -9420,7 +9420,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="input_data->ReadItem(event_idx)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][1].args[0]$$;
+      obj=.programs.gp[3][1].args[0]$$;
       method=DataTable::ReadItem;
       meth_args {
        name="meth_args";
@@ -9461,7 +9461,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][2].doc$$: };
     };
     name="ApplyInputs";
     short_nm="Inputs";
@@ -9484,8 +9484,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$.projects[0].data.gp[0][0]$;
-      network=$.projects[0].networks[0]$;
+      data=$.data.gp[0][0]$;
+      network=$.networks[0]$;
       layer_data {
        name="layer_data";
        el_typ=LayerWriterEl;
@@ -9539,7 +9539,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -9551,7 +9551,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -9568,7 +9568,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="layer_writer_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[3][2].objs[0]$$;
+      object_val=.programs.gp[3][2].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9592,7 +9592,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][2].vars[0]$$;
+      obj=.programs.gp[3][2].vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -9630,7 +9630,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->AutoConfig()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].vars[0]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        name="meth_args";
@@ -9657,7 +9657,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name="meth_args";
@@ -9689,7 +9689,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].vars[0]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -9727,7 +9727,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][2].vars[0]$;
+      obj=$.programs.gp[3][2].vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name="meth_args";
@@ -9765,7 +9765,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][0].doc$$: };
     };
     name="StdGlobalsInit";
     short_nm="GlobInit";
@@ -9800,7 +9800,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
@@ -9827,7 +9827,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="Config";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[3][0]$;
+      object_val=$.data.gp[3][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9981,9 +9981,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=true ";
-      data_var=.projects[0].programs.gp[4][0].vars[0]$$;
+      data_var=.programs.gp[4][0].vars[0]$$;
       row_spec=ROW_VAL;
-      row_var=.projects[0].programs.gp[4][0].args[1]$$;
+      row_var=.programs.gp[4][0].args[1]$$;
       set_data=0;
       all_matches=1;
       quiet=0;
@@ -9997,7 +9997,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="trials_per_epoch_orig = trials_per_epoch";
-      result_var=.projects[0].programs.gp[4][0].vars[2]$$;
+      result_var=.programs.gp[4][0].vars[2]$$;
       expr {
        expr="trials_per_epoch";
       };
@@ -10019,7 +10019,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trials_per_epoch = trials_per_epoch / taMisc::dmem_nprocs";
-	result_var=.projects[0].programs.gp[4][0].vars[1]$$;
+	result_var=.programs.gp[4][0].vars[1]$$;
 	expr {
 	 expr="trials_per_epoch / taMisc::dmem_nprocs";
 	};
@@ -10041,7 +10041,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc="round up..";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="trials_per_epoch += 1";
-	  var=$.projects[0].programs.gp[4][0].vars[1]$;
+	  var=$.programs.gp[4][0].vars[1]$;
 	  expr {
 	   expr="1";
 	  };
@@ -10070,7 +10070,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][1].doc$$: };
     };
     name="BatchRndSeed";
     short_nm="BatchSeed";
@@ -10213,7 +10213,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -10230,7 +10230,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="rnd_seeds";
       var_type=T_Object;
       object_type=RndSeed_List;
-      object_val=.projects[0].programs.gp[4][1].objs[0]$$;
+      object_val=.programs.gp[4][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -10259,7 +10259,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][1].vars[0]$$;
+      obj=.programs.gp[4][1].vars[0]$$;
       method=RndSeed_List::UseSeed;
       meth_args {
        name="meth_args";
@@ -10300,7 +10300,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][2].doc$$: };
     };
     name="ConfigNetwork";
     short_nm="CfgNet";
@@ -10335,7 +10335,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -10459,7 +10459,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->UnLesionLayers()";
 	  result_var=NULL;
-	  obj=.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$$;
+	  obj=.programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$$;
 	  method=Layer_Group::UnLesionLayers;
 	  meth_args {
 	   name="meth_args";
@@ -10475,7 +10475,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->DeIconifyLayers()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
+	  obj=$.programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
 	  method=Layer_Group::DeIconifyLayers;
 	  meth_args {
 	   name="meth_args";
@@ -10486,7 +10486,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  meth_desc=" un-set the lesion flag on all the layers within this group";
 	 };
 	};
-	el_var=$.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
+	el_var=$.programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
 	in {
 	 expr="network.layers.gp";
 	};
@@ -10506,7 +10506,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay->UnLesion()";
 	  result_var=NULL;
-	  obj=.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$$;
+	  obj=.programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$$;
 	  method=Layer::UnLesion;
 	  meth_args {
 	   name="meth_args";
@@ -10522,7 +10522,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay->DeIconify()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
+	  obj=$.programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
 	  method=Layer::DeIconify;
 	  meth_args {
 	   name="meth_args";
@@ -10533,7 +10533,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  meth_desc=" de-iconify this layer in the network display (make full size)";
 	 };
 	};
-	el_var=$.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
+	el_var=$.programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
 	in {
 	 expr="network.layers";
 	};
@@ -10627,7 +10627,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[0]$$;
+	obj=.programs.gp[4][2].functions[1].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
 	meth_args {
 	 name="meth_args";
@@ -10673,9 +10673,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-	  obj=.projects[0].programs.gp[4][2].args[0]$$;
+	  obj=.programs.gp[4][2].args[0]$$;
 	  path="layers.gp";
-	  result_var=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$$;
+	  result_var=.programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$$;
 	  method=taGroup_Layer_::FindName;
 	  meth_args {
 	   name="meth_args";
@@ -10850,7 +10850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->LesionLayers()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	    method=Layer_Group::LesionLayers;
 	    meth_args {
 	     name="meth_args";
@@ -10866,7 +10866,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->IconifyLayers()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	    method=Layer_Group::IconifyLayers;
 	    meth_args {
 	     name="meth_args";
@@ -10896,7 +10896,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->UnLesionLayers()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	    method=Layer_Group::UnLesionLayers;
 	    meth_args {
 	     name="meth_args";
@@ -10912,7 +10912,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="laygp->DeIconifyLayers()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	    method=Layer_Group::DeIconifyLayers;
 	    meth_args {
 	     name="meth_args";
@@ -10925,7 +10925,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	el_var=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[2]$$;
+	el_var=.programs.gp[4][2].functions[1].fun_code[0].local_vars[2]$$;
 	in {
 	 expr="les_laygp_mat";
 	};
@@ -11019,7 +11019,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="les_lays_mat->FmDelimString(lays, \" \")";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[0]$$;
+	obj=.programs.gp[4][2].functions[2].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
 	meth_args {
 	 name="meth_args";
@@ -11065,9 +11065,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay = network.layers.FindLeafName(lay_nm)";
-	  obj=$.projects[0].programs.gp[4][2].args[0]$;
+	  obj=$.programs.gp[4][2].args[0]$;
 	  path="layers";
-	  result_var=.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$$;
+	  result_var=.programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$$;
 	  method=taGroup_Layer_::FindLeafName;
 	  meth_args {
 	   name="meth_args";
@@ -11242,7 +11242,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->Lesion()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	    method=Layer::Lesion;
 	    meth_args {
 	     name="meth_args";
@@ -11258,7 +11258,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->Iconify()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	    method=Layer::Iconify;
 	    meth_args {
 	     name="meth_args";
@@ -11288,7 +11288,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->UnLesion()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	    method=Layer::UnLesion;
 	    meth_args {
 	     name="meth_args";
@@ -11304,7 +11304,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="lay->DeIconify()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	    obj=$.programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	    method=Layer::DeIconify;
 	    meth_args {
 	     name="meth_args";
@@ -11317,7 +11317,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	el_var=.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[2]$$;
+	el_var=.programs.gp[4][2].functions[2].fun_code[0].local_vars[2]$$;
 	in {
 	 expr="les_lays_mat";
 	};
@@ -11433,7 +11433,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[0]$$;
+	obj=.programs.gp[4][2].functions[3].fun_code[0].local_vars[0]$$;
 	method=String_Matrix::FmDelimString;
 	meth_args {
 	 name="meth_args";
@@ -11615,8 +11615,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay_nm = prjn_nm->before(\".\", )";
-	  result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[3]$$;
-	  obj=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$$;
+	  result_var=.programs.gp[4][2].functions[3].fun_code[0].local_vars[3]$$;
+	  obj=.programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$$;
 	  method=taString::before;
 	  meth_args {
 	   name="meth_args";
@@ -11653,8 +11653,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="prjn_nm = prjn_nm->after(\".\", )";
-	  result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
-	  obj=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+	  result_var=$.programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+	  obj=$.programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
 	  method=taString::after;
 	  meth_args {
 	   name="meth_args";
@@ -11691,9 +11691,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="lay = network.layers.FindLeafName(lay_nm)";
-	  obj=$.projects[0].programs.gp[4][2].args[0]$;
+	  obj=$.programs.gp[4][2].args[0]$;
 	  path="layers";
-	  result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[4]$$;
+	  result_var=.programs.gp[4][2].functions[3].fun_code[0].local_vars[4]$$;
 	  method=taGroup_Layer_::FindLeafName;
 	  meth_args {
 	   name="meth_args";
@@ -11855,7 +11855,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="prjn = lay.projections.FindName(prjn_nm)";
-	  result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$$;
+	  result_var=.programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$$;
 	  expr {
 	   expr="lay.projections.FindName(prjn_nm)";
 	  };
@@ -12001,7 +12001,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="prjn.off = !prjn_on";
-	  obj=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$;
+	  obj=$.programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$;
 	  path="off";
 	  expr {
 	   expr="!prjn_on";
@@ -12009,7 +12009,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  update_after=1;
 	 };
 	};
-	el_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+	el_var=$.programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
 	in {
 	 expr="les_prjns_mat";
 	};
@@ -12043,7 +12043,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="UnlesionAll()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[4][2].functions[0]$$;
+      fun=.programs.gp[4][2].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -12056,7 +12056,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerGpsOnOff(lesion_layer_groups, false)";
       result_var=NULL;
-      fun=.projects[0].programs.gp[4][2].functions[1]$$;
+      fun=.programs.gp[4][2].functions[1]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -12091,7 +12091,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LayersOnOff(lesion_layers, false)";
       result_var=NULL;
-      fun=.projects[0].programs.gp[4][2].functions[2]$$;
+      fun=.programs.gp[4][2].functions[2]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -12126,7 +12126,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="ProjectionsOnOff(lesion_prjns, false)";
       result_var=NULL;
-      fun=.projects[0].programs.gp[4][2].functions[3]$$;
+      fun=.programs.gp[4][2].functions[3]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -12161,7 +12161,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="ProjectionsOnOff(un_lesion_prjns, true)";
       result_var=NULL;
-      fun=$.projects[0].programs.gp[4][2].functions[3]$;
+      fun=$.programs.gp[4][2].functions[3]$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -12196,7 +12196,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Build()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][2].args[0]$;
+      obj=$.programs.gp[4][2].args[0]$;
       method=Network::Build;
       meth_args {
        name="meth_args";
@@ -12212,7 +12212,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UpdtAfterNetMod()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][2].args[0]$;
+      obj=$.programs.gp[4][2].args[0]$;
       method=Network::UpdtAfterNetMod;
       meth_args {
        name="meth_args";
@@ -12253,7 +12253,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=UserDataItem;
      el_def=0;
      UserDataItem @[0] {name="user_pinned": value=0: val_type_fixed=0: };
-     UserData_DocLink @[1] {name="DocLink": doc=.projects[0].programs.gp[4][3].doc$$: };
+     UserData_DocLink @[1] {name="DocLink": doc=.programs.gp[4][3].doc$$: };
     };
     name="PositionLayersFromTable";
     short_nm="PstLyr";
@@ -12695,7 +12695,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[4][3].types[0]$$;
+       enum_type=.programs.gp[4][3].types[0]$$;
        value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -12709,7 +12709,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[4][3].types[1]$$;
+       enum_type=.programs.gp[4][3].types[1]$$;
        value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -12721,7 +12721,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -12738,7 +12738,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="LayerLayout";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[4][3].objs[0]$$;
+      object_val=.programs.gp[4][3].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12750,7 +12750,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="LayerLayout_previous";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[4][3].objs[1]$$;
+      object_val=.programs.gp[4][3].objs[1]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12842,7 +12842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LayerLayout_previous->CopyFrom(LayerLayout)";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][3].vars[1]$$;
+	obj=.programs.gp[4][3].vars[1]$$;
 	method=taBase::CopyFrom;
 	meth_args {
 	 name="meth_args";
@@ -12869,7 +12869,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="LayerLayout->RemoveAllRows()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][3].vars[0]$$;
+	obj=.programs.gp[4][3].vars[0]$$;
 	method=DataTable::RemoveAllRows;
 	meth_args {
 	 name="meth_args";
@@ -12884,7 +12884,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="all of the layers";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="net_layers = network.layers";
-	result_var=.projects[0].programs.gp[4][3].functions[0].fun_code[0].local_vars[2]$$;
+	result_var=.programs.gp[4][3].functions[0].fun_code[0].local_vars[2]$$;
 	expr {
 	 expr="network.layers";
 	};
@@ -12910,7 +12910,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout->AddBlankRow()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[4][3].vars[0]$;
+	  obj=$.programs.gp[4][3].vars[0]$;
 	  method=DataTable::AddBlankRow;
 	  meth_args {
 	   name="meth_args";
@@ -12957,7 +12957,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	el_var=.projects[0].programs.gp[4][3].functions[0].fun_code[0].local_vars[3]$$;
+	el_var=.programs.gp[4][3].functions[0].fun_code[0].local_vars[3]$$;
 	in {
 	 expr="net_layers.gp";
 	};
@@ -12977,7 +12977,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="LayerLayout->AddBlankRow()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[4][3].vars[0]$;
+	  obj=$.programs.gp[4][3].vars[0]$;
 	  method=DataTable::AddBlankRow;
 	  meth_args {
 	   name="meth_args";
@@ -12992,7 +12992,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="current_layer = net_layers.Leaf(leaf)";
-	  result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$$;
+	  result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$$;
 	  expr {
 	   expr="net_layers.Leaf(leaf)";
 	  };
@@ -13231,7 +13231,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="layer_name = LayerLayout[\"LayerName\"][row]";
-	  result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[2]$$;
+	  result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[2]$$;
 	  expr {
 	   expr="LayerLayout[\"LayerName\"][row]";
 	  };
@@ -13250,7 +13250,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="current_layer = network.FindLayer(layer_name)";
-	  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
+	  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
 	  expr {
 	   expr="network.FindLayer(layer_name)";
 	  };
@@ -13272,7 +13272,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="switch(use_group)";
-	    switch_var=.projects[0].programs.gp[4][3].args[1]$$;
+	    switch_var=.programs.gp[4][3].args[1]$$;
 	    cases {
 	     name="cases";
 	     el_typ=CaseBlock;
@@ -13292,7 +13292,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		flags=CAN_REVERT_TO_CODE;
 		code_string="current_layer->SetAbsPos(LayerLayout[\"X_Abs\"][row], LayerLayout[\"Y_Abs\"][row], LayerLayout[\"Z_Abs\"][row])";
 		result_var=NULL;
-		obj=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
+		obj=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
 		method=Layer::SetAbsPos;
 		meth_args {
 		 name="meth_args";
@@ -13355,7 +13355,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="group_name = LayerLayout[\"LayerGroup\"][row]";
-		result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[4]$$;
+		result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[4]$$;
 		expr {
 		 expr="LayerLayout[\"LayerGroup\"][row]";
 		};
@@ -13377,8 +13377,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lgrow = LayerLayout->FindVal(group_name, \"LayerGroup\", 0, true)";
-		  result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[5]$$;
-		  obj=$.projects[0].programs.gp[4][3].vars[0]$;
+		  result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[5]$$;
+		  obj=$.programs.gp[4][3].vars[0]$;
 		  method=DataTable::FindVal;
 		  meth_args {
 		   name="meth_args";
@@ -13437,7 +13437,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
-		  result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$$;
+		  result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$$;
 		  expr {
 		   expr="LayerLayout[\"X_Abs\"][lgrow]";
 		  };
@@ -13447,7 +13447,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
-		  result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$$;
+		  result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$$;
 		  expr {
 		   expr="LayerLayout[\"Y_Abs\"][lgrow]";
 		  };
@@ -13457,7 +13457,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
-		  result_var=.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$$;
+		  result_var=.programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$$;
 		  expr {
 		   expr="LayerLayout[\"Z_Abs\"][lgrow]";
 		  };
@@ -13481,7 +13481,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = 0";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$;
 		  expr {
 		   expr="0";
 		  };
@@ -13491,7 +13491,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = 0";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$;
 		  expr {
 		   expr="0";
 		  };
@@ -13501,7 +13501,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = 0";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$;
 		  expr {
 		   expr="0";
 		  };
@@ -13514,7 +13514,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		flags=CAN_REVERT_TO_CODE;
 		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
 		result_var=NULL;
-		obj=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
+		obj=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
 		method=Layer::SetAbsPos;
 		meth_args {
 		 name="meth_args";
@@ -13577,7 +13577,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		desc=;
 		flags=CAN_REVERT_TO_CODE;
 		code_string="group_name = LayerLayout[\"LayoutGroup\"][row]";
-		result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[4]$;
+		result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[4]$;
 		expr {
 		 expr="LayerLayout[\"LayoutGroup\"][row]";
 		};
@@ -13599,8 +13599,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lgrow = LayerLayout->FindVal(group_name, \"LayoutGroup\", 0, true)";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[5]$;
-		  obj=$.projects[0].programs.gp[4][3].vars[0]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[5]$;
+		  obj=$.programs.gp[4][3].vars[0]$;
 		  method=DataTable::FindVal;
 		  meth_args {
 		   name="meth_args";
@@ -13659,7 +13659,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = LayerLayout[\"X_Abs\"][lgrow]";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$;
 		  expr {
 		   expr="LayerLayout[\"X_Abs\"][lgrow]";
 		  };
@@ -13669,7 +13669,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = LayerLayout[\"Y_Abs\"][lgrow]";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$;
 		  expr {
 		   expr="LayerLayout[\"Y_Abs\"][lgrow]";
 		  };
@@ -13679,7 +13679,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = LayerLayout[\"Z_Abs\"][lgrow]";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$;
 		  expr {
 		   expr="LayerLayout[\"Z_Abs\"][lgrow]";
 		  };
@@ -13703,7 +13703,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_x = 0";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[6]$;
 		  expr {
 		   expr="0";
 		  };
@@ -13713,7 +13713,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_y = 0";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[7]$;
 		  expr {
 		   expr="0";
 		  };
@@ -13723,7 +13723,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		  desc=;
 		  flags=CAN_REVERT_TO_CODE;
 		  code_string="lg_z = 0";
-		  result_var=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$;
+		  result_var=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[8]$;
 		  expr {
 		   expr="0";
 		  };
@@ -13736,7 +13736,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 		flags=CAN_REVERT_TO_CODE;
 		code_string="current_layer->SetAbsPos(lg_x + LayerLayout[\"X_Rel\"][row], lg_y + LayerLayout[\"Y_Rel\"][row], lg_z + LayerLayout[\"Z_Rel\"][row])";
 		result_var=NULL;
-		obj=$.projects[0].programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
+		obj=$.programs.gp[4][3].functions[1].fun_code[0].local_vars[1]$;
 		method=Layer::SetAbsPos;
 		meth_args {
 		 name="meth_args";
@@ -13806,7 +13806,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Build()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][3].args[2]$$;
+	obj=.programs.gp[4][3].args[2]$$;
 	method=LeabraNetwork::Build;
 	meth_args {
 	 name="meth_args";
@@ -13833,7 +13833,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="switch(action)";
-      switch_var=.projects[0].programs.gp[4][3].args[0]$$;
+      switch_var=.programs.gp[4][3].args[0]$$;
       cases {
        name="cases";
        el_typ=CaseBlock;
@@ -13853,7 +13853,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="GetCurrent()";
 	  result_var=NULL;
-	  fun=.projects[0].programs.gp[4][3].functions[0]$$;
+	  fun=.programs.gp[4][3].functions[0]$$;
 	  fun_args {
 	   name="fun_args";
 	   el_typ=ProgArg;
@@ -13881,7 +13881,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="SetPos()";
 	  result_var=NULL;
-	  fun=.projects[0].programs.gp[4][3].functions[1]$$;
+	  fun=.programs.gp[4][3].functions[1]$$;
 	  fun_args {
 	   name="fun_args";
 	   el_typ=ProgArg;
@@ -13916,7 +13916,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][4].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][4].doc$$: };
     };
     name="NetworkToggleLesion";
     short_nm="NtwTgg";
@@ -13954,7 +13954,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -13991,7 +13991,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="les_lay_mat";
       var_type=T_Object;
       object_type=String_Matrix;
-      object_val=.projects[0].programs.gp[4][4].objs[0]$$;
+      object_val=.programs.gp[4][4].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14052,7 +14052,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="les_lay_mat->FmDelimString(lesion_layers, \" \")";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][4].vars[0]$$;
+      obj=.programs.gp[4][4].vars[0]$$;
       method=String_Matrix::FmDelimString;
       meth_args {
        name="meth_args";
@@ -14098,8 +14098,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="laygp_nm = les_lay_mat->SafeEl_Flat(i)";
-	result_var=.projects[0].programs.gp[4][4].vars[2]$$;
-	obj=$.projects[0].programs.gp[4][4].vars[0]$;
+	result_var=.programs.gp[4][4].vars[2]$$;
+	obj=$.programs.gp[4][4].vars[0]$;
 	method=taMatrixT_taString_::SafeEl_Flat;
 	meth_args {
 	 name="meth_args";
@@ -14125,9 +14125,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-	obj=.projects[0].programs.gp[4][4].args[0]$$;
+	obj=.programs.gp[4][4].args[0]$$;
 	path="layers.gp";
-	result_var=.projects[0].programs.gp[4][4].vars[3]$$;
+	result_var=.programs.gp[4][4].vars[3]$$;
 	method=taGroup_Layer_::FindName;
 	meth_args {
 	 name="meth_args";
@@ -14302,7 +14302,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->LesionLayers()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[4][4].vars[3]$;
+	  obj=$.programs.gp[4][4].vars[3]$;
 	  method=Layer_Group::LesionLayers;
 	  meth_args {
 	   name="meth_args";
@@ -14332,7 +14332,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="laygp->UnLesionLayers()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[4][4].vars[3]$;
+	  obj=$.programs.gp[4][4].vars[3]$;
 	  method=Layer_Group::UnLesionLayers;
 	  meth_args {
 	   name="meth_args";
@@ -14361,7 +14361,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UpdtAfterNetMod()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][4].args[0]$;
+      obj=$.programs.gp[4][4].args[0]$;
       method=Network::UpdtAfterNetMod;
       meth_args {
        name="meth_args";
@@ -14391,7 +14391,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][5].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][5].doc$$: };
     };
     name="TrainStart";
     short_nm="TrnStart";
@@ -14430,7 +14430,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -14451,7 +14451,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
      ProgVar @[1] {
       name="load_weights";
@@ -14461,7 +14461,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
      ProgVar @[2] {
       name="load_st_epc";
@@ -14471,7 +14471,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
      ProgVar @[3] {
       name="lrs_step_epochs";
@@ -14481,7 +14481,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
      ProgVar @[4] {
       name="lrs_bump_step";
@@ -14491,13 +14491,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
      ProgVar @[5] {
       name="LRSConSpec";
       var_type=T_Object;
       object_type=LeabraConSpec;
-      object_val=$.projects[0].networks[0].specs[2]$;
+      object_val=$.networks[0].specs[2]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14509,7 +14509,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects[0].programs.gp[4][5].objs[0]$$;
+      object_val=.programs.gp[4][5].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14563,7 +14563,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4][1]$$;
+      target=.programs.gp[4][1]$$;
       targ_ld_init="*BatchRndSeed*";
      };
      If @[1] {
@@ -14584,7 +14584,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Build()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][5].args[0]$$;
+	obj=.programs.gp[4][5].args[0]$$;
 	method=Network::Build;
 	meth_args {
 	 name="meth_args";
@@ -14629,7 +14629,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=.projects[0].programs.gp[4].gp[0][0]$$;
+	target=.programs.gp[4].gp[0][0]$$;
 	targ_ld_init="*SaveLogFiles*";
        };
       };
@@ -14640,7 +14640,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Weights()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][5].args[0]$;
+      obj=$.programs.gp[4][5].args[0]$;
       method=Network::Init_Weights;
       meth_args {
        name="meth_args";
@@ -14678,7 +14678,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->LoadWeights(weights_file, false)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[4][5].args[0]$;
+	obj=$.programs.gp[4][5].args[0]$;
 	method=Network::LoadWeights;
 	meth_args {
 	 name="meth_args";
@@ -14716,7 +14716,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"loaded weights file:\" weights_file";
 	message="loaded weights file:";
-	print_var=.projects[0].programs.gp[4][5].vars[0]$$;
+	print_var=.programs.gp[4][5].vars[0]$$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -14729,7 +14729,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network.epoch = load_st_epc";
-	obj=$.projects[0].programs.gp[4][5].args[0]$;
+	obj=$.programs.gp[4][5].args[0]$;
 	path="epoch";
 	expr {
 	 expr="load_st_epc";
@@ -14744,7 +14744,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, 5, lrs_bump_step)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][5].vars[5]$$;
+      obj=.programs.gp[4][5].vars[5]$$;
       method=LeabraConSpec::LogLrateSched;
       meth_args {
        name="meth_args";
@@ -14805,7 +14805,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="dmem_rnd_seed->NewSeed()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][5].vars[6]$$;
+	obj=.programs.gp[4][5].vars[6]$$;
 	method=RndSeed::NewSeed;
 	meth_args {
 	 name="meth_args";
@@ -14838,7 +14838,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=$.projects[0].programs.gp[4][7]$;
+      target=$.programs.gp[4][7]$;
       targ_ld_init="*EpochStart*";
      };
     };
@@ -14861,7 +14861,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][6].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][6].doc$$: };
     };
     name="TrainEnd";
     short_nm="TrnEnd";
@@ -14896,7 +14896,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -14917,13 +14917,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc=;
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
      ProgVar @[1] {
       name="Train";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[1][1]$;
+      object_val=$.programs.gp[1][1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14979,7 +14979,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[4][16]$;
+	target=$.programs.gp[4][16]$;
 	targ_ld_init="*SaveWeights*";
        };
       };
@@ -14990,7 +14990,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="Train->SetVar(\"stop_train\", true)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][6].vars[1]$$;
+      obj=.programs.gp[4][6].vars[1]$$;
       method=Program::SetVar;
       meth_args {
        name="meth_args";
@@ -15042,7 +15042,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][7].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][7].doc$$: };
     };
     name="EpochStart";
     short_nm="EpcStart";
@@ -15077,7 +15077,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -15094,7 +15094,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data.gp[1][0]$$;
+      object_val=.data.gp[1][0]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -15106,7 +15106,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="BasicTrainTime";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects[0].programs.gp[2][0].objs[0]$;
+      object_val=$.programs.gp[2][0].objs[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -15134,7 +15134,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network.trial = 0";
-      obj=.projects[0].programs.gp[4][7].args[0]$$;
+      obj=.programs.gp[4][7].args[0]$$;
       path="trial";
       expr {
        expr="0";
@@ -15146,7 +15146,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start the epoch timer to record computation time per epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.epoch_time.StartTimer(true)";
-      obj=$.projects[0].programs.gp[4][7].args[0]$;
+      obj=$.programs.gp[4][7].args[0]$;
       path="epoch_time";
       result_var=NULL;
       method=TimeUsed::StartTimer;
@@ -15175,7 +15175,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="BasicTrainTime->ResetUsed()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][7].vars[1]$$;
+      obj=.programs.gp[4][7].vars[1]$$;
       method=TimeUsed::ResetUsed;
       meth_args {
        name="meth_args";
@@ -15191,7 +15191,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][7].vars[0]$$;
+      obj=.programs.gp[4][7].vars[0]$$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -15207,7 +15207,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=NEW_EL|CAN_REVERT_TO_CODE;
       code_string="network->Init_Epoch()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][7].args[0]$;
+      obj=$.programs.gp[4][7].args[0]$;
       method=Network::Init_Epoch;
       meth_args {
        name="meth_args";
@@ -15237,7 +15237,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][8].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][8].doc$$: };
     };
     name="EpochEnd";
     short_nm="EpcEnd";
@@ -15272,7 +15272,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -15293,7 +15293,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc=;
-      init_from=$.projects[0].programs.gp[4][0]$;
+      init_from=$.programs.gp[4][0]$;
      };
     };
     functions {
@@ -15316,7 +15316,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][8].args[0]$$;
+      obj=.programs.gp[4][8].args[0]$$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name="meth_args";
@@ -15331,7 +15331,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start the epoch timer to record computation time per epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.epoch_time.EndTimer()";
-      obj=$.projects[0].programs.gp[4][8].args[0]$;
+      obj=$.programs.gp[4][8].args[0]$;
       path="epoch_time";
       result_var=NULL;
       method=TimeUsed::EndTimer;
@@ -15364,7 +15364,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[4].gp[0][2]$$;
+      target=.programs.gp[4].gp[0][2]$$;
       targ_ld_init="*LeabraEpochMonitor*";
      };
      If @[3] {
@@ -15400,7 +15400,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[4][16]$;
+	target=$.programs.gp[4][16]$;
 	targ_ld_init="*SaveWeightsSpecs*";
        };
       };
@@ -15425,7 +15425,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][9].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][9].doc$$: };
     };
     name="TrialStart";
     short_nm="TrStrt";
@@ -15460,7 +15460,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -15494,7 +15494,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][9].args[0]$$;
+      obj=.programs.gp[4][9].args[0]$$;
       method=LeabraNetwork::Trial_Init;
       meth_args {
        name="meth_args";
@@ -15522,7 +15522,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[4][9].args[0]$;
+	obj=$.programs.gp[4][9].args[0]$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name="meth_args";
@@ -15540,7 +15540,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][9].args[0]$;
+      obj=$.programs.gp[4][9].args[0]$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -15555,7 +15555,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="start at 0 cycle";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.cycle = 0";
-      obj=$.projects[0].programs.gp[4][9].args[0]$;
+      obj=$.programs.gp[4][9].args[0]$;
       path="cycle";
       expr {
        expr="0";
@@ -15582,7 +15582,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][10].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][10].doc$$: };
     };
     name="TrialEnd";
     short_nm="TrlEnd";
@@ -15617,7 +15617,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -15661,7 +15661,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Final()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][10].args[0]$$;
+      obj=.programs.gp[4][10].args[0]$$;
       method=LeabraNetwork::Trial_Final;
       meth_args {
        name="meth_args";
@@ -15676,8 +15676,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[4][10].args[0]$;
-      update_var=.projects[0].programs.gp[4][10].vars[0]$$;
+      network_var=$.programs.gp[4][10].args[0]$;
+      update_var=.programs.gp[4][10].vars[0]$$;
      };
     };
     step_prog=NULL;
@@ -15699,7 +15699,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][11].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][11].doc$$: };
     };
     name="SettleMinus";
     short_nm="SetlMin";
@@ -15734,7 +15734,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -15823,7 +15823,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=.projects[0].programs.gp[4][14]$$;
+	target=.programs.gp[4][14]$$;
 	targ_ld_init="*Quarter*";
        };
       };
@@ -15842,11 +15842,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=.projects[0].programs.gp[4][11].args[0]$$;
-      update_var=.projects[0].programs.gp[4][11].vars[0]$$;
+      network_var=.programs.gp[4][11].args[0]$$;
+      update_var=.programs.gp[4][11].vars[0]$$;
      };
     };
-    step_prog=$.projects[0].programs.gp[4][15]$;
+    step_prog=$.programs.gp[4][15]$;
     step_n=1;
     doc {
      name="doc";
@@ -15865,7 +15865,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][12].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][12].doc$$: };
     };
     name="SettlePlus";
     short_nm="SttPls";
@@ -15900,7 +15900,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -15970,7 +15970,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=$.projects[0].programs.gp[4][14]$;
+      target=$.programs.gp[4][14]$;
       targ_ld_init="*Quarter*";
      };
      NetUpdateView @[2] {
@@ -15978,11 +15978,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=.projects[0].programs.gp[4][12].args[0]$$;
-      update_var=.projects[0].programs.gp[4][12].vars[0]$$;
+      network_var=.programs.gp[4][12].args[0]$$;
+      update_var=.programs.gp[4][12].vars[0]$$;
      };
     };
-    step_prog=$.projects[0].programs.gp[4][15]$;
+    step_prog=$.programs.gp[4][15]$;
     step_n=1;
     doc {
      name="doc";
@@ -16001,7 +16001,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][13].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][13].doc$$: };
     };
     name="Trial";
     short_nm="Trial";
@@ -16036,7 +16036,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -16113,7 +16113,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][13].args[0]$$;
+	obj=.programs.gp[4][13].args[0]$$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name="meth_args";
@@ -16131,7 +16131,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][13].args[0]$;
+      obj=$.programs.gp[4][13].args[0]$;
       method=LeabraNetwork::Trial_Init;
       meth_args {
        name="meth_args";
@@ -16177,7 +16177,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[4][14]$;
+	target=$.programs.gp[4][14]$;
 	targ_ld_init="*Quarter*";
        };
       };
@@ -16197,7 +16197,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Final()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][13].args[0]$;
+      obj=$.programs.gp[4][13].args[0]$;
       method=LeabraNetwork::Trial_Final;
       meth_args {
        name="meth_args";
@@ -16212,11 +16212,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[4][13].args[0]$;
-      update_var=.projects[0].programs.gp[4][13].vars[0]$$;
+      network_var=$.programs.gp[4][13].args[0]$;
+      update_var=.programs.gp[4][13].vars[0]$$;
      };
     };
-    step_prog=$.projects[0].programs.gp[4][15]$;
+    step_prog=$.programs.gp[4][15]$;
     step_n=1;
     doc {
      name="doc";
@@ -16235,7 +16235,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][14].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][14].doc$$: };
     };
     name="Quarter";
     short_nm="Quarter";
@@ -16270,7 +16270,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -16318,8 +16318,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=.projects[0].programs.gp[4][14].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[4][14].vars[0]$$;
+      network_var=.programs.gp[4][14].args[0]$$;
+      local_ctr_var=.programs.gp[4][14].vars[0]$$;
       counter=Network::cycle;
       update_after=0;
      };
@@ -16371,7 +16371,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][14].args[0]$;
+      obj=$.programs.gp[4][14].args[0]$;
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        name="meth_args";
@@ -16386,8 +16386,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="cycle_max = network->CycleRunMax()";
-      result_var=.projects[0].programs.gp[4][14].prog_code[0].local_vars[0]$$;
-      obj=$.projects[0].programs.gp[4][14].args[0]$;
+      result_var=.programs.gp[4][14].prog_code[0].local_vars[0]$$;
+      obj=$.programs.gp[4][14].args[0]$;
       method=LeabraNetwork::CycleRunMax;
       meth_args {
        name="meth_args";
@@ -16427,7 +16427,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[4][15]$;
+	target=$.programs.gp[4][15]$;
 	targ_ld_init="*Cycle*";
        };
        AssignExpr @[1] {
@@ -16435,7 +16435,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc="grab the updated cycle count";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="cycle = network.cycle";
-	result_var=$.projects[0].programs.gp[4][14].vars[0]$;
+	result_var=$.programs.gp[4][14].vars[0]$;
 	expr {
 	 expr="network.cycle";
 	};
@@ -16457,7 +16457,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Final()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][14].args[0]$;
+      obj=$.programs.gp[4][14].args[0]$;
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        name="meth_args";
@@ -16472,11 +16472,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[4][14].args[0]$;
-      update_var=.projects[0].programs.gp[4][14].vars[1]$$;
+      network_var=$.programs.gp[4][14].args[0]$;
+      update_var=.programs.gp[4][14].vars[1]$$;
      };
     };
-    step_prog=$.projects[0].programs.gp[4][15]$;
+    step_prog=$.programs.gp[4][15]$;
     step_n=1;
     doc {
      name="doc";
@@ -16495,7 +16495,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][15].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][15].doc$$: };
     };
     name="Cycle";
     short_nm="Cycle";
@@ -16530,7 +16530,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -16574,7 +16574,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Cycle_Run()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[4][15].args[0]$$;
+      obj=.programs.gp[4][15].args[0]$$;
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        name="meth_args";
@@ -16589,15 +16589,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[4][15].args[0]$;
-      update_var=$.projects[0].programs.gp[4][15].vars[0]$;
+      network_var=$.programs.gp[4][15].args[0]$;
+      update_var=$.programs.gp[4][15].vars[0]$;
      };
      MemberAssign @[2] {
       name="MemberAssign_networkcyclenetworkcycle1";
       desc="IMPORTANT: Cycle_Run() now updates cycle by itself, and can run multiple cycles!";
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="network.cycle = network.cycle + 1";
-      obj=$.projects[0].programs.gp[4][15].args[0]$;
+      obj=$.programs.gp[4][15].args[0]$;
       path="cycle";
       expr {
        expr="network.cycle + 1";
@@ -16624,7 +16624,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][16].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][16].doc$$: };
     };
     name="SaveWeights";
     short_nm="SWghts";
@@ -16661,7 +16661,7 @@ also save specs.";
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -16777,7 +16777,7 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
-      result_var=.projects[0].programs.gp[4][16].vars[4]$$;
+      result_var=.programs.gp[4][16].vars[4]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -16813,7 +16813,7 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
-      result_var=.projects[0].programs.gp[4][16].vars[3]$$;
+      result_var=.programs.gp[4][16].vars[3]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -16849,7 +16849,7 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
-      result_var=.projects[0].programs.gp[4][16].vars[5]$$;
+      result_var=.programs.gp[4][16].vars[5]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
       };
@@ -16859,8 +16859,8 @@ also save specs.";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
-      result_var=.projects[0].programs.gp[4][16].vars[2]$$;
-      obj=.projects[0].programs.gp[4][16].args[0]$$;
+      result_var=.programs.gp[4][16].vars[2]$$;
+      obj=.programs.gp[4][16].args[0]$$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name="meth_args";
@@ -16920,7 +16920,7 @@ also save specs.";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[4][16].args[0]$;
+      obj=$.programs.gp[4][16].args[0]$;
       method=Network::SaveWeights;
       meth_args {
        name="meth_args";
@@ -16979,7 +16979,7 @@ also save specs.";
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[0][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[0][0].doc$$: };
      };
      name="SaveLogFiles";
      short_nm="SLFls";
@@ -17014,7 +17014,7 @@ also save specs.";
        name="network";
        var_type=T_Object;
        object_type=LeabraNetwork;
-       object_val=$.projects[0].networks[0]$;
+       object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
@@ -17035,7 +17035,7 @@ also save specs.";
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
-       init_from=$.projects[0].programs[0]$;
+       init_from=$.programs[0]$;
       };
       ProgVar @[1] {
        name="log_trials";
@@ -17045,7 +17045,7 @@ also save specs.";
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
-       init_from=$.projects[0].programs.gp[4][0]$;
+       init_from=$.programs.gp[4][0]$;
       };
       ProgVar @[2] {
        name="log_dir";
@@ -17071,7 +17071,7 @@ also save specs.";
        name="epoch_output_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=$.projects[0].data.gp[1][1]$;
+       object_val=$.data.gp[1][1]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -17083,7 +17083,7 @@ also save specs.";
        name="trial_output_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=$.projects[0].data.gp[1][0]$;
+       object_val=$.data.gp[1][0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -17145,8 +17145,8 @@ also save specs.";
        desc="last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = epoch_output_data->GetFileNameFmProject(\".trn_epc.dat\", tag, log_dir, false)";
-       result_var=.projects[0].programs.gp[4].gp[0][0].vars[3]$$;
-       obj=.projects[0].programs.gp[4].gp[0][0].vars[4]$$;
+       result_var=.programs.gp[4].gp[0][0].vars[3]$$;
+       obj=.programs.gp[4].gp[0][0].vars[4]$$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name="meth_args";
@@ -17206,7 +17206,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_output_data->SaveDataLog(log_file_nm, false, true)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][0].vars[4]$;
+       obj=$.programs.gp[4].gp[0][0].vars[4]$;
        method=DataTable::SaveDataLog;
        meth_args {
 	name="meth_args";
@@ -17255,7 +17255,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  \"Saving epoch log data to:\" log_file_nm";
        message="Saving epoch log data to:";
-       print_var=$.projects[0].programs.gp[4].gp[0][0].vars[3]$;
+       print_var=$.programs.gp[4].gp[0][0].vars[3]$;
        print_var2=NULL;
        print_var3=NULL;
        print_var4=NULL;
@@ -17280,8 +17280,8 @@ also save specs.";
 	 desc="last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = trial_output_data->GetFileNameFmProject(\".trn_trl.dat\", tag, log_dir, true)";
-	 result_var=$.projects[0].programs.gp[4].gp[0][0].vars[3]$;
-	 obj=.projects[0].programs.gp[4].gp[0][0].vars[5]$$;
+	 result_var=$.programs.gp[4].gp[0][0].vars[3]$;
+	 obj=.programs.gp[4].gp[0][0].vars[5]$$;
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  name="meth_args";
@@ -17341,7 +17341,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_output_data->SaveDataLog(log_file_nm, false, false)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[4].gp[0][0].vars[5]$;
+	 obj=$.programs.gp[4].gp[0][0].vars[5]$;
 	 method=DataTable::SaveDataLog;
 	 meth_args {
 	  name="meth_args";
@@ -17390,7 +17390,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  \"Saving trial log data to:\" log_file_nm";
 	 message="Saving trial log data to:";
-	 print_var=$.projects[0].programs.gp[4].gp[0][0].vars[3]$;
+	 print_var=$.programs.gp[4].gp[0][0].vars[3]$;
 	 print_var2=NULL;
 	 print_var3=NULL;
 	 print_var4=NULL;
@@ -17420,7 +17420,7 @@ also save specs.";
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[0][1].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[0][1].doc$$: };
      };
      name="LeabraTrialMonitor";
      short_nm="TrialMon";
@@ -17451,7 +17451,7 @@ also save specs.";
 	 name="batch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="batch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17485,7 +17485,7 @@ also save specs.";
 	 name="epoch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="epoch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17519,7 +17519,7 @@ also save specs.";
 	 name="train_mode";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="train_mode";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17553,7 +17553,7 @@ also save specs.";
 	 name="group";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="group";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17587,7 +17587,7 @@ also save specs.";
 	 name="trial";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="trial";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17621,7 +17621,7 @@ also save specs.";
 	 name="tick";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="tick";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17655,7 +17655,7 @@ also save specs.";
 	 name="time";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="time";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17689,7 +17689,7 @@ also save specs.";
 	 name="trial_name";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="trial_name";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17723,7 +17723,7 @@ also save specs.";
 	 name="group_name";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="group_name";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17757,7 +17757,7 @@ also save specs.";
 	 name="output_name";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="minus_output_name";
 	 var_label=;
 	 name_style=MY_NAME;
@@ -17791,7 +17791,7 @@ also save specs.";
 	 name="rt_cycles";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="rt_cycles";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17825,7 +17825,7 @@ also save specs.";
 	 name="sse";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="sse";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17859,7 +17859,7 @@ also save specs.";
 	 name="norm_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="norm_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17893,7 +17893,7 @@ also save specs.";
 	 name="cos_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="cos_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17927,7 +17927,7 @@ also save specs.";
 	 name="ext_rew";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="ext_rew";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -17961,7 +17961,7 @@ also save specs.";
 	 name="lay_sse";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.sse";
 	 var_label="lay_sse";
 	 name_style=AUTO_NAME;
@@ -17995,7 +17995,7 @@ also save specs.";
 	 name="lay_bin_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.bin_err";
 	 var_label="lay_bin_err";
 	 name_style=AUTO_NAME;
@@ -18029,7 +18029,7 @@ also save specs.";
 	 name="lay_norm_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.norm_err";
 	 var_label="lay_norm_err";
 	 name_style=AUTO_NAME;
@@ -18063,7 +18063,7 @@ also save specs.";
 	 name="lay_cos_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.cos_err";
 	 var_label="lay_cos_err";
 	 name_style=AUTO_NAME;
@@ -18097,7 +18097,7 @@ also save specs.";
 	 name="lay_net_sd";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.net_sd";
 	 var_label="lay_net_sd";
 	 name_style=AUTO_NAME;
@@ -18131,7 +18131,7 @@ also save specs.";
 	 name="net_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="cos_diff";
 	 var_label="net_cos_diff";
 	 name_style=AUTO_NAME;
@@ -18165,7 +18165,7 @@ also save specs.";
 	 name="net_trial_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="trial_cos_diff";
 	 var_label="net_trial_cos_diff";
 	 name_style=AUTO_NAME;
@@ -18199,7 +18199,7 @@ also save specs.";
 	 name="net_avg_act_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_act_diff";
 	 var_label="net_avg_act_diff";
 	 name_style=AUTO_NAME;
@@ -18233,7 +18233,7 @@ also save specs.";
 	 name="cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.cos_diff";
 	 var_label="cos_diff";
 	 name_style=AUTO_NAME;
@@ -18267,7 +18267,7 @@ also save specs.";
 	 name="trial_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.trial_cos_diff";
 	 var_label="trial_cos_diff";
 	 name_style=AUTO_NAME;
@@ -18301,7 +18301,7 @@ also save specs.";
 	 name="avg_act_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_act_diff";
 	 var_label="avg_act_diff";
 	 name_style=AUTO_NAME;
@@ -18332,8 +18332,8 @@ also save specs.";
 	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
        };
-       network=$.projects[0].networks[0]$;
-       data=$.projects[0].data.gp[1][0]$;
+       network=$.networks[0]$;
+       data=$.data.gp[1][0]$;
        rmv_orphan_cols=1;
       };
      };
@@ -18350,7 +18350,7 @@ also save specs.";
        name="network";
        var_type=T_Object;
        object_type=Network;
-       object_val=$.projects[0].networks[0]$;
+       object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -18367,7 +18367,7 @@ also save specs.";
        name="trial_mon_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=$.projects[0].data.gp[1][0]$;
+       object_val=$.data.gp[1][0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -18379,7 +18379,7 @@ also save specs.";
        name="trial_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
-       object_val=.projects[0].programs.gp[4].gp[0][1].objs[0]$$;
+       object_val=.programs.gp[4].gp[0][1].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -18413,7 +18413,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
        result_var=NULL;
-       obj=.projects[0].programs.gp[4].gp[0][1].vars[1]$$;
+       obj=.programs.gp[4].gp[0][1].vars[1]$$;
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	name="meth_args";
@@ -18451,7 +18451,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->CheckConfig(false)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][1].vars[1]$;
+       obj=$.programs.gp[4].gp[0][1].vars[1]$;
        method=taBase::CheckConfig;
        meth_args {
 	name="meth_args";
@@ -18478,7 +18478,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->UpdateMonitors(true)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][1].vars[1]$;
+       obj=$.programs.gp[4].gp[0][1].vars[1]$;
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	name="meth_args";
@@ -18504,7 +18504,7 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       result_var=.projects[0].programs.gp[4].gp[0][1].vars[2]$$;
+       result_var=.programs.gp[4].gp[0][1].vars[2]$$;
        expr {
 	expr="false";
        };
@@ -18532,7 +18532,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[4].gp[0][1].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][1].vars[1]$;
 	 method=NetMonitor::SetDataNetwork;
 	 meth_args {
 	  name="meth_args";
@@ -18570,7 +18570,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="trial_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[4].gp[0][1].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][1].vars[1]$;
 	 method=NetMonitor::UpdateMonitors;
 	 meth_args {
 	  name="meth_args";
@@ -18596,7 +18596,7 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 result_var=$.projects[0].programs.gp[4].gp[0][1].vars[2]$;
+	 result_var=$.programs.gp[4].gp[0][1].vars[2]$;
 	 expr {
 	  expr="true";
 	 };
@@ -18609,7 +18609,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_mon_data->AddBlankRow()";
        result_var=NULL;
-       obj=.projects[0].programs.gp[4].gp[0][1].vars[0]$$;
+       obj=.programs.gp[4].gp[0][1].vars[0]$$;
        method=DataTable::AddBlankRow;
        meth_args {
 	name="meth_args";
@@ -18625,7 +18625,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_netmon->GetMonVals()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][1].vars[1]$;
+       obj=$.programs.gp[4].gp[0][1].vars[1]$;
        method=NetMonitor::GetMonVals;
        meth_args {
 	name="meth_args";
@@ -18641,7 +18641,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="trial_mon_data->WriteClose()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][1].vars[0]$;
+       obj=$.programs.gp[4].gp[0][1].vars[0]$;
        method=DataTable::WriteClose;
        meth_args {
 	name="meth_args";
@@ -18657,7 +18657,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
        result_var=NULL;
-       obj=.projects[0].programs.gp[4].gp[0][1].args[0]$$;
+       obj=.programs.gp[4].gp[0][1].args[0]$$;
        method=Network::DMem_ShareTrialData;
        meth_args {
 	name="meth_args";
@@ -18690,7 +18690,7 @@ also save specs.";
        meth_desc=" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient";
       };
      };
-     step_prog=$.projects[0].programs.gp[4].gp[0][1]$;
+     step_prog=$.programs.gp[4].gp[0][1]$;
      step_n=1;
      doc {
       name="doc";
@@ -18709,7 +18709,7 @@ also save specs.";
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[0][2].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[0][2].doc$$: };
      };
      name="LeabraEpochMonitor";
      short_nm="EpcMon";
@@ -18740,7 +18740,7 @@ also save specs.";
 	 name="batch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="batch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18774,7 +18774,7 @@ also save specs.";
 	 name="epoch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="epoch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18808,7 +18808,7 @@ also save specs.";
 	 name="avg_sse";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_sse";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18842,7 +18842,7 @@ also save specs.";
 	 name="cnt_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="cnt_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18876,7 +18876,7 @@ also save specs.";
 	 name="pct_cor";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="pct_cor";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18910,7 +18910,7 @@ also save specs.";
 	 name="pct_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="pct_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18944,7 +18944,7 @@ also save specs.";
 	 name="avg_norm_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_norm_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -18978,7 +18978,7 @@ also save specs.";
 	 name="avg_cos_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_cos_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -19012,7 +19012,7 @@ also save specs.";
 	 name="avg_ext_rew";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_ext_rew";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -19046,7 +19046,7 @@ also save specs.";
 	 name="avg_cycles";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_cycles";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -19148,7 +19148,7 @@ also save specs.";
 	 name="lay_avg_sse";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_sse";
 	 var_label="lay_avg_sse";
 	 name_style=AUTO_NAME;
@@ -19182,7 +19182,7 @@ also save specs.";
 	 name="lay_cnt_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.cnt_err";
 	 var_label="lay_cnt_err";
 	 name_style=AUTO_NAME;
@@ -19216,7 +19216,7 @@ also save specs.";
 	 name="lay_pct_cor";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.pct_cor";
 	 var_label="lay_pct_cor";
 	 name_style=AUTO_NAME;
@@ -19250,7 +19250,7 @@ also save specs.";
 	 name="lay_pct_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.pct_err";
 	 var_label="lay_pct_err";
 	 name_style=AUTO_NAME;
@@ -19284,7 +19284,7 @@ also save specs.";
 	 name="lay_avg_norm_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_norm_err";
 	 var_label="lay_avg_norm_err";
 	 name_style=AUTO_NAME;
@@ -19318,7 +19318,7 @@ also save specs.";
 	 name="lay_avg_cos_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_cos_err";
 	 var_label="lay_avg_cos_err";
 	 name_style=AUTO_NAME;
@@ -19352,7 +19352,7 @@ also save specs.";
 	 name="net_avg_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_cos_diff";
 	 var_label="net_avg_cos_diff";
 	 name_style=AUTO_NAME;
@@ -19386,7 +19386,7 @@ also save specs.";
 	 name="net_avg_trial_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_trial_cos_diff";
 	 var_label="net_avg_trial_cos_diff";
 	 name_style=AUTO_NAME;
@@ -19420,7 +19420,7 @@ also save specs.";
 	 name="net_avg_avg_act_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="avg_avg_act_diff";
 	 var_label="net_avg_avg_act_diff";
 	 name_style=AUTO_NAME;
@@ -19454,7 +19454,7 @@ also save specs.";
 	 name="avg_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_cos_diff";
 	 var_label="avg_cos_diff";
 	 name_style=AUTO_NAME;
@@ -19488,7 +19488,7 @@ also save specs.";
 	 name="avg_trial_cos_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_trial_cos_diff";
 	 var_label="avg_trial_cos_diff";
 	 name_style=AUTO_NAME;
@@ -19522,7 +19522,7 @@ also save specs.";
 	 name="avg_avg_act_diff";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_avg_act_diff";
 	 var_label="avg_avg_act_diff";
 	 name_style=AUTO_NAME;
@@ -19556,7 +19556,7 @@ also save specs.";
 	 name="avg_net_sd";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_net_sd";
 	 var_label="avg_net_sd";
 	 name_style=AUTO_NAME;
@@ -19590,7 +19590,7 @@ also save specs.";
 	 name="hog_pct";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.hog_pct";
 	 var_label="hog_pct";
 	 name_style=AUTO_NAME;
@@ -19624,7 +19624,7 @@ also save specs.";
 	 name="dead_pct";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.dead_pct";
 	 var_label="dead_pct";
 	 name_style=AUTO_NAME;
@@ -19658,7 +19658,7 @@ also save specs.";
 	 name="netmax";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="layers.avg_netin.max";
 	 var_label="netmax";
 	 name_style=AUTO_NAME;
@@ -19692,7 +19692,7 @@ also save specs.";
 	 name="avg_act";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable=".layers.acts_p_avg";
 	 var_label="avg_act";
 	 name_style=AUTO_NAME;
@@ -19726,7 +19726,7 @@ also save specs.";
 	 name="netrel";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=$.projects[0].networks[0]$;
+	 object=$.networks[0]$;
 	 variable="prjns.avg_netin_rel";
 	 var_label="netrel";
 	 name_style=AUTO_NAME;
@@ -19757,8 +19757,8 @@ also save specs.";
 	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
        };
-       network=$.projects[0].networks[0]$;
-       data=$.projects[0].data.gp[1][1]$;
+       network=$.networks[0]$;
+       data=$.data.gp[1][1]$;
        rmv_orphan_cols=1;
       };
      };
@@ -19775,7 +19775,7 @@ also save specs.";
        name="network";
        var_type=T_Object;
        object_type=Network;
-       object_val=$.projects[0].networks[0]$;
+       object_val=$.networks[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -19792,7 +19792,7 @@ also save specs.";
        name="epoch_mon_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=$.projects[0].data.gp[1][1]$;
+       object_val=$.data.gp[1][1]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -19804,7 +19804,7 @@ also save specs.";
        name="epoch_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
-       object_val=.projects[0].programs.gp[4].gp[0][2].objs[0]$$;
+       object_val=.programs.gp[4].gp[0][2].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -19816,7 +19816,7 @@ also save specs.";
        name="epoch_timer";
        var_type=T_Object;
        object_type=TimeUsed;
-       object_val=.projects[0].networks[0].epoch_time$$;
+       object_val=.networks[0].epoch_time$$;
        object_scope=NULL;
        objs_ptr=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -19849,7 +19849,7 @@ also save specs.";
        desc="get the epoch timer from current network";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_timer = network.epoch_time";
-       result_var=.projects[0].programs.gp[4].gp[0][2].vars[2]$$;
+       result_var=.programs.gp[4].gp[0][2].vars[2]$$;
        expr {
 	expr="network.epoch_time";
        };
@@ -19860,7 +19860,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
        result_var=NULL;
-       obj=.projects[0].programs.gp[4].gp[0][2].vars[1]$$;
+       obj=.programs.gp[4].gp[0][2].vars[1]$$;
        method=NetMonitor::SetDataNetwork;
        meth_args {
 	name="meth_args";
@@ -19898,7 +19898,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->CheckConfig(false)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][2].vars[1]$;
+       obj=$.programs.gp[4].gp[0][2].vars[1]$;
        method=taBase::CheckConfig;
        meth_args {
 	name="meth_args";
@@ -19925,7 +19925,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->UpdateMonitors(true)";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][2].vars[1]$;
+       obj=$.programs.gp[4].gp[0][2].vars[1]$;
        method=NetMonitor::UpdateMonitors;
        meth_args {
 	name="meth_args";
@@ -19951,7 +19951,7 @@ also save specs.";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="run_already = false";
-       result_var=.projects[0].programs.gp[4].gp[0][2].vars[3]$$;
+       result_var=.programs.gp[4].gp[0][2].vars[3]$$;
        expr {
 	expr="false";
        };
@@ -19979,7 +19979,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[4].gp[0][2].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][2].vars[1]$;
 	 method=NetMonitor::SetDataNetwork;
 	 meth_args {
 	  name="meth_args";
@@ -20017,7 +20017,7 @@ also save specs.";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="epoch_netmon->UpdateMonitors(true)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[4].gp[0][2].vars[1]$;
+	 obj=$.programs.gp[4].gp[0][2].vars[1]$;
 	 method=NetMonitor::UpdateMonitors;
 	 meth_args {
 	  name="meth_args";
@@ -20043,7 +20043,7 @@ also save specs.";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="run_already = true";
-	 result_var=$.projects[0].programs.gp[4].gp[0][2].vars[3]$;
+	 result_var=$.programs.gp[4].gp[0][2].vars[3]$;
 	 expr {
 	  expr="true";
 	 };
@@ -20056,7 +20056,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->AddBlankRow()";
        result_var=NULL;
-       obj=.projects[0].programs.gp[4].gp[0][2].vars[0]$$;
+       obj=.programs.gp[4].gp[0][2].vars[0]$$;
        method=DataTable::AddBlankRow;
        meth_args {
 	name="meth_args";
@@ -20072,7 +20072,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_netmon->GetMonVals()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][2].vars[1]$;
+       obj=$.programs.gp[4].gp[0][2].vars[1]$;
        method=NetMonitor::GetMonVals;
        meth_args {
 	name="meth_args";
@@ -20087,7 +20087,7 @@ also save specs.";
        desc="get the epoch timer from current network";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_timer = network.epoch_time";
-       result_var=$.projects[0].programs.gp[4].gp[0][2].vars[2]$;
+       result_var=$.programs.gp[4].gp[0][2].vars[2]$;
        expr {
 	expr="network.epoch_time";
        };
@@ -20098,7 +20098,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][2].vars[0]$;
+       obj=$.programs.gp[4].gp[0][2].vars[0]$;
        method=DataTable::SetValColName;
        meth_args {
 	name="meth_args";
@@ -20158,7 +20158,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][2].vars[0]$;
+       obj=$.programs.gp[4].gp[0][2].vars[0]$;
        method=DataTable::SetValColName;
        meth_args {
 	name="meth_args";
@@ -20218,7 +20218,7 @@ also save specs.";
        flags=CAN_REVERT_TO_CODE;
        code_string="epoch_mon_data->WriteClose()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4].gp[0][2].vars[0]$;
+       obj=$.programs.gp[4].gp[0][2].vars[0]$;
        method=DataTable::WriteClose;
        meth_args {
 	name="meth_args";
@@ -20257,7 +20257,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 ";
       };
      };
-     step_prog=$.projects[0].programs.gp[4].gp[0][2]$;
+     step_prog=$.programs.gp[4].gp[0][2]$;
      step_n=1;
      doc {
       name="doc";
@@ -20291,7 +20291,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
    name="Browser3";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"LeabraFlex_10389_v804_updt\"] - LeabraFlex_10389_v804_updt.proj";
@@ -20331,7 +20331,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";
@@ -20370,7 +20370,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 el_def=0;
 	 NetView @[0] {
 	  name="Network_0_View";
-	  m_data=$.projects[0].networks[0]$;
+	  m_data=$.networks[0]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -20424,7 +20424,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   last_max=0;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -20541,7 +20541,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 GraphTableView @[0] {
 	  name="EpochOutputData_Graph";
-	  m_data=$.projects[0].data.gp[1][1]$;
+	  m_data=$.data.gp[1][1]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -20550,7 +20550,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="batch";
-	    m_data=.projects[0].data.gp[1][1].data[0]$$;
+	    m_data=.data.gp[1][1].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20559,7 +20559,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="epoch";
-	    m_data=.projects[0].data.gp[1][1].data[1]$$;
+	    m_data=.data.gp[1][1].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20568,7 +20568,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="avg_sse";
-	    m_data=.projects[0].data.gp[1][1].data[2]$$;
+	    m_data=.data.gp[1][1].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20577,7 +20577,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[3] {
 	    name="cnt_err";
-	    m_data=.projects[0].data.gp[1][1].data[3]$$;
+	    m_data=.data.gp[1][1].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20586,7 +20586,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[4] {
 	    name="pct_cor";
-	    m_data=.projects[0].data.gp[1][1].data[4]$$;
+	    m_data=.data.gp[1][1].data[4]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20595,7 +20595,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[5] {
 	    name="pct_err";
-	    m_data=.projects[0].data.gp[1][1].data[5]$$;
+	    m_data=.data.gp[1][1].data[5]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20604,7 +20604,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[6] {
 	    name="avg_norm_err";
-	    m_data=.projects[0].data.gp[1][1].data[6]$$;
+	    m_data=.data.gp[1][1].data[6]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20613,7 +20613,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[7] {
 	    name="avg_cos_err";
-	    m_data=.projects[0].data.gp[1][1].data[7]$$;
+	    m_data=.data.gp[1][1].data[7]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20622,7 +20622,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[8] {
 	    name="avg_ext_rew";
-	    m_data=.projects[0].data.gp[1][1].data[8]$$;
+	    m_data=.data.gp[1][1].data[8]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20631,7 +20631,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[9] {
 	    name="avg_cycles";
-	    m_data=.projects[0].data.gp[1][1].data[9]$$;
+	    m_data=.data.gp[1][1].data[9]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20640,7 +20640,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[10] {
 	    name="epoch_time_tot";
-	    m_data=.projects[0].data.gp[1][1].data[10]$$;
+	    m_data=.data.gp[1][1].data[10]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20649,7 +20649,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[11] {
 	    name="epoch_time_usr";
-	    m_data=.projects[0].data.gp[1][1].data[11]$$;
+	    m_data=.data.gp[1][1].data[11]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20658,7 +20658,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[12] {
 	    name="Output_lay_avg_sse";
-	    m_data=.projects[0].data.gp[1][1].data[12]$$;
+	    m_data=.data.gp[1][1].data[12]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20667,7 +20667,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[13] {
 	    name="Output_lay_cnt_err";
-	    m_data=.projects[0].data.gp[1][1].data[13]$$;
+	    m_data=.data.gp[1][1].data[13]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20676,7 +20676,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[14] {
 	    name="Output_lay_pct_cor";
-	    m_data=.projects[0].data.gp[1][1].data[14]$$;
+	    m_data=.data.gp[1][1].data[14]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20685,7 +20685,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[15] {
 	    name="Output_lay_pct_err";
-	    m_data=.projects[0].data.gp[1][1].data[15]$$;
+	    m_data=.data.gp[1][1].data[15]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20694,7 +20694,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[16] {
 	    name="Output_lay_avg_norm_err";
-	    m_data=.projects[0].data.gp[1][1].data[16]$$;
+	    m_data=.data.gp[1][1].data[16]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20703,7 +20703,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[17] {
 	    name="Output_lay_avg_cos_err";
-	    m_data=.projects[0].data.gp[1][1].data[17]$$;
+	    m_data=.data.gp[1][1].data[17]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20712,7 +20712,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[18] {
 	    name="net_avg_cos_diff";
-	    m_data=.projects[0].data.gp[1][1].data[18]$$;
+	    m_data=.data.gp[1][1].data[18]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20721,7 +20721,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[19] {
 	    name="net_avg_trial_cos_diff";
-	    m_data=.projects[0].data.gp[1][1].data[19]$$;
+	    m_data=.data.gp[1][1].data[19]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20730,7 +20730,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[20] {
 	    name="net_avg_avg_act_diff";
-	    m_data=.projects[0].data.gp[1][1].data[20]$$;
+	    m_data=.data.gp[1][1].data[20]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20739,7 +20739,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[21] {
 	    name="Hidden_avg_cos_diff";
-	    m_data=.projects[0].data.gp[1][1].data[21]$$;
+	    m_data=.data.gp[1][1].data[21]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20748,7 +20748,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[22] {
 	    name="Output_avg_cos_diff";
-	    m_data=.projects[0].data.gp[1][1].data[22]$$;
+	    m_data=.data.gp[1][1].data[22]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20757,7 +20757,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[23] {
 	    name="Hidden_avg_trial_cos_diff";
-	    m_data=.projects[0].data.gp[1][1].data[23]$$;
+	    m_data=.data.gp[1][1].data[23]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20766,7 +20766,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[24] {
 	    name="Output_avg_trial_cos_diff";
-	    m_data=.projects[0].data.gp[1][1].data[24]$$;
+	    m_data=.data.gp[1][1].data[24]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20775,7 +20775,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[25] {
 	    name="Hidden_avg_avg_act_diff";
-	    m_data=.projects[0].data.gp[1][1].data[25]$$;
+	    m_data=.data.gp[1][1].data[25]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20784,7 +20784,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[26] {
 	    name="Output_avg_avg_act_diff";
-	    m_data=.projects[0].data.gp[1][1].data[26]$$;
+	    m_data=.data.gp[1][1].data[26]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20793,7 +20793,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[27] {
 	    name="Hidden_avg_net_sd";
-	    m_data=.projects[0].data.gp[1][1].data[27]$$;
+	    m_data=.data.gp[1][1].data[27]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20802,7 +20802,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[28] {
 	    name="Output_avg_net_sd";
-	    m_data=.projects[0].data.gp[1][1].data[28]$$;
+	    m_data=.data.gp[1][1].data[28]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20811,7 +20811,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[29] {
 	    name="Hidden_hog_pct";
-	    m_data=.projects[0].data.gp[1][1].data[29]$$;
+	    m_data=.data.gp[1][1].data[29]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20820,7 +20820,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[30] {
 	    name="Output_hog_pct";
-	    m_data=.projects[0].data.gp[1][1].data[30]$$;
+	    m_data=.data.gp[1][1].data[30]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20829,7 +20829,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[31] {
 	    name="Hidden_dead_pct";
-	    m_data=.projects[0].data.gp[1][1].data[31]$$;
+	    m_data=.data.gp[1][1].data[31]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20838,7 +20838,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[32] {
 	    name="Output_dead_pct";
-	    m_data=.projects[0].data.gp[1][1].data[32]$$;
+	    m_data=.data.gp[1][1].data[32]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20847,7 +20847,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[33] {
 	    name="Hidden_netmax";
-	    m_data=.projects[0].data.gp[1][1].data[33]$$;
+	    m_data=.data.gp[1][1].data[33]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20856,7 +20856,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[34] {
 	    name="Output_netmax";
-	    m_data=.projects[0].data.gp[1][1].data[34]$$;
+	    m_data=.data.gp[1][1].data[34]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20865,7 +20865,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[35] {
 	    name="Input_avg_act";
-	    m_data=.projects[0].data.gp[1][1].data[35]$$;
+	    m_data=.data.gp[1][1].data[35]$$;
 	    cur_font_size=14;
 	    m_transform=NULL;
 	    visible=1;
@@ -20874,7 +20874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[36] {
 	    name="Hidden_avg_act";
-	    m_data=.projects[0].data.gp[1][1].data[36]$$;
+	    m_data=.data.gp[1][1].data[36]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20883,7 +20883,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[37] {
 	    name="Output_avg_act";
-	    m_data=.projects[0].data.gp[1][1].data[37]$$;
+	    m_data=.data.gp[1][1].data[37]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20892,7 +20892,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[38] {
 	    name="Hidden_Fm_Input_netrel";
-	    m_data=.projects[0].data.gp[1][1].data[38]$$;
+	    m_data=.data.gp[1][1].data[38]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20901,7 +20901,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[39] {
 	    name="Hidden_Fm_Output_netrel";
-	    m_data=.projects[0].data.gp[1][1].data[39]$$;
+	    m_data=.data.gp[1][1].data[39]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -20910,7 +20910,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[40] {
 	    name="Output_Fm_Hidden_netrel";
-	    m_data=.projects[0].data.gp[1][1].data[40]$$;
+	    m_data=.data.gp[1][1].data[40]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -21813,7 +21813,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -22091,7 +22091,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[2].children[0]$$: };
+     bias_spec {type=LeabraBiasSpec: spec=.networks[0].specs[2].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
@@ -22391,7 +22391,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[0];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
      };
      units {
       name="units";
@@ -22400,7 +22400,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[1]$$: };
+     unit_spec {type=LeabraUnitSpec: spec=.networks[0].specs[1]$$: };
      dist {fm_input=0: fm_output=2: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -22409,7 +22409,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.15;
      acts_p_avg=0.15;
      acts_p_avg_eff=0.15;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[0].children[0]$$: };
+     spec {type=LeabraLayerSpec: spec=.networks[0].specs[0].children[0]$$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;
@@ -22447,10 +22447,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[3]$$: };
+       from=.networks[0].layers[0]$$;
+       spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=$.projects[0].networks[0].specs[2]$: };
+       con_spec {type=LeabraConSpec: spec=$.networks[0].specs[2]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -22465,10 +22465,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[2]$$;
-       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[3]$: };
+       from=.networks[0].layers[2]$$;
+       spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[2].children[1]$$: };
+       con_spec {type=LeabraConSpec: spec=.networks[0].specs[2].children[1]$$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -22483,7 +22483,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[2].projections[0];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[2].projections[0];
      };
      units {
       name="units";
@@ -22492,7 +22492,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[1]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=1: fm_output=1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -22501,7 +22501,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.15;
      acts_p_avg=0.15;
      acts_p_avg_eff=0.15;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[0]$$: };
+     spec {type=LeabraLayerSpec: spec=.networks[0].specs[0]$$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;
@@ -22539,10 +22539,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$$;
-       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[3]$: };
+       from=.networks[0].layers[1]$$;
+       spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=$.projects[0].networks[0].specs[2]$: };
+       con_spec {type=LeabraConSpec: spec=$.networks[0].specs[2]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -22557,7 +22557,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[1];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[1];
      };
      units {
       name="units";
@@ -22566,7 +22566,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[1]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=2: fm_output=0: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -22575,7 +22575,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.15;
      acts_p_avg=0.15;
      acts_p_avg_eff=0.15;
-     spec {type=LeabraLayerSpec: spec=$.projects[0].networks[0].specs[0].children[0]$: };
+     spec {type=LeabraLayerSpec: spec=$.networks[0].specs[0].children[0]$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;

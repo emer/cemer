@@ -1,0 +1,5382 @@
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+Patch .projects[0].patches[0] { 
+ PatchRec_Group @.patch_recs = [0] {
+  PatchRec_Group @.gp[0] = [1] { 
+   PatchRec @[0] { };
+  };
+  PatchRec_Group @.gp[1] = [2] { 
+   PatchRec @[0] { };
+   PatchRec @[1] { };
+  };
+  PatchRec_Group @.gp[2] = [53] { 
+   PatchRec @[0] { };
+   PatchRec @[1] { };
+   PatchRec @[2] { };
+   PatchRec @[3] { };
+   PatchRec @[4] { };
+   PatchRec @[5] { };
+   PatchRec @[6] { };
+   PatchRec @[7] { };
+   PatchRec @[8] { };
+   PatchRec @[9] { };
+   PatchRec @[10] { };
+   PatchRec @[11] { };
+   PatchRec @[12] { };
+   PatchRec @[13] { };
+   PatchRec @[14] { };
+   PatchRec @[15] { };
+   PatchRec @[16] { };
+   PatchRec @[17] { };
+   PatchRec @[18] { };
+   PatchRec @[19] { };
+   PatchRec @[20] { };
+   PatchRec @[21] { };
+   PatchRec @[22] { };
+   PatchRec @[23] { };
+   PatchRec @[24] { };
+   PatchRec @[25] { };
+   PatchRec @[26] { };
+   PatchRec @[27] { };
+   PatchRec @[28] { };
+   PatchRec @[29] { };
+   PatchRec @[30] { };
+   PatchRec @[31] { };
+   PatchRec @[32] { };
+   PatchRec @[33] { };
+   PatchRec @[34] { };
+   PatchRec @[35] { };
+   PatchRec @[36] { };
+   PatchRec @[37] { };
+   PatchRec @[38] { };
+   PatchRec @[39] { };
+   PatchRec @[40] { };
+   PatchRec @[41] { };
+   PatchRec @[42] { };
+   PatchRec @[43] { };
+   PatchRec @[44] { };
+   PatchRec @[45] { };
+   PatchRec @[46] { };
+   PatchRec @[47] { };
+   PatchRec @[48] { };
+   PatchRec @[49] { };
+   PatchRec @[50] { };
+   PatchRec @[51] { };
+   PatchRec @[52] { };
+  };
+  PatchRec_Group @.gp[3] = [9] { 
+   PatchRec @[0] { };
+   PatchRec @[1] { };
+   PatchRec @[2] { };
+   PatchRec @[3] { };
+   PatchRec @[4] { };
+   PatchRec @[5] { };
+   PatchRec @[6] { };
+   PatchRec @[7] { };
+   PatchRec @[8] { };
+  };
+ };
+};
+Patch .projects[0].patches[0] {
+ name="BpStd_v701_to_v810";
+ tags="Bp, BpStd, v701, v810, BpTrain";
+ desc="updates a version 7.0 set of standard backprop programs to 8.1.0, including fixing the error in BpTrain about Average";
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
+ date="2017_05_11_16_10_48";
+ from_name="BpStd_7187_v701";
+ to_name="BpStd_10715_v808";
+ patch_recs {
+  name="patch_recs";
+  el_typ=PatchRec;
+  el_def=0;
+  path=;
+  PatchRec_Group @.gp[0] {
+   name="Project";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".";
+    obj_path_idx=".";
+    obj_type="BpProject";
+    mbr_path="license.year";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="2016";
+   };
+  };
+  PatchRec_Group @.gp[1] {
+   name="data";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".data.gp[\"OutputData\"]";
+    obj_path_idx=".data.gp[1]";
+    obj_type="DataTable_Group";
+    mbr_path=;
+    targ_idx=2;
+    targ_name="TestTrialOutputData";
+    insert_after="EpochOutputData";
+    insert_before=;
+    new_obj_type="DataTable";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+DataTable .projects[1].data.gp[1][2] { 
+ DataTableCols @.data = [6] {
+  int_Data @[0] { };
+  int_Data @[1] { };
+  int_Data @[2] { };
+  String_Data @[3] { };
+  String_Data @[4] { };
+  float_Data @[5] { };
+ };
+
+ DataOpList @.last_sort_spec.ops = [0] {
+ };
+};
+DataTable .projects[1].data.gp[1][2] {
+ name=\"TestTrialOutputData\";
+ desc=;
+ data {
+  name=\"data\";
+  el_typ=int_Data;
+  el_def=0;
+  int_Data @[0] {
+   name=\"batch\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  int_Data @[1] {
+   name=\"epoch\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  int_Data @[2] {
+   name=\"trial\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  String_Data @[3] {
+   name=\"trial_name\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=16;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  String_Data @[4] {
+   name=\"group_name\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=16;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  float_Data @[5] {
+   name=\"sse\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+ };
+ data_flags=SAVE_ROWS|AUTO_CALC;
+ auto_load=NO_AUTO_LOAD;
+ auto_load_file=;
+ row_height=1;
+ max_col_width=50;
+ keygen 4 0=0;
+ row_indexes {
+  name=\"row_indexes\";
+ [0]  };
+ last_sort_spec {
+  name=\"last_sort_spec\";
+  ops {
+   name=\"ops\";
+   el_typ=DataSortEl;
+   el_def=0;
+  };
+ };
+ row_with_hilite=-1;
+};
+";
+   };
+   PatchRec @[1] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".data.gp[\"OutputData\"]";
+    obj_path_idx=".data.gp[1]";
+    obj_type="DataTable_Group";
+    mbr_path=;
+    targ_idx=2;
+    targ_name="TestEpochOutputData";
+    insert_after="TestTrialOutputData";
+    insert_before=;
+    new_obj_type="DataTable";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+DataTable .projects[1].data.gp[1][3] { 
+ DataTableCols @.data = [6] {
+  int_Data @[0] { };
+  int_Data @[1] { };
+  float_Data @[2] { };
+  float_Data @[3] { };
+  float_Data @[4] { };
+  float_Data @[5] { };
+ };
+
+ DataOpList @.last_sort_spec.ops = [0] {
+ };
+};
+DataTable .projects[1].data.gp[1][3] {
+ name=\"TestEpochOutputData\";
+ desc=;
+ data {
+  name=\"data\";
+  el_typ=int_Data;
+  el_def=0;
+  int_Data @[0] {
+   name=\"batch\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  int_Data @[1] {
+   name=\"epoch\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  float_Data @[2] {
+   name=\"avg_sse\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  float_Data @[3] {
+   name=\"cnt_err\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=8;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  float_Data @[4] {
+   name=\"epoch_time_tot\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=14;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+  float_Data @[5] {
+   name=\"epoch_time_usr\";
+   col_flags=MARK|PIN|SAVE_DATA|AUTO_WIDTH;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   calc_expr {
+    expr=;
+   };
+   dim_names {
+    name=\"dim_names\";
+   [0]    };
+   width=14;
+   matrix_col_width=10;
+   ar {
+    name=\"ar\";
+   [0]    };
+  };
+ };
+ data_flags=SAVE_ROWS|AUTO_CALC;
+ auto_load=NO_AUTO_LOAD;
+ auto_load_file=;
+ row_height=1;
+ max_col_width=50;
+ keygen 4 0=0;
+ row_indexes {
+  name=\"row_indexes\";
+ [0]  };
+ last_sort_spec {
+  name=\"last_sort_spec\";
+  ops {
+   name=\"ops\";
+   el_typ=DataSortEl;
+   el_def=0;
+  };
+ };
+ row_with_hilite=-1;
+};
+";
+   };
+  };
+  PatchRec_Group @.gp[2] {
+   name="programs";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"]";
+    obj_path_idx=".programs[0]";
+    obj_type="Program";
+    mbr_path="tags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="Bp, Startup";
+   };
+   PatchRec @[1] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"]";
+    obj_path_idx=".programs[0]";
+    obj_type="Program";
+    mbr_path="desc";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
+   };
+   PatchRec @[2] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].vars[\"train\"]";
+    obj_path_idx=".programs[0].vars[0]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[0].programs[0].vars[0] { };
+ProgVar .projects[0].programs[0].vars[0] {
+ name=\"train\";
+ var_type=T_Object;
+ object_type=Program;
+ object_val=.programs.gp[\"BpAll_Std\"][\"BpTrain\"]$$<Program,BpTrain>;
+ object_scope=NULL;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"set this to point to your train process\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[3] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].vars[\"batch\"]";
+    obj_path_idx=".programs[0].vars[1]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[0].programs[0].vars[1] { };
+ProgVar .projects[0].programs[0].vars[1] {
+ name=\"batch\";
+ var_type=T_Object;
+ object_type=Program;
+ object_val=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ object_scope=NULL;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"set this to point to your batch process\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[4] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].vars[\"batches\"]";
+    obj_path_idx=".programs[0].vars[2]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[0].programs[0].vars[2] { };
+ProgVar .projects[0].programs[0].vars[2] {
+ name=\"batches\";
+ var_type=T_Int;
+ int_val=100;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"this is a \\\"dummy\\\" var for ClusterRun to set the startup arg\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[5] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].vars[\"epochs\"]";
+    obj_path_idx=".programs[0].vars[3]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[0].programs[0].vars[3] { };
+ProgVar .projects[0].programs[0].vars[3] {
+ name=\"epochs\";
+ var_type=T_Int;
+ int_val=10000;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"this is a \\\"dummy\\\" var for ClusterRun to set the startup arg\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[6] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].vars";
+    obj_path_idx=".programs[0].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="train_prog";
+    insert_after="batch_str";
+    insert_before="train";
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs[0].vars[0] { };
+ProgVar .projects[1].programs[0].vars[0] {
+ name=\"train_prog\";
+ var_type=T_Object;
+ object_type=Program;
+ object_val=.programs.gp[\"BpAll_Std\"][\"BpTrain\"]$$<Program,BpTrain>;
+ object_scope=NULL;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"set this to point to your train process\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[7] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].vars";
+    obj_path_idx=".programs[0].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="batch_prog";
+    insert_after="train_prog";
+    insert_before="train";
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs[0].vars[1] { };
+ProgVar .projects[1].programs[0].vars[1] {
+ name=\"batch_prog\";
+ var_type=T_Object;
+ object_type=Program;
+ object_val=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ object_scope=NULL;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"set this to point to your batch process\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[8] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].vars";
+    obj_path_idx=".programs[0].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="param_set";
+    insert_after="batch_prog";
+    insert_before="train";
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs[0].vars[2] { };
+ProgVar .projects[1].programs[0].vars[2] {
+ name=\"param_set\";
+ var_type=T_String;
+ string_val=;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"name of saved parameter set to apply at startup\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[9] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].vars";
+    obj_path_idx=".programs[0].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=12;
+    targ_name="param_sets";
+    insert_after="MyClusterRun";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs[0].vars[11] { };
+ProgVar .projects[1].programs[0].vars[11] {
+ name=\"param_sets\";
+ var_type=T_Object;
+ object_type=ParamSet_Group;
+ object_val=.active_params$$<ParamSet_Group,active_params>;
+ object_scope=NULL;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=;
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[10] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"].vars[\"log_file_nm\"]";
+    obj_path_idx=".programs[0].vars[7]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs[0].vars[6] { };
+ProgVar .projects[1].programs[0].vars[6] {
+ name=\"log_file_nm\";
+ var_type=T_String;
+ string_val=\"/Users/oreilly/projects_1_gui.epc.dat\";
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"name of log file\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[11] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"If_iftaMiscguiactive\"]";
+    obj_path_idx=".programs[0].prog_code[0]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[0].programs[0].prog_code[0] { 
+ ProgEl_List @.true_code = [1] {
+  ReturnExpr @[0] { };
+ };
+};
+If .projects[0].programs[0].prog_code[0] {
+ name=\"If_iftaMiscguiactive\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (taMisc::gui_active)\";
+ cond {
+  expr=\"taMisc::gui_active\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  ReturnExpr @[0] {
+   name=\"ReturnExpr_return\";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"return \";
+   expr {
+    expr=;
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[12] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].prog_code";
+    obj_path_idx=".programs[0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=6;
+    targ_name="ProgVarFmArg_SetVarparamsetin_fromArgparamset";
+    insert_after="ProgVarFmArg_SetVarlogdirinPr_upfromArglogdir";
+    insert_before="ProgVarFmArg_SetVarmaxepochin_infromArgepochs";
+    new_obj_type="ProgVarFmArg";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[1].programs[0].prog_code[5] { };
+ProgVarFmArg .projects[1].programs[0].prog_code[5] {
+ name=\"ProgVarFmArg_SetVarparamsetin_fromArgparamset\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:param_set in Program:BpStartup from Arg:param_set\";
+ prog=.programs[\"BpStartup\"]$$<Program,BpStartup>;
+ var_name=\"param_set\";
+ arg_name=\"param_set\";
+};
+";
+   };
+   PatchRec @[13] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"ProgVarFmArg_SetVarmaxbatchin_hfromArgbatches\"]";
+    obj_path_idx=".programs[0].prog_code[8]";
+    obj_type="ProgVarFmArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[0].programs[0].prog_code[8] { };
+ProgVarFmArg .projects[0].programs[0].prog_code[8] {
+ name=\"ProgVarFmArg_SetVarmaxbatchin_hfromArgbatches\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:max_batch in Program:BpBatch from Arg:batches\";
+ prog=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ var_name=\"max_batch\";
+ arg_name=\"batches\";
+};
+";
+   };
+   PatchRec @[14] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"ProgVarFmArg_SetVarmaxbatchin_atchfromArgbend\"]";
+    obj_path_idx=".programs[0].prog_code[9]";
+    obj_type="ProgVarFmArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[0].programs[0].prog_code[9] { };
+ProgVarFmArg .projects[0].programs[0].prog_code[9] {
+ name=\"ProgVarFmArg_SetVarmaxbatchin_atchfromArgbend\";
+ desc=\"b_end is parallel-batch mode of operation (see b_start)\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:max_batch in Program:BpBatch from Arg:b_end\";
+ prog=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ var_name=\"max_batch\";
+ arg_name=\"b_end\";
+};
+";
+   };
+   PatchRec @[15] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"ProgVarFmArg_SetVarbatchinPro_chfromArgbstart\"]";
+    obj_path_idx=".programs[0].prog_code[10]";
+    obj_type="ProgVarFmArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[0].programs[0].prog_code[10] { };
+ProgVarFmArg .projects[0].programs[0].prog_code[10] {
+ name=\"ProgVarFmArg_SetVarbatchinPro_chfromArgbstart\";
+ desc=\"b_start is parallel-batch mode of operation (see also b_end)\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:batch in Program:BpBatch from Arg:b_start\";
+ prog=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ var_name=\"batch\";
+ arg_name=\"b_start\";
+};
+";
+   };
+   PatchRec @[16] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].prog_code";
+    obj_path_idx=".programs[0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="ProgVarFmArg_SetVarbatchstart_omArgbatchstart";
+    insert_after="ProgVarFmArg_SetVarrndinitinP_nfromArgrndinit";
+    insert_before="ProgVarFmArg_SetVarmaxbatchin_hfromArgbatches";
+    new_obj_type="ProgVarFmArg";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[1].programs[0].prog_code[8] { };
+ProgVarFmArg .projects[1].programs[0].prog_code[8] {
+ name=\"ProgVarFmArg_SetVarbatchstart_omArgbatchstart\";
+ desc=\"starting batch -- replaces b_start\";
+ flags=NEW_EL|CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:batch_start in Program:BpBatch from Arg:batch_start\";
+ prog=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ var_name=\"batch_start\";
+ arg_name=\"batch_start\";
+};
+";
+   };
+   PatchRec @[17] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].prog_code";
+    obj_path_idx=".programs[0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="ProgVarFmArg_SetVarnbatchesin_fromArgnbatches";
+    insert_after="ProgVarFmArg_SetVarbatchstart_omArgbatchstart";
+    insert_before="ProgVarFmArg_SetVarmaxbatchin_hfromArgbatches";
+    new_obj_type="ProgVarFmArg";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[1].programs[0].prog_code[9] { };
+ProgVarFmArg .projects[1].programs[0].prog_code[9] {
+ name=\"ProgVarFmArg_SetVarnbatchesin_fromArgnbatches\";
+ desc=\"number of batches to run\";
+ flags=NEW_EL|CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:n_batches in Program:BpBatch from Arg:n_batches\";
+ prog=.programs.gp[\"BpAll_Std\"][\"BpBatch\"]$$<Program,BpBatch>;
+ var_name=\"n_batches\";
+ arg_name=\"n_batches\";
+};
+";
+   };
+   PatchRec @[18] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].prog_code";
+    obj_path_idx=".programs[0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=14;
+    targ_name="If_ifparamsetnonempty";
+    insert_after="ControlPanelsFmArgs_CtrlPanelFmArgsvarMyClusterRun";
+    insert_before="Comment_Addyourownvariableshere";
+    new_obj_type="If";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[1].programs[0].prog_code[13] { 
+ ProgEl_List @.true_code = [1] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+ };
+};
+If .projects[1].programs[0].prog_code[13] {
+ name=\"If_ifparamsetnonempty\";
+ desc=\"set variables to values stored in a param set\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (param_set.nonempty())\";
+ cond {
+  expr=\"param_set.nonempty()\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  MethodCall @[0] {
+   name=\"MethodCall_paramsetsActivat_aramSetparamset\";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"param_sets->LoadParamSet(param_set)\";
+   result_var=NULL;
+   obj=.programs[\"BpStartup\"].vars[\"param_sets\"]$$<ProgVar,param_sets>;
+   method=ParamSet_Group::ActivateParamSet;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type=\"taString&\";
+     name=\"set_name\";
+     required=1;
+     def_val=;
+     prev_expr=\"param_set\";
+     expr {
+      expr=\"param_set\";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=bool;
+     type=\"bool\";
+     name=\"err_not_found\";
+     required=0;
+     def_val=\"true\";
+     prev_expr=;
+     expr {
+      expr=;
+     };
+    };
+   };
+   meth_sig=\"bool ActivateParamSet(taString& set_name, bool err_not_found = true)\";
+   meth_desc=\" find given parameter set by name within this group, and call CopySavedtoActive(true) on that ParamSet if found, otherwise emit an error (if err_not_found) -- one step function for applying named parameter sets in programs\";
+  };
+ };
+};
+";
+   };
+   PatchRec @[19] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"If_iftaMiscCheckArgByNamebstart\"]";
+    obj_path_idx=".programs[0].prog_code[16]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[1].programs[0].prog_code[16] { 
+ ProgEl_List @.true_code = [4] {
+  ProgVarFmArg @[0] { };
+  MiscCall @[1] { 
+   ProgArg_List @.meth_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+  VarIncr @[2] { };
+  If @[3] { 
+   ProgEl_List @.true_code = [2] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MiscCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+ };
+};
+If .projects[1].programs[0].prog_code[16] {
+ name=\"If_iftaMiscCheckArgByNamebatchstart\";
+ desc=\"set tag for starting batch (new code in v 8.0)\";
+ flags=NEW_EL|CAN_REVERT_TO_CODE;
+ code_string=\"if (taMisc::CheckArgByName(\\\"batch_start\\\"))\";
+ cond {
+  expr=\"taMisc::CheckArgByName(\\\"batch_start\\\")\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  ProgVarFmArg @[0] {
+   name=\"ProgVarFmArg_SetVarbatchstart_omArgbatchstart\";
+   desc=\"read in the arg to us too, so we can set file names based on it\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"Set Var:batch_start in Program:BpStartup from Arg:batch_start\";
+   prog=.programs[\"BpStartup\"]$$<Program,BpStartup>;
+   var_name=\"batch_start\";
+   arg_name=\"batch_start\";
+  };
+  MiscCall @[1] {
+   name=\"MiscCall_batchstrtaMiscLe_erosbatchstart2\";
+   desc=\"string version with leading zeros\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"batch_str = taMisc::LeadingZeros(batch_start, 2)\";
+   result_var=.programs[\"BpStartup\"].vars[\"batch_str\"]$$<ProgVar,batch_str>;
+   object_type=taMisc;
+   method=taMisc::LeadingZeros;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type=\"int\";
+     name=\"num\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"batch_start\";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int;
+     type=\"int\";
+     name=\"len\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"2\";
+     };
+    };
+   };
+  };
+  VarIncr @[2] {
+   name=\"VarIncr_tagbatchstr\";
+   desc=\"add to tag for setting log file names\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"tag += \\\".\\\" + batch_str\";
+   var=.programs[\"BpStartup\"].vars[\"tag\"]$$<ProgVar,tag>;
+   expr {
+    expr=\"\\\".\\\" + batch_str\";
+   };
+  };
+  If @[3] {
+   name=\"If_ifbatchstart0\";
+   desc=\"save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"if (batch_start == 0)\";
+   cond {
+    expr=\"batch_start == 0\";
+   };
+   true_code {
+    name=\"true_code\";
+    el_typ=ProgCode;
+    el_def=0;
+    MethodCall @[0] {
+     name=\"MethodCall_logfilenmEpochOu_e001logdirfalse\";
+     desc=\"save args to file: last arg is to include dmem proc number\";
+     flags=CAN_REVERT_TO_CODE;
+     code_string=\"log_file_nm = EpochOutputData->GetFileNameFmProject(\\\".args\\\", tag.before(\\\".00\\\",-1), log_dir, false)\";
+     result_var=.programs[\"BpStartup\"].vars[\"log_file_nm\"]$$<ProgVar,log_file_nm>;
+     obj=.programs[\"BpStartup\"].vars[\"EpochOutputData\"]$$<ProgVar,EpochOutputData>;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=\"meth_args\";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"ext\";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=\"\\\".args\\\"\";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"tag\";
+       required=0;
+       def_val=\"\\\"\\\"\";
+       prev_expr=;
+       expr {
+	expr=\"tag.before(\\\".00\\\",-1)\";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"subdir\";
+       required=0;
+       def_val=\"\\\"\\\"\";
+       prev_expr=;
+       expr {
+	expr=\"log_dir\";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type=\"bool\";
+       name=\"dmem_proc_no\";
+       required=0;
+       def_val=\"false\";
+       prev_expr=;
+       expr {
+	expr=\"false\";
+       };
+      };
+     };
+     meth_sig=\"taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)\";
+     meth_desc=\" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found\";
+    };
+    MiscCall @[1] {
+     name=\"MiscCall_taMiscFullArgStr_ToFilelogfilenm\";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=\"taMisc::FullArgStringToFile(log_file_nm)\";
+     result_var=NULL;
+     object_type=taMisc;
+     method=taMisc::FullArgStringToFile;
+     meth_args {
+      name=\"meth_args\";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"fname\";
+       required=1;
+       def_val=\"\\\"\\\"\";
+       prev_expr=;
+       expr {
+	expr=\"log_file_nm\";
+       };
+      };
+     };
+    };
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[20] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"Else_If_iftaMiscCheckArgByNamebstart\"]";
+    obj_path_idx=".programs[0].prog_code[17]";
+    obj_type="Else";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+Else .projects[1].programs[0].prog_code[17] { 
+ ProgEl_List @.true_code = [2] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [4] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+    ProgArg @[3] { };
+   };
+  };
+  MiscCall @[1] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+ };
+};
+Else .projects[1].programs[0].prog_code[17] {
+ name=\"Else_If_iftaMiscCheckArgByNamebatchstart\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"else\";
+ cond {
+  expr=;
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  MethodCall @[0] {
+   name=\"MethodCall_logfilenmEpochOu_staglogdirfalse\";
+   desc=\"save args to file: last arg is to include dmem proc number\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"log_file_nm = EpochOutputData->GetFileNameFmProject(\\\".args\\\", tag, log_dir, false)\";
+   result_var=.programs[\"BpStartup\"].vars[\"log_file_nm\"]$$<ProgVar,log_file_nm>;
+   obj=.programs[\"BpStartup\"].vars[\"EpochOutputData\"]$$<ProgVar,EpochOutputData>;
+   method=taBase::GetFileNameFmProject;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type=\"taString&\";
+     name=\"ext\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"\\\".args\\\"\";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=const_taString_ref;
+     type=\"taString&\";
+     name=\"tag\";
+     required=0;
+     def_val=\"\\\"\\\"\";
+     prev_expr=;
+     expr {
+      expr=\"tag\";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=const_taString_ref;
+     type=\"taString&\";
+     name=\"subdir\";
+     required=0;
+     def_val=\"\\\"\\\"\";
+     prev_expr=;
+     expr {
+      expr=\"log_dir\";
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type=\"bool\";
+     name=\"dmem_proc_no\";
+     required=0;
+     def_val=\"false\";
+     prev_expr=;
+     expr {
+      expr=\"false\";
+     };
+    };
+   };
+   meth_sig=\"taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)\";
+   meth_desc=\" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found\";
+  };
+  MiscCall @[1] {
+   name=\"MiscCall_taMiscFullArgStr_ToFilelogfilenm\";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"taMisc::FullArgStringToFile(log_file_nm)\";
+   result_var=NULL;
+   object_type=taMisc;
+   method=taMisc::FullArgStringToFile;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type=\"taString&\";
+     name=\"fname\";
+     required=1;
+     def_val=\"\\\"\\\"\";
+     prev_expr=;
+     expr {
+      expr=\"log_file_nm\";
+     };
+    };
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[21] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"PrintExpr_PrintRunningbatchname\"]";
+    obj_path_idx=".programs[0].prog_code[28]";
+    obj_type="PrintExpr";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+PrintExpr .projects[1].programs[0].prog_code[28] { };
+PrintExpr .projects[1].programs[0].prog_code[28] {
+ name=\"PrintExpr_PrintRunningbatchprogname\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Print \\\"Running: \\\" << batch_prog.name\";
+ expr {
+  expr=\"\\\"Running: \\\" << batch_prog.name\";
+ };
+ debug=0;
+};
+";
+   };
+   PatchRec @[22] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"If_iftaMiscCheckArgByNamebstart\"]";
+    obj_path_idx=".programs[0].prog_code[16]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[1].programs[0].prog_code[16] { 
+ ProgEl_List @.true_code = [4] {
+  ProgVarFmArg @[0] { };
+  MiscCall @[1] { 
+   ProgArg_List @.meth_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+  VarIncr @[2] { };
+  If @[3] { 
+   ProgEl_List @.true_code = [2] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MiscCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+ };
+};
+If .projects[1].programs[0].prog_code[16] {
+ name=\"If_iftaMiscCheckArgByNamebatchstart\";
+ desc=\"set tag for starting batch (new code in v 8.0)\";
+ flags=NEW_EL|CAN_REVERT_TO_CODE;
+ code_string=\"if (taMisc::CheckArgByName(\\\"batch_start\\\"))\";
+ cond {
+  expr=\"taMisc::CheckArgByName(\\\"batch_start\\\")\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  ProgVarFmArg @[0] {
+   name=\"ProgVarFmArg_SetVarbatchstart_omArgbatchstart\";
+   desc=\"read in the arg to us too, so we can set file names based on it\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"Set Var:batch_start in Program:BpStartup from Arg:batch_start\";
+   prog=.programs[\"BpStartup\"]$$<Program,BpStartup>;
+   var_name=\"batch_start\";
+   arg_name=\"batch_start\";
+  };
+  MiscCall @[1] {
+   name=\"MiscCall_batchstrtaMiscLe_erosbatchstart2\";
+   desc=\"string version with leading zeros\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"batch_str = taMisc::LeadingZeros(batch_start, 2)\";
+   result_var=.programs[\"BpStartup\"].vars[\"batch_str\"]$$<ProgVar,batch_str>;
+   object_type=taMisc;
+   method=taMisc::LeadingZeros;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type=\"int\";
+     name=\"num\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"batch_start\";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int;
+     type=\"int\";
+     name=\"len\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"2\";
+     };
+    };
+   };
+  };
+  VarIncr @[2] {
+   name=\"VarIncr_tagbatchstr\";
+   desc=\"add to tag for setting log file names\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"tag += \\\".\\\" + batch_str\";
+   var=.programs[\"BpStartup\"].vars[\"tag\"]$$<ProgVar,tag>;
+   expr {
+    expr=\"\\\".\\\" + batch_str\";
+   };
+  };
+  If @[3] {
+   name=\"If_ifbatchstart0\";
+   desc=\"save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"if (batch_start == 0)\";
+   cond {
+    expr=\"batch_start == 0\";
+   };
+   true_code {
+    name=\"true_code\";
+    el_typ=ProgCode;
+    el_def=0;
+    MethodCall @[0] {
+     name=\"MethodCall_logfilenmEpochOu_e001logdirfalse\";
+     desc=\"save args to file: last arg is to include dmem proc number\";
+     flags=CAN_REVERT_TO_CODE;
+     code_string=\"log_file_nm = EpochOutputData->GetFileNameFmProject(\\\".args\\\", tag.before(\\\".00\\\",-1), log_dir, false)\";
+     result_var=.programs[\"BpStartup\"].vars[\"log_file_nm\"]$$<ProgVar,log_file_nm>;
+     obj=.programs[\"BpStartup\"].vars[\"EpochOutputData\"]$$<ProgVar,EpochOutputData>;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=\"meth_args\";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"ext\";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=\"\\\".args\\\"\";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"tag\";
+       required=0;
+       def_val=\"\\\"\\\"\";
+       prev_expr=;
+       expr {
+	expr=\"tag.before(\\\".00\\\",-1)\";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"subdir\";
+       required=0;
+       def_val=\"\\\"\\\"\";
+       prev_expr=;
+       expr {
+	expr=\"log_dir\";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type=\"bool\";
+       name=\"dmem_proc_no\";
+       required=0;
+       def_val=\"false\";
+       prev_expr=;
+       expr {
+	expr=\"false\";
+       };
+      };
+     };
+     meth_sig=\"taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)\";
+     meth_desc=\" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found\";
+    };
+    MiscCall @[1] {
+     name=\"MiscCall_taMiscFullArgStr_ToFilelogfilenm\";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=\"taMisc::FullArgStringToFile(log_file_nm)\";
+     result_var=NULL;
+     object_type=taMisc;
+     method=taMisc::FullArgStringToFile;
+     meth_args {
+      name=\"meth_args\";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type=\"taString&\";
+       name=\"fname\";
+       required=1;
+       def_val=\"\\\"\\\"\";
+       prev_expr=;
+       expr {
+	expr=\"log_file_nm\";
+       };
+      };
+     };
+    };
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[23] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"If_iftaMiscCheckArgByNamebstart\"].true_code[\"MethodCall_batchSetVarinitbatchfalse\"]";
+    obj_path_idx=".programs[0].prog_code[16].true_code[0]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+MethodCall .projects[0].programs[0].prog_code[16].true_code[0] { 
+ ProgArg_List @.meth_args = [2] {
+  ProgArg @[0] { };
+  ProgArg @[1] { };
+ };
+};
+MethodCall .projects[0].programs[0].prog_code[16].true_code[0] {
+ name=\"MethodCall_batchSetVarinitbatchfalse\";
+ desc=\"directly set variable on batch program\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"batch->SetVar(\\\"init_batch\\\", false)\";
+ result_var=NULL;
+ obj=.programs[\"BpStartup\"].vars[\"batch\"]$$<ProgVar,batch>;
+ method=Program::SetVar;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"var_nm\";
+   required=1;
+   def_val=\"\\\"\\\"\";
+   prev_expr=;
+   expr {
+    expr=\"\\\"init_batch\\\"\";
+   };
+  };
+  ProgArg @[1] {
+   arg_type=const_Variant_ref;
+   type=\"Variant&\";
+   name=\"value\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"false\";
+   };
+  };
+ };
+ meth_sig=\"bool SetVar(taString& var_nm, Variant& value)\";
+ meth_desc=\" set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program\";
+};
+";
+   };
+   PatchRec @[24] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"If_iftaMiscCheckArgByNamebstart\"].true_code[\"ProgVarFmArg_SetVarbatchstart_upfromArgbstart\"]";
+    obj_path_idx=".programs[0].prog_code[16].true_code[1]";
+    obj_type="ProgVarFmArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[0].programs[0].prog_code[16].true_code[1] { };
+ProgVarFmArg .projects[0].programs[0].prog_code[16].true_code[1] {
+ name=\"ProgVarFmArg_SetVarbatchstart_upfromArgbstart\";
+ desc=\"read in the arg to us too, so we can set file names based on it\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:batch_start in Program:BpStartup from Arg:b_start\";
+ prog=.programs[\"BpStartup\"]$$<Program,BpStartup>;
+ var_name=\"batch_start\";
+ arg_name=\"b_start\";
+};
+";
+   };
+   PatchRec @[25] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"If_iftaMiscCheckArgByNamebstart\"].true_code";
+    obj_path_idx=".programs[0].prog_code[16].true_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="ProgVarFmArg_SetVarbatchstart_omArgbatchstart";
+    insert_after="VarIncr_tagbatchstr";
+    insert_before="MethodCall_batchSetVarinitbatchfalse";
+    new_obj_type="ProgVarFmArg";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVarFmArg .projects[1].programs[0].prog_code[16].true_code[0] { };
+ProgVarFmArg .projects[1].programs[0].prog_code[16].true_code[0] {
+ name=\"ProgVarFmArg_SetVarbatchstart_omArgbatchstart\";
+ desc=\"read in the arg to us too, so we can set file names based on it\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Set Var:batch_start in Program:BpStartup from Arg:batch_start\";
+ prog=.programs[\"BpStartup\"]$$<Program,BpStartup>;
+ var_name=\"batch_start\";
+ arg_name=\"batch_start\";
+};
+";
+   };
+   PatchRec @[26] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs[\"BpStartup\"].prog_code[\"PrintExpr_PrintRunningbatchname\"]";
+    obj_path_idx=".programs[0].prog_code[28]";
+    obj_type="PrintExpr";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+PrintExpr .projects[1].programs[0].prog_code[28] { };
+PrintExpr .projects[1].programs[0].prog_code[28] {
+ name=\"PrintExpr_PrintRunningbatchprogname\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Print \\\"Running: \\\" << batch_prog.name\";
+ expr {
+  expr=\"\\\"Running: \\\" << batch_prog.name\";
+ };
+ debug=0;
+};
+";
+   };
+   PatchRec @[27] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp";
+    obj_path_idx=".programs.gp";
+    obj_type="taSubGroup";
+    mbr_path=;
+    targ_idx=1;
+    targ_name="BpAll_Test";
+    insert_after="BpAll_Std";
+    insert_before=;
+    new_obj_type="Program_Group";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+Program_Group .projects[1].programs.gp[1] { 
+ Program @[0] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [6] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+   ProgVar @[3] { };
+   ProgVar @[4] { };
+   ProgVar @[5] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [2] {
+   NetCounterInit @[0] { };
+   AssignExpr @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [11] {
+   NetCounterInit @[0] { };
+   MemberAssign @[1] { };
+   AssignExpr @[2] { };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[4] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   NetDataLoop @[5] { 
+    ProgEl_List @.loop_code = [2] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     If @[1] { 
+      ProgEl_List @.true_code = [1] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+      };
+     };
+    };
+   };
+   If @[6] { 
+    ProgEl_List @.true_code = [1] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+   };
+   MethodCall @[7] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ProgramCall @[8] { 
+    ProgArg_List @.prog_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MemberAssign @[9] { };
+   MethodCall @[10] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+  };
+ };
+ Program @[1] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+   ProgVar @[0] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [6] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ProgramCall @[1] { 
+    ProgArg_List @.prog_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ProgramCall @[4] { 
+    ProgArg_List @.prog_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   NetUpdateView @[5] { };
+  };
+ };
+ Program @[2] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
+  ProgObjList @.objs = [1] {
+   LayerWriter @[0] { 
+    LayerDataEl_List @.layer_data = [3] {
+     LayerWriterEl @[0] { };
+     LayerWriterEl @[1] { };
+     LayerWriterEl @[2] { };
+    };
+   };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+   ProgVar @[0] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [3] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+  };
+ };
+ Program @[3] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
+  ProgObjList @.objs = [1] {
+   NetMonitor @[0] { 
+    NetMonItem_List @.items = [6] {
+     NetMonItem @[0] { };
+     NetMonItem @[1] { };
+     NetMonItem @[2] { };
+     NetMonItem @[3] { };
+     NetMonItem @[4] { };
+     NetMonItem @[5] { };
+    };
+   };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [3] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+
+  ProgEl_List @.prog_code = [4] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+  };
+ };
+ Program @[4] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
+  ProgObjList @.objs = [1] {
+   NetMonitor @[0] { 
+    NetMonItem_List @.items = [6] {
+     NetMonItem @[0] { };
+     NetMonItem @[1] { };
+     NetMonItem @[2] { };
+     NetMonItem @[3] { };
+     NetMonItem @[4] { };
+     NetMonItem @[5] { };
+    };
+   };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [3] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [4] {
+   AssignExpr @[0] { };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+
+  ProgEl_List @.prog_code = [6] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   AssignExpr @[2] { };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [4] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+     ProgArg @[2] { };
+     ProgArg @[3] { };
+    };
+   };
+   MethodCall @[4] { 
+    ProgArg_List @.meth_args = [4] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+     ProgArg @[2] { };
+     ProgArg @[3] { };
+    };
+   };
+   MethodCall @[5] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+  };
+ };
+};
+Program_Group .projects[1].programs.gp[1] {
+ name=\"BpAll_Test\";
+ el_typ=Program;
+ el_def=0;
+ tags=\"Bp, Std, All, Test\";
+ desc=\"The full set of programs for testing a standard Backpropagation network (starting with Epoch)\";
+ debug_mode=0;
+ Program @[0] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {name=\"DocLink\": doc=[0].doc$$: };
+  };
+  name=\"BpEpochTest\";
+  short_nm=\"EpcTest\";
+  tags=\"Bp, Std\";
+  desc=\"iterates over all of the items in a data table and calls BpTrial process on them\";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author=\"Randall C. O'Reilly\";
+  email=\"emergent-users@grey.colorado.edu\";
+  flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
+  objs {
+   name=\"objs\";
+   el_typ=taNBase;
+   el_def=0;
+  };
+  types {
+   name=\"types\";
+   el_typ=DynEnumType;
+   el_def=0;
+  };
+  args {
+   name=\"args\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"network\";
+    var_type=T_Object;
+    object_type=BpNetwork;
+    object_val=.networks[\"Network_0\"]$$<BpNetwork,Network_0>;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"network to operate on\";
+    init_from=NULL;
+   };
+  };
+  vars {
+   name=\"vars\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"input_data\";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=.data.gp[\"InputData\"][\"StdInputData\"]$$<DataTable,StdInputData>;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"table of patterns to present to the network, one row at a time\";
+    init_from=NULL;
+   };
+   ProgVar @[1] {
+    name=\"data_loop_order\";
+    var_type=T_HardEnum;
+    int_val=0;
+    object_scope=NULL;
+    hard_enum_type=DataLoop::Order;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"controls the order in which events (rows of the input data datatable) are presented to the network
+(SEQUENTIAL, PERMUTED, RANDOM)\";
+    init_from=NULL;
+   };
+   ProgVar @[2] {
+    name=\"trial\";
+    var_type=T_Int;
+    int_val=0;
+    object_scope=NULL;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"current trial (event) within the epoch -- increments automatically\";
+    init_from=NULL;
+   };
+   ProgVar @[3] {
+    name=\"trial_mon_data\";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=.data.gp[\"OutputData\"][\"TestTrialOutputData\"]$$<DataTable,TestTrialOutputData>;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data\";
+    init_from=NULL;
+   };
+   ProgVar @[4] {
+    name=\"epoch_timer\";
+    var_type=T_Object;
+    object_type=TimeUsed;
+    object_val=.networks[\"Network_0\"].epoch_time$$<TimeUsed,epoch_time>;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)\";
+    init_from=NULL;
+   };
+   ProgVar @[5] {
+    name=\"data_loop_index\";
+    var_type=T_Int;
+    int_val=5;
+    object_scope=NULL;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)\";
+    init_from=NULL;
+   };
+  };
+  functions {
+   name=\"functions\";
+   el_typ=Function;
+   el_def=0;
+  };
+  init_code {
+   name=\"init_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   NetCounterInit @[0] {
+    name=\"NetCounterInit_NetCounterInittrial\";
+    desc=\"initialize trial counter (local variable and in the network)\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"Net Counter Init: trial\";
+    network_var=[0].args[0]$$;
+    local_ctr_var=[0].vars[2]$$;
+    counter=Network::trial;
+    update_after=0;
+   };
+   AssignExpr @[1] {
+    name=\"AssignExpr_epochtimernetworkepochtime\";
+    desc=\"get pointer to epoch timer object on network\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_timer = network.epoch_time\";
+    result_var=[0].vars[4]$$;
+    expr {
+     expr=\"network.epoch_time\";
+    };
+   };
+  };
+  prog_code {
+   name=\"prog_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   NetCounterInit @[0] {
+    name=\"NetCounterInit_NetCounterInittrial\";
+    desc=\"initialize trial counter (local variable and in the network)\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"Net Counter Init: trial\";
+    network_var=$[0].args[0]$;
+    local_ctr_var=$[0].vars[2]$;
+    counter=Network::trial;
+    update_after=0;
+   };
+   MemberAssign @[1] {
+    name=\"MemberAssign_networktrainmodeNetworkTEST\";
+    desc=\"set to testing mode\";
+    flags=NEW_EL|CAN_REVERT_TO_CODE;
+    code_string=\"network.train_mode = Network::TEST\";
+    obj=$[0].args[0]$;
+    path=\"train_mode\";
+    expr {
+     expr=\"Network::TEST\";
+    };
+    update_after=0;
+   };
+   AssignExpr @[2] {
+    name=\"AssignExpr_epochtimernetworkepochtime\";
+    desc=\"get pointer to epoch timer object on network\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_timer = network.epoch_time\";
+    result_var=$[0].vars[4]$;
+    expr {
+     expr=\"network.epoch_time\";
+    };
+   };
+   MethodCall @[3] {
+    name=\"MethodCall_epochtimerStartTimertrue\";
+    desc=\"start the epoch timer to record computation time per epoch\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_timer->StartTimer(true)\";
+    result_var=NULL;
+    obj=$[0].vars[4]$;
+    method=TimeUsed::StartTimer;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"reset_used\";
+      required=0;
+      def_val=\"true\";
+      prev_expr=;
+      expr {
+       expr=\"true\";
+      };
+     };
+    };
+    meth_sig=\"void StartTimer(bool reset_used = true)\";
+    meth_desc=\" record the current time as the starting time, and optionally reset the time used information\";
+   };
+   MethodCall @[4] {
+    name=\"MethodCall_trialmondataResetData\";
+    desc=\"reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_mon_data->ResetData()\";
+    result_var=NULL;
+    obj=[0].vars[3]$$;
+    method=DataTable::ResetData;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void ResetData()\";
+    meth_desc=\" deletes all the data (rows), but keeps the column structure -- this cannot be undone!\";
+   };
+   NetDataLoop @[5] {
+    name=\"NetDataLoop_NetDataLoopSEQUE_ardatalooporder\";
+    desc=\"iterates over the events/rows of input_data, according to data_loop_order variable\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"Net Data Loop (SEQUENTIAL):  table=input_data  index=data_loop_index  order_var=data_loop_order \";
+    loop_code {
+     name=\"loop_code\";
+     el_typ=ProgCode;
+     el_def=0;
+     ProgramCall @[0] {
+      name=\"ProgramCall_BpTrialTestnetworkinputdata\";
+      desc=\"run the trial program, passing network and input_data\";
+      flags=CAN_REVERT_TO_CODE;
+      code_string=\"BpTrialTest(network, input_data)\";
+      prog_args {
+       name=\"prog_args\";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=BpNetwork;
+	type=\"BpNetwork*\";
+	name=\"network\";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr=\"network\";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=DataTable;
+	type=\"DataTable*\";
+	name=\"input_data\";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr=\"input_data\";
+	};
+       };
+      };
+      target=[1]$$;
+      targ_ld_init=\"*BpTrial*\";
+     };
+     If @[1] {
+      name=\"If_ifnetworkCompute_ightsTesttrial1\";
+      desc=\"test if it is time to update the weight values from delta weights (dWt) computed over trials\";
+      flags=CAN_REVERT_TO_CODE;
+      code_string=\"if (network.Compute_Weights_Test(trial+1))\";
+      cond {
+       expr=\"network.Compute_Weights_Test(trial+1)\";
+      };
+      true_code {
+       name=\"true_code\";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	name=\"MethodCall_networkComputeWeights\";
+	desc=\"update the weight values based on changes computed by trial program\";
+	flags=CAN_REVERT_TO_CODE;
+	code_string=\"network->Compute_Weights()\";
+	result_var=NULL;
+	obj=$[0].args[0]$;
+	method=Network::Compute_Weights;
+	meth_args {
+	 name=\"meth_args\";
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig=\"void Compute_Weights()\";
+	meth_desc=\" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode\";
+       };
+      };
+     };
+    };
+    data_var=[0].vars[0]$$;
+    index_var=[0].vars[5]$$;
+    order_var=[0].vars[1]$$;
+    order=SEQUENTIAL;
+    update_after=0;
+    dmem_nprocs=1;
+    dmem_this_proc=0;
+    grouped=0;
+    group_col 9 0=\"Group\";
+    group_index_var=NULL;
+    group_order_var=NULL;
+    group_order=PERMUTED;
+    group_idx_list{     };
+   };
+   If @[6] {
+    name=\"If_ifnetworkwtupdateNetworkBATCH\";
+    desc=\"if full batch mode, update only at end of epoch\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"if (network.wt_update == Network::BATCH)\";
+    cond {
+     expr=\"network.wt_update == Network::BATCH\";
+    };
+    true_code {
+     name=\"true_code\";
+     el_typ=ProgCode;
+     el_def=0;
+     MethodCall @[0] {
+      name=\"MethodCall_networkComputeWeights\";
+      desc=\"final update of weights based on accumulated changes\";
+      flags=CAN_REVERT_TO_CODE;
+      code_string=\"network->Compute_Weights()\";
+      result_var=NULL;
+      obj=$[0].args[0]$;
+      method=Network::Compute_Weights;
+      meth_args {
+       name=\"meth_args\";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig=\"void Compute_Weights()\";
+      meth_desc=\" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode\";
+     };
+    };
+   };
+   MethodCall @[7] {
+    name=\"MethodCall_networkComputeEpochStats\";
+    desc=\"network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"network->Compute_EpochStats()\";
+    result_var=NULL;
+    obj=$[0].args[0]$;
+    method=LeabraNetwork::Compute_EpochStats;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void Compute_EpochStats()\";
+    meth_desc=\" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles\";
+   };
+   ProgramCall @[8] {
+    name=\"ProgramCall_BpEpochMonitorTestnetwork\";
+    desc=\"run program that records data from network and possibly other sources about the epoch\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"BpEpochMonitorTest(network)\";
+    prog_args {
+     name=\"prog_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=Network;
+      type=\"BpNetwork*\";
+      name=\"network\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+    };
+    target=[4]$$;
+    targ_ld_init=\"*BpEpochMonitor*\";
+   };
+   MemberAssign @[9] {
+    name=\"MemberAssign_networktrainmodeNetworkTRAIN\";
+    desc=\"set back to training mode\";
+    flags=NEW_EL|CAN_REVERT_TO_CODE;
+    code_string=\"network.train_mode = Network::TRAIN\";
+    obj=$[0].args[0]$;
+    path=\"train_mode\";
+    expr {
+     expr=\"Network::TRAIN\";
+    };
+    update_after=0;
+   };
+   MethodCall @[10] {
+    name=\"MethodCall_epochtimerEndTimer\";
+    desc=\"done with the computation in the epoch -- record time it took\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_timer->EndTimer()\";
+    result_var=NULL;
+    obj=$[0].vars[4]$;
+    method=TimeUsed::EndTimer;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void EndTimer()\";
+    meth_desc=\" record the current time as the ending time, and compute difference as the time used\";
+   };
+  };
+  step_prog=NULL;
+  step_n=1;
+  doc {
+   name=\"doc\";
+   desc=;
+   web_doc=1;
+   wiki=\"emergent\";
+   url=\"BpEpoch\";
+   full_url=\"https://grey.colorado.edu/emergent/index.php/BpEpoch\";
+   text_size=1;
+   text=;
+   html_text=;
+  };
+ };
+ Program @[1] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {name=\"DocLink\": doc=[1].doc$$: };
+  };
+  name=\"BpTrialTest\";
+  short_nm=\"TrlTest\";
+  tags=\"Bp, Std\";
+  desc=\"Backpropagation processing of a single input/output event or external information\";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author=\"Randall C. O'Reilly\";
+  email=\"emergent-users@grey.colorado.edu\";
+  flags=0;
+  stop_step_cond {
+   expr=;
+  };
+  objs {
+   name=\"objs\";
+   el_typ=taNBase;
+   el_def=0;
+  };
+  types {
+   name=\"types\";
+   el_typ=DynEnumType;
+   el_def=0;
+  };
+  args {
+   name=\"args\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"network\";
+    var_type=T_Object;
+    object_type=BpNetwork;
+    object_val=$.networks[\"Network_0\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"network to operate on -- typically set by higher-level calling programs\";
+    init_from=NULL;
+   };
+   ProgVar @[1] {
+    name=\"input_data\";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=$.data.gp[\"InputData\"][\"StdInputData\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"datatable containing training input/output patterns\";
+    init_from=NULL;
+   };
+  };
+  vars {
+   name=\"vars\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"update_net_view\";
+    var_type=T_Bool;
+    bool_val=1;
+    object_scope=NULL;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"determines whether to update any network view displays after trial is completed\";
+    init_from=NULL;
+   };
+  };
+  functions {
+   name=\"functions\";
+   el_typ=Function;
+   el_def=0;
+  };
+  init_code {
+   name=\"init_code\";
+   el_typ=ProgCode;
+   el_def=0;
+  };
+  prog_code {
+   name=\"prog_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   MethodCall @[0] {
+    name=\"MethodCall_networkInitInputData\";
+    desc=\"resets input data, before getting new external inputs data from apply inputs call\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"network->Init_InputData()\";
+    result_var=NULL;
+    obj=[1].args[0]$$;
+    method=Network::Init_InputData;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void Init_InputData()\";
+    meth_desc=\" Initializes external and target inputs\";
+   };
+   ProgramCall @[1] {
+    name=\"ProgramCall_ApplyInputsTestnetworkinputdata\";
+    desc=\"apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"ApplyInputsTest(network, input_data)\";
+    prog_args {
+     name=\"prog_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=LeabraNetwork;
+      type=\"BpNetwork*\";
+      name=\"network\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=DataTable;
+      type=\"DataTable*\";
+      name=\"input_data\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"input_data\";
+      };
+     };
+    };
+    target=[2]$$;
+    targ_ld_init=\"*ApplyInputs*\";
+   };
+   MethodCall @[2] {
+    name=\"MethodCall_networkTrialRun\";
+    desc=\"initializes various counters at start of trial\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"network->Trial_Run()\";
+    result_var=NULL;
+    obj=$[1].args[0]$;
+    method=BpNetwork::Trial_Run;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void Trial_Run()\";
+    meth_desc=\" run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt. If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)\";
+   };
+   MethodCall @[3] {
+    name=\"MethodCall_networkComputeTrialStats\";
+    desc=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"network->Compute_TrialStats()\";
+    result_var=NULL;
+    obj=$[1].args[0]$;
+    method=LeabraNetwork::Compute_TrialStats;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void Compute_TrialStats()\";
+    meth_desc=\" compute trial-level statistics (SSE and others defined by specific algorithms) do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time\";
+   };
+   ProgramCall @[4] {
+    name=\"ProgramCall_BpTrialMonitorTestnetwork\";
+    desc=\"records data about the trial-level processing to a datatable for graphing/processing\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"BpTrialMonitorTest(network)\";
+    prog_args {
+     name=\"prog_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=Network;
+      type=\"BpNetwork*\";
+      name=\"network\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+    };
+    target=[3]$$;
+    targ_ld_init=\"*BpTrialMonitor*\";
+   };
+   NetUpdateView @[5] {
+    name=\"NetUpdateView_NetUpdateView\";
+    desc=\"update the network view(s) (only if update_net_view is true)\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"Net Update View\";
+    network_var=$[1].args[0]$;
+    update_var=[1].vars[0]$$;
+   };
+  };
+  step_prog=NULL;
+  step_n=1;
+  doc {
+   name=\"doc\";
+   desc=;
+   web_doc=1;
+   wiki=\"emergent\";
+   url=\"BpTrial\";
+   full_url=\"https://grey.colorado.edu/emergent/index.php/BpTrial\";
+   text_size=1;
+   text=;
+   html_text=;
+  };
+ };
+ Program @[2] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {name=\"DocLink\": doc=[2].doc$$: };
+  };
+  name=\"ApplyInputsTest\";
+  short_nm=\"InTest\";
+  tags=\"Network, InputData, Apply\";
+  desc=\"apply the current input data to the network as external input and target values\";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author=\"Randall C. O'Reilly\";
+  email=\"emergent-users@grey.colorado.edu\";
+  flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
+  objs {
+   name=\"objs\";
+   el_typ=LayerWriter;
+   el_def=0;
+   LayerWriter @[0] {
+    name=\"LayerWriter_0\";
+    data=$.data.gp[\"InputData\"][\"StdInputData\"]$;
+    network=$.networks[\"Network_0\"]$;
+    layer_data {
+     name=\"layer_data\";
+     el_typ=LayerWriterEl;
+     el_def=0;
+     LayerWriterEl @[0] {
+      col_name=\"Input\";
+      net_target=LAYER;
+      layer_name=\"Input\";
+      offset {x=0: y=0: };
+      use_layer_type=1;
+      quiet=0;
+      na_by_range=0;
+      ext_flags=EXT;
+      noise {name=\"RandomSpec_4\": type=NONE: mean=0: var=0.5: par=1: };
+     };
+     LayerWriterEl @[1] {
+      col_name=\"Output\";
+      net_target=LAYER;
+      layer_name=\"Output\";
+      offset {x=0: y=0: };
+      use_layer_type=1;
+      quiet=0;
+      na_by_range=0;
+      ext_flags=TARG;
+      noise {name=\"RandomSpec_5\": type=NONE: mean=0: var=0.5: par=1: };
+     };
+     LayerWriterEl @[2] {
+      col_name=\"Name\";
+      net_target=TRIAL_NAME;
+      layer_name=\"Name\";
+      offset {x=0: y=0: };
+      use_layer_type=1;
+      quiet=0;
+      na_by_range=0;
+      ext_flags=0;
+      noise {name=\"RandomSpec_6\": type=NONE: mean=0: var=0.5: par=1: };
+     };
+    };
+   };
+  };
+  types {
+   name=\"types\";
+   el_typ=DynEnumType;
+   el_def=0;
+  };
+  args {
+   name=\"args\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"network\";
+    var_type=T_Object;
+    object_type=LeabraNetwork;
+    object_val=$.networks[\"Network_0\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"network to apply inputs to -- typically set by calling program\";
+    init_from=NULL;
+   };
+   ProgVar @[1] {
+    name=\"input_data\";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=$.data.gp[\"InputData\"][\"StdInputData\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"input datatable containing input/output patterns\";
+    init_from=NULL;
+   };
+  };
+  vars {
+   name=\"vars\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"LayerWriter_0\";
+    var_type=T_Object;
+    object_type=LayerWriter;
+    object_val=[2].objs[0]$$;
+    object_scope=NULL;
+    objs_ptr=1;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network\";
+    init_from=NULL;
+   };
+  };
+  functions {
+   name=\"functions\";
+   el_typ=Function;
+   el_def=0;
+  };
+  init_code {
+   name=\"init_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   MethodCall @[0] {
+    name=\"MethodCall_LayerWriter0SetD_nputdatanetwork\";
+    desc=\"sets the datatable and network for the layer writer, so it knows what to write to\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"LayerWriter_0->SetDataNetwork(input_data, network)\";
+    result_var=NULL;
+    obj=[2].vars[0]$$;
+    method=LayerWriter::SetDataNetwork;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=DataTable_ptr;
+      type=\"DataTable*\";
+      name=\"db\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"input_data\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=Network_ptr;
+      type=\"Network*\";
+      name=\"net\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+    };
+    meth_sig=\"void SetDataNetwork(DataTable* db, Network* net)\";
+    meth_desc=\" set the data table and network pointers -- convenience function for programs \";
+   };
+   MethodCall @[1] {
+    name=\"MethodCall_LayerWriter0AutoConfig\";
+    desc=\"configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"LayerWriter_0->AutoConfig()\";
+    result_var=NULL;
+    obj=$[2].vars[0]$;
+    method=LayerWriter::AutoConfig;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"remove_unused\";
+      required=0;
+      def_val=\"true\";
+      prev_expr=\"true\";
+      expr {
+       expr=;
+      };
+     };
+    };
+    meth_sig=\"void AutoConfig(bool remove_unused = true)\";
+    meth_desc=\" do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed\";
+   };
+   MethodCall @[2] {
+    name=\"MethodCall_LayerWriter0CheckConfigfalse\";
+    desc=\"check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"LayerWriter_0->CheckConfig(false)\";
+    result_var=NULL;
+    obj=$[2].vars[0]$;
+    method=taList_impl::CheckConfig;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"quiet\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=\"false\";
+      };
+     };
+    };
+    meth_sig=\"bool CheckConfig(bool quiet = false)\";
+    meth_desc=\" check the configuration of this object and all its children (defaults to no confirm of success)\";
+   };
+  };
+  prog_code {
+   name=\"prog_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   MethodCall @[0] {
+    name=\"MethodCall_LayerWriter0SetD_nputdatanetwork\";
+    desc=\"sets the datatable and network for the layer writer, so it knows what to write to\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"LayerWriter_0->SetDataNetwork(input_data, network)\";
+    result_var=NULL;
+    obj=$[2].vars[0]$;
+    method=LayerWriter::SetDataNetwork;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=DataTable_ptr;
+      type=\"DataTable*\";
+      name=\"db\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"input_data\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=Network_ptr;
+      type=\"Network*\";
+      name=\"net\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+    };
+    meth_sig=\"void SetDataNetwork(DataTable* db, Network* net)\";
+    meth_desc=\" set the data table and network pointers -- convenience function for programs \";
+   };
+   MethodCall @[1] {
+    name=\"MethodCall_LayerWriter0ApplyInputData\";
+    desc=\"apply inputs to the network!  layer writer has all the key specs\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"LayerWriter_0->ApplyInputData()\";
+    result_var=NULL;
+    obj=$[2].vars[0]$;
+    method=LayerWriter::ApplyInputData;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"bool ApplyInputData()\";
+    meth_desc=\" apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success\";
+   };
+  };
+  step_prog=NULL;
+  step_n=1;
+  doc {
+   name=\"doc\";
+   desc=;
+   web_doc=1;
+   wiki=\"emergent\";
+   url=\"ApplyInputs\";
+   full_url=\"https://grey.colorado.edu/emergent/index.php/ApplyInputs\";
+   text_size=1;
+   text=;
+   html_text=;
+  };
+ };
+ Program @[3] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {name=\"DocLink\": doc=[3].doc$$: };
+  };
+  name=\"BpTrialMonitorTest\";
+  short_nm=\"TrlMonTest\";
+  tags=\"Bp, Std, Monitor\";
+  desc=\"monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis \";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author=\"Randall C. O'Reilly\";
+  email=\"emergent-users@grey.colorado.edu\";
+  flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
+  objs {
+   name=\"objs\";
+   el_typ=NetMonitor;
+   el_def=0;
+   NetMonitor @[0] {
+    name=\"trial_netmon\";
+    items {
+     name=\"items\";
+     el_typ=NetMonItem;
+     el_def=0;
+     NetMonItem @[0] {
+      name=\"batch\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"batch\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[1] {
+      name=\"epoch\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"epoch\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[2] {
+      name=\"trial\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"trial\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[3] {
+      name=\"trial_name\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"trial_name\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[4] {
+      name=\"group_name\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"group_name\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[5] {
+      name=\"sse\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"sse\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+    };
+    network=$.networks[\"Network_0\"]$;
+    data=$.data.gp[\"OutputData\"][\"TestTrialOutputData\"]$;
+    rmv_orphan_cols=1;
+   };
+  };
+  types {
+   name=\"types\";
+   el_typ=DynEnumType;
+   el_def=0;
+  };
+  args {
+   name=\"args\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"network\";
+    var_type=T_Object;
+    object_type=Network;
+    object_val=$.networks[\"Network_0\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"network to record data from\";
+    init_from=NULL;
+   };
+  };
+  vars {
+   name=\"vars\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"trial_mon_data\";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=$.data.gp[\"OutputData\"][\"TestTrialOutputData\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"data table to record trial-level data to (this program writes new data to this table!)\";
+    init_from=NULL;
+   };
+   ProgVar @[1] {
+    name=\"trial_netmon\";
+    var_type=T_Object;
+    object_type=NetMonitor;
+    object_val=[3].objs[0]$$;
+    object_scope=NULL;
+    objs_ptr=1;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it\";
+    init_from=NULL;
+   };
+  };
+  functions {
+   name=\"functions\";
+   el_typ=Function;
+   el_def=0;
+  };
+  init_code {
+   name=\"init_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   MethodCall @[0] {
+    name=\"MethodCall_trialnetmonSetDa_lmondatanetwork\";
+    desc=\"set the network and datatable for the NetMonitor\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_netmon->SetDataNetwork(trial_mon_data, network)\";
+    result_var=NULL;
+    obj=[3].vars[1]$$;
+    method=NetMonitor::SetDataNetwork;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=DataTable_ptr;
+      type=\"DataTable*\";
+      name=\"dt\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"trial_mon_data\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=Network_ptr;
+      type=\"Network*\";
+      name=\"net\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+    };
+    meth_sig=\"void SetDataNetwork(DataTable* dt, Network* net)\";
+    meth_desc=\" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table\";
+   };
+   MethodCall @[1] {
+    name=\"MethodCall_trialnetmonCheckConfigfalse\";
+    desc=\"check the configuration of the network monitor -- will emit warnings and errors for misconfigurations\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_netmon->CheckConfig(false)\";
+    result_var=NULL;
+    obj=$[3].vars[1]$;
+    method=taBase::CheckConfig;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"quiet\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=\"false\";
+      };
+     };
+    };
+    meth_sig=\"bool CheckConfig(bool quiet = false)\";
+    meth_desc=\" check the configuration of this object and all its children (defaults to no confirm of success)\";
+   };
+   MethodCall @[2] {
+    name=\"MethodCall_trialnetmonUpdateMonitorstrue\";
+    desc=\"update the monitor items and data schema based on current settings of the NetMonitor object\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_netmon->UpdateMonitors(true)\";
+    result_var=NULL;
+    obj=$[3].vars[1]$;
+    method=NetMonitor::UpdateMonitors;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"reset_first\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=\"true\";
+      };
+     };
+    };
+    meth_sig=\"void UpdateMonitors(bool reset_first = false)\";
+    meth_desc=\" old name for UpdateDataTable\";
+   };
+  };
+  prog_code {
+   name=\"prog_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   MethodCall @[0] {
+    name=\"MethodCall_trialmondataAddBlankRow\";
+    desc=\"add a new blank row to the data\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_mon_data->AddBlankRow()\";
+    result_var=NULL;
+    obj=[3].vars[0]$$;
+    method=DataTable::AddBlankRow;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"int AddBlankRow()\";
+    meth_desc=\" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row \";
+   };
+   MethodCall @[1] {
+    name=\"MethodCall_trialnetmonGetMonVals\";
+    desc=\"get the new monitor data from the network and other sources -- this does the main work\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_netmon->GetMonVals()\";
+    result_var=NULL;
+    obj=$[3].vars[1]$;
+    method=NetMonitor::GetMonVals;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void GetMonVals()\";
+    meth_desc=\" get all the values and store in current row of data table -- call in program to get new data\";
+   };
+   MethodCall @[2] {
+    name=\"MethodCall_trialmondataWriteClose\";
+    desc=\"update views and other things after writing new data to monitor data table\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"trial_mon_data->WriteClose()\";
+    result_var=NULL;
+    obj=$[3].vars[0]$;
+    method=DataTable::WriteClose;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void WriteClose()\";
+    meth_desc=\" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc\";
+   };
+   MethodCall @[3] {
+    name=\"MethodCall_networkDMemShare_tatrialmondata1\";
+    desc=\"only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"network->DMem_ShareTrialData(trial_mon_data, 1)\";
+    result_var=NULL;
+    obj=[3].args[0]$$;
+    method=Network::DMem_ShareTrialData;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=DataTable_ptr;
+      type=\"DataTable*\";
+      name=\"dt\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"trial_mon_data\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=int;
+      type=\"int\";
+      name=\"n_rows\";
+      required=0;
+      def_val=\"1\";
+      prev_expr=;
+      expr {
+       expr=\"1\";
+      };
+     };
+    };
+    meth_sig=\"void DMem_ShareTrialData(DataTable* dt, int n_rows = 1)\";
+    meth_desc=\" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient\";
+   };
+  };
+  step_prog=NULL;
+  step_n=1;
+  doc {
+   name=\"doc\";
+   desc=;
+   web_doc=1;
+   wiki=\"emergent\";
+   url=\"Monitor_Data\";
+   full_url=\"https://grey.colorado.edu/emergent/index.php/Monitor_Data\";
+   text_size=1;
+   text=;
+   html_text=;
+  };
+ };
+ Program @[4] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {name=\"DocLink\": doc=[4].doc$$: };
+  };
+  name=\"BpEpochMonitorTest\";
+  short_nm=\"EpcMonTest\";
+  tags=\"Bp, Std, Monitor\";
+  desc=\"monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis\";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author=\"Randall C. O'Reilly\";
+  email=\"emergent-users@grey.colorado.edu\";
+  flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
+  objs {
+   name=\"objs\";
+   el_typ=NetMonitor;
+   el_def=0;
+   NetMonitor @[0] {
+    name=\"epoch_netmon\";
+    items {
+     name=\"items\";
+     el_typ=NetMonItem;
+     el_def=0;
+     NetMonItem @[0] {
+      name=\"batch\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"batch\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[1] {
+      name=\"epoch\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"epoch\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[2] {
+      name=\"avg_sse\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"avg_sse\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[3] {
+      name=\"cnt_err\";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.networks[\"Network_0\"]$;
+      variable=\"cnt_err\";
+      var_label=;
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[4] {
+      name=\"epoch_time_tot\";
+      computed=1;
+      object_type=NULL;
+      object=NULL;
+      variable=\"act\";
+      var_label=;
+      name_style=MY_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[5] {
+      name=\"epoch_time_usr\";
+      computed=1;
+      object_type=NULL;
+      object=NULL;
+      variable=\"act\";
+      var_label=;
+      name_style=MY_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name=\"agg\": op=NONE: rel={name=\"rel\": rel=LESSTHANOREQUAL: val=0: val_string=\"\": use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name=\"_EQUAL_\";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name=\"pre_proc_1\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name=\"pre_proc_2\": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name=\"pre_proc_3\": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+    };
+    network=$.networks[\"Network_0\"]$;
+    data=.data.gp[\"OutputData\"][\"TestEpochOutputData\"]$$<DataTable,TestEpochOutputData>;
+    rmv_orphan_cols=1;
+   };
+  };
+  types {
+   name=\"types\";
+   el_typ=DynEnumType;
+   el_def=0;
+  };
+  args {
+   name=\"args\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"network\";
+    var_type=T_Object;
+    object_type=Network;
+    object_val=$.networks[\"Network_0\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+    reference=0;
+    desc=\"network to get data from\";
+    init_from=NULL;
+   };
+  };
+  vars {
+   name=\"vars\";
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name=\"epoch_mon_data\";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=$.data.gp[\"OutputData\"][\"TestEpochOutputData\"]$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"data table to write the epoch data to\";
+    init_from=NULL;
+   };
+   ProgVar @[1] {
+    name=\"epoch_netmon\";
+    var_type=T_Object;
+    object_type=NetMonitor;
+    object_val=[4].objs[0]$$;
+    object_scope=NULL;
+    objs_ptr=1;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"network monitor object that contains full specs for what to record and where to get it\";
+    init_from=NULL;
+   };
+   ProgVar @[2] {
+    name=\"epoch_timer\";
+    var_type=T_Object;
+    object_type=TimeUsed;
+    object_val=$.networks[\"Network_0\"].epoch_time$;
+    object_scope=NULL;
+    objs_ptr=0;
+    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+    reference=0;
+    desc=\"pointer to the network's epoch-level timer, to record how long it took to process an epoch\";
+    init_from=NULL;
+   };
+  };
+  functions {
+   name=\"functions\";
+   el_typ=Function;
+   el_def=0;
+  };
+  init_code {
+   name=\"init_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   AssignExpr @[0] {
+    name=\"AssignExpr_epochtimernetworkepochtime\";
+    desc=\"get the epoch timer from current network\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_timer = network.epoch_time\";
+    result_var=[4].vars[2]$$;
+    expr {
+     expr=\"network.epoch_time\";
+    };
+   };
+   MethodCall @[1] {
+    name=\"MethodCall_epochnetmonSetDa_hmondatanetwork\";
+    desc=\"set data and network on NetMonitor object\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_netmon->SetDataNetwork(epoch_mon_data, network)\";
+    result_var=NULL;
+    obj=[4].vars[1]$$;
+    method=NetMonitor::SetDataNetwork;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=DataTable_ptr;
+      type=\"DataTable*\";
+      name=\"dt\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"epoch_mon_data\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=Network_ptr;
+      type=\"Network*\";
+      name=\"net\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"network\";
+      };
+     };
+    };
+    meth_sig=\"void SetDataNetwork(DataTable* dt, Network* net)\";
+    meth_desc=\" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table\";
+   };
+   MethodCall @[2] {
+    name=\"MethodCall_epochnetmonCheckConfigfalse\";
+    desc=\"check configuration and emit errors/warnings for problems\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_netmon->CheckConfig(false)\";
+    result_var=NULL;
+    obj=$[4].vars[1]$;
+    method=taBase::CheckConfig;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"quiet\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=\"false\";
+      };
+     };
+    };
+    meth_sig=\"bool CheckConfig(bool quiet = false)\";
+    meth_desc=\" check the configuration of this object and all its children (defaults to no confirm of success)\";
+   };
+   MethodCall @[3] {
+    name=\"MethodCall_epochnetmonUpdateMonitorstrue\";
+    desc=\"update the monitor items and data schema based on current settings of NetMonitor\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_netmon->UpdateMonitors(true)\";
+    result_var=NULL;
+    obj=$[4].vars[1]$;
+    method=NetMonitor::UpdateMonitors;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"reset_first\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=\"true\";
+      };
+     };
+    };
+    meth_sig=\"void UpdateMonitors(bool reset_first = false)\";
+    meth_desc=\" old name for UpdateDataTable\";
+   };
+  };
+  prog_code {
+   name=\"prog_code\";
+   el_typ=ProgCode;
+   el_def=0;
+   MethodCall @[0] {
+    name=\"MethodCall_epochmondataAddBlankRow\";
+    desc=\"add a new blank row to the data\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_mon_data->AddBlankRow()\";
+    result_var=NULL;
+    obj=[4].vars[0]$$;
+    method=DataTable::AddBlankRow;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"int AddBlankRow()\";
+    meth_desc=\" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row \";
+   };
+   MethodCall @[1] {
+    name=\"MethodCall_epochnetmonGetMonVals\";
+    desc=\"get the new monitor data and stor it into the data table -- this does the main job here\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_netmon->GetMonVals()\";
+    result_var=NULL;
+    obj=$[4].vars[1]$;
+    method=NetMonitor::GetMonVals;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void GetMonVals()\";
+    meth_desc=\" get all the values and store in current row of data table -- call in program to get new data\";
+   };
+   AssignExpr @[2] {
+    name=\"AssignExpr_epochtimernetworkepochtime\";
+    desc=\"get the epoch timer from current network\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_timer = network.epoch_time\";
+    result_var=$[4].vars[2]$;
+    expr {
+     expr=\"network.epoch_time\";
+    };
+   };
+   MethodCall @[3] {
+    name=\"MethodCall_epochmondataSetV_csepochtimetot1\";
+    desc=\"set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \\\"epoch_time_tot\\\", -1, )\";
+    result_var=NULL;
+    obj=$[4].vars[0]$;
+    method=DataTable::SetValColName;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=const_Variant_ref;
+      type=\"Variant&\";
+      name=\"val\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"epoch_timer.used.GetTotSecs()\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=const_taString_ref;
+      type=\"taString&\";
+      name=\"col_name\";
+      required=1;
+      def_val=\"\\\"\\\"\";
+      prev_expr=;
+      expr {
+       expr=\"\\\"epoch_time_tot\\\"\";
+      };
+     };
+     ProgArg @[2] {
+      arg_type=int;
+      type=\"int\";
+      name=\"row\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"-1\";
+      };
+     };
+     ProgArg @[3] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"quiet\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=;
+      };
+     };
+    };
+    meth_sig=\"bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)\";
+    meth_desc=\" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly\";
+   };
+   MethodCall @[4] {
+    name=\"MethodCall_epochmondataSetV_csepochtimeusr1\";
+    desc=\"set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \\\"epoch_time_usr\\\", -1, )\";
+    result_var=NULL;
+    obj=$[4].vars[0]$;
+    method=DataTable::SetValColName;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=const_Variant_ref;
+      type=\"Variant&\";
+      name=\"val\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"epoch_timer.used.GetUsrSecs()\";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=const_taString_ref;
+      type=\"taString&\";
+      name=\"col_name\";
+      required=1;
+      def_val=\"\\\"\\\"\";
+      prev_expr=;
+      expr {
+       expr=\"\\\"epoch_time_usr\\\"\";
+      };
+     };
+     ProgArg @[2] {
+      arg_type=int;
+      type=\"int\";
+      name=\"row\";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr=\"-1\";
+      };
+     };
+     ProgArg @[3] {
+      arg_type=bool;
+      type=\"bool\";
+      name=\"quiet\";
+      required=0;
+      def_val=\"false\";
+      prev_expr=;
+      expr {
+       expr=;
+      };
+     };
+    };
+    meth_sig=\"bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)\";
+    meth_desc=\" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly\";
+   };
+   MethodCall @[5] {
+    name=\"MethodCall_epochmondataWriteClose\";
+    desc=\"update after writing new data to monitor data table\";
+    flags=CAN_REVERT_TO_CODE;
+    code_string=\"epoch_mon_data->WriteClose()\";
+    result_var=NULL;
+    obj=$[4].vars[0]$;
+    method=DataTable::WriteClose;
+    meth_args {
+     name=\"meth_args\";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig=\"void WriteClose()\";
+    meth_desc=\" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc\";
+   };
+  };
+  step_prog=NULL;
+  step_n=1;
+  doc {
+   name=\"doc\";
+   desc=;
+   web_doc=1;
+   wiki=\"emergent\";
+   url=\"Monitor_Data\";
+   full_url=\"https://grey.colorado.edu/emergent/index.php/Monitor_Data\";
+   text_size=1;
+   text=;
+   html_text=;
+  };
+ };
+};
+";
+   };
+   PatchRec @[28] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"]";
+    obj_path_idx=".programs.gp[0][0]";
+    obj_type="Program";
+    mbr_path="tags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="Leabra, Std";
+   };
+   PatchRec @[29] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].args[\"network\"]";
+    obj_path_idx=".programs.gp[0][0].args[0]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][0].args[0] { };
+ProgVar .projects[1].programs.gp[0][0].args[0] {
+ name=\"network\";
+ var_type=T_Object;
+ object_type=LeabraNetwork;
+ object_val=.networks[\"Network_0\"]$$<BpNetwork,Network_0>;
+ object_scope=NULL;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+ reference=0;
+ desc=\"network to operate on -- updates batch counter on network and passes it to train program\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[30] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"init_batch\"]";
+    obj_path_idx=".programs.gp[0][0].vars[1]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][0].vars[1] { };
+ProgVar .projects[1].programs.gp[0][0].vars[1] {
+ name=\"batch_start\";
+ var_type=T_Int;
+ int_val=0;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"batch number to start on\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[31] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"max_batch\"]";
+    obj_path_idx=".programs.gp[0][0].vars[2]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][0].vars[2] { };
+ProgVar .projects[1].programs.gp[0][0].vars[2] {
+ name=\"n_batches\";
+ var_type=T_Int;
+ int_val=10;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"number of batches to run\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[32] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"init_batch\"]";
+    obj_path_idx=".programs.gp[0][0].vars[1]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][0].vars[1] { };
+ProgVar .projects[1].programs.gp[0][0].vars[1] {
+ name=\"batch_start\";
+ var_type=T_Int;
+ int_val=0;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"batch number to start on\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[33] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"max_batch\"]";
+    obj_path_idx=".programs.gp[0][0].vars[2]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][0].vars[2] { };
+ProgVar .projects[1].programs.gp[0][0].vars[2] {
+ name=\"n_batches\";
+ var_type=T_Int;
+ int_val=10;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"number of batches to run\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[34] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code[\"If_ifinitbatch\"]";
+    obj_path_idx=".programs.gp[0][0].prog_code[0]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[0].programs.gp[0][0].prog_code[0] { 
+ ProgEl_List @.true_code = [1] {
+  NetCounterInit @[0] { };
+ };
+};
+If .projects[0].programs.gp[0][0].prog_code[0] {
+ name=\"If_ifinitbatch\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (init_batch)\";
+ cond {
+  expr=\"init_batch\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  NetCounterInit @[0] {
+   name=\"NetCounterInit_NetCounterInitbatch\";
+   desc=\"initializes local batch counter and batch field on network\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"Net Counter Init: batch\";
+   network_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].args[\"network\"]$$<ProgVar,network>;
+   local_ctr_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"batch\"]$$<ProgVar,batch>;
+   counter=Network::batch;
+   update_after=0;
+  };
+ };
+};
+";
+   };
+   PatchRec @[35] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code[\"Else_If_ifinitbatch\"]";
+    obj_path_idx=".programs.gp[0][0].prog_code[1]";
+    obj_type="Else";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+Else .projects[0].programs.gp[0][0].prog_code[1] { 
+ ProgEl_List @.true_code = [1] {
+  MemberAssign @[0] { };
+ };
+};
+Else .projects[0].programs.gp[0][0].prog_code[1] {
+ name=\"Else_If_ifinitbatch\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"else\";
+ cond {
+  expr=;
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  MemberAssign @[0] {
+   name=\"MemberAssign_networkbatchbatch\";
+   desc=\"just set directly to current batch value\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"network.batch = batch\";
+   obj=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].args[\"network\"]$$<ProgVar,network>;
+   path=\"batch\";
+   expr {
+    expr=\"batch\";
+   };
+   update_after=0;
+  };
+ };
+};
+";
+   };
+   PatchRec @[36] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code[\"WhileLoop_whilebatchmaxbatch\"]";
+    obj_path_idx=".programs.gp[0][0].prog_code[2]";
+    obj_type="WhileLoop";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+WhileLoop .projects[0].programs.gp[0][0].prog_code[2] { 
+ ProgEl_List @.loop_code = [2] {
+  ProgramCall @[0] { 
+   ProgArg_List @.prog_args = [3] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+   };
+  };
+  NetCounterIncr @[1] { };
+ };
+};
+WhileLoop .projects[0].programs.gp[0][0].prog_code[2] {
+ name=\"WhileLoop_whilebatchmaxbatch\";
+ desc=\"the main loop over training runs\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"while (batch < max_batch)\";
+ loop_code {
+  name=\"loop_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  ProgramCall @[0] {
+   name=\"ProgramCall_BpTrainnetworkinputdatatrue\";
+   desc=\"run the training program -- sets the network and input_data args\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"BpTrain(network, input_data, true)\";
+   prog_args {
+    name=\"prog_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=BpNetwork;
+     type=\"BpNetwork*\";
+     name=\"network\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"network\";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type=\"DataTable*\";
+     name=\"input_data\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"input_data\";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=bool;
+     type=\"bool\";
+     name=\"no_prompts\";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr=\"true\";
+     };
+    };
+   };
+   target=.programs.gp[\"BpAll_Std\"][\"BpTrain\"]$$<Program,BpTrain>;
+   targ_ld_init=\"*BpTrain*\";
+  };
+  NetCounterIncr @[1] {
+   name=\"NetCounterIncr_NetCounterIncrbatch\";
+   desc=\"increment the local batch counter and copy to network\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"Net Counter Incr: batch\";
+   network_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].args[\"network\"]$$<ProgVar,network>;
+   local_ctr_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"batch\"]$$<ProgVar,batch>;
+   counter=Network::batch;
+   update_after=0;
+  };
+ };
+ test {
+  expr=\"batch < max_batch\";
+ };
+};
+";
+   };
+   PatchRec @[37] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code";
+    obj_path_idx=".programs.gp[0][0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="LocalVars_LocalVars1vars";
+    insert_after=;
+    insert_before="If_ifinitbatch";
+    new_obj_type="LocalVars";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+LocalVars .projects[1].programs.gp[0][0].prog_code[0] { 
+ ProgVar_List @.local_vars = [1] {
+  ProgVar @[0] { };
+ };
+};
+LocalVars .projects[1].programs.gp[0][0].prog_code[0] {
+ name=\"LocalVars_LocalVars1vars\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"LocalVars (1 vars)\";
+ local_vars {
+  name=\"local_vars\";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name=\"i\";
+   var_type=T_Int;
+   int_val=0;
+   object_scope=NULL;
+   flags=LOCAL_VAR|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+};
+";
+   };
+   PatchRec @[38] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code";
+    obj_path_idx=".programs.gp[0][0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="AssignExpr_batchbatchstart";
+    insert_after="LocalVars_LocalVars1vars";
+    insert_before="If_ifinitbatch";
+    new_obj_type="AssignExpr";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+AssignExpr .projects[1].programs.gp[0][0].prog_code[1] { };
+AssignExpr .projects[1].programs.gp[0][0].prog_code[1] {
+ name=\"AssignExpr_batchbatchstart\";
+ desc=\"start at the start\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"batch = batch_start\";
+ result_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"batch\"]$$<ProgVar,batch>;
+ expr {
+  expr=\"batch_start\";
+ };
+};
+";
+   };
+   PatchRec @[39] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code";
+    obj_path_idx=".programs.gp[0][0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="MemberAssign_networkbatchbatch";
+    insert_after="AssignExpr_batchbatchstart";
+    insert_before="If_ifinitbatch";
+    new_obj_type="MemberAssign";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+MemberAssign .projects[1].programs.gp[0][0].prog_code[2] { };
+MemberAssign .projects[1].programs.gp[0][0].prog_code[2] {
+ name=\"MemberAssign_networkbatchbatch\";
+ desc=\"update network\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"network.batch = batch\";
+ obj=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].args[\"network\"]$$<ProgVar,network>;
+ path=\"batch\";
+ expr {
+  expr=\"batch\";
+ };
+ update_after=0;
+};
+";
+   };
+   PatchRec @[40] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code";
+    obj_path_idx=".programs.gp[0][0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="ForLoop_fori0inbatchesi";
+    insert_after="MemberAssign_networkbatchbatch";
+    insert_before="If_ifinitbatch";
+    new_obj_type="ForLoop";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ForLoop .projects[1].programs.gp[0][0].prog_code[3] { 
+ ProgEl_List @.loop_code = [2] {
+  ProgramCall @[0] { 
+   ProgArg_List @.prog_args = [3] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+   };
+  };
+  NetCounterIncr @[1] { };
+ };
+};
+ForLoop .projects[1].programs.gp[0][0].prog_code[3] {
+ name=\"ForLoop_fori0inbatchesi\";
+ desc=\"main loop over training runs\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"for (i=0; i<n_batches; i++)\";
+ loop_code {
+  name=\"loop_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  ProgramCall @[0] {
+   name=\"ProgramCall_BpTrainnetworkinputdatatrue\";
+   desc=\"run the training program -- sets the network and input_data args\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"BpTrain(network, input_data, true)\";
+   prog_args {
+    name=\"prog_args\";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=BpNetwork;
+     type=\"BpNetwork*\";
+     name=\"network\";
+     required=1;
+     def_val=;
+     prev_expr=\"network\";
+     expr {
+      expr=\"network\";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type=\"DataTable*\";
+     name=\"input_data\";
+     required=1;
+     def_val=;
+     prev_expr=\"input_data\";
+     expr {
+      expr=\"input_data\";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=bool;
+     type=\"bool\";
+     name=\"no_prompts\";
+     required=1;
+     def_val=;
+     prev_expr=\"true\";
+     expr {
+      expr=\"true\";
+     };
+    };
+   };
+   target=.programs.gp[\"BpAll_Std\"][\"BpTrain\"]$$<Program,BpTrain>;
+   targ_ld_init=\"*BpTrain*\";
+  };
+  NetCounterIncr @[1] {
+   name=\"NetCounterIncr_NetCounterIncrbatch\";
+   desc=\"increment the local batch counter and copy to network\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"Net Counter Incr: batch\";
+   network_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].args[\"network\"]$$<ProgVar,network>;
+   local_ctr_var=.programs.gp[\"BpAll_Std\"][\"BpBatch\"].vars[\"batch\"]$$<ProgVar,batch>;
+   counter=Network::batch;
+   update_after=0;
+  };
+ };
+ init {
+  expr=\"i=0\";
+ };
+ test {
+  expr=\"i<n_batches\";
+ };
+ iter {
+  expr=\"i++\";
+ };
+};
+";
+   };
+   PatchRec @[41] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpBatch\"].prog_code";
+    obj_path_idx=".programs.gp[0][0].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="BlankLineEl_";
+    insert_after="ForLoop_fori0inbatchesi";
+    insert_before="If_ifinitbatch";
+    new_obj_type="BlankLineEl";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+BlankLineEl .projects[1].programs.gp[0][0].prog_code[4] { };
+BlankLineEl .projects[1].programs.gp[0][0].prog_code[4] {
+ name=\"BlankLineEl_\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\" \";
+};
+";
+   };
+   PatchRec @[42] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpTrain\"].vars[\"err_stopcrit\"]";
+    obj_path_idx=".programs.gp[0][1].vars[4]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][1].vars[4] { };
+ProgVar .projects[1].programs.gp[0][1].vars[4] {
+ name=\"err_stopcrit\";
+ var_type=T_Real;
+ real_val=0;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"stopping criterion -- network avg_sse must be <= this number to stop training -- see n_under_thr too\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[43] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpTrain\"].prog_code[\"WhileLoop_whileepochmaxepoch\"].loop_code[\"If_ifnetworkavgsseerrstopcrit\"]";
+    obj_path_idx=".programs.gp[0][1].prog_code[7].loop_code[2]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[1].programs.gp[0][1].prog_code[7].loop_code[2] { 
+ ProgEl_List @.true_code = [2] {
+  VarIncr @[0] { };
+  IfBreak @[1] { };
+ };
+};
+If .projects[1].programs.gp[0][1].prog_code[7].loop_code[2] {
+ name=\"If_ifnetworkavgsseavgerrstopcrit\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (network.avg_sse.avg <= err_stopcrit)\";
+ cond {
+  expr=\"network.avg_sse.avg <= err_stopcrit\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  VarIncr @[0] {
+   name=\"VarIncr_nundercnt1\";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"n_under_cnt += 1\";
+   var=.programs.gp[\"BpAll_Std\"][\"BpTrain\"].vars[\"n_under_cnt\"]$$<ProgVar,n_under_cnt>;
+   expr {
+    expr=\"1\";
+   };
+  };
+  IfBreak @[1] {
+   name=\"IfBreak_ifnundercntnunderthrbreak\";
+   desc=\"stop if errors go below stopping criterion (note: could use sse or avg_sse here too)\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"if(n_under_cnt >=  n_under_thr) break\";
+   cond {
+    expr=\"n_under_cnt >=  n_under_thr\";
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[44] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpTrain\"].prog_code[\"WhileLoop_whileepochmaxepoch\"].loop_code[\"Else_If_ifnetworkavgsseerrstopcrit\"]";
+    obj_path_idx=".programs.gp[0][1].prog_code[7].loop_code[3]";
+    obj_type="Else";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+Else .projects[1].programs.gp[0][1].prog_code[7].loop_code[3] { 
+ ProgEl_List @.true_code = [1] {
+  AssignExpr @[0] { };
+ };
+};
+Else .projects[1].programs.gp[0][1].prog_code[7].loop_code[3] {
+ name=\"Else_If_ifnetworkavgsseavgerrstopcrit\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"else\";
+ cond {
+  expr=;
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  AssignExpr @[0] {
+   name=\"AssignExpr_nundercnt0\";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"n_under_cnt = 0\";
+   result_var=.programs.gp[\"BpAll_Std\"][\"BpTrain\"].vars[\"n_under_cnt\"]$$<ProgVar,n_under_cnt>;
+   expr {
+    expr=\"0\";
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[45] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpTrain\"].prog_code[\"WhileLoop_whileepochmaxepoch\"].loop_code[\"If_ifnetworkavgsseerrstopcrit\"]";
+    obj_path_idx=".programs.gp[0][1].prog_code[7].loop_code[2]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[1].programs.gp[0][1].prog_code[7].loop_code[2] { 
+ ProgEl_List @.true_code = [2] {
+  VarIncr @[0] { };
+  IfBreak @[1] { };
+ };
+};
+If .projects[1].programs.gp[0][1].prog_code[7].loop_code[2] {
+ name=\"If_ifnetworkavgsseavgerrstopcrit\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (network.avg_sse.avg <= err_stopcrit)\";
+ cond {
+  expr=\"network.avg_sse.avg <= err_stopcrit\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  VarIncr @[0] {
+   name=\"VarIncr_nundercnt1\";
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"n_under_cnt += 1\";
+   var=.programs.gp[\"BpAll_Std\"][\"BpTrain\"].vars[\"n_under_cnt\"]$$<ProgVar,n_under_cnt>;
+   expr {
+    expr=\"1\";
+   };
+  };
+  IfBreak @[1] {
+   name=\"IfBreak_ifnundercntnunderthrbreak\";
+   desc=\"stop if errors go below stopping criterion (note: could use sse or avg_sse here too)\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"if(n_under_cnt >=  n_under_thr) break\";
+   cond {
+    expr=\"n_under_cnt >=  n_under_thr\";
+   };
+  };
+ };
+};
+";
+   };
+   PatchRec @[46] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpEpoch\"].vars[\"data_loop_index\"]";
+    obj_path_idx=".programs.gp[0][2].vars[4]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][2].vars[4] { };
+ProgVar .projects[1].programs.gp[0][2].vars[4] {
+ name=\"data_loop_index\";
+ var_type=T_Int;
+ int_val=5;
+ object_scope=NULL;
+ flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[47] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpEpoch\"].prog_code";
+    obj_path_idx=".programs.gp[0][2].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=3;
+    targ_name="MethodCall_networkInitEpoch";
+    insert_after="MethodCall_epochtimerStartTimertrue";
+    insert_before="MethodCall_trialmondataResetData";
+    new_obj_type="MethodCall";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+MethodCall .projects[1].programs.gp[0][2].prog_code[3] { 
+ ProgArg_List @.meth_args = [0] {
+ };
+};
+MethodCall .projects[1].programs.gp[0][2].prog_code[3] {
+ name=\"MethodCall_networkInitEpoch\";
+ desc=\"added in 8.0: essential for param_seqs\";
+ flags=NEW_EL|CAN_REVERT_TO_CODE;
+ code_string=\"network->Init_Epoch()\";
+ result_var=NULL;
+ obj=.programs.gp[\"BpAll_Std\"][\"BpEpoch\"].args[\"network\"]$$<ProgVar,network>;
+ method=Network::Init_Epoch;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+ };
+ meth_sig=\"void Init_Epoch()\";
+ meth_desc=\" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example\";
+};
+";
+   };
+   PatchRec @[48] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpEpoch\"].prog_code";
+    obj_path_idx=".programs.gp[0][2].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=7;
+    targ_name="MethodCall_epochtimerEndTimer";
+    insert_after="MethodCall_networkComputeEpochStats";
+    insert_before="ProgramCall_BpEpochMonitornetwork";
+    new_obj_type="MethodCall";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+MethodCall .projects[1].programs.gp[0][2].prog_code[8] { 
+ ProgArg_List @.meth_args = [0] {
+ };
+};
+MethodCall .projects[1].programs.gp[0][2].prog_code[8] {
+ name=\"MethodCall_epochtimerEndTimer\";
+ desc=\"done with the computation in the epoch -- record time it took\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"epoch_timer->EndTimer()\";
+ result_var=NULL;
+ obj=.programs.gp[\"BpAll_Std\"][\"BpEpoch\"].vars[\"epoch_timer\"]$$<ProgVar,epoch_timer>;
+ method=TimeUsed::EndTimer;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+ };
+ meth_sig=\"void EndTimer()\";
+ meth_desc=\" record the current time as the ending time, and compute difference as the time used\";
+};
+";
+   };
+   PatchRec @[49] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpEpoch\"].prog_code[\"MethodCall_epochtimerEndTimer\"]";
+    obj_path_idx=".programs.gp[0][2].prog_code[8]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+MethodCall .projects[0].programs.gp[0][2].prog_code[8] { 
+ ProgArg_List @.meth_args = [0] {
+ };
+};
+MethodCall .projects[0].programs.gp[0][2].prog_code[8] {
+ name=\"MethodCall_epochtimerEndTimer\";
+ desc=\"done with the computation in the epoch -- record time it took\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"epoch_timer->EndTimer()\";
+ result_var=NULL;
+ obj=.programs.gp[\"BpAll_Std\"][\"BpEpoch\"].vars[\"epoch_timer\"]$$<ProgVar,epoch_timer>;
+ method=TimeUsed::EndTimer;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+ };
+ meth_sig=\"void EndTimer()\";
+ meth_desc=\" record the current time as the ending time, and compute difference as the time used\";
+};
+";
+   };
+   PatchRec @[50] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpEpoch\"].prog_code[\"NetDataLoop_NetDataLoopPERMU_ardatalooporder\"].loop_code[\"If_ifnetworkCompute_ightsTesttrial1\"]";
+    obj_path_idx=".programs.gp[0][2].prog_code[4].loop_code[1]";
+    obj_type="If";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[0].programs.gp[0][2].prog_code[4].loop_code[1] { 
+ ProgEl_List @.true_code = [1] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+ };
+};
+If .projects[0].programs.gp[0][2].prog_code[4].loop_code[1] {
+ name=\"If_ifnetworkCompute_ightsTesttrial1\";
+ desc=\"test if it is time to update the weight values from delta weights (dWt) computed over trials\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (network.Compute_Weights_Test(trial+1))\";
+ cond {
+  expr=\"network.Compute_Weights_Test(trial+1)\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  MethodCall @[0] {
+   name=\"MethodCall_networkComputeWeights\";
+   desc=\"update the weight values based on changes computed by trial program\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"network->Compute_Weights()\";
+   result_var=NULL;
+   obj=.programs.gp[\"BpAll_Std\"][\"BpEpoch\"].args[\"network\"]$$<ProgVar,network>;
+   method=Network::Compute_Weights;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig=\"void Compute_Weights()\";
+   meth_desc=\" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode\";
+  };
+ };
+};
+";
+   };
+   PatchRec @[51] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpTrial\"].vars";
+    obj_path_idx=".programs.gp[0][3].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=1;
+    targ_name="trial";
+    insert_after="update_net_view";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[0][3].vars[1] { };
+ProgVar .projects[1].programs.gp[0][3].vars[1] {
+ name=\"trial\";
+ var_type=T_Int;
+ int_val=1;
+ object_scope=NULL;
+ flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"current trial (event) within the epoch -- increments automatically\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[52] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"BpAll_Std\"][\"BpTrial\"].prog_code";
+    obj_path_idx=".programs.gp[0][3].prog_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="If_ifnetworkCompute_ightsTesttrial1";
+    insert_after=;
+    insert_before="MethodCall_networkInitInputData";
+    new_obj_type="If";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+If .projects[1].programs.gp[0][3].prog_code[0] { 
+ ProgEl_List @.true_code = [1] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+ };
+};
+If .projects[1].programs.gp[0][3].prog_code[0] {
+ name=\"If_ifnetworkCompute_ightsTesttrial1\";
+ desc=\"test if it is time to update the weight values from delta weights (dWt) computed over trials\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"if (network.Compute_Weights_Test(trial+1))\";
+ cond {
+  expr=\"network.Compute_Weights_Test(trial+1)\";
+ };
+ true_code {
+  name=\"true_code\";
+  el_typ=ProgCode;
+  el_def=0;
+  MethodCall @[0] {
+   name=\"MethodCall_networkComputeWeights\";
+   desc=\"update the weight values based on changes computed by trial program\";
+   flags=CAN_REVERT_TO_CODE;
+   code_string=\"network->Compute_Weights()\";
+   result_var=NULL;
+   obj=.programs.gp[\"BpAll_Std\"][\"BpTrial\"].args[\"network\"]$$<ProgVar,network>;
+   method=Network::Compute_Weights;
+   meth_args {
+    name=\"meth_args\";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig=\"void Compute_Weights()\";
+   meth_desc=\" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode\";
+  };
+ };
+};
+";
+   };
+  };
+  PatchRec_Group @.gp[3] {
+   name="ctrl_panels";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs[\"BpConSpec_0_lrate\"]";
+    obj_path_idx=".ctrl_panels[0].mbrs[0]";
+    obj_type="ControlPanelMember";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[0] { };
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[0] {
+ label=\"BpConSpec_0_lrate\";
+ short_label=0;
+ cust_label=1;
+ desc=\" learning rate\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpConSpec_0\"]$$<BpConSpec,BpConSpec_0>;
+ mbr=BpConSpec::lrate;
+ data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[1] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs[\"BpUnitSpec_0_err_tol\"]";
+    obj_path_idx=".ctrl_panels[0].mbrs[1]";
+    obj_type="ControlPanelMember";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[1] { };
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[1] {
+ label=\"BpUnitSpec_0_err_tol\";
+ short_label=0;
+ cust_label=1;
+ desc=\"[Default: 0.05;0]  error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpUnitSpec_0\"]$$<BpUnitSpec,BpUnitSpec_0>;
+ mbr=BpUnitSpec::err_tol;
+ data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[2] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_unit_spec_0_err_tol";
+    insert_after=;
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[0] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[0] {
+ label=\"bp_unit_spec_0_err_tol\";
+ short_label=0;
+ cust_label=0;
+ desc=\"[Default: 0.05;0]  error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpUnitSpec_0\"]$$<BpUnitSpec,BpUnitSpec_0>;
+ mbr=BpUnitSpec::err_tol;
+ data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value=\"\": range=\"0:1:0.1\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[3] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_con_spec_0_lrate";
+    insert_after="bp_unit_spec_0_err_tol";
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[1] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[1] {
+ label=\"bp_con_spec_0_lrate\";
+ short_label=0;
+ cust_label=0;
+ desc=\" learning rate\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpConSpec_0\"]$$<BpConSpec,BpConSpec_0>;
+ mbr=BpConSpec::lrate;
+ data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value=\"\": range=\"0:1:0.1\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[4] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_con_spec_0_momentum";
+    insert_after="bp_con_spec_0_lrate";
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[2] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[2] {
+ label=\"bp_con_spec_0_momentum\";
+ short_label=0;
+ cust_label=0;
+ desc=\" momentum factor -- as of 8.0 this is standardized to NOT include an additional learning rate factor (previous AFTER_LRATE option -- momentum is effectively after the learning rate)\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpConSpec_0\"]$$<BpConSpec,BpConSpec_0>;
+ mbr=BpConSpec::momentum;
+ data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[5] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_con_spec_0_decay";
+    insert_after="bp_con_spec_0_momentum";
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[3] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[3] {
+ label=\"bp_con_spec_0_decay\";
+ short_label=0;
+ cust_label=0;
+ desc=\" decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpConSpec_0\"]$$<BpConSpec,BpConSpec_0>;
+ mbr=BpConSpec::decay;
+ data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[6] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_unit_spec_0_act_fun";
+    insert_after="bp_con_spec_0_decay";
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[4] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[4] {
+ label=\"bp_unit_spec_0_act_fun\";
+ short_label=0;
+ cust_label=0;
+ desc=\" activation function to use -- note that act_range is ignored for most functions except linear-based ones, and for output units using the cross-entropy error function<br> * SIGMOID:  standard sigmoidal activation in 0-1 range: 1 / (1 + e^-net) -- note that we dropped gain and offset params in 8.0 -- just uses standard gain = 1, 0 offset<br> * TANH:  hyperbolic tangent function -- basically a sigmoid centered around 0 with range -1..1 (which is how we implement it)<br> * RELU:  rectified linear unit, i.e., a simple threshold nonlinearity --- if netinput < 0, activation = 0, else act = net<br> * LINEAR:  purely linear output -- not suitable for hidden units, as some form of nonlinearity is essential, but can be useful for output units<br> * NLXX1:  noisy-linear version of XX1 function = x/(x+1) (= 1/(1+x^1) -- sigmoidal asymptote but hard 0 threshold) where x = netin -- NL version adds a small linear 'ramp' for negative inputs starting at ramp_start negative input and reaching a magnitude of ramp_max at 0, after which point it transitions to regular XX1 (starting at ramp_max) -- ramp approximates effects of convolving XX1 with gaussian noise, but with a simpler function -- provides a hybrid of sigmoid and ReLu with good overall properties for sparse representations with bias set to -2<br> * BINARY:  stochastic binary activation -- produces a 1 or a 0 based on sigmoidal underlying probability<br> * GAUSS:  gaussian applied to the standard dot-product netinput -- also known as a 'bump' function<br> * RBF:  radial basis function activation -- uses distance-based net input (net input is distance between activations and weights, instead of usual dot product) and runs that through a gaussian function to produce a radial basis function kernel activation<br> * MAX POOL:  compute the activation = max over input activations, and send backprop error only back to max input, rest = 0<br> * SOFTMAX:  soft-max over the units within the layer -- does a few passes to compute activation -- useful for single-winner output layers (e.g., localist classification outputs) -- unlike in 8.0, this does NOT require an exponential layer input -- everything is done internally -- implies CROSS_ENTROPY error so that derivative is simple, and is ONLY applicable to output (TARGET) layers\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpUnitSpec_0\"]$$<BpUnitSpec,BpUnitSpec_0>;
+ mbr=BpUnitSpec::act_fun;
+ data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"SIGMOID\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[7] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_unit_spec_0_error_fun";
+    insert_after="bp_unit_spec_0_act_fun";
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[5] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[5] {
+ label=\"bp_unit_spec_0_error_fun\";
+ short_label=0;
+ cust_label=0;
+ desc=\" error function to use: only applicable to layers of type TARGET -- squared error is appropriate for unbounded linear targets, while cross-entropy is more appropriate for binary targets<br> * SQUARED ERR:  use the squared error function in computing derivatives of Target layer units -- appropriate for unbounded linear targets<br> * CROSS ENTROPY:  use the cross-entropy (sigmoid-based) error function in computing derivatives of Target layer units -- appropriate for binary targets\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpUnitSpec_0\"]$$<BpUnitSpec,BpUnitSpec_0>;
+ mbr=BpUnitSpec::error_fun;
+ data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"CROSS_ENTROPY\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[8] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=0;
+    targ_name="bp_con_spec_0_decay_type";
+    insert_after="bp_unit_spec_0_error_fun";
+    insert_before="BpConSpec_0_lrate";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[6] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[6] {
+ label=\"bp_con_spec_0_decay_type\";
+ short_label=0;
+ cust_label=0;
+ desc=\" type of weight decay to apply (before 8.0 this was set by selecting a function, but this prevents optimization)<br> * NO DECAY:  do not perform any form of weight decay<br> * SIMPLE DECAY:  apply simple weight decay -- subtract a constant factor of the weight value with every update to the weights<br> * ELIMINATION:  weight elimination weight decay -- subtract: (decay * w) / (1 + wt^2)^2 -- this eliminates small weights but weights that are larger (around 1 or higher) are subject to a much smaller amount of decay -- based on a bimodal underlying distribution -- developed by Weigend et al (1990) -- note that prior to 8.0, this included a 2.0 factor and incorrectly used wt in the numerator which was kind of a deadly mistake!\";
+ cust_desc=0;
+ base=.networks[\"Network_0\"].specs[\"BpConSpec_0\"]$$<BpConSpec,BpConSpec_0>;
+ mbr=BpConSpec::decay_type;
+ data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"SIMPLE_DECAY\": range=\"\": notes=\"\": };
+};
+";
+   };
+  };
+ };
+};

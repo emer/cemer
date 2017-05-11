@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -3608,7 +3608,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="Filter";
    short_nm="Filter";
@@ -3776,7 +3776,7 @@ LeabraProject .projects[0] {
      name="data_table1";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[0].objs[0]$$;
+     object_val=.programs[0].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3788,7 +3788,7 @@ LeabraProject .projects[0] {
      name="data_table1_copy";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[0].objs[1]$$;
+     object_val=.programs[0].objs[1]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3838,12 +3838,12 @@ LeabraProject .projects[0] {
      code_string="// Test Greaterthan";
     };
     MethodCall @[2] {
-     name="MethodCall_DataTable1copyCopyFromDataTable1";
+     name="MethodCall_datatable1copyCopyFromdatatable1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[1]$$;
+     obj=.programs[0].vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -3865,7 +3865,7 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     If @[3] {
-     name="If_ifDataTable1copyrows10";
+     name="If_ifdatatable1copyrows10";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -3992,12 +3992,12 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[4] {
-     name="MethodCall_DataTable1copyFi_ionGREATERTHAN3";
+     name="MethodCall_datatable1copyFi_ionGREATERTHAN3";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"epoch\", Relation::GREATERTHAN, 3, , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[1]$;
+     obj=$.programs[0].vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -4118,7 +4118,7 @@ LeabraProject .projects[0] {
      meth_desc=" Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first";
     };
     If @[5] {
-     name="If_ifDataTable1copyrows6";
+     name="If_ifdatatable1copyrows6";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 6)";
@@ -4247,7 +4247,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=.projects[0].programs[0].vars[2]$$;
+       result_var=.programs[0].vars[2]$$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -4255,7 +4255,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[6] {
-     name="If_ifDataTable1copyepoch04";
+     name="If_ifdatatable1copyepoch04";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 4)";
@@ -4384,7 +4384,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -4392,7 +4392,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[7] {
-     name="If_ifDataTable1copyepoch59";
+     name="If_ifdatatable1copyepoch59";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][5] != 9)";
@@ -4521,7 +4521,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -4540,7 +4540,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[1]$;
+     obj=$.programs[0].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -4689,12 +4689,12 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[11] {
-     name="MethodCall_DataTable1copyFi_lationLESSTHAN3";
+     name="MethodCall_datatable1copyFi_lationLESSTHAN3";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"epoch\", Relation::LESSTHAN, 3, , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[1]$;
+     obj=$.programs[0].vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -4815,7 +4815,7 @@ LeabraProject .projects[0] {
      meth_desc=" Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first";
     };
     If @[12] {
-     name="If_ifDataTable1copyrows3";
+     name="If_ifdatatable1copyrows3";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 3)";
@@ -4944,7 +4944,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 1)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 1)";
        };
@@ -4952,7 +4952,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[13] {
-     name="If_ifDataTable1copyepoch00";
+     name="If_ifdatatable1copyepoch00";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 0)";
@@ -5081,7 +5081,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 1)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 1)";
        };
@@ -5089,7 +5089,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[14] {
-     name="If_ifDataTable1copyepoch22";
+     name="If_ifdatatable1copyepoch22";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][2] != 2)";
@@ -5218,7 +5218,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 1)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 1)";
        };
@@ -5237,7 +5237,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[1]$;
+     obj=$.programs[0].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -5386,12 +5386,12 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[18] {
-     name="MethodCall_DataTable1copyFi_onCONTAINSWorld";
+     name="MethodCall_datatable1copyFi_onCONTAINSWorld";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Filter(\"Name\", Relation::CONTAINS, \"World\", , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[1]$;
+     obj=$.programs[0].vars[1]$;
      method=DataTable::Filter;
      meth_args {
       name="meth_args";
@@ -5641,7 +5641,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 2)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 2)";
        };
@@ -5649,7 +5649,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[20] {
-     name="If_ifDataTable1copyName0HelloWorld";
+     name="If_ifdatatable1copyName0HelloWorld";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][0] != \"Hello World\")";
@@ -5778,7 +5778,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 2)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 2)";
        };
@@ -5786,7 +5786,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[21] {
-     name="If_ifDataTable1copyName2World";
+     name="If_ifdatatable1copyName2World";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][2] != \"World\")";
@@ -5915,7 +5915,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 2)";
-       result_var=$.projects[0].programs[0].vars[2]$;
+       result_var=$.programs[0].vars[2]$;
        expr {
 	expr="test_failed | (1 << 2)";
        };
@@ -5948,7 +5948,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[1].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[1].doc$$: };
    };
    name="Select";
    short_nm="Select";
@@ -6180,7 +6180,7 @@ LeabraProject .projects[0] {
      name="data_table1";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[0]$$;
+     object_val=.programs[1].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6192,7 +6192,7 @@ LeabraProject .projects[0] {
      name="data_table1_copy";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[2]$$;
+     object_val=.programs[1].objs[2]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6213,7 +6213,7 @@ LeabraProject .projects[0] {
      name="dest_data_table1";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[1]$$;
+     object_val=.programs[1].objs[1]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6254,12 +6254,12 @@ LeabraProject .projects[0] {
      code_string="// Test Equals with one entry";
     };
     MethodCall @[2] {
-     name="MethodCall_DataTable1copyCopyFromDataTable1";
+     name="MethodCall_datatable1copyCopyFromdatatable1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.projects[0].programs[1].vars[1]$$;
+     obj=.programs[1].vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -6281,12 +6281,12 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     MethodCall @[3] {
-     name="MethodCall_DestDataTable1ResetData";
+     name="MethodCall_destdatatable1ResetData";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="dest_data_table1->ResetData()";
      result_var=NULL;
-     obj=.projects[0].programs[1].vars[3]$$;
+     obj=.programs[1].vars[3]$$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -6297,7 +6297,7 @@ LeabraProject .projects[0] {
      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
     };
     If @[4] {
-     name="If_ifDestDataTable1rows0";
+     name="If_ifdestdatatable1rows0";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (dest_data_table1->rows != 0)";
@@ -6424,7 +6424,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[5] {
-     name="If_ifDataTable1copyrows10";
+     name="If_ifdatatable1copyrows10";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -6551,12 +6551,12 @@ LeabraProject .projects[0] {
      };
     };
     DataSelectRowsProg @[6] {
-     name="DataSelectRowsProg_SelectRowssrctab_Table1combopAND";
+     name="DataSelectRowsProg_SelectRowssrctab_table1combopAND";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="SelectRows:  src table = data_table1_copy  dest table = dest_data_table1  comb_op = AND";
-     src_data_var=$.projects[0].programs[1].vars[1]$;
-     dest_data_var=$.projects[0].programs[1].vars[3]$;
+     src_data_var=$.programs[1].vars[1]$;
+     dest_data_var=$.programs[1].vars[3]$;
      select_spec {
       name="select_spec";
       ops {
@@ -6707,7 +6707,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=.projects[0].programs[1].vars[2]$$;
+       result_var=.programs[1].vars[2]$$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -6715,7 +6715,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[8] {
-     name="If_ifDestDataTable1rows1";
+     name="If_ifdestdatatable1rows1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (dest_data_table1->rows != 1)";
@@ -6844,7 +6844,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[1].vars[2]$;
+       result_var=$.programs[1].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -6852,7 +6852,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[9] {
-     name="If_ifDestDataTable1epoch00";
+     name="If_ifdestdatatable1epoch00";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (dest_data_table1[\"epoch\"][0] != 0)";
@@ -6981,7 +6981,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[1].vars[2]$;
+       result_var=$.programs[1].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -7000,7 +7000,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[1].vars[1]$;
+     obj=$.programs[1].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -7027,7 +7027,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="dest_data_table1->ResetData()";
      result_var=NULL;
-     obj=$.projects[0].programs[1].vars[3]$;
+     obj=$.programs[1].vars[3]$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -7317,7 +7317,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[2].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[2].doc$$: };
    };
    name="Sort";
    short_nm="rt";
@@ -7551,7 +7551,7 @@ LeabraProject .projects[0] {
      name="data_table1";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[2].objs[0]$$;
+     object_val=.programs[2].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7563,7 +7563,7 @@ LeabraProject .projects[0] {
      name="data_table1_copy";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[2].objs[1]$$;
+     object_val=.programs[2].objs[1]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7613,12 +7613,12 @@ LeabraProject .projects[0] {
      code_string="// Test sort integer descending";
     };
     MethodCall @[2] {
-     name="MethodCall_DataTable1copyCopyFromDataTable1";
+     name="MethodCall_datatable1copyCopyFromdatatable1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.projects[0].programs[2].vars[1]$$;
+     obj=.programs[2].vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -7640,7 +7640,7 @@ LeabraProject .projects[0] {
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
     If @[3] {
-     name="If_ifDataTable1copyrows10";
+     name="If_ifdatatable1copyrows10";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy->rows != 10)";
@@ -7767,7 +7767,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[4] {
-     name="If_ifDataTable1copyepoch00";
+     name="If_ifdatatable1copyepoch00";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 0)";
@@ -7896,7 +7896,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=.projects[0].programs[2].vars[2]$$;
+       result_var=.programs[2].vars[2]$$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -7904,12 +7904,12 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[5] {
-     name="MethodCall_DataTable1copySortepochfalse";
+     name="MethodCall_datatable1copySortepochfalse";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Sort(\"epoch\", false, , , , , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[1]$;
+     obj=$.programs[2].vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -8181,7 +8181,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8189,7 +8189,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[7] {
-     name="If_ifDataTable1copyepoch09";
+     name="If_ifdatatable1copyepoch09";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 9)";
@@ -8318,7 +8318,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8326,7 +8326,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[8] {
-     name="If_ifDataTable1copyName0World";
+     name="If_ifdatatable1copyName0World";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][0] != \"World\")";
@@ -8455,7 +8455,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8463,7 +8463,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[9] {
-     name="If_ifDataTable1copyepoch90";
+     name="If_ifdatatable1copyepoch90";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][9] != 0)";
@@ -8592,7 +8592,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8600,7 +8600,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[10] {
-     name="If_ifDataTable1copyName9Hello";
+     name="If_ifdatatable1copyName9Hello";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][9] != \"Hello\")";
@@ -8729,7 +8729,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -8754,7 +8754,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[1]$;
+     obj=$.programs[2].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -9032,7 +9032,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9040,12 +9040,12 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[16] {
-     name="MethodCall_DataTable1copySortNamefalse";
+     name="MethodCall_datatable1copySortNamefalse";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Sort(\"Name\", false, , , , , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[1]$;
+     obj=$.programs[2].vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -9317,7 +9317,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9325,7 +9325,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[18] {
-     name="If_ifDataTable1copyepoch08";
+     name="If_ifdatatable1copyepoch08";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 8)";
@@ -9454,7 +9454,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9462,7 +9462,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[19] {
-     name="If_ifDataTable1copy_Yestanothername";
+     name="If_ifdatatable1copy_Yestanothername";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][0] != \"Yest another name\")";
@@ -9591,7 +9591,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9599,7 +9599,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[20] {
-     name="If_ifDataTable1copyepoch97";
+     name="If_ifdatatable1copyepoch97";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][9] != 7)";
@@ -9728,7 +9728,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9736,7 +9736,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[21] {
-     name="If_ifDataTable1copyName9Anothername";
+     name="If_ifdatatable1copyName9Anothername";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][9] != \"Another name\")";
@@ -9865,7 +9865,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -9890,7 +9890,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[1]$;
+     obj=$.programs[2].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -10168,7 +10168,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10176,12 +10176,12 @@ LeabraProject .projects[0] {
      };
     };
     MethodCall @[27] {
-     name="MethodCall_DataTable1copySo_htrueepochfalse";
+     name="MethodCall_datatable1copySo_htrueepochfalse";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->Sort(\"batch\", true, \"epoch\", false, , , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[1]$;
+     obj=$.programs[2].vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -10453,7 +10453,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10461,7 +10461,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[29] {
-     name="If_ifDataTable1copybatch01";
+     name="If_ifdatatable1copybatch01";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"batch\"][0] != 1)";
@@ -10590,7 +10590,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10598,7 +10598,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[30] {
-     name="If_ifDataTable1copyepoch05";
+     name="If_ifdatatable1copyepoch05";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][0] != 5)";
@@ -10727,7 +10727,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10735,7 +10735,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[31] {
-     name="If_ifDataTable1copyName0Morenames";
+     name="If_ifdatatable1copyName0Morenames";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][0] != \"More names\")";
@@ -10864,7 +10864,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -10872,7 +10872,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[32] {
-     name="If_ifDataTable1copybatch93";
+     name="If_ifdatatable1copybatch93";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"batch\"][9] != 3)";
@@ -11001,7 +11001,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11009,7 +11009,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[33] {
-     name="If_ifDataTable1copyepoch96";
+     name="If_ifdatatable1copyepoch96";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][9] != 6)";
@@ -11138,7 +11138,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11146,7 +11146,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[34] {
-     name="If_ifDataTable1copy_e9Evenmorenames";
+     name="If_ifdatatable1copy_e9Evenmorenames";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"Name\"][9] != \"Even more names\")";
@@ -11275,7 +11275,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11283,7 +11283,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[35] {
-     name="If_ifDataTable1copybatch73";
+     name="If_ifdatatable1copybatch73";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"batch\"][7] != 3)";
@@ -11412,7 +11412,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11420,7 +11420,7 @@ LeabraProject .projects[0] {
      };
     };
     If @[36] {
-     name="If_ifDataTable1copyepoch78";
+     name="If_ifdatatable1copyepoch78";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="if (data_table1_copy[\"epoch\"][7] != 8)";
@@ -11549,7 +11549,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11686,7 +11686,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[2].vars[2]$;
+       result_var=$.programs[2].vars[2]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -11719,7 +11719,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=$.projects[0].programs[2].doc$: };
+    UserData_DocLink @[0] {name="DocLink": doc=$.programs[2].doc$: };
    };
    name="Group";
    short_nm="Group";
@@ -11929,7 +11929,7 @@ LeabraProject .projects[0] {
      name="data_table1";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[3].objs[0]$$;
+     object_val=.programs[3].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -11941,7 +11941,7 @@ LeabraProject .projects[0] {
      name="data_table1_copy";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[3].objs[1]$$;
+     object_val=.programs[3].objs[1]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -11953,7 +11953,7 @@ LeabraProject .projects[0] {
      name="data_table1_dst";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[3].objs[2]$$;
+     object_val=.programs[3].objs[2]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12017,7 +12017,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 0";
-     result_var=.projects[0].programs[3].prog_code[0].local_vars[0]$$;
+     result_var=.programs[3].prog_code[0].local_vars[0]$$;
      expr {
       expr="0";
      };
@@ -12028,7 +12028,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=.projects[0].programs[3].vars[1]$$;
+     obj=.programs[3].vars[1]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -12055,7 +12055,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=.projects[0].programs[3].vars[2]$$;
+     obj=.programs[3].vars[2]$$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -12195,7 +12195,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=.projects[0].programs[3].vars[3]$$;
+       result_var=.programs[3].vars[3]$$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12332,7 +12332,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12469,7 +12469,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12481,8 +12481,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -12628,7 +12628,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12765,7 +12765,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -12902,7 +12902,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13039,7 +13039,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << 0)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << 0)";
        };
@@ -13063,7 +13063,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 1";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="1";
      };
@@ -13074,7 +13074,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -13101,7 +13101,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -13116,8 +13116,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -13268,7 +13268,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13405,7 +13405,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13542,7 +13542,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13679,7 +13679,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13816,7 +13816,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -13846,7 +13846,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 2";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="2";
      };
@@ -13857,7 +13857,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -13884,7 +13884,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -13899,8 +13899,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -14051,7 +14051,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14188,7 +14188,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14325,7 +14325,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14462,7 +14462,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14599,7 +14599,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14635,7 +14635,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 3";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="3";
      };
@@ -14646,7 +14646,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -14673,7 +14673,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -14688,8 +14688,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -14840,7 +14840,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -14977,7 +14977,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15114,7 +15114,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15251,7 +15251,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15388,7 +15388,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15424,7 +15424,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 4";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="4";
      };
@@ -15435,7 +15435,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -15462,7 +15462,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -15477,8 +15477,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -15629,7 +15629,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15766,7 +15766,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -15903,7 +15903,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16040,7 +16040,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16177,7 +16177,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16213,7 +16213,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 5";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="5";
      };
@@ -16224,7 +16224,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -16251,7 +16251,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -16266,8 +16266,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -16418,7 +16418,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16555,7 +16555,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16692,7 +16692,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16829,7 +16829,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -16966,7 +16966,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17002,7 +17002,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 6";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="6";
      };
@@ -17013,7 +17013,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -17040,7 +17040,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -17055,8 +17055,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -17207,7 +17207,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17344,7 +17344,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17481,7 +17481,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17618,7 +17618,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17755,7 +17755,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -17803,7 +17803,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 7";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="7";
      };
@@ -17814,7 +17814,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -17841,7 +17841,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -17856,8 +17856,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -18008,7 +18008,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18145,7 +18145,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18282,7 +18282,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18419,7 +18419,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18556,7 +18556,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18598,7 +18598,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 8";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="8";
      };
@@ -18609,7 +18609,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -18636,7 +18636,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -18651,8 +18651,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -18803,7 +18803,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -18940,7 +18940,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19077,7 +19077,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19214,7 +19214,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19351,7 +19351,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19387,7 +19387,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 9";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="9";
      };
@@ -19398,7 +19398,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -19425,7 +19425,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -19440,8 +19440,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -19592,7 +19592,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19729,7 +19729,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -19866,7 +19866,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20003,7 +20003,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20140,7 +20140,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20176,7 +20176,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 10";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="10";
      };
@@ -20187,7 +20187,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -20214,7 +20214,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -20229,8 +20229,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -20381,7 +20381,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20518,7 +20518,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20655,7 +20655,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20792,7 +20792,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20929,7 +20929,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -20965,7 +20965,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 11";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="11";
      };
@@ -20976,7 +20976,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -21003,7 +21003,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -21018,8 +21018,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -21170,7 +21170,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21307,7 +21307,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21444,7 +21444,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21581,7 +21581,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21718,7 +21718,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -21754,7 +21754,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 12";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="12";
      };
@@ -21765,7 +21765,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -21792,7 +21792,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -21807,8 +21807,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -21959,7 +21959,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22096,7 +22096,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22233,7 +22233,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22370,7 +22370,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22507,7 +22507,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22543,7 +22543,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 13";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="13";
      };
@@ -22554,7 +22554,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -22581,7 +22581,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -22596,8 +22596,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -22748,7 +22748,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -22885,7 +22885,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23022,7 +23022,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23159,7 +23159,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23296,7 +23296,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23332,7 +23332,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 14";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="14";
      };
@@ -23343,7 +23343,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -23370,7 +23370,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -23385,8 +23385,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -23537,7 +23537,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23674,7 +23674,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23811,7 +23811,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -23948,7 +23948,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24085,7 +24085,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24115,7 +24115,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 15";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="15";
      };
@@ -24126,7 +24126,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -24153,7 +24153,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -24168,8 +24168,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -24320,7 +24320,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24457,7 +24457,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24594,7 +24594,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24731,7 +24731,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24868,7 +24868,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -24898,7 +24898,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 16";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="16";
      };
@@ -24909,7 +24909,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -24936,7 +24936,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -24951,8 +24951,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -25103,7 +25103,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25240,7 +25240,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25377,7 +25377,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25514,7 +25514,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25651,7 +25651,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -25681,7 +25681,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 17";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="17";
      };
@@ -25692,7 +25692,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -25719,7 +25719,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -25734,8 +25734,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_dst";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[2]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[2]$;
      group_spec {
       name="group_spec";
       ops {
@@ -25886,7 +25886,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26023,7 +26023,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26160,7 +26160,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26297,7 +26297,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26434,7 +26434,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26458,7 +26458,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="tst_idx = 18";
-     result_var=$.projects[0].programs[3].prog_code[0].local_vars[0]$;
+     result_var=$.programs[3].prog_code[0].local_vars[0]$;
      expr {
       expr="18";
      };
@@ -26469,7 +26469,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_copy->CopyFrom(data_table1)";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[1]$;
+     obj=$.programs[3].vars[1]$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -26496,7 +26496,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="data_table1_dst->Reset()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[2]$;
+     obj=$.programs[3].vars[2]$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -26636,7 +26636,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26648,8 +26648,8 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = data_table1_copy dest table = data_table1_copy";
-     src_data_var=$.projects[0].programs[3].vars[1]$;
-     dest_data_var=$.projects[0].programs[3].vars[1]$;
+     src_data_var=$.programs[3].vars[1]$;
+     dest_data_var=$.programs[3].vars[1]$;
      group_spec {
       name="group_spec";
       ops {
@@ -26800,7 +26800,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -26937,7 +26937,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -27074,7 +27074,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -27211,7 +27211,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="test_failed = test_failed | (1 << tst_idx)";
-       result_var=$.projects[0].programs[3].vars[3]$;
+       result_var=$.programs[3].vars[3]$;
        expr {
 	expr="test_failed | (1 << tst_idx)";
        };
@@ -27269,7 +27269,7 @@ LeabraProject .projects[0] {
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestDataTableProcs\"] - TestDataTableProcs.proj";
@@ -27309,7 +27309,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";

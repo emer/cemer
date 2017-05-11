@@ -173,13 +173,13 @@ Patch .projects[0].patches[0] {
  };
 };
 Patch .projects[0].patches[0] {
- name="LeabraFlex_v804_to_v810";
- tags="Leabra, LeabraFlex, v8.0.4, v8.1.0, ParamSet, ConfigTable, Logging, Tag";
- desc="Updates a LeabraFlex-based project from version 8.0.4 to 8.1.0, transitioning from ConfigTable to ParamSet-based configuration, and adding logging / tag code to Interactive runs";
+ name="LeabraFlex_10389_v804_to_10713_v808";
+ tags=;
+ desc=;
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
  date="2017_05_11_16_24_47";
- from_name="LeabraFlex_10389_v804";
+ from_name="LeabraFlex_10389_v804_updt";
  to_name="LeabraFlex_10713_v808";
  patch_recs {
   name="patch_recs";

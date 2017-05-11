@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 BpProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -1677,7 +1677,7 @@ BpProject .projects[0] {
      cust_label=0;
      desc="[Default: 0.05;0]  error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations";
      cust_desc=0;
-     base=.projects[0].networks[0].specs[0]$$;
+     base=.networks[0].specs[0]$$;
      mbr=BpUnitSpec::err_tol;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -1687,7 +1687,7 @@ BpProject .projects[0] {
      cust_label=0;
      desc=" learning rate";
      cust_desc=0;
-     base=.projects[0].networks[0].specs[1]$$;
+     base=.networks[0].specs[1]$$;
      mbr=BpConSpec::lrate;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="": };
     };
@@ -1697,7 +1697,7 @@ BpProject .projects[0] {
      cust_label=0;
      desc=" momentum factor -- as of 8.0 this is standardized to NOT include an additional learning rate factor (previous AFTER_LRATE option -- momentum is effectively after the learning rate)";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[1]$;
+     base=$.networks[0].specs[1]$;
      mbr=BpConSpec::momentum;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
     };
@@ -1707,7 +1707,7 @@ BpProject .projects[0] {
      cust_label=0;
      desc=" decay rate -- the learning rate is also applied to the decay -- i.e., decay comes before the learning rate factor";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[1]$;
+     base=$.networks[0].specs[1]$;
      mbr=BpConSpec::decay;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
     };
@@ -1723,7 +1723,7 @@ BpProject .projects[0] {
      cust_label=1;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
-     base=.projects[0].programs.gp[0][1]$$;
+     base=.programs.gp[0][1]$$;
      mth=Program::Init;
     };
     ControlPanelMethod @[1] {
@@ -1732,7 +1732,7 @@ BpProject .projects[0] {
      cust_label=1;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
-     base=$.projects[0].programs.gp[0][1]$;
+     base=$.programs.gp[0][1]$;
      mth=Program::Run_Gui;
     };
     ControlPanelMethod @[2] {
@@ -1741,7 +1741,7 @@ BpProject .projects[0] {
      cust_label=1;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
-     base=$.projects[0].programs.gp[0][1]$;
+     base=$.programs.gp[0][1]$;
      mth=Program::Step_Gui;
     };
     ControlPanelMethod @[3] {
@@ -1750,7 +1750,7 @@ BpProject .projects[0] {
      cust_label=1;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
-     base=$.projects[0].programs.gp[0][1]$;
+     base=$.programs.gp[0][1]$;
      mth=Program::Stop;
     };
    };
@@ -2540,7 +2540,7 @@ BpProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="BpStartup";
    short_nm="Startup";
@@ -2575,7 +2575,7 @@ BpProject .projects[0] {
      name="network";
      var_type=T_Object;
      object_type=BpNetwork;
-     object_val=.projects[0].networks[0]$$;
+     object_val=.networks[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -2587,7 +2587,7 @@ BpProject .projects[0] {
      name="input_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$$;
+     object_val=.data.gp[0][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -2604,7 +2604,7 @@ BpProject .projects[0] {
      name="train_prog";
      var_type=T_Object;
      object_type=Program;
-     object_val=$.projects[0].programs.gp[0][1]$;
+     object_val=$.programs.gp[0][1]$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
@@ -2616,7 +2616,7 @@ BpProject .projects[0] {
      name="batch_prog";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs.gp[0][0]$$;
+     object_val=.programs.gp[0][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2688,7 +2688,7 @@ BpProject .projects[0] {
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][1]$$;
+     object_val=.data.gp[1][1]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2700,7 +2700,7 @@ BpProject .projects[0] {
      name="TrialOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][0]$$;
+     object_val=.data.gp[1][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2712,7 +2712,7 @@ BpProject .projects[0] {
      name="MyClusterRun";
      var_type=T_Object;
      object_type=ClusterRun;
-     object_val=.projects[0].ctrl_panels[1]$$;
+     object_val=.ctrl_panels[1]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2724,7 +2724,7 @@ BpProject .projects[0] {
      name="param_sets";
      var_type=T_Object;
      object_type=ParamSet_Group;
-     object_val=.projects[0].active_params$$;
+     object_val=.active_params$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2774,7 +2774,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:tag in Program:BpStartup from Arg:tag";
-     prog=.projects[0].programs[0]$$;
+     prog=.programs[0]$$;
      var_name="tag";
      arg_name="tag";
     };
@@ -2783,7 +2783,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:log_dir in Program:BpStartup from Arg:log_dir";
-     prog=$.projects[0].programs[0]$;
+     prog=$.programs[0]$;
      var_name="log_dir";
      arg_name="log_dir";
     };
@@ -2792,7 +2792,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:param_set in Program:BpStartup from Arg:param_set";
-     prog=$.projects[0].programs[0]$;
+     prog=$.programs[0]$;
      var_name="param_set";
      arg_name="param_set";
     };
@@ -2801,7 +2801,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_epoch in Program:BpTrain from Arg:epochs";
-     prog=$.projects[0].programs.gp[0][1]$;
+     prog=$.programs.gp[0][1]$;
      var_name="max_epoch";
      arg_name="epochs";
     };
@@ -2810,7 +2810,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:rnd_init in Program:BpTrain from Arg:rnd_init";
-     prog=$.projects[0].programs.gp[0][1]$;
+     prog=$.programs.gp[0][1]$;
      var_name="rnd_init";
      arg_name="rnd_init";
     };
@@ -2819,7 +2819,7 @@ BpProject .projects[0] {
      desc="starting batch -- replaces b_start";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:batch_start in Program:BpBatch from Arg:batch_start";
-     prog=$.projects[0].programs.gp[0][0]$;
+     prog=$.programs.gp[0][0]$;
      var_name="batch_start";
      arg_name="batch_start";
     };
@@ -2828,7 +2828,7 @@ BpProject .projects[0] {
      desc="number of batches to run";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="Set Var:n_batches in Program:BpBatch from Arg:n_batches";
-     prog=$.projects[0].programs.gp[0][0]$;
+     prog=$.programs.gp[0][0]$;
      var_name="n_batches";
      arg_name="n_batches";
     };
@@ -2837,7 +2837,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_wts_interval in Program:BpTrain from Arg:save_wts_interval";
-     prog=$.projects[0].programs.gp[0][1]$;
+     prog=$.programs.gp[0][1]$;
      var_name="save_wts_interval";
      arg_name="save_wts_interval";
     };
@@ -2846,7 +2846,7 @@ BpProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_final_wts in Program:BpTrain from Arg:save_final_wts";
-     prog=$.projects[0].programs.gp[0][1]$;
+     prog=$.programs.gp[0][1]$;
      var_name="save_final_wts";
      arg_name="save_final_wts";
     };
@@ -2855,7 +2855,7 @@ BpProject .projects[0] {
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
-     ctrl_panel_var=.projects[0].programs[0].vars[10]$$;
+     ctrl_panel_var=.programs[0].vars[10]$$;
     };
     If @[13] {
      name="If_ifparamsetnonempty";
@@ -2875,7 +2875,7 @@ BpProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="param_sets->LoadParamSet(param_set)";
        result_var=NULL;
-       obj=.projects[0].programs[0].vars[11]$$;
+       obj=.programs[0].vars[11]$$;
        method=ParamSet_Group::ActivateParamSet;
        meth_args {
 	name="meth_args";
@@ -2938,7 +2938,7 @@ BpProject .projects[0] {
        desc="read in the arg to us too, so we can set file names based on it";
        flags=CAN_REVERT_TO_CODE;
        code_string="Set Var:batch_start in Program:BpStartup from Arg:batch_start";
-       prog=$.projects[0].programs[0]$;
+       prog=$.programs[0]$;
        var_name="batch_start";
        arg_name="batch_start";
       };
@@ -2947,7 +2947,7 @@ BpProject .projects[0] {
        desc="string version with leading zeros";
        flags=CAN_REVERT_TO_CODE;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
-       result_var=.projects[0].programs[0].vars[4]$$;
+       result_var=.programs[0].vars[4]$$;
        object_type=taMisc;
        method=taMisc::LeadingZeros;
        meth_args {
@@ -2983,7 +2983,7 @@ BpProject .projects[0] {
        desc="add to tag for setting log file names";
        flags=CAN_REVERT_TO_CODE;
        code_string="tag += \".\" + batch_str";
-       var=.projects[0].programs[0].vars[3]$$;
+       var=.programs[0].vars[3]$$;
        expr {
 	expr="\".\" + batch_str";
        };
@@ -3005,8 +3005,8 @@ BpProject .projects[0] {
 	 desc="save args to file: last arg is to include dmem proc number";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
-	 result_var=.projects[0].programs[0].vars[6]$$;
-	 obj=.projects[0].programs[0].vars[8]$$;
+	 result_var=.programs[0].vars[6]$$;
+	 obj=.programs[0].vars[8]$$;
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  name="meth_args";
@@ -3106,8 +3106,8 @@ BpProject .projects[0] {
        desc="save args to file: last arg is to include dmem proc number";
        flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
-       result_var=$.projects[0].programs[0].vars[6]$;
-       obj=$.projects[0].programs[0].vars[8]$;
+       result_var=$.programs[0].vars[6]$;
+       obj=$.programs[0].vars[8]$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name="meth_args";
@@ -3224,8 +3224,8 @@ BpProject .projects[0] {
      desc="last arg is to include dmem proc number";
      flags=CAN_REVERT_TO_CODE;
      code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
-     result_var=$.projects[0].programs[0].vars[6]$;
-     obj=$.projects[0].programs[0].vars[8]$;
+     result_var=$.programs[0].vars[6]$;
+     obj=$.programs[0].vars[8]$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name="meth_args";
@@ -3285,7 +3285,7 @@ BpProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[8]$;
+     obj=$.programs[0].vars[8]$;
      method=DataTable::SaveDataLog;
      meth_args {
       name="meth_args";
@@ -3334,7 +3334,7 @@ BpProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      message="Saving epoch log data to:";
-     print_var=$.projects[0].programs[0].vars[6]$;
+     print_var=$.programs[0].vars[6]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -3353,8 +3353,8 @@ BpProject .projects[0] {
      desc="last arg is to include dmem proc number";
      flags=OFF|CAN_REVERT_TO_CODE;
      code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
-     result_var=$.projects[0].programs[0].vars[6]$;
-     obj=.projects[0].programs[0].vars[9]$$;
+     result_var=$.programs[0].vars[6]$;
+     obj=.programs[0].vars[9]$$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name="meth_args";
@@ -3414,7 +3414,7 @@ BpProject .projects[0] {
      flags=OFF|CAN_REVERT_TO_CODE;
      code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[9]$;
+     obj=$.programs[0].vars[9]$;
      method=DataTable::SaveDataLog;
      meth_args {
       name="meth_args";
@@ -3463,7 +3463,7 @@ BpProject .projects[0] {
      flags=OFF|CAN_REVERT_TO_CODE;
      code_string="Print  \"Saving trial log data to:\" log_file_nm";
      message="Saving trial log data to:";
-     print_var=$.projects[0].programs[0].vars[6]$;
+     print_var=$.programs[0].vars[6]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -3476,9 +3476,9 @@ BpProject .projects[0] {
      desc="propagate the tag";
      flags=CAN_REVERT_TO_CODE;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-     other_prog=.projects[0].programs.gp[0][7]$$;
+     other_prog=.programs.gp[0][7]$$;
      set_other=1;
-     var_1=$.projects[0].programs[0].vars[3]$;
+     var_1=$.programs[0].vars[3]$;
      var_2=NULL;
      var_3=NULL;
      var_4=NULL;
@@ -3525,7 +3525,7 @@ BpProject .projects[0] {
        };
       };
      };
-     target=$.projects[0].programs.gp[0][0]$;
+     target=$.programs.gp[0][0]$;
      targ_ld_init="*LeabraBatch*";
     };
    };
@@ -3555,7 +3555,7 @@ BpProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][0].doc$$: };
     };
     name="BpBatch";
     short_nm="Batch";
@@ -3590,7 +3590,7 @@ BpProject .projects[0] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -3602,7 +3602,7 @@ BpProject .projects[0] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -3660,8 +3660,8 @@ BpProject .projects[0] {
       desc="initializes local batch counter and batch field on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
-      network_var=.projects[0].programs.gp[0][0].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$$;
+      network_var=.programs.gp[0][0].args[0]$$;
+      local_ctr_var=.programs.gp[0][0].vars[0]$$;
       counter=Network::batch;
       update_after=0;
      };
@@ -3696,7 +3696,7 @@ BpProject .projects[0] {
       desc="start at the start";
       flags=CAN_REVERT_TO_CODE;
       code_string="batch = batch_start";
-      result_var=$.projects[0].programs.gp[0][0].vars[0]$;
+      result_var=$.programs.gp[0][0].vars[0]$;
       expr {
        expr="batch_start";
       };
@@ -3706,7 +3706,7 @@ BpProject .projects[0] {
       desc="update network";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.batch = batch";
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       path="batch";
       expr {
        expr="batch";
@@ -3765,7 +3765,7 @@ BpProject .projects[0] {
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[0][1]$;
+	target=$.programs.gp[0][1]$;
 	targ_ld_init="*BpTrain*";
        };
        NetCounterIncr @[1] {
@@ -3773,8 +3773,8 @@ BpProject .projects[0] {
 	desc="increment the local batch counter and copy to network";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
-	network_var=$.projects[0].programs.gp[0][0].args[0]$;
-	local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
+	network_var=$.programs.gp[0][0].args[0]$;
+	local_ctr_var=$.programs.gp[0][0].vars[0]$;
 	counter=Network::batch;
 	update_after=0;
        };
@@ -3815,7 +3815,7 @@ BpProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][1].doc$$: };
     };
     name="BpTrain";
     short_nm="Train";
@@ -3987,7 +3987,7 @@ BpProject .projects[0] {
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -3999,7 +3999,7 @@ BpProject .projects[0] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -4059,7 +4059,7 @@ BpProject .projects[0] {
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[0][1].types[0]$$;
+       enum_type=.programs.gp[0][1].types[0]$$;
        value=2;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4121,7 +4121,7 @@ BpProject .projects[0] {
       name="rnd_seeds";
       var_type=T_Object;
       object_type=RndSeed_List;
-      object_val=.projects[0].programs.gp[0][1].objs[0]$$;
+      object_val=.programs.gp[0][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4133,7 +4133,7 @@ BpProject .projects[0] {
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].train_time$$;
+      object_val=.networks[0].train_time$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4145,7 +4145,7 @@ BpProject .projects[0] {
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects[0].programs.gp[0][1].objs[1]$$;
+      object_val=.programs.gp[0][1].objs[1]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4190,7 +4190,7 @@ BpProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="switch(rnd_init)";
-	switch_var=.projects[0].programs.gp[0][1].vars[3]$$;
+	switch_var=.programs.gp[0][1].vars[3]$$;
 	cases {
 	 name="cases";
 	 el_typ=CaseBlock;
@@ -4210,7 +4210,7 @@ BpProject .projects[0] {
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seed->OldSeed()";
 	    result_var=NULL;
-	    obj=.projects[0].programs.gp[0][1].vars[11]$$;
+	    obj=.programs.gp[0][1].vars[11]$$;
 	    method=RndSeed::OldSeed;
 	    meth_args {
 	     name="meth_args";
@@ -4241,7 +4241,7 @@ BpProject .projects[0] {
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seed->NewSeed()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[0][1].vars[11]$;
+	    obj=$.programs.gp[0][1].vars[11]$;
 	    method=RndSeed::NewSeed;
 	    meth_args {
 	     name="meth_args";
@@ -4272,7 +4272,7 @@ BpProject .projects[0] {
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	    result_var=NULL;
-	    obj=.projects[0].programs.gp[0][1].vars[9]$$;
+	    obj=.programs.gp[0][1].vars[9]$$;
 	    method=RndSeed_List::UseSeed;
 	    meth_args {
 	     name="meth_args";
@@ -4313,7 +4313,7 @@ BpProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="no_prompts = false";
-      result_var=.projects[0].programs.gp[0][1].args[2]$$;
+      result_var=.programs.gp[0][1].args[2]$$;
       expr {
        expr="false";
       };
@@ -4324,7 +4324,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="network->CheckConfig(false)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][1].args[0]$$;
+      obj=.programs.gp[0][1].args[0]$$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -4350,7 +4350,7 @@ BpProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
-      result_var=.projects[0].programs.gp[0][1].vars[10]$$;
+      result_var=.programs.gp[0][1].vars[10]$$;
       expr {
        expr="network.train_time";
       };
@@ -4360,7 +4360,7 @@ BpProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="n_under_cnt = 0";
-      result_var=.projects[0].programs.gp[0][1].vars[8]$$;
+      result_var=.programs.gp[0][1].vars[8]$$;
       expr {
        expr="0";
       };
@@ -4371,7 +4371,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="GetRandomSeed()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[0][1].functions[0]$$;
+      fun=.programs.gp[0][1].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -4396,7 +4396,7 @@ BpProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[0][1].args[0]$;
+	obj=$.programs.gp[0][1].args[0]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name="meth_args";
@@ -4423,7 +4423,7 @@ BpProject .projects[0] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch = network.epoch";
-      result_var=.projects[0].programs.gp[0][1].vars[1]$$;
+      result_var=.programs.gp[0][1].vars[1]$$;
       expr {
        expr="network.epoch";
       };
@@ -4438,7 +4438,7 @@ BpProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
-      result_var=$.projects[0].programs.gp[0][1].vars[10]$;
+      result_var=$.programs.gp[0][1].vars[10]$;
       expr {
        expr="network.train_time";
       };
@@ -4449,7 +4449,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].vars[10]$;
+      obj=$.programs.gp[0][1].vars[10]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -4475,7 +4475,7 @@ BpProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="n_under_cnt = 0";
-      result_var=$.projects[0].programs.gp[0][1].vars[8]$;
+      result_var=$.programs.gp[0][1].vars[8]$;
       expr {
        expr="0";
       };
@@ -4485,7 +4485,7 @@ BpProject .projects[0] {
       desc="set network's training mode to our local value";
       flags=CAN_REVERT_TO_CODE;
       code_string="network.train_mode = train_mode";
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       path="train_mode";
       expr {
        expr="train_mode";
@@ -4498,7 +4498,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="GetRandomSeed()";
       result_var=NULL;
-      fun=$.projects[0].programs.gp[0][1].functions[0]$;
+      fun=$.programs.gp[0][1].functions[0]$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -4523,7 +4523,7 @@ BpProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[0][1].args[0]$;
+	obj=$.programs.gp[0][1].args[0]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name="meth_args";
@@ -4550,7 +4550,7 @@ BpProject .projects[0] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch = network.epoch";
-      result_var=$.projects[0].programs.gp[0][1].vars[1]$;
+      result_var=$.programs.gp[0][1].vars[1]$;
       expr {
        expr="network.epoch";
       };
@@ -4596,7 +4596,7 @@ BpProject .projects[0] {
 	  };
 	 };
 	};
-	target=.projects[0].programs.gp[0][2]$$;
+	target=.programs.gp[0][2]$$;
 	targ_ld_init="*BpEpoch*";
        };
        NetCounterIncr @[1] {
@@ -4604,8 +4604,8 @@ BpProject .projects[0] {
 	desc="increment the epoch counter";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: epoch";
-	network_var=$.projects[0].programs.gp[0][1].args[0]$;
-	local_ctr_var=$.projects[0].programs.gp[0][1].vars[1]$;
+	network_var=$.programs.gp[0][1].args[0]$;
+	local_ctr_var=$.programs.gp[0][1].vars[1]$;
 	counter=Network::epoch;
 	update_after=0;
        };
@@ -4626,7 +4626,7 @@ BpProject .projects[0] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="n_under_cnt += 1";
-	  var=$.projects[0].programs.gp[0][1].vars[8]$;
+	  var=$.programs.gp[0][1].vars[8]$;
 	  expr {
 	   expr="1";
 	  };
@@ -4659,7 +4659,7 @@ BpProject .projects[0] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="n_under_cnt = 0";
-	  result_var=$.projects[0].programs.gp[0][1].vars[8]$;
+	  result_var=$.programs.gp[0][1].vars[8]$;
 	  expr {
 	   expr="0";
 	  };
@@ -4711,7 +4711,7 @@ BpProject .projects[0] {
 	      };
 	     };
 	    };
-	    target=$.projects[0].programs.gp[0][7]$;
+	    target=$.programs.gp[0][7]$;
 	    targ_ld_init="*SaveWeights*";
 	   };
 	  };
@@ -4756,7 +4756,7 @@ BpProject .projects[0] {
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[0][7]$;
+	target=$.programs.gp[0][7]$;
 	targ_ld_init="*SaveWeights*";
        };
       };
@@ -4767,7 +4767,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].vars[10]$;
+      obj=$.programs.gp[0][1].vars[10]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -4778,7 +4778,7 @@ BpProject .projects[0] {
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=.projects[0].programs.gp[0][3]$$;
+    step_prog=.programs.gp[0][3]$$;
     step_n=1;
     doc {
      name="doc";
@@ -4797,7 +4797,7 @@ BpProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][2].doc$$: };
     };
     name="BpEpoch";
     short_nm="Epoch";
@@ -4832,7 +4832,7 @@ BpProject .projects[0] {
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -4844,7 +4844,7 @@ BpProject .projects[0] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -4883,7 +4883,7 @@ BpProject .projects[0] {
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][0]$;
+      object_val=$.data.gp[1][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4895,7 +4895,7 @@ BpProject .projects[0] {
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].epoch_time$$;
+      object_val=.networks[0].epoch_time$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4928,8 +4928,8 @@ BpProject .projects[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
-      network_var=.projects[0].programs.gp[0][2].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$$;
+      network_var=.programs.gp[0][2].args[0]$$;
+      local_ctr_var=.programs.gp[0][2].vars[1]$$;
       counter=Network::trial;
       update_after=0;
      };
@@ -4938,7 +4938,7 @@ BpProject .projects[0] {
       desc="get pointer to epoch timer object on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=.projects[0].programs.gp[0][2].vars[3]$$;
+      result_var=.programs.gp[0][2].vars[3]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -4953,8 +4953,8 @@ BpProject .projects[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
-      network_var=$.projects[0].programs.gp[0][2].args[0]$;
-      local_ctr_var=$.projects[0].programs.gp[0][2].vars[1]$;
+      network_var=$.programs.gp[0][2].args[0]$;
+      local_ctr_var=$.programs.gp[0][2].vars[1]$;
       counter=Network::trial;
       update_after=0;
      };
@@ -4963,7 +4963,7 @@ BpProject .projects[0] {
       desc="get pointer to epoch timer object on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects[0].programs.gp[0][2].vars[3]$;
+      result_var=$.programs.gp[0][2].vars[3]$;
       expr {
        expr="network.epoch_time";
       };
@@ -4974,7 +4974,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][2].vars[3]$;
+      obj=$.programs.gp[0][2].vars[3]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -5001,7 +5001,7 @@ BpProject .projects[0] {
       flags=NEW_EL|CAN_REVERT_TO_CODE;
       code_string="network->Init_Epoch()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][2].args[0]$;
+      obj=$.programs.gp[0][2].args[0]$;
       method=Network::Init_Epoch;
       meth_args {
        name="meth_args";
@@ -5017,7 +5017,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][2].vars[2]$$;
+      obj=.programs.gp[0][2].vars[2]$$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -5068,13 +5068,13 @@ BpProject .projects[0] {
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[0][3]$;
+	target=$.programs.gp[0][3]$;
 	targ_ld_init="*BpTrial*";
        };
       };
-      data_var=.projects[0].programs.gp[0][2].args[1]$$;
-      index_var=.projects[0].programs.gp[0][2].vars[4]$$;
-      order_var=.projects[0].programs.gp[0][2].vars[0]$$;
+      data_var=.programs.gp[0][2].args[1]$$;
+      index_var=.programs.gp[0][2].vars[4]$$;
+      order_var=.programs.gp[0][2].vars[0]$$;
       order=PERMUTED;
       update_after=0;
       dmem_nprocs=1;
@@ -5104,7 +5104,7 @@ BpProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[0][2].args[0]$;
+	obj=$.programs.gp[0][2].args[0]$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name="meth_args";
@@ -5122,7 +5122,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][2].args[0]$;
+      obj=$.programs.gp[0][2].args[0]$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name="meth_args";
@@ -5138,7 +5138,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][2].vars[3]$;
+      obj=$.programs.gp[0][2].vars[3]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -5169,7 +5169,7 @@ BpProject .projects[0] {
 	};
        };
       };
-      target=.projects[0].programs.gp[0][6]$$;
+      target=.programs.gp[0][6]$$;
       targ_ld_init="*BpEpochMonitor*";
      };
     };
@@ -5192,7 +5192,7 @@ BpProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][3].doc$$: };
     };
     name="BpTrial";
     short_nm="Trial";
@@ -5227,7 +5227,7 @@ BpProject .projects[0] {
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5239,7 +5239,7 @@ BpProject .projects[0] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5305,7 +5305,7 @@ BpProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[0][3].args[0]$$;
+	obj=.programs.gp[0][3].args[0]$$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name="meth_args";
@@ -5323,7 +5323,7 @@ BpProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].args[0]$;
+      obj=$.programs.gp[0][3].args[0]$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -5366,7 +5366,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects[0].programs.gp[0][4]$$;
+      target=.programs.gp[0][4]$$;
       targ_ld_init="*ApplyInputs*";
      };
      MethodCall @[3] {
@@ -5375,7 +5375,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Run()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].args[0]$;
+      obj=$.programs.gp[0][3].args[0]$;
       method=BpNetwork::Trial_Run;
       meth_args {
        name="meth_args";
@@ -5391,7 +5391,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_TrialStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].args[0]$;
+      obj=$.programs.gp[0][3].args[0]$;
       method=LeabraNetwork::Compute_TrialStats;
       meth_args {
        name="meth_args";
@@ -5422,7 +5422,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects[0].programs.gp[0][5]$$;
+      target=.programs.gp[0][5]$$;
       targ_ld_init="*BpTrialMonitor*";
      };
      NetUpdateView @[6] {
@@ -5430,8 +5430,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[0][3].args[0]$;
-      update_var=.projects[0].programs.gp[0][3].vars[0]$$;
+      network_var=$.programs.gp[0][3].args[0]$;
+      update_var=.programs.gp[0][3].vars[0]$$;
      };
     };
     step_prog=NULL;
@@ -5453,7 +5453,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][4].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][4].doc$$: };
     };
     name="ApplyInputs";
     short_nm="Inputs";
@@ -5476,8 +5476,8 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$.projects[0].data.gp[0][0]$;
-      network=$.projects[0].networks[0]$;
+      data=$.data.gp[0][0]$;
+      network=$.networks[0]$;
       layer_data {
        name="layer_data";
        el_typ=LayerWriterEl;
@@ -5531,7 +5531,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5543,7 +5543,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5560,7 +5560,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="layer_writer_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[0][4].objs[0]$$;
+      object_val=.programs.gp[0][4].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5584,7 +5584,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][4].vars[0]$$;
+      obj=.programs.gp[0][4].vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -5622,7 +5622,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->AutoConfig()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][4].vars[0]$;
+      obj=$.programs.gp[0][4].vars[0]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        name="meth_args";
@@ -5649,7 +5649,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][4].vars[0]$;
+      obj=$.programs.gp[0][4].vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name="meth_args";
@@ -5681,7 +5681,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][4].vars[0]$;
+      obj=$.programs.gp[0][4].vars[0]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -5719,7 +5719,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="layer_writer_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][4].vars[0]$;
+      obj=$.programs.gp[0][4].vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name="meth_args";
@@ -5749,7 +5749,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][5].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][5].doc$$: };
     };
     name="BpTrialMonitor";
     short_nm="TrlMon";
@@ -5780,7 +5780,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5814,7 +5814,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5848,7 +5848,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5882,7 +5882,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5916,7 +5916,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5950,7 +5950,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5981,8 +5981,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=$.projects[0].data.gp[1][0]$;
+      network=$.networks[0]$;
+      data=$.data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
     };
@@ -5999,7 +5999,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -6016,7 +6016,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][0]$;
+      object_val=$.data.gp[1][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6028,7 +6028,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][5].objs[0]$$;
+      object_val=.programs.gp[0][5].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6052,7 +6052,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].vars[1]$$;
+      obj=.programs.gp[0][5].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -6090,7 +6090,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][5].vars[1]$;
+      obj=$.programs.gp[0][5].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -6117,7 +6117,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][5].vars[1]$;
+      obj=$.programs.gp[0][5].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -6149,7 +6149,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].vars[0]$$;
+      obj=.programs.gp[0][5].vars[0]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name="meth_args";
@@ -6165,7 +6165,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][5].vars[1]$;
+      obj=$.programs.gp[0][5].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -6181,7 +6181,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][5].vars[0]$;
+      obj=$.programs.gp[0][5].vars[0]$;
       method=DataTable::WriteClose;
       meth_args {
        name="meth_args";
@@ -6197,7 +6197,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].args[0]$$;
+      obj=.programs.gp[0][5].args[0]$$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name="meth_args";
@@ -6249,7 +6249,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][6].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][6].doc$$: };
     };
     name="BpEpochMonitor";
     short_nm="EpcMon";
@@ -6280,7 +6280,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6314,7 +6314,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6348,7 +6348,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6382,7 +6382,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6481,8 +6481,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=$.projects[0].data.gp[1][1]$;
+      network=$.networks[0]$;
+      data=$.data.gp[1][1]$;
       rmv_orphan_cols=1;
      };
     };
@@ -6499,7 +6499,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -6516,7 +6516,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][1]$;
+      object_val=$.data.gp[1][1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6528,7 +6528,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][6].objs[0]$$;
+      object_val=.programs.gp[0][6].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6540,7 +6540,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects[0].networks[0].epoch_time$;
+      object_val=$.networks[0].epoch_time$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6563,7 +6563,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the epoch timer from current network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=.projects[0].programs.gp[0][6].vars[2]$$;
+      result_var=.programs.gp[0][6].vars[2]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -6574,7 +6574,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][6].vars[1]$$;
+      obj=.programs.gp[0][6].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -6612,7 +6612,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][6].vars[1]$;
+      obj=$.programs.gp[0][6].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -6639,7 +6639,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][6].vars[1]$;
+      obj=$.programs.gp[0][6].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -6671,7 +6671,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][6].vars[0]$$;
+      obj=.programs.gp[0][6].vars[0]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name="meth_args";
@@ -6687,7 +6687,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][6].vars[1]$;
+      obj=$.programs.gp[0][6].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -6702,7 +6702,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the epoch timer from current network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects[0].programs.gp[0][6].vars[2]$;
+      result_var=$.programs.gp[0][6].vars[2]$;
       expr {
        expr="network.epoch_time";
       };
@@ -6713,7 +6713,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].vars[0]$;
       method=DataTable::SetValColName;
       meth_args {
        name="meth_args";
@@ -6773,7 +6773,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].vars[0]$;
       method=DataTable::SetValColName;
       meth_args {
        name="meth_args";
@@ -6833,7 +6833,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][6].vars[0]$;
+      obj=$.programs.gp[0][6].vars[0]$;
       method=DataTable::WriteClose;
       meth_args {
        name="meth_args";
@@ -6863,7 +6863,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][7].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][7].doc$$: };
     };
     name="SaveWeights";
     short_nm="SavWts";
@@ -6898,7 +6898,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7014,7 +7014,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get current batch counter for file name, with leading zeros to length 3";
       flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
-      result_var=.projects[0].programs.gp[0][7].vars[4]$$;
+      result_var=.programs.gp[0][7].vars[4]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -7050,7 +7050,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get current epoch counter with leading zeros to length 4";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
-      result_var=.projects[0].programs.gp[0][7].vars[3]$$;
+      result_var=.programs.gp[0][7].vars[3]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -7086,7 +7086,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
       flags=CAN_REVERT_TO_CODE;
       code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
-      result_var=.projects[0].programs.gp[0][7].vars[5]$$;
+      result_var=.programs.gp[0][7].vars[5]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
       };
@@ -7096,8 +7096,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get a file name based on the project's current file name, for saving the weights";
       flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
-      result_var=.projects[0].programs.gp[0][7].vars[2]$$;
-      obj=.projects[0].programs.gp[0][7].args[0]$$;
+      result_var=.programs.gp[0][7].vars[2]$$;
+      obj=.programs.gp[0][7].args[0]$$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name="meth_args";
@@ -7157,7 +7157,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][7].args[0]$;
+      obj=$.programs.gp[0][7].args[0]$;
       method=Network::SaveWeights;
       meth_args {
        name="meth_args";
@@ -7217,7 +7217,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][0].doc$$: };
     };
     name="BpEpochTest";
     short_nm="EpcTest";
@@ -7252,7 +7252,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7269,7 +7269,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7303,7 +7303,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data.gp[1][2]$$;
+      object_val=.data.gp[1][2]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7315,7 +7315,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects[0].networks[0].epoch_time$;
+      object_val=$.networks[0].epoch_time$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7348,8 +7348,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="initialize trial counter (local variable and in the network)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
-      network_var=.projects[0].programs.gp[1][0].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[1][0].vars[2]$$;
+      network_var=.programs.gp[1][0].args[0]$$;
+      local_ctr_var=.programs.gp[1][0].vars[2]$$;
       counter=Network::trial;
       update_after=0;
      };
@@ -7358,7 +7358,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get pointer to epoch timer object on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=.projects[0].programs.gp[1][0].vars[4]$$;
+      result_var=.programs.gp[1][0].vars[4]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -7373,8 +7373,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="initialize trial counter (local variable and in the network)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
-      network_var=$.projects[0].programs.gp[1][0].args[0]$;
-      local_ctr_var=$.projects[0].programs.gp[1][0].vars[2]$;
+      network_var=$.programs.gp[1][0].args[0]$;
+      local_ctr_var=$.programs.gp[1][0].vars[2]$;
       counter=Network::trial;
       update_after=0;
      };
@@ -7383,7 +7383,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="set to testing mode";
       flags=NEW_EL|CAN_REVERT_TO_CODE;
       code_string="network.train_mode = Network::TEST";
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       path="train_mode";
       expr {
        expr="Network::TEST";
@@ -7395,7 +7395,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get pointer to epoch timer object on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects[0].programs.gp[1][0].vars[4]$;
+      result_var=$.programs.gp[1][0].vars[4]$;
       expr {
        expr="network.epoch_time";
       };
@@ -7406,7 +7406,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].vars[4]$;
+      obj=$.programs.gp[1][0].vars[4]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name="meth_args";
@@ -7433,7 +7433,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][0].vars[3]$$;
+      obj=.programs.gp[1][0].vars[3]$$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -7484,7 +7484,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=.projects[0].programs.gp[1][1]$$;
+	target=.programs.gp[1][1]$$;
 	targ_ld_init="*BpTrial*";
        };
        If @[1] {
@@ -7505,7 +7505,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="network->Compute_Weights()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[1][0].args[0]$;
+	  obj=$.programs.gp[1][0].args[0]$;
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   name="meth_args";
@@ -7518,9 +7518,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      data_var=.projects[0].programs.gp[1][0].vars[0]$$;
-      index_var=.projects[0].programs.gp[1][0].vars[5]$$;
-      order_var=.projects[0].programs.gp[1][0].vars[1]$$;
+      data_var=.programs.gp[1][0].vars[0]$$;
+      index_var=.programs.gp[1][0].vars[5]$$;
+      order_var=.programs.gp[1][0].vars[1]$$;
       order=SEQUENTIAL;
       update_after=0;
       dmem_nprocs=1;
@@ -7550,7 +7550,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[1][0].args[0]$;
+	obj=$.programs.gp[1][0].args[0]$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name="meth_args";
@@ -7568,7 +7568,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name="meth_args";
@@ -7599,7 +7599,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects[0].programs.gp[1][4]$$;
+      target=.programs.gp[1][4]$$;
       targ_ld_init="*BpEpochMonitor*";
      };
      MemberAssign @[9] {
@@ -7607,7 +7607,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="set back to training mode";
       flags=NEW_EL|CAN_REVERT_TO_CODE;
       code_string="network.train_mode = Network::TRAIN";
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       path="train_mode";
       expr {
        expr="Network::TRAIN";
@@ -7620,7 +7620,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].vars[4]$;
+      obj=$.programs.gp[1][0].vars[4]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name="meth_args";
@@ -7650,7 +7650,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][1].doc$$: };
     };
     name="BpTrialTest";
     short_nm="TrlTest";
@@ -7685,7 +7685,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7697,7 +7697,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7741,7 +7741,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][1].args[0]$$;
+      obj=.programs.gp[1][1].args[0]$$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -7784,7 +7784,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects[0].programs.gp[1][2]$$;
+      target=.programs.gp[1][2]$$;
       targ_ld_init="*ApplyInputs*";
      };
      MethodCall @[2] {
@@ -7793,7 +7793,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Run()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][1].args[0]$;
+      obj=$.programs.gp[1][1].args[0]$;
       method=BpNetwork::Trial_Run;
       meth_args {
        name="meth_args";
@@ -7809,7 +7809,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_TrialStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][1].args[0]$;
+      obj=$.programs.gp[1][1].args[0]$;
       method=LeabraNetwork::Compute_TrialStats;
       meth_args {
        name="meth_args";
@@ -7840,7 +7840,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects[0].programs.gp[1][3]$$;
+      target=.programs.gp[1][3]$$;
       targ_ld_init="*BpTrialMonitor*";
      };
      NetUpdateView @[5] {
@@ -7848,8 +7848,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[1][1].args[0]$;
-      update_var=.projects[0].programs.gp[1][1].vars[0]$$;
+      network_var=$.programs.gp[1][1].args[0]$;
+      update_var=.programs.gp[1][1].vars[0]$$;
      };
     };
     step_prog=NULL;
@@ -7871,7 +7871,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][2].doc$$: };
     };
     name="ApplyInputsTest";
     short_nm="InTest";
@@ -7894,8 +7894,8 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$.projects[0].data.gp[0][0]$;
-      network=$.projects[0].networks[0]$;
+      data=$.data.gp[0][0]$;
+      network=$.networks[0]$;
       layer_data {
        name="layer_data";
        el_typ=LayerWriterEl;
@@ -7949,7 +7949,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7961,7 +7961,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[0][0]$;
+      object_val=$.data.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7978,7 +7978,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[1][2].objs[0]$$;
+      object_val=.programs.gp[1][2].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8002,7 +8002,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][2].vars[0]$$;
+      obj=.programs.gp[1][2].vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -8040,7 +8040,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->AutoConfig()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][2].vars[0]$;
+      obj=$.programs.gp[1][2].vars[0]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        name="meth_args";
@@ -8067,7 +8067,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][2].vars[0]$;
+      obj=$.programs.gp[1][2].vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name="meth_args";
@@ -8099,7 +8099,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][2].vars[0]$;
+      obj=$.programs.gp[1][2].vars[0]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -8137,7 +8137,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][2].vars[0]$;
+      obj=$.programs.gp[1][2].vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name="meth_args";
@@ -8167,7 +8167,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][3].doc$$: };
     };
     name="BpTrialMonitorTest";
     short_nm="TrlMonTest";
@@ -8198,7 +8198,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8232,7 +8232,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8266,7 +8266,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8300,7 +8300,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8334,7 +8334,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8368,7 +8368,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8399,8 +8399,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=$.projects[0].data.gp[1][2]$;
+      network=$.networks[0]$;
+      data=$.data.gp[1][2]$;
       rmv_orphan_cols=1;
      };
     };
@@ -8417,7 +8417,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -8434,7 +8434,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][2]$;
+      object_val=$.data.gp[1][2]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8446,7 +8446,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[1][3].objs[0]$$;
+      object_val=.programs.gp[1][3].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8470,7 +8470,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][3].vars[1]$$;
+      obj=.programs.gp[1][3].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -8508,7 +8508,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][3].vars[1]$;
+      obj=$.programs.gp[1][3].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -8535,7 +8535,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][3].vars[1]$;
+      obj=$.programs.gp[1][3].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -8567,7 +8567,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][3].vars[0]$$;
+      obj=.programs.gp[1][3].vars[0]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name="meth_args";
@@ -8583,7 +8583,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][3].vars[1]$;
+      obj=$.programs.gp[1][3].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -8599,7 +8599,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][3].vars[0]$;
+      obj=$.programs.gp[1][3].vars[0]$;
       method=DataTable::WriteClose;
       meth_args {
        name="meth_args";
@@ -8615,7 +8615,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][3].args[0]$$;
+      obj=.programs.gp[1][3].args[0]$$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name="meth_args";
@@ -8667,7 +8667,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][4].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][4].doc$$: };
     };
     name="BpEpochMonitorTest";
     short_nm="EpcMonTest";
@@ -8698,7 +8698,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8732,7 +8732,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8766,7 +8766,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8800,7 +8800,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8899,8 +8899,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=.projects[0].data.gp[1][3]$$;
+      network=$.networks[0]$;
+      data=.data.gp[1][3]$$;
       rmv_orphan_cols=1;
      };
     };
@@ -8917,7 +8917,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -8934,7 +8934,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][3]$;
+      object_val=$.data.gp[1][3]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8946,7 +8946,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[1][4].objs[0]$$;
+      object_val=.programs.gp[1][4].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8958,7 +8958,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects[0].networks[0].epoch_time$;
+      object_val=$.networks[0].epoch_time$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8981,7 +8981,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the epoch timer from current network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=.projects[0].programs.gp[1][4].vars[2]$$;
+      result_var=.programs.gp[1][4].vars[2]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -8992,7 +8992,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][4].vars[1]$$;
+      obj=.programs.gp[1][4].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -9030,7 +9030,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][4].vars[1]$;
+      obj=$.programs.gp[1][4].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -9057,7 +9057,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][4].vars[1]$;
+      obj=$.programs.gp[1][4].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -9089,7 +9089,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[1][4].vars[0]$$;
+      obj=.programs.gp[1][4].vars[0]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name="meth_args";
@@ -9105,7 +9105,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][4].vars[1]$;
+      obj=$.programs.gp[1][4].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -9120,7 +9120,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the epoch timer from current network";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects[0].programs.gp[1][4].vars[2]$;
+      result_var=$.programs.gp[1][4].vars[2]$;
       expr {
        expr="network.epoch_time";
       };
@@ -9131,7 +9131,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][4].vars[0]$;
+      obj=$.programs.gp[1][4].vars[0]$;
       method=DataTable::SetValColName;
       meth_args {
        name="meth_args";
@@ -9191,7 +9191,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][4].vars[0]$;
+      obj=$.programs.gp[1][4].vars[0]$;
       method=DataTable::SetValColName;
       meth_args {
        name="meth_args";
@@ -9251,7 +9251,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][4].vars[0]$;
+      obj=$.programs.gp[1][4].vars[0]$;
       method=DataTable::WriteClose;
       meth_args {
        name="meth_args";
@@ -9288,14 +9288,14 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.04672897: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04587935: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestBP\"] - TestBP.proj";
@@ -9335,7 +9335,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      visible=1;
      root_typ=BpProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";
@@ -9374,7 +9374,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 el_def=0;
 	 NetView @[0] {
 	  name="Network_0_View";
-	  m_data=$.projects[0].networks[0]$;
+	  m_data=$.networks[0]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -9428,7 +9428,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   last_max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -9599,7 +9599,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 GraphTableView @[0] {
 	  name="EpochOutputData_Graph";
-	  m_data=$.projects[0].data.gp[1][1]$;
+	  m_data=$.data.gp[1][1]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -9608,7 +9608,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="batch";
-	    m_data=.projects[0].data.gp[1][1].data[0]$$;
+	    m_data=.data.gp[1][1].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9617,7 +9617,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="epoch";
-	    m_data=.projects[0].data.gp[1][1].data[1]$$;
+	    m_data=.data.gp[1][1].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9626,7 +9626,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="avg_sse";
-	    m_data=.projects[0].data.gp[1][1].data[2]$$;
+	    m_data=.data.gp[1][1].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9635,7 +9635,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[3] {
 	    name="cnt_err";
-	    m_data=.projects[0].data.gp[1][1].data[3]$$;
+	    m_data=.data.gp[1][1].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9644,7 +9644,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[4] {
 	    name="epoch_time_tot";
-	    m_data=.projects[0].data.gp[1][1].data[4]$$;
+	    m_data=.data.gp[1][1].data[4]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9653,7 +9653,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[5] {
 	    name="epoch_time_usr";
-	    m_data=.projects[0].data.gp[1][1].data[5]$$;
+	    m_data=.data.gp[1][1].data[5]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10556,7 +10556,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -10751,7 +10751,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[0]$$: };
+     bias_spec {type=BpConSpec: spec=.networks[0].specs[1].children[0]$$: };
      sse_tol=0.5;
      act_fun=SIGMOID;
      error_fun=CROSS_ENTROPY;
@@ -10877,7 +10877,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
+      Projection_Group @. = [0] = Projection .networks[0].layers[1].projections[0];
      };
      units {
       name="units";
@@ -10886,7 +10886,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
+     unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=0: fm_output=2: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -10922,10 +10922,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$$: };
+       from=.networks[0].layers[0]$$;
+       spec {type=FullPrjnSpec: spec=.networks[0].specs[2]$$: };
        con_type=BpCon;
-       con_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
+       con_spec {type=BpConSpec: spec=$.networks[0].specs[1]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -10940,7 +10940,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
+      Projection_Group @. = [0] = Projection .networks[0].layers[2].projections[0];
      };
      units {
       name="units";
@@ -10949,7 +10949,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
+     unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=1: fm_output=1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -10985,10 +10985,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$$;
-       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[2]$: };
+       from=.networks[0].layers[1]$$;
+       spec {type=FullPrjnSpec: spec=$.networks[0].specs[2]$: };
        con_type=BpCon;
-       con_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
+       con_spec {type=BpConSpec: spec=$.networks[0].specs[1]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -11011,7 +11011,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
+     unit_spec {type=BpUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=2: fm_output=0: };
      units_lesioned=0;
      gp_unit_names_4d=0;

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -377,7 +377,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="createLeabraFlexProject";
    short_nm="crLbFl";
@@ -466,7 +466,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="project_group = .projects";
-     result_var=.projects[0].programs[0].vars[0]$$;
+     result_var=.programs[0].vars[0]$$;
      expr {
       expr=".projects";
      };
@@ -477,7 +477,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="project_group->NewFromTemplateByName(\"LeabraFlex\")";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[0]$;
+     obj=$.programs[0].vars[0]$;
      method=Project_Group::NewFromTemplateByName;
      meth_args {
       name="meth_args";
@@ -503,7 +503,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="new_project = .projects[1]";
-     result_var=.projects[0].programs[0].vars[1]$$;
+     result_var=.programs[0].vars[1]$$;
      expr {
       expr=".projects[1]";
      };
@@ -514,7 +514,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="Print  new_project";
      message=;
-     print_var=$.projects[0].programs[0].vars[1]$;
+     print_var=$.programs[0].vars[1]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -554,7 +554,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[1].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[1].doc$$: };
    };
    name="saveProject";
    short_nm="sPrjct";
@@ -632,7 +632,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="new_project = .projects[1]";
-     result_var=.projects[0].programs[1].vars[0]$$;
+     result_var=.programs[1].vars[0]$$;
      expr {
       expr=".projects[1]";
      };
@@ -643,7 +643,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="new_project->SaveAs(\"TestSavedProjectTmp.proj\")";
      result_var=NULL;
-     obj=$.projects[0].programs[1].vars[0]$;
+     obj=$.programs[1].vars[0]$;
      method=taProject::SaveAs;
      meth_args {
       name="meth_args";
@@ -702,14 +702,14 @@ LeabraProject .projects[0] {
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.0008496176: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestProjectOperations\"] - TestProjectOperations.proj";
@@ -749,7 +749,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";

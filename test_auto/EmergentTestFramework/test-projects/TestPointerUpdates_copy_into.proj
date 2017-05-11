@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -1590,7 +1590,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][0].doc$$: };
     };
     name="HasDataTable";
     short_nm="HDTbl";
@@ -1674,7 +1674,7 @@ LeabraProject .projects[0] {
       name="a_data_table";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[0][0].objs[0]$$;
+      object_val=.programs.gp[0][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -1719,11 +1719,11 @@ LeabraProject .projects[0] {
       };
      };
      MatrixAssign @[1] {
-      name="MatrixAssign_aDataTablecolone0SetValue";
+      name="MatrixAssign_adatatablecolone0SetValue";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="a_data_table[\"col_one\"][0] = SetValue";
-      variable=.projects[0].programs.gp[0][0].vars[0]$$;
+      variable=.programs.gp[0][0].vars[0]$$;
       data_table=1;
       col {
        expr="\"col_one\"";
@@ -1770,7 +1770,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][1].doc$$: };
     };
     name="Callee";
     short_nm="Callee";
@@ -1862,7 +1862,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_name = this.prog_gp.GetPathNames()";
-	result_var=.projects[0].programs.gp[0][1].vars[0]$$;
+	result_var=.programs.gp[0][1].vars[0]$$;
 	expr {
 	 expr="this.prog_gp.GetPathNames()";
 	};
@@ -1896,7 +1896,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="Function_2()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[0][1].functions[0]$$;
+      fun=.programs.gp[0][1].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -1923,7 +1923,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][2].doc$$: };
     };
     name="Caller";
     short_nm="Caller";
@@ -1999,7 +1999,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="group_name = \"\"";
-      result_var=.projects[0].programs.gp[0][2].vars[0]$$;
+      result_var=.programs.gp[0][2].vars[0]$$;
       expr {
        expr="\"\"";
       };
@@ -2014,7 +2014,7 @@ LeabraProject .projects[0] {
        el_typ=ProgArg;
        el_def=0;
       };
-      target=.projects[0].programs.gp[0][1]$$;
+      target=.programs.gp[0][1]$$;
       targ_ld_init="*Callee*";
      };
      OtherProgramVar @[3] {
@@ -2022,9 +2022,9 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Vars Fm:  program=Callee set=from  var_1=group_name  var_2=?  var_3=?  var_4=? ";
-      other_prog=$.projects[0].programs.gp[0][1]$;
+      other_prog=$.programs.gp[0][1]$;
       set_other=0;
-      var_1=$.projects[0].programs.gp[0][2].vars[0]$;
+      var_1=$.programs.gp[0][2].vars[0]$;
       var_2=NULL;
       var_3=NULL;
       var_4=NULL;
@@ -2049,7 +2049,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][3].doc$$: };
     };
     name="LoopCodeFunction";
     short_nm="LCFnct";
@@ -2131,7 +2131,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="j = j + 1";
-	result_var=.projects[0].programs.gp[0][3].vars[0]$$;
+	result_var=.programs.gp[0][3].vars[0]$$;
 	expr {
 	 expr="j + 1";
 	};
@@ -2174,7 +2174,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="j = 0";
-      result_var=$.projects[0].programs.gp[0][3].vars[0]$;
+      result_var=$.programs.gp[0][3].vars[0]$;
       expr {
        expr="0";
       };
@@ -2185,7 +2185,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="addOne()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[0][3].functions[0]$$;
+      fun=.programs.gp[0][3].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -2218,7 +2218,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  j";
       message=;
-      print_var=$.projects[0].programs.gp[0][3].vars[0]$;
+      print_var=$.programs.gp[0][3].vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -2246,7 +2246,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][4].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][4].doc$$: };
     };
     name="LoopCodeProgram";
     short_nm="LCPrgr";
@@ -2337,7 +2337,7 @@ LeabraProject .projects[0] {
        el_typ=ProgArg;
        el_def=0;
       };
-      target=$.projects[0].programs.gp[0][1]$;
+      target=$.programs.gp[0][1]$;
       targ_ld_init="*Callee*";
      };
      ForLoop @[2] {
@@ -2366,7 +2366,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  j";
       message=;
-      print_var=.projects[0].programs.gp[0][4].vars[0]$$;
+      print_var=.programs.gp[0][4].vars[0]$$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -2410,7 +2410,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2][0].doc$$: };
     };
     name="TestGroup";
     short_nm="TstGrp";
@@ -2450,7 +2450,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=.projects[0].programs.gp[1]$$;
+      object_val=.programs.gp[1]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2462,7 +2462,7 @@ LeabraProject .projects[0] {
       name="group_one";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=.projects[0].programs.gp[0]$$;
+      object_val=.programs.gp[0]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2492,7 +2492,7 @@ LeabraProject .projects[0] {
       name="group_three";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=.projects[0].programs.gp[4]$$;
+      object_val=.programs.gp[4]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2504,7 +2504,7 @@ LeabraProject .projects[0] {
       name="sub_group_three";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=.projects[0].programs.gp[4].gp[0]$$;
+      object_val=.programs.gp[4].gp[0]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2567,8 +2567,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_one->FindName(\"Caller\")";
-	result_var=.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$$;
-	obj=.projects[0].programs.gp[2][0].vars[1]$$;
+	result_var=.programs.gp[2][0].prog_code[0].local_vars[0]$$;
+	obj=.programs.gp[2][0].vars[1]$$;
 	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
@@ -2608,8 +2608,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_two->FindName(\"Caller\")";
-	result_var=$.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$;
-	obj=.projects[0].programs.gp[2][0].vars[0]$$;
+	result_var=$.programs.gp[2][0].prog_code[0].local_vars[0]$;
+	obj=.programs.gp[2][0].vars[0]$$;
 	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
@@ -2649,8 +2649,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_three->FindName(\"Caller\")";
-	result_var=$.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$;
-	obj=.projects[0].programs.gp[2][0].vars[4]$$;
+	result_var=$.programs.gp[2][0].prog_code[0].local_vars[0]$;
+	obj=.programs.gp[2][0].vars[4]$$;
 	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
@@ -2690,8 +2690,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = sub_group_three->FindName(\"Caller\")";
-	result_var=$.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$;
-	obj=.projects[0].programs.gp[2][0].vars[5]$$;
+	result_var=$.programs.gp[2][0].prog_code[0].local_vars[0]$;
+	obj=.programs.gp[2][0].vars[5]$$;
 	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
@@ -2731,7 +2731,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_name = \"NONE\"";
-	result_var=.projects[0].programs.gp[2][0].vars[3]$$;
+	result_var=.programs.gp[2][0].vars[3]$$;
 	expr {
 	 expr="\"NONE\"";
 	};
@@ -2756,7 +2756,7 @@ LeabraProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram->CallInit(this)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$;
+	obj=$.programs.gp[2][0].prog_code[0].local_vars[0]$;
 	method=Program::CallInit;
 	meth_args {
 	 name="meth_args";
@@ -2783,7 +2783,7 @@ LeabraProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram->Call(this)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$;
+	obj=$.programs.gp[2][0].prog_code[0].local_vars[0]$;
 	method=Program::Call;
 	meth_args {
 	 name="meth_args";
@@ -2809,8 +2809,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_name = myProgram->GetVar(\"group_name\")";
-	result_var=$.projects[0].programs.gp[2][0].vars[3]$;
-	obj=$.projects[0].programs.gp[2][0].prog_code[0].local_vars[0]$;
+	result_var=$.programs.gp[2][0].vars[3]$;
+	obj=$.programs.gp[2][0].prog_code[0].local_vars[0]$;
 	method=Program::GetVar;
 	meth_args {
 	 name="meth_args";
@@ -2839,7 +2839,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  group_name";
       message=;
-      print_var=$.projects[0].programs.gp[2][0].vars[3]$;
+      print_var=$.programs.gp[2][0].vars[3]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -2867,7 +2867,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2][1].doc$$: };
     };
     name="TestDataTableValue";
     short_nm="TsDTbl";
@@ -2907,7 +2907,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -2919,7 +2919,7 @@ LeabraProject .projects[0] {
       name="group_one";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[0]$;
+      object_val=$.programs.gp[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3011,8 +3011,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_one->FindLeafName(\"HasDataTable\")";
-	result_var=.projects[0].programs.gp[2][1].prog_code[0].local_vars[0]$$;
-	obj=.projects[0].programs.gp[2][1].vars[1]$$;
+	result_var=.programs.gp[2][1].prog_code[0].local_vars[0]$$;
+	obj=.programs.gp[2][1].vars[1]$$;
 	method=taGroup_Program_::FindLeafName;
 	meth_args {
 	 name="meth_args";
@@ -3052,8 +3052,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_two->FindLeafName(\"HasDataTable\")";
-	result_var=$.projects[0].programs.gp[2][1].prog_code[0].local_vars[0]$;
-	obj=.projects[0].programs.gp[2][1].vars[0]$$;
+	result_var=$.programs.gp[2][1].prog_code[0].local_vars[0]$;
+	obj=.programs.gp[2][1].vars[0]$$;
 	method=taGroup_Program_::FindLeafName;
 	meth_args {
 	 name="meth_args";
@@ -3093,7 +3093,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="data_table_value = -1";
-	result_var=.projects[0].programs.gp[2][1].vars[3]$$;
+	result_var=.programs.gp[2][1].vars[3]$$;
 	expr {
 	 expr="-1";
 	};
@@ -3117,8 +3117,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="data_table = myProgram->GetVar(\"aDataTable\")";
-	result_var=.projects[0].programs.gp[2][1].vars[4]$$;
-	obj=$.projects[0].programs.gp[2][1].prog_code[0].local_vars[0]$;
+	result_var=.programs.gp[2][1].vars[4]$$;
+	obj=$.programs.gp[2][1].prog_code[0].local_vars[0]$;
 	method=Program::GetVar;
 	meth_args {
 	 name="meth_args";
@@ -3144,7 +3144,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="data_table_value = data_table[\"col_one\"][0]";
-	result_var=$.projects[0].programs.gp[2][1].vars[3]$;
+	result_var=$.programs.gp[2][1].vars[3]$;
 	expr {
 	 expr="data_table[\"col_one\"][0]";
 	};
@@ -3155,7 +3155,7 @@ LeabraProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  data_table_value";
 	message=;
-	print_var=$.projects[0].programs.gp[2][1].vars[3]$;
+	print_var=$.programs.gp[2][1].vars[3]$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -3185,7 +3185,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2][2].doc$$: };
     };
     name="edit_datatable";
     short_nm="dtdttb";
@@ -3225,7 +3225,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3237,7 +3237,7 @@ LeabraProject .projects[0] {
       name="group_one";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[0]$;
+      object_val=$.programs.gp[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3318,8 +3318,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_one->FindLeafName(\"HasDataTable\")";
-	result_var=.projects[0].programs.gp[2][2].prog_code[0].local_vars[0]$$;
-	obj=.projects[0].programs.gp[2][2].vars[1]$$;
+	result_var=.programs.gp[2][2].prog_code[0].local_vars[0]$$;
+	obj=.programs.gp[2][2].vars[1]$$;
 	method=taGroup_Program_::FindLeafName;
 	meth_args {
 	 name="meth_args";
@@ -3359,8 +3359,8 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram = group_two->FindLeafName(\"HasDataTable\")";
-	result_var=$.projects[0].programs.gp[2][2].prog_code[0].local_vars[0]$;
-	obj=.projects[0].programs.gp[2][2].vars[0]$$;
+	result_var=$.programs.gp[2][2].prog_code[0].local_vars[0]$;
+	obj=.programs.gp[2][2].vars[0]$$;
 	method=taGroup_Program_::FindLeafName;
 	meth_args {
 	 name="meth_args";
@@ -3400,7 +3400,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="SetValue = \"NONE\"";
-	result_var=.projects[0].programs.gp[2][2].vars[3]$$;
+	result_var=.programs.gp[2][2].vars[3]$$;
 	expr {
 	 expr="\"NONE\"";
 	};
@@ -3425,7 +3425,7 @@ LeabraProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram->CallInit(this)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[2][2].prog_code[0].local_vars[0]$;
+	obj=$.programs.gp[2][2].prog_code[0].local_vars[0]$;
 	method=Program::CallInit;
 	meth_args {
 	 name="meth_args";
@@ -3452,7 +3452,7 @@ LeabraProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram->SetVar(\"SetValue\", SetValue)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[2][2].prog_code[0].local_vars[0]$;
+	obj=$.programs.gp[2][2].prog_code[0].local_vars[0]$;
 	method=Program::SetVar;
 	meth_args {
 	 name="meth_args";
@@ -3490,7 +3490,7 @@ LeabraProject .projects[0] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="myProgram->Call(this)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[2][2].prog_code[0].local_vars[0]$;
+	obj=$.programs.gp[2][2].prog_code[0].local_vars[0]$;
 	method=Program::Call;
 	meth_args {
 	 name="meth_args";
@@ -3533,7 +3533,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2][3].doc$$: };
     };
     name="TestCtrlPanel";
     short_nm="TsCtrP";
@@ -3640,7 +3640,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ctrlPanelVar = ctrlPanel->base";
-      result_var=.projects[0].programs.gp[2][3].vars[1]$$;
+      result_var=.programs.gp[2][3].vars[1]$$;
       expr {
        expr="ctrlPanel->base";
       };
@@ -3682,7 +3682,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][0].doc$$: };
     };
     name="copy_callee_caller";
     short_nm="cpycll";
@@ -3722,7 +3722,7 @@ LeabraProject .projects[0] {
       name="callee";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][1]$;
+      object_val=$.programs.gp[0][1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3734,7 +3734,7 @@ LeabraProject .projects[0] {
       name="caller";
       var_type=T_Object;
       object_type=Program;
-      object_val=.projects[0].programs.gp[0][2]$$;
+      object_val=.programs.gp[0][2]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3746,7 +3746,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3786,7 +3786,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->CopyChildBeforeIndex(callee, -1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][0].vars[2]$$;
+      obj=.programs.gp[3][0].vars[2]$$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -3824,7 +3824,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->CopyChildBeforeIndex(caller, -1)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][0].vars[2]$;
+      obj=$.programs.gp[3][0].vars[2]$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -3876,7 +3876,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][1].doc$$: };
     };
     name="copy_callee_caller_into_subgroup";
     short_nm="cpycll";
@@ -3916,7 +3916,7 @@ LeabraProject .projects[0] {
       name="callee";
       var_type=T_Object;
       object_type=Program;
-      object_val=.projects[0].programs.gp[4][0]$$;
+      object_val=.programs.gp[4][0]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3928,7 +3928,7 @@ LeabraProject .projects[0] {
       name="caller";
       var_type=T_Object;
       object_type=Program;
-      object_val=.projects[0].programs.gp[4][1]$$;
+      object_val=.programs.gp[4][1]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3940,7 +3940,7 @@ LeabraProject .projects[0] {
       name="group_three_sub";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[4].gp[0]$;
+      object_val=$.programs.gp[4].gp[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3980,7 +3980,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_three_sub->CopyChildBeforeIndex(callee, -1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][1].vars[2]$$;
+      obj=.programs.gp[3][1].vars[2]$$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -4018,7 +4018,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_three_sub->CopyChildBeforeIndex(caller, -1)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][1].vars[2]$;
+      obj=$.programs.gp[3][1].vars[2]$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -4070,7 +4070,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][2].doc$$: };
     };
     name="move_callee_caller";
     short_nm="mvcllc";
@@ -4110,7 +4110,7 @@ LeabraProject .projects[0] {
       name="callee";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][1]$;
+      object_val=$.programs.gp[0][1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4122,7 +4122,7 @@ LeabraProject .projects[0] {
       name="caller";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][2]$;
+      object_val=$.programs.gp[0][2]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4134,7 +4134,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4174,7 +4174,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->Transfer(callee)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][2].vars[2]$$;
+      obj=.programs.gp[3][2].vars[2]$$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4201,7 +4201,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->Transfer(caller)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][2].vars[2]$;
+      obj=$.programs.gp[3][2].vars[2]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4242,7 +4242,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][3].doc$$: };
     };
     name="move_callee_caller_into_subgroup";
     short_nm="mvcllc";
@@ -4282,7 +4282,7 @@ LeabraProject .projects[0] {
       name="callee";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[4][0]$;
+      object_val=$.programs.gp[4][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4294,7 +4294,7 @@ LeabraProject .projects[0] {
       name="caller";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[4][1]$;
+      object_val=$.programs.gp[4][1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4306,7 +4306,7 @@ LeabraProject .projects[0] {
       name="group_three_sub";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[4].gp[0]$;
+      object_val=$.programs.gp[4].gp[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4346,7 +4346,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_three_sub->Transfer(callee)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][3].vars[2]$$;
+      obj=.programs.gp[3][3].vars[2]$$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4373,7 +4373,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_three_sub->Transfer(caller)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][3].vars[2]$;
+      obj=$.programs.gp[3][3].vars[2]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4414,7 +4414,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][4].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][4].doc$$: };
     };
     name="move_callee_caller_out_of_subgroup";
     short_nm="mvcllc";
@@ -4476,7 +4476,7 @@ LeabraProject .projects[0] {
       name="group_three_sub";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[4].gp[0]$;
+      object_val=$.programs.gp[4].gp[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4488,7 +4488,7 @@ LeabraProject .projects[0] {
       name="group_three";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[4]$;
+      object_val=$.programs.gp[4]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4527,8 +4527,8 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="caller = group_three_sub->FindLeafName(\"Caller\")";
-      result_var=.projects[0].programs.gp[3][4].vars[1]$$;
-      obj=.projects[0].programs.gp[3][4].vars[2]$$;
+      result_var=.programs.gp[3][4].vars[1]$$;
+      obj=.programs.gp[3][4].vars[2]$$;
       method=taGroup_Program_::FindLeafName;
       meth_args {
        name="meth_args";
@@ -4554,8 +4554,8 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="callee = group_three_sub->FindLeafName(\"Callee\")";
-      result_var=.projects[0].programs.gp[3][4].vars[0]$$;
-      obj=$.projects[0].programs.gp[3][4].vars[2]$;
+      result_var=.programs.gp[3][4].vars[0]$$;
+      obj=$.programs.gp[3][4].vars[2]$;
       method=taGroup_Program_::FindLeafName;
       meth_args {
        name="meth_args";
@@ -4582,7 +4582,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_three->Transfer(callee)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][4].vars[3]$$;
+      obj=.programs.gp[3][4].vars[3]$$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4609,7 +4609,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_three->Transfer(caller)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][4].vars[3]$;
+      obj=$.programs.gp[3][4].vars[3]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4650,7 +4650,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][5].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][5].doc$$: };
     };
     name="copy_hasdatatable";
     short_nm="cpyhsd";
@@ -4690,7 +4690,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4702,7 +4702,7 @@ LeabraProject .projects[0] {
       name="hasdatatable";
       var_type=T_Object;
       object_type=Program;
-      object_val=.projects[0].programs.gp[0][0]$$;
+      object_val=.programs.gp[0][0]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4742,7 +4742,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->CopyChildBeforeIndex(hasdatatable, -1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][5].vars[0]$$;
+      obj=.programs.gp[3][5].vars[0]$$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -4794,7 +4794,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][6].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][6].doc$$: };
     };
     name="move_hasdatatable";
     short_nm="mvhsdt";
@@ -4834,7 +4834,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4846,7 +4846,7 @@ LeabraProject .projects[0] {
       name="hasdatatable";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][0]$;
+      object_val=$.programs.gp[0][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4886,7 +4886,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->Transfer(hasdatatable)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][6].vars[0]$$;
+      obj=.programs.gp[3][6].vars[0]$$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -4927,7 +4927,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][7].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][7].doc$$: };
     };
     name="copy_refs_global_table";
     short_nm="cpyrfs";
@@ -4967,7 +4967,7 @@ LeabraProject .projects[0] {
       name="group_two";
       var_type=T_Object;
       object_type=Program_Group;
-      object_val=$.projects[0].programs.gp[1]$;
+      object_val=$.programs.gp[1]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5019,7 +5019,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="group_two->CopyChildBeforeIndex(refs_global_table, -1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][7].vars[0]$$;
+      obj=.programs.gp[3][7].vars[0]$$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -5071,7 +5071,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][8].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][8].doc$$: };
     };
     name="copy_function_code_into_loop";
     short_nm="cpyfnc";
@@ -5111,7 +5111,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=.projects[0].programs.gp[0][3]$$;
+      object_val=.programs.gp[0][3]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5186,7 +5186,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][8].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][8].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -5196,7 +5196,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_prog_code[2]";
-      result_var=.projects[0].programs.gp[3][8].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][8].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_prog_code[2]";
       };
@@ -5206,7 +5206,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[3].loop_code";
-      result_var=.projects[0].programs.gp[3][8].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][8].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[3].loop_code";
       };
@@ -5217,7 +5217,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code->CopyChildBeforeIndex(call_program_element, -1)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][8].prog_code[0].local_vars[2]$;
+      obj=$.programs.gp[3][8].prog_code[0].local_vars[2]$;
       method=taBase::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -5269,7 +5269,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][9].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][9].doc$$: };
     };
     name="copy_function_code_out_of_loop";
     short_nm="cpyfnc";
@@ -5309,7 +5309,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][3]$;
+      object_val=$.programs.gp[0][3]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5384,7 +5384,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][9].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][9].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -5394,7 +5394,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[3].loop_code";
-      result_var=.projects[0].programs.gp[3][9].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][9].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[3].loop_code";
       };
@@ -5404,7 +5404,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_loop_code[0]";
-      result_var=.projects[0].programs.gp[3][9].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][9].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_loop_code[0]";
       };
@@ -5415,7 +5415,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code->CopyChildBeforeIndex(call_program_element, -1)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][9].prog_code[0].local_vars[0]$;
+      obj=$.programs.gp[3][9].prog_code[0].local_vars[0]$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -5467,7 +5467,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][10].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][10].doc$$: };
     };
     name="move_function_code_into_loop";
     short_nm="mvfncc";
@@ -5507,7 +5507,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][3]$;
+      object_val=$.programs.gp[0][3]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5582,7 +5582,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][10].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][10].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -5592,7 +5592,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_prog_code[2]";
-      result_var=.projects[0].programs.gp[3][10].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][10].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_prog_code[2]";
       };
@@ -5602,7 +5602,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[3].loop_code";
-      result_var=.projects[0].programs.gp[3][10].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][10].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[3].loop_code";
       };
@@ -5613,7 +5613,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code->Transfer(call_program_element)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][10].prog_code[0].local_vars[2]$;
+      obj=$.programs.gp[3][10].prog_code[0].local_vars[2]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -5654,7 +5654,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][11].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][11].doc$$: };
     };
     name="move_function_code_out_of_loop";
     short_nm="mvfncc";
@@ -5694,7 +5694,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][3]$;
+      object_val=$.programs.gp[0][3]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5769,7 +5769,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][11].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][11].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -5779,7 +5779,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[2].loop_code";
-      result_var=.projects[0].programs.gp[3][11].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][11].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[2].loop_code";
       };
@@ -5789,7 +5789,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_loop_code[0]";
-      result_var=.projects[0].programs.gp[3][11].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][11].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_loop_code[0]";
       };
@@ -5800,7 +5800,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code->Transfer(call_program_element)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][11].prog_code[0].local_vars[0]$;
+      obj=$.programs.gp[3][11].prog_code[0].local_vars[0]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -5841,7 +5841,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][12].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][12].doc$$: };
     };
     name="copy_program_code_into_loop";
     short_nm="cpyprg";
@@ -5881,7 +5881,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=.projects[0].programs.gp[0][4]$$;
+      object_val=.programs.gp[0][4]$$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5956,7 +5956,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][12].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][12].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -5966,7 +5966,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_prog_code[1]";
-      result_var=.projects[0].programs.gp[3][12].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][12].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_prog_code[1]";
       };
@@ -5976,7 +5976,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[2].loop_code";
-      result_var=.projects[0].programs.gp[3][12].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][12].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[2].loop_code";
       };
@@ -5987,7 +5987,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code->CopyChildBeforeIndex(call_program_element, -1)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][12].prog_code[0].local_vars[2]$;
+      obj=$.programs.gp[3][12].prog_code[0].local_vars[2]$;
       method=taBase::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -6039,7 +6039,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][13].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][13].doc$$: };
     };
     name="copy_program_code_out_of_loop";
     short_nm="cpyprg";
@@ -6079,7 +6079,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][4]$;
+      object_val=$.programs.gp[0][4]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6154,7 +6154,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][13].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][13].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -6164,7 +6164,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[2].loop_code";
-      result_var=.projects[0].programs.gp[3][13].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][13].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[2].loop_code";
       };
@@ -6174,7 +6174,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_loop_code[0]";
-      result_var=.projects[0].programs.gp[3][13].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][13].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_loop_code[0]";
       };
@@ -6185,7 +6185,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code->CopyChildBeforeIndex(call_program_element, -1)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][13].prog_code[0].local_vars[0]$;
+      obj=$.programs.gp[3][13].prog_code[0].local_vars[0]$;
       method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
@@ -6237,7 +6237,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][14].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][14].doc$$: };
     };
     name="move_program_code_into_loop";
     short_nm="mvprgc";
@@ -6277,7 +6277,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][4]$;
+      object_val=$.programs.gp[0][4]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6352,7 +6352,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][14].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][14].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -6362,7 +6362,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_prog_code[1]";
-      result_var=.projects[0].programs.gp[3][14].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][14].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_prog_code[1]";
       };
@@ -6372,7 +6372,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[2].loop_code";
-      result_var=.projects[0].programs.gp[3][14].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][14].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[2].loop_code";
       };
@@ -6383,7 +6383,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code->Transfer(call_program_element)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][14].prog_code[0].local_vars[2]$;
+      obj=$.programs.gp[3][14].prog_code[0].local_vars[2]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -6424,7 +6424,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][15].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][15].doc$$: };
     };
     name="move_program_code_out_of_loop";
     short_nm="mvprgc";
@@ -6464,7 +6464,7 @@ LeabraProject .projects[0] {
       name="program_a";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects[0].programs.gp[0][4]$;
+      object_val=$.programs.gp[0][4]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6539,7 +6539,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code = program_a.prog_code";
-      result_var=.projects[0].programs.gp[3][15].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][15].prog_code[0].local_vars[0]$$;
       expr {
        expr="program_a.prog_code";
       };
@@ -6549,7 +6549,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="the_loop_code = the_prog_code[1].loop_code";
-      result_var=.projects[0].programs.gp[3][15].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[3][15].prog_code[0].local_vars[2]$$;
       expr {
        expr="the_prog_code[1].loop_code";
       };
@@ -6559,7 +6559,7 @@ LeabraProject .projects[0] {
       desc="// target reference should not be updated if copy within program";
       flags=CAN_REVERT_TO_CODE;
       code_string="call_program_element = the_loop_code[0]";
-      result_var=.projects[0].programs.gp[3][15].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][15].prog_code[0].local_vars[1]$$;
       expr {
        expr="the_loop_code[0]";
       };
@@ -6570,7 +6570,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="the_prog_code->Transfer(call_program_element)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][15].prog_code[0].local_vars[0]$;
+      obj=$.programs.gp[3][15].prog_code[0].local_vars[0]$;
       method=taList_impl::Transfer;
       meth_args {
        name="meth_args";
@@ -6619,7 +6619,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][0].doc$$: };
     };
     name="Callee";
     short_nm="Callee";
@@ -6711,7 +6711,7 @@ LeabraProject .projects[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_name = this.prog_gp";
-	result_var=.projects[0].programs.gp[4][0].vars[0]$$;
+	result_var=.programs.gp[4][0].vars[0]$$;
 	expr {
 	 expr="this.prog_gp";
 	};
@@ -6745,7 +6745,7 @@ LeabraProject .projects[0] {
       flags=CAN_REVERT_TO_CODE;
       code_string="Function_2()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[4][0].functions[0]$$;
+      fun=.programs.gp[4][0].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -6772,7 +6772,7 @@ LeabraProject .projects[0] {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][1].doc$$: };
     };
     name="Caller";
     short_nm="Caller";
@@ -6848,7 +6848,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="group_name = \"\"";
-      result_var=.projects[0].programs.gp[4][1].vars[0]$$;
+      result_var=.programs.gp[4][1].vars[0]$$;
       expr {
        expr="\"\"";
       };
@@ -6863,7 +6863,7 @@ LeabraProject .projects[0] {
        el_typ=ProgArg;
        el_def=0;
       };
-      target=$.projects[0].programs.gp[4][0]$;
+      target=$.programs.gp[4][0]$;
       targ_ld_init="*Callee*";
      };
      OtherProgramVar @[3] {
@@ -6871,9 +6871,9 @@ LeabraProject .projects[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Vars Fm:  program=Callee set=from  var_1=group_name  var_2=?  var_3=?  var_4=? ";
-      other_prog=$.projects[0].programs.gp[4][0]$;
+      other_prog=$.programs.gp[4][0]$;
       set_other=0;
-      var_1=$.projects[0].programs.gp[4][1].vars[0]$;
+      var_1=$.programs.gp[4][1].vars[0]$;
       var_2=NULL;
       var_3=NULL;
       var_4=NULL;
@@ -6920,7 +6920,7 @@ LeabraProject .projects[0] {
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABeQAAAb0AAAIFAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestPointerUpdates_copy_into\"] - TestPointerUpdates_copy_into.proj";
@@ -6960,7 +6960,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";
@@ -7116,7 +7116,7 @@ LeabraProject .projects[0] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.ctrl_panels;.data;.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[3][7].vars;.programs.gp[4];.networks; };
+ tree_state{ .;.ctrl_panels;.data;.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;

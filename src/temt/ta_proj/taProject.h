@@ -90,9 +90,9 @@ public:
   taProjVersion         version;
   // #NO_DIFF project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
   String                author;
-  // the project author - by default the one saved in emergent preferences
+  // #NO_DIFF the project author - by default the one saved in emergent preferences
   String                email;
-  // email address for comments, questions about the project - typically the author's email address - by default the one saved in emergent preferences
+  // #NO_DIFF email address for comments, questions about the project - typically the author's email address - by default the one saved in emergent preferences
   taLicense             license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
   String                pub_cite; // for a project that has been described in a publication, this is the citation key for that publication, in the form of Author1[Author2][Author3][EtAl]YY where Author is last name of given author -- e.g., OReillyMunakataFrankEtAl12 is the citation key for the online wiki textbook: http://ccnbook.colorado.edu
   taWikiSpec            wiki; // wiki info, for projects that have been saved to a wiki

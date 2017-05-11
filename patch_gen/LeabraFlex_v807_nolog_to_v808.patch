@@ -1,7 +1,7 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
 Patch .projects[1].patches[0] { 
  PatchRec_Group @.patch_recs = [0] {
-  PatchRec_Group @.gp[0] = [20] { 
+  PatchRec_Group @.gp[0] = [35] { 
    PatchRec @[0] { };
    PatchRec @[1] { };
    PatchRec @[2] { };
@@ -22,6 +22,21 @@ Patch .projects[1].patches[0] {
    PatchRec @[17] { };
    PatchRec @[18] { };
    PatchRec @[19] { };
+   PatchRec @[20] { };
+   PatchRec @[21] { };
+   PatchRec @[22] { };
+   PatchRec @[23] { };
+   PatchRec @[24] { };
+   PatchRec @[25] { };
+   PatchRec @[26] { };
+   PatchRec @[27] { };
+   PatchRec @[28] { };
+   PatchRec @[29] { };
+   PatchRec @[30] { };
+   PatchRec @[31] { };
+   PatchRec @[32] { };
+   PatchRec @[33] { };
+   PatchRec @[34] { };
   };
   PatchRec_Group @.gp[1] = [5] { 
    PatchRec @[0] { };
@@ -33,12 +48,12 @@ Patch .projects[1].patches[0] {
  };
 };
 Patch .projects[1].patches[0] {
- name="LeabraFlex_v807_to_v810_logging";
- tags="Leabra, LeabraFlex, v8.0.7, v8.1.0, Logging, Tag";
- desc="Adds logging / tag code to Interactive runs in LeabraFlex via changes in MasterTrain, TrainStart etc. You will need to re-add any parameter set Activation's back into MasterTrain as that part is overwritten here.";
+ name="LeabraFlex_v807_nolog_to_v808";
+ tags=;
+ desc=;
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- date="2017_05_11_16_17_02";
+ date="2017_05_10_16_11_32";
  from_name="LeabraFlex_10609_v807_nolog";
  to_name="LeabraFlex_10713_v808";
  patch_recs {
@@ -53,6 +68,8 @@ Patch .projects[1].patches[0] {
    path=;
    PatchRec @[0] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"OtherProgramVar_VarsToprogramSav_tagvar2var3var4\"]";
     obj_path_idx=".programs[0].prog_code[13]";
@@ -63,16 +80,16 @@ Patch .projects[1].patches[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-OtherProgramVar .projects[1].programs[0].prog_code[13] { };
-OtherProgramVar .projects[1].programs[0].prog_code[13] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+OtherProgramVar .projects[0].programs[0].prog_code[13] { };
+OtherProgramVar .projects[0].programs[0].prog_code[13] {
  name=\"OtherProgramVar_VarsToprogramSav_tagvar2var3var4\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
  code_string=\"Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? \";
- other_prog=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+ other_prog=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
  set_other=1;
- var_1=.programs[\"MasterStartup\"].vars[\"tag\"]$$<ProgVar,tag>;
+ var_1=.projects[0].programs[0].vars[1]$$<ProgVar,tag>;
  var_2=NULL;
  var_3=NULL;
  var_4=NULL;
@@ -81,6 +98,8 @@ OtherProgramVar .projects[1].programs[0].prog_code[13] {
    };
    PatchRec @[1] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
     obj_path_idx=".programs.gp[1][1].vars";
@@ -91,13 +110,13 @@ OtherProgramVar .projects[1].programs[0].prog_code[13] {
     insert_after="init_prog";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[1][1].vars[5] { };
-ProgVar .projects[1].programs.gp[1][1].vars[5] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[1][1].vars[5] { };
+ProgVar .projects[0].programs.gp[1][1].vars[5] {
  name=\"cluster_run\";
  var_type=T_Object;
  object_type=ClusterRun;
- object_val=.ctrl_panels[\"ClusterRun\"]$$<ClusterRun,ClusterRun>;
+ object_val=.projects[0].ctrl_panels[1]$$<ClusterRun,ClusterRun>;
  object_scope=NULL;
  objs_ptr=0;
  flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -109,6 +128,8 @@ ProgVar .projects[1].programs.gp[1][1].vars[5] {
    };
    PatchRec @[2] {
     off=0;
+    in_conflict=1;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
     obj_path_idx=".programs.gp[1][1].vars";
@@ -119,9 +140,9 @@ ProgVar .projects[1].programs.gp[1][1].vars[5] {
     insert_after="cluster_run";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[1][1].vars[6] { };
-ProgVar .projects[1].programs.gp[1][1].vars[6] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[1][1].vars[6] { };
+ProgVar .projects[0].programs.gp[1][1].vars[6] {
  name=\"save_log_files_interactive\";
  var_type=T_Bool;
  bool_val=0;
@@ -135,6 +156,8 @@ ProgVar .projects[1].programs.gp[1][1].vars[6] {
    };
    PatchRec @[3] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
     obj_path_idx=".programs.gp[1][1].vars";
@@ -145,9 +168,9 @@ ProgVar .projects[1].programs.gp[1][1].vars[6] {
     insert_after="save_log_files_interactive";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[1][1].vars[7] { };
-ProgVar .projects[1].programs.gp[1][1].vars[7] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[1][1].vars[7] { };
+ProgVar .projects[0].programs.gp[1][1].vars[7] {
  name=\"cust_tag\";
  var_type=T_String;
  string_val=;
@@ -161,6 +184,8 @@ ProgVar .projects[1].programs.gp[1][1].vars[7] {
    };
    PatchRec @[4] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
     obj_path_idx=".programs.gp[1][1].vars";
@@ -171,9 +196,9 @@ ProgVar .projects[1].programs.gp[1][1].vars[7] {
     insert_after="cust_tag";
     insert_before="stop_train";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[1][1].vars[8] { };
-ProgVar .projects[1].programs.gp[1][1].vars[8] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[1][1].vars[8] { };
+ProgVar .projects[0].programs.gp[1][1].vars[8] {
  name=\"tag\";
  var_type=T_String;
  string_val=\"__RunMaster_NetMaster\";
@@ -187,6 +212,8 @@ ProgVar .projects[1].programs.gp[1][1].vars[8] {
    };
    PatchRec @[5] {
     off=0;
+    in_conflict=1;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code";
     obj_path_idx=".programs.gp[1][1].prog_code";
@@ -197,12 +224,12 @@ ProgVar .projects[1].programs.gp[1][1].vars[8] {
     insert_after=;
     insert_before="AssignExpr_stoptrainfalse";
     new_obj_type="LocalVars";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-LocalVars .projects[1].programs.gp[1][1].prog_code[0] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+LocalVars .projects[0].programs.gp[1][1].prog_code[0] { 
  ProgVar_List @.local_vars = [0] {
  };
 };
-LocalVars .projects[1].programs.gp[1][1].prog_code[0] {
+LocalVars .projects[0].programs.gp[1][1].prog_code[0] {
  name=\"LocalVars_LocalVars0vars\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
@@ -217,6 +244,8 @@ LocalVars .projects[1].programs.gp[1][1].prog_code[0] {
    };
    PatchRec @[6] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"]";
     obj_path_idx=".programs.gp[1][1].prog_code[1]";
@@ -227,8 +256,8 @@ LocalVars .projects[1].programs.gp[1][1].prog_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-If .projects[1].programs.gp[1][1].prog_code[2] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+If .projects[0].programs.gp[1][1].prog_code[2] { 
  ProgEl_List @.true_code = [3] {
   AssignExpr @[0] { };
   OtherProgramVar @[1] { };
@@ -248,7 +277,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
   };
  };
 };
-If .projects[1].programs.gp[1][1].prog_code[2] {
+If .projects[0].programs.gp[1][1].prog_code[2] {
  name=\"If_iftaMiscinteractive\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
@@ -265,7 +294,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string=\"tag = \\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)\";
-   result_var=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"tag\"]$$<ProgVar,tag>;
+   result_var=.projects[0].programs.gp[1][1].vars[8]$$<ProgVar,tag>;
    expr {
     expr=\"\\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)\";
    };
@@ -275,9 +304,9 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string=\"Vars To:  program=SaveLogFiles set=to  var_1=tag  var_2=?  var_3=?  var_4=? \";
-   other_prog=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+   other_prog=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
    set_other=1;
-   var_1=$.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"tag\"]$;
+   var_1=$.projects[0].programs.gp[1][1].vars[8]$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
@@ -300,7 +329,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
      flags=CAN_REVERT_TO_CODE;
      code_string=\"run_params->Activate(true)\";
      result_var=NULL;
-     obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"run_params\"]$$<ProgVar,run_params>;
+     obj=.projects[0].programs.gp[1][1].vars[1]$$<ProgVar,run_params>;
      method=ParamSet::Activate;
      meth_args {
       name=\"meth_args\";
@@ -327,7 +356,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
      flags=CAN_REVERT_TO_CODE;
      code_string=\"net_params->Activate(true)\";
      result_var=NULL;
-     obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_params\"]$$<ProgVar,net_params>;
+     obj=.projects[0].programs.gp[1][1].vars[2]$$<ProgVar,net_params>;
      method=ParamSet::Activate;
      meth_args {
       name=\"meth_args\";
@@ -356,6 +385,8 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
    };
    PatchRec @[7] {
     off=0;
+    in_conflict=1;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"]";
     obj_path_idx=".programs.gp[1][1].prog_code[1]";
@@ -366,8 +397,8 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-If .projects[1].programs.gp[1][1].prog_code[2] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+If .projects[0].programs.gp[1][1].prog_code[2] { 
  ProgEl_List @.true_code = [3] {
   AssignExpr @[0] { };
   OtherProgramVar @[1] { };
@@ -387,7 +418,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
   };
  };
 };
-If .projects[1].programs.gp[1][1].prog_code[2] {
+If .projects[0].programs.gp[1][1].prog_code[2] {
  name=\"If_iftaMiscinteractive\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
@@ -404,7 +435,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string=\"tag = \\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)\";
-   result_var=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"tag\"]$$<ProgVar,tag>;
+   result_var=.projects[0].programs.gp[1][1].vars[8]$$<ProgVar,tag>;
    expr {
     expr=\"\\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)\";
    };
@@ -414,9 +445,9 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    code_string=\"Vars To:  program=SaveLogFiles set=to  var_1=tag  var_2=?  var_3=?  var_4=? \";
-   other_prog=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+   other_prog=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
    set_other=1;
-   var_1=$.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"tag\"]$;
+   var_1=$.projects[0].programs.gp[1][1].vars[8]$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
@@ -439,7 +470,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
      flags=CAN_REVERT_TO_CODE;
      code_string=\"run_params->Activate(true)\";
      result_var=NULL;
-     obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"run_params\"]$$<ProgVar,run_params>;
+     obj=.projects[0].programs.gp[1][1].vars[1]$$<ProgVar,run_params>;
      method=ParamSet::Activate;
      meth_args {
       name=\"meth_args\";
@@ -466,7 +497,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
      flags=CAN_REVERT_TO_CODE;
      code_string=\"net_params->Activate(true)\";
      result_var=NULL;
-     obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_params\"]$$<ProgVar,net_params>;
+     obj=.projects[0].programs.gp[1][1].vars[2]$$<ProgVar,net_params>;
      method=ParamSet::Activate;
      meth_args {
       name=\"meth_args\";
@@ -495,6 +526,8 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
    };
    PatchRec @[8] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"].true_code[\"MethodCall_runparamsActivatetrue\"]";
     obj_path_idx=".programs.gp[1][1].prog_code[1].true_code[0]";
@@ -505,19 +538,19 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[0] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+MethodCall .projects[1].programs.gp[1][1].prog_code[1].true_code[0] { 
  ProgArg_List @.meth_args = [1] {
   ProgArg @[0] { };
  };
 };
-MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[0] {
+MethodCall .projects[1].programs.gp[1][1].prog_code[1].true_code[0] {
  name=\"MethodCall_runparamsActivatetrue\";
  desc=\"activate config values\";
  flags=CAN_REVERT_TO_CODE;
- code_string=\"run_params->Activate(true)\";
+ code_string=\"run_params.CopySavedToActive()\";
  result_var=NULL;
- obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"run_params\"]$$<ProgVar,run_params>;
+ obj=.projects[1].programs.gp[1][1].vars[1]$$<ProgVar,run_params>;
  method=ParamSet::Activate;
  meth_args {
   name=\"meth_args\";
@@ -542,6 +575,8 @@ MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[0] {
    };
    PatchRec @[9] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"].true_code[\"MethodCall_netparamsActivatetrue\"]";
     obj_path_idx=".programs.gp[1][1].prog_code[1].true_code[1]";
@@ -552,19 +587,19 @@ MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[1] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+MethodCall .projects[1].programs.gp[1][1].prog_code[1].true_code[1] { 
  ProgArg_List @.meth_args = [1] {
   ProgArg @[0] { };
  };
 };
-MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[1] {
+MethodCall .projects[1].programs.gp[1][1].prog_code[1].true_code[1] {
  name=\"MethodCall_netparamsActivatetrue\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
- code_string=\"net_params->Activate(true)\";
+ code_string=\"run_params.CopySavedToActive()\";
  result_var=NULL;
- obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_params\"]$$<ProgVar,net_params>;
+ obj=.projects[1].programs.gp[1][1].vars[2]$$<ProgVar,net_params>;
  method=ParamSet::Activate;
  meth_args {
   name=\"meth_args\";
@@ -589,6 +624,8 @@ MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[1] {
    };
    PatchRec @[10] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"].true_code";
     obj_path_idx=".programs.gp[1][1].prog_code[1].true_code";
@@ -599,14 +636,14 @@ MethodCall .projects[0].programs.gp[1][1].prog_code[1].true_code[1] {
     insert_after=;
     insert_before="MethodCall_runparamsActivatetrue";
     new_obj_type="AssignExpr";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-AssignExpr .projects[1].programs.gp[1][1].prog_code[2].true_code[0] { };
-AssignExpr .projects[1].programs.gp[1][1].prog_code[2].true_code[0] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+AssignExpr .projects[0].programs.gp[1][1].prog_code[2].true_code[0] { };
+AssignExpr .projects[0].programs.gp[1][1].prog_code[2].true_code[0] {
  name=\"AssignExpr_tagcusttagcluste_amSetNamesfalse\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
  code_string=\"tag = \\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)\";
- result_var=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"tag\"]$$<ProgVar,tag>;
+ result_var=.projects[0].programs.gp[1][1].vars[8]$$<ProgVar,tag>;
  expr {
   expr=\"\\\"_\\\" + cust_tag + \\\"_\\\" + cluster_run->ParamSetNames(false)\";
  };
@@ -615,6 +652,8 @@ AssignExpr .projects[1].programs.gp[1][1].prog_code[2].true_code[0] {
    };
    PatchRec @[11] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"].true_code";
     obj_path_idx=".programs.gp[1][1].prog_code[1].true_code";
@@ -625,16 +664,16 @@ AssignExpr .projects[1].programs.gp[1][1].prog_code[2].true_code[0] {
     insert_after="AssignExpr_tagcusttagcluste_amSetNamesfalse";
     insert_before="MethodCall_runparamsActivatetrue";
     new_obj_type="OtherProgramVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-OtherProgramVar .projects[1].programs.gp[1][1].prog_code[2].true_code[1] { };
-OtherProgramVar .projects[1].programs.gp[1][1].prog_code[2].true_code[1] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+OtherProgramVar .projects[0].programs.gp[1][1].prog_code[2].true_code[1] { };
+OtherProgramVar .projects[0].programs.gp[1][1].prog_code[2].true_code[1] {
  name=\"OtherProgramVar_VarsToprogramSav_tagvar2var3var4\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
  code_string=\"Vars To:  program=SaveLogFiles set=to  var_1=tag  var_2=?  var_3=?  var_4=? \";
- other_prog=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+ other_prog=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
  set_other=1;
- var_1=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"tag\"]$$<ProgVar,tag>;
+ var_1=.projects[0].programs.gp[1][1].vars[8]$$<ProgVar,tag>;
  var_2=NULL;
  var_3=NULL;
  var_4=NULL;
@@ -643,6 +682,8 @@ OtherProgramVar .projects[1].programs.gp[1][1].prog_code[2].true_code[1] {
    };
    PatchRec @[12] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteract_eactivateparams\"].true_code";
     obj_path_idx=".programs.gp[1][1].prog_code[1].true_code";
@@ -653,8 +694,8 @@ OtherProgramVar .projects[1].programs.gp[1][1].prog_code[2].true_code[1] {
     insert_after="OtherProgramVar_VarsToprogramSav_tagvar2var3var4";
     insert_before="MethodCall_runparamsActivatetrue";
     new_obj_type="If";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+If .projects[0].programs.gp[1][1].prog_code[2].true_code[2] { 
  ProgEl_List @.true_code = [2] {
   MethodCall @[0] { 
    ProgArg_List @.meth_args = [1] {
@@ -668,7 +709,7 @@ If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] {
   };
  };
 };
-If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] {
+If .projects[0].programs.gp[1][1].prog_code[2].true_code[2] {
  name=\"If_ifactivateparams\";
  desc=\"only if running interactively -- otherwise set in MasterStartup!\";
  flags=CAN_REVERT_TO_CODE;
@@ -686,7 +727,7 @@ If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] {
    flags=CAN_REVERT_TO_CODE;
    code_string=\"run_params->Activate(true)\";
    result_var=NULL;
-   obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"run_params\"]$$<ProgVar,run_params>;
+   obj=.projects[0].programs.gp[1][1].vars[1]$$<ProgVar,run_params>;
    method=ParamSet::Activate;
    meth_args {
     name=\"meth_args\";
@@ -713,7 +754,7 @@ If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] {
    flags=CAN_REVERT_TO_CODE;
    code_string=\"net_params->Activate(true)\";
    result_var=NULL;
-   obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_params\"]$$<ProgVar,net_params>;
+   obj=.projects[0].programs.gp[1][1].vars[2]$$<ProgVar,net_params>;
    method=ParamSet::Activate;
    meth_args {
     name=\"meth_args\";
@@ -740,6 +781,338 @@ If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] {
    };
    PatchRec @[13] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].vars[\"stop_step_grain\"]";
+    obj_path_idx=".programs.gp[1][2].vars[0]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[1][2].vars[0] { };
+ProgVar .projects[0].programs.gp[1][2].vars[0] {
+ name=\"stop_step_grain\";
+ var_type=T_DynEnum;
+ object_scope=NULL;
+ dyn_enum_val {
+  user_data_=NULL;
+  enum_type=.projects[0].programs.gp[1][2].types[0]$$<DynEnumType,StopStepGrain>;
+  value=0;
+ };
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"select grain size for Step function on MasterRun program -- can extend this functionality -- very useful!\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[14] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"BasicTrain\"].prog_code[\"ProgramCall_ApplyInputsnetworkinputdata\"]";
+    obj_path_idx=".programs.gp[2][0].prog_code[12]";
+    obj_type="ProgramCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgramCall .projects[0].programs.gp[2][0].prog_code[12] { 
+ ProgArg_List @.prog_args = [2] {
+  ProgArg @[0] { };
+  ProgArg @[1] { };
+ };
+};
+ProgramCall .projects[0].programs.gp[2][0].prog_code[12] {
+ name=\"ProgramCall_ApplyInputsnetworkinputdata_1\";
+ desc=\"only need to re-apply if something is new!\";
+ flags=OFF|CAN_REVERT_TO_CODE;
+ code_string=\"ApplyInputs(network, input_data)\";
+ prog_args {
+  name=\"prog_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=Network;
+   type=\"LeabraNetwork*\";
+   name=\"network\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"network\";
+   };
+  };
+  ProgArg @[1] {
+   arg_type=DataTable;
+   type=\"DataTable*\";
+   name=\"input_data\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"input_data\";
+   };
+  };
+ };
+ target=.projects[0].programs.gp[3][2]$$<Program,ApplyInputs>;
+ targ_ld_init=\"*ApplyInputs*\";
+};
+";
+   };
+   PatchRec @[15] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"BasicTrain\"].prog_code[\"MethodCall_networkComputePhaseStats\"]";
+    obj_path_idx=".programs.gp[2][0].prog_code[14]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+MethodCall .projects[0].programs.gp[2][0].prog_code[14] { 
+ ProgArg_List @.meth_args = [0] {
+ };
+};
+MethodCall .projects[0].programs.gp[2][0].prog_code[14] {
+ name=\"MethodCall_networkComputePhaseStats_1\";
+ desc=\"compute stats appropriate for given phase\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"network->Compute_PhaseStats()\";
+ result_var=NULL;
+ obj=.projects[0].programs.gp[2][0].args[0]$$<ProgVar,network>;
+ method=LeabraNetwork::Compute_PhaseStats;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+ };
+ meth_sig=\"void Compute_PhaseStats()\";
+ meth_desc=\" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case\";
+};
+";
+   };
+   PatchRec @[16] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"BasicTrain\"].prog_code[\"NetUpdateView_NetUpdateView\"]";
+    obj_path_idx=".programs.gp[2][0].prog_code[15]";
+    obj_type="NetUpdateView";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+NetUpdateView .projects[0].programs.gp[2][0].prog_code[15] { };
+NetUpdateView .projects[0].programs.gp[2][0].prog_code[15] {
+ name=\"NetUpdateView_NetUpdateView_1\";
+ desc=\"update network views, if update_net_view == true\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Net Update View\";
+ network_var=.projects[0].programs.gp[2][0].args[0]$$<ProgVar,network>;
+ update_var=.projects[0].programs.gp[2][0].args[2]$$<ProgVar,update_net_view>;
+};
+";
+   };
+   PatchRec @[17] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"BasicTest\"].prog_code[\"ProgramCall_ApplyInputsnetworkinputdata\"]";
+    obj_path_idx=".programs.gp[2][1].prog_code[12]";
+    obj_type="ProgramCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgramCall .projects[0].programs.gp[2][1].prog_code[12] { 
+ ProgArg_List @.prog_args = [2] {
+  ProgArg @[0] { };
+  ProgArg @[1] { };
+ };
+};
+ProgramCall .projects[0].programs.gp[2][1].prog_code[12] {
+ name=\"ProgramCall_ApplyInputsnetworkinputdata_1\";
+ desc=\"only need to re-apply if something is new!\";
+ flags=OFF|CAN_REVERT_TO_CODE;
+ code_string=\"ApplyInputs(network, input_data)\";
+ prog_args {
+  name=\"prog_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=Network;
+   type=\"LeabraNetwork*\";
+   name=\"network\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"network\";
+   };
+  };
+  ProgArg @[1] {
+   arg_type=DataTable;
+   type=\"DataTable*\";
+   name=\"input_data\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"input_data\";
+   };
+  };
+ };
+ target=.projects[0].programs.gp[3][2]$$<Program,ApplyInputs>;
+ targ_ld_init=\"*ApplyInputs*\";
+};
+";
+   };
+   PatchRec @[18] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"BasicTest\"].prog_code[\"MethodCall_networkComputePhaseStats\"]";
+    obj_path_idx=".programs.gp[2][1].prog_code[14]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+MethodCall .projects[0].programs.gp[2][1].prog_code[14] { 
+ ProgArg_List @.meth_args = [0] {
+ };
+};
+MethodCall .projects[0].programs.gp[2][1].prog_code[14] {
+ name=\"MethodCall_networkComputePhaseStats_1\";
+ desc=\"compute stats appropriate for given phase\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"network->Compute_PhaseStats()\";
+ result_var=NULL;
+ obj=.projects[0].programs.gp[2][1].args[0]$$<ProgVar,network>;
+ method=LeabraNetwork::Compute_PhaseStats;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+ };
+ meth_sig=\"void Compute_PhaseStats()\";
+ meth_desc=\" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case\";
+};
+";
+   };
+   PatchRec @[19] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"BasicTest\"].prog_code[\"NetUpdateView_NetUpdateView\"]";
+    obj_path_idx=".programs.gp[2][1].prog_code[15]";
+    obj_type="NetUpdateView";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+NetUpdateView .projects[0].programs.gp[2][1].prog_code[15] { };
+NetUpdateView .projects[0].programs.gp[2][1].prog_code[15] {
+ name=\"NetUpdateView_NetUpdateView_1\";
+ desc=\"update network views, if update_net_view == true\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"Net Update View\";
+ network_var=.projects[0].programs.gp[2][1].args[0]$$<ProgVar,network>;
+ update_var=.projects[0].programs.gp[2][1].args[2]$$<ProgVar,update_net_view>;
+};
+";
+   };
+   PatchRec @[20] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"TaskProgs\"][\"TestAll\"].vars[\"data_loop_index\"]";
+    obj_path_idx=".programs.gp[2][2].vars[5]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[2][2].vars[5] { };
+ProgVar .projects[0].programs.gp[2][2].vars[5] {
+ name=\"data_loop_index\";
+ var_type=T_Int;
+ int_val=6;
+ object_scope=NULL;
+ flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[21] {
+    off=0;
+    in_conflict=1;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"EnviroProgs\"][\"ChooseNextEvent\"].vars[\"input_idx\"]";
+    obj_path_idx=".programs.gp[3][0].vars[1]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[3][0].vars[1] { };
+ProgVar .projects[0].programs.gp[3][0].vars[1] {
+ name=\"input_idx\";
+ var_type=T_Int;
+ int_val=3;
+ object_scope=NULL;
+ flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=;
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[22] {
+    off=0;
+    in_conflict=1;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
     obj_path_idx=".programs.gp[4][4].vars";
@@ -750,9 +1123,9 @@ If .projects[1].programs.gp[1][1].prog_code[2].true_code[2] {
     insert_after="LRSConSpec";
     insert_before="dmem_new_seed";
     new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[8] { };
-ProgVar .projects[1].programs.gp[4][4].vars[8] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[4][4].vars[8] { };
+ProgVar .projects[0].programs.gp[4][4].vars[8] {
  name=\"save_log_files_interactive\";
  var_type=T_Bool;
  bool_val=0;
@@ -764,8 +1137,42 @@ ProgVar .projects[1].programs.gp[4][4].vars[8] {
 };
 ";
    };
-   PatchRec @[14] {
+   PatchRec @[23] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].functions[\"DMemSafeTrialsPerEpoch\"]";
+    obj_path_idx=".programs.gp[4][4].functions[0]";
+    obj_type="Function";
+    mbr_path="flags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="NEW_EL|CAN_REVERT_TO_CODE";
+   };
+   PatchRec @[24] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].functions[\"DMemSafeTrialsPerEpoch\"].fun_code[\"LocalVars_LocalVars0vars\"]";
+    obj_path_idx=".programs.gp[4][4].functions[0].fun_code[0]";
+    obj_type="LocalVars";
+    mbr_path="flags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="CAN_REVERT_TO_CODE";
+   };
+   PatchRec @[25] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"If_iftaMiscinteractive\"]";
     obj_path_idx=".programs.gp[4][4].prog_code[3]";
@@ -776,8 +1183,8 @@ ProgVar .projects[1].programs.gp[4][4].vars[8] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-If .projects[1].programs.gp[4][4].prog_code[3] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+If .projects[0].programs.gp[4][4].prog_code[3] { 
  ProgEl_List @.true_code = [1] {
   ProgramCall @[0] { 
    ProgArg_List @.prog_args = [1] {
@@ -786,7 +1193,7 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
   };
  };
 };
-If .projects[1].programs.gp[4][4].prog_code[3] {
+If .projects[0].programs.gp[4][4].prog_code[3] {
  name=\"If_iftaMiscinteract_ilesinteractive\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
@@ -819,15 +1226,17 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
      };
     };
    };
-   target=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+   target=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
    targ_ld_init=\"*SaveLogFiles*\";
   };
  };
 };
 ";
    };
-   PatchRec @[15] {
+   PatchRec @[26] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"If_iftaMiscinteractive\"]";
     obj_path_idx=".programs.gp[4][4].prog_code[3]";
@@ -838,8 +1247,8 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-If .projects[1].programs.gp[4][4].prog_code[3] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+If .projects[0].programs.gp[4][4].prog_code[3] { 
  ProgEl_List @.true_code = [1] {
   ProgramCall @[0] { 
    ProgArg_List @.prog_args = [1] {
@@ -848,7 +1257,7 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
   };
  };
 };
-If .projects[1].programs.gp[4][4].prog_code[3] {
+If .projects[0].programs.gp[4][4].prog_code[3] {
  name=\"If_iftaMiscinteract_ilesinteractive\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
@@ -881,15 +1290,17 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
      };
     };
    };
-   target=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+   target=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
    targ_ld_init=\"*SaveLogFiles*\";
   };
  };
 };
 ";
    };
-   PatchRec @[16] {
+   PatchRec @[27] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"SaveWeights\"].vars[\"tag\"]";
     obj_path_idx=".programs.gp[4][15].vars[0]";
@@ -900,9 +1311,9 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][15].vars[0] { };
-ProgVar .projects[1].programs.gp[4][15].vars[0] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[4][15].vars[0] { };
+ProgVar .projects[0].programs.gp[4][15].vars[0] {
  name=\"tag\";
  var_type=T_String;
  string_val=\"__RunMaster_NetMaster\";
@@ -910,12 +1321,46 @@ ProgVar .projects[1].programs.gp[4][15].vars[0] {
  flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
  reference=0;
  desc=\"user defined tag (set by startup script)\";
- init_from=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"]$$<Program,SaveLogFiles>;
+ init_from=.projects[0].programs.gp[4].gp[0][0]$$<Program,SaveLogFiles>;
 };
 ";
    };
-   PatchRec @[17] {
+   PatchRec @[28] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"SaveWeights\"].prog_code[\"If_iftaMiscdmemproc0\"]";
+    obj_path_idx=".programs.gp[4][15].prog_code[0]";
+    obj_type="If";
+    mbr_path="flags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="CAN_REVERT_TO_CODE";
+   };
+   PatchRec @[29] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"SaveWeights\"].prog_code[\"If_iftaMiscdmemproc0\"].true_code[\"ReturnExpr_return\"]";
+    obj_path_idx=".programs.gp[4][15].prog_code[0].true_code[0]";
+    obj_type="ReturnExpr";
+    mbr_path="flags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="CAN_REVERT_TO_CODE";
+   };
+   PatchRec @[30] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].vars[\"tag\"]";
     obj_path_idx=".programs.gp[4].gp[0][0].vars[0]";
@@ -926,9 +1371,9 @@ ProgVar .projects[1].programs.gp[4][15].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] { };
-ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[4].gp[0][0].vars[0] { };
+ProgVar .projects[0].programs.gp[4].gp[0][0].vars[0] {
  name=\"tag\";
  var_type=T_String;
  string_val=\"__RunMaster_NetMaster\";
@@ -940,8 +1385,10 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] {
 };
 ";
    };
-   PatchRec @[18] {
+   PatchRec @[31] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].vars[\"log_file_nm\"]";
     obj_path_idx=".programs.gp[4].gp[0][0].vars[3]";
@@ -952,9 +1399,9 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] {
     insert_after=;
     insert_before=;
     new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] { };
-ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] {
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ProgVar .projects[0].programs.gp[4].gp[0][0].vars[3] { };
+ProgVar .projects[0].programs.gp[4].gp[0][0].vars[3] {
  name=\"log_file_nm\";
  var_type=T_String;
  string_val=\"/Users/oreilly/emergent/proj_templates/LeabraFlex__RunMaster_NetMaster.trn_epc.dat\";
@@ -966,8 +1413,10 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] {
 };
 ";
    };
-   PatchRec @[19] {
+   PatchRec @[32] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].init_code";
     obj_path_idx=".programs.gp[4].gp[0][0].init_code";
@@ -978,8 +1427,8 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] {
     insert_after=;
     insert_before=;
     new_obj_type="If";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-If .projects[1].programs.gp[4].gp[0][0].init_code[0] { 
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+If .projects[0].programs.gp[4].gp[0][0].init_code[0] { 
  ProgEl_List @.true_code = [1] {
   MethodCall @[0] { 
    ProgArg_List @.meth_args = [0] {
@@ -987,7 +1436,7 @@ If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
   };
  };
 };
-If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
+If .projects[0].programs.gp[4].gp[0][0].init_code[0] {
  name=\"If_iftaMiscinteractive\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
@@ -1005,7 +1454,7 @@ If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
    flags=CAN_REVERT_TO_CODE;
    code_string=\"epoch_output_data->CloseDataLog()\";
    result_var=NULL;
-   obj=.programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].vars[\"epoch_output_data\"]$$<ProgVar,epoch_output_data>;
+   obj=.projects[0].programs.gp[4].gp[0][0].vars[4]$$<ProgVar,epoch_output_data>;
    method=DataTable::CloseDataLog;
    meth_args {
     name=\"meth_args\";
@@ -1019,6 +1468,38 @@ If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
 };
 ";
    };
+   PatchRec @[33] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].prog_code[\"If_ifepochoutputdataIsSavingDataLog\"]";
+    obj_path_idx=".programs.gp[4].gp[0][0].prog_code[1]";
+    obj_type="If";
+    mbr_path="flags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="CAN_REVERT_TO_CODE";
+   };
+   PatchRec @[34] {
+    off=0;
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].prog_code[\"If_ifepochoutputdataIsSavingDataLog\"].true_code[\"ReturnExpr_return\"]";
+    obj_path_idx=".programs.gp[4].gp[0][0].prog_code[1].true_code[0]";
+    obj_type="ReturnExpr";
+    mbr_path="flags";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="CAN_REVERT_TO_CODE";
+   };
   };
   PatchRec_Group @.gp[1] {
    name="ctrl_panels";
@@ -1027,37 +1508,67 @@ If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
    path=;
    PatchRec @[0] {
     off=0;
-    action=ASSIGN;
-    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs[\"run_params\"]";
-    obj_path_idx=".ctrl_panels[0].mbrs[0]";
-    obj_type="ControlPanelMember";
-    mbr_path="data.state";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
+    in_conflict=0;
+    conflict=NULL;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="save_log_files_interactive";
+    insert_after="trial_update_net_view";
     insert_before=;
-    new_obj_type=;
-    value="EXPLORE";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[8] { };
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[8] {
+ label=\"save_log_files_interactive\";
+ short_label=1;
+ cust_label=0;
+ desc=\"save log files when running interactively?\";
+ cust_desc=0;
+ base=.projects[0].programs.gp[4][4].vars[8]$$<ProgVar,save_log_files_interactive>;
+ mbr=ProgVar::bool_val;
+ data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"false\": range=\"\": notes=\"save log files while running interactively\": };
+};
+";
    };
    PatchRec @[1] {
     off=0;
-    action=ASSIGN;
-    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs[\"run_params\"]";
-    obj_path_idx=".ctrl_panels[0].mbrs[0]";
-    obj_type="ControlPanelMember";
-    mbr_path="data.notes";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
+    in_conflict=0;
+    conflict=NULL;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="cust_tag";
+    insert_after="save_log_files_interactive";
     insert_before=;
-    new_obj_type=;
-    value="set to explore for name to be added to tag";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.8.0 rev10715
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[9] { };
+ControlPanelMember .projects[0].ctrl_panels[0].mbrs[9] {
+ label=\"cust_tag\";
+ short_label=1;
+ cust_label=0;
+ desc=\"add any custom tag string here -- used for labeling log and weight files along with config info\";
+ cust_desc=0;
+ base=.projects[0].programs.gp[1][1].vars[7]$$<ProgVar,cust_tag>;
+ mbr=ProgVar::string_val;
+ data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"mtau10_mrg1st.5\": range=\"\": notes=\"update this to label log files -- will also be labeled with config names \": };
+};
+";
    };
    PatchRec @[2] {
     off=0;
+    in_conflict=0;
+    conflict=NULL;
     action=ASSIGN;
-    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs[\"net_params\"]";
-    obj_path_idx=".ctrl_panels[0].mbrs[1]";
+    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs[\"run_params\"]";
+    obj_path_idx=".ctrl_panels[1].mbrs[0]";
     obj_type="ControlPanelMember";
     mbr_path="data.state";
     targ_idx=0;
@@ -1069,55 +1580,35 @@ If .projects[1].programs.gp[4].gp[0][0].init_code[0] {
    };
    PatchRec @[3] {
     off=0;
-    action=INSERT;
-    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
-    obj_path_idx=".ctrl_panels[1].mbrs";
-    obj_type="ControlPanelMember_Group";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="save_log_files_interactive";
-    insert_after="trial_update_net_view";
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs[\"run_params\"]";
+    obj_path_idx=".ctrl_panels[1].mbrs[0]";
+    obj_type="ControlPanelMember";
+    mbr_path="data.notes";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
     insert_before=;
-    new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ControlPanelMember .projects[1].ctrl_panels[1].mbrs[8] { };
-ControlPanelMember .projects[1].ctrl_panels[1].mbrs[8] {
- label=\"save_log_files_interactive\";
- short_label=1;
- cust_label=0;
- desc=\"save log files when running interactively?\";
- cust_desc=0;
- base=.programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"save_log_files_interactive\"]$$<ProgVar,save_log_files_interactive>;
- mbr=ProgVar::bool_val;
- data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"false\": range=\"\": notes=\"save log files while running interactively\": };
-};
-";
+    new_obj_type=;
+    value="set to explore for name to be added to tag";
    };
    PatchRec @[4] {
     off=0;
-    action=INSERT;
-    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
-    obj_path_idx=".ctrl_panels[1].mbrs";
-    obj_type="ControlPanelMember_Group";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="cust_tag";
-    insert_after="save_log_files_interactive";
+    in_conflict=0;
+    conflict=NULL;
+    action=ASSIGN;
+    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs[\"net_params\"]";
+    obj_path_idx=".ctrl_panels[1].mbrs[1]";
+    obj_type="ControlPanelMember";
+    mbr_path="data.state";
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
     insert_before=;
-    new_obj_type="ControlPanelMember";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ControlPanelMember .projects[1].ctrl_panels[1].mbrs[9] { };
-ControlPanelMember .projects[1].ctrl_panels[1].mbrs[9] {
- label=\"cust_tag\";
- short_label=1;
- cust_label=0;
- desc=\"add any custom tag string here -- used for labeling log and weight files along with config info\";
- cust_desc=0;
- base=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"cust_tag\"]$$<ProgVar,cust_tag>;
- mbr=ProgVar::string_val;
- data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\"mtau10_mrg1st.5\": range=\"\": notes=\"update this to label log files -- will also be labeled with config names \": };
-};
-";
+    new_obj_type=;
+    value="EXPLORE";
    };
   };
  };

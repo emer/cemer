@@ -1,12 +1,11 @@
 // ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
- Doc_Group @.docs = [2] {
+ Doc_Group @.docs = [1] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @[0] { };
    };
   };
-  taDoc @[1] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -18,7 +17,23 @@ LeabraProject .projects[0] {
  };
 
  ControlPanel_Group @.ctrl_panels = [2] {
-  ControlPanel @[0] { 
+  ClusterRun @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [2] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
+   };
+
+   ControlPanelMethod_Group @.mths = [0] {
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+  ControlPanel @[1] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @[0] { };
    };
@@ -43,28 +58,12 @@ LeabraProject .projects[0] {
     ControlPanelMethod @[3] { };
    };
   };
-  ClusterRun @[1] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-   };
-
-   ControlPanelMember_Group @.mbrs = [2] {
-    ControlPanelMember @[0] { };
-    ControlPanelMember @[1] { };
-   };
-
-   ControlPanelMethod_Group @.mths = [0] {
-   };
-
-   ParamSearchAlgo_List @.search_algos = [0] {
-   };
-  };
  };
 
  ParamSet_Group @.active_params = [0] {
   ParamSet_Group @.gp[0] = [2] { 
    ParamSet @[0] { 
-    ControlPanelMember_Group @.mbrs = [18] {
+    ControlPanelMember_Group @.mbrs = [17] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -82,14 +81,13 @@ LeabraProject .projects[0] {
      ControlPanelMember @[14] { };
      ControlPanelMember @[15] { };
      ControlPanelMember @[16] { };
-     ControlPanelMember @[17] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
     };
    };
    ParamSet @[1] { 
-    ControlPanelMember_Group @.mbrs = [18] {
+    ControlPanelMember_Group @.mbrs = [17] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -107,7 +105,6 @@ LeabraProject .projects[0] {
      ControlPanelMember @[14] { };
      ControlPanelMember @[15] { };
      ControlPanelMember @[16] { };
-     ControlPanelMember @[17] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
@@ -1808,7 +1805,8 @@ LeabraProject .projects[0] {
    };
    Program @[2] { 
     UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @[0] { };
+     UserDataItem @[0] { };
+     UserData_DocLink @[1] { };
     };
 
     ProgObjList @.objs = [2] {
@@ -3603,40 +3601,34 @@ LeabraProject .projects[0] {
        BaseSpec_Group @.children = [0] {
        };
 
-       Schedule @.lrate_sched = [7] {
+       Schedule @.lrate_sched = [5] {
 	SchedItem @[0] { };
 	SchedItem @[1] { };
 	SchedItem @[2] { };
 	SchedItem @[3] { };
 	SchedItem @[4] { };
-	SchedItem @[5] { };
-	SchedItem @[6] { };
        };
       };
       LeabraConSpec @[1] { 
        BaseSpec_Group @.children = [0] {
        };
 
-       Schedule @.lrate_sched = [7] {
+       Schedule @.lrate_sched = [5] {
 	SchedItem @[0] { };
 	SchedItem @[1] { };
 	SchedItem @[2] { };
 	SchedItem @[3] { };
 	SchedItem @[4] { };
-	SchedItem @[5] { };
-	SchedItem @[6] { };
        };
       };
      };
 
-     Schedule @.lrate_sched = [7] {
+     Schedule @.lrate_sched = [5] {
       SchedItem @[0] { };
       SchedItem @[1] { };
       SchedItem @[2] { };
       SchedItem @[3] { };
       SchedItem @[4] { };
-      SchedItem @[5] { };
-      SchedItem @[6] { };
      };
     };
     FullPrjnSpec @[3] { 
@@ -3681,13 +3673,13 @@ LeabraProject .projects[0] {
  };
 };
 LeabraProject .projects[0] {
- name="LeabraFlex";
+ name="LeabraFlex_10389_v804_patch2";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
  version {
   major=8;
   minor=0;
-  step=3;
+  step=0;
  };
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
@@ -3948,59 +3940,6 @@ mw.config.set({\"wgBackendResponseTime\":192});
 
 </body></html>";
   };
-  taDoc @[1] {
-   name="ChangeLog";
-   desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
-<head>ChangeLog</head>
-<body>
-<h1>ChangeLog</h1>
-<ul>
-
-
-<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
-svn rev: 10514 update startup program
-
-
-
-<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
-svn rev: 10489 actually remove the config table finally
-
-
-<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
-leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant
-</ul>
-</body>
-</html>
-";
-   html_text="<html>
-<head>ChangeLog</head>
-<body>
-<h1>ChangeLog</h1>
-<ul>
-<P>
-<P>
-<li>Sat Mar  4 02:19:15 2017 version: 8.0.3 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
-svn rev: 10514 update startup program
-<P>
-<P>
-<P>
-<li>Fri Feb 17 01:20:30 2017 version: 8.0.2 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
-svn rev: 10489 actually remove the config table finally
-<P>
-<P>
-<li>Fri Feb 17 01:19:23 2017 version: 8.0.1 user: oreilly file_name: <code>LeabraFlexParamSetExperiment.proj</code> <br>
-leabra flex using param sets experiment project -- updated by randy from John's original, to remove the config table entirely, and use StdGlobal where relevant
-</ul>
-</body>
-</html>
-";
-  };
  };
  wizards {
   name="wizards";
@@ -4021,7 +3960,85 @@ leabra flex using param sets experiment project -- updated by randy from John's 
   el_typ=ControlPanel;
   el_def=0;
   master_and_clones=0;
-  ControlPanel @[0] {
+  ClusterRun @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
+   };
+   name="ClusterRun";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+    ControlPanelMember @[0] {
+     label="run_params";
+     short_label=1;
+     cust_label=0;
+     desc="select parameters for controlling how network is run";
+     cust_desc=0;
+     base=.programs.gp[1][1].vars[1]$$;
+     mbr=ProgVar::object_val;
+     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="set to explore for name to be added to tag": };
+    };
+    ControlPanelMember @[1] {
+     label="net_params";
+     short_label=1;
+     cust_label=0;
+     desc="select other parameters, typically network spec params -- independent of run params";
+     cust_desc=0;
+     base=.programs.gp[1][1].vars[2]$$;
+     mbr=ProgVar::object_val;
+     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
+    };
+   };
+   mths {
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   search_algos {
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   use_search_algo=0;
+   cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
+   last_submit_time=;
+   notes=;
+   label=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   queue=;
+   run_time=;
+   exe_cmd="emergent";
+   ram_gb=-1;
+   n_threads=2;
+   use_mpi=0;
+   mpi_nodes=10;
+   mpi_per_node=1;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_n_batches_per=1;
+   nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=1;
+  };
+  ControlPanel @[1] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItem;
@@ -4052,7 +4069,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      cust_label=0;
      desc="select parameters for controlling how network is run";
      cust_desc=0;
-     base=.programs.gp[1][1].vars[1]$$;
+     base=$.programs.gp[1][1].vars[1]$;
      mbr=ProgVar::object_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"RunParams\"][\"SpecialTrain\"]": range="": notes="MasterTrain sets these params at start": };
     };
@@ -4062,7 +4079,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      cust_label=0;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=.programs.gp[1][1].vars[2]$$;
+     base=$.programs.gp[1][1].vars[2]$;
      mbr=ProgVar::object_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"MiscParams\"][\"MiscOne\"]": range="": notes="add extra params as needed..": };
     };
@@ -4119,10 +4136,10 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     ControlPanelMember @[8] {
      label="save_log_files_interactive";
      short_label=1;
-     cust_label=0;
+     cust_label=1;
      desc="save log files when running interactively?";
      cust_desc=0;
-     base=.programs.gp[4][4].vars[8]$$;
+     base=.programs.gp[4][4].vars[6]$$;
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="false": range="": notes="save log files while running interactively": };
     };
@@ -4179,84 +4196,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mth=Program::Stop;
     };
    };
-  };
-  ClusterRun @[1] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
-   };
-   name="ClusterRun";
-   cp_state=REGULAR;
-   updt_while_running=0;
-   desc=;
-   mbrs {
-    name="mbrs";
-    el_typ=ControlPanelMember;
-    el_def=0;
-    ControlPanelMember @[0] {
-     label="run_params";
-     short_label=1;
-     cust_label=0;
-     desc="select parameters for controlling how network is run";
-     cust_desc=0;
-     base=$.programs.gp[1][1].vars[1]$;
-     mbr=ProgVar::object_val;
-     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="set to explore for name to be added to tag": };
-    };
-    ControlPanelMember @[1] {
-     label="net_params";
-     short_label=1;
-     cust_label=0;
-     desc="select other parameters, typically network spec params -- independent of run params";
-     cust_desc=0;
-     base=$.programs.gp[1][1].vars[2]$;
-     mbr=ProgVar::object_val;
-     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
-    };
-   };
-   mths {
-    name="mths";
-    el_typ=ControlPanelMethod;
-    el_def=0;
-    group_type=GT_BUTTONS;
-   };
-   search_algos {
-    name="search_algos";
-    el_typ=ParamSearchAlgo;
-    el_def=0;
-   };
-   use_search_algo=0;
-   cur_search_algo=NULL;
-   set_proj_name=1;
-   proj_name="param_search";
-   auto_updt_interval=10;
-   auto_updt_timeout=30;
-   cluster="dream";
-   clusters="dream";
-   users="oreilly";
-   last_submit_time="2017_02_08_21_14_24";
-   notes="testing param_set config idea";
-   label=;
-   extra_files=;
-   svn_repo="grey_run";
-   repo_url="https://grey.colorado.edu/svn/clusterun";
-   queue=;
-   run_time="1h";
-   exe_cmd="emergent";
-   ram_gb=0;
-   n_threads=2;
-   use_mpi=0;
-   mpi_nodes=10;
-   mpi_per_node=1;
-   parallel_batch=0;
-   pb_batches=10;
-   pb_n_batches_per=1;
-   nowin_x=0;
-   enable_kill=0;
-   enable_load=1;
-   enable_notes=1;
   };
  };
  active_params {
@@ -4379,66 +4318,56 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
      ControlPanelMember @[10] {
-      label="load_weights";
-      short_label=1;
-      cust_label=0;
-      desc="load initial weights from a file (specified in weights_file)";
-      cust_desc=0;
-      base=.programs.gp[4][4].vars[1]$$;
-      mbr=ProgVar::bool_val;
-      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
-     };
-     ControlPanelMember @[11] {
       label="weights_file";
       short_label=1;
       cust_label=0;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=0;
-      base=.programs.gp[4][4].vars[2]$$;
+      base=.programs.gp[4][4].vars[0]$$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
      };
-     ControlPanelMember @[12] {
+     ControlPanelMember @[11] {
       label="load_st_epc";
       short_label=1;
       cust_label=0;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=0;
-      base=.programs.gp[4][4].vars[3]$$;
+      base=.programs.gp[4][4].vars[1]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
-     ControlPanelMember @[13] {
+     ControlPanelMember @[12] {
       label="lrs_step_epochs";
       short_label=1;
       cust_label=0;
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=0;
-      base=.programs.gp[4][4].vars[4]$$;
+      base=.programs.gp[4][4].vars[2]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
      };
-     ControlPanelMember @[14] {
+     ControlPanelMember @[13] {
       label="lrs_n_steps";
       short_label=1;
       cust_label=0;
       desc="number of steps in the learning rate schedule";
       cust_desc=0;
-      base=.programs.gp[4][4].vars[5]$$;
+      base=.programs.gp[4][4].vars[3]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="7": range="": notes="": };
      };
-     ControlPanelMember @[15] {
+     ControlPanelMember @[14] {
       label="lrs_bump_step";
       short_label=1;
       cust_label=0;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=0;
-      base=.programs.gp[4][4].vars[6]$$;
+      base=.programs.gp[4][4].vars[4]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="-1": range="": notes="": };
      };
-     ControlPanelMember @[16] {
+     ControlPanelMember @[15] {
       label="n_batches";
       short_label=1;
       cust_label=0;
@@ -4448,7 +4377,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
-     ControlPanelMember @[17] {
+     ControlPanelMember @[16] {
       label="batch_start";
       short_label=1;
       cust_label=0;
@@ -4577,66 +4506,56 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
      };
      ControlPanelMember @[10] {
-      label="load_weights";
-      short_label=1;
-      cust_label=0;
-      desc="load initial weights from a file (specified in weights_file)";
-      cust_desc=0;
-      base=$.programs.gp[4][4].vars[1]$;
-      mbr=ProgVar::bool_val;
-      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="false": range="": notes="": };
-     };
-     ControlPanelMember @[11] {
       label="weights_file";
       short_label=1;
       cust_label=0;
       desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
       cust_desc=0;
-      base=$.programs.gp[4][4].vars[2]$;
+      base=$.programs.gp[4][4].vars[0]$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
      };
-     ControlPanelMember @[12] {
+     ControlPanelMember @[11] {
       label="load_st_epc";
       short_label=1;
       cust_label=0;
       desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
       cust_desc=0;
-      base=$.programs.gp[4][4].vars[3]$;
+      base=$.programs.gp[4][4].vars[1]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
-     ControlPanelMember @[13] {
+     ControlPanelMember @[12] {
       label="lrs_step_epochs";
       short_label=1;
       cust_label=0;
       desc="learning rate schedule epochs per step of decrease in learning rate";
       cust_desc=0;
-      base=$.programs.gp[4][4].vars[4]$;
+      base=$.programs.gp[4][4].vars[2]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="50": range="": notes="": };
      };
-     ControlPanelMember @[14] {
+     ControlPanelMember @[13] {
       label="lrs_n_steps";
       short_label=1;
       cust_label=0;
       desc="number of steps in the learning rate schedule";
       cust_desc=0;
-      base=$.programs.gp[4][4].vars[5]$;
+      base=$.programs.gp[4][4].vars[3]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="7": range="": notes="": };
      };
-     ControlPanelMember @[15] {
+     ControlPanelMember @[14] {
       label="lrs_bump_step";
       short_label=1;
       cust_label=0;
       desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
       cust_desc=0;
-      base=$.programs.gp[4][4].vars[6]$;
+      base=$.programs.gp[4][4].vars[4]$;
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="-1": range="": notes="": };
      };
-     ControlPanelMember @[16] {
+     ControlPanelMember @[15] {
       label="n_batches";
       short_label=1;
       cust_label=0;
@@ -4646,7 +4565,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="1": range="": notes="": };
      };
-     ControlPanelMember @[17] {
+     ControlPanelMember @[16] {
       label="batch_start";
       short_label=1;
       cust_label=0;
@@ -6856,8 +6775,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     minor=0;
     step=0;
    };
-   author="Randall C. O'Reilly";
-   email="emergent-users@grey.colorado.edu";
+   author=;
+   email=;
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -6940,7 +6859,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_Object;
      object_type=DataTable;
      object_val=.data.gp[1][1]$$;
-     object_scope=.data.gp[1]$$;
+     object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6974,14 +6893,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      object_scope=NULL;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
-     desc="additional configuration-specific startup code to run, in the StartupProgs -- any global startup stuff should still be in MasterStartup -- this should only be for startup that is specific to a particular configuration (rare)";
+     desc=;
      init_from=NULL;
     };
     ProgVar @[8] {
      name="MyClusterRun";
      var_type=T_Object;
      object_type=ClusterRun;
-     object_val=.ctrl_panels[1]$$;
+     object_val=.ctrl_panels[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7089,7 +7008,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     ControlPanelsFmArgs @[8] {
      name="ControlPanelsFmArgs_CtrlPanelFmArgsvarMyClusterRun";
-     desc="also gets any params from linked control panels";
+     desc="sets any arg listed in the control panel";
      flags=CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=$.programs[0].vars[8]$;
@@ -7824,8 +7743,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author="Randall C. O'Reilly";
-    email="emergent-users@grey.colorado.edu";
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -7902,7 +7821,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="name of run program to run -- must exist in the RunProgs group";
+      desc="name of run program from the Config table";
       init_from=NULL;
      };
      ProgVar @[4] {
@@ -7912,14 +7831,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="name of init program -- must exist in the InitProgs group";
+      desc="name of init program from the Config table";
       init_from=NULL;
      };
      ProgVar @[5] {
       name="cluster_run";
       var_type=T_Object;
       object_type=ClusterRun;
-      object_val=$.ctrl_panels[1]$;
+      object_val=$.ctrl_panels[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8188,7 +8107,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="network";
 	expr {
 	 expr="network";
 	};
@@ -8232,7 +8151,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="run_prog";
 	  required=1;
 	  def_val=;
-	  prev_expr="config_id";
+	  prev_expr=;
 	  expr {
 	   expr="run_prog";
 	  };
@@ -8247,7 +8166,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    step_prog=.programs.gp[2][1]$$;
+    step_prog=$.programs.gp[1][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -8277,8 +8196,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author="Randall C. O'Reilly";
-    email="emergent-users@grey.colorado.edu";
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr="StopStepTest()";
@@ -8346,7 +8265,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc="name of run program";
+      desc="name of run program from the Config table";
       init_from=NULL;
      };
     };
@@ -8365,7 +8284,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="select grain size for Step function on MasterRun program -- can extend this functionality -- very useful!";
+      desc=;
       init_from=NULL;
      };
     };
@@ -8582,8 +8501,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       minor=0;
       step=0;
      };
-     author="Randall C. O'Reilly";
-     email="emergent-users@grey.colorado.edu";
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -8867,8 +8786,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       minor=0;
       step=0;
      };
-     author="Randall C. O'Reilly";
-     email="emergent-users@grey.colorado.edu";
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -9262,7 +9181,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=3226: sys=831: tot=149439832778: }: end={usr=3226: sys=831: tot=149439832778: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=5719: sys=1229: tot=148342034626: }: end={usr=5719: sys=1229: tot=148342034626: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -10492,7 +10411,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	target=$.programs.gp[2][1]$;
+	target=.programs.gp[2][1]$$;
 	targ_ld_init="*BasicTest*";
        };
        If @[1] {
@@ -14027,9 +13946,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    Program @[2] {
     UserDataItem_List @*(.user_data_) {
      name=;
-     el_typ=UserData_DocLink;
+     el_typ=UserDataItem;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][2].doc$$: };
+     UserDataItem @[0] {name="user_pinned": value=0: val_type_fixed=0: };
+     UserData_DocLink @[1] {name="DocLink": doc=.programs.gp[4][2].doc$$: };
     };
     name="PositionLayersFromTable";
     short_nm="PstLyr";
@@ -16220,6 +16140,68 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=ProgVar;
      el_def=0;
      ProgVar @[0] {
+      name="weights_file";
+      var_type=T_String;
+      string_val=;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
+      init_from=NULL;
+     };
+     ProgVar @[1] {
+      name="load_st_epc";
+      var_type=T_Int;
+      int_val=1;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
+      init_from=NULL;
+     };
+     ProgVar @[2] {
+      name="lrs_step_epochs";
+      var_type=T_Int;
+      int_val=50;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="learning rate schedule epochs per step of decrease in learning rate";
+      init_from=NULL;
+     };
+     ProgVar @[3] {
+      name="lrs_n_steps";
+      var_type=T_Int;
+      int_val=7;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="number of steps in the learning rate schedule";
+      init_from=NULL;
+     };
+     ProgVar @[4] {
+      name="lrs_bump_step";
+      var_type=T_Int;
+      int_val=-1;
+      object_scope=NULL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
+      init_from=NULL;
+     };
+     ProgVar @[5] {
+      name="LRSConSpec";
+      var_type=T_Object;
+      object_type=LeabraConSpec;
+      object_val=$.networks[0].specs[2]$;
+      object_scope=NULL;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[6] {
       name="dmem_rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
@@ -16231,7 +16213,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-     ProgVar @[1] {
+     ProgVar @[7] {
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
@@ -16239,68 +16221,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="load initial weights from a file (specified in weights_file)";
-      init_from=NULL;
-     };
-     ProgVar @[2] {
-      name="weights_file";
-      var_type=T_String;
-      string_val=;
-      object_scope=NULL;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory";
-      init_from=NULL;
-     };
-     ProgVar @[3] {
-      name="load_st_epc";
-      var_type=T_Int;
-      int_val=1;
-      object_scope=NULL;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)";
-      init_from=NULL;
-     };
-     ProgVar @[4] {
-      name="lrs_step_epochs";
-      var_type=T_Int;
-      int_val=50;
-      object_scope=NULL;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="learning rate schedule epochs per step of decrease in learning rate";
-      init_from=NULL;
-     };
-     ProgVar @[5] {
-      name="lrs_n_steps";
-      var_type=T_Int;
-      int_val=7;
-      object_scope=NULL;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="number of steps in the learning rate schedule";
-      init_from=NULL;
-     };
-     ProgVar @[6] {
-      name="lrs_bump_step";
-      var_type=T_Int;
-      int_val=-1;
-      object_scope=NULL;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level";
-      init_from=NULL;
-     };
-     ProgVar @[7] {
-      name="LRSConSpec";
-      var_type=T_Object;
-      object_type=LeabraConSpec;
-      object_val=$.networks[0].specs[2]$;
-      object_scope=NULL;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
       init_from=NULL;
      };
      ProgVar @[8] {
@@ -16662,7 +16582,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"loaded weights file:\" weights_file";
 	message="loaded weights file:";
-	print_var=$.programs.gp[4][4].vars[2]$;
+	print_var=$.programs.gp[4][4].vars[0]$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -16704,7 +16624,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CAN_REVERT_TO_CODE;
       code_string="LRSConSpec->LogLrateSched(lrs_step_epochs, lrs_n_steps, lrs_bump_step)";
       result_var=NULL;
-      obj=.programs.gp[4][4].vars[7]$$;
+      obj=.programs.gp[4][4].vars[5]$$;
       method=LeabraConSpec::LogLrateSched;
       meth_args {
        name="meth_args";
@@ -16765,7 +16685,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	flags=CAN_REVERT_TO_CODE;
 	code_string="dmem_rnd_seed->NewSeed()";
 	result_var=NULL;
-	obj=.programs.gp[4][4].vars[0]$$;
+	obj=$.programs.gp[4][4].vars[6]$;
 	method=RndSeed::NewSeed;
 	meth_args {
 	 name="meth_args";
@@ -18206,8 +18126,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author="Randall C. O'Reilly";
-    email="emergent-users@grey.colorado.edu";
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -19032,7 +18952,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.data.gp[1][1]$;
-       object_scope=$.data.gp[1]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -19044,7 +18964,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.data.gp[1][0]$;
-       object_scope=$.data.gp[1]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -20358,7 +20278,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.data.gp[1][0]$;
-       object_scope=$.data.gp[1]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -21783,7 +21703,7 @@ also save specs.";
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.data.gp[1][1]$;
-       object_scope=$.data.gp[1]$;
+       object_scope=NULL;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -23214,7 +23134,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        var_type=T_Object;
        object_type=DataTable;
        object_val=$.data.gp[1][2]$;
-       object_scope=$.data.gp[1]$;
+       object_scope=.data.gp[1]$$;
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -24804,13 +24724,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
   el_def=0;
   MainWindowViewer @[0] {
    UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_130";
+    name="UserDataItem_List_1";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.005313496: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.03738318: val_type_fixed=0: };
-    UserDataItem @[2] {name="view_win_wd": value=0.9941552: val_type_fixed=0: };
-    UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.028887: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABFwAAAfwAAAKMAf////8BAAAAAQA=: val_type_fixed=0: };
    };
@@ -24818,7 +24738,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
    m_data=.$$;
    cur_font_size=12;
    visible=1;
-   win_name=".projects[\"LeabraFlex\"] - LeabraFlex.proj";
+   win_name=".projects[\"LeabraFlex_10389_v804_patch2\"] - LeabraFlex_10389_v804_patch2.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -24830,7 +24750,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     ToolBar @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_131";
+      name="UserDataItem_List_1";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_visible": value=1: val_type_fixed=0: };
@@ -24865,7 +24785,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     T3PanelViewer @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_132";
+      name="UserDataItem_List_1";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_panel_selected": value=1: val_type_fixed=0: };
@@ -24962,7 +24882,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    max=1;
 	   };
 	  };
-	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
 	 };
 	};
        };
@@ -25087,7 +25007,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=32: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=29: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
@@ -25096,7 +25016,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.02739: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.52558: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
@@ -25105,7 +25025,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=50: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
@@ -25132,7 +25052,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.54: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.586: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
@@ -25267,7 +25187,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0.962046: fix_max=0: max=0.999009: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[22] {
@@ -25321,7 +25241,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[28] {
@@ -25462,7 +25382,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  plot_style=LINE;
 	  negative_draw=0;
 	  negative_draw_z=1;
-	  line_width=1;
+	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
 	  solid_lines=0;
@@ -25588,7 +25508,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -26466,13 +26386,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_def=0;
     ToolBoxDockViewer @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_133";
+      name="UserDataItem_List_1";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
       UserDataItem @[1] {name="view_win_top": value=0.008496176: val_type_fixed=0: };
       UserDataItem @[2] {name="view_win_wd": value=0.04357067: val_type_fixed=0: };
-      UserDataItem @[3] {name="view_win_ht": value=0.7349193: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.7357689: val_type_fixed=0: };
       UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
       UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
      };
@@ -26490,8 +26410,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers; };
+ last_change_desc="* everything is now in Layer_Groups and spec groups, for portability between projects
+
+* integrated highvis model for objrec, with separate img filtering pathways, etc
+
+* two 'ticks' per trial: fixate, then recognize -- RobotTrial coordinates -- other progs conditionalize on network.tick
+
+* objs_per_epc in lesson -- only present a limited # of objects per epoch repeatedly over the lesson -- makes the carousel much more efficient
+
+  this is all impl in the new Build_Presentation_Robot
+
+* need to change camera fov for objrec -- not enough resolution for fovea otherwise
+
+* added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
+
+";
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1][1];.programs.gp[1][1].prog_code;.programs.gp[1][1].prog_code[3];.programs.gp[1][1].prog_code[3].prog_args[0];.programs.gp[1][1].prog_code[4];.programs.gp[1][1].prog_code[4].loop_code[0];.programs.gp[1][1].prog_code[4].loop_code[0].prog_args[0];.programs.gp[1][1].prog_code[4].loop_code[0].prog_args[1];.programs.gp[1][2];.programs.gp[1][2].prog_code;.programs.gp[1][2].prog_code[0];.programs.gp[1][2].prog_code[0].prog_args[0];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -26616,7 +26550,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.2: i=1: };
+     g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
@@ -26699,18 +26633,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	SchedItem @[4] {
 	 start_ctr=200;
 	 start_val=0.05;
-	 duration=50;
-	 step=-0.0006;
-	};
-	SchedItem @[5] {
-	 start_ctr=250;
-	 start_val=0.02;
-	 duration=50;
-	 step=-0.0002;
-	};
-	SchedItem @[6] {
-	 start_ctr=300;
-	 start_val=0.01;
 	 duration=1;
 	 step=1;
 	};
@@ -26723,7 +26645,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @[1] {
@@ -26780,18 +26702,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	SchedItem @[4] {
 	 start_ctr=200;
 	 start_val=0.05;
-	 duration=50;
-	 step=-0.0006;
-	};
-	SchedItem @[5] {
-	 start_ctr=250;
-	 start_val=0.02;
-	 duration=50;
-	 step=-0.0002;
-	};
-	SchedItem @[6] {
-	 start_ctr=300;
-	 start_val=0.01;
 	 duration=1;
 	 step=1;
 	};
@@ -26804,7 +26714,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -26850,18 +26760,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       SchedItem @[4] {
        start_ctr=200;
        start_val=0.05;
-       duration=50;
-       step=-0.0006;
-      };
-      SchedItem @[5] {
-       start_ctr=250;
-       start_val=0.02;
-       duration=50;
-       step=-0.0002;
-      };
-      SchedItem @[6] {
-       start_ctr=300;
-       start_val=0.01;
        duration=1;
        step=1;
       };
@@ -26874,7 +26772,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
-     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
     };
     FullPrjnSpec @[3] {
      name="FullPrjnSpec_0";

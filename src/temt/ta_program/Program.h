@@ -132,11 +132,11 @@ public:
   String                desc;
   // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   taProjVersion         version;
-  // #EDIT_DIALOG #HIDDEN_INLINE version for this program -- can optionally be used for widely-used programs -- standard algorithm programs can use the emergent version in which they were released for example
+  // #EDIT_DIALOG #HIDDEN_INLINE #NO_DIFF version for this program -- can optionally be used for widely-used programs -- standard algorithm programs can use the emergent version in which they were released for example
   String                author;
-  // the program author - by default the one saved in emergent preferences
+  // #NO_DIFF the program author - by default the one saved in emergent preferences
   String                email;
-  // email address for comments, questions about the program - typically the author's email address - by default the one saved in emergent preferences
+  // #NO_DIFF email address for comments, questions about the program - typically the author's email address - by default the one saved in emergent preferences
   ProgFlags             flags;
   // control flags, for display and execution control
   ProgExpr              stop_step_cond;

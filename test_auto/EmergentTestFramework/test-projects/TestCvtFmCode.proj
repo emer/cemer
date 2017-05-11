@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -532,7 +532,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="ProgElsSet";
    short_nm="PrgSt";
@@ -615,7 +615,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="i = 0";
-     result_var=.projects[0].programs[0].prog_code[0].local_vars[0]$$;
+     result_var=.programs[0].prog_code[0].local_vars[0]$$;
      expr {
       expr="0";
      };
@@ -630,7 +630,7 @@ LeabraProject .projects[0] {
       el_typ=ProgArg;
       el_def=0;
      };
-     target=.projects[0].programs[1]$$;
+     target=.programs[1]$$;
      targ_ld_init="*TestProgCodeCvtToProgEl*";
     };
     ForLoop @[4] {
@@ -668,7 +668,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="switch(i)";
-     switch_var=$.projects[0].programs[0].prog_code[0].local_vars[0]$;
+     switch_var=$.programs[0].prog_code[0].local_vars[0]$;
      cases {
       name="cases";
       el_typ=CaseBlock;
@@ -708,7 +708,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  i";
        message=;
-       print_var=$.projects[0].programs[0].prog_code[0].local_vars[0]$;
+       print_var=$.programs[0].prog_code[0].local_vars[0]$;
        print_var2=NULL;
        print_var3=NULL;
        print_var4=NULL;
@@ -736,7 +736,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  i";
        message=;
-       print_var=$.projects[0].programs[0].prog_code[0].local_vars[0]$;
+       print_var=$.programs[0].prog_code[0].local_vars[0]$;
        print_var2=NULL;
        print_var3=NULL;
        print_var4=NULL;
@@ -752,7 +752,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="Print  i";
      message=;
-     print_var=$.projects[0].programs[0].prog_code[0].local_vars[0]$;
+     print_var=$.programs[0].prog_code[0].local_vars[0]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -796,7 +796,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[1].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[1].doc$$: };
    };
    name="TestProgCodeCvtToProgEl";
    short_nm="TsPrCd";
@@ -836,7 +836,7 @@ LeabraProject .projects[0] {
      name="prog_els_set";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs[0]$$;
+     object_val=.programs[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -913,7 +913,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="my_prog_code = prog_els_set.prog_code[progel_idx]";
-     result_var=.projects[0].programs[1].vars[2]$$;
+     result_var=.programs[1].vars[2]$$;
      expr {
       expr="prog_els_set.prog_code[progel_idx]";
      };
@@ -924,7 +924,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="my_prog_code->CvtFmSavedCode()";
      result_var=NULL;
-     obj=$.projects[0].programs[1].vars[2]$;
+     obj=$.programs[1].vars[2]$;
      method=ProgEl::CvtFmSavedCode;
      meth_args {
       name="meth_args";
@@ -939,7 +939,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="does_match = my_prog_code.DerivesFromName(should_match)";
-     result_var=.projects[0].programs[1].vars[4]$$;
+     result_var=.programs[1].vars[4]$$;
      expr {
       expr="my_prog_code.DerivesFromName(should_match)";
      };
@@ -1012,7 +1012,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[2].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[2].doc$$: };
    };
    name="TestConvertProgCodeStringToProgElCode";
    short_nm="TsCnvP";
@@ -1159,7 +1159,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgCode = new ProgCode()";
-     result_var=.projects[0].programs[2].vars[0]$$;
+     result_var=.programs[2].vars[0]$$;
      expr {
       expr="new ProgCode()";
      };
@@ -1169,7 +1169,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgEl_list = .projects[\"TestCvtFmCode\"].programs[\"TestConvertProgCodeStringToProgElCode\"].prog_code[1].true_code";
-     result_var=.projects[0].programs[2].vars[2]$$;
+     result_var=.programs[2].vars[2]$$;
      expr {
       expr=".projects[\"TestCvtFmCode\"].programs[\"TestConvertProgCodeStringToProgElCode\"].prog_code[1].true_code";
      };
@@ -1179,7 +1179,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgCode.code.expr = test_code_str";
-     obj=$.projects[0].programs[2].vars[0]$;
+     obj=$.programs[2].vars[0]$;
      path="code.expr";
      expr {
       expr="test_code_str";
@@ -1192,7 +1192,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgEl_list->Transfer(MyProgCode)";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[2]$;
+     obj=$.programs[2].vars[2]$;
      method=taList_impl::Transfer;
      meth_args {
       name="meth_args";
@@ -1219,7 +1219,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgCode->ConvertToProgEl()";
      result_var=NULL;
-     obj=$.projects[0].programs[2].vars[0]$;
+     obj=$.programs[2].vars[0]$;
      method=ProgCode::ConvertToProgEl;
      meth_args {
       name="meth_args";
@@ -1277,7 +1277,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=$.projects[0].programs[2].doc$: };
+    UserData_DocLink @[0] {name="DocLink": doc=$.programs[2].doc$: };
    };
    name="TestConvertProgCodeStringToProgElVerify";
    short_nm="TsCnvP";
@@ -1358,7 +1358,7 @@ LeabraProject .projects[0] {
      flags=CTRL_READ_ONLY|NULL_CHECK|USED;
      reference=0;
      desc=;
-     init_from=.projects[0].programs[2]$$;
+     init_from=.programs[2]$$;
     };
    };
    functions {
@@ -1391,7 +1391,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgEl_list = .projects[\"TestCvtFmCode\"].programs[\"TestConvertProgCodeStringToProgElCode\"].prog_code[1].true_code";
-     result_var=.projects[0].programs[3].vars[0]$$;
+     result_var=.programs[3].vars[0]$$;
      expr {
       expr=".projects[\"TestCvtFmCode\"].programs[\"TestConvertProgCodeStringToProgElCode\"].prog_code[1].true_code";
      };
@@ -1401,7 +1401,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="does_match = MyProgEl_list[1].DerivesFromName(should_match_type)";
-     result_var=.projects[0].programs[3].vars[3]$$;
+     result_var=.programs[3].vars[3]$$;
      expr {
       expr="MyProgEl_list[1].DerivesFromName(should_match_type)";
      };
@@ -1445,7 +1445,7 @@ LeabraProject .projects[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="does_match = false";
-	 result_var=$.projects[0].programs[3].vars[3]$;
+	 result_var=$.programs[3].vars[3]$;
 	 expr {
 	  expr="false";
 	 };
@@ -1494,7 +1494,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="MyProgEl_list->RemoveLast()";
      result_var=NULL;
-     obj=$.projects[0].programs[3].vars[0]$;
+     obj=$.programs[3].vars[0]$;
      method=taList_impl::RemoveLast;
      meth_args {
       name="meth_args";
@@ -1529,15 +1529,15 @@ LeabraProject .projects[0] {
     name="UserDataItem_List_46";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.001594049: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.04672897: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04587935: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABbQAAA84AAAAAAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestCvtFmCode\"] - TestCvtFmCode.proj";
@@ -1577,7 +1577,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";

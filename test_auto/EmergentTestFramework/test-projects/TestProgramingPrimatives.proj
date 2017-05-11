@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [6] {
   taDoc @[0] { 
@@ -5036,7 +5036,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][0].doc$$: };
     };
     name="For";
     short_nm="For";
@@ -5153,7 +5153,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  i";
 	message=;
-	print_var=.projects[0].programs.gp[0][0].prog_code[0].local_vars[0]$$;
+	print_var=.programs.gp[0][0].prog_code[0].local_vars[0]$$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -5192,7 +5192,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][1].doc$$: };
     };
     name="Foreach";
     short_nm="Foreac";
@@ -5283,7 +5283,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	};
        };
       };
-      el_var=.projects[0].programs.gp[0][1].prog_code[0].local_vars[0]$$;
+      el_var=.programs.gp[0][1].prog_code[0].local_vars[0]$$;
       in {
        expr="[0:10:1]";
       };
@@ -5307,7 +5307,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	};
        };
       };
-      el_var=$.projects[0].programs.gp[0][1].prog_code[0].local_vars[0]$;
+      el_var=$.programs.gp[0][1].prog_code[0].local_vars[0]$;
       in {
        expr="[10:0:-1]";
       };
@@ -5331,7 +5331,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	};
        };
       };
-      el_var=$.projects[0].programs.gp[0][1].prog_code[0].local_vars[0]$;
+      el_var=$.programs.gp[0][1].prog_code[0].local_vars[0]$;
       in {
        expr="[-1:-10:-1]";
       };
@@ -5356,7 +5356,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][2].doc$$: };
     };
     name="Switch";
     short_nm="Switch";
@@ -5433,7 +5433,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  sw_int_var";
       message=;
-      print_var=.projects[0].programs.gp[0][2].vars[0]$$;
+      print_var=.programs.gp[0][2].vars[0]$$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -5446,7 +5446,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="switch(sw_int_var)";
-      switch_var=$.projects[0].programs.gp[0][2].vars[0]$;
+      switch_var=$.programs.gp[0][2].vars[0]$;
       cases {
        name="cases";
        el_typ=CaseBlock;
@@ -5598,7 +5598,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][3].doc$$: };
     };
     name="If_Else";
     short_nm="If";
@@ -5768,7 +5768,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      el_typ=UserDataItem;
      el_def=0;
      UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
-     UserData_DocLink @[1] {name="DocLink": doc=.projects[0].programs.gp[0][4].doc$$: };
+     UserData_DocLink @[1] {name="DocLink": doc=.programs.gp[0][4].doc$$: };
     };
     name="Conditional_Printing";
     short_nm="CndPrn";
@@ -5830,7 +5830,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[0][4].types[0]$$;
+       enum_type=.programs.gp[0][4].types[0]$$;
        value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
@@ -5844,7 +5844,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=$.projects[0].programs.gp[0][4].types[0]$;
+       enum_type=$.programs.gp[0][4].types[0]$;
        value=2;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
@@ -5858,7 +5858,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=$.projects[0].programs.gp[0][4].types[0]$;
+       enum_type=$.programs.gp[0][4].types[0]$;
        value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
@@ -5988,7 +5988,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][0].doc$$: };
     };
     name="Strings";
     short_nm="String";
@@ -6097,7 +6097,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="always use double-quotes for any string literal in the program";
       flags=CAN_REVERT_TO_CODE;
       code_string="str = \"abcdefg\"";
-      result_var=.projects[0].programs.gp[1][0].vars[0]$$;
+      result_var=.programs.gp[1][0].vars[0]$$;
       expr {
        expr="\"abcdefg\"";
       };
@@ -6108,7 +6108,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  str";
       message=;
-      print_var=$.projects[0].programs.gp[1][0].vars[0]$;
+      print_var=$.programs.gp[1][0].vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -6229,7 +6229,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="str->upcase()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].vars[0]$;
+      obj=$.programs.gp[1][0].vars[0]$;
       method=taString::upcase;
       meth_args {
        name="meth_args";
@@ -6255,7 +6255,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="str->downcase()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].vars[0]$;
+      obj=$.programs.gp[1][0].vars[0]$;
       method=taString::downcase;
       meth_args {
        name="meth_args";
@@ -6281,7 +6281,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="str->capitalize()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].vars[0]$;
+      obj=$.programs.gp[1][0].vars[0]$;
       method=taString::capitalize;
       meth_args {
        name="meth_args";
@@ -6307,7 +6307,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="str->gsub(\"d\", \"delicious\")";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].vars[0]$;
+      obj=$.programs.gp[1][0].vars[0]$;
       method=taString::gsub;
       meth_args {
        name="meth_args";
@@ -6370,7 +6370,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  chr";
 	message=;
-	print_var=.projects[0].programs.gp[1][0].prog_code[0].local_vars[1]$$;
+	print_var=.programs.gp[1][0].prog_code[0].local_vars[1]$$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -6379,7 +6379,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	debug=0;
        };
       };
-      el_var=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[1]$;
+      el_var=$.programs.gp[1][0].prog_code[0].local_vars[1]$;
       in {
        expr="str";
       };
@@ -6389,8 +6389,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="split breaks the string into an array of strings - esp handy for delimited strings";
       flags=CAN_REVERT_TO_CODE;
       code_string="sary = str->split(\"\")";
-      result_var=.projects[0].programs.gp[1][0].prog_code[0].local_vars[2]$$;
-      obj=$.projects[0].programs.gp[1][0].vars[0]$;
+      result_var=.programs.gp[1][0].prog_code[0].local_vars[2]$$;
+      obj=$.programs.gp[1][0].vars[0]$;
       method=taString::split;
       meth_args {
        name="meth_args";
@@ -6417,7 +6417,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"split into array:\" sary";
       message="split into array:";
-      print_var=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[2]$;
+      print_var=$.programs.gp[1][0].prog_code[0].local_vars[2]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -6430,8 +6430,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="join it back, with spaces now..";
       flags=CAN_REVERT_TO_CODE;
       code_string="str = sary->Join(\" \")";
-      result_var=$.projects[0].programs.gp[1][0].vars[0]$;
-      obj=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[2]$;
+      result_var=$.programs.gp[1][0].vars[0]$;
+      obj=$.programs.gp[1][0].prog_code[0].local_vars[2]$;
       method=String_Array::Join;
       meth_args {
        name="meth_args";
@@ -6458,7 +6458,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"joined with spaces:\" str";
       message="joined with spaces:";
-      print_var=$.projects[0].programs.gp[1][0].vars[0]$;
+      print_var=$.programs.gp[1][0].vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -6477,7 +6477,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="str = 3.14159";
-      result_var=$.projects[0].programs.gp[1][0].vars[0]$;
+      result_var=$.programs.gp[1][0].vars[0]$;
       expr {
        expr="3.14159";
       };
@@ -6537,7 +6537,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       code_string="// see DynEnum program examples for how to convert between strings and enumerated types";
      };
     };
-    step_prog=.projects[0].programs.gp[1][0]$$;
+    step_prog=.programs.gp[1][0]$$;
     step_n=1;
     doc {
      name="doc";
@@ -6556,7 +6556,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][1].doc$$: };
     };
     name="DynEnum";
     short_nm="DyEnum";
@@ -6871,7 +6871,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        };
       };
       bits=0;
-      src_table=.projects[0].programs.gp[1][1].objs[2]$$;
+      src_table=.programs.gp[1][1].objs[2]$$;
       src_column="config_id";
      };
     };
@@ -6885,7 +6885,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[1][1].types[0]$$;
+       enum_type=.programs.gp[1][1].types[0]$$;
        value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -6904,7 +6904,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[1][1].types[2]$$;
+       enum_type=.programs.gp[1][1].types[2]$$;
        value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6918,7 +6918,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects[0].programs.gp[1][1].types[1]$$;
+       enum_type=.programs.gp[1][1].types[1]$$;
        value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6932,7 +6932,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       object_scope=NULL;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=$.projects[0].programs.gp[1][1].types[1]$;
+       enum_type=$.programs.gp[1][1].types[1]$;
        value=0;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6944,7 +6944,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[1][1].objs[0]$$;
+      object_val=.programs.gp[1][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6956,7 +6956,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="test_orders";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[1][1].objs[1]$$;
+      object_val=.programs.gp[1][1].objs[1]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6968,7 +6968,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="configurations";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].programs.gp[1][1].objs[2]$;
+      object_val=$.programs.gp[1][1].objs[2]$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7029,21 +7029,21 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	};
        };
        AssignExpr @[1] {
-	name="AssignExpr_param1Configurat_param1curconfig";
+	name="AssignExpr_param1configurat_param1curconfig";
 	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="param_1 = configurations[\"param_1\"][cur_config]";
-	result_var=.projects[0].programs.gp[1][1].vars[6]$$;
+	result_var=.programs.gp[1][1].vars[6]$$;
 	expr {
 	 expr="configurations[\"param_1\"][cur_config]";
 	};
        };
        AssignExpr @[2] {
-	name="AssignExpr_param2Configurat_param2curconfig";
+	name="AssignExpr_param2configurat_param2curconfig";
 	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="param_2 = configurations[\"param_2\"][cur_config]";
-	result_var=.projects[0].programs.gp[1][1].vars[7]$$;
+	result_var=.programs.gp[1][1].vars[7]$$;
 	expr {
 	 expr="configurations[\"param_2\"][cur_config]";
 	};
@@ -7054,9 +7054,9 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  \"current configuration parameters\" cur_config param_1 param_2";
 	message="current configuration parameters";
-	print_var=.projects[0].programs.gp[1][1].vars[0]$$;
-	print_var2=$.projects[0].programs.gp[1][1].vars[6]$;
-	print_var3=$.projects[0].programs.gp[1][1].vars[7]$;
+	print_var=.programs.gp[1][1].vars[0]$$;
+	print_var2=$.programs.gp[1][1].vars[6]$;
+	print_var3=$.programs.gp[1][1].vars[7]$;
 	print_var4=NULL;
 	print_var5=NULL;
 	print_var6=NULL;
@@ -7111,7 +7111,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="SetConfigParams()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[1][1].functions[0]$$;
+      fun=.programs.gp[1][1].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -7123,7 +7123,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="switch statements are very frequently used with enum's -- very handy -- hit the Cases Fm Enum button to automatically get all the cases";
       flags=CAN_REVERT_TO_CODE;
       code_string="switch(cmd)";
-      switch_var=.projects[0].programs.gp[1][1].args[0]$$;
+      switch_var=.programs.gp[1][1].args[0]$$;
       cases {
        name="cases";
        el_typ=CaseBlock;
@@ -7152,7 +7152,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  desc="randomly select one of the unit names";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="unit_val = Random::IntZeroN(N_UnitNames, )";
-	  result_var=.projects[0].programs.gp[1][1].vars[1]$$;
+	  result_var=.programs.gp[1][1].vars[1]$$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
 	  meth_args {
@@ -7184,12 +7184,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  };
 	 };
 	 MethodCall @[2] {
-	  name="MethodCall_InputDataEnforceRows1";
+	  name="MethodCall_inputdataEnforceRows1";
 	  desc="make sure we've got a row";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data->EnforceRows(1)";
 	  result_var=NULL;
-	  obj=.projects[0].programs.gp[1][1].vars[3]$$;
+	  obj=.programs.gp[1][1].vars[3]$$;
 	  method=DataTable::EnforceRows;
 	  meth_args {
 	   name="meth_args";
@@ -7211,11 +7211,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
 	 };
 	 MemberMethodCall @[3] {
-	  name="MemberMethodCall_InputDataInputInitVals00";
+	  name="MemberMethodCall_inputdataInputInitVals00";
 	  desc="initialize the values so we can write to them";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data.Input.InitVals(0.0)";
-	  obj=$.projects[0].programs.gp[1][1].vars[3]$;
+	  obj=$.programs.gp[1][1].vars[3]$;
 	  path="Input";
 	  result_var=NULL;
 	  method=DataCol::InitVals;
@@ -7239,7 +7239,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  meth_desc=" initialize all values in this column to given value";
 	 };
 	 CssExpr @[4] {
-	  name="CssExpr_InputDataInputunitval0110";
+	  name="CssExpr_inputdataInputunitval0110";
 	  desc="key advantage of enum: you can use them as a number (here as an index)";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data[\"Input\"][unit_val,0,-1] = 1.0;";
@@ -7248,7 +7248,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  };
 	 };
 	 CssExpr @[5] {
-	  name="CssExpr_InputDataName1Stringunitval";
+	  name="CssExpr_inputdataName1Stringunitval";
 	  desc="but *also* as a string -- here we tell it to use the name (string) form";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data[\"Name\"][-1] = (String)unit_val;";
@@ -7299,7 +7299,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="name_var->NameToNumber_Matrix(test_orders[\"EnumVals\"].ar, test_orders[\"EnumNames\"].ar)";
 	  result_var=NULL;
-	  obj=.projects[0].programs.gp[1][1].vars[2]$$;
+	  obj=.programs.gp[1][1].vars[2]$$;
 	  method=DynEnum::NameToNumber_Matrix;
 	  meth_args {
 	   name="meth_args";
@@ -7338,11 +7338,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  code_string="// we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
 	 };
 	 RandomCall @[5] {
-	  name="RandomCall_rowRandomIntZeroNTestOrdersrows";
+	  name="RandomCall_rowRandomIntZeroNtestordersrows";
 	  desc="randomly select a row to read from the table";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="row = Random::IntZeroN(test_orders.rows, )";
-	  result_var=.projects[0].programs.gp[1][1].prog_code[0].local_vars[0]$$;
+	  result_var=.programs.gp[1][1].prog_code[0].local_vars[0]$$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
 	  meth_args {
@@ -7379,7 +7379,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="Print  \"testing row number:\" row";
 	  message="testing row number:";
-	  print_var=$.projects[0].programs.gp[1][1].prog_code[0].local_vars[0]$;
+	  print_var=$.programs.gp[1][1].prog_code[0].local_vars[0]$;
 	  print_var2=NULL;
 	  print_var3=NULL;
 	  print_var4=NULL;
@@ -7388,12 +7388,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  debug=0;
 	 };
 	 MethodCall @[7] {
-	  name="MethodCall_InputDataResetData";
+	  name="MethodCall_inputdataResetData";
 	  desc="clear out any existing rows";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="input_data->ResetData()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[1][1].vars[3]$;
+	  obj=$.programs.gp[1][1].vars[3]$;
 	  method=DataTable::ResetData;
 	  meth_args {
 	   name="meth_args";
@@ -7404,7 +7404,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
 	 };
 	 ForeachLoop @[8] {
-	  name="ForeachLoop_foreachiinTestOrdersEnumValsrow";
+	  name="ForeachLoop_foreachiintestordersEnumValsrow";
 	  desc="iterate over all the items listed in the cell";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="foreach(i in test_orders[\"EnumVals\"][:,row])";
@@ -7413,12 +7413,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	   el_typ=ProgCode;
 	   el_def=0;
 	   MethodCall @[0] {
-	    name="MethodCall_InputDataAddBlankRow";
+	    name="MethodCall_inputdataAddBlankRow";
 	    desc="add a new row";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data->AddBlankRow()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[1][1].vars[3]$;
+	    obj=$.programs.gp[1][1].vars[3]$;
 	    method=DataTable::AddBlankRow;
 	    meth_args {
 	     name="meth_args";
@@ -7429,7 +7429,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
 	   };
 	   CssExpr @[1] {
-	    name="CssExpr_InputDataInputi0110";
+	    name="CssExpr_inputdataInputi0110";
 	    desc="see RUN case above -- note we need ; at end when doing [ ] expressions on left-hand-side of =";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data[\"Input\"][i,0,-1] = 1.0;";
@@ -7438,7 +7438,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    };
 	   };
 	   CssExpr @[2] {
-	    name="CssExpr_InputDataName1StringUnitNamesi";
+	    name="CssExpr_inputdataName1StringUnitNamesi";
 	    desc="this is a fancy double-cast of the integer i first into the enum, and then into the string, to get the name";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data[\"Name\"][-1] = (String)(UnitNames)i;";
@@ -7457,12 +7457,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    debug=0;
 	   };
 	   MethodCall @[4] {
-	    name="MethodCall_InputDataWriteClose";
+	    name="MethodCall_inputdataWriteClose";
 	    desc="tells the gui etc that you're done writing to this row";
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_data->WriteClose()";
 	    result_var=NULL;
-	    obj=$.projects[0].programs.gp[1][1].vars[3]$;
+	    obj=$.programs.gp[1][1].vars[3]$;
 	    method=DataTable::WriteClose;
 	    meth_args {
 	     name="meth_args";
@@ -7473,7 +7473,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	    meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
 	   };
 	  };
-	  el_var=.projects[0].programs.gp[1][1].prog_code[0].local_vars[1]$$;
+	  el_var=.programs.gp[1][1].prog_code[0].local_vars[1]$$;
 	  in {
 	   expr="test_orders[\"EnumVals\"][:,row]";
 	  };
@@ -7551,7 +7551,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name="UserDataItem_List_61";
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].docs[2]$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.docs[2]$$: };
     };
     name="Matrix";
     short_nm="MtrCss";
@@ -7658,7 +7658,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="tmp_v = exp(v) / temp";
-	result_var=.projects[0].programs.gp[1][2].functions[0].fun_code[0].local_vars[0]$$;
+	result_var=.programs.gp[1][2].functions[0].fun_code[0].local_vars[0]$$;
 	expr {
 	 expr="exp(v) / temp";
 	};
@@ -7668,7 +7668,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="v = tmp_v / vec_sum(tmp_v)";
-	result_var=.projects[0].programs.gp[1][2].functions[0].args[0]$$;
+	result_var=.programs.gp[1][2].functions[0].args[0]$$;
 	expr {
 	 expr="tmp_v / vec_sum(tmp_v)";
 	};
@@ -8185,8 +8185,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="smax = softmax(b, 2.0)";
-      result_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[2]$$;
-      fun=.projects[0].programs.gp[1][2].functions[0]$$;
+      result_var=.programs.gp[1][2].prog_code[0].local_vars[2]$$;
+      fun=.programs.gp[1][2].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -8273,7 +8273,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][3].doc$$: };
     };
     name="Global_vs_Local";
     short_nm="GlbvsL";
@@ -8334,7 +8334,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="aGlobalVar = 0";
-      result_var=.projects[0].programs.gp[1][3].vars[0]$$;
+      result_var=.programs.gp[1][3].vars[0]$$;
       expr {
        expr="0";
       };
@@ -8381,8 +8381,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"before setting the vars\" aGlobalVar aLocalVar";
       message="before setting the vars";
-      print_var=$.projects[0].programs.gp[1][3].vars[0]$;
-      print_var2=.projects[0].programs.gp[1][3].prog_code[0].local_vars[0]$$;
+      print_var=$.programs.gp[1][3].vars[0]$;
+      print_var2=.programs.gp[1][3].prog_code[0].local_vars[0]$$;
       print_var3=NULL;
       print_var4=NULL;
       print_var5=NULL;
@@ -8394,7 +8394,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="aLocalVar = aLocalVar + 1";
-      result_var=$.projects[0].programs.gp[1][3].prog_code[0].local_vars[0]$;
+      result_var=$.programs.gp[1][3].prog_code[0].local_vars[0]$;
       expr {
        expr="aLocalVar + 1";
       };
@@ -8404,7 +8404,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="aGlobalVar = aGlobalVar + 1";
-      result_var=$.projects[0].programs.gp[1][3].vars[0]$;
+      result_var=$.programs.gp[1][3].vars[0]$;
       expr {
        expr="aGlobalVar + 1";
       };
@@ -8415,8 +8415,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"after setting the vars\" aGlobalVar aLocalVar";
       message="after setting the vars";
-      print_var=$.projects[0].programs.gp[1][3].vars[0]$;
-      print_var2=$.projects[0].programs.gp[1][3].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[1][3].vars[0]$;
+      print_var2=$.programs.gp[1][3].prog_code[0].local_vars[0]$;
       print_var3=NULL;
       print_var4=NULL;
       print_var5=NULL;
@@ -8458,7 +8458,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[0][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[0][0].doc$$: };
      };
      name="ReadAndPrintAllRows";
      short_nm="RCrrRw";
@@ -8583,7 +8583,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][0].objs[0]$$;
+       object_val=.programs.gp[2].gp[0][0].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8659,14 +8659,14 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 code_string="// read from data table gets a value from one column only";
 	};
 	DataVarRead @[1] {
-	 name="DataVarRead_FromtabletableDe_eccurrowvarName";
+	 name="DataVarRead_Fromtabletablede_eccurrowvarName";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="From table:  table=demo_data  column=Name  row_spec=cur_row  var=Name ";
-	 data_var=.projects[0].programs.gp[2].gp[0][0].vars[2]$$;
+	 data_var=.programs.gp[2].gp[0][0].vars[2]$$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
-	 var=.projects[0].programs.gp[2].gp[0][0].prog_code[1].local_vars[0]$$;
+	 var=.programs.gp[2].gp[0][0].prog_code[1].local_vars[0]$$;
 	 column_name="Name";
 	};
 	Comment @[2] {
@@ -8682,14 +8682,14 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 code_string="// the column name and variable can be different";
 	};
 	DataVarRead @[4] {
-	 name="DataVarRead_FromtabletableDe_currowvaravalue";
+	 name="DataVarRead_Fromtabletablede_currowvaravalue";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="From table:  table=demo_data  column=Value  row_spec=cur_row  var=a_value ";
-	 data_var=$.projects[0].programs.gp[2].gp[0][0].vars[2]$;
+	 data_var=$.programs.gp[2].gp[0][0].vars[2]$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
-	 var=.projects[0].programs.gp[2].gp[0][0].prog_code[1].local_vars[1]$$;
+	 var=.programs.gp[2].gp[0][0].prog_code[1].local_vars[1]$$;
 	 column_name="Value";
 	};
 	PrintVar @[5] {
@@ -8698,8 +8698,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  Name a_value";
 	 message=;
-	 print_var=$.projects[0].programs.gp[2].gp[0][0].prog_code[1].local_vars[0]$;
-	 print_var2=$.projects[0].programs.gp[2].gp[0][0].prog_code[1].local_vars[1]$;
+	 print_var=$.programs.gp[2].gp[0][0].prog_code[1].local_vars[0]$;
+	 print_var2=$.programs.gp[2].gp[0][0].prog_code[1].local_vars[1]$;
 	 print_var3=NULL;
 	 print_var4=NULL;
 	 print_var5=NULL;
@@ -8707,9 +8707,9 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 debug=0;
 	};
        };
-       data_var=$.projects[0].programs.gp[2].gp[0][0].vars[2]$;
-       index_var=.projects[0].programs.gp[2].gp[0][0].vars[1]$$;
-       order_var=.projects[0].programs.gp[2].gp[0][0].vars[0]$$;
+       data_var=$.programs.gp[2].gp[0][0].vars[2]$;
+       index_var=.programs.gp[2].gp[0][0].vars[1]$$;
+       order_var=.programs.gp[2].gp[0][0].vars[0]$$;
        order=SEQUENTIAL;
       };
      };
@@ -8732,7 +8732,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[0][1].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[0][1].doc$$: };
      };
      name="ReadRowBySpecifyingByNumber";
      short_nm="RRBySp";
@@ -8836,7 +8836,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][1].objs[0]$$;
+       object_val=.programs.gp[2].gp[0][1].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8919,25 +8919,25 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// Notice that row_spec is set to row_num & the variable 'the_row' (arbitrary name) holds the row number of the row we want to access";
       };
       DataVarRead @[4] {
-       name="DataVarRead_FromtabletableDe_artherowvarName";
+       name="DataVarRead_Fromtabletablede_artherowvarName";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=demo_data  column=Name  row_spec=row_num  row_var=the_row  var=Name ";
-       data_var=.projects[0].programs.gp[2].gp[0][1].vars[0]$$;
+       data_var=.programs.gp[2].gp[0][1].vars[0]$$;
        row_spec=ROW_NUM;
-       row_var=.projects[0].programs.gp[2].gp[0][1].vars[1]$$;
-       var=.projects[0].programs.gp[2].gp[0][1].prog_code[2].local_vars[0]$$;
+       row_var=.programs.gp[2].gp[0][1].vars[1]$$;
+       var=.programs.gp[2].gp[0][1].prog_code[2].local_vars[0]$$;
        column_name="Name";
       };
       DataVarRead @[5] {
-       name="DataVarRead_FromtabletableDe_rtherowvarValue";
+       name="DataVarRead_Fromtabletablede_rtherowvarValue";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=demo_data  column=Value  row_spec=row_num  row_var=the_row  var=Value ";
-       data_var=$.projects[0].programs.gp[2].gp[0][1].vars[0]$;
+       data_var=$.programs.gp[2].gp[0][1].vars[0]$;
        row_spec=ROW_NUM;
-       row_var=$.projects[0].programs.gp[2].gp[0][1].vars[1]$;
-       var=.projects[0].programs.gp[2].gp[0][1].prog_code[2].local_vars[1]$$;
+       row_var=$.programs.gp[2].gp[0][1].vars[1]$;
+       var=.programs.gp[2].gp[0][1].prog_code[2].local_vars[1]$$;
        column_name="Value";
       };
       PrintVar @[6] {
@@ -8946,8 +8946,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  Name Value";
        message=;
-       print_var=$.projects[0].programs.gp[2].gp[0][1].prog_code[2].local_vars[0]$;
-       print_var2=$.projects[0].programs.gp[2].gp[0][1].prog_code[2].local_vars[1]$;
+       print_var=$.programs.gp[2].gp[0][1].prog_code[2].local_vars[0]$;
+       print_var2=$.programs.gp[2].gp[0][1].prog_code[2].local_vars[1]$;
        print_var3=NULL;
        print_var4=NULL;
        print_var5=NULL;
@@ -8974,7 +8974,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[0][2].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[0][2].doc$$: };
      };
      name="ReadRowBySpecifyingValue";
      short_nm="RRBySp";
@@ -9078,7 +9078,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][2].objs[0]$$;
+       object_val=.programs.gp[2].gp[0][2].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9145,14 +9145,14 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// Notice that row_spec is set to row_val & the variable 'Name' has the value of the row we want to retrieve";
       };
       DataVarRead @[3] {
-       name="DataVarRead_FromtabletableDe_varNamevarcount";
+       name="DataVarRead_Fromtabletablede_varNamevarcount";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="From table:  table=demo_data  column=Quantity  row_spec=row_val  row_var=Name  var=count ";
-       data_var=.projects[0].programs.gp[2].gp[0][2].vars[0]$$;
+       data_var=.programs.gp[2].gp[0][2].vars[0]$$;
        row_spec=ROW_VAL;
-       row_var=.projects[0].programs.gp[2].gp[0][2].vars[1]$$;
-       var=.projects[0].programs.gp[2].gp[0][2].prog_code[1].local_vars[0]$$;
+       row_var=.programs.gp[2].gp[0][2].vars[1]$$;
+       var=.programs.gp[2].gp[0][2].prog_code[1].local_vars[0]$$;
        column_name="Quantity";
       };
       PrintVar @[4] {
@@ -9161,7 +9161,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  \"Huckleberry in stock,\" count";
        message="Huckleberry in stock,";
-       print_var=$.projects[0].programs.gp[2].gp[0][2].prog_code[1].local_vars[0]$;
+       print_var=$.programs.gp[2].gp[0][2].prog_code[1].local_vars[0]$;
        print_var2=NULL;
        print_var3=NULL;
        print_var4=NULL;
@@ -9189,7 +9189,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[0][3].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[0][3].doc$$: };
      };
      name="AddRowsAndWriteToTable";
      short_nm="dRwsWr";
@@ -9267,7 +9267,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="some_table";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][3].objs[0]$$;
+       object_val=.programs.gp[2].gp[0][3].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9286,11 +9286,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       el_typ=ProgCode;
       el_def=0;
       ResetDataRows @[0] {
-       name="ResetDataRows_ResetDataRowstableSomeTable";
+       name="ResetDataRows_ResetDataRowstablesometable";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="ResetDataRows:  table = some_table ";
-       data_var=.projects[0].programs.gp[2].gp[0][3].vars[0]$$;
+       data_var=.programs.gp[2].gp[0][3].vars[0]$$;
       };
      };
      prog_code {
@@ -9348,27 +9348,27 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="text = text + text";
-	 result_var=.projects[0].programs.gp[2].gp[0][3].prog_code[1].local_vars[1]$$;
+	 result_var=.programs.gp[2].gp[0][3].prog_code[1].local_vars[1]$$;
 	 expr {
 	  expr="text + text";
 	 };
 	};
 	AddNewDataRow @[1] {
-	 name="AddNewDataRow_AddNewRowtableSomeTable";
+	 name="AddNewDataRow_AddNewRowtablesometable";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Add New Row:  table = some_table ";
-	 data_var=$.projects[0].programs.gp[2].gp[0][3].vars[0]$;
+	 data_var=$.programs.gp[2].gp[0][3].vars[0]$;
 	};
 	DataVarWrite @[2] {
-	 name="DataVarWrite_TotabletableSome_eccurrowvartext";
+	 name="DataVarWrite_Totabletablesome_eccurrowvartext";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="To table:  table=some_table  column=StringData  row_spec=cur_row  var=text ";
-	 data_var=$.projects[0].programs.gp[2].gp[0][3].vars[0]$;
+	 data_var=$.programs.gp[2].gp[0][3].vars[0]$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
-	 var=$.projects[0].programs.gp[2].gp[0][3].prog_code[1].local_vars[1]$;
+	 var=$.programs.gp[2].gp[0][3].prog_code[1].local_vars[1]$;
 	 column_name="StringData";
 	};
        };
@@ -9383,12 +9383,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        };
       };
       MethodCall @[3] {
-       name="MethodCall_SomeTableOpenInWindow";
+       name="MethodCall_sometableOpenInWindow";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="some_table->OpenInWindow()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[2].gp[0][3].vars[0]$;
+       obj=$.programs.gp[2].gp[0][3].vars[0]$;
        method=taBase::OpenInWindow;
        meth_args {
 	name="meth_args";
@@ -9429,7 +9429,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[0][4].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[0][4].doc$$: };
      };
      name="ReadFromManyColumns";
      short_nm="RFrMny";
@@ -9598,7 +9598,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="more_demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][4].objs[0]$$;
+       object_val=.programs.gp[2].gp[0][4].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9747,11 +9747,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 code_string="// Any variable whose name matches a column name will be retrieved";
 	};
 	DataVarProg @[2] {
-	 name="DataVarProg_DataFromtableMor_mallmatchestrue";
+	 name="DataVarProg_DataFromtablemor_mallmatchestrue";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Data From:  table=more_demo_data  row_spec=cur_row  set=from  all_matches=true ";
-	 data_var=.projects[0].programs.gp[2].gp[0][4].vars[0]$$;
+	 data_var=.programs.gp[2].gp[0][4].vars[0]$$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
 	 set_data=0;
@@ -9768,18 +9768,18 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  a b A B user_name value";
 	 message=;
-	 print_var=.projects[0].programs.gp[2].gp[0][4].vars[3]$$;
-	 print_var2=.projects[0].programs.gp[2].gp[0][4].vars[4]$$;
-	 print_var3=.projects[0].programs.gp[2].gp[0][4].vars[1]$$;
-	 print_var4=.projects[0].programs.gp[2].gp[0][4].vars[2]$$;
-	 print_var5=.projects[0].programs.gp[2].gp[0][4].vars[5]$$;
-	 print_var6=.projects[0].programs.gp[2].gp[0][4].vars[6]$$;
+	 print_var=.programs.gp[2].gp[0][4].vars[3]$$;
+	 print_var2=.programs.gp[2].gp[0][4].vars[4]$$;
+	 print_var3=.programs.gp[2].gp[0][4].vars[1]$$;
+	 print_var4=.programs.gp[2].gp[0][4].vars[2]$$;
+	 print_var5=.programs.gp[2].gp[0][4].vars[5]$$;
+	 print_var6=.programs.gp[2].gp[0][4].vars[6]$$;
 	 debug=0;
 	};
        };
-       data_var=$.projects[0].programs.gp[2].gp[0][4].vars[0]$;
-       index_var=.projects[0].programs.gp[2].gp[0][4].vars[8]$$;
-       order_var=.projects[0].programs.gp[2].gp[0][4].vars[7]$$;
+       data_var=$.programs.gp[2].gp[0][4].vars[0]$;
+       index_var=.programs.gp[2].gp[0][4].vars[8]$$;
+       order_var=.programs.gp[2].gp[0][4].vars[7]$$;
        order=SEQUENTIAL;
       };
      };
@@ -9802,7 +9802,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[0][5].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[0][5].doc$$: };
      };
      name="ExportImport";
      short_nm="xprtmp";
@@ -10465,7 +10465,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data_orig";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][5].objs[0]$$;
+       object_val=.programs.gp[2].gp[0][5].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -10477,7 +10477,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data_copy_json";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][5].objs[1]$$;
+       object_val=.programs.gp[2].gp[0][5].objs[1]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -10489,7 +10489,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data_copy_csv";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[0][5].objs[2]$$;
+       object_val=.programs.gp[2].gp[0][5].objs[2]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -10535,7 +10535,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_orig->ExportDataJSON(\"DemoDataOrigExport.json\")";
        result_var=NULL;
-       obj=.projects[0].programs.gp[2].gp[0][5].vars[0]$$;
+       obj=.programs.gp[2].gp[0][5].vars[0]$$;
        method=DataTable::ExportDataJSON;
        meth_args {
 	name="meth_args";
@@ -10557,12 +10557,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        meth_desc=" exports data in json format";
       };
       MethodCall @[3] {
-       name="MethodCall_DemoDataOrigExpo_taOrigExportcsv";
+       name="MethodCall_demodataorigExpo_taOrigExportcsv";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_orig->ExportData(\"DemoDataOrigExport.csv\", , , )";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[2].gp[0][5].vars[0]$;
+       obj=$.programs.gp[2].gp[0][5].vars[0]$;
        method=DataTable::ExportData;
        meth_args {
 	name="meth_args";
@@ -10617,12 +10617,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        meth_desc=" exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)";
       };
       MethodCall @[4] {
-       name="MethodCall_DemoDataCopyJsonRemoveAllCols";
+       name="MethodCall_demodatacopyjsonRemoveAllCols";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_json->RemoveAllCols()";
        result_var=NULL;
-       obj=.projects[0].programs.gp[2].gp[0][5].vars[1]$$;
+       obj=.programs.gp[2].gp[0][5].vars[1]$$;
        method=DataTable::RemoveAllCols;
        meth_args {
 	name="meth_args";
@@ -10638,7 +10638,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_json->ExportDataJSON(\"DemoDataOrigExport.json\")";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[2].gp[0][5].vars[1]$;
+       obj=$.programs.gp[2].gp[0][5].vars[1]$;
        method=DataTable::ExportDataJSON;
        meth_args {
 	name="meth_args";
@@ -10660,12 +10660,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        meth_desc=" exports data in json format";
       };
       MethodCall @[6] {
-       name="MethodCall_DemoDataCopyCSVRemoveAllCols";
+       name="MethodCall_demodatacopycsvRemoveAllCols";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_csv->RemoveAllCols()";
        result_var=NULL;
-       obj=.projects[0].programs.gp[2].gp[0][5].vars[2]$$;
+       obj=.programs.gp[2].gp[0][5].vars[2]$$;
        method=DataTable::RemoveAllCols;
        meth_args {
 	name="meth_args";
@@ -10676,12 +10676,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        meth_desc=" remove all columns (and data)";
       };
       MethodCall @[7] {
-       name="MethodCall_DemoDataCopyCSVI_taOrigExportcsv";
+       name="MethodCall_demodatacopycsvI_taOrigExportcsv";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data_copy_csv->ImportData(\"DemoDataOrigExport.csv\", , , )";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[2].gp[0][5].vars[2]$;
+       obj=$.programs.gp[2].gp[0][5].vars[2]$;
        method=DataTable::ImportData;
        meth_args {
 	name="meth_args";
@@ -10763,7 +10763,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[1][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[1][0].doc$$: };
      };
      name="UseLocalVarWhenAccessingMatrices";
      short_nm="DtcCss";
@@ -10890,7 +10890,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[1][0].objs[0]$$;
+       object_val=.programs.gp[2].gp[1][0].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -10979,7 +10979,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="cell_mat = new float_Matrix";
-       result_var=.projects[0].programs.gp[2].gp[1][0].prog_code[3].local_vars[0]$$;
+       result_var=.programs.gp[2].gp[1][0].prog_code[3].local_vars[0]$$;
        expr {
 	expr="new float_Matrix";
        };
@@ -10997,7 +10997,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// when the row changes the pointer will point to the matrix in the next row";
       };
       ForLoop @[7] {
-       name="ForLoop_fori0iDemoDatarowsi";
+       name="ForLoop_fori0idemodatarowsi";
        desc="i is a LocalVar";
        flags=CAN_REVERT_TO_CODE;
        code_string="for (i = 0; i < demo_data.rows; i++)";
@@ -11006,12 +11006,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_cellmatDemoDataG_lNameMatrixVali";
+	 name="MethodCall_cellmatdemodataG_lNameMatrixVali";
 	 desc="cell_mat will point to the matrix in the column named \"MatrixVal\" and the pointer will change as we go from row to row";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cell_mat = demo_data->GetValAsMatrixColName(\"MatrixVal\", i, )";
-	 result_var=$.projects[0].programs.gp[2].gp[1][0].prog_code[3].local_vars[0]$;
-	 obj=.projects[0].programs.gp[2].gp[1][0].vars[0]$$;
+	 result_var=$.programs.gp[2].gp[1][0].prog_code[3].local_vars[0]$;
+	 obj=.programs.gp[2].gp[1][0].vars[0]$$;
 	 method=DataTable::GetValAsMatrixColName;
 	 meth_args {
 	  name="meth_args";
@@ -11059,7 +11059,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc="calculate the mean value of the matrix currently referred to by cell_mat";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="cell_avg = taMath_float::vec_mean(cell_mat)";
-	 result_var=.projects[0].programs.gp[2].gp[1][0].vars[1]$$;
+	 result_var=.programs.gp[2].gp[1][0].vars[1]$$;
 	 object_type=taMath_float;
 	 method=taMath_float::vec_mean;
 	 meth_args {
@@ -11080,12 +11080,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 };
 	};
 	MethodCall @[2] {
-	 name="MethodCall_DemoDataSetValcellavgMeansi";
+	 name="MethodCall_demodataSetValcellavgMeansi";
 	 desc="put the calculated value into the cell in row i of column \"Means\"";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="demo_data->SetVal(cell_avg, \"Means\", i)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[2].gp[1][0].vars[0]$;
+	 obj=$.programs.gp[2].gp[1][0].vars[0]$;
 	 method=DataTable::SetVal;
 	 meth_args {
 	  name="meth_args";
@@ -11159,7 +11159,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="UserDataItem_List_65";
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].docs[3]$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.docs[3]$$: };
      };
      name="DataTable_css";
      short_nm="DTblcs";
@@ -11322,7 +11322,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[1][1].objs[0]$$;
+       object_val=.programs.gp[2].gp[1][1].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -11369,7 +11369,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// == accessing the data within a given column in various ways ==";
       };
       PrintExpr @[3] {
-       name="PrintExpr_Printfirstcolumn_emoDataNameendl";
+       name="PrintExpr_Printfirstcolumn_emodataNameendl";
        desc=": = all in given dimension -- row is last dimension, and only dimension for scalar columns";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"first column (Name), all rows of data:  DemoData[\\\"Name\\\"][:] \\n\" <<demo_data[\"Name\"][:] << endl";
@@ -11379,7 +11379,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        debug=0;
       };
       PrintExpr @[4] {
-       name="PrintExpr_Printfirst3rowsf_DemoData003endl";
+       name="PrintExpr_Printfirst3rowsf_demodata003endl";
        desc="full syntax is start : end : increment";
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"first 3 rows from first column:  DemoData[0][0:3]\\n\" << demo_data[0][0:3] << endl";
@@ -11389,7 +11389,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        debug=0;
       };
       PrintExpr @[5] {
-       name="PrintExpr_Printeveryotherr_moDatarows2endl";
+       name="PrintExpr_Printeveryotherr_modatarows2endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"every other row: DemoData[0][0:DemoData.rows:2]\\n\" << demo_data[0][0:demo_data.rows:2] << endl";
@@ -11415,7 +11415,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        debug=0;
       };
       CssExpr @[8] {
-       name="CssExpr_DemoDataMatrixVa_oDataMatrixVal0";
+       name="CssExpr_demodataMatrixVa_odataMatrixVal0";
        desc="random numbers";
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data[\"MatrixVal\"][:,:,0] = rand(shape(demo_data[\"MatrixVal\"][:,:,0]));";
@@ -11459,7 +11459,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// == doing some scalar column math ==";
       };
       CssExpr @[13] {
-       name="CssExpr_DemoDataValue3De_eDemoDataValue2";
+       name="CssExpr_demodataValue3de_edemodataValue2";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="demo_data[\"Value3\"][:] = demo_data[\"Value\"][:] + demo_data[\"Value2\"][:];";
@@ -11468,7 +11468,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        };
       };
       PrintExpr @[14] {
-       name="PrintExpr_Printvalue3value_oDataValue3endl";
+       name="PrintExpr_Printvalue3value_odataValue3endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"value3 = value + value2: \\n\" << demo_data[\"Value3\"][:] << endl";
@@ -11478,7 +11478,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        debug=0;
       };
       PrintExpr @[15] {
-       name="PrintExpr_Printmeanofvalue_oDataValue3endl";
+       name="PrintExpr_Printmeanofvalue_odataValue3endl";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Print \"mean of value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][:]) \\n\" << taMath_float::vec_mean(demo_data[\"Value3\"][:]) << endl";
@@ -11531,7 +11531,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[2][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[2][0].doc$$: };
      };
      name="DataLoop";
      short_nm="DLp";
@@ -11656,7 +11656,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][0].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][0].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -11732,12 +11732,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_NameDemoDataGetV_medataloopindex";
+	 name="MethodCall_NamedemodataGetV_medataloopindex";
 	 desc="read the value from the data table into variable";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Name = demo_data->GetVal(\"Name\", data_loop_index)";
-	 result_var=.projects[0].programs.gp[2].gp[2][0].prog_code[0].local_vars[0]$$;
-	 obj=.projects[0].programs.gp[2].gp[2][0].vars[2]$$;
+	 result_var=.programs.gp[2].gp[2][0].prog_code[0].local_vars[0]$$;
+	 obj=.programs.gp[2].gp[2][0].vars[2]$$;
 	 method=DataTable::GetVal;
 	 meth_args {
 	  name="meth_args";
@@ -11770,12 +11770,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
 	};
 	MethodCall @[1] {
-	 name="MethodCall_ValueDemoDataGet_uedataloopindex";
+	 name="MethodCall_ValuedemodataGet_uedataloopindex";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Value = demo_data->GetVal(\"Value\", data_loop_index)";
-	 result_var=.projects[0].programs.gp[2].gp[2][0].prog_code[0].local_vars[1]$$;
-	 obj=$.projects[0].programs.gp[2].gp[2][0].vars[2]$;
+	 result_var=.programs.gp[2].gp[2][0].prog_code[0].local_vars[1]$$;
+	 obj=$.programs.gp[2].gp[2][0].vars[2]$;
 	 method=DataTable::GetVal;
 	 meth_args {
 	  name="meth_args";
@@ -11813,8 +11813,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Print  Name Value";
 	 message=;
-	 print_var=$.projects[0].programs.gp[2].gp[2][0].prog_code[0].local_vars[0]$;
-	 print_var2=$.projects[0].programs.gp[2].gp[2][0].prog_code[0].local_vars[1]$;
+	 print_var=$.programs.gp[2].gp[2][0].prog_code[0].local_vars[0]$;
+	 print_var2=$.programs.gp[2].gp[2][0].prog_code[0].local_vars[1]$;
 	 print_var3=NULL;
 	 print_var4=NULL;
 	 print_var5=NULL;
@@ -11822,9 +11822,9 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 debug=0;
 	};
        };
-       data_var=$.projects[0].programs.gp[2].gp[2][0].vars[2]$;
-       index_var=.projects[0].programs.gp[2].gp[2][0].vars[1]$$;
-       order_var=.projects[0].programs.gp[2].gp[2][0].vars[0]$$;
+       data_var=$.programs.gp[2].gp[2][0].vars[2]$;
+       index_var=.programs.gp[2].gp[2][0].vars[1]$$;
+       order_var=.programs.gp[2].gp[2][0].vars[0]$$;
        order=SEQUENTIAL;
       };
      };
@@ -11847,7 +11847,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="UserDataItem_List_65";
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=$.projects[0].docs[3]$: };
+      UserData_DocLink @[0] {name="DocLink": doc=$.docs[3]$: };
      };
      name="DataCalcLoop";
      short_nm="DClc";
@@ -12010,7 +12010,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="table_two";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][1].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][1].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12022,7 +12022,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="table_one";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][1].objs[1]$$;
+       object_val=.programs.gp[2].gp[2][1].objs[1]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12063,12 +12063,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// Make values in one column twice their value in another";
       };
       DataCalcLoop @[2] {
-       name="DataCalcLoop_Calcloopsrctable_sttableTableTwo";
+       name="DataCalcLoop_Calcloopsrctable_sttabletabletwo";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Calc loop:  src table = table_one  dest table = table_two ";
-       src_data_var=.projects[0].programs.gp[2].gp[2][1].vars[1]$$;
-       dest_data_var=.projects[0].programs.gp[2].gp[2][1].vars[0]$$;
+       src_data_var=.programs.gp[2].gp[2][1].vars[1]$$;
+       dest_data_var=.programs.gp[2].gp[2][1].vars[0]$$;
        src_cols {
 	name="src_cols";
 	el_typ=DataOpEl;
@@ -12094,18 +12094,18 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="s_ColumnC = s_ColumnA * 2";
-	 result_var=.projects[0].programs.gp[2].gp[2][1].prog_code[2].src_col_vars[1]$$;
+	 result_var=.programs.gp[2].gp[2][1].prog_code[2].src_col_vars[1]$$;
 	 expr {
 	  expr="s_ColumnA * 2";
 	 };
 	};
 	DataCalcSetSrcRow @[1] {
-	 name="DataCalcSetSrcRow_SetSrcRowinTableOne";
+	 name="DataCalcSetSrcRow_SetSrcRowintableone";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Set Src Row in: table_one";
-	 src_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[1]$;
-	 dest_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[0]$;
+	 src_data_var=$.programs.gp[2].gp[2][1].vars[1]$;
+	 dest_data_var=$.programs.gp[2].gp[2][1].vars[0]$;
 	};
        };
        use_col_numbers=0;
@@ -12151,8 +12151,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Calc loop:  src table = table_one  dest table = table_two ";
-       src_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[1]$;
-       dest_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[0]$;
+       src_data_var=$.programs.gp[2].gp[2][1].vars[1]$;
+       dest_data_var=$.programs.gp[2].gp[2][1].vars[0]$;
        src_cols {
 	name="src_cols";
 	el_typ=DataOpEl;
@@ -12181,15 +12181,15 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Add Dest Row in: table_two";
-	 src_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[1]$;
-	 dest_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[0]$;
+	 src_data_var=$.programs.gp[2].gp[2][1].vars[1]$;
+	 dest_data_var=$.programs.gp[2].gp[2][1].vars[0]$;
 	};
 	AssignExpr @[1] {
 	 name="AssignExpr_dColumnBsColumnC";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="d_ColumnB = s_ColumnC";
-	 result_var=.projects[0].programs.gp[2].gp[2][1].prog_code[4].dest_col_vars[0]$$;
+	 result_var=.programs.gp[2].gp[2][1].prog_code[4].dest_col_vars[0]$$;
 	 expr {
 	  expr="s_ColumnC";
 	 };
@@ -12199,8 +12199,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Set Dest Row in: table_two";
-	 src_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[1]$;
-	 dest_data_var=$.projects[0].programs.gp[2].gp[2][1].vars[0]$;
+	 src_data_var=$.programs.gp[2].gp[2][1].vars[1]$;
+	 dest_data_var=$.programs.gp[2].gp[2][1].vars[0]$;
 	};
        };
        use_col_numbers=0;
@@ -12246,12 +12246,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        };
       };
       MethodCall @[5] {
-       name="MethodCall_TableTwoOpenInWindow";
+       name="MethodCall_tabletwoOpenInWindow";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="table_two->OpenInWindow()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[2].gp[2][1].vars[0]$;
+       obj=$.programs.gp[2].gp[2][1].vars[0]$;
        method=taBase::OpenInWindow;
        meth_args {
 	name="meth_args";
@@ -12292,7 +12292,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[2][2].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[2][2].doc$$: };
      };
      name="DataSelect";
      short_nm="DtSlct";
@@ -12496,7 +12496,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][2].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][2].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12508,7 +12508,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="selected_rows";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][2].objs[1]$$;
+       object_val=.programs.gp[2].gp[2][2].objs[1]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12565,12 +12565,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        };
       };
       DataSelectRowsProg @[3] {
-       name="DataSelectRowsProg_SelectRowssrctab_edRowscombopAND";
+       name="DataSelectRowsProg_SelectRowssrctab_edrowscombopAND";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="SelectRows:  src table = demo_data  dest table = selected_rows  comb_op = AND";
-       src_data_var=.projects[0].programs.gp[2].gp[2][2].vars[0]$$;
-       dest_data_var=.projects[0].programs.gp[2].gp[2][2].vars[1]$$;
+       src_data_var=.programs.gp[2].gp[2][2].vars[0]$$;
+       dest_data_var=.programs.gp[2].gp[2][2].vars[1]$$;
        select_spec {
 	name="select_spec";
 	ops {
@@ -12594,7 +12594,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  rel=GREATERTHANOREQUAL;
 	  use_var=1;
 	  cmp 6 0=10;
-	  var=.projects[0].programs.gp[2].gp[2][2].vars[2]$$;
+	  var=.programs.gp[2].gp[2][2].vars[2]$$;
 	  enable_var=NULL;
 	 };
 	};
@@ -12621,7 +12621,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[2][3].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[2][3].doc$$: };
      };
      name="DataGroup";
      short_nm="DtGrp";
@@ -12825,7 +12825,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][3].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][3].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12837,7 +12837,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_stats";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][3].objs[1]$$;
+       object_val=.programs.gp[2].gp[2][3].objs[1]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -12890,12 +12890,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// here we are calculating the mean and median for each category found in the DemoData table";
       };
       DataGroupProg @[4] {
-       name="DataGroupProg_Groupfromsrctabl_ttableDemoStats";
+       name="DataGroupProg_Groupfromsrctabl_ttabledemostats";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Group from:  src table = demo_data dest table = demo_stats";
-       src_data_var=.projects[0].programs.gp[2].gp[2][3].vars[0]$$;
-       dest_data_var=.projects[0].programs.gp[2].gp[2][3].vars[1]$$;
+       src_data_var=.programs.gp[2].gp[2][3].vars[0]$$;
+       dest_data_var=.programs.gp[2].gp[2][3].vars[1]$$;
        group_spec {
 	name="group_spec";
 	ops {
@@ -12941,7 +12941,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[2][4].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[2][4].doc$$: };
      };
      name="DataSort";
      short_nm="DSrt";
@@ -13153,7 +13153,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][4].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][4].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -13165,7 +13165,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="sorted_rows";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][4].objs[1]$$;
+       object_val=.programs.gp[2].gp[2][4].objs[1]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -13218,12 +13218,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        code_string="// or duplicate an existing column 'e.g. Name' and change the column name";
       };
       DataSortProg @[4] {
-       name="DataSortProg_SortsrctableDemo_tableSortedRows";
+       name="DataSortProg_Sortsrctabledemo_tablesortedrows";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Sort:  src table = demo_data  dest table = sorted_rows ";
-       src_data_var=.projects[0].programs.gp[2].gp[2][4].vars[0]$$;
-       dest_data_var=.projects[0].programs.gp[2].gp[2][4].vars[1]$$;
+       src_data_var=.programs.gp[2].gp[2][4].vars[0]$$;
+       dest_data_var=.programs.gp[2].gp[2][4].vars[1]$$;
        sort_spec {
 	name="sort_spec";
 	ops {
@@ -13258,7 +13258,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[2][5].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[2][5].doc$$: };
      };
      name="DataJoin";
      short_nm="DJn";
@@ -13594,7 +13594,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][5].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][5].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -13606,7 +13606,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="joined_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][5].objs[2]$$;
+       object_val=.programs.gp[2].gp[2][5].objs[2]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -13618,7 +13618,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="fruit_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][5].objs[1]$$;
+       object_val=.programs.gp[2].gp[2][5].objs[1]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -13653,13 +13653,13 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        };
       };
       DataJoinProg @[1] {
-       name="DataJoinProg_JointablessrcaDe_tableJoinedData";
+       name="DataJoinProg_Jointablessrcade_tablejoineddata";
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Join tables:  src_a = demo_data src_b = fruit_data dest table = joined_data";
-       src_data_var=.projects[0].programs.gp[2].gp[2][5].vars[0]$$;
-       dest_data_var=.projects[0].programs.gp[2].gp[2][5].vars[1]$$;
-       src_b_data_var=.projects[0].programs.gp[2].gp[2][5].vars[2]$$;
+       src_data_var=.programs.gp[2].gp[2][5].vars[0]$$;
+       dest_data_var=.programs.gp[2].gp[2][5].vars[1]$$;
+       src_b_data_var=.programs.gp[2].gp[2][5].vars[2]$$;
        join_spec {name="join_spec": col_a={col_name="Name": }: col_b={col_name="Name": }: type=INNER: nomatch_warn=1: };
       };
      };
@@ -13682,7 +13682,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[2].gp[2][6].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[2].gp[2][6].doc$$: };
      };
      name="FindMatchingRows";
      short_nm="FnMtcR";
@@ -13806,7 +13806,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        name="demo_data";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=.projects[0].programs.gp[2].gp[2][6].objs[0]$$;
+       object_val=.programs.gp[2].gp[2][6].objs[0]$$;
        object_scope=NULL;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -13903,12 +13903,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	el_typ=ProgCode;
 	el_def=0;
 	MethodCall @[0] {
-	 name="MethodCall_nameonevalueDemo_nedataloopindex";
+	 name="MethodCall_nameonevaluedemo_nedataloopindex";
 	 desc="read the value from the data table into variable";
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="name_one_value = demo_data->GetVal(\"Name_One\", data_loop_index)";
-	 result_var=.projects[0].programs.gp[2].gp[2][6].vars[3]$$;
-	 obj=.projects[0].programs.gp[2].gp[2][6].vars[0]$$;
+	 result_var=.programs.gp[2].gp[2][6].vars[3]$$;
+	 obj=.programs.gp[2].gp[2][6].vars[0]$$;
 	 method=DataTable::GetVal;
 	 meth_args {
 	  name="meth_args";
@@ -13941,12 +13941,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
 	};
 	MethodCall @[1] {
-	 name="MethodCall_nametwovalueDemo_wodataloopindex";
+	 name="MethodCall_nametwovaluedemo_wodataloopindex";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="name_two_value = demo_data->GetVal(\"Name_Two\", data_loop_index)";
-	 result_var=.projects[0].programs.gp[2].gp[2][6].vars[4]$$;
-	 obj=$.projects[0].programs.gp[2].gp[2][6].vars[0]$;
+	 result_var=.programs.gp[2].gp[2][6].vars[4]$$;
+	 obj=$.programs.gp[2].gp[2][6].vars[0]$;
 	 method=DataTable::GetVal;
 	 meth_args {
 	  name="meth_args";
@@ -13991,12 +13991,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MethodCall @[0] {
-	   name="MethodCall_DemoDataSetVal1M_chdataloopindex";
+	   name="MethodCall_demodataSetVal1M_chdataloopindex";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="demo_data->SetVal(1, \"Match\", data_loop_index)";
 	   result_var=NULL;
-	   obj=$.projects[0].programs.gp[2].gp[2][6].vars[0]$;
+	   obj=$.programs.gp[2].gp[2][6].vars[0]$;
 	   method=DataTable::SetVal;
 	   meth_args {
 	    name="meth_args";
@@ -14054,12 +14054,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	  el_typ=ProgCode;
 	  el_def=0;
 	  MethodCall @[0] {
-	   name="MethodCall_DemoDataSetVal0M_chdataloopindex";
+	   name="MethodCall_demodataSetVal0M_chdataloopindex";
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="demo_data->SetVal(0, \"Match\", data_loop_index)";
 	   result_var=NULL;
-	   obj=$.projects[0].programs.gp[2].gp[2][6].vars[0]$;
+	   obj=$.programs.gp[2].gp[2][6].vars[0]$;
 	   method=DataTable::SetVal;
 	   meth_args {
 	    name="meth_args";
@@ -14105,9 +14105,9 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 };
 	};
        };
-       data_var=$.projects[0].programs.gp[2].gp[2][6].vars[0]$;
-       index_var=.projects[0].programs.gp[2].gp[2][6].vars[1]$$;
-       order_var=.projects[0].programs.gp[2].gp[2][6].vars[2]$$;
+       data_var=$.programs.gp[2].gp[2][6].vars[0]$;
+       index_var=.programs.gp[2].gp[2][6].vars[1]$$;
+       order_var=.programs.gp[2].gp[2][6].vars[2]$$;
        order=SEQUENTIAL;
       };
      };
@@ -14139,7 +14139,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][0].doc$$: };
     };
     name="RandomInteger";
     short_nm="Rndmnt";
@@ -14225,7 +14225,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="demo_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[3][0].objs[0]$$;
+      object_val=.programs.gp[3][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14286,11 +14286,11 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       code_string="// Good for picking a random row of a data table because the first row is zero";
      };
      RandomCall @[3] {
-      name="RandomCall_rowRandomIntZeroNDemoDatarows";
+      name="RandomCall_rowRandomIntZeroNdemodatarows";
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="row = Random::IntZeroN(demo_data.rows, )";
-      result_var=.projects[0].programs.gp[3][0].vars[1]$$;
+      result_var=.programs.gp[3][0].vars[1]$$;
       object_type=Random;
       method=Random::IntZeroN;
       meth_args {
@@ -14327,7 +14327,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  row";
       message=;
-      print_var=$.projects[0].programs.gp[3][0].vars[1]$;
+      print_var=$.programs.gp[3][0].vars[1]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14370,7 +14370,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="row = Random::IntMinMax(1, 4, )";
-      result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+      result_var=$.programs.gp[3][0].vars[1]$;
       object_type=Random;
       method=Random::IntMinMax;
       meth_args {
@@ -14418,7 +14418,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  row";
       message=;
-      print_var=$.projects[0].programs.gp[3][0].vars[1]$;
+      print_var=$.programs.gp[3][0].vars[1]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14446,7 +14446,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][1].doc$$: };
     };
     name="RandomFloats";
     short_nm="RndFlt";
@@ -14533,7 +14533,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is the simplest, most commonly-used random number";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_val = Random::ZeroOne()";
-      result_var=.projects[0].programs.gp[3][1].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][1].prog_code[0].local_vars[0]$$;
       object_type=Random;
       method=Random::ZeroOne;
       meth_args {
@@ -14559,7 +14559,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"ZeroOne():\" rnd_val";
       message="ZeroOne():";
-      print_var=$.projects[0].programs.gp[3][1].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][1].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14572,7 +14572,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="can also specify any range";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_val = Random::UniformMinMax(-1.0, 1.0, )";
-      result_var=$.projects[0].programs.gp[3][1].prog_code[0].local_vars[0]$;
+      result_var=$.programs.gp[3][1].prog_code[0].local_vars[0]$;
       object_type=Random;
       method=Random::UniformMinMax;
       meth_args {
@@ -14620,7 +14620,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"UniformMinMax():\" rnd_val";
       message="UniformMinMax():";
-      print_var=$.projects[0].programs.gp[3][1].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][1].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14633,7 +14633,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="gaussian is also very handy";
       flags=CAN_REVERT_TO_CODE;
       code_string="rnd_val = Random::Gauss(1.0, )";
-      result_var=$.projects[0].programs.gp[3][1].prog_code[0].local_vars[0]$;
+      result_var=$.programs.gp[3][1].prog_code[0].local_vars[0]$;
       object_type=Random;
       method=Random::Gauss;
       meth_args {
@@ -14670,7 +14670,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"Gauss(1):\" rnd_val";
       message="Gauss(1):";
-      print_var=$.projects[0].programs.gp[3][1].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][1].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14683,7 +14683,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="binomial is very convenient for saying how many events will happen out of a sample of n, given probability p";
       flags=CAN_REVERT_TO_CODE;
       code_string="int_val = Random::Binom(10, .5, )";
-      result_var=.projects[0].programs.gp[3][1].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[3][1].prog_code[0].local_vars[1]$$;
       object_type=Random;
       method=Random::Binom;
       meth_args {
@@ -14731,7 +14731,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"Binom(10,.5)\" int_val";
       message="Binom(10,.5)";
-      print_var=$.projects[0].programs.gp[3][1].prog_code[0].local_vars[1]$;
+      print_var=$.programs.gp[3][1].prog_code[0].local_vars[1]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14759,7 +14759,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[3][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[3][2].doc$$: };
     };
     name="MiscMath";
     short_nm="MsMth";
@@ -14802,7 +14802,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="float_mat_data";
       var_type=T_Object;
       object_type=float_Matrix;
-      object_val=.projects[0].programs.gp[3][2].objs[0]$$;
+      object_val=.programs.gp[3][2].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -14881,7 +14881,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::euc_dist(.5, .2, 2.5, 3.0)";
-      result_var=.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[3][2].prog_code[0].local_vars[0]$$;
       object_type=taMath_float;
       method=taMath_float::euc_dist;
       meth_args {
@@ -14940,7 +14940,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"euc_dist between .5,.2 and 2.5, 3.0:\" rval";
       message="euc_dist between .5,.2 and 2.5, 3.0:";
-      print_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -14953,7 +14953,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="this is also available as just plain atan2 -- but using taMath_float makes it easier to find them, and you can get some help too!";
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::atan2(1.0, 1.0)";
-      result_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      result_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       object_type=taMath_float;
       method=taMath_float::atan2;
       meth_args {
@@ -14990,7 +14990,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"atan2(1,1):\" rval";
       message="atan2(1,1):";
-      print_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -15010,7 +15010,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="float_mat_data->SetGeom(1, data_n, , , , , , )";
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][2].vars[0]$$;
+      obj=.programs.gp[3][2].vars[0]$$;
       method=taMatrix::SetGeom;
       meth_args {
        name="meth_args";
@@ -15142,7 +15142,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="get the mean of all the numbers";
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::vec_mean(float_mat_data)";
-      result_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      result_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       object_type=taMath_float;
       method=taMath_float::vec_mean;
       meth_args {
@@ -15168,7 +15168,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"mean of our gaussian (normal) random data:\" rval";
       message="mean of our gaussian (normal) random data:";
-      print_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -15181,7 +15181,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc="we make it faster by using the existing mean -- hardly matters but wth";
       flags=CAN_REVERT_TO_CODE;
       code_string="rval = taMath_float::vec_std_dev(float_mat_data, rval, true, )";
-      result_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      result_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       object_type=taMath_float;
       method=taMath_float::vec_std_dev;
       meth_args {
@@ -15240,7 +15240,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  \"standard deviation:\" rval";
       message="standard deviation:";
-      print_var=$.projects[0].programs.gp[3][2].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[3][2].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -15282,7 +15282,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][0].doc$$: };
     };
     name="CallFunctionReturnValue";
     short_nm="ClFnct";
@@ -15381,7 +15381,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="sq_value = value * value";
-	result_var=.projects[0].programs.gp[4][0].functions[0].fun_code[1].local_vars[0]$$;
+	result_var=.programs.gp[4][0].functions[0].fun_code[1].local_vars[0]$$;
 	expr {
 	 expr="value * value";
 	};
@@ -15445,7 +15445,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="result = Square(25.5)";
-      result_var=.projects[0].programs.gp[4][0].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[4][0].prog_code[0].local_vars[0]$$;
       expr {
        expr="Square(25.5)";
       };
@@ -15456,7 +15456,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="Print  result";
       message=;
-      print_var=$.projects[0].programs.gp[4][0].prog_code[0].local_vars[0]$;
+      print_var=$.programs.gp[4][0].prog_code[0].local_vars[0]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -15484,7 +15484,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4][1].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4][1].doc$$: };
     };
     name="CallFunctionNoReturn";
     short_nm="ClFncN";
@@ -15525,7 +15525,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name="date_object";
       var_type=T_Object;
       object_type=taDateTime;
-      object_val=.projects[0].programs.gp[4][1].objs[0]$$;
+      object_val=.programs.gp[4][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -15576,12 +15576,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	};
        };
        MethodCall @[1] {
-	name="MethodCall_dateObjectcurrentDateTime";
+	name="MethodCall_dateobjectcurrentDateTime";
 	desc="initialize the dateObject with the current date and time";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="date_object->currentDateTime()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[4][1].vars[0]$$;
+	obj=.programs.gp[4][1].vars[0]$$;
 	method=taDateTime::currentDateTime;
 	meth_args {
 	 name="meth_args";
@@ -15592,12 +15592,12 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	meth_desc=;
        };
        MethodCall @[2] {
-	name="MethodCall_currentyeardateObjectyear";
+	name="MethodCall_currentyeardateobjectyear";
 	desc="get the current year";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="current_year = date_object->year()";
-	result_var=.projects[0].programs.gp[4][1].vars[1]$$;
-	obj=$.projects[0].programs.gp[4][1].vars[0]$;
+	result_var=.programs.gp[4][1].vars[1]$$;
+	obj=$.programs.gp[4][1].vars[0]$;
 	method=taDateTime::year;
 	meth_args {
 	 name="meth_args";
@@ -15613,7 +15613,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Print  current_year";
 	message=;
-	print_var=$.projects[0].programs.gp[4][1].vars[1]$;
+	print_var=$.programs.gp[4][1].vars[1]$;
 	print_var2=NULL;
 	print_var3=NULL;
 	print_var4=NULL;
@@ -15656,7 +15656,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       flags=CAN_REVERT_TO_CODE;
       code_string="PrintDate()";
       result_var=NULL;
-      fun=.projects[0].programs.gp[4][1].functions[0]$$;
+      fun=.programs.gp[4][1].functions[0]$$;
       fun_args {
        name="fun_args";
        el_typ=ProgArg;
@@ -15690,7 +15690,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[0][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[0][0].doc$$: };
      };
      name="CallingProgram";
      short_nm="CllPrg";
@@ -15779,7 +15779,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 };
 	};
        };
-       target=.projects[0].programs.gp[4].gp[0][2]$$;
+       target=.programs.gp[4].gp[0][2]$$;
        targ_ld_init="*Program_B*";
       };
      };
@@ -15802,7 +15802,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=$.projects[0].programs.gp[4].gp[0][0].doc$: };
+      UserData_DocLink @[0] {name="DocLink": doc=$.programs.gp[4].gp[0][0].doc$: };
      };
      name="CallingProgramFunction";
      short_nm="CllPrg";
@@ -15901,7 +15901,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 };
 	};
        };
-       target=$.projects[0].programs.gp[4].gp[0][2]$;
+       target=$.programs.gp[4].gp[0][2]$;
        targ_ld_init="*Program_B*";
        function="TestFunction";
       };
@@ -15925,7 +15925,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[0][2].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[0][2].doc$$: };
      };
      name="Program_B";
      short_nm="CllPrg";
@@ -16080,7 +16080,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[1][0].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[1][0].doc$$: };
      };
      name="ProgramSeekingValue";
      short_nm="PrgSkn";
@@ -16179,10 +16179,10 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="Vars Fm:  program=ProgramWithValue set=from  var_1=user_name  var_2=location  var_3=?  var_4=? ";
-       other_prog=.projects[0].programs.gp[4].gp[1][1]$$;
+       other_prog=.programs.gp[4].gp[1][1]$$;
        set_other=0;
-       var_1=.projects[0].programs.gp[4].gp[1][0].vars[0]$$;
-       var_2=.projects[0].programs.gp[4].gp[1][0].vars[1]$$;
+       var_1=.programs.gp[4].gp[1][0].vars[0]$$;
+       var_2=.programs.gp[4].gp[1][0].vars[1]$$;
        var_3=NULL;
        var_4=NULL;
       };
@@ -16192,8 +16192,8 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  user_name location";
        message=;
-       print_var=$.projects[0].programs.gp[4].gp[1][0].vars[0]$;
-       print_var2=$.projects[0].programs.gp[4].gp[1][0].vars[1]$;
+       print_var=$.programs.gp[4].gp[1][0].vars[0]$;
+       print_var2=$.programs.gp[4].gp[1][0].vars[1]$;
        print_var3=NULL;
        print_var4=NULL;
        print_var5=NULL;
@@ -16220,7 +16220,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
       name=;
       el_typ=UserData_DocLink;
       el_def=0;
-      UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[4].gp[1][1].doc$$: };
+      UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[4].gp[1][1].doc$$: };
      };
      name="ProgramWithValue";
      short_nm="PrgWtV";
@@ -16337,7 +16337,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABQQAABHIAAAFGAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestProgramingPrimatives\"] - TestProgramingPrimatives.proj";
@@ -16377,7 +16377,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";
@@ -16416,7 +16416,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
 	 el_def=0;
 	 NetView @[0] {
 	  name="Network_0_View";
-	  m_data=.projects[0].networks[0]$$;
+	  m_data=.networks[0]$$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -16470,7 +16470,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   last_max=0;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -16587,7 +16587,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 GraphTableView @[0] {
 	  name="EpochOutputData_Graph";
-	  m_data=.projects[0].data.gp[1][1]$$;
+	  m_data=.data.gp[1][1]$$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -16596,7 +16596,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="batch";
-	    m_data=.projects[0].data.gp[1][1].data[0]$$;
+	    m_data=.data.gp[1][1].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16605,7 +16605,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="epoch";
-	    m_data=.projects[0].data.gp[1][1].data[1]$$;
+	    m_data=.data.gp[1][1].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16614,7 +16614,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="avg_sse";
-	    m_data=.projects[0].data.gp[1][1].data[2]$$;
+	    m_data=.data.gp[1][1].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16623,7 +16623,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[3] {
 	    name="cnt_err";
-	    m_data=.projects[0].data.gp[1][1].data[3]$$;
+	    m_data=.data.gp[1][1].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16632,7 +16632,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[4] {
 	    name="avg_ext_rew";
-	    m_data=.projects[0].data.gp[1][1].data[4]$$;
+	    m_data=.data.gp[1][1].data[4]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16641,7 +16641,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[5] {
 	    name="avg_cycles";
-	    m_data=.projects[0].data.gp[1][1].data[5]$$;
+	    m_data=.data.gp[1][1].data[5]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16650,7 +16650,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[6] {
 	    name="epoch_time_tot";
-	    m_data=.projects[0].data.gp[1][1].data[6]$$;
+	    m_data=.data.gp[1][1].data[6]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -16659,7 +16659,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[7] {
 	    name="epoch_time_usr";
-	    m_data=.projects[0].data.gp[1][1].data[7]$$;
+	    m_data=.data.gp[1][1].data[7]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -17562,7 +17562,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -17826,7 +17826,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[2].children[0]$$: };
+     bias_spec {type=LeabraBiasSpec: spec=.networks[0].specs[2].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
@@ -17998,7 +17998,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[0];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
      };
      units {
       name="units";
@@ -18007,7 +18007,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[1]$$: };
+     unit_spec {type=LeabraUnitSpec: spec=.networks[0].specs[1]$$: };
      dist {fm_input=0: fm_output=2: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -18016,7 +18016,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[0].children[0]$$: };
+     spec {type=LeabraLayerSpec: spec=.networks[0].specs[0].children[0]$$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;
@@ -18054,10 +18054,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[3]$$: };
+       from=.networks[0].layers[0]$$;
+       spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[2]$$: };
+       con_spec {type=LeabraConSpec: spec=.networks[0].specs[2]$$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -18072,10 +18072,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[2]$$;
-       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[3]$: };
+       from=.networks[0].layers[2]$$;
+       spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=$.projects[0].networks[0].specs[2]$: };
+       con_spec {type=LeabraConSpec: spec=$.networks[0].specs[2]$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -18090,7 +18090,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[2].projections[0];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[2].projections[0];
      };
      units {
       name="units";
@@ -18099,7 +18099,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[1]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=1: fm_output=1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -18108,7 +18108,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[0]$$: };
+     spec {type=LeabraLayerSpec: spec=.networks[0].specs[0]$$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;
@@ -18146,10 +18146,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$$;
-       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[3]$: };
+       from=.networks[0].layers[1]$$;
+       spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=$.projects[0].networks[0].specs[2]$: };
+       con_spec {type=LeabraConSpec: spec=$.networks[0].specs[2]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -18164,7 +18164,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[1];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[1];
      };
      units {
       name="units";
@@ -18173,7 +18173,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[1]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[1]$: };
      dist {fm_input=2: fm_output=0: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -18182,7 +18182,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=$.projects[0].networks[0].specs[0].children[0]$: };
+     spec {type=LeabraLayerSpec: spec=$.networks[0].specs[0].children[0]$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;

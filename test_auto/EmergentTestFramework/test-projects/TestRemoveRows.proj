@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -627,7 +627,7 @@ LeabraProject .projects[0] {
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="TestRemoveRows";
    short_nm="TsRmRw";
@@ -719,7 +719,7 @@ LeabraProject .projects[0] {
      name="some_table";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[0].objs[0]$$;
+     object_val=.programs[0].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -747,7 +747,7 @@ LeabraProject .projects[0] {
        name="our_table";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=$.projects[0].programs[0].objs[0]$;
+       object_val=$.programs[0].objs[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -777,7 +777,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="our_table->RemoveAllRows()";
        result_var=NULL;
-       obj=.projects[0].programs[0].functions[0].args[0]$$;
+       obj=.programs[0].functions[0].args[0]$$;
        method=DataTable::RemoveAllRows;
        meth_args {
 	name="meth_args";
@@ -793,7 +793,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="our_table->AddRows(10)";
        result_var=NULL;
-       obj=$.projects[0].programs[0].functions[0].args[0]$;
+       obj=$.programs[0].functions[0].args[0]$;
        method=DataTable::AddRows;
        meth_args {
 	name="meth_args";
@@ -820,7 +820,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="our_table->InitValsToRowNo(\"one\")";
        result_var=NULL;
-       obj=$.projects[0].programs[0].functions[0].args[0]$;
+       obj=$.programs[0].functions[0].args[0]$;
        method=DataTable::InitValsToRowNo;
        meth_args {
 	name="meth_args";
@@ -858,7 +858,7 @@ LeabraProject .projects[0] {
        name="our_table";
        var_type=T_Object;
        object_type=DataTable;
-       object_val=$.projects[0].programs[0].objs[0]$;
+       object_val=$.programs[0].objs[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -926,7 +926,7 @@ LeabraProject .projects[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="values = values + our_table[column][i] + \", \"";
-	 result_var=.projects[0].programs[0].functions[1].fun_code[0].local_vars[1]$$;
+	 result_var=.programs[0].functions[1].fun_code[0].local_vars[1]$$;
 	 expr {
 	  expr="values + our_table[column][i] + \", \"";
 	 };
@@ -948,7 +948,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  values";
        message=;
-       print_var=$.projects[0].programs[0].functions[1].fun_code[0].local_vars[1]$;
+       print_var=$.programs[0].functions[1].fun_code[0].local_vars[1]$;
        print_var2=NULL;
        print_var3=NULL;
        print_var4=NULL;
@@ -1033,8 +1033,8 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="Print  st_row n_rows";
        message=;
-       print_var=.projects[0].programs[0].functions[2].args[1]$$;
-       print_var2=.projects[0].programs[0].functions[2].args[2]$$;
+       print_var=.programs[0].functions[2].args[1]$$;
+       print_var2=.programs[0].functions[2].args[2]$$;
        print_var3=NULL;
        print_var4=NULL;
        print_var5=NULL;
@@ -1047,7 +1047,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="our_table->RemoveRows(st_row, n_rows)";
        result_var=NULL;
-       obj=.projects[0].programs[0].functions[2].args[0]$$;
+       obj=.programs[0].functions[2].args[0]$$;
        method=DataTable::RemoveRows;
        meth_args {
 	name="meth_args";
@@ -1146,7 +1146,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="ResetTable(our_table)";
        result_var=NULL;
-       fun=.projects[0].programs[0].functions[0]$$;
+       fun=.programs[0].functions[0]$$;
        fun_args {
 	name="fun_args";
 	el_typ=ProgArg;
@@ -1170,7 +1170,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="RemoveRows(our_table, st_row, n_rows)";
        result_var=NULL;
-       fun=.projects[0].programs[0].functions[2]$$;
+       fun=.programs[0].functions[2]$$;
        fun_args {
 	name="fun_args";
 	el_typ=ProgArg;
@@ -1216,7 +1216,7 @@ LeabraProject .projects[0] {
        flags=CAN_REVERT_TO_CODE;
        code_string="PrintColumn(our_table, \"one\")";
        result_var=NULL;
-       fun=.projects[0].programs[0].functions[1]$$;
+       fun=.programs[0].functions[1]$$;
        fun_args {
 	name="fun_args";
 	el_typ=ProgArg;
@@ -1289,12 +1289,12 @@ LeabraProject .projects[0] {
      debug=0;
     };
     FunctionCall @[3] {
-     name="FunctionCall_RunTestSomeTable52";
+     name="FunctionCall_RunTestsometable52";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, 5, 2)";
      result_var=NULL;
-     fun=.projects[0].programs[0].functions[3]$$;
+     fun=.programs[0].functions[3]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1335,12 +1335,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[4] {
-     name="FunctionCall_RunTestSomeTable11";
+     name="FunctionCall_RunTestsometable11";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -1, 1)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1386,7 +1386,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -1, -1)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1427,12 +1427,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[6] {
-     name="FunctionCall_RunTestSomeTable21";
+     name="FunctionCall_RunTestsometable21";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -2, 1)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1473,12 +1473,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[7] {
-     name="FunctionCall_RunTestSomeTable22";
+     name="FunctionCall_RunTestsometable22";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -2, -2)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1529,12 +1529,12 @@ LeabraProject .projects[0] {
      debug=0;
     };
     FunctionCall @[9] {
-     name="FunctionCall_RunTestSomeTable3100";
+     name="FunctionCall_RunTestsometable3100";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, 3, 100)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1575,12 +1575,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[10] {
-     name="FunctionCall_RunTestSomeTable250";
+     name="FunctionCall_RunTestsometable250";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -2, 50)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1621,12 +1621,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[11] {
-     name="FunctionCall_RunTestSomeTable253";
+     name="FunctionCall_RunTestsometable253";
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -25, 3)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1667,12 +1667,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[12] {
-     name="FunctionCall_RunTestSomeTable76";
+     name="FunctionCall_RunTestsometable76";
      desc="end less than start";
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, 7, -6)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1713,12 +1713,12 @@ LeabraProject .projects[0] {
      };
     };
     FunctionCall @[13] {
-     name="FunctionCall_RunTestSomeTable26";
+     name="FunctionCall_RunTestsometable26";
      desc="end less than start";
      flags=CAN_REVERT_TO_CODE;
      code_string="RunTest(some_table, -2, -6)";
      result_var=NULL;
-     fun=$.projects[0].programs[0].functions[3]$;
+     fun=$.programs[0].functions[3]$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -1796,7 +1796,7 @@ LeabraProject .projects[0] {
     name="UserDataItem_List_321";
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[1].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[1].doc$$: };
    };
    name="RestoreSomeTable";
    short_nm="RstSTb";
@@ -1836,7 +1836,7 @@ LeabraProject .projects[0] {
      name="some_table";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$$;
+     object_val=.data.gp[0][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -1876,7 +1876,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="some_table->RemoveAllRows()";
      result_var=NULL;
-     obj=.projects[0].programs[1].vars[0]$$;
+     obj=.programs[1].vars[0]$$;
      method=DataTable::RemoveAllRows;
      meth_args {
       name="meth_args";
@@ -1892,7 +1892,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="some_table->AddRows(10)";
      result_var=NULL;
-     obj=$.projects[0].programs[1].vars[0]$;
+     obj=$.programs[1].vars[0]$;
      method=DataTable::AddRows;
      meth_args {
       name="meth_args";
@@ -1919,7 +1919,7 @@ LeabraProject .projects[0] {
      flags=CAN_REVERT_TO_CODE;
      code_string="some_table->InitValsToRowNo(\"one\")";
      result_var=NULL;
-     obj=$.projects[0].programs[1].vars[0]$;
+     obj=$.programs[1].vars[0]$;
      method=DataTable::InitValsToRowNo;
      meth_args {
       name="meth_args";
@@ -1978,14 +1978,14 @@ LeabraProject .projects[0] {
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.04587935: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.04502974: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7994902: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABJAAAAbEAAAJqAQAAAAcBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=13;
    visible=1;
    win_name=".projects[\"TestRemoveRows\"] - TestRemoveRows.proj";
@@ -2025,7 +2025,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";

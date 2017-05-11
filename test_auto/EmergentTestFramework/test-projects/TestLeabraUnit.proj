@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.8.0 rev10712
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [3] {
   taDoc @[0] { 
@@ -2068,7 +2068,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing<br> * NOISY XX1:  x over x plus 1 convolved with Gaussian noise (noise is nvar)<br> * SPIKE:  discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model";
      cust_desc=0;
-     base=.projects[0].networks[0].specs[0]$$;
+     base=.networks[0].specs[0]$$;
      mbr=LeabraUnitSpec::act_fun;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="spike vs. rate code (NOISY XX1)": };
     };
@@ -2078,7 +2078,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" [Defaults: 1, .1, 1] maximal conductances for channels";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::g_bar;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="0.3, 0.3, 1 defaults": };
     };
@@ -2088,7 +2088,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" [Defaults: 1, .3, .25] reversal potentials for each channel";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::e_rev;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="1, 0.3, 0.25 defaults": };
     };
@@ -2098,7 +2098,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=1;
      desc=" 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)";
      cust_desc=0;
-     base=.projects[0].networks[0].specs[0].noise$$;
+     base=.networks[0].specs[0].noise$$;
      mbr=Random::var;
      data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="0 default": };
     };
@@ -2108,7 +2108,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::adapt;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="144, 0.04, 0.00805 defaults": };
     };
@@ -2118,7 +2118,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::stp;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="off by default": };
     };
@@ -2128,7 +2128,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" activation function parameters -- very important for determining the shape of the selected act_fun";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::act;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="0.5, 40, 0.01 defaults": };
     };
@@ -2138,7 +2138,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" misc extra spiking function specs (only for act_fun = SPIKE)";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::spike_misc;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="ex, .02, 1.2, 0.3, 0, 0.12, regular defaults": };
     };
@@ -2148,7 +2148,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" time constants (rate of updating): membrane potential (vm) and net input (net)";
      cust_desc=0;
-     base=$.projects[0].networks[0].specs[0]$;
+     base=$.networks[0].specs[0]$;
      mbr=LeabraUnitSpec::dt;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=0: state=EXPLORE: saved_value="": range="0:1:0.1": notes="1, 3.3, 1.4, 0 defaults": };
     };
@@ -2158,7 +2158,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=1;
      desc=" boolean value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
-     base=.projects[0].programs.gp[0][2].vars[0]$$;
+     base=.programs.gp[0][2].vars[0]$$;
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
     };
@@ -2172,7 +2172,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       cust_label=0;
       desc=" integer value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
       cust_desc=0;
-      base=.projects[0].programs.gp[0][0].vars[0]$$;
+      base=.programs.gp[0][0].vars[0]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="200 default": };
      };
@@ -2182,7 +2182,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       cust_label=0;
       desc=" integer value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
       cust_desc=0;
-      base=.projects[0].programs.gp[0][0].vars[1]$$;
+      base=.programs.gp[0][0].vars[1]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="10 default": };
      };
@@ -2192,7 +2192,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       cust_label=0;
       desc=" integer value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
       cust_desc=0;
-      base=.projects[0].programs.gp[0][0].vars[2]$$;
+      base=.programs.gp[0][0].vars[2]$$;
       mbr=ProgVar::int_val;
       data {ctrl_type=CONTROL: is_numeric=1: is_single=1: state=EXPLORE: saved_value="": range="0:1:0.1": notes="160 default": };
      };
@@ -2214,7 +2214,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
-     base=.projects[0].programs.gp[0][0]$$;
+     base=.programs.gp[0][0]$$;
      mth=Program::Init;
     };
     ControlPanelMethod @[1] {
@@ -2223,7 +2223,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
-     base=$.projects[0].programs.gp[0][0]$;
+     base=$.programs.gp[0][0]$;
      mth=Program::Run_Gui;
     };
     ControlPanelMethod @[2] {
@@ -2232,7 +2232,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
-     base=$.projects[0].programs.gp[0][0]$;
+     base=$.programs.gp[0][0]$;
      mth=Program::Step_Gui;
     };
     ControlPanelMethod @[3] {
@@ -2241,7 +2241,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=0;
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
-     base=$.projects[0].programs.gp[0][0]$;
+     base=$.programs.gp[0][0]$;
      mth=Program::Stop;
     };
     ControlPanelMethod @[4] {
@@ -2250,7 +2250,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=1;
      desc="set all the parameters back to initial defaults (for AdEx spiking)";
      cust_desc=1;
-     base=.projects[0].programs[0]$$;
+     base=.programs[0]$$;
      mth=Program::Run_Gui;
     };
     ControlPanelMethod @[5] {
@@ -2259,7 +2259,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      cust_label=1;
      desc="run the Spiking vs. Rate code program which produces a graph comparing spiking vs rate code rates";
      cust_desc=1;
-     base=.projects[0].programs[1]$$;
+     base=.programs[1]$$;
      mth=Program::Run_Gui;
     };
    };
@@ -3549,7 +3549,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[0].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
    };
    name="SetDefaults";
    short_nm="SDflts";
@@ -3710,7 +3710,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="unit_spec";
      var_type=T_Object;
      object_type=LeabraUnitSpec;
-     object_val=$.projects[0].networks[0].specs[0]$;
+     object_val=$.networks[0].specs[0]$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3722,7 +3722,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="settle";
      var_type=T_Object;
      object_type=Program;
-     object_val=$.projects[0].programs.gp[0][0]$;
+     object_val=$.programs.gp[0][0]$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3734,7 +3734,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="MyControlPanel";
      var_type=T_Object;
      object_type=ControlPanel;
-     object_val=.projects[0].ctrl_panels[0]$$;
+     object_val=.ctrl_panels[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3762,7 +3762,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.g_bar.e = g_bar_e";
-     obj=.projects[0].programs[0].vars[12]$$;
+     obj=.programs[0].vars[12]$$;
      path="g_bar.e";
      expr {
       expr="g_bar_e";
@@ -3774,7 +3774,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.g_bar.l = g_bar_l";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="g_bar.l";
      expr {
       expr="g_bar_l";
@@ -3786,7 +3786,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.e_rev.e = e_rev_e";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="e_rev.e";
      expr {
       expr="e_rev_e";
@@ -3798,7 +3798,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.e_rev.l = e_rev_l";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="e_rev.l";
      expr {
       expr="e_rev_l";
@@ -3810,7 +3810,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.noise.var = noise_var";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="noise.var";
      expr {
       expr="noise_var";
@@ -3822,7 +3822,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.act_fun = act_fun";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="act_fun";
      expr {
       expr="act_fun";
@@ -3834,7 +3834,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.adapt.on = adapt_on";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="adapt.on";
      expr {
       expr="adapt_on";
@@ -3846,7 +3846,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.stp.on = false";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="stp.on";
      expr {
       expr="false";
@@ -3858,7 +3858,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=OFF|CAN_REVERT_TO_CODE;
      code_string="unit_spec.spike_misc.ex = true";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="spike_misc.ex";
      expr {
       expr="true";
@@ -3870,7 +3870,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.spike_misc.exp_slope = exp_slope";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="spike_misc.exp_slope";
      expr {
       expr="exp_slope";
@@ -3882,7 +3882,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="unit_spec.spike_misc.spk_thr = spk_thr";
-     obj=$.projects[0].programs[0].vars[12]$;
+     obj=$.programs[0].vars[12]$;
      path="spike_misc.spk_thr";
      expr {
       expr="spk_thr";
@@ -3895,7 +3895,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      flags=CAN_REVERT_TO_CODE;
      code_string="settle->SetVar(\"n_cycles\", n_cycles)";
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[13]$$;
+     obj=.programs[0].vars[13]$$;
      method=Program::SetVar;
      meth_args {
       name="meth_args";
@@ -3933,7 +3933,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      flags=CAN_REVERT_TO_CODE;
      code_string="settle->SetVar(\"on_cycle\", on_cycle)";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[13]$;
+     obj=$.programs[0].vars[13]$;
      method=Program::SetVar;
      meth_args {
       name="meth_args";
@@ -3971,7 +3971,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      flags=CAN_REVERT_TO_CODE;
      code_string="settle->SetVar(\"off_cycle\", off_cycle)";
      result_var=NULL;
-     obj=$.projects[0].programs[0].vars[13]$;
+     obj=$.programs[0].vars[13]$;
      method=Program::SetVar;
      meth_args {
       name="meth_args";
@@ -4009,7 +4009,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      flags=CAN_REVERT_TO_CODE;
      code_string="MyControlPanel->UpdateAfterEdit()";
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[14]$$;
+     obj=.programs[0].vars[14]$$;
      method=taBase::UpdateAfterEdit;
      meth_args {
       name="meth_args";
@@ -4039,7 +4039,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
     name=;
     el_typ=UserData_DocLink;
     el_def=0;
-    UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs[1].doc$$: };
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[1].doc$$: };
    };
    name="SpikeVsRate";
    short_nm="SpVRt";
@@ -4261,7 +4261,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
-     object_val=.projects[0].networks[0]$$;
+     object_val=.networks[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -4278,7 +4278,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="SpikeVsRate_raw";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[1]$$;
+     object_val=.programs[1].objs[1]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4290,7 +4290,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="SpikeVsRate";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[0]$$;
+     object_val=.programs[1].objs[0]$$;
      object_scope=NULL;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4302,7 +4302,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="CycleOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][0]$$;
+     object_val=.data.gp[1][0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4314,7 +4314,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name="UnitSpec_0";
      var_type=T_Object;
      object_type=LeabraUnitSpec;
-     object_val=$.projects[0].networks[0].specs[0]$;
+     object_val=$.networks[0].specs[0]$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4432,7 +4432,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        name="unit_spec";
        var_type=T_Object;
        object_type=LeabraUnitSpec;
-       object_val=$.projects[0].networks[0].specs[0]$;
+       object_val=$.networks[0].specs[0]$;
        object_scope=NULL;
        objs_ptr=0;
        flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -4521,7 +4521,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="g_e_terms = unit_spec.dt.vm_dt * (unit_spec.g_bar.e + unit_spec.g_bar.l)";
-       result_var=.projects[0].programs[1].functions[0].fun_code[0].local_vars[0]$$;
+       result_var=.programs[1].functions[0].fun_code[0].local_vars[0]$$;
        expr {
 	expr="unit_spec.dt.vm_dt * (unit_spec.g_bar.e + unit_spec.g_bar.l)";
        };
@@ -4531,7 +4531,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="e_rev_terms = unit_spec.dt.vm_dt * (unit_spec.g_bar.e * unit_spec.e_rev.e + unit_spec.g_bar.l * unit_spec.e_rev.l)";
-       result_var=.projects[0].programs[1].functions[0].fun_code[0].local_vars[1]$$;
+       result_var=.programs[1].functions[0].fun_code[0].local_vars[1]$$;
        expr {
 	expr="unit_spec.dt.vm_dt * (unit_spec.g_bar.e * unit_spec.e_rev.e + unit_spec.g_bar.l * unit_spec.e_rev.l)";
        };
@@ -4541,7 +4541,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="b_a_ratio = e_rev_terms / g_e_terms";
-       result_var=.projects[0].programs[1].functions[0].fun_code[0].local_vars[2]$$;
+       result_var=.programs[1].functions[0].fun_code[0].local_vars[2]$$;
        expr {
 	expr="e_rev_terms / g_e_terms";
        };
@@ -4551,7 +4551,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="log_arg = (unit_spec.spike_misc.vm_r - b_a_ratio) / (unit_spec.act.thr - b_a_ratio)";
-       result_var=.projects[0].programs[1].functions[0].fun_code[0].local_vars[3]$$;
+       result_var=.programs[1].functions[0].fun_code[0].local_vars[3]$$;
        expr {
 	expr="(unit_spec.spike_misc.vm_r - b_a_ratio) / (unit_spec.act.thr - b_a_ratio)";
        };
@@ -4573,7 +4573,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="time_to_thr = (1.0 / g_e_terms) * log(log_arg) + if_refract_time";
-	 result_var=.projects[0].programs[1].functions[0].fun_code[0].local_vars[4]$$;
+	 result_var=.programs[1].functions[0].fun_code[0].local_vars[4]$$;
 	 expr {
 	  expr="(1.0 / g_e_terms) * log(log_arg) + if_refract_time";
 	 };
@@ -4597,7 +4597,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="time_to_thr = 100000";
-	 result_var=$.projects[0].programs[1].functions[0].fun_code[0].local_vars[4]$;
+	 result_var=$.programs[1].functions[0].fun_code[0].local_vars[4]$;
 	 expr {
 	  expr="100000";
 	 };
@@ -4609,7 +4609,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="freq = 1.0 / time_to_thr";
-       result_var=.projects[0].programs[1].functions[0].fun_code[0].local_vars[5]$$;
+       result_var=.programs[1].functions[0].fun_code[0].local_vars[5]$$;
        expr {
 	expr="1.0 / time_to_thr";
        };
@@ -4711,7 +4711,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="init_g_bar_e = UnitSpec_0.g_bar.e";
-     result_var=.projects[0].programs[1].prog_code[0].local_vars[1]$$;
+     result_var=.programs[1].prog_code[0].local_vars[1]$$;
      expr {
       expr="UnitSpec_0.g_bar.e";
      };
@@ -4721,7 +4721,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="UnitSpec_0.noise.var = noise_var";
-     obj=.projects[0].programs[1].vars[3]$$;
+     obj=.programs[1].vars[3]$$;
      path="noise.var";
      expr {
       expr="noise_var";
@@ -4733,7 +4733,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="ResetDataRows:  table = SpikeVsRate_raw ";
-     data_var=.projects[0].programs[1].vars[0]$$;
+     data_var=.programs[1].vars[0]$$;
     };
     ForLoop @[4] {
      name="ForLoop_forgbaregbaresta_ndgbaregbareinc";
@@ -4749,7 +4749,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="UnitSpec_0.g_bar.e = g_bar_e";
-       obj=$.projects[0].programs[1].vars[3]$;
+       obj=$.programs[1].vars[3]$;
        path="g_bar.e";
        expr {
 	expr="g_bar_e";
@@ -4770,14 +4770,14 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="ResetDataRows:  table = CycleOutputData ";
-	 data_var=.projects[0].programs[1].vars[2]$$;
+	 data_var=.programs[1].vars[2]$$;
 	};
 	MemberAssign @[1] {
 	 name="MemberAssign_UnitSpec0actfunL_raUnitSpecSPIKE";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="UnitSpec_0.act_fun = LeabraUnitSpec::SPIKE";
-	 obj=$.projects[0].programs[1].vars[3]$;
+	 obj=$.programs[1].vars[3]$;
 	 path="act_fun";
 	 expr {
 	  expr="LeabraUnitSpec::SPIKE";
@@ -4816,7 +4816,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	   };
 	  };
 	 };
-	 target=$.projects[0].programs.gp[0][0]$;
+	 target=$.programs.gp[0][0]$;
 	 targ_ld_init="*LeabraSettle*";
 	};
 	MethodCall @[3] {
@@ -4824,8 +4824,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="spike = CycleOutputData->GetVal(\"act_eq\", spike_cycle)";
-	 result_var=.projects[0].programs[1].prog_code[0].local_vars[3]$$;
-	 obj=$.projects[0].programs[1].vars[2]$;
+	 result_var=.programs[1].prog_code[0].local_vars[3]$$;
+	 obj=$.programs[1].vars[2]$;
 	 method=DataTable::GetVal;
 	 meth_args {
 	  name="meth_args";
@@ -4862,14 +4862,14 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="ResetDataRows:  table = CycleOutputData ";
-	 data_var=$.projects[0].programs[1].vars[2]$;
+	 data_var=$.programs[1].vars[2]$;
 	};
 	MemberAssign @[5] {
 	 name="MemberAssign_UnitSpec0actfunL_nitSpecNOISYXX1";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="UnitSpec_0.act_fun = LeabraUnitSpec::NOISY_XX1";
-	 obj=$.projects[0].programs[1].vars[3]$;
+	 obj=$.programs[1].vars[3]$;
 	 path="act_fun";
 	 expr {
 	  expr="LeabraUnitSpec::NOISY_XX1";
@@ -4908,7 +4908,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	   };
 	  };
 	 };
-	 target=$.projects[0].programs.gp[0][0]$;
+	 target=$.programs.gp[0][0]$;
 	 targ_ld_init="*LeabraSettle*";
 	};
 	MethodCall @[7] {
@@ -4916,8 +4916,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="rate = CycleOutputData->GetVal(\"act_eq\", rate_cycle)";
-	 result_var=.projects[0].programs[1].prog_code[0].local_vars[4]$$;
-	 obj=$.projects[0].programs[1].vars[2]$;
+	 result_var=.programs[1].prog_code[0].local_vars[4]$$;
+	 obj=$.programs[1].vars[2]$;
 	 method=DataTable::GetVal;
 	 meth_args {
 	  name="meth_args";
@@ -4966,8 +4966,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="integ_fire_if = Compute_IntegFireIF(UnitSpec_0)";
-	   result_var=.projects[0].programs[1].prog_code[0].local_vars[5]$$;
-	   fun=.projects[0].programs[1].functions[0]$$;
+	   result_var=.programs[1].prog_code[0].local_vars[5]$$;
+	   fun=.programs[1].functions[0]$$;
 	   fun_args {
 	    name="fun_args";
 	    el_typ=ProgArg;
@@ -4992,30 +4992,30 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Add New Row:  table = SpikeVsRate_raw ";
-	 data_var=$.projects[0].programs[1].vars[0]$;
+	 data_var=$.programs[1].vars[0]$;
 	};
 	DataVarProg @[10] {
 	 name="DataVarProg_DataTotableSpike_var4integfireif";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="Data To:  table=SpikeVsRate_raw  row_spec=cur_row  set=to  all_matches=false  var_1=g_bar_e  var_2=spike  var_3=rate  var_4=integ_fire_if ";
-	 data_var=$.projects[0].programs[1].vars[0]$;
+	 data_var=$.programs[1].vars[0]$;
 	 row_spec=CUR_ROW;
 	 row_var=NULL;
 	 set_data=1;
 	 all_matches=0;
 	 quiet=0;
-	 var_1=.projects[0].programs[1].prog_code[0].local_vars[2]$$;
-	 var_2=$.projects[0].programs[1].prog_code[0].local_vars[3]$;
-	 var_3=$.projects[0].programs[1].prog_code[0].local_vars[4]$;
-	 var_4=$.projects[0].programs[1].prog_code[0].local_vars[5]$;
+	 var_1=.programs[1].prog_code[0].local_vars[2]$$;
+	 var_2=$.programs[1].prog_code[0].local_vars[3]$;
+	 var_3=$.programs[1].prog_code[0].local_vars[4]$;
+	 var_4=$.programs[1].prog_code[0].local_vars[5]$;
 	};
 	DoneWritingDataRow @[11] {
 	 name="DoneWritingDataRow_DoneWritingDataR_ableSpikeVsRate";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="DoneWritingDataRow:  table = SpikeVsRate ";
-	 data_var=.projects[0].programs[1].vars[1]$$;
+	 data_var=.programs[1].vars[1]$$;
 	};
        };
        init {
@@ -5044,7 +5044,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="UnitSpec_0.g_bar.e = init_g_bar_e";
-     obj=$.projects[0].programs[1].vars[3]$;
+     obj=$.programs[1].vars[3]$;
      path="g_bar.e";
      expr {
       expr="init_g_bar_e";
@@ -5056,7 +5056,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="UnitSpec_0.noise.var = 0.0";
-     obj=$.projects[0].programs[1].vars[3]$;
+     obj=$.programs[1].vars[3]$;
      path="noise.var";
      expr {
       expr="0.0";
@@ -5095,7 +5095,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
        };
       };
      };
-     target=$.projects[0].programs.gp[0][0]$;
+     target=$.programs.gp[0][0]$;
      targ_ld_init="*LeabraSettle*";
     };
     DataGroupProg @[8] {
@@ -5103,8 +5103,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = SpikeVsRate_raw dest table = SpikeVsRate";
-     src_data_var=$.projects[0].programs[1].vars[0]$;
-     dest_data_var=$.projects[0].programs[1].vars[1]$;
+     src_data_var=$.programs[1].vars[0]$;
+     dest_data_var=$.programs[1].vars[1]$;
      group_spec {
       name="group_spec";
       ops {
@@ -5136,7 +5136,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      };
     };
    };
-   step_prog=.projects[0].programs.gp[0][2]$$;
+   step_prog=.programs.gp[0][2]$$;
    step_n=1;
    doc {
     name="doc";
@@ -5162,7 +5162,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][0].doc$$: };
     };
     name="LeabraSettle";
     short_nm="Settle";
@@ -5193,7 +5193,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="cycle";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="cycle";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5227,7 +5227,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="net";
 	computed=0;
 	object_type=LeabraLayer;
-	object=.projects[0].networks[0].layers[1]$$;
+	object=.networks[0].layers[1]$$;
 	variable="units[0].net";
 	var_label=;
 	name_style=MY_NAME;
@@ -5261,7 +5261,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="I_net";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].I_net";
 	var_label=;
 	name_style=MY_NAME;
@@ -5295,7 +5295,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="v_m";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].v_m";
 	var_label=;
 	name_style=MY_NAME;
@@ -5329,7 +5329,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="act";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].act";
 	var_label=;
 	name_style=MY_NAME;
@@ -5363,7 +5363,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="act_eq";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].act_eq";
 	var_label=;
 	name_style=MY_NAME;
@@ -5397,7 +5397,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="spike";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].spike";
 	var_label=;
 	name_style=MY_NAME;
@@ -5431,7 +5431,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="adapt";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].adapt";
 	var_label=;
 	name_style=MY_NAME;
@@ -5465,7 +5465,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="syn_tr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_tr";
 	var_label=;
 	name_style=MY_NAME;
@@ -5499,7 +5499,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="syn_nr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_nr";
 	var_label=;
 	name_style=MY_NAME;
@@ -5533,7 +5533,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="syn_pr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_pr";
 	var_label=;
 	name_style=MY_NAME;
@@ -5567,7 +5567,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="syn_kre";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_kre";
 	var_label=;
 	name_style=MY_NAME;
@@ -5601,7 +5601,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	name="vm_eq";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].v_m_eq";
 	var_label=;
 	name_style=MY_NAME;
@@ -5632,8 +5632,8 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=$.projects[0].data.gp[1][0]$;
+      network=$.networks[0]$;
+      data=$.data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
     };
@@ -5650,7 +5650,7 @@ Updated to 8.0 specs and programs.  No major changes.  Did add new short-term-pl
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5748,7 +5748,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][0].objs[0]$$;
+      object_val=.programs.gp[0][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5760,7 +5760,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][0]$;
+      object_val=$.data.gp[1][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5782,7 +5782,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="unit_spec_0";
       var_type=T_Object;
       object_type=LeabraUnitSpec;
-      object_val=$.projects[0].networks[0].specs[0]$;
+      object_val=$.networks[0].specs[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -5828,7 +5828,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->DataUpdate(true)";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[0][0].vars[8]$$;
+	obj=.programs.gp[0][0].vars[8]$$;
 	method=taBase::DataUpdate;
 	meth_args {
 	 name="meth_args";
@@ -5855,7 +5855,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->AddBlankRow()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[0][0].vars[8]$;
+	obj=$.programs.gp[0][0].vars[8]$;
 	method=DataTable::AddBlankRow;
 	meth_args {
 	 name="meth_args";
@@ -5871,7 +5871,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_netmon->GetMonVals()";
 	result_var=NULL;
-	obj=.projects[0].programs.gp[0][0].vars[7]$$;
+	obj=.programs.gp[0][0].vars[7]$$;
 	method=NetMonitor::GetMonVals;
 	meth_args {
 	 name="meth_args";
@@ -5886,13 +5886,13 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Data From:  table=trial_mon_data  row_spec=cur_row  set=from  all_matches=false  var_1=net  var_2=?  var_3=?  var_4=? ";
-	data_var=$.projects[0].programs.gp[0][0].vars[8]$;
+	data_var=$.programs.gp[0][0].vars[8]$;
 	row_spec=CUR_ROW;
 	row_var=NULL;
 	set_data=0;
 	all_matches=0;
 	quiet=0;
-	var_1=.projects[0].programs.gp[0][0].vars[9]$$;
+	var_1=.programs.gp[0][0].vars[9]$$;
 	var_2=NULL;
 	var_3=NULL;
 	var_4=NULL;
@@ -5902,7 +5902,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc="net does not contain g_bar.e anymore";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="net = net * unit_spec_0.g_bar.e";
-	result_var=$.projects[0].programs.gp[0][0].vars[9]$;
+	result_var=$.programs.gp[0][0].vars[9]$;
 	expr {
 	 expr="net * unit_spec_0.g_bar.e";
 	};
@@ -5912,13 +5912,13 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Data To:  table=trial_mon_data  row_spec=cur_row  set=to  all_matches=false  var_1=net  var_2=?  var_3=?  var_4=? ";
-	data_var=$.projects[0].programs.gp[0][0].vars[8]$;
+	data_var=$.programs.gp[0][0].vars[8]$;
 	row_spec=CUR_ROW;
 	row_var=NULL;
 	set_data=1;
 	all_matches=0;
 	quiet=0;
-	var_1=$.projects[0].programs.gp[0][0].vars[9]$;
+	var_1=$.programs.gp[0][0].vars[9]$;
 	var_2=NULL;
 	var_3=NULL;
 	var_4=NULL;
@@ -5929,7 +5929,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->WriteClose()";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[0][0].vars[8]$;
+	obj=$.programs.gp[0][0].vars[8]$;
 	method=DataTable::WriteClose;
 	meth_args {
 	 name="meth_args";
@@ -5945,7 +5945,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	flags=CAN_REVERT_TO_CODE;
 	code_string="trial_mon_data->DataUpdate(false)";
 	result_var=NULL;
-	obj=$.projects[0].programs.gp[0][0].vars[8]$;
+	obj=$.programs.gp[0][0].vars[8]$;
 	method=taBase::DataUpdate;
 	meth_args {
 	 name="meth_args";
@@ -5978,8 +5978,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=.projects[0].programs.gp[0][0].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[0][0].vars[3]$$;
+      network_var=.programs.gp[0][0].args[0]$$;
+      local_ctr_var=.programs.gp[0][0].vars[3]$$;
       counter=Network::cycle;
       update_after=0;
      };
@@ -5989,7 +5989,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].vars[8]$;
+      obj=$.programs.gp[0][0].vars[8]$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -6010,7 +6010,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UnBuild()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=Network::UnBuild;
       meth_args {
        name="meth_args";
@@ -6026,7 +6026,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Build()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=LeabraNetwork::Build;
       meth_args {
        name="meth_args";
@@ -6042,7 +6042,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Acts()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=Network::Init_Acts;
       meth_args {
        name="meth_args";
@@ -6058,7 +6058,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Weights()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=Network::Init_Weights;
       meth_args {
        name="meth_args";
@@ -6074,7 +6074,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=LeabraNetwork::Trial_Init;
       meth_args {
        name="meth_args";
@@ -6090,7 +6090,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].vars[8]$;
+      obj=$.programs.gp[0][0].vars[8]$;
       method=DataTable::ResetData;
       meth_args {
        name="meth_args";
@@ -6105,8 +6105,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=$.projects[0].programs.gp[0][0].args[0]$;
-      local_ctr_var=$.projects[0].programs.gp[0][0].vars[3]$;
+      network_var=$.programs.gp[0][0].args[0]$;
+      local_ctr_var=$.programs.gp[0][0].vars[3]$;
       counter=Network::cycle;
       update_after=1;
      };
@@ -6116,7 +6116,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -6132,7 +6132,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        name="meth_args";
@@ -6168,7 +6168,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  desc="on";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="send_act = 1.0";
-	  result_var=.projects[0].programs.gp[0][0].vars[5]$$;
+	  result_var=.programs.gp[0][0].vars[5]$$;
 	  expr {
 	   expr="1.0";
 	  };
@@ -6192,7 +6192,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  desc="off";
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="send_act = 0.0";
-	  result_var=$.projects[0].programs.gp[0][0].vars[5]$;
+	  result_var=$.programs.gp[0][0].vars[5]$;
 	  expr {
 	   expr="0.0";
 	  };
@@ -6226,7 +6226,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="network->Cycle_Run()";
 	  result_var=NULL;
-	  obj=$.projects[0].programs.gp[0][0].args[0]$;
+	  obj=$.programs.gp[0][0].args[0]$;
 	  method=LeabraNetwork::Cycle_Run;
 	  meth_args {
 	   name="meth_args";
@@ -6251,7 +6251,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="MonitorCycle()";
 	  result_var=NULL;
-	  fun=.projects[0].programs.gp[0][0].functions[0]$$;
+	  fun=.programs.gp[0][0].functions[0]$$;
 	  fun_args {
 	   name="fun_args";
 	   el_typ=ProgArg;
@@ -6304,7 +6304,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    };
 	   };
 	  };
-	  target=$.projects[0].programs.gp[0][2]$;
+	  target=$.programs.gp[0][2]$;
 	  targ_ld_init="*LeabraCycle*";
 	 };
 	 FunctionCall @[1] {
@@ -6313,7 +6313,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="MonitorCycle()";
 	  result_var=NULL;
-	  fun=$.projects[0].programs.gp[0][0].functions[0]$;
+	  fun=$.programs.gp[0][0].functions[0]$;
 	  fun_args {
 	   name="fun_args";
 	   el_typ=ProgArg;
@@ -6327,8 +6327,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc="increment cycle counter (also on network)";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: cycle";
-	network_var=$.projects[0].programs.gp[0][0].args[0]$;
-	local_ctr_var=$.projects[0].programs.gp[0][0].vars[3]$;
+	network_var=$.programs.gp[0][0].args[0]$;
+	local_ctr_var=$.programs.gp[0][0].vars[3]$;
 	counter=Network::cycle;
 	update_after=1;
        };
@@ -6343,7 +6343,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Final()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        name="meth_args";
@@ -6359,7 +6359,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_MinusStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=LeabraNetwork::Compute_MinusStats;
       meth_args {
        name="meth_args";
@@ -6375,7 +6375,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_PlusStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
+      obj=$.programs.gp[0][0].args[0]$;
       method=LeabraNetwork::Compute_PlusStats;
       meth_args {
        name="meth_args";
@@ -6390,11 +6390,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[0][0].args[0]$;
-      update_var=.projects[0].programs.gp[0][0].vars[6]$$;
+      network_var=$.programs.gp[0][0].args[0]$;
+      update_var=.programs.gp[0][0].vars[6]$$;
      };
     };
-    step_prog=$.projects[0].programs.gp[0][2]$;
+    step_prog=$.programs.gp[0][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -6413,7 +6413,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=$.projects[0].programs.gp[0][0].doc$: };
+     UserData_DocLink @[0] {name="DocLink": doc=$.programs.gp[0][0].doc$: };
     };
     name="LeabraInit";
     short_nm="Init";
@@ -6444,7 +6444,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="cycle";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="cycle";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6478,7 +6478,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="net";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].net";
 	var_label=;
 	name_style=MY_NAME;
@@ -6512,7 +6512,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="I_net";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].I_net";
 	var_label=;
 	name_style=MY_NAME;
@@ -6546,7 +6546,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="v_m";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].v_m";
 	var_label=;
 	name_style=MY_NAME;
@@ -6580,7 +6580,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="act";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].act";
 	var_label=;
 	name_style=MY_NAME;
@@ -6614,7 +6614,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="act_eq";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].act_eq";
 	var_label=;
 	name_style=MY_NAME;
@@ -6648,7 +6648,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="spike";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].spike";
 	var_label=;
 	name_style=MY_NAME;
@@ -6682,7 +6682,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="adapt";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].adapt";
 	var_label=;
 	name_style=MY_NAME;
@@ -6716,7 +6716,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_tr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_tr";
 	var_label=;
 	name_style=MY_NAME;
@@ -6750,7 +6750,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_nr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_nr";
 	var_label=;
 	name_style=MY_NAME;
@@ -6784,7 +6784,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_pr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_pr";
 	var_label=;
 	name_style=MY_NAME;
@@ -6818,7 +6818,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_kre";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_kre";
 	var_label=;
 	name_style=MY_NAME;
@@ -6852,7 +6852,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="vm_eq";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].v_m_eq";
 	var_label=;
 	name_style=MY_NAME;
@@ -6883,8 +6883,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=$.projects[0].data.gp[1][0]$;
+      network=$.networks[0]$;
+      data=$.data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
     };
@@ -6901,7 +6901,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7009,7 +7009,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="unit_spec_0";
       var_type=T_Object;
       object_type=LeabraUnitSpec;
-      object_val=$.projects[0].networks[0].specs[0]$;
+      object_val=$.networks[0].specs[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
@@ -7021,7 +7021,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][1].objs[0]$$;
+      object_val=.programs.gp[0][1].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7044,8 +7044,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=.projects[0].programs.gp[0][1].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[0][1].vars[3]$$;
+      network_var=.programs.gp[0][1].args[0]$$;
+      local_ctr_var=.programs.gp[0][1].vars[3]$$;
       counter=Network::cycle;
       update_after=0;
      };
@@ -7060,7 +7060,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UnBuild()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=Network::UnBuild;
       meth_args {
        name="meth_args";
@@ -7076,7 +7076,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Build()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=LeabraNetwork::Build;
       meth_args {
        name="meth_args";
@@ -7092,7 +7092,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Acts()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=Network::Init_Acts;
       meth_args {
        name="meth_args";
@@ -7108,7 +7108,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Weights()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=Network::Init_Weights;
       meth_args {
        name="meth_args";
@@ -7124,7 +7124,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=LeabraNetwork::Trial_Init;
       meth_args {
        name="meth_args";
@@ -7139,8 +7139,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=$.projects[0].programs.gp[0][1].args[0]$;
-      local_ctr_var=$.projects[0].programs.gp[0][1].vars[3]$;
+      network_var=$.programs.gp[0][1].args[0]$;
+      local_ctr_var=$.programs.gp[0][1].vars[3]$;
       counter=Network::cycle;
       update_after=1;
      };
@@ -7150,7 +7150,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -7166,7 +7166,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        name="meth_args";
@@ -7182,7 +7182,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Final()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][1].args[0]$;
+      obj=$.programs.gp[0][1].args[0]$;
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        name="meth_args";
@@ -7193,7 +7193,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       meth_desc=" do final processing after each quarter: ";
      };
     };
-    step_prog=$.projects[0].programs.gp[0][2]$;
+    step_prog=$.programs.gp[0][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -7212,7 +7212,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][2].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][2].doc$$: };
     };
     name="LeabraCycle";
     short_nm="Cycle";
@@ -7247,7 +7247,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7329,7 +7329,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Cycle_Run()";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][2].args[0]$$;
+      obj=.programs.gp[0][2].args[0]$$;
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        name="meth_args";
@@ -7362,8 +7362,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="update network views if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[0][2].args[0]$;
-      update_var=$.projects[0].programs.gp[0][2].vars[0]$;
+      network_var=$.programs.gp[0][2].args[0]$;
+      update_var=$.programs.gp[0][2].vars[0]$;
      };
     };
     step_prog=NULL;
@@ -7385,7 +7385,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[0][3].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[0][3].doc$$: };
     };
     name="LeabraCycleMonitor";
     short_nm="CycMnt";
@@ -7416,7 +7416,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="cycle";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects[0].networks[0]$;
+	object=$.networks[0]$;
 	variable="cycle";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7450,7 +7450,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="net";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].net";
 	var_label=;
 	name_style=MY_NAME;
@@ -7484,7 +7484,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="I_net";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].I_net";
 	var_label=;
 	name_style=MY_NAME;
@@ -7518,7 +7518,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="v_m";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].v_m";
 	var_label=;
 	name_style=MY_NAME;
@@ -7552,7 +7552,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="act";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].act";
 	var_label=;
 	name_style=MY_NAME;
@@ -7586,7 +7586,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="act_eq";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].act_eq";
 	var_label=;
 	name_style=MY_NAME;
@@ -7620,7 +7620,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="spike";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].spike";
 	var_label=;
 	name_style=MY_NAME;
@@ -7654,7 +7654,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="adapt";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].adapt";
 	var_label=;
 	name_style=MY_NAME;
@@ -7688,7 +7688,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_tr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_tr";
 	var_label=;
 	name_style=MY_NAME;
@@ -7722,7 +7722,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_nr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_nr";
 	var_label=;
 	name_style=MY_NAME;
@@ -7756,7 +7756,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_pr";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_pr";
 	var_label=;
 	name_style=MY_NAME;
@@ -7790,7 +7790,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="syn_kre";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].syn_kre";
 	var_label=;
 	name_style=MY_NAME;
@@ -7824,7 +7824,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	name="vm_eq";
 	computed=0;
 	object_type=LeabraLayer;
-	object=$.projects[0].networks[0].layers[1]$;
+	object=$.networks[0].layers[1]$;
 	variable="units[0].v_m_eq";
 	var_label=;
 	name_style=MY_NAME;
@@ -7855,8 +7855,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects[0].networks[0]$;
-      data=$.projects[0].data.gp[1][0]$;
+      network=$.networks[0]$;
+      data=$.data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
     };
@@ -7873,7 +7873,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7890,7 +7890,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects[0].data.gp[1][0]$;
+      object_val=$.data.gp[1][0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7902,7 +7902,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][3].objs[0]$$;
+      object_val=.programs.gp[0][3].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7914,7 +7914,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="unit_spec_0";
       var_type=T_Object;
       object_type=LeabraUnitSpec;
-      object_val=$.projects[0].networks[0].specs[0]$;
+      object_val=$.networks[0].specs[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7948,7 +7948,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][3].vars[1]$$;
+      obj=.programs.gp[0][3].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name="meth_args";
@@ -7986,7 +7986,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].vars[1]$;
+      obj=$.programs.gp[0][3].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name="meth_args";
@@ -8013,7 +8013,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].vars[1]$;
+      obj=$.programs.gp[0][3].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name="meth_args";
@@ -8045,7 +8045,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->DataUpdate(true)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][3].vars[0]$$;
+      obj=.programs.gp[0][3].vars[0]$$;
       method=taBase::DataUpdate;
       meth_args {
        name="meth_args";
@@ -8072,7 +8072,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].vars[0]$;
+      obj=$.programs.gp[0][3].vars[0]$;
       method=DataTable::AddBlankRow;
       meth_args {
        name="meth_args";
@@ -8088,7 +8088,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].vars[1]$;
+      obj=$.programs.gp[0][3].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name="meth_args";
@@ -8103,13 +8103,13 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data From:  table=trial_mon_data  row_spec=cur_row  set=from  all_matches=false  var_1=net  var_2=?  var_3=?  var_4=? ";
-      data_var=$.projects[0].programs.gp[0][3].vars[0]$;
+      data_var=$.programs.gp[0][3].vars[0]$;
       row_spec=CUR_ROW;
       row_var=NULL;
       set_data=0;
       all_matches=0;
       quiet=0;
-      var_1=.projects[0].programs.gp[0][3].vars[3]$$;
+      var_1=.programs.gp[0][3].vars[3]$$;
       var_2=NULL;
       var_3=NULL;
       var_4=NULL;
@@ -8119,7 +8119,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="net does not contain g_bar.e anymore";
       flags=CAN_REVERT_TO_CODE;
       code_string="net = net * unit_spec_0.g_bar.e";
-      result_var=$.projects[0].programs.gp[0][3].vars[3]$;
+      result_var=$.programs.gp[0][3].vars[3]$;
       expr {
        expr="net * unit_spec_0.g_bar.e";
       };
@@ -8129,13 +8129,13 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data To:  table=trial_mon_data  row_spec=cur_row  set=to  all_matches=false  var_1=net  var_2=?  var_3=?  var_4=? ";
-      data_var=$.projects[0].programs.gp[0][3].vars[0]$;
+      data_var=$.programs.gp[0][3].vars[0]$;
       row_spec=CUR_ROW;
       row_var=NULL;
       set_data=1;
       all_matches=0;
       quiet=0;
-      var_1=$.projects[0].programs.gp[0][3].vars[3]$;
+      var_1=$.programs.gp[0][3].vars[3]$;
       var_2=NULL;
       var_3=NULL;
       var_4=NULL;
@@ -8146,7 +8146,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].vars[0]$;
+      obj=$.programs.gp[0][3].vars[0]$;
       method=DataTable::WriteClose;
       meth_args {
        name="meth_args";
@@ -8162,7 +8162,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->DataUpdate(false)";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[0][3].vars[0]$;
+      obj=$.programs.gp[0][3].vars[0]$;
       method=taBase::DataUpdate;
       meth_args {
        name="meth_args";
@@ -8189,7 +8189,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=OFF|CAN_REVERT_TO_CODE;
       code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][3].args[0]$$;
+      obj=.programs.gp[0][3].args[0]$$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name="meth_args";
@@ -8249,7 +8249,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
-     UserData_DocLink @[0] {name="DocLink": doc=.projects[0].programs.gp[1][0].doc$$: };
+     UserData_DocLink @[0] {name="DocLink": doc=.programs.gp[1][0].doc$$: };
     };
     name="ComplexSettle";
     short_nm="CmpStt";
@@ -8345,7 +8345,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects[0].networks[0]$;
+      object_val=$.networks[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -8402,7 +8402,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       name="InputTiming";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].programs.gp[1][0].objs[0]$$;
+      object_val=.programs.gp[1][0].objs[0]$$;
       object_scope=NULL;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8425,8 +8425,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=.projects[0].programs.gp[1][0].args[0]$$;
-      local_ctr_var=.projects[0].programs.gp[1][0].vars[1]$$;
+      network_var=.programs.gp[1][0].args[0]$$;
+      local_ctr_var=.programs.gp[1][0].vars[1]$$;
       counter=Network::cycle;
       update_after=0;
      };
@@ -8482,7 +8482,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Acts()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=Network::Init_Acts;
       meth_args {
        name="meth_args";
@@ -8498,7 +8498,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_Weights()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=Network::Init_Weights;
       meth_args {
        name="meth_args";
@@ -8513,8 +8513,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="initialize local cycle counter and corresponding counter on network";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
-      network_var=$.projects[0].programs.gp[1][0].args[0]$;
-      local_ctr_var=$.projects[0].programs.gp[1][0].vars[1]$;
+      network_var=$.programs.gp[1][0].args[0]$;
+      local_ctr_var=$.programs.gp[1][0].vars[1]$;
       counter=Network::cycle;
       update_after=1;
      };
@@ -8524,7 +8524,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=Network::Init_InputData;
       meth_args {
        name="meth_args";
@@ -8540,7 +8540,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Init()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=LeabraNetwork::Quarter_Init;
       meth_args {
        name="meth_args";
@@ -8555,7 +8555,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="input_row = 0";
-      result_var=.projects[0].programs.gp[1][0].prog_code[0].local_vars[0]$$;
+      result_var=.programs.gp[1][0].prog_code[0].local_vars[0]$$;
       expr {
        expr="0";
       };
@@ -8565,7 +8565,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="nxt_cycle = InputTiming[\"cycle\"][input_row]";
-      result_var=.projects[0].programs.gp[1][0].prog_code[0].local_vars[1]$$;
+      result_var=.programs.gp[1][0].prog_code[0].local_vars[1]$$;
       expr {
        expr="InputTiming[\"cycle\"][input_row]";
       };
@@ -8575,7 +8575,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="nxt_val = InputTiming[\"value\"][input_row]";
-      result_var=.projects[0].programs.gp[1][0].prog_code[0].local_vars[2]$$;
+      result_var=.programs.gp[1][0].prog_code[0].local_vars[2]$$;
       expr {
        expr="InputTiming[\"value\"][input_row]";
       };
@@ -8585,7 +8585,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="send_act = nxt_val";
-      result_var=.projects[0].programs.gp[1][0].vars[2]$$;
+      result_var=.programs.gp[1][0].vars[2]$$;
       expr {
        expr="nxt_val";
       };
@@ -8628,7 +8628,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="send_act = nxt_val";
-	    result_var=$.projects[0].programs.gp[1][0].vars[2]$;
+	    result_var=$.programs.gp[1][0].vars[2]$;
 	    expr {
 	     expr="nxt_val";
 	    };
@@ -8638,7 +8638,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="nxt_cycle = -1";
-	    result_var=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[1]$;
+	    result_var=$.programs.gp[1][0].prog_code[0].local_vars[1]$;
 	    expr {
 	     expr="-1";
 	    };
@@ -8662,7 +8662,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="input_row += 1";
-	    var=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[0]$;
+	    var=$.programs.gp[1][0].prog_code[0].local_vars[0]$;
 	    expr {
 	     expr="1";
 	    };
@@ -8672,7 +8672,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="send_act = nxt_val";
-	    result_var=$.projects[0].programs.gp[1][0].vars[2]$;
+	    result_var=$.programs.gp[1][0].vars[2]$;
 	    expr {
 	     expr="nxt_val";
 	    };
@@ -8682,7 +8682,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="nxt_cycle = InputTiming[\"cycle\"][input_row]";
-	    result_var=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[1]$;
+	    result_var=$.programs.gp[1][0].prog_code[0].local_vars[1]$;
 	    expr {
 	     expr="InputTiming[\"cycle\"][input_row]";
 	    };
@@ -8692,7 +8692,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
 	    code_string="nxt_val = InputTiming[\"value\"][input_row]";
-	    result_var=$.projects[0].programs.gp[1][0].prog_code[0].local_vars[2]$;
+	    result_var=$.programs.gp[1][0].prog_code[0].local_vars[2]$;
 	    expr {
 	     expr="InputTiming[\"value\"][input_row]";
 	    };
@@ -8733,7 +8733,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  };
 	 };
 	};
-	target=$.projects[0].programs.gp[0][2]$;
+	target=$.programs.gp[0][2]$;
 	targ_ld_init="*LeabraCycle*";
        };
        ProgramCall @[2] {
@@ -8757,7 +8757,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	  };
 	 };
 	};
-	target=.projects[0].programs.gp[0][3]$$;
+	target=.programs.gp[0][3]$$;
 	targ_ld_init="*LeabraCycleMonitor*";
        };
        NetUpdateView @[3] {
@@ -8765,16 +8765,16 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	desc="update network views, if update_net_view == true";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Update View";
-	network_var=$.projects[0].programs.gp[1][0].args[0]$;
-	update_var=.projects[0].programs.gp[1][0].vars[3]$$;
+	network_var=$.programs.gp[1][0].args[0]$;
+	update_var=.programs.gp[1][0].vars[3]$$;
        };
        NetCounterIncr @[4] {
 	name="NetCounterIncr_NetCounterIncrcycle";
 	desc="increment cycle counter (also on network)";
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: cycle";
-	network_var=$.projects[0].programs.gp[1][0].args[0]$;
-	local_ctr_var=$.projects[0].programs.gp[1][0].vars[1]$;
+	network_var=$.programs.gp[1][0].args[0]$;
+	local_ctr_var=$.programs.gp[1][0].vars[1]$;
 	counter=Network::cycle;
 	update_after=1;
        };
@@ -8809,7 +8809,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Quarter_Final()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=LeabraNetwork::Quarter_Final;
       meth_args {
        name="meth_args";
@@ -8825,7 +8825,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_MinusStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=LeabraNetwork::Compute_MinusStats;
       meth_args {
        name="meth_args";
@@ -8841,7 +8841,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_PlusStats()";
       result_var=NULL;
-      obj=$.projects[0].programs.gp[1][0].args[0]$;
+      obj=$.programs.gp[1][0].args[0]$;
       method=LeabraNetwork::Compute_PlusStats;
       meth_args {
        name="meth_args";
@@ -8856,11 +8856,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="update network views, if update_net_view == true";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
-      network_var=$.projects[0].programs.gp[1][0].args[0]$;
-      update_var=$.projects[0].programs.gp[1][0].vars[3]$;
+      network_var=$.programs.gp[1][0].args[0]$;
+      update_var=$.programs.gp[1][0].vars[3]$;
      };
     };
-    step_prog=$.projects[0].programs.gp[0][2]$;
+    step_prog=$.programs.gp[0][2]$;
     step_n=1;
     doc {
      name="doc";
@@ -8893,7 +8893,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
     UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABGQAAAqYAAAHQAQAAAAYBAAAAAQE=: val_type_fixed=0: };
    };
    name="Browser";
-   m_data=.projects[0]$$;
+   m_data=.$$;
    cur_font_size=12;
    visible=1;
    win_name=".projects[\"TestLeabraUnit\"] - TestLeabraUnit.proj";
@@ -8933,7 +8933,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.$;
     };
     PanelViewer @[1] {
      name="Editor";
@@ -8973,7 +8973,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
 	 el_def=0;
 	 NetView @[0] {
 	  name="UnitNet_View";
-	  m_data=$.projects[0].networks[0]$;
+	  m_data=$.networks[0]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -9027,7 +9027,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   last_max=0;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -9234,7 +9234,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 GraphTableView @[0] {
 	  name="CycleOutputData_Graph";
-	  m_data=$.projects[0].data.gp[1][0]$;
+	  m_data=$.data.gp[1][0]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -9243,7 +9243,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="cycle";
-	    m_data=.projects[0].data.gp[1][0].data[0]$$;
+	    m_data=.data.gp[1][0].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9252,7 +9252,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="net";
-	    m_data=.projects[0].data.gp[1][0].data[1]$$;
+	    m_data=.data.gp[1][0].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9261,7 +9261,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="I_net";
-	    m_data=.projects[0].data.gp[1][0].data[2]$$;
+	    m_data=.data.gp[1][0].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9270,7 +9270,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[3] {
 	    name="v_m";
-	    m_data=.projects[0].data.gp[1][0].data[3]$$;
+	    m_data=.data.gp[1][0].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9279,7 +9279,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[4] {
 	    name="act";
-	    m_data=.projects[0].data.gp[1][0].data[4]$$;
+	    m_data=.data.gp[1][0].data[4]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9288,7 +9288,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[5] {
 	    name="act_eq";
-	    m_data=.projects[0].data.gp[1][0].data[5]$$;
+	    m_data=.data.gp[1][0].data[5]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9297,7 +9297,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[6] {
 	    name="spike";
-	    m_data=.projects[0].data.gp[1][0].data[6]$$;
+	    m_data=.data.gp[1][0].data[6]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9306,7 +9306,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[7] {
 	    name="adapt";
-	    m_data=.projects[0].data.gp[1][0].data[7]$$;
+	    m_data=.data.gp[1][0].data[7]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9315,7 +9315,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[8] {
 	    name="syn_tr";
-	    m_data=.projects[0].data.gp[1][0].data[8]$$;
+	    m_data=.data.gp[1][0].data[8]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9324,7 +9324,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[9] {
 	    name="syn_nr";
-	    m_data=.projects[0].data.gp[1][0].data[9]$$;
+	    m_data=.data.gp[1][0].data[9]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9333,7 +9333,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[10] {
 	    name="syn_pr";
-	    m_data=.projects[0].data.gp[1][0].data[10]$$;
+	    m_data=.data.gp[1][0].data[10]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9342,7 +9342,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[11] {
 	    name="syn_kre";
-	    m_data=.projects[0].data.gp[1][0].data[11]$$;
+	    m_data=.data.gp[1][0].data[11]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -9351,7 +9351,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[12] {
 	    name="vm_eq";
-	    m_data=.projects[0].data.gp[1][0].data[12]$$;
+	    m_data=.data.gp[1][0].data[12]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10254,7 +10254,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -10291,7 +10291,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	 GraphTableView @[1] {
 	  name="CycleOutputData_copy_1_Graph";
-	  m_data=.projects[0].data.gp[1][1]$$;
+	  m_data=.data.gp[1][1]$$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=1.405622: z=0: }: };
 	  children {
@@ -10300,7 +10300,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="cycle";
-	    m_data=.projects[0].data.gp[1][1].data[0]$$;
+	    m_data=.data.gp[1][1].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10309,7 +10309,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="net";
-	    m_data=.projects[0].data.gp[1][1].data[1]$$;
+	    m_data=.data.gp[1][1].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10318,7 +10318,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="I_net";
-	    m_data=.projects[0].data.gp[1][1].data[2]$$;
+	    m_data=.data.gp[1][1].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10327,7 +10327,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[3] {
 	    name="v_m";
-	    m_data=.projects[0].data.gp[1][1].data[3]$$;
+	    m_data=.data.gp[1][1].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10336,7 +10336,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[4] {
 	    name="act";
-	    m_data=.projects[0].data.gp[1][1].data[4]$$;
+	    m_data=.data.gp[1][1].data[4]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10345,7 +10345,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[5] {
 	    name="act_eq";
-	    m_data=.projects[0].data.gp[1][1].data[5]$$;
+	    m_data=.data.gp[1][1].data[5]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10354,7 +10354,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[6] {
 	    name="spike";
-	    m_data=.projects[0].data.gp[1][1].data[6]$$;
+	    m_data=.data.gp[1][1].data[6]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10363,7 +10363,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[7] {
 	    name="adapt";
-	    m_data=.projects[0].data.gp[1][1].data[7]$$;
+	    m_data=.data.gp[1][1].data[7]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10372,7 +10372,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[8] {
 	    name="syn_tr";
-	    m_data=.projects[0].data.gp[1][1].data[8]$$;
+	    m_data=.data.gp[1][1].data[8]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10381,7 +10381,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[9] {
 	    name="syn_nr";
-	    m_data=.projects[0].data.gp[1][1].data[9]$$;
+	    m_data=.data.gp[1][1].data[9]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10390,7 +10390,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[10] {
 	    name="syn_pr";
-	    m_data=.projects[0].data.gp[1][1].data[10]$$;
+	    m_data=.data.gp[1][1].data[10]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10399,7 +10399,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[11] {
 	    name="syn_kre";
-	    m_data=.projects[0].data.gp[1][1].data[11]$$;
+	    m_data=.data.gp[1][1].data[11]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -11302,7 +11302,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -11438,7 +11438,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 el_def=0;
 	 GraphTableView @[0] {
 	  name="UnitSpec_0_ActFmNetFun_Graph";
-	  m_data=.projects[0].data.gp[2][0]$$;
+	  m_data=.data.gp[2][0]$$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -11447,7 +11447,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="Net";
-	    m_data=.projects[0].data.gp[2][0].data[0]$$;
+	    m_data=.data.gp[2][0].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -11456,7 +11456,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="Act";
-	    m_data=.projects[0].data.gp[2][0].data[1]$$;
+	    m_data=.data.gp[2][0].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -11465,7 +11465,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="Linear";
-	    m_data=.projects[0].data.gp[2][0].data[2]$$;
+	    m_data=.data.gp[2][0].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -12368,7 +12368,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -12504,7 +12504,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 el_def=0;
 	 GraphTableView @[0] {
 	  name="SpikeVsRate_Graph";
-	  m_data=$.projects[0].programs[1].objs[0]$;
+	  m_data=$.programs[1].objs[0]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -12513,7 +12513,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @[0] {
 	    name="g_bar_e";
-	    m_data=.projects[0].programs[1].objs[0].data[0]$$;
+	    m_data=.programs[1].objs[0].data[0]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -12522,7 +12522,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[1] {
 	    name="spike";
-	    m_data=.projects[0].programs[1].objs[0].data[1]$$;
+	    m_data=.programs[1].objs[0].data[1]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -12531,7 +12531,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[2] {
 	    name="rate";
-	    m_data=.projects[0].programs[1].objs[0].data[2]$$;
+	    m_data=.programs[1].objs[0].data[2]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -12540,7 +12540,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @[3] {
 	    name="integ_fire_if";
-	    m_data=.projects[0].programs[1].objs[0].data[3]$$;
+	    m_data=.programs[1].objs[0].data[3]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -13443,7 +13443,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   last_max=1;
 	   range=0;
 	   zero=0;
-	   spec=$.colorspecs[0]$;
+	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -13657,7 +13657,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[1].children[0]$$: };
+     bias_spec {type=LeabraBiasSpec: spec=.networks[0].specs[1].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=40: nvar=0.01: };
@@ -13856,7 +13856,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[0];
+      Projection_Group @. = [0] = LeabraPrjn .networks[0].layers[1].projections[0];
      };
      units {
       name="units";
@@ -13865,7 +13865,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=0: fm_output=-1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -13874,7 +13874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[2]$$: };
+     spec {type=LeabraLayerSpec: spec=.networks[0].specs[2]$$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;
@@ -13912,10 +13912,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[3]$$: };
+       from=.networks[0].layers[0]$$;
+       spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
        con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[1]$$: };
+       con_spec {type=LeabraConSpec: spec=.networks[0].specs[1]$$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -13938,7 +13938,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.networks[0].specs[0]$: };
      dist {fm_input=1: fm_output=-1: };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -13947,7 +13947,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      acts_m_avg=0.2;
      acts_p_avg=0.2;
      acts_p_avg_eff=0.2;
-     spec {type=LeabraLayerSpec: spec=$.projects[0].networks[0].specs[2]$: };
+     spec {type=LeabraLayerSpec: spec=$.networks[0].specs[2]$: };
      adapt_gi=1;
      margin_low_thr=0.501;
      margin_med_thr=0.506;

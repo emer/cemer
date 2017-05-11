@@ -18,7 +18,23 @@ LeabraProject .projects[0] {
  };
 
  ControlPanel_Group @.ctrl_panels = [2] {
-  ControlPanel @[0] { 
+  ClusterRun @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [2] {
+    ControlPanelMember @[0] { };
+    ControlPanelMember @[1] { };
+   };
+
+   ControlPanelMethod_Group @.mths = [0] {
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+  ControlPanel @[1] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @[0] { };
    };
@@ -41,22 +57,6 @@ LeabraProject .projects[0] {
     ControlPanelMethod @[1] { };
     ControlPanelMethod @[2] { };
     ControlPanelMethod @[3] { };
-   };
-  };
-  ClusterRun @[1] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @[0] { };
-   };
-
-   ControlPanelMember_Group @.mbrs = [2] {
-    ControlPanelMember @[0] { };
-    ControlPanelMember @[1] { };
-   };
-
-   ControlPanelMethod_Group @.mths = [0] {
-   };
-
-   ParamSearchAlgo_List @.search_algos = [0] {
    };
   };
  };
@@ -3681,7 +3681,7 @@ LeabraProject .projects[0] {
  };
 };
 LeabraProject .projects[0] {
- name="LeabraFlex";
+ name="LeabraFlex_10609_v807_nolog_patch1";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
  version {
@@ -4021,7 +4021,85 @@ leabra flex using param sets experiment project -- updated by randy from John's 
   el_typ=ControlPanel;
   el_def=0;
   master_and_clones=0;
-  ControlPanel @[0] {
+  ClusterRun @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
+   };
+   name="ClusterRun";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+    ControlPanelMember @[0] {
+     label="run_params";
+     short_label=1;
+     cust_label=0;
+     desc="select parameters for controlling how network is run";
+     cust_desc=0;
+     base=.programs.gp[1][1].vars[1]$$;
+     mbr=ProgVar::object_val;
+     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="set to explore for name to be added to tag": };
+    };
+    ControlPanelMember @[1] {
+     label="net_params";
+     short_label=1;
+     cust_label=0;
+     desc="select other parameters, typically network spec params -- independent of run params";
+     cust_desc=0;
+     base=.programs.gp[1][1].vars[2]$$;
+     mbr=ProgVar::object_val;
+     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
+    };
+   };
+   mths {
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   search_algos {
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   use_search_algo=0;
+   cur_search_algo=NULL;
+   set_proj_name=1;
+   proj_name="param_search";
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster="dream";
+   clusters="dream";
+   users="oreilly";
+   last_submit_time="2017_02_08_21_14_24";
+   notes="testing param_set config idea";
+   label=;
+   extra_files=;
+   svn_repo="grey_run";
+   repo_url="https://grey.colorado.edu/svn/clusterun";
+   queue=;
+   run_time="1h";
+   exe_cmd="emergent";
+   ram_gb=0;
+   n_threads=2;
+   use_mpi=0;
+   mpi_nodes=10;
+   mpi_per_node=1;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_n_batches_per=1;
+   nowin_x=0;
+   enable_kill=0;
+   enable_load=1;
+   enable_notes=1;
+  };
+  ControlPanel @[1] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItem;
@@ -4052,7 +4130,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      cust_label=0;
      desc="select parameters for controlling how network is run";
      cust_desc=0;
-     base=.programs.gp[1][1].vars[1]$$;
+     base=$.programs.gp[1][1].vars[1]$;
      mbr=ProgVar::object_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"RunParams\"][\"SpecialTrain\"]": range="": notes="MasterTrain sets these params at start": };
     };
@@ -4062,7 +4140,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      cust_label=0;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=.programs.gp[1][1].vars[2]$$;
+     base=$.programs.gp[1][1].vars[2]$;
      mbr=ProgVar::object_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"MiscParams\"][\"MiscOne\"]": range="": notes="add extra params as needed..": };
     };
@@ -4179,84 +4257,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mth=Program::Stop;
     };
    };
-  };
-  ClusterRun @[1] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
-   };
-   name="ClusterRun";
-   cp_state=REGULAR;
-   updt_while_running=0;
-   desc=;
-   mbrs {
-    name="mbrs";
-    el_typ=ControlPanelMember;
-    el_def=0;
-    ControlPanelMember @[0] {
-     label="run_params";
-     short_label=1;
-     cust_label=0;
-     desc="select parameters for controlling how network is run";
-     cust_desc=0;
-     base=$.programs.gp[1][1].vars[1]$;
-     mbr=ProgVar::object_val;
-     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="set to explore for name to be added to tag": };
-    };
-    ControlPanelMember @[1] {
-     label="net_params";
-     short_label=1;
-     cust_label=0;
-     desc="select other parameters, typically network spec params -- independent of run params";
-     cust_desc=0;
-     base=$.programs.gp[1][1].vars[2]$;
-     mbr=ProgVar::object_val;
-     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
-    };
-   };
-   mths {
-    name="mths";
-    el_typ=ControlPanelMethod;
-    el_def=0;
-    group_type=GT_BUTTONS;
-   };
-   search_algos {
-    name="search_algos";
-    el_typ=ParamSearchAlgo;
-    el_def=0;
-   };
-   use_search_algo=0;
-   cur_search_algo=NULL;
-   set_proj_name=1;
-   proj_name="param_search";
-   auto_updt_interval=10;
-   auto_updt_timeout=30;
-   cluster="dream";
-   clusters="dream";
-   users="oreilly";
-   last_submit_time="2017_02_08_21_14_24";
-   notes="testing param_set config idea";
-   label=;
-   extra_files=;
-   svn_repo="grey_run";
-   repo_url="https://grey.colorado.edu/svn/clusterun";
-   queue=;
-   run_time="1h";
-   exe_cmd="emergent";
-   ram_gb=0;
-   n_threads=2;
-   use_mpi=0;
-   mpi_nodes=10;
-   mpi_per_node=1;
-   parallel_batch=0;
-   pb_batches=10;
-   pb_n_batches_per=1;
-   nowin_x=0;
-   enable_kill=0;
-   enable_load=1;
-   enable_notes=1;
   };
  };
  active_params {
@@ -4465,7 +4465,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_05_10_15_38_40";
+    date="2017_04_06_01_23_37";
    };
    ParamSet @[1] {
     name="RunConfig1";
@@ -4697,7 +4697,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      el_def=0;
      group_type=GT_BUTTONS;
     };
-    date="2017_05_10_15_38_40";
+    date="2017_04_06_01_23_37";
    };
    ParamSet @[1] {
     name="NetConfig1";
@@ -6981,7 +6981,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="MyClusterRun";
      var_type=T_Object;
      object_type=ClusterRun;
-     object_val=.ctrl_panels[1]$$;
+     object_val=.ctrl_panels[0]$$;
      object_scope=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -7919,7 +7919,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cluster_run";
       var_type=T_Object;
       object_type=ClusterRun;
-      object_val=$.ctrl_panels[1]$;
+      object_val=$.ctrl_panels[0]$;
       object_scope=NULL;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -8361,7 +8361,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       dyn_enum_val {
        user_data_=NULL;
        enum_type=.programs.gp[1][2].types[0]$$;
-       value=0;
+       value=1;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9262,7 +9262,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=3226: sys=831: tot=149439832778: }: end={usr=3226: sys=831: tot=149439832778: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=1796: sys=220: tot=149140942226: }: end={usr=1805: sys=221: tot=149140942236: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -9766,7 +9766,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=3215: sys=830: tot=149439832771: }: end={usr=3216: sys=830: tot=149439832771: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=1817: sys=223: tot=149140942247: }: end={usr=1816: sys=222: tot=149140942246: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -10356,7 +10356,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=1;
       object_scope=NULL;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10722,7 +10722,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="input_idx";
       var_type=T_Int;
-      int_val=3;
+      int_val=0;
       object_scope=NULL;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -24807,8 +24807,8 @@ and the testing data is updated.  The first epoch monitor should have all the it
     name="UserDataItem_List_130";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @[0] {name="view_win_lft": value=0.005313496: val_type_fixed=0: };
-    UserDataItem @[1] {name="view_win_top": value=0.03738318: val_type_fixed=0: };
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0.02973662: val_type_fixed=0: };
     UserDataItem @[2] {name="view_win_wd": value=0.9941552: val_type_fixed=0: };
     UserDataItem @[3] {name="view_win_ht": value=0.7986406: val_type_fixed=0: };
     UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
@@ -24818,7 +24818,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
    m_data=.$$;
    cur_font_size=12;
    visible=1;
-   win_name=".projects[\"LeabraFlex\"] - LeabraFlex.proj";
+   win_name=".projects[\"LeabraFlex_10609_v807_nolog_patch1\"] - LeabraFlex_10609_v807_nolog_patch1.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -24962,7 +24962,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    max=1;
 	   };
 	  };
-	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
 	 };
 	};
        };
@@ -26491,7 +26491,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -26604,7 +26604,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.networks[0].specs[2].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.5: gain=100: nvar=0.005: };
+     act {thr=0.5: gain=20: nvar=0.01: };
      act_misc {rec_nd=1: avg_nd=1: dif_avg=0: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {ex=0: exp_slope=0.02: spk_thr=1.2: vm_r=0.3: t_r=3: clamp_max_p=0.12: clamp_type=REGULAR: eff_spk_thr=0.5: };
@@ -26616,7 +26616,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: s_in_s=0.9: };
      avg_l {init=0.4: gain=2.5: min=0.2: tau=10: lrn_max=0.5: lrn_min=0.0001: dt=0.1: lrn_fact=0.2173478: };
      avg_l_2 {err_mod=1: err_min=0.01: lay_act_thr=0.01: };
-     g_bar {e=1: l=0.2: i=1: };
+     g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {on=0: tau=144: vm_gain=0.04: spike_gain=0.00805: Ei_dyn=1: Ei_gain=0.001: Ei_tau=50: dt=0.006944444: Ei_dt=0.02: };
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
@@ -26723,7 +26723,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @[1] {
@@ -26804,7 +26804,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -26874,7 +26874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
-     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.01: };
+     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
     };
     FullPrjnSpec @[3] {
      name="FullPrjnSpec_0";

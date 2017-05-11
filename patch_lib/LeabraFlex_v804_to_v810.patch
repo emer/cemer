@@ -1,5 +1,5 @@
 // ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-Patch .projects[1].patches[0] { 
+Patch .projects[0].patches[0] { 
  PatchRec_Group @.patch_recs = [0] {
   PatchRec_Group @.gp[0] = [4] { 
    PatchRec @[0] { };
@@ -7,7 +7,7 @@ Patch .projects[1].patches[0] {
    PatchRec @[2] { };
    PatchRec @[3] { };
   };
-  PatchRec_Group @.gp[1] = [126] { 
+  PatchRec_Group @.gp[1] = [114] { 
    PatchRec @[0] { };
    PatchRec @[1] { };
    PatchRec @[2] { };
@@ -122,18 +122,6 @@ Patch .projects[1].patches[0] {
    PatchRec @[111] { };
    PatchRec @[112] { };
    PatchRec @[113] { };
-   PatchRec @[114] { };
-   PatchRec @[115] { };
-   PatchRec @[116] { };
-   PatchRec @[117] { };
-   PatchRec @[118] { };
-   PatchRec @[119] { };
-   PatchRec @[120] { };
-   PatchRec @[121] { };
-   PatchRec @[122] { };
-   PatchRec @[123] { };
-   PatchRec @[124] { };
-   PatchRec @[125] { };
   };
   PatchRec_Group @.gp[2] = [17] { 
    PatchRec @[0] { };
@@ -178,22 +166,19 @@ Patch .projects[1].patches[0] {
    PatchRec @[16] { };
    PatchRec @[17] { };
   };
-  PatchRec_Group @.gp[5] = [1] { 
-   PatchRec @[0] { };
-  };
-  PatchRec_Group @.gp[6] = [2] { 
+  PatchRec_Group @.gp[5] = [2] { 
    PatchRec @[0] { };
    PatchRec @[1] { };
   };
  };
 };
-Patch .projects[1].patches[0] {
+Patch .projects[0].patches[0] {
  name="LeabraFlex_v804_to_v810";
  tags="Leabra, LeabraFlex, v8.0.4, v8.1.0, ParamSet, ConfigTable, Logging, Tag";
  desc="Updates a LeabraFlex-based project from version 8.0.4 to 8.1.0, transitioning from ConfigTable to ParamSet-based configuration, and adding logging / tag code to Interactive runs";
  author="Randall C. O'Reilly";
  email="emergent-users@grey.colorado.edu";
- date="2017_05_11_04_00_49";
+ date="2017_05_11_16_24_47";
  from_name="LeabraFlex_10389_v804";
  to_name="LeabraFlex_10713_v808";
  patch_recs {
@@ -1612,34 +1597,6 @@ DataTable .projects[0].data.gp[3][0] {
    path=;
    PatchRec @[0] {
     off=0;
-    action=ASSIGN;
-    obj_path_names=".programs[\"MasterStartup\"]";
-    obj_path_idx=".programs[0]";
-    obj_type="Program";
-    mbr_path="author";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="Randall C. O'Reilly";
-   };
-   PatchRec @[1] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs[\"MasterStartup\"]";
-    obj_path_idx=".programs[0]";
-    obj_type="Program";
-    mbr_path="email";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="emergent-users@grey.colorado.edu";
-   };
-   PatchRec @[2] {
-    off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].vars[\"config_id\"]";
     obj_path_idx=".programs[0].vars[2]";
@@ -1664,7 +1621,7 @@ ProgVar .projects[0].programs[0].vars[2] {
 };
 ";
    };
-   PatchRec @[3] {
+   PatchRec @[1] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].vars[\"param_set\"]";
@@ -1690,7 +1647,7 @@ ProgVar .projects[0].programs[0].vars[3] {
 };
 ";
    };
-   PatchRec @[4] {
+   PatchRec @[2] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].vars[\"Config\"]";
@@ -1718,7 +1675,7 @@ ProgVar .projects[0].programs[0].vars[7] {
 };
 ";
    };
-   PatchRec @[5] {
+   PatchRec @[3] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].vars[\"param_sets\"]";
@@ -1746,7 +1703,7 @@ ProgVar .projects[0].programs[0].vars[12] {
 };
 ";
    };
-   PatchRec @[6] {
+   PatchRec @[4] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs[\"MasterStartup\"].vars[\"tag\"]";
@@ -1772,7 +1729,7 @@ ProgVar .projects[1].programs[0].vars[1] {
 };
 ";
    };
-   PatchRec @[7] {
+   PatchRec @[5] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs[\"MasterStartup\"].vars[\"log_file_nm\"]";
@@ -1798,7 +1755,7 @@ ProgVar .projects[1].programs[0].vars[3] {
 };
 ";
    };
-   PatchRec @[8] {
+   PatchRec @[6] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].functions[\"set_n_units\"]";
@@ -1943,7 +1900,7 @@ Function .projects[0].programs[0].functions[0] {
 };
 ";
    };
-   PatchRec @[9] {
+   PatchRec @[7] {
     off=0;
     action=INSERT;
     obj_path_names=".programs[\"MasterStartup\"].prog_code";
@@ -1969,7 +1926,7 @@ AssignExpr .projects[1].programs[0].prog_code[3] {
 };
 ";
    };
-   PatchRec @[10] {
+   PatchRec @[8] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"ProgVarFmArg_SetVarparamsetin_fromArgparamset\"]";
@@ -1994,7 +1951,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[5] {
 };
 ";
    };
-   PatchRec @[11] {
+   PatchRec @[9] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"ProgVarFmArg_SetVarbatchstart_omArgbatchstart\"]";
@@ -2019,7 +1976,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[6] {
 };
 ";
    };
-   PatchRec @[12] {
+   PatchRec @[10] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"ProgVarFmArg_SetVarnbatchesin_fromArgnbatches\"]";
@@ -2044,7 +2001,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[7] {
 };
 ";
    };
-   PatchRec @[13] {
+   PatchRec @[11] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"ProgVarFmArg_SetVarcurconfigi_infromArgconfig\"]";
@@ -2069,7 +2026,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[9] {
 };
 ";
    };
-   PatchRec @[14] {
+   PatchRec @[12] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"ProgVarFmArg_SetVarconfigidin_infromArgconfig\"]";
@@ -2094,7 +2051,7 @@ ProgVarFmArg .projects[0].programs[0].prog_code[10] {
 };
 ";
    };
-   PatchRec @[15] {
+   PatchRec @[13] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"OtherProgramVar_VarsFmprogramMas_gidvar2var3var4\"]";
@@ -2122,7 +2079,7 @@ OtherProgramVar .projects[0].programs[0].prog_code[11] {
 };
 ";
    };
-   PatchRec @[16] {
+   PatchRec @[14] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"MethodCall_Configmethod\"]";
@@ -2145,7 +2102,7 @@ MethodCall .projects[0].programs[0].prog_code[12] {
  name=\"MethodCall_Configmethod\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
- code_string=\"Config->SetCellsFromRowLookup(\\\"config_id\\\", config_id)\";
+ code_string=\"Config->method()\";
  result_var=NULL;
  obj=.programs[\"MasterStartup\"].vars[\"Config\"]$$<ProgVar,Config>;
  method=NULL;
@@ -2181,7 +2138,7 @@ MethodCall .projects[0].programs[0].prog_code[12] {
 };
 ";
    };
-   PatchRec @[17] {
+   PatchRec @[15] {
     off=0;
     action=INSERT;
     obj_path_names=".programs[\"MasterStartup\"].prog_code";
@@ -2228,7 +2185,7 @@ MethodCall .projects[1].programs[0].prog_code[7] {
 };
 ";
    };
-   PatchRec @[18] {
+   PatchRec @[16] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"If_ifparamsetnonempty\"]";
@@ -2267,7 +2224,7 @@ If .projects[0].programs[0].prog_code[14] {
    name=\"MethodCall_paramsetsActivat_aramSetparamset\";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string=\"param_sets->LoadParamSet(param_set)\";
+   code_string=\"param_sets->ActivateParamSet(param_set, )\";
    result_var=NULL;
    obj=.programs[\"MasterStartup\"].vars[\"param_sets\"]$$<ProgVar,param_sets>;
    method=ParamSet_Group::ActivateParamSet;
@@ -2305,7 +2262,7 @@ If .projects[0].programs[0].prog_code[14] {
 };
 ";
    };
-   PatchRec @[19] {
+   PatchRec @[17] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"Comment_TODOAddyourprogr_eremultilinesok\"]";
@@ -2327,7 +2284,7 @@ Comment .projects[0].programs[0].prog_code[15] {
 };
 ";
    };
-   PatchRec @[20] {
+   PatchRec @[18] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"Comment_Addargstotagname\"]";
@@ -2349,7 +2306,7 @@ Comment .projects[0].programs[0].prog_code[16] {
 };
 ";
    };
-   PatchRec @[21] {
+   PatchRec @[19] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"If_ifconfigidempty\"]";
@@ -2508,7 +2465,7 @@ If .projects[0].programs[0].prog_code[17] {
 };
 ";
    };
-   PatchRec @[22] {
+   PatchRec @[20] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"AssignExpr_tagconfigidtag\"]";
@@ -2534,7 +2491,7 @@ AssignExpr .projects[0].programs[0].prog_code[18] {
 };
 ";
    };
-   PatchRec @[23] {
+   PatchRec @[21] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"Comment_setanyparamsfromConfig\"]";
@@ -2556,7 +2513,7 @@ Comment .projects[0].programs[0].prog_code[19] {
 };
 ";
    };
-   PatchRec @[24] {
+   PatchRec @[22] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"DataColsFmArgs_DataColsFmArgsta_lrowvarconfigid\"]";
@@ -2581,7 +2538,7 @@ DataColsFmArgs .projects[0].programs[0].prog_code[20] {
 };
 ";
    };
-   PatchRec @[25] {
+   PatchRec @[23] {
     off=0;
     action=INSERT;
     obj_path_names=".programs[\"MasterStartup\"].prog_code";
@@ -2607,7 +2564,7 @@ AssignExpr .projects[1].programs[0].prog_code[9] {
 };
 ";
    };
-   PatchRec @[26] {
+   PatchRec @[24] {
     off=0;
     action=DELETE;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"DataVarProg_DataFromtableCon_rogvar2var3var4\"]";
@@ -2639,7 +2596,7 @@ DataVarProg .projects[0].programs[0].prog_code[26] {
 };
 ";
    };
-   PatchRec @[27] {
+   PatchRec @[25] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"ControlPanelsFmArgs_CtrlPanelFmArgsvarMyClusterRun\"]";
@@ -2653,7 +2610,7 @@ DataVarProg .projects[0].programs[0].prog_code[26] {
     new_obj_type=;
     value="CAN_REVERT_TO_CODE";
    };
-   PatchRec @[28] {
+   PatchRec @[26] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"If_iftaMiscCheckArgByNamebatchstart\"]";
@@ -2667,7 +2624,7 @@ DataVarProg .projects[0].programs[0].prog_code[26] {
     new_obj_type=;
     value="CAN_REVERT_TO_CODE";
    };
-   PatchRec @[29] {
+   PatchRec @[27] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs[\"MasterStartup\"].prog_code[\"OtherProgramVar_VarsToprogramSav_tagvar2var3var4\"]";
@@ -2695,7 +2652,7 @@ OtherProgramVar .projects[1].programs[0].prog_code[13] {
 };
 ";
    };
-   PatchRec @[30] {
+   PatchRec @[28] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"StartupProgs\"][\"BasicStartup\"].vars[\"tag\"]";
@@ -2721,7 +2678,7 @@ ProgVar .projects[1].programs.gp[0][0].vars[0] {
 };
 ";
    };
-   PatchRec @[31] {
+   PatchRec @[29] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterBatch\"].vars[\"n_batches\"]";
@@ -2747,35 +2704,7 @@ ProgVar .projects[1].programs.gp[1][0].vars[2] {
 };
 ";
    };
-   PatchRec @[32] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"]";
-    obj_path_idx=".programs.gp[1][1]";
-    obj_type="Program";
-    mbr_path="author";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="Randall C. O'Reilly";
-   };
-   PatchRec @[33] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"]";
-    obj_path_idx=".programs.gp[1][1]";
-    obj_type="Program";
-    mbr_path="email";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="emergent-users@grey.colorado.edu";
-   };
-   PatchRec @[34] {
+   PatchRec @[30] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].types[\"ConfigOptions\"]";
@@ -2812,7 +2741,7 @@ DynEnumTableCol .projects[0].programs.gp[1][1].types[0] {
 };
 ";
    };
-   PatchRec @[35] {
+   PatchRec @[31] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"Config\"]";
@@ -2838,7 +2767,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[0] {
 };
 ";
    };
-   PatchRec @[36] {
+   PatchRec @[32] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"cur_config\"]";
@@ -2866,7 +2795,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[1] {
 };
 ";
    };
-   PatchRec @[37] {
+   PatchRec @[33] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"config_id\"]";
@@ -2894,7 +2823,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
 };
 ";
    };
-   PatchRec @[38] {
+   PatchRec @[34] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
@@ -2922,7 +2851,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[5] {
 };
 ";
    };
-   PatchRec @[39] {
+   PatchRec @[35] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
@@ -2948,7 +2877,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[6] {
 };
 ";
    };
-   PatchRec @[40] {
+   PatchRec @[36] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
@@ -2974,7 +2903,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[7] {
 };
 ";
    };
-   PatchRec @[41] {
+   PatchRec @[37] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
@@ -3000,7 +2929,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[8] {
 };
 ";
    };
-   PatchRec @[42] {
+   PatchRec @[38] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"Config\"]";
@@ -3026,7 +2955,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[0] {
 };
 ";
    };
-   PatchRec @[43] {
+   PatchRec @[39] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"cur_config\"]";
@@ -3054,7 +2983,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[1] {
 };
 ";
    };
-   PatchRec @[44] {
+   PatchRec @[40] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"config_id\"]";
@@ -3082,7 +3011,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
 };
 ";
    };
-   PatchRec @[45] {
+   PatchRec @[41] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"run_prog\"]";
@@ -3096,7 +3025,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
     new_obj_type=;
     value="CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL";
    };
-   PatchRec @[46] {
+   PatchRec @[42] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"init_prog\"]";
@@ -3110,7 +3039,7 @@ ProgVar .projects[1].programs.gp[1][1].vars[2] {
     new_obj_type=;
     value="CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL";
    };
-   PatchRec @[47] {
+   PatchRec @[43] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].init_code[\"AssignExpr_configidcurconfig\"]";
@@ -3136,7 +3065,7 @@ AssignExpr .projects[0].programs.gp[1][1].init_code[1] {
 };
 ";
    };
-   PatchRec @[48] {
+   PatchRec @[44] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code";
@@ -3166,7 +3095,7 @@ LocalVars .projects[1].programs.gp[1][1].prog_code[0] {
 };
 ";
    };
-   PatchRec @[49] {
+   PatchRec @[45] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"AssignExpr_configidcurconfig\"]";
@@ -3192,7 +3121,7 @@ AssignExpr .projects[0].programs.gp[1][1].prog_code[1] {
 };
 ";
    };
-   PatchRec @[50] {
+   PatchRec @[46] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"DataVarProg_DataFromtableCon_runprogvar3var4\"]";
@@ -3224,7 +3153,7 @@ DataVarProg .projects[0].programs.gp[1][1].prog_code[2] {
 };
 ";
    };
-   PatchRec @[51] {
+   PatchRec @[47] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"MethodCall_Configmethod\"]";
@@ -3283,7 +3212,7 @@ MethodCall .projects[0].programs.gp[1][1].prog_code[3] {
 };
 ";
    };
-   PatchRec @[52] {
+   PatchRec @[48] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"ProgramCallVar_CallFmproggroupI_networkconfigid\"]";
@@ -3339,7 +3268,7 @@ ProgramCallVar .projects[0].programs.gp[1][1].prog_code[4] {
 };
 ";
    };
-   PatchRec @[53] {
+   PatchRec @[49] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code";
@@ -3478,7 +3407,7 @@ If .projects[1].programs.gp[1][1].prog_code[2] {
 };
 ";
    };
-   PatchRec @[54] {
+   PatchRec @[50] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code";
@@ -3522,7 +3451,7 @@ ProgramCallVar .projects[1].programs.gp[1][1].prog_code[3] {
 };
 ";
    };
-   PatchRec @[55] {
+   PatchRec @[51] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"WhileLoop_whilestoptrain\"].loop_code[\"ProgramCall_MasterRunnetworkconfigidrunprog\"]";
@@ -3578,7 +3507,7 @@ ProgramCall .projects[1].programs.gp[1][1].prog_code[4].loop_code[0] {
 };
 ";
    };
-   PatchRec @[56] {
+   PatchRec @[52] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"WhileLoop_whilestoptrain\"].loop_code[\"ProgramCall_MasterRunnetworkconfigidrunprog\"]";
@@ -3634,7 +3563,7 @@ ProgramCall .projects[1].programs.gp[1][1].prog_code[4].loop_code[0] {
 };
 ";
    };
-   PatchRec @[57] {
+   PatchRec @[53] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"WhileLoop_whilestoptrain\"].loop_code[\"ProgramCall_MasterRunnetworkconfigidrunprog\"].prog_args[\"config_id\"]";
@@ -3661,35 +3590,7 @@ ProgArg .projects[0].programs.gp[1][1].prog_code[5].loop_code[0].prog_args[1] {
 };
 ";
    };
-   PatchRec @[58] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"]";
-    obj_path_idx=".programs.gp[1][2]";
-    obj_type="Program";
-    mbr_path="author";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="Randall C. O'Reilly";
-   };
-   PatchRec @[59] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"]";
-    obj_path_idx=".programs.gp[1][2]";
-    obj_type="Program";
-    mbr_path="email";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="emergent-users@grey.colorado.edu";
-   };
-   PatchRec @[60] {
+   PatchRec @[54] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].args[\"config_id\"]";
@@ -3715,7 +3616,7 @@ ProgVar .projects[0].programs.gp[1][2].args[1] {
 };
 ";
    };
-   PatchRec @[61] {
+   PatchRec @[55] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].args[\"run_prog\"]";
@@ -3729,7 +3630,7 @@ ProgVar .projects[0].programs.gp[1][2].args[1] {
     new_obj_type=;
     value="CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG";
    };
-   PatchRec @[62] {
+   PatchRec @[56] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].vars[\"Config\"]";
@@ -3757,7 +3658,7 @@ ProgVar .projects[0].programs.gp[1][2].vars[0] {
 };
 ";
    };
-   PatchRec @[63] {
+   PatchRec @[57] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].prog_code[\"ProgramCallVar_CallFmproggroupR_networkconfigid\"]";
@@ -3801,7 +3702,7 @@ ProgramCallVar .projects[1].programs.gp[1][2].prog_code[0] {
 };
 ";
    };
-   PatchRec @[64] {
+   PatchRec @[58] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].prog_code[\"ProgramCallVar_CallFmproggroupR_networkconfigid\"]";
@@ -3845,7 +3746,7 @@ ProgramCallVar .projects[1].programs.gp[1][2].prog_code[0] {
 };
 ";
    };
-   PatchRec @[65] {
+   PatchRec @[59] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterRun\"].prog_code[\"ProgramCallVar_CallFmproggroupR_networkconfigid\"].prog_args[\"config_id\"]";
@@ -3872,35 +3773,7 @@ ProgArg .projects[0].programs.gp[1][2].prog_code[0].prog_args[1] {
 };
 ";
    };
-   PatchRec @[66] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"]";
-    obj_path_idx=".programs.gp[1].gp[0][0]";
-    obj_type="Program";
-    mbr_path="author";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="Randall C. O'Reilly";
-   };
-   PatchRec @[67] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"]";
-    obj_path_idx=".programs.gp[1].gp[0][0]";
-    obj_type="Program";
-    mbr_path="email";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="emergent-users@grey.colorado.edu";
-   };
-   PatchRec @[68] {
+   PatchRec @[60] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].args[\"config_id\"]";
@@ -3926,7 +3799,7 @@ ProgVar .projects[0].programs.gp[1].gp[0][0].args[1] {
 };
 ";
    };
-   PatchRec @[69] {
+   PatchRec @[61] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars";
@@ -3952,7 +3825,7 @@ ProgVar .projects[1].programs.gp[1].gp[0][0].vars[4] {
 };
 ";
    };
-   PatchRec @[70] {
+   PatchRec @[62] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].prog_code[\"ProgramCall_StdGlobalsInitnetworkconfigid\"]";
@@ -4008,7 +3881,7 @@ ProgramCall .projects[0].programs.gp[1].gp[0][0].prog_code[0] {
 };
 ";
    };
-   PatchRec @[71] {
+   PatchRec @[63] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].prog_code[\"If_ifconfigidcontainstest\"]";
@@ -4054,7 +3927,7 @@ If .projects[1].programs.gp[1].gp[0][0].prog_code[2] {
 };
 ";
    };
-   PatchRec @[72] {
+   PatchRec @[64] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].prog_code[\"Else_If_ifconfigidcontainstest\"]";
@@ -4100,7 +3973,7 @@ Else .projects[1].programs.gp[1].gp[0][0].prog_code[3] {
 };
 ";
    };
-   PatchRec @[73] {
+   PatchRec @[65] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].prog_code[\"If_ifconfigidcontainstest\"]";
@@ -4146,35 +4019,7 @@ If .projects[1].programs.gp[1].gp[0][0].prog_code[2] {
 };
 ";
    };
-   PatchRec @[74] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"]";
-    obj_path_idx=".programs.gp[1].gp[1][0]";
-    obj_type="Program";
-    mbr_path="author";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="Randall C. O'Reilly";
-   };
-   PatchRec @[75] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"]";
-    obj_path_idx=".programs.gp[1].gp[1][0]";
-    obj_type="Program";
-    mbr_path="email";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="emergent-users@grey.colorado.edu";
-   };
-   PatchRec @[76] {
+   PatchRec @[66] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].args[\"config_id\"]";
@@ -4200,7 +4045,7 @@ ProgVar .projects[0].programs.gp[1].gp[1][0].args[1] {
 };
 ";
    };
-   PatchRec @[77] {
+   PatchRec @[67] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].vars[\"trials_per_epoch\"]";
@@ -4226,7 +4071,7 @@ ProgVar .projects[0].programs.gp[1].gp[1][0].vars[0] {
 };
 ";
    };
-   PatchRec @[78] {
+   PatchRec @[68] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].vars";
@@ -4252,7 +4097,7 @@ ProgVar .projects[1].programs.gp[1].gp[1][0].vars[1] {
 };
 ";
    };
-   PatchRec @[79] {
+   PatchRec @[69] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].vars";
@@ -4278,7 +4123,7 @@ ProgVar .projects[1].programs.gp[1].gp[1][0].vars[2] {
 };
 ";
    };
-   PatchRec @[80] {
+   PatchRec @[70] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].vars[\"train_epochs\"]";
@@ -4304,7 +4149,7 @@ ProgVar .projects[1].programs.gp[1].gp[1][0].vars[0] {
 };
 ";
    };
-   PatchRec @[81] {
+   PatchRec @[71] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].prog_code[\"If_ifnetworktrialtrialsperepoch\"]";
@@ -4512,7 +4357,7 @@ If .projects[1].programs.gp[1].gp[1][0].prog_code[5] {
 };
 ";
    };
-   PatchRec @[82] {
+   PatchRec @[72] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].prog_code[\"If_ifnetworktrialtrialsperepoch\"]";
@@ -4720,7 +4565,7 @@ If .projects[1].programs.gp[1].gp[1][0].prog_code[5] {
 };
 ";
    };
-   PatchRec @[83] {
+   PatchRec @[73] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"ConfigProgs\"].gp[\"RunProgs\"][\"BasicRun\"].prog_code[\"If_ifnetworktrialtrialsperepoch\"].true_code";
@@ -4782,7 +4627,7 @@ If .projects[1].programs.gp[1].gp[1][0].prog_code[5].true_code[1] {
 };
 ";
    };
-   PatchRec @[84] {
+   PatchRec @[74] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"TaskProgs\"]";
@@ -5407,7 +5252,7 @@ Program .projects[1].programs.gp[2][1] {
 };
 ";
    };
-   PatchRec @[85] {
+   PatchRec @[75] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"TaskProgs\"]";
@@ -5835,7 +5680,7 @@ Program .projects[1].programs.gp[2][2] {
 };
 ";
    };
-   PatchRec @[86] {
+   PatchRec @[76] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"EnviroProgs\"][\"ChooseNextEvent\"].vars[\"input_idx\"]";
@@ -5861,7 +5706,7 @@ ProgVar .projects[1].programs.gp[3][0].vars[1] {
 };
 ";
    };
-   PatchRec @[87] {
+   PatchRec @[77] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"StdGlobalsInit\"]";
@@ -6235,7 +6080,7 @@ Program .projects[0].programs.gp[4][0] {
 };
 ";
    };
-   PatchRec @[88] {
+   PatchRec @[78] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
@@ -6263,7 +6108,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[0] {
 };
 ";
    };
-   PatchRec @[89] {
+   PatchRec @[79] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
@@ -6289,7 +6134,7 @@ ProgVar .projects[1].programs.gp[4][4].vars[1] {
 };
 ";
    };
-   PatchRec @[90] {
+   PatchRec @[80] {
     off=0;
     action=DELETE;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"load_weights\"]";
@@ -6315,7 +6160,7 @@ ProgVar .projects[0].programs.gp[4][5].vars[1] {
 };
 ";
    };
-   PatchRec @[91] {
+   PatchRec @[81] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
@@ -6337,6 +6182,266 @@ ProgVar .projects[1].programs.gp[4][4].vars[5] {
  flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
  reference=0;
  desc=\"number of steps in the learning rate schedule\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[82] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"dmem_rnd_seed\"]";
+    obj_path_idx=".programs.gp[4][5].vars[6]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[8] { };
+ProgVar .projects[1].programs.gp[4][4].vars[8] {
+ name=\"save_log_files_interactive\";
+ var_type=T_Bool;
+ bool_val=0;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"save log files when running interactively?\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[83] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
+    obj_path_idx=".programs.gp[4][5].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="train_epochs";
+    insert_after="dmem_new_seed";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[10] { };
+ProgVar .projects[1].programs.gp[4][4].vars[10] {
+ name=\"train_epochs\";
+ var_type=T_Int;
+ int_val=50;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"number of epochs to train network for\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[84] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
+    obj_path_idx=".programs.gp[4][5].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="trials_per_epoch";
+    insert_after="train_epochs";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[11] { };
+ProgVar .projects[1].programs.gp[4][4].vars[11] {
+ name=\"trials_per_epoch\";
+ var_type=T_Int;
+ int_val=50;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"number of trials per epoch\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[85] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
+    obj_path_idx=".programs.gp[4][5].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="trials_per_epoch_eff";
+    insert_after="trials_per_epoch";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[12] { };
+ProgVar .projects[1].programs.gp[4][4].vars[12] {
+ name=\"trials_per_epoch_eff\";
+ var_type=T_Int;
+ int_val=50;
+ object_scope=NULL;
+ flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"effective value, taking into account number of MPI processors\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[86] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
+    obj_path_idx=".programs.gp[4][5].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="test_run";
+    insert_after="trials_per_epoch_eff";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[13] { };
+ProgVar .projects[1].programs.gp[4][4].vars[13] {
+ name=\"test_run\";
+ var_type=T_Bool;
+ bool_val=0;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"is this a testing-only run, no training?\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[87] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
+    obj_path_idx=".programs.gp[4][5].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=8;
+    targ_name="test_interval";
+    insert_after="test_run";
+    insert_before=;
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[14] { };
+ProgVar .projects[1].programs.gp[4][4].vars[14] {
+ name=\"test_interval\";
+ var_type=T_Int;
+ int_val=1;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+ reference=0;
+ desc=\"how frequently (epochs) to run a test during training\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[88] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"weights_file\"]";
+    obj_path_idx=".programs.gp[4][5].vars[0]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[2] { };
+ProgVar .projects[1].programs.gp[4][4].vars[2] {
+ name=\"weights_file\";
+ var_type=T_String;
+ string_val=;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[89] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"load_st_epc\"]";
+    obj_path_idx=".programs.gp[4][5].vars[2]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[3] { };
+ProgVar .projects[1].programs.gp[4][4].vars[3] {
+ name=\"load_st_epc\";
+ var_type=T_Int;
+ int_val=1;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[90] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"lrs_step_epochs\"]";
+    obj_path_idx=".programs.gp[4][5].vars[3]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[4] { };
+ProgVar .projects[1].programs.gp[4][4].vars[4] {
+ name=\"lrs_step_epochs\";
+ var_type=T_Int;
+ int_val=50;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"learning rate schedule epochs per step of decrease in learning rate\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[91] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"lrs_bump_step\"]";
+    obj_path_idx=".programs.gp[4][5].vars[4]";
+    obj_type="ProgVar";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+ProgVar .projects[1].programs.gp[4][4].vars[6] { };
+ProgVar .projects[1].programs.gp[4][4].vars[6] {
+ name=\"lrs_bump_step\";
+ var_type=T_Int;
+ int_val=-1;
+ object_scope=NULL;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level\";
  init_from=NULL;
 };
 ";
@@ -6368,266 +6473,6 @@ ProgVar .projects[1].programs.gp[4][4].vars[8] {
 ";
    };
    PatchRec @[93] {
-    off=0;
-    action=INSERT;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
-    obj_path_idx=".programs.gp[4][5].vars";
-    obj_type="ProgVar_List";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="train_epochs";
-    insert_after="dmem_new_seed";
-    insert_before=;
-    new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[10] { };
-ProgVar .projects[1].programs.gp[4][4].vars[10] {
- name=\"train_epochs\";
- var_type=T_Int;
- int_val=50;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
- reference=0;
- desc=\"number of epochs to train network for\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[94] {
-    off=0;
-    action=INSERT;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
-    obj_path_idx=".programs.gp[4][5].vars";
-    obj_type="ProgVar_List";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="trials_per_epoch";
-    insert_after="train_epochs";
-    insert_before=;
-    new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[11] { };
-ProgVar .projects[1].programs.gp[4][4].vars[11] {
- name=\"trials_per_epoch\";
- var_type=T_Int;
- int_val=50;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"number of trials per epoch\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[95] {
-    off=0;
-    action=INSERT;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
-    obj_path_idx=".programs.gp[4][5].vars";
-    obj_type="ProgVar_List";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="trials_per_epoch_eff";
-    insert_after="trials_per_epoch";
-    insert_before=;
-    new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[12] { };
-ProgVar .projects[1].programs.gp[4][4].vars[12] {
- name=\"trials_per_epoch_eff\";
- var_type=T_Int;
- int_val=50;
- object_scope=NULL;
- flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"effective value, taking into account number of MPI processors\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[96] {
-    off=0;
-    action=INSERT;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
-    obj_path_idx=".programs.gp[4][5].vars";
-    obj_type="ProgVar_List";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="test_run";
-    insert_after="trials_per_epoch_eff";
-    insert_before=;
-    new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[13] { };
-ProgVar .projects[1].programs.gp[4][4].vars[13] {
- name=\"test_run\";
- var_type=T_Bool;
- bool_val=0;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
- reference=0;
- desc=\"is this a testing-only run, no training?\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[97] {
-    off=0;
-    action=INSERT;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars";
-    obj_path_idx=".programs.gp[4][5].vars";
-    obj_type="ProgVar_List";
-    mbr_path=;
-    targ_idx=8;
-    targ_name="test_interval";
-    insert_after="test_run";
-    insert_before=;
-    new_obj_type="ProgVar";
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[14] { };
-ProgVar .projects[1].programs.gp[4][4].vars[14] {
- name=\"test_interval\";
- var_type=T_Int;
- int_val=1;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
- reference=0;
- desc=\"how frequently (epochs) to run a test during training\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[98] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"weights_file\"]";
-    obj_path_idx=".programs.gp[4][5].vars[0]";
-    obj_type="ProgVar";
-    mbr_path=;
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[2] { };
-ProgVar .projects[1].programs.gp[4][4].vars[2] {
- name=\"weights_file\";
- var_type=T_String;
- string_val=;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"full relative path (from project) of weights file to load -- use CRR: prefix to load from cluster run results directory\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[99] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"load_st_epc\"]";
-    obj_path_idx=".programs.gp[4][5].vars[2]";
-    obj_type="ProgVar";
-    mbr_path=;
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[3] { };
-ProgVar .projects[1].programs.gp[4][4].vars[3] {
- name=\"load_st_epc\";
- var_type=T_Int;
- int_val=1;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"after loading weights, reset epoch counter to this value (-1 = leave at value from the loaded weights)\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[100] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"lrs_step_epochs\"]";
-    obj_path_idx=".programs.gp[4][5].vars[3]";
-    obj_type="ProgVar";
-    mbr_path=;
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[4] { };
-ProgVar .projects[1].programs.gp[4][4].vars[4] {
- name=\"lrs_step_epochs\";
- var_type=T_Int;
- int_val=50;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"learning rate schedule epochs per step of decrease in learning rate\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[101] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"lrs_bump_step\"]";
-    obj_path_idx=".programs.gp[4][5].vars[4]";
-    obj_type="ProgVar";
-    mbr_path=;
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[6] { };
-ProgVar .projects[1].programs.gp[4][4].vars[6] {
- name=\"lrs_bump_step\";
- var_type=T_Int;
- int_val=-1;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"if positive (3 is typical), then bump up the learning rate at this step in the schedule -- can help improve final performance level\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[102] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].vars[\"dmem_rnd_seed\"]";
-    obj_path_idx=".programs.gp[4][5].vars[6]";
-    obj_type="ProgVar";
-    mbr_path=;
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ProgVar .projects[1].programs.gp[4][4].vars[8] { };
-ProgVar .projects[1].programs.gp[4][4].vars[8] {
- name=\"save_log_files_interactive\";
- var_type=T_Bool;
- bool_val=0;
- object_scope=NULL;
- flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
- reference=0;
- desc=\"save log files when running interactively?\";
- init_from=NULL;
-};
-";
-   };
-   PatchRec @[103] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].functions";
@@ -6751,7 +6596,7 @@ Function .projects[1].programs.gp[4][4].functions[0] {
 };
 ";
    };
-   PatchRec @[104] {
+   PatchRec @[94] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code";
@@ -6783,7 +6628,7 @@ FunctionCall .projects[1].programs.gp[4][4].prog_code[0] {
 };
 ";
    };
-   PatchRec @[105] {
+   PatchRec @[95] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"If_iftaMiscinteractive\"]";
@@ -6845,7 +6690,7 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
 };
 ";
    };
-   PatchRec @[106] {
+   PatchRec @[96] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"MethodCall_LRSConSpecLogLra_chs5lrsbumpstep\"]";
@@ -6916,7 +6761,7 @@ MethodCall .projects[1].programs.gp[4][4].prog_code[7] {
 };
 ";
    };
-   PatchRec @[107] {
+   PatchRec @[97] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"If_iftaMiscinteractive\"]";
@@ -6978,7 +6823,7 @@ If .projects[1].programs.gp[4][4].prog_code[3] {
 };
 ";
    };
-   PatchRec @[108] {
+   PatchRec @[98] {
     off=0;
     action=REPLACE;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"If_ifloadweightsweightsfilenonempty\"].true_code";
@@ -7024,7 +6869,7 @@ If .projects[1].programs.gp[4][4].prog_code[6].true_code[2] {
 };
 ";
    };
-   PatchRec @[109] {
+   PatchRec @[99] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"MethodCall_LRSConSpecLogLra_chs5lrsbumpstep\"]";
@@ -7095,7 +6940,7 @@ MethodCall .projects[1].programs.gp[4][4].prog_code[7] {
 };
 ";
    };
-   PatchRec @[110] {
+   PatchRec @[100] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainStart\"].prog_code[\"MethodCall_LRSConSpecLogLra_chs5lrsbumpstep\"].meth_args[\"n_steps\"]";
@@ -7122,7 +6967,7 @@ ProgArg .projects[1].programs.gp[4][4].prog_code[7].meth_args[1] {
 };
 ";
    };
-   PatchRec @[111] {
+   PatchRec @[101] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"TrainEnd\"].vars[\"save_final_wts\"]";
@@ -7148,7 +6993,7 @@ ProgVar .projects[1].programs.gp[4][5].vars[0] {
 };
 ";
    };
-   PatchRec @[112] {
+   PatchRec @[102] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"EpochEnd\"].vars[\"save_wts_interval\"]";
@@ -7174,7 +7019,7 @@ ProgVar .projects[1].programs.gp[4][7].vars[0] {
 };
 ";
    };
-   PatchRec @[113] {
+   PatchRec @[103] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"Trial\"].vars[\"update_net_view\"]";
@@ -7200,35 +7045,7 @@ ProgVar .projects[1].programs.gp[4][12].vars[0] {
 };
 ";
    };
-   PatchRec @[114] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"Quarter\"]";
-    obj_path_idx=".programs.gp[4][14]";
-    obj_type="Program";
-    mbr_path="author";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="Randall C. O'Reilly";
-   };
-   PatchRec @[115] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".programs.gp[\"UtilProgs\"][\"Quarter\"]";
-    obj_path_idx=".programs.gp[4][14]";
-    obj_type="Program";
-    mbr_path="email";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="emergent-users@grey.colorado.edu";
-   };
-   PatchRec @[116] {
+   PatchRec @[104] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"Quarter\"].vars[\"update_net_view\"]";
@@ -7254,7 +7071,7 @@ ProgVar .projects[1].programs.gp[4][13].vars[1] {
 };
 ";
    };
-   PatchRec @[117] {
+   PatchRec @[105] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"SaveWeights\"].vars[\"tag\"]";
@@ -7280,7 +7097,7 @@ ProgVar .projects[1].programs.gp[4][15].vars[0] {
 };
 ";
    };
-   PatchRec @[118] {
+   PatchRec @[106] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"SaveWeights\"].vars[\"fname\"]";
@@ -7306,7 +7123,7 @@ ProgVar .projects[1].programs.gp[4][15].vars[2] {
 };
 ";
    };
-   PatchRec @[119] {
+   PatchRec @[107] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"][\"SaveWeights\"].vars[\"final_tag\"]";
@@ -7332,7 +7149,7 @@ ProgVar .projects[1].programs.gp[4][15].vars[5] {
 };
 ";
    };
-   PatchRec @[120] {
+   PatchRec @[108] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"]";
@@ -8747,7 +8564,7 @@ Program .projects[1].programs.gp[4].gp[0][3] {
 };
 ";
    };
-   PatchRec @[121] {
+   PatchRec @[109] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"]";
@@ -10112,7 +9929,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 };
 ";
    };
-   PatchRec @[122] {
+   PatchRec @[110] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].vars[\"tag\"]";
@@ -10138,7 +9955,7 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[0] {
 };
 ";
    };
-   PatchRec @[123] {
+   PatchRec @[111] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].vars[\"log_trials\"]";
@@ -10164,7 +9981,7 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[1] {
 };
 ";
    };
-   PatchRec @[124] {
+   PatchRec @[112] {
     off=0;
     action=ASSIGN;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].vars[\"log_file_nm\"]";
@@ -10190,7 +10007,7 @@ ProgVar .projects[1].programs.gp[4].gp[0][0].vars[3] {
 };
 ";
    };
-   PatchRec @[125] {
+   PatchRec @[113] {
     off=0;
     action=INSERT;
     obj_path_names=".programs.gp[\"UtilProgs\"].gp[\"Monitors\"][\"SaveLogFiles\"].init_code";
@@ -11318,7 +11135,7 @@ MethodCall .projects[1].programs[0].prog_code[9] {
  name=\"MethodCall_objectmethod\";
  desc=;
  flags=CAN_REVERT_TO_CODE;
- code_string=\"Config->SetCellsFromRowLookup(\\\"config_id\\\", config_id)\";
+ code_string=\"Config->method()\";
  result_var=NULL;
  obj=NULL;
  method=NULL;
@@ -11896,26 +11713,6 @@ MethodCall .projects[0].programs.gp[4][4].prog_code[8].true_code[0] {
    };
   };
   PatchRec_Group @.gp[5] {
-   name="ctrl_panels_1";
-   el_typ=PatchRec;
-   el_def=0;
-   path=;
-   PatchRec @[0] {
-    off=0;
-    action=ASSIGN;
-    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs[\"save_log_files_interactive\"]";
-    obj_path_idx=".ctrl_panels[1].mbrs[8]";
-    obj_type="ControlPanelMember";
-    mbr_path="cust_label";
-    targ_idx=0;
-    targ_name=;
-    insert_after=;
-    insert_before=;
-    new_obj_type=;
-    value="false";
-   };
-  };
-  PatchRec_Group @.gp[6] {
    name="active_params_1";
    el_typ=PatchRec;
    el_def=0;
@@ -11933,8 +11730,8 @@ MethodCall .projects[0].programs.gp[4][4].prog_code[8].true_code[0] {
     insert_before="weights_file";
     new_obj_type="ControlPanelMember";
     value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ControlPanelMember .projects[0].active_params.gp[0][0].mbrs[10] { };
-ControlPanelMember .projects[0].active_params.gp[0][0].mbrs[10] {
+ControlPanelMember .projects[1].active_params.gp[0][0].mbrs[10] { };
+ControlPanelMember .projects[1].active_params.gp[0][0].mbrs[10] {
  label=\"load_weights\";
  short_label=1;
  cust_label=0;
@@ -11959,8 +11756,8 @@ ControlPanelMember .projects[0].active_params.gp[0][0].mbrs[10] {
     insert_before="weights_file";
     new_obj_type="ControlPanelMember";
     value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
-ControlPanelMember .projects[0].active_params.gp[0][1].mbrs[10] { };
-ControlPanelMember .projects[0].active_params.gp[0][1].mbrs[10] {
+ControlPanelMember .projects[1].active_params.gp[0][1].mbrs[10] { };
+ControlPanelMember .projects[1].active_params.gp[0][1].mbrs[10] {
  label=\"load_weights\";
  short_label=1;
  cust_label=0;
