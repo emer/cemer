@@ -3140,8 +3140,9 @@ String TypeDef::GetHTML(bool gendoc) const {
   rval.cat("<p>Index: <a href=\"#subtypes\">SubTypes</a>, ");
 
   rval.cat("<a href=\"#members\">Members</a>, ");
-  rval.cat("<a href=\"#static_members\">Static Members</a>, ");
   rval.cat("<a href=\"#methods\">Methods</a>, ");
+  rval.cat("<a href=\"#static_members\">Static Members</a>, ");
+  rval.cat("<a href=\"#static_methods\">Static Methods</a>, ");
   rval.cat("<a href=\"#expert_members\">Expert Members</a>, ");
   rval.cat("<a href=\"#expert_methods\">Expert Methods</a></p>");
 
@@ -3225,7 +3226,7 @@ String TypeDef::GetHTML(bool gendoc) const {
   //    STATIC members and methods
   {
     rval.cat("<hr />\n");
-    rval.cat("<h2>Static Members Documentation</h2>\n");
+    rval.cat("<h2>Static Member and Method Documentation</h2>\n");
 
     /////////////////////////////////////////////////////////////////////
     // collect the members and methods into string arrays for sorting
@@ -3259,7 +3260,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       meth_idx.Add(key);
     }
     meth_idx.Sort();              // sorts by category then key, in effect
-    rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "", "", gendoc));
+    rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "Static", "static_", gendoc));
   }
   
   ///////////////////////////////////////////////////////
@@ -3326,17 +3327,23 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
   // first pass output
 
   rval.cat("<a name=\"" + link_prefix + "members\"></a>\n");
-  rval.cat("<h3>" + label_prefix + "Members</h3>\n");
+  rval.cat("<h3>" + label_prefix + " Members</h3>\n");
   if(memb_idx.size > 0) {
     String prv_cat;
     for(int i=0;i<memb_idx.size;i++) {
       String key = memb_idx[i];
       String cat = key.before(':');
       String mnm = key.after(':');
-      MemberDef* md = members.FindName(mnm);
+      MemberDef* md;
+      if(label_prefix.startsWith("Static")) {
+        md = static_members.FindName(mnm);
+      }
+      else {
+        md = members.FindName(mnm);
+      }
       if(cat != prv_cat) {
         if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-        rval.cat("<h4>" + label_prefix + "Member Category: <a href=\"#MbrCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
+        rval.cat("<h4>" + label_prefix + " Member Category: <a href=\"#MbrCat-").cat(link_prefix).cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
         rval.cat("<ul>\n");
         prv_cat = cat;
       }
@@ -3346,7 +3353,7 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
   }
 
   rval.cat("<a name=\"" + link_prefix + "methods\"></a>\n");
-  rval.cat("<h3>" + label_prefix + "Methods</h3>\n");
+  rval.cat("<h3>" + label_prefix + " Methods</h3>\n");
   if(meth_idx.size > 0) {
     String prv_cat;
     for(int i=0;i<meth_idx.size;i++) {
@@ -3356,7 +3363,7 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
       MethodDef* md = methods.FindName(mnm);
       if(cat != prv_cat) {
         if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-        rval.cat("<h4>" + label_prefix + "Method Category: <a href=\"#MthCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
+        rval.cat("<h4>" + label_prefix + " Method Category: <a href=\"#MthCat-").cat(link_prefix).cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
         rval.cat("<ul>\n");
         prv_cat = cat;
       }
@@ -3367,17 +3374,23 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
 
   if(memb_idx.size > 0) {
     rval.cat("<hr />\n");
-    rval.cat("<h2>Member Documentation</h2>\n");
+    rval.cat("<h2>" + label_prefix + " Member Documentation</h2>\n");
 
     String prv_cat;
     for(int i=0;i<memb_idx.size;i++) {
       String key = memb_idx[i];
       String cat = key.before(':');
       String mnm = key.after(':');
-      MemberDef* md = members.FindName(mnm);
+      MemberDef* md;
+      if(label_prefix.startsWith("Static")) {
+        md = static_members.FindName(mnm);
+      }
+      else {
+        md = members.FindName(mnm);
+      }
       if(cat != prv_cat) {
-        rval.cat("<a name=\"MbrCat-").cat(cat).cat("\"></a>\n");
-        rval.cat("<h3>Member Category: ").cat(cat).cat("</h3>\n");
+        rval.cat("<a name=\"MbrCat-").cat(link_prefix).cat(cat).cat("\"></a>\n");
+        rval.cat("<h3>" + label_prefix + " Member Category: ").cat(cat).cat("</h3>\n");
         prv_cat = cat;
       }
       rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
@@ -3386,7 +3399,7 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
 
   if(methods.size > 0) {
     rval.cat("<hr />\n");
-    rval.cat("<h2>Method Documentation</h2>\n");
+    rval.cat("<h2>" + label_prefix + " Method Documentation</h2>\n");
 
     String prv_cat;
     for(int i=0;i<meth_idx.size;i++) {
@@ -3395,8 +3408,8 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
       String mnm = key.after(':');
       MethodDef* md = methods.FindName(mnm);
       if(cat != prv_cat) {
-        rval.cat("<a name=\"MthCat-").cat(cat).cat("\"></a>\n");
-        rval.cat("<h3>Method Category: ").cat(cat).cat("</h3>\n");
+        rval.cat("<a name=\"MthCat-").cat(link_prefix).cat(cat).cat("\"></a>\n");
+        rval.cat("<h3>" + label_prefix + " Method Category: ").cat(cat).cat("</h3>\n");
         prv_cat = cat;
       }
       rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
