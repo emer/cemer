@@ -1199,7 +1199,7 @@ ProgVar* Program::FindVarName(const String& var_nm) const {
 
 void Program::AddVarTo(taNBase* src) {
   if (src->owner->GetName() == "templates") {
-    vars.ChooseNew(NULL);
+    vars.ChooseNew(NULL, "");   // todo: could specify GLOBAL or LOCAL if relevant
   }
   else {
     vars.AddVarTo(src);
@@ -1208,7 +1208,7 @@ void Program::AddVarTo(taNBase* src) {
 
 void Program::AddArgTo(taNBase* src) {
   if (src->owner->GetName() == "templates") {
-    args.ChooseNew(NULL);
+    args.ChooseNew(NULL, "");
   }
   else {
     args.AddVarTo(src);

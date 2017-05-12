@@ -689,7 +689,8 @@ public:
     { return New_impl(n_objs, type, name);}
   // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
 
-  virtual taBase*       ChooseNew(taBase* origin) { return NULL; }
+  virtual taBase*       ChooseNew(taBase* origin, const String& choice_text)
+  { return NULL; }
   // #IGNORE called by taiWidgetTokenChooser to create a new object of this type from the chooser, if the user so chooses
   virtual bool          HasChooseNew()            { return false; }
   // #IGNORE return true if this class defines a ChooseNew function
@@ -1057,7 +1058,9 @@ public:
   // #CAT_ObjectMgmt set the stale flag indicating a change in object values; gets forwarded up ("true" is implied, only the impl obj defines when it is cleared)
   
   virtual void          SetMember(const String& member, const String& value);
-  // #DYN1 Set member to value for each of the selected objects. Member will be the member name or will be object_name.member_name, e.g. input_size.retina_size.x, replace any space with '_'
+  // #CAT_ObjectMgmt #DYN1 Set member to value for each of the selected objects. Member will be the member name or will be object_name.member_name, e.g. input_size.retina_size.x, replace any space with '_'
+  virtual String        GetMemberStrVal(const String& member) const;
+  // #CAT_ObjectMgmt get a string representation of the current value of given member of this object -- member_name can be a sub-path as well to a value within a member class
 
 protected:  // Impl
   virtual void          UpdateAfterEdit_impl() { };

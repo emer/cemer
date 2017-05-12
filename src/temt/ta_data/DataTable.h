@@ -1171,7 +1171,7 @@ public:
   String                GetTypeDecoKey() const override { return "DataTable"; }
   int                   GetSpecialState() const override;
   taBase*               ChildDuplicate(const taBase* chld) override;
-  taBase*               ChooseNew(taBase* origin) override;
+  taBase*               ChooseNew(taBase* origin, const String& choice_text) override;
   bool                  HasChooseNew() override { return true; }
   String                GetToolbarName() const override { return "data table"; }
 

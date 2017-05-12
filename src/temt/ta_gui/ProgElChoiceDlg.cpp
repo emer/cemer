@@ -129,7 +129,9 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
   }
   
   int result = dlg.PostDialog(true); // true is modal
-  local_global_choice = combo_local_global->currentIndex();
+  if(show_local_global_chooser) {
+    local_global_choice = combo_local_global->currentIndex();
+  }
   if (show_type_chooser) {
     var_type_choice = (ProgVar::VarType)combo_var_type->currentIndex();
   }

@@ -473,7 +473,7 @@ bool BaseSpec::IsMemberEditable(const String& memb_name) const {
   return true;
 }
 
-taBase* BaseSpec::ChooseNew(taBase* origin) {
+taBase* BaseSpec::ChooseNew(taBase* origin, const String& choice_text) {
   BaseSpec* newSpec = NULL;
 
   if (origin->GetTypeDef()->DerivesFrom(&TA_SpecPtr_impl)) {

@@ -67,7 +67,7 @@ public:
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 
-  taBase*      ChooseNew(taBase* origin) override;
+  taBase*      ChooseNew(taBase* origin, const String& choice_text) override;
   bool         HasChooseNew() override { return true; }
 
   void  setStale() override;

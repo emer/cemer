@@ -52,8 +52,7 @@ void ObjDiffRec::Copy_(const ObjDiffRec& cp) {
 }
 
 String ObjDiffRec::GetDisplayName() const {
-  MemberDef* md = GetTypeDef()->members.FindName("flags");
-  String rval = String(nest_level) + "_" + md->type->Get_C_EnumString(flags, false);
+  String rval = GetMemberStrVal("flags");
   if(mdef) {
     rval += "_" + mdef->name;
   }

@@ -4904,7 +4904,7 @@ bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
   return rval;
 }
 
-taBase* DataTable::ChooseNew(taBase* origin) {
+taBase* DataTable::ChooseNew(taBase* origin, const String& choice_text) {
   // location of new DataTable can be the current program, if one, and any subgroup of project data tables
   if (origin == NULL)
     return NULL;

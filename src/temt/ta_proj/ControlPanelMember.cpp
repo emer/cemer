@@ -693,10 +693,15 @@ void ControlPanelMember::GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, 
 
 String ControlPanelMember::BrowserEditString() const {
   String rval = label;
+  String st_str = GetMemberStrVal("data.state");
   if(IsParamSet()) {
-    MemberDef* md = data.GetTypeDef()->members.FindName("state");
-    String st_str = md->type->Get_C_EnumString(data.state, false);
-    rval += " = " + data.saved_value + " " + st_str;
+    rval += " = " + data.saved_value + " : " + st_str;
+  }
+  else if(IsClusterRun()) {
+    if(IsSearch()) {
+      rval += " = " + data.range;
+    }
+    rval += " : " + st_str;
   }
   return rval;
 }

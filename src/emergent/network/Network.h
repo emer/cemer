@@ -1219,7 +1219,7 @@ public:
   String       GetToolbarName() const override { return "network"; }
 
   bool         ChangeMyType(TypeDef* new_type) override;
-  taBase*      ChooseNew(taBase* origin) override;
+  taBase*      ChooseNew(taBase* origin, const String& choice_text) override;
   bool         HasChooseNew() override { return true; }
 
   void  InitLinks() override;

@@ -30,8 +30,7 @@ void PatchRec::Initialize() {
 }
 
 String PatchRec::GetDisplayName() const {
-  MemberDef* md = GetTypeDef()->members.FindName("action");
-  String rval = md->type->Get_C_EnumString(action, false);
+  String rval = GetMemberStrVal("action");
   String obj_name;
   if(obj_path_names.endsWith(']')) {
     obj_name = obj_path_names.after('[',-1);

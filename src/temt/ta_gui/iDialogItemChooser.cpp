@@ -112,7 +112,7 @@ void iDialogItemChooser::accept() {
       if(new_base) {
         taBase* nw = NULL;
         if(itm->text(0).contains(" CREATE")) { // special chooser guy
-            nw = new_base->ChooseNew(m_client->Base());
+          nw = new_base->ChooseNew(m_client->Base(), itm->text(0));
         }
         else {
           nw = new_base->New(1);

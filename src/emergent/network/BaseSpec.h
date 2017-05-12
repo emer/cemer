@@ -142,7 +142,7 @@ public:
   virtual void    ComparePeers(BaseSpec* spec);
   // #DYN12N calls network::SpecComparePeers to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!
 
-  taBase*         ChooseNew(taBase* origin) override;
+  taBase*         ChooseNew(taBase* origin, const String& choice_text) override;
   bool            HasChooseNew() override { return true; }
   
   void	InitLinks() override;

@@ -201,12 +201,16 @@ bool ProgVar_List::BrowserCollapseAll() {
   return prog->BrowserCollapseAll_ProgItem(this);
 }
 
-taBase* ProgVar_List::ChooseNew(taBase* origin) {
+taBase* ProgVar_List::ChooseNew(taBase* origin, const String& choice_text) {
   String var_nm;
   ProgVar* rval = NULL;
   ProgElChoiceDlg dlg;
   taBase::Ref(dlg);
-  int choice = 2;
+  int choice = ProgElChoiceDlg::LOCALGLOBAL;
+  if(choice_text.contains("GLOBAL"))
+    choice = ProgElChoiceDlg::GLOBAL;
+  else if(choice_text.contains("LOCAL"))
+    choice = ProgElChoiceDlg::LOCAL;
   ProgVar::VarType var_type = ProgVar::T_UnDef;
   int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
   if (result == 1) {

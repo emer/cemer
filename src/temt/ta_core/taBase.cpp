@@ -2161,6 +2161,20 @@ void taBase::SetMember(const String& member, const String& value) {
   }
 }
 
+String taBase::GetMemberStrVal(const String& member) const {
+  TypeDef* td = GetTypeDef();
+
+  ta_memb_ptr mbr_off = 0;
+  int base_off = 0;
+  MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, mbr_off,
+                                                 member, true); // warn!
+  if(mbr_def) {
+    void* address = MemberDef::GetOff_static(this, base_off, mbr_off);
+    return mbr_def->type->GetValStr(address, NULL, mbr_def);
+  }
+  return _nilString;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //      Data Links -- notify other guys when you change
 
