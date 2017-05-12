@@ -2898,6 +2898,7 @@ String& TypeDef::PrintType(String& strm, int indent) const {
       }
     }
     members.PrintType(strm, indent+1);
+    static_members.PrintType(strm, indent+1);
     methods.PrintType(strm, indent+1);
     taMisc::IndentString(strm, indent) << "} ";
     if(children.size > 0) {

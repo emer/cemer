@@ -30,7 +30,7 @@ class TypeItem; //
 taTypeDef_Of(ControlPanelItem);
 
 class TA_API ControlPanelItem: public taOBase {
-  // #STEM_BASE ##CAT_Display base class for membs/meths in a ControlPanel
+  // #STEM_BASE ##CAT_Display ##DIFF_STRING base class for membs/meths in a ControlPanel
   INHERITED(taOBase)
 public:
   // some convenience functions

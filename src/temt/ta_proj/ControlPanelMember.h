@@ -263,6 +263,7 @@ public:
   FlatTreeEl*   GetFlatTree(FlatTreeEl_List& ftl, int nest_lev, FlatTreeEl* par_el,
                             const taBase* par_obj, MemberDef* md) const override;
   void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
+  String        BrowserEditString() const override;
 
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(ControlPanelMember);
