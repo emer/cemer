@@ -76,6 +76,57 @@ private:
   void  Destroy()               { };
 };
 
+eTypeDef_Of(LayerRelPos);
+
+class E_API LayerRelPos : public taOBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network relative positioning of layers
+INHERITED(taOBase)
+public:
+  enum RelPos {                 // position of this layer relative to other
+    ABS_POS,                    // use absolute positioning in abs_pos, not layer-relative positioning
+    RIGHT_OF,                   // this is to the right of other (preferred form)
+    LEFT_OF,                    // this is to the left of other (use of RIGHT_OF is preferable -- this can lead to negative pos)
+    BEHIND,                     // this is behind other (preferred form)
+    FRONT_OF,                   // this is in front of other (use of BEHIND is preferable -- this can lead to negative pos)
+    ABOVE,                      // for 3d only: this is above other (z+1) (preferred form)
+    BELOW,                      // for 3d only: this is below other (z-1) (use of ABOVE is preferable, this can lead to negative pos)
+  };
+
+  enum XAlign {                 // alignment in X (horizontal) axis
+    LEFT,                       // align left edge of this layer with left of other (+/- offset)
+    MIDDLE,                     // align middle of this layer with middle of other (+/- offset)
+    RIGHT,                      // align right edge of this layer with right of other (+/- offset)
+  };
+
+  enum YAlign {                 // alignment in Y axis
+    FRONT,                      // align front edge of this layer with front of other (+/- offset)
+    CENTER,                     // align center of this layer with center of other (+/- offset)
+    BACK,                       // align back edge of this layer with back of other (+/- offset)
+  };
+
+  RelPos        rel;            // relative position of this layer compared to other
+  LayerRef      other;          // other layer to position relative to
+  XAlign        x_align;        // #CONDSHOW_ON_rel:FRONT_OF,BEHIND,ABOVE,BELOW horizontal (x-axis) alignment relative to other 
+  YAlign        y_align;        // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW Y-axis alignment relative to other
+  int           space;          // #MIN_0 how much space to add between layers
+  int           offset;         // how much offset to add for alignment factors
+  
+  String        GetTypeDecoKey() const override { return "Layer"; }
+
+  inline bool   IsRel() { return (rel != ABS_POS && other); }
+  // is layer using relative positioning
+
+  virtual bool  ComputePos3D(taVector3i& pos, Layer* lay);
+  // compute new 3d position for this layer relative to other layer -- returns false if not using relative positioning (including if other is not set)
+  virtual bool  ComputePos2D(taVector2i& pos, Layer* lay);
+  // compute new 3d position for this layer relative to other layer -- returns false if not using relative positioning (including if other is not set)
+  
+  TA_SIMPLE_BASEFUNS(LayerRelPos);
+private:
+  void  Initialize();
+  void  Destroy()               { };
+};
+
 
 eTypeDef_Of(Layer);
 
@@ -99,7 +150,6 @@ public:
     SAVE_UNIT_NAMES     = 0x0010,       // save the names for individual units in the unit_names matrix on this layer (the Units themselves are never saved) -- when the network is built, these names are then assigned to the units -- use SetUnitNames method to update unit names from unit_names matrix if you've changed them, and GetUnitNames to save current unit names into unit_names matrix
     PROJECT_WTS_NEXT    = 0x0020,       // #HIDDEN this layer is next in line for weight projection operation
     PROJECT_WTS_DONE    = 0x0040,       // #HIDDEN this layer is done with weight projection operation (prevents loops)
-    ABS_POS             = 0x0080,       // #HIDDEN -- copied from Network -- always use absolute positions for layers as the primary positioning, otherwise if not set then layer positions relative to owning layer group are primary and absolute positions are computed relative to them
   };
 
   enum AccessMode {     // how to access the units in the layer -- only relevant for layers with unit groups (otherwise modes are the same)
@@ -111,10 +161,11 @@ public:
   Network*              own_net;        // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Structure #NO_SET_POINTER Network this layer is in
   LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
   LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
-  PosVector3i           pos;            // #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS position of layer relative to owning layer group, or overall network position if none (0,0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos or SetAbsPos to set position either way
-  PosVector3i           pos_abs;        // #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute position of layer always relative to overall network position (0,0,0 is lower left hand corner) -- not relative to owning layer group -- see network ABS_POS flag for which position is used by default -- can use SetRelPos or SetAbsPos to set position either way
-  PosVector2i       	pos2d;		// #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS 2D  network view display position of layer relative to owning layer group, or overall nework position if none (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos2d or SetAbsPos2d to set position either way
-  PosVector2i       	pos2d_abs;	// #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute 2D network view display position of layer always relative to the overall nework (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos2d or SetAbsPos2d to set position either way
+  LayerRelPos           pos_rel;        // #CAT_Structure position this layer relative to another layer -- this is recommended and keeps positioning adaptive to layer sizes -- just start with one or a few "anchor" layers with absolute positioning, and position everything else relative to them
+  PosVector3i           pos;            // #CAT_Structure #READ_ONLY position of layer relative to owning layer group, or overall network position if none (0,0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos or SetAbsPos to set position either way
+  PosVector3i           pos_abs;        // #CAT_Structure #CONDEDIT_ON_pos_rel.rel:ABS_POS absolute position of layer always relative to overall network position (0,0,0 is lower left hand corner) -- not relative to owning layer group
+  PosVector2i       	pos2d;		// #CAT_Structure #READ_ONLY 2D network view display position of layer relative to owning layer group, or overall nework position if none (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos2d or SetAbsPos2d to set position either way
+  PosVector2i       	pos2d_abs;	// #CAT_Structure #CONDEDIT_ON_pos_rel.rel:ABS_POS absolute 2D network view display position of layer always relative to the overall nework (0,0 is lower left hand corner)
   float                 disp_scale;     // #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom               un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer
   bool                  unit_groups;    // #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups
@@ -302,8 +353,6 @@ public:
   // #IGNORE add relative pos, which factors in offsets from above
   void          AddRelPos2d(taVector2i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
-  void          UpdtAbsPosFlag();
-  // #IGNORE update the ABS_POS flag from the network
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update our owning layer group geometry (auto called after repositioning layers)
 
@@ -340,9 +389,9 @@ public:
   // #IGNORE initialize position of layer -- 2d
 
   virtual void  PositionRightOf(Layer* lay, int space = 2);
-  // position this layer to the right of given other layer -- does this for both 3D and 2D displays, with given amount of space
+  // position this layer to the right of given other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
   virtual void  PositionBehind(Layer* lay, int space = 2);
-  // position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space
+  // position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
   
   virtual void  Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)

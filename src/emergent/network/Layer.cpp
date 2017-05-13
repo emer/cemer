@@ -24,11 +24,95 @@
 #include <tabMisc>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(LayerDistances);
+TA_BASEFUNS_CTORS_DEFN(LayerRelPos);
 TA_BASEFUNS_CTORS_DEFN(Layer);
 
-TA_BASEFUNS_CTORS_LITE_DEFN(LayerDistances);
-
 using namespace std;
+
+void LayerRelPos::Initialize() {
+  rel = ABS_POS;
+  x_align = MIDDLE;
+  y_align = CENTER;
+  space = 2;
+  offset = 0;
+}
+
+bool LayerRelPos::ComputePos3D(taVector3i& pos, Layer* lay) {
+  if(!other || rel == ABS_POS)
+    return false;
+  pos.z = other->pos.z;         // default
+  ComputePos2D(pos, lay);       // handles alignment
+  if(rel == ABOVE) {
+    pos.z = other->pos.z + 1;
+  }
+  else if(rel == BELOW) {
+    pos.z = other->pos.z - 1;
+  }
+  return true;
+}
+
+bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
+  if(!other)
+    return false;
+  switch(rel) {
+  case ABS_POS: {
+    return false;
+  }
+  case RIGHT_OF: {
+    pos.x = other->pos_abs.x + other->scaled_disp_geom.x + space;
+    break;
+  }
+  case LEFT_OF: {
+    pos.x = other->pos_abs.x - lay->scaled_disp_geom.x - space;
+    break;
+  }
+  case BEHIND: {
+    pos.y = other->pos_abs.y + other->scaled_disp_geom.y + space;
+    break;
+  }
+  case FRONT_OF: {
+    pos.y = other->pos_abs.y - lay->scaled_disp_geom.y - space;
+    break;
+  }
+  default:
+    break;
+  }
+
+  if(!(rel == LEFT_OF || rel == RIGHT_OF)) {
+    switch(x_align) {
+    case LEFT: {
+      pos.x = offset + other->pos_abs.x;
+      break;
+    }
+    case MIDDLE: {
+      pos.x = offset + (other->pos_abs.x + (other->scaled_disp_geom.x / 2)) - (lay->scaled_disp_geom.x / 2);
+      break;
+    }
+    case RIGHT: {
+      pos.x = offset + (other->pos_abs.x + other->scaled_disp_geom.x) - lay->scaled_disp_geom.x;
+      break;
+    }
+    }
+  }
+  if(!(rel == FRONT_OF || rel == BEHIND)) {
+    switch(y_align) {
+    case FRONT: {
+      pos.y = offset + other->pos_abs.y;
+      break;
+    }
+    case CENTER: {
+      pos.y = offset + (other->pos_abs.y + (other->scaled_disp_geom.y / 2)) - (lay->scaled_disp_geom.y / 2);
+      break;
+    }
+    case BACK: {
+      pos.y = offset + (other->pos_abs.y + other->scaled_disp_geom.y) - lay->scaled_disp_geom.y;
+      break;
+    }
+    }
+  }
+  return true;
+}
 
 
 void Layer::Initialize() {
@@ -83,6 +167,7 @@ void Layer::Initialize() {
 
 void Layer::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(pos_rel, this);
   taBase::Own(pos, this);
   taBase::Own(pos_abs, this);
   taBase::Own(pos2d, this);
@@ -114,11 +199,10 @@ void Layer::InitLinks() {
   own_net = GET_MY_OWNER(Network);
   if(own_net)
     own_net->ClearIntact();
-  UpdtAbsPosFlag();
-  if(pos == 0)
+  if(!taMisc::is_loading) {
     SetDefaultPos();
-  if(pos2d == 0)
     SetDefaultPos2d();
+  }
   units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
 
@@ -133,6 +217,7 @@ void Layer::CutLinks() {
   if(own_net)
     own_net->ClearIntact();
   DisConnect_impl();
+  pos_rel.CutLinks();
   pos.CutLinks();
   pos_abs.CutLinks();
   pos2d.CutLinks();
@@ -175,6 +260,7 @@ void Layer::Copy_(const Layer& cp) {
   desc = cp.desc;
   flags = cp.flags;
   layer_type = cp.layer_type;
+  pos_rel = cp.pos_rel;
   pos = cp.pos;
   pos_abs = cp.pos_abs;
   pos2d = cp.pos2d;
@@ -222,17 +308,9 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
   UpdatePointers_NewPar(otnet, mynet);
 }
 
-void Layer::UpdtAbsPosFlag() {
-  if(own_net) {
-    SetLayerFlagState(ABS_POS, own_net->HasNetFlag(Network::ABS_POS));
-  }
-}  
-
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  UpdtAbsPosFlag();
-  
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
@@ -264,8 +342,6 @@ void Layer::UpdateAfterEdit_impl() {
   }
   else {                        // not loading
     RecomputeGeometry();
-    if(own_net)
-      own_net->LayerPos_Cleanup();
     UpdateSendPrjnNames();
 
     if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
@@ -464,7 +540,6 @@ void Layer::UpdateLayerGroupGeom() {
 }
 
 void Layer::RecomputeGeometry() {
-  UpdtAbsPosFlag();
   un_geom.SetGtEq(1);           // can't go < 1
   gp_geom.SetGtEq(1);
   un_geom.UpdateAfterEdit_NoGui();
@@ -486,18 +561,29 @@ void Layer::RecomputeGeometry() {
   scaled_disp_geom.x = (int)ceil((float)disp_geom.x * disp_scale);
   scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
 
+  if(pos_rel.IsRel()) {
+    if(TestWarning((pos_rel.other->pos_rel.other == this), "RecomputeGeom",
+                   "two layers have reciprocal relative positions -- not good! cannot be any loops in the relationship connectivity! other layer:", pos_rel.other->name,
+                   "I cut our connection")) {
+      pos_rel.other = NULL;
+      pos_rel.rel = LayerRelPos::ABS_POS;
+    }
+    else {
+      // go ahead and update!
+      pos_rel.ComputePos3D(pos_abs, this);
+      pos_rel.ComputePos2D(pos2d_abs, this);
+      pos_abs.UpdateAfterEdit(); // update pos status
+      pos2d_abs.UpdateAfterEdit(); // update pos status
+    }
+  }
+
   taVector3i rp = 0;
   AddRelPos(rp);
   taVector2i rp2 = 0;
   AddRelPos2d(rp2);
-  if(HasLayerFlag(ABS_POS)) {
-    pos = pos_abs - rp;         // subtract relative positions
-    pos2d = pos2d_abs - rp2;
-  }
-  else {
-    pos_abs = pos + rp;         // add relative positions
-    pos2d_abs = pos2d + rp2;
-  }
+  // always update pos based on pos_abs
+  pos = pos_abs - rp;         // subtract relative positions
+  pos2d = pos2d_abs - rp2;
   UpdateLayerGroupGeom();
 }
 
@@ -507,6 +593,11 @@ void Layer::SetRelPos(int x, int y, int z) {
 }
 
 void Layer::SetRelPos(taVector3i& ps) {
+  if(TestWarning(pos_rel.IsRel(), "SetRelPos",
+                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
+    RecomputeGeometry();        // moves us
+    return;
+  }
   taVector3i rp = 0;
   AddRelPos(rp);
   pos.x = ps.x; pos.y = ps.y; pos.z = ps.z; // avoid pos constraint
@@ -521,6 +612,11 @@ void Layer::SetAbsPos(int x, int y, int z) {
 }
 
 void Layer::SetAbsPos(taVector3i& ps) {
+  if(TestWarning(pos_rel.IsRel(), "SetAbsPos",
+                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
+    RecomputeGeometry();        // moves us
+    return;
+  }
   taVector3i rp = 0;
   AddRelPos(rp);
   pos_abs = ps;
@@ -535,6 +631,11 @@ void Layer::SetRelPos2d(int x, int y) {
 }
 
 void Layer::SetRelPos2d(taVector2i& ps) {
+  if(TestWarning(pos_rel.IsRel(), "SetRelPos2d",
+                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
+    RecomputeGeometry();        // moves us
+    return;
+  }
   taVector2i rp = 0;
   AddRelPos2d(rp);
   pos2d.x = ps.x; pos2d.y = ps.y; // avoid pos constraint
@@ -549,6 +650,11 @@ void Layer::SetAbsPos2d(int x, int y) {
 }
 
 void Layer::SetAbsPos2d(taVector2i& ps) {
+  if(TestWarning(pos_rel.IsRel(), "SetAbsPos2d",
+                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
+    RecomputeGeometry();        // moves us
+    return;
+  }
   taVector2i rp = 0;
   AddRelPos2d(rp);
   pos2d_abs = ps;
@@ -558,40 +664,33 @@ void Layer::SetAbsPos2d(taVector2i& ps) {
 }
 
 void Layer::MovePos(int x, int y, int z) {
-  if(HasLayerFlag(ABS_POS)) {
-    taVector3i nps = pos_abs;
-    nps.x += x;
-    if(nps.x < 0) nps.x = 0;
-    nps.y += y;
-    if(nps.y < 0) nps.y = 0;
-    nps.z += z;
-    if(nps.z < 0) nps.z = 0;
-    SetAbsPos(nps);
+  if(TestWarning(pos_rel.IsRel(), "MovePos",
+                 "layer is using relative positioning as specified in pos_rel -- cannot move -- set to ABS_POS to be able to move")) {
+    RecomputeGeometry();        // moves us
+    return;
   }
-  else {
-    taVector3i nps = pos;
-    nps.x += x;
-    nps.y += y;
-    nps.z += z;
-    SetRelPos(nps);
-  }
+  taVector3i nps = pos_abs;
+  nps.x += x;
+  if(nps.x < 0) nps.x = 0;
+  nps.y += y;
+  if(nps.y < 0) nps.y = 0;
+  nps.z += z;
+  if(nps.z < 0) nps.z = 0;
+  SetAbsPos(nps);
 }
 
 void Layer::MovePos2d(int x, int y) {
-  if(HasLayerFlag(ABS_POS)) {
-    taVector2i nps = pos2d_abs;
-    nps.x += x;
-    if(nps.x < 0) nps.x = 0;
-    nps.y += y;
-    if(nps.y < 0) nps.y = 0;
-    SetAbsPos2d(nps);
+  if(TestWarning(pos_rel.IsRel(), "MovePos2d",
+                 "layer is using relative positioning as specified in pos_rel -- cannot move -- set to ABS_POS to be able to move")) {
+    RecomputeGeometry();        // moves us
+    return;
   }
-  else {
-    taVector2i nps = pos2d;
-    nps.x += x;
-    nps.y += y;
-    SetRelPos2d(nps);
-  }
+  taVector2i nps = pos2d_abs;
+  nps.x += x;
+  if(nps.x < 0) nps.x = 0;
+  nps.y += y;
+  if(nps.y < 0) nps.y = 0;
+  SetAbsPos2d(nps);
 }
 
 ProjectBase* Layer::project() {
@@ -640,27 +739,25 @@ void Layer::SetDefaultPos2d() {
 }
 
 void Layer::PositionRightOf(Layer* lay, int space) {
-  lay->RecomputeGeometry();     // be sure..
-  taVector3i ps;
-  ps = lay->pos_abs;
-  ps.x += lay->scaled_disp_geom.x + space;
-  SetAbsPos(ps);
-  taVector2i ps2;
-  ps2 = lay->pos2d_abs;
-  ps2.x += lay->scaled_disp_geom.x + space;
-  SetAbsPos2d(ps2);
+  if(TestWarning((lay->pos_rel.other == this), "PositionRightOf",
+                 "two layers cannot have reciprocal relative positions -- not good!  cannot in general be any loops in the relationship connectivity!")) {
+    return;
+  }
+  pos_rel.other = lay;
+  pos_rel.rel = LayerRelPos::RIGHT_OF;
+  pos_rel.space = space;
+  lay->RecomputeGeometry();
 }
 
 void Layer::PositionBehind(Layer* lay, int space) {
-  lay->RecomputeGeometry();     // be sure..
-  taVector3i ps;
-  ps = lay->pos_abs;
-  ps.y += lay->scaled_disp_geom.y + space;
-  SetAbsPos(ps);
-  taVector2i ps2;
-  ps2 = lay->pos2d_abs;
-  ps2.y += lay->scaled_disp_geom.y + space;
-  SetAbsPos2d(ps2);
+  if(TestWarning((lay->pos_rel.other == this), "PositionBehind",
+                 "two layers cannot have reciprocal relative positions -- not good!  cannot in general be any loops in the relationship connectivity!")) {
+    return;
+  }
+  pos_rel.other = lay;
+  pos_rel.rel = LayerRelPos::BEHIND;
+  pos_rel.space = space;
+  lay->RecomputeGeometry();
 }
 
 void Layer::LayoutUnits() {

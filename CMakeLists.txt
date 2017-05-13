@@ -353,6 +353,10 @@ include(CMakeModules/EmergentCPack.cmake)
 # targets on Windows (at least in VS) thus we have to omit them
 if (NOT WIN32)
   # use this to remove all ta files from source tree
+  add_custom_target(clean_ta_ta
+    DEPENDS clean_ta_ta_core clean_ta_ta_math clean_ta_ta_proj clean_ta_ta_program clean_ta_ta_data clean_ta_ta_gui clean_ta_ta_3d
+    )
+
   add_custom_target(clean_ta_emergent
     DEPENDS clean_ta_network clean_ta_leabra clean_ta_bp clean_ta_cs clean_ta_so clean_ta_actr   
     )

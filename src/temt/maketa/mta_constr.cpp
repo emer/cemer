@@ -306,6 +306,21 @@ void MTA::TypeDef_Gen_TypeDefs_impl(TypeDef* ths, ostream& strm) {
       strm << "0";
   }
 
+  if(ths->HasOption("TOKENS")) {
+    ths->tokens.keep = true;
+  }
+  else if(ths->HasOption("NO_TOKENS")) {
+    ths->tokens.keep = false;
+  }
+  else if(ths->IsActualTaBase()) {
+    ths->tokens.keep = true;
+  }
+  else {
+    ths->tokens.keep = false;
+  }
+    
+  // default is ??
+  
   if(ths->tokens.keep)        strm << ", 1";
   else                        strm << ", 0";
   strm << ", 1);\n";           // last true makes it global object

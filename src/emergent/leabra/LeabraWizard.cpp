@@ -460,6 +460,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contain
   ctxt_prjn->is_new = false;   // could not be used
 
   stduns->deep.on = true;
+  stduns->deep_raw_qtr = LeabraUnitSpec::Q4; // default
   
   s_uns->SetUnique("deep", true);
   s_uns->deep.on = true;
@@ -1804,9 +1805,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
-  net->SetNetFlag(Network::ABS_POS); // only works with absolute positioning
-  net->SetNetFlag(Network::MANUAL_POS); // and turn off automatic..
-  
   // todo: see about better options here..
   pos_pv->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
   neg_pv->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
@@ -3194,9 +3192,6 @@ can be sure everything is ok.";
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
-  net->SetNetFlag(Network::ABS_POS); // only works with absolute positioning
-  net->SetNetFlag(Network::MANUAL_POS); // and turn off automatic..
-  
   if(matrix_go->brain_area.empty()) 
     matrix_go->brain_area = ".*/.*/.*/.*/Caudate Body";
   if(matrix_nogo->brain_area.empty()) 

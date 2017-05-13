@@ -249,18 +249,13 @@ classdefns:
         ;
 
 classdsub:
-          classname membs '}'		{
-	    if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
-	    else $1->tokens.keep = true; }
-        | classname '}'			{
-	    if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
-	    else $1->tokens.keep = true; }
+          classname membs '}'		{ }
+        | classname '}'			{ }
         ;
 
 classname:
           classhead '{'			{
-	    $1->tokens.keep = true; mta->Class_ResetCurPtrs();
-	    mta->SetSource($1, true); }
+	    mta->Class_ResetCurPtrs();  mta->SetSource($1, true); }
         | classhead MP_COMMENT '{'			{
             SETDESC($1,$2); mta->PushState(MTA::Parse_inclass); mta->Class_ResetCurPtrs();
             mta->SetSource($1, true); }
@@ -383,19 +378,15 @@ templdefns:
         ;
 
 templdsub:
-          templname membs '}'		{
-          if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
-	  else $1->tokens.keep = true; }
-        | templname '}'			{
-          if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
-	  else $1->tokens.keep = true; }
+          templname membs '}'		{ }
+        | templname '}'			{ }
         | templhead term
         ;
 
 templname:
           templhead '{'			{
 	    if(mta->state != MTA::Parse_enum) /* could have triggered earlier -- need to keep */
-	      mta->PushState(MTA::Parse_inclass); $1->tokens.keep = true;
+	      mta->PushState(MTA::Parse_inclass);
 	    mta->Class_ResetCurPtrs(); }
         | templhead MP_COMMENT '{'	{
 	    if(mta->state != MTA::Parse_enum) /* could have triggered earlier -- need to keep */

@@ -50,8 +50,9 @@ public:
     NO_VAR_ERRS         = 0x0001, // do not generate error messages for variables that cannot be found (e.g., for more complex expressions that might create local variables)
     FULL_STMT           = 0x0002, // expression is full css statement(s), not just isolated expressions -- this affects how the parsing works
     FOR_LOOP_EXPR       = 0x0004, // expression is an initializer or increment for a for loop -- requires different parsing due to possibility of commas..
-    NO_PARSE            = 0x0008, // do not parse expression in UAE
-    IN_PARSE            = 0x0010, // currently doing a parse -- prevent loops!
+    MATRIX_COL_EXPR     = 0x0008, // matrix column expression, could have : etc
+    NO_PARSE            = 0x0010, // do not parse expression in UAE
+    IN_PARSE            = 0x0020, // currently doing a parse -- prevent loops!
   };
   
   enum LookUpType {

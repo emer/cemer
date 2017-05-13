@@ -27,6 +27,12 @@ TA_BASEFUNS_CTORS_DEFN(MatrixAssign);
 
 void MatrixAssign::Initialize() {
   data_table = false;
+  dim0.SetExprFlag(ProgExpr::MATRIX_COL_EXPR);
+  dim1.SetExprFlag(ProgExpr::MATRIX_COL_EXPR);
+  dim2.SetExprFlag(ProgExpr::MATRIX_COL_EXPR);
+  dim3.SetExprFlag(ProgExpr::MATRIX_COL_EXPR);
+  dim4.SetExprFlag(ProgExpr::MATRIX_COL_EXPR);
+  dim5.SetExprFlag(ProgExpr::MATRIX_COL_EXPR);
 }
 
 void MatrixAssign::CheckThisConfig_impl(bool quiet, bool& rval) {

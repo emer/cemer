@@ -379,6 +379,10 @@ bool ProgExprBase::ParseExpr() {
     parse_expr = "for(" + expr + ";;) .i;";
     parse_ve_off = 4;
   }
+  else if(HasExprFlag(MATRIX_COL_EXPR)) {
+    parse_expr = "int_Matrix __tmp=[" + expr + "];";
+    parse_ve_off = 18;
+  }
   else {
     if((bool)TypeDef::FindGlobalTypeName(expr, false)) {
       var_expr = expr;

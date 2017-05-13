@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10724
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
@@ -4229,18 +4229,18 @@ leabra flex using param sets experiment project -- updated by randy from John's 
    };
    use_search_algo=0;
    cur_search_algo=NULL;
-   set_proj_name=1;
+   set_proj_name=0;
    proj_name="param_search";
    auto_updt_interval=10;
    auto_updt_timeout=30;
-   cluster="dream";
-   clusters="dream";
-   users="oreilly";
+   cluster=;
+   clusters=;
+   users=;
    last_submit_time="2017_02_08_21_14_24";
-   notes="testing param_set config idea";
+   notes=;
    label=;
    extra_files=;
-   svn_repo="grey_run";
+   svn_repo=;
    repo_url="https://grey.colorado.edu/svn/clusterun";
    queue=;
    run_time="1h";

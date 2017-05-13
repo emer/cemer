@@ -225,6 +225,8 @@ void Layer_Group::MovePos2d(int x, int y) {
   UpdateLayerGroupGeom();       // double check..
 }
 
+// todo: redo everything below to use relative positioning!
+
 void Layer_Group::LayerPos_Cleanup() {
   LayerPos_Cleanup_2d();
   LayerPos_Cleanup_3d();

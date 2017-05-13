@@ -94,7 +94,7 @@ void Network::Initialize() {
   unit_vars_type = &TA_UnitVars;
   con_group_type = &TA_ConGroup;
 
-  flags = (NetFlags)(ABS_POS | BUILD_INIT_WTS | MANUAL_POS);
+  flags = (NetFlags)(BUILD_INIT_WTS);
 
   auto_build = AUTO_BUILD;
   auto_load_wts = NO_AUTO_LOAD;
@@ -398,11 +398,6 @@ void Network::UpdateAfterEdit_impl(){
   else {
     if(brain_atlas)
       brain_atlas_name = brain_atlas->name; // for later saving..
-
-    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-      if(l->lesioned()) continue;
-      l->UpdtAbsPosFlag();
-    }
   }
 }
 
@@ -615,7 +610,7 @@ void Network::CheckSpecs() {
 void Network::BuildLayers() {
   ++taMisc::no_auto_expand;
   StructUpdate(true);
-  LayerPos_Cleanup();
+  LayerPos_RelPos();
   layers.BuildLayers(); // recurses
 
   active_layers.Reset();
@@ -3161,6 +3156,55 @@ bool Network::SaveWeights_ClusterRunCmd() {
   return false;
 }
 
+void Network::LayerPos_RelPos() {
+  taBase_List loop_check;
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    if(!l->pos_rel.IsRel()) {
+      continue;
+    }
+    bool has_loop = false;
+    loop_check.Reset();
+    Layer* cur = l;
+    while(cur) {
+      if(!cur->pos_rel.IsRel())
+        break;
+      int fidx = loop_check.FindEl(cur->pos_rel.other);
+      if(TestWarning(fidx >= 0, "RelPosLoopCheck",
+                     "a loop was found in the connection graph of relative positioning of layers -- severing last link!")) {
+        cur->pos_rel.other = NULL;
+        has_loop = true;
+        break;
+      }
+      loop_check.Link(cur);
+      cur = cur->pos_rel.other;
+    }
+    l->RecomputeGeometry();     // does lay pos update
+  }
+  bool lay_moved = false;
+  int n_iters = 0;
+  PosVector3i new_pos;
+  PosVector2i new_pos2d;
+  do {
+    lay_moved = false;
+    n_iters++;
+    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+      if(!l->pos_rel.IsRel()) {
+        continue;
+      }
+      l->pos_rel.ComputePos3D(new_pos, l);
+      l->pos_rel.ComputePos2D(new_pos2d, l);
+      new_pos.UpdateAfterEdit();
+      new_pos2d.UpdateAfterEdit();
+      if(new_pos != l->pos_abs || new_pos2d != l->pos2d_abs) {
+        lay_moved = true;
+      }
+    }
+  }
+  while(lay_moved && n_iters < 5);
+  
+  UpdateLayerGroupGeom();          // must do that in case something moves
+}
+
 
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
@@ -3178,11 +3222,6 @@ void Network::LayerZPos_Unitize() {
 }
 
 void Network::LayerPos_Cleanup() {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    l->UpdtAbsPosFlag();
-  }
-  if (flags & MANUAL_POS) return;
   layers.LayerPos_Cleanup();
   UpdateLayerGroupGeom();          // must do that in case something moves
 }

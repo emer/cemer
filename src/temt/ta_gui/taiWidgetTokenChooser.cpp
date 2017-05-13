@@ -192,25 +192,33 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
 
 bool taiWidgetTokenChooser::ShowToken(taBase* obj, TypeDef* td, int i) const {
   if(!obj) return false;
-  if(obj->isDestroying()) {  // todo: we shouldn't be seeing these -- debug!
+  if(obj->isDestroying()) {  // this should not happen -- did for taMatrix, fixed that
     taMisc::Info("is destroying of type:", td->name, "token:", String(i));
     return false;
   }
+  // if(targ_typ->InheritsFromName("DataTable_Group") ||
+  //    td->InheritsFromName("DataTable_Group")) {
+  //   taMisc::Info("got group!");
+  // }
   taBase* owner = obj->GetOwner();
   if(!owner) return false;
-  if(!owner->InheritsFrom(&TA_taList_impl)) {
-    // radical but simple fact: if you're not on a list, you shouldn't be selectable
-    // by someone else as a token, because you are not an independent object -- you are
-    // either an owned member of another token, or effectively such as a managed pointer
-    // member, as in the AR() matrix on a DataCol
+  if(td != targ_typ && !targ_typ->InheritsFrom(&TA_taList_impl)) {
+    // only apply this filtering to derived types, and not for lists which DO mostly live
+    // as members of other objects, and are selected for putting things somewhere..
+    if(!owner->InheritsFrom(&TA_taList_impl)) {
+      // radical but simple fact: if you're not on a list, you shouldn't be selectable
+      // by someone else as a token, because you are not an independent object -- you are
+      // either an owned member of another token, or effectively such as a managed pointer
+      // member, as in the AR() matrix on a DataCol
 
-    if(!owner->InheritsFrom(&TA_taProject)) { // allow project members!
-      return false;
+      if(!owner->InheritsFrom(&TA_taProject)) { // allow project members!
+        return false;
+      }
     }
+    taBase* parent = obj->GetParent(); // must have owner and not just be on some list
+    if (!parent)
+      return false;
   }
-  taBase* parent = obj->GetParent(); // must have owner and not just be on some list
-  if (!parent)
-    return false;
   // keeps templates out of the list of actual instances
   if (owner == &tabMisc::root->templates) {
     return false;
