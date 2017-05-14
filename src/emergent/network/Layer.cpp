@@ -562,7 +562,12 @@ void Layer::RecomputeGeometry() {
   scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
 
   if(pos_rel.IsRel()) {
-    if(TestWarning((pos_rel.other->pos_rel.other == this), "RecomputeGeom",
+    if(TestWarning((pos_rel.other == this), "RecomputeGeom",
+                   "getting relative position from self -- not good! cannot be any loops in the relationship connectivity! I cut the connection")) {
+      pos_rel.other = NULL;
+      pos_rel.rel = LayerRelPos::ABS_POS;
+    }
+    else if(TestWarning((pos_rel.other->pos_rel.other == this), "RecomputeGeom",
                    "two layers have reciprocal relative positions -- not good! cannot be any loops in the relationship connectivity! other layer:", pos_rel.other->name,
                    "I cut our connection")) {
       pos_rel.other = NULL;
