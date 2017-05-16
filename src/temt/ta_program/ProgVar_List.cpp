@@ -44,6 +44,7 @@ void ProgVar_List::El_SetIndex_(void* it_, int idx) {
 
 void ProgVar_List::AddVarTo(taNBase* src) {
   if (!src) return;
+  
   // if already exists, just ignore
   for (int i = 0; i < size; ++i) {
     ProgVar* it = FastEl(i);
@@ -53,6 +54,21 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   }
   ProgVar* it = (ProgVar*)New(1);
   it->SetObject(src);
+  
+  TypeDef* td = src->GetTypeDef();
+  if (td->InheritsFrom(&TA_DynEnumBase)) {  // must set ProgVar type and DynEnum type as well
+    Program* prg = GET_MY_OWNER(Program);
+    if(prg) {
+      DynEnumBase* dyn_enum_base = (DynEnumBase*)src;
+      String enum_type_name = dyn_enum_base->ProgType::GetName();
+      ProgType* pt = prg->types.FindName(enum_type_name);
+      if(pt) {
+        it->var_type = ProgVar::T_DynEnum;
+        it->dyn_enum_val.enum_type = (DynEnumBase*)pt;
+      }
+    }
+  }
+  
   String temp = src->GetName().CamelToSnake();
   it->SetName(temp);
   it->UpdateAfterEdit();
