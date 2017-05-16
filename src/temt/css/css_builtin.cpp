@@ -368,7 +368,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     slice_Matrix* imat = new slice_Matrix;
     rval = new cssTA_Matrix(imat);
     imat->SetGeomN(mg);
-    int ses[3] = {0,-1,1};
+    int ses[3] = {0,0,1};       // 8.0 default to 0 for end, not -1!
     int ses_dx = 0;		// 0 = start, 1 = end, 2 = step
     int dim = 0;
     int n_cols = 0;

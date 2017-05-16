@@ -107,9 +107,10 @@ public:
   RelPos        rel;            // relative position of this layer compared to other
   LayerRef      other;          // other layer to position relative to
   XAlign        x_align;        // #CONDSHOW_ON_rel:FRONT_OF,BEHIND,ABOVE,BELOW horizontal (x-axis) alignment relative to other 
+  int           x_off;          // #CONDSHOW_ON_rel:FRONT_OF,BEHIND,ABOVE,BELOW how much offset to add for horizontal (x-axis) alignment
   YAlign        y_align;        // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW Y-axis alignment relative to other
+  int           y_off;          // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW how much offset to add for Y-axis alignment
   int           space;          // #MIN_0 how much space to add between layers
-  int           offset;         // how much offset to add for alignment factors
   
   String        GetTypeDecoKey() const override { return "Layer"; }
 
@@ -355,6 +356,11 @@ public:
   // #IGNORE add relative pos, which factors in offsets from above
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update our owning layer group geometry (auto called after repositioning layers)
+
+  virtual void  RelPosFromDropped(Layer* lay, LayerRelPos::RelPos rel);
+  // #CAT_Structure #DROP1 set the rel_pos other for this layer from the selected (dropped) layer -- for drag-and-drop configuring
+  virtual void  RelPosToDropped(Layer* lay, LayerRelPos::RelPos rel);
+  // #CAT_Structure #DROP1 set the rel_pos other for the selected (dropped) layer from this layer
 
   inline void   GetAbsPos(taVector3i& abs_pos) { abs_pos = pos_abs; }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups

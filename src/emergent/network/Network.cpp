@@ -3197,6 +3197,7 @@ void Network::LayerPos_RelPos() {
       new_pos2d.UpdateAfterEdit();
       if(new_pos != l->pos_abs || new_pos2d != l->pos2d_abs) {
         lay_moved = true;
+        l->SigEmitUpdated();
       }
     }
   }

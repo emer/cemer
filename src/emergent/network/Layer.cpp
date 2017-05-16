@@ -32,10 +32,11 @@ using namespace std;
 
 void LayerRelPos::Initialize() {
   rel = ABS_POS;
-  x_align = MIDDLE;
-  y_align = CENTER;
+  x_align = LEFT;
+  x_off = 0;
+  y_align = FRONT;
+  y_off = 0;
   space = 2;
-  offset = 0;
 }
 
 bool LayerRelPos::ComputePos3D(taVector3i& pos, Layer* lay) {
@@ -82,15 +83,15 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
   if(!(rel == LEFT_OF || rel == RIGHT_OF)) {
     switch(x_align) {
     case LEFT: {
-      pos.x = offset + other->pos_abs.x;
+      pos.x = x_off + other->pos_abs.x;
       break;
     }
     case MIDDLE: {
-      pos.x = offset + (other->pos_abs.x + (other->scaled_disp_geom.x / 2)) - (lay->scaled_disp_geom.x / 2);
+      pos.x = x_off + (other->pos_abs.x + (other->scaled_disp_geom.x / 2)) - (lay->scaled_disp_geom.x / 2);
       break;
     }
     case RIGHT: {
-      pos.x = offset + (other->pos_abs.x + other->scaled_disp_geom.x) - lay->scaled_disp_geom.x;
+      pos.x = x_off + (other->pos_abs.x + other->scaled_disp_geom.x) - lay->scaled_disp_geom.x;
       break;
     }
     }
@@ -98,15 +99,15 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
   if(!(rel == FRONT_OF || rel == BEHIND)) {
     switch(y_align) {
     case FRONT: {
-      pos.y = offset + other->pos_abs.y;
+      pos.y = y_off + other->pos_abs.y;
       break;
     }
     case CENTER: {
-      pos.y = offset + (other->pos_abs.y + (other->scaled_disp_geom.y / 2)) - (lay->scaled_disp_geom.y / 2);
+      pos.y = y_off + (other->pos_abs.y + (other->scaled_disp_geom.y / 2)) - (lay->scaled_disp_geom.y / 2);
       break;
     }
     case BACK: {
-      pos.y = offset + (other->pos_abs.y + other->scaled_disp_geom.y) - lay->scaled_disp_geom.y;
+      pos.y = y_off + (other->pos_abs.y + other->scaled_disp_geom.y) - lay->scaled_disp_geom.y;
       break;
     }
     }
@@ -342,6 +343,9 @@ void Layer::UpdateAfterEdit_impl() {
   }
   else {                        // not loading
     RecomputeGeometry();
+    if(own_net) {
+      own_net->LayerPos_RelPos();
+    }
     UpdateSendPrjnNames();
 
     if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
@@ -590,6 +594,18 @@ void Layer::RecomputeGeometry() {
   pos = pos_abs - rp;         // subtract relative positions
   pos2d = pos2d_abs - rp2;
   UpdateLayerGroupGeom();
+}
+
+void Layer::RelPosFromDropped(Layer* lay, LayerRelPos::RelPos rel) {
+  pos_rel.other = lay;
+  pos_rel.rel = rel;
+  SigEmitUpdated();
+}
+
+void Layer::RelPosToDropped(Layer* lay, LayerRelPos::RelPos rel) {
+  lay->pos_rel.other = this;
+  lay->pos_rel.rel = rel;
+  lay->SigEmitUpdated();
 }
 
 void Layer::SetRelPos(int x, int y, int z) {
