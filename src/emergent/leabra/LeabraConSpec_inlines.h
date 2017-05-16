@@ -28,7 +28,6 @@ inline void LeabraConSpec::Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* 
   cg->wt_avg = 0.5f;
   cg->wb_inc = 1.0f;
   cg->wb_dec = 1.0f;
-  cg->dwt_max_avg = 0.0f;
 }
 
 inline void LeabraConSpec::Init_Weights_post(ConGroup* cg, Network* net, int thr_no) {
@@ -163,14 +162,13 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   const int sz = cg->size;
 
   float* dwts = cg->OwnCnVar(DWT);
+  float* dwnorms = cg->OwnCnVar(DWNORM);
   
   if(dwt_zone.on) {
     clrate *= dwt_zone.lrate_mult;
     float* dwa_ss = cg->OwnCnVar(DWA_S);
     float* dwa_ls = cg->OwnCnVar(DWA_L);
-    float* dwnorms = cg->OwnCnVar(DWNORM);
     float* swts = cg->OwnCnVar(SWT);
-    float dwt_max = 0.0f;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
@@ -182,16 +180,11 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
         lrate_eff *= margin.MarginLrate(ru->margin);
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
-      C_Compute_dWt_CtLeabraXCAL_DwtZone
-        (dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], dwts[i],
-         dwt_max, cg->dwt_max_avg, lrate_eff,
-         ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m, ru->avg_l, l_lrn_eff, ru->margin);
-    }
-    if(!dwt_zone.con_norm) {
-      if(cg->dwt_max_avg == 0.0f)
-        cg->dwt_max_avg = dwt_max;
-      else 
-        cg->dwt_max_avg += dwt_zone.norm_dt * (dwt_max - cg->dwt_max_avg);
+      C_Compute_dWt_CtLeabraXCAL
+        (dwts[i], ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+         ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+      C_Compute_dWt_DwtZone(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], dwts[i]);
+      dwts[i] *= lrate_eff;
     }
   }
   else {
@@ -206,8 +199,9 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       }
       float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
       C_Compute_dWt_CtLeabraXCAL
-        (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-         ru->avg_l, l_lrn_eff, ru->margin);
+        (dwts[i], ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+         ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+      dwts[i] *= lrate_eff;
     }
   }
 }

@@ -195,17 +195,27 @@ class E_API DwtZoneSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra delta weight zone-of-proximal development learning rate modulation mechanism -- focuses learning on synapses where the current weight changes (integrated over a relatively short time scale) are most different from the longer-term pattern of weight changes -- essentially a temporal derivative based on running average values -- filters out any steadily increasing or decreasing patterns of weight changes, and is a strong weapon against "hog" units
 INHERITED(SpecMemberBase)
 public:
+  enum Moment {
+    DWT_ZONE, // lrate reduced when running average weight changes are similar over time
+    MOMENTUM, // use classical, simple momentum in accelerating learning changes
+    NESTEROV, // use Nesterov form of momentum..
+    ADAM,       // use normalized form of momentum update
+  };
+  
+  bool          dwmag_norm;     // normalize weight changes by running average dwt magnitude -- computed as dwtnorm = MAX((1-norm_dt)*dwtnorm, abs(dwt)), as in AdaMax algorithm -- guarantees that normalized dwt is always < 1 but approaches 1 when dwt is of maximum magnitude -- this is independent of other manipulations to learning rate as in dwt_zone or momentum
+  float         norm_tau;       // #CONDSHOW_ON_dwmag_norm #MIN_1 #DEF_100;1000 time constant for integration of dwtnorm normalization factor -- generally should be long-ish, between 100-1000
   bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
-  bool          con_norm;       // #CONDSHOW_ON_on #DEF_true use connection-level normalization of the dwt average values, via the dwnorm connection variable -- otherwise use sending connection-group normalization factor, which is less precise but much more memory efficient
+  Moment        moment;         // #CONDSHOW_ON_on type of momentum to apply -- purely experimental for time being
   float         s_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_50;10 time constant for integration of shorter-term dwt average: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
   float         l_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_2 time constant for integration of longer-term dwt average: dwa_l -- this cascades on top of the dwa_s short term average value, so this essentially reflects the number of trials over which a new direction of learning is allowed to drive learning -- e.g., if this value was 1 then the time constant of integration is 1 and the learning rate will always be 0
-  float         norm_tau;       // #CONDSHOW_ON_on #MIN_1 #DEF_100 time constant for integration of normalization dwt factor -- should probably be on scale at least of l_tau..
   float         gain;           // #CONDSHOW_ON_on #MIN_0 #DEF_2 the zone-based learning rate is computed as: zone = XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor) -- the dwts are normalized by the average max dwt magnitude across each set of sending connections prior to computing the dwa_s, _l values, compensating for differences across layers.
   float         lrate_mult;     // #CONDSHOW_ON_on #MIN_0 #DEF_3 overall learning rate multiplier to compensate for the fact that the effective learning rate is lower on average using this mechanism -- allows for a common master learning rate for comparison between zone and non-zone conditions
 
   float         s_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / s_tau
+  float         s_dt_c;        // #CONDSHOW_ON_on #READ_ONLY #EXPERT complement rate constant of delta-weight integration = 1 / s_tau
   float         l_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight integration = 1 / l_tau
   float         norm_dt;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight norm integration = 1 / norm_tau
+  float         norm_dt_c;     // #CONDSHOW_ON_on #READ_ONLY #EXPERT complement rate constant of delta-weight norm integration = 1.0f - (1 / norm_tau)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -571,47 +581,70 @@ public:
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
   inline void 	C_Compute_dWt_CtLeabraXCAL
-    (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
+    (float& dwt, const float ru_avg_s, const float ru_avg_m,
      const float su_avg_s, const float su_avg_m, const float ru_avg_l,
-     const float ru_avg_l_lrn, const float ru_margin) 
+     const float ru_avg_l_lrn, const float ru_margin, float& dwnorm) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
-    dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
+    dwt += (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                      xcal.m_lrn * xcal.dWtFun(srs, srm));
     if(margin.sign_dwt) {
       float mdwt = margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
       if(margin.sign_l_lrn) mdwt *= ru_avg_l_lrn;
-      dwt += clrate * mdwt;
+      dwt += mdwt;
+    }
+    if(dwt_zone.dwmag_norm) {
+      dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
+      if(dwnorm > 0.0f) {
+        dwt /= dwnorm;
+      }
     }
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_DwtZone
-    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& dwt,
-     float& dwt_max, const float dwt_max_avg, const float clrate,
-     const float ru_avg_s, const float ru_avg_m,
-     const float su_avg_s, const float su_avg_m,
-     const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin) 
+  inline void 	C_Compute_dWt_DwtZone
+    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& dwt)
   {
-    // send in clrate = 1.0f -- apply clrate later
-    C_Compute_dWt_CtLeabraXCAL(dwt, 1.0f, ru_avg_s, ru_avg_m,
-                               su_avg_s, su_avg_m, ru_avg_l, ru_avg_l_lrn, ru_margin);
-    dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
-    dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
-    float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);
-    if(dwt_zone.con_norm) {
-      if(dwnorm == 0.0f) { dwnorm = fabsf(dwt); dwt = 0.0f; return; }
-      dwnorm += dwt_zone.norm_dt * (fabsf(dwt) - dwnorm);
-      zone /= dwnorm;
+    if(dwt_zone.moment == DwtZoneSpec::DWT_ZONE) {
+      dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
+      dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
+      float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);
+      // dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
+      // zone /= dwnorm;
+      float zone_lr = zone / (1.0f + zone); // XX1 sigmoidify
+      swt = zone_lr;              // temp: save this for visualization -- incompat with slow..
+      dwt *= zone_lr;
     }
-    else {
-      dwt_max = fmaxf(dwt_max, fabsf(dwt));
-      if(dwt_max_avg == 0.0f) { dwt = 0.0f; return; } // bail on first pass
-      zone /= dwt_max_avg;
+    else if(dwt_zone.moment == DwtZoneSpec::MOMENTUM) {
+      dwa_s = dwt_zone.s_dt_c * dwa_s + dwt;
+      // if(dwt_zone.dwmag_norm) {
+      //   dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
+      //   dwt = dwa_s / dwnorm;
+      // }
+      // else {
+        dwt = dwa_s;
+      // }
     }
-    float zone_lr = zone / (1.0f + zone); // XX1 sigmoidify
-    swt = zone_lr;              // temp: save this for visualization -- incompat with slow..
-    dwt *= clrate * zone_lr; // clrate already pre-mult by lrate_mult
+    else if(dwt_zone.moment == DwtZoneSpec::NESTEROV) {
+      dwa_s = dwt_zone.s_dt_c * dwa_s + dwt;
+      // if(dwt_zone.dwmag_norm) {
+      //   dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
+      //   dwt += dwt_zone.s_dt_c * dwa_s / dwnorm;
+      // }
+      // else {
+        dwt = dwt_zone.s_dt_c * dwa_s + dwt;
+      // }
+    }
+    else if(dwt_zone.moment == DwtZoneSpec::ADAM) {
+      dwa_s += dwt_zone.s_dt * (dwt - dwa_s); // normalized
+      // if(dwt_zone.dwmag_norm) {
+      //   dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
+      //   dwt = dwa_s / dwnorm;
+      // }
+      // else {
+        dwt = dwa_s;
+      // }
+    }
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt zone of proximal development mechanism
 

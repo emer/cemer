@@ -60,8 +60,13 @@ public:
 
   inline void C_Compute_dWt_Delta(float& dwt, const float lrate_eff,
                                   const float ru_avg_s, const float ru_avg_m,
-                                  const float su_deep_prv)
-  { dwt += lrate_eff * (ru_avg_s - ru_avg_m) * su_deep_prv; }
+                                  const float su_deep_prv, float& dwnorm) {
+    dwt += (ru_avg_s - ru_avg_m) * su_deep_prv;
+    if(dwt_zone.dwmag_norm) {
+      dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
+      dwt /= dwnorm;
+    }
+  }
   // #IGNORE
 
   inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
@@ -77,30 +82,64 @@ public:
     const float su_avg_s = su->deep_raw_prv; // value sent on prior trial..
     const float su_avg_m = su->deep_raw_prv;
     float* dwts = cg->OwnCnVar(DWT);
+    float* dwnorms = cg->OwnCnVar(DWNORM);
 
     const int sz = cg->size;
 
-    for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      float lrate_eff = clrate;
-      if(deep_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+    if(dwt_zone.on) {
+      clrate *= dwt_zone.lrate_mult;
+      float* dwa_ss = cg->OwnCnVar(DWA_S);
+      float* dwa_ls = cg->OwnCnVar(DWA_L);
+      float* swts = cg->OwnCnVar(SWT);
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        // note: applying opt_thresh.xcal_lrn here does NOT work well for dwt_zone..
+        float lrate_eff = clrate;
+        if(deep_on) {
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+        }
+        if(margin.lrate_mod) {
+          lrate_eff *= margin.MarginLrate(ru->margin);
+        }
+        float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
+        if(delta_dwt) {
+          C_Compute_dWt_Delta(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, su_avg_s,
+                              dwnorms[i]);
+        }
+        else {
+          C_Compute_dWt_CtLeabraXCAL
+            (dwts[i], ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+             ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+        }
+        C_Compute_dWt_DwtZone(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], dwts[i]);
+        dwts[i] *= lrate_eff;
       }
-      if(margin.lrate_mod) {
-        lrate_eff *= margin.MarginLrate(ru->margin);
-      }
-      float l_lrn_eff;
-      if(xcal.set_l_lrn)
-        l_lrn_eff = xcal.l_lrn;
-      else
-        l_lrn_eff = ru->avg_l_lrn;
-      if(delta_dwt) {
-        C_Compute_dWt_Delta(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, su_avg_s);
-      }
-      else {
-        C_Compute_dWt_CtLeabraXCAL
-          (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-           ru->avg_l, l_lrn_eff, ru->margin);
+    }
+    else {
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        float lrate_eff = clrate;
+        if(deep_on) {
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+        }
+        if(margin.lrate_mod) {
+          lrate_eff *= margin.MarginLrate(ru->margin);
+        }
+        float l_lrn_eff;
+        if(xcal.set_l_lrn)
+          l_lrn_eff = xcal.l_lrn;
+        else
+          l_lrn_eff = ru->avg_l_lrn;
+        if(delta_dwt) {
+          C_Compute_dWt_Delta(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, su_avg_s,
+                              dwnorms[i]);
+        }
+        else {
+          C_Compute_dWt_CtLeabraXCAL
+            (dwts[i], ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+             ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
+        }
+        dwts[i] *= lrate_eff;
       }
     }
   }

@@ -106,11 +106,12 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 
 void DwtZoneSpec::Initialize() {
   on = false;
+  dwmag_norm = false;
+  moment = DWT_ZONE;
   Defaults_init();
 }
 
 void DwtZoneSpec::Defaults_init() {
-  con_norm = true;
   s_tau = 50.0f;
   l_tau = 2.0f;
   norm_tau = 100.0f;
@@ -118,15 +119,19 @@ void DwtZoneSpec::Defaults_init() {
   lrate_mult = 3.0f;
 
   s_dt = 1.0f / s_tau;
+  s_dt_c = 1.0f - s_dt;
   l_dt = 1.0f / l_tau;
   norm_dt = 1.0f / norm_tau;
+  norm_dt_c = 1.0f - norm_dt;
 }
 
 void DwtZoneSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   s_dt = 1.0f / s_tau;
+  s_dt_c = 1.0f - s_dt;
   l_dt = 1.0f / l_tau;
   norm_dt = 1.0f / norm_tau;
+  norm_dt_c = 1.0f - norm_dt;
 }
 
 void WtBalanceSpec::Initialize() {
