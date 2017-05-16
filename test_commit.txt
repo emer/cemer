@@ -1,3 +1,4 @@
 This is a test commit file
 Commit 2
 Commit 3
+Commit 4
