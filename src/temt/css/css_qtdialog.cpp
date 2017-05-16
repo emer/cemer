@@ -395,7 +395,7 @@ void cssiArgDialog::GetValue() {
   err_flag = false;
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiWidget* mb_dat = widget_el(0).SafeEl(i);
+    taiWidget* mb_dat = widget_el(0).SafeEl(i-hide_args);
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetValue(mb_dat, root);
     if (art->err_flag)
@@ -418,7 +418,7 @@ void cssiArgDialog::GetValue() {
 void cssiArgDialog::GetImage(bool) {
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiWidget* mb_dat = widget_el(0).SafeEl(i);
+    taiWidget* mb_dat = widget_el(0).SafeEl(i-hide_args);
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetImage(mb_dat, root);
   }

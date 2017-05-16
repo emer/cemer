@@ -53,14 +53,14 @@ void Layer_Group::UpdateAfterEdit_impl() {
     prev_pos = pos;
     prev_pos2d = pos2d;
   }
-  if(pos != prev_pos) {
-    taVector3i del = pos - prev_pos;
-    MovePos(del.x, del.y, del.z);
-  }
-  if(pos2d != prev_pos2d) {
-    taVector2i del = pos2d - prev_pos2d;
-    MovePos2d(del.x, del.y);
-  }
+  // if(pos != prev_pos) {
+  //   taVector3i del = pos - prev_pos;
+  //   MovePos(del.x, del.y, del.z);
+  // }
+  // if(pos2d != prev_pos2d) {
+  //   taVector2i del = pos2d - prev_pos2d;
+  //   MovePos2d(del.x, del.y);
+  // }
 }
 
 void Layer_Group::AddRelPos(taVector3i& rel_pos) {

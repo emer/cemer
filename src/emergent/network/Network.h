@@ -302,9 +302,9 @@ public:
   float         pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
   float         pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
 
-  PRerrVals     prerr;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
+  PRerrVals     prerr;          // #NO_SAVE #GUI_READ_ONLY #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
   PRerrVals     sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
-  PRerrVals     epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
+  PRerrVals     epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
 
   TimeUsed      train_time;     // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
   TimeUsed      epoch_time;     // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)

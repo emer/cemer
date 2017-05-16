@@ -218,8 +218,7 @@ void MarginLearnSpec::Initialize() {
 
 void MarginLearnSpec::Defaults_init() {
   stable_lrate = 0.5f;
-  sign_l_lrn = false;
-  sign_lrn = 0.001f;
+  sign_lrn = 0.5f;
 }
 
 

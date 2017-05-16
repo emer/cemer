@@ -999,6 +999,7 @@ void NetView::Layer_DataUAE(LayerView* lv) {
 
 void NetView::NewLayer(int x, int y) {
   Layer* lay = net()->layers.NewEl(1);
+  // todo: use rel positioning by default!
   taVector3i nps;
   nps.z = lay->pos_abs.z;
   nps.x = x; nps.y = y;

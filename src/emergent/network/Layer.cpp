@@ -42,13 +42,13 @@ void LayerRelPos::Initialize() {
 bool LayerRelPos::ComputePos3D(taVector3i& pos, Layer* lay) {
   if(!other || rel == ABS_POS)
     return false;
-  pos.z = other->pos.z;         // default
+  pos.z = other->pos_abs.z;     // default
   ComputePos2D(pos, lay);       // handles alignment
   if(rel == ABOVE) {
-    pos.z = other->pos.z + 1;
+    pos.z = other->pos_abs.z + 1;
   }
   else if(rel == BELOW) {
-    pos.z = other->pos.z - 1;
+    pos.z = other->pos_abs.z - 1;
   }
   return true;
 }
@@ -569,13 +569,11 @@ void Layer::RecomputeGeometry() {
     if(TestWarning((pos_rel.other == this), "RecomputeGeom",
                    "getting relative position from self -- not good! cannot be any loops in the relationship connectivity! I cut the connection")) {
       pos_rel.other = NULL;
-      pos_rel.rel = LayerRelPos::ABS_POS;
     }
     else if(TestWarning((pos_rel.other->pos_rel.other == this), "RecomputeGeom",
                    "two layers have reciprocal relative positions -- not good! cannot be any loops in the relationship connectivity! other layer:", pos_rel.other->name,
                    "I cut our connection")) {
       pos_rel.other = NULL;
-      pos_rel.rel = LayerRelPos::ABS_POS;
     }
     else {
       // go ahead and update!

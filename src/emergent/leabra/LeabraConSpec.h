@@ -368,8 +368,7 @@ public:
   bool          lrate_mod;      // enable the margin-based modulation of the learning rate -- marginal units have a learning rate of 1, while others are reduced
   float         stable_lrate;   // #CONDSHOW_ON_lrate_mod #MIN_0 #DEF_0.5 learning rate multiplier for units that are outside of the margin (either solidly active or inactive) -- reduced relative to those on the margin (which have the default learning rate)
   bool          sign_dwt;       // use the sign of the margin state (low vs. high marginal status) to drive an additional dwt learning factor
-  bool          sign_l_lrn;     // #CONDSHOW_ON_sign_dwt apply the avg_l (BCM Hebbian) learning factor to sign-based learning
-  float         sign_lrn;       // #CONDSHOW_ON_sign_dwt #MIN_0 amount of learning for sign-based learning factor
+  float         sign_lrn;       // #CONDSHOW_ON_sign_dwt #MIN_0 #DEF_0.5 amount of learning for sign-based learning factor
 
   inline float  MarginLrate(const float marg) {
     if(marg == -2.0f || marg == 2.0f) return stable_lrate;
@@ -589,8 +588,7 @@ public:
     dwt += (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
                      xcal.m_lrn * xcal.dWtFun(srs, srm));
     if(margin.sign_dwt) {
-      float mdwt = margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
-      if(margin.sign_l_lrn) mdwt *= ru_avg_l_lrn;
+      float mdwt = ru_avg_l_lrn * margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
       dwt += mdwt;
     }
     if(dwt_zone.dwmag_norm) {
