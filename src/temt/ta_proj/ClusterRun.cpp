@@ -582,6 +582,10 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
     DataCol* cl = dat->FindMakeCol("label", VT_STRING);
     cl->InitVals(tag + ": " + label);
   }
+  {
+    DataCol* cl = dat->FindMakeCol("label_notag", VT_STRING);
+    cl->InitVals(label);
+  }
   
   String_Array pars;
   pars.FmDelimString(params, " ");
