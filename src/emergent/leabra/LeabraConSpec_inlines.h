@@ -45,7 +45,7 @@ inline void LeabraConSpec::Init_Weights_post(ConGroup* cg, Network* net, int thr
     dwa_ss[i] = 0.0f;
     dwa_ls[i] = 0.0f;
     dwnorms[i] = 0.0f;
-    if(dwt_zone.on) {
+    if(dynlr.moment == LeabraDynLrates::DWT_ZONE) {
       swts[i] = 0.0f;         // used for saving zone_lr val
     }
     else {
@@ -164,8 +164,8 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   float* dwts = cg->OwnCnVar(DWT);
   float* dwnorms = cg->OwnCnVar(DWNORM);
   
-  if(dwt_zone.on) {
-    clrate *= dwt_zone.lrate_mult;
+  if(dynlr.moment != LeabraDynLrates::NO_MOMENT) {
+    clrate *= dynlr.lrate_comp;
     float* dwa_ss = cg->OwnCnVar(DWA_S);
     float* dwa_ls = cg->OwnCnVar(DWA_L);
     float* swts = cg->OwnCnVar(SWT);
@@ -183,7 +183,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
       float new_dwt = C_Compute_dWt_CtLeabraXCAL
         (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
          ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
-      new_dwt = C_Compute_dWt_DwtZone(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
+      new_dwt = dynlr.ComputeMoment(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
       dwts[i] += lrate_eff * new_dwt;
     }
   }

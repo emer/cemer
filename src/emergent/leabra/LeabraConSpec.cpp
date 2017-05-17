@@ -24,7 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
-TA_BASEFUNS_CTORS_DEFN(DwtZoneSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraDynLrates);
 TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
@@ -104,34 +104,38 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
-void DwtZoneSpec::Initialize() {
-  on = false;
-  dwmag_norm = false;
-  moment = DWT_ZONE;
+void LeabraDynLrates::Initialize() {
+  dwt_norm = NO_NORM;
+  moment = NO_MOMENT;
   Defaults_init();
 }
 
-void DwtZoneSpec::Defaults_init() {
+void LeabraDynLrates::Defaults_init() {
+  norm_tau = 100.0f;
+  norm_min = 0.001f;
+  m_tau = 10.0f;
   s_tau = 50.0f;
   l_tau = 2.0f;
-  norm_tau = 100.0f;
+  xx1 = true;
   gain = 2.0f;
-  lrate_mult = 3.0f;
+  lrate_comp = 3.0f;
 
-  s_dt = 1.0f / s_tau;
-  s_dt_c = 1.0f - s_dt;
-  l_dt = 1.0f / l_tau;
   norm_dt = 1.0f / norm_tau;
   norm_dt_c = 1.0f - norm_dt;
+  m_dt = 1.0f / m_tau;
+  m_dt_c = 1.0f - m_dt;
+  s_dt = 1.0f / s_tau;
+  l_dt = 1.0f / l_tau;
 }
 
-void DwtZoneSpec::UpdateAfterEdit_impl() {
+void LeabraDynLrates::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  s_dt = 1.0f / s_tau;
-  s_dt_c = 1.0f - s_dt;
-  l_dt = 1.0f / l_tau;
   norm_dt = 1.0f / norm_tau;
   norm_dt_c = 1.0f - norm_dt;
+  m_dt = 1.0f / m_tau;
+  m_dt_c = 1.0f - m_dt;
+  s_dt = 1.0f / s_tau;
+  l_dt = 1.0f / l_tau;
 }
 
 void WtBalanceSpec::Initialize() {
@@ -286,7 +290,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   CreateWtSigFun();
 
-  if(TestWarning(dwt_zone.on && slow_wts.on, "UAE",
+  if(TestWarning(dynlr.moment == LeabraDynLrates::DWT_ZONE && slow_wts.on, "UAE",
                  "dwt_zone and slow_wts cannot both be on at this point -- turning slow_wts off")) {
     slow_wts.on = false;
   }

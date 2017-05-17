@@ -82,8 +82,8 @@ public:
 
     const int sz = cg->size;
 
-    if(dwt_zone.on) {
-      clrate *= dwt_zone.lrate_mult;
+    if(dynlr.moment != LeabraDynLrates::NO_MOMENT) {
+      clrate *= dynlr.lrate_comp;
       float* dwa_ss = cg->OwnCnVar(DWA_S);
       float* dwa_ls = cg->OwnCnVar(DWA_L);
       float* swts = cg->OwnCnVar(SWT);
@@ -107,7 +107,7 @@ public:
             (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
              ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
         }
-        new_dwt = C_Compute_dWt_DwtZone(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
+        new_dwt = dynlr.ComputeMoment(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
         dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }
     }
