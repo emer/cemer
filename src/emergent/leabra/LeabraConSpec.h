@@ -307,6 +307,7 @@ public:
       }
       return dwa_s;
     }
+    return new_dwt;
   }
   
   String       GetTypeDecoKey() const override { return "ConSpec"; }
