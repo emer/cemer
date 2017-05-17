@@ -51,7 +51,9 @@ public:
     NO_SET_POINTER= 0x00010000, // do not use the taBase::SetPointer method when setting this pointer
     
     IS_EDITOR_HIDDEN = 0x00040000, // computed value: has HIDDEN or [GUI_]READ_ONLY without SHOW
-    IS_TREE_HIDDEN   = 0x00080000, // computed value
+    IS_TREE_HIDDEN   = 0x00080000, // computed value: do not show in the tree -- note this is ON for DEF_CHILD members to prevent them from showing up in the tree an extra time
+    IS_DEF_CHILD     = 0x00100000, // is this a default child member -- automatically visible
+    IS_VISIBLE       = 0x00200000, // summary flag for whether this item is visible in some form or another, taking into account editor hidden, tree hidden and def child factors -- it should be used for filtering any kind of search or traversal process -- expert items ARE counted as visible so you need to check that separately if you want to exclude them
     OPTS_SET         = 0x10000000, // options have already been set -- don't redo!!
   };
 
@@ -101,6 +103,9 @@ public:
   inline bool  IsGuiReadOnly() const { return HasReadOnly() || HasGuiReadOnly(); }
   inline bool  IsEditorHidden() const { return HasOptFlag(IS_EDITOR_HIDDEN); }
   inline bool  IsTreeHidden() const { return HasOptFlag(IS_TREE_HIDDEN); }
+  inline bool  IsDefChild() const { return HasOptFlag(IS_DEF_CHILD); }
+  inline bool  IsVisible() const { return HasOptFlag(IS_VISIBLE); }
+  inline bool  IsInvisible() const { return !IsVisible(); }
   inline bool  IsStatic() const { return is_static; }
   
   void*        This() override {return this;}

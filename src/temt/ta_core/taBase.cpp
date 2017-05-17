@@ -2780,8 +2780,7 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
       if(!md->type->IsActualTaBase()) continue;
-      if(md->HasReadOnly() || md->HasHidden() || md->HasTreeHidden() || md->HasNoFind()
-         || md->HasExpert())
+      if(md->IsInvisible() || md->HasNoFind()) // || md->HasExpert())
         continue;
       taBase* obj = (taBase*)md->GetOff(this);
       if(!obj) continue;
@@ -2796,8 +2795,7 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(!md->type->IsActualTaBase()) continue;
-    if(md->HasReadOnly() || md->HasHidden() || md->HasTreeHidden() || md->HasNoFind()
-       || md->HasExpert())
+    if(md->IsInvisible() || md->HasNoFind()) // || md->HasExpert())
       continue;
     taBase* obj = (taBase*)md->GetOff(this);
     obj->SearchIn_impl(srch, items, owners, text_only, contains, case_sensitive, obj_name, obj_type,

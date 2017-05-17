@@ -370,7 +370,7 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("DIFF") && // positive diff overrides all..
-       (md->HasNoSave() || md->IsGuiReadOnly() || md->IsEditorHidden() || md->HasNoDiff()
+       (md->HasNoSave() || md->IsGuiReadOnly() || md->IsInvisible() || md->HasNoDiff()
         || md->type->HasOption("NO_DIFF")))
       continue;
     if(md->type->InheritsFrom(&TA_taList_impl)) { // not now

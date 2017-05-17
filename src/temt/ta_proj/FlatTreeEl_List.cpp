@@ -85,56 +85,40 @@ FlatTreeEl* FlatTreeEl_List::GetFlatTreeMember(int nest, MemberDef* md, FlatTree
 void FlatTreeEl_List::GetFlatTreeMembers(FlatTreeEl* obj_fel, const taBase* obj) {
   int new_lev = obj_fel->nest_level + 1;
   
-  MemberDef* last_md = NULL;    // special option for putting one member after others!
   TypeDef* td = obj_fel->type;
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
-    if(md->HasNoSave() || md->IsEditorHidden())
+    if(md->HasNoSave() || md->IsInvisible())
       continue;
     if(obj_fel->mdef) { // object is a member
       if(md->HasHiddenInline()) continue;
-    }
-    if(md->HasOption("DIFF_LAST")) {
-      last_md = md;
-      continue;
     }
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..
     }
 
     GetFlatTreeMember(new_lev, md, obj_fel, obj);
-  }
-  if(last_md) {
-    GetFlatTreeMember(new_lev, last_md, obj_fel, obj);
   }
 }
 
 void FlatTreeEl_List::GetFlatTreeMembers_ListsOnly(FlatTreeEl* obj_fel, const taBase* obj) {
   int new_lev = obj_fel->nest_level + 1;
   
-  MemberDef* last_md = NULL;    // special option for putting one member after others!
   TypeDef* td = obj_fel->type;
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
     if(!md->type->InheritsFrom(&TA_taList_impl)) // key diff -- only lists!
       continue;
-    if(md->HasNoSave() || md->IsEditorHidden())
+    if(md->HasNoSave() || md->IsInvisible())
       continue;
     if(obj_fel->mdef) { // object is a member
       if(md->HasHiddenInline()) continue;
-    }
-    if(md->HasOption("DIFF_LAST")) {
-      last_md = md;
-      continue;
     }
     if(md->name == "user_data_") {
       continue;                 // too much clutter for now..
     }
 
     GetFlatTreeMember(new_lev, md, obj_fel, obj);
-  }
-  if(last_md) {
-    GetFlatTreeMember(new_lev, last_md, obj_fel, obj);
   }
 }
 

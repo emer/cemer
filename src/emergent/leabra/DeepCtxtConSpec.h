@@ -58,14 +58,10 @@ public:
   inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
-  inline void C_Compute_dWt_Delta(float& dwt, const float lrate_eff,
-                                  const float ru_avg_s, const float ru_avg_m,
-                                  const float su_deep_prv, float& dwnorm) {
-    dwt += (ru_avg_s - ru_avg_m) * su_deep_prv;
-    if(dwt_zone.dwmag_norm) {
-      dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
-      dwt /= dwnorm;
-    }
+  inline float C_Compute_dWt_Delta
+    (const float ru_avg_s, const float ru_avg_m, const float su_deep_prv, float& dwnorm) {
+    float new_dwt = (ru_avg_s - ru_avg_m) * su_deep_prv;
+    return C_Compute_dWt_DwNorm(dwnorm, new_dwt);
   }
   // #IGNORE
 
@@ -102,17 +98,17 @@ public:
           lrate_eff *= margin.MarginLrate(ru->margin);
         }
         float l_lrn_eff = xcal.LongLrate(ru->avg_l_lrn);
+        float new_dwt;
         if(delta_dwt) {
-          C_Compute_dWt_Delta(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, su_avg_s,
-                              dwnorms[i]);
+          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s, dwnorms[i]);
         }
         else {
-          C_Compute_dWt_CtLeabraXCAL
-            (dwts[i], ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+          new_dwt = C_Compute_dWt_CtLeabraXCAL
+            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
              ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
         }
-        C_Compute_dWt_DwtZone(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], dwts[i]);
-        dwts[i] *= lrate_eff;
+        new_dwt = C_Compute_dWt_DwtZone(dwa_ss[i], dwa_ls[i], dwnorms[i], swts[i], new_dwt);
+        dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }
     }
     else {
@@ -130,16 +126,16 @@ public:
           l_lrn_eff = xcal.l_lrn;
         else
           l_lrn_eff = ru->avg_l_lrn;
+        float new_dwt;
         if(delta_dwt) {
-          C_Compute_dWt_Delta(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, su_avg_s,
-                              dwnorms[i]);
+          new_dwt = C_Compute_dWt_Delta(ru->avg_s, ru->avg_m, su_avg_s, dwnorms[i]);
         }
         else {
-          C_Compute_dWt_CtLeabraXCAL
-            (dwts[i], ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+          new_dwt = C_Compute_dWt_CtLeabraXCAL
+            (ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
              ru->avg_l, l_lrn_eff, ru->margin, dwnorms[i]);
         }
-        dwts[i] *= lrate_eff;
+        dwts[i] += lrate_eff * new_dwt; // lrate always at the end!
       }
     }
   }

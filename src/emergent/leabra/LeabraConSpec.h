@@ -204,6 +204,7 @@ public:
   
   bool          dwmag_norm;     // normalize weight changes by running average dwt magnitude -- computed as dwtnorm = MAX((1-norm_dt)*dwtnorm, abs(dwt)), as in AdaMax algorithm -- guarantees that normalized dwt is always < 1 but approaches 1 when dwt is of maximum magnitude -- this is independent of other manipulations to learning rate as in dwt_zone or momentum
   float         norm_tau;       // #CONDSHOW_ON_dwmag_norm #MIN_1 #DEF_100;1000 time constant for integration of dwtnorm normalization factor -- generally should be long-ish, between 100-1000
+  float         norm_min;       // #CONDSHOW_ON_dwmag_norm #MIN_0 minimum value of the dwmag_norm factor -- don't renormalize away values that are lower than this
   bool          on;             // enable delta weight zone-of-proximal development learning rate modulation mechanism
   Moment        moment;         // #CONDSHOW_ON_on type of momentum to apply -- purely experimental for time being
   float         s_tau;          // #CONDSHOW_ON_on #MIN_1 #DEF_50;10 time constant for integration of shorter-term dwt average: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
@@ -217,6 +218,12 @@ public:
   float         norm_dt;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of delta-weight norm integration = 1 / norm_tau
   float         norm_dt_c;     // #CONDSHOW_ON_on #READ_ONLY #EXPERT complement rate constant of delta-weight norm integration = 1.0f - (1 / norm_tau)
 
+  inline void  DwMagNormUpdt(float& dwnorm, const float dwt) {
+    dwnorm = fmax(norm_dt_c * dwnorm, fabsf(dwt));
+    dwnorm = fmax(dwnorm, norm_min);
+  }
+  // update the dw magnitude norm factor
+  
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(DwtZoneSpec);
@@ -579,70 +586,69 @@ public:
   // }
   // also: fminf(ru_avg_l,1.0f) for threshold as an option..
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL
-    (float& dwt, const float ru_avg_s, const float ru_avg_m,
-     const float su_avg_s, const float su_avg_m, const float ru_avg_l,
-     const float ru_avg_l_lrn, const float ru_margin, float& dwnorm) 
-  { float srs = ru_avg_s * su_avg_s;
-    float srm = ru_avg_m * su_avg_m;
-    dwt += (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
-                     xcal.m_lrn * xcal.dWtFun(srs, srm));
-    if(margin.sign_dwt) {
-      float mdwt = ru_avg_l_lrn * margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
-      dwt += mdwt;
-    }
+  inline float 	C_Compute_dWt_DwNorm(float& dwnorm, const float new_dwt) {
     if(dwt_zone.dwmag_norm) {
-      dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
-      if(dwnorm > 0.0f) {
-        dwt /= dwnorm;
+      dwt_zone.DwMagNormUpdt(dwnorm, new_dwt); // always update norm on pure dwt
+      if(!dwt_zone.on && dwnorm != 0.0f) {    // not otherwise going to be applied
+        return new_dwt / dwnorm;
       }
     }
+    return new_dwt;
   }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
+  // #IGNORE update dwt magnitude norm from new weight change, apply it if not otherwise going to be applied
 
-  inline void 	C_Compute_dWt_DwtZone
-    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, float& dwt)
+  inline float 	C_Compute_dWt_CtLeabraXCAL
+    (const float ru_avg_s, const float ru_avg_m, const float su_avg_s, const float su_avg_m,
+     const float ru_avg_l, const float ru_avg_l_lrn, const float ru_margin, float& dwnorm) 
+  { float srs = ru_avg_s * su_avg_s;
+    float srm = ru_avg_m * su_avg_m;
+    float new_dwt = (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
+                    xcal.m_lrn * xcal.dWtFun(srs, srm));
+    if(margin.sign_dwt) {
+      float mdwt = ru_avg_l_lrn * margin.sign_lrn * margin.SignDwt(ru_margin) * su_avg_s;
+      new_dwt += mdwt;
+    }
+    return C_Compute_dWt_DwNorm(dwnorm, new_dwt);
+  }
+  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL), returning new dwt
+
+  inline float 	C_Compute_dWt_DwtZone
+    (float& dwa_s, float& dwa_l, float& dwnorm, float& swt, const float new_dwt)
   {
     if(dwt_zone.moment == DwtZoneSpec::DWT_ZONE) {
-      dwa_s += dwt_zone.s_dt * (dwt - dwa_s);
+      dwa_s += dwt_zone.s_dt * (new_dwt - dwa_s);
       dwa_l += dwt_zone.l_dt * (dwa_s - dwa_l);
       float zone = dwt_zone.gain * fabsf(dwa_s - dwa_l);
-      // dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
-      // zone /= dwnorm;
+      if(dwt_zone.dwmag_norm && dwnorm != 0.0f) {
+        zone /= dwnorm;
+      }
       float zone_lr = zone / (1.0f + zone); // XX1 sigmoidify
       swt = zone_lr;              // temp: save this for visualization -- incompat with slow..
-      dwt *= zone_lr;
+      return new_dwt * zone_lr;
     }
     else if(dwt_zone.moment == DwtZoneSpec::MOMENTUM) {
-      dwa_s = dwt_zone.s_dt_c * dwa_s + dwt;
-      // if(dwt_zone.dwmag_norm) {
-      //   dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
-      //   dwt = dwa_s / dwnorm;
-      // }
-      // else {
-        dwt = dwa_s;
-      // }
+      dwa_s = dwt_zone.s_dt_c * dwa_s + new_dwt;
+      if(dwt_zone.dwmag_norm && dwnorm != 0.0f) {
+        return dwa_s / dwnorm;
+      }
+      return dwa_s;
     }
     else if(dwt_zone.moment == DwtZoneSpec::NESTEROV) {
-      dwa_s = dwt_zone.s_dt_c * dwa_s + dwt;
-      // if(dwt_zone.dwmag_norm) {
-      //   dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
-      //   dwt += dwt_zone.s_dt_c * dwa_s / dwnorm;
-      // }
-      // else {
-        dwt = dwt_zone.s_dt_c * dwa_s + dwt;
-      // }
+      dwa_s = dwt_zone.s_dt_c * dwa_s + new_dwt;
+      if(dwt_zone.dwmag_norm && dwnorm != 0.0f) {
+        return (new_dwt + dwt_zone.s_dt_c * dwa_s) / dwnorm;
+      }
+      return dwt_zone.s_dt_c * dwa_s + new_dwt;
     }
     else if(dwt_zone.moment == DwtZoneSpec::ADAM) {
-      dwa_s += dwt_zone.s_dt * (dwt - dwa_s); // normalized
-      // if(dwt_zone.dwmag_norm) {
-      //   dwnorm = fmax(dwt_zone.norm_dt_c * dwnorm, fabsf(dwt));
-      //   dwt = dwa_s / dwnorm;
-      // }
-      // else {
-        dwt = dwa_s;
-      // }
+      dwa_s += dwt_zone.s_dt * (new_dwt - dwa_s); // regular exponential integration
+      // note: theoretically should multiply by s_tau, but impls don't seem to do that..
+      if(dwt_zone.dwmag_norm && dwnorm != 0.0f) {
+        return dwa_s / dwnorm;
+      }
+      return dwa_s;
     }
+    return new_dwt;             // shouldn't happen
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- dwt zone of proximal development mechanism
 

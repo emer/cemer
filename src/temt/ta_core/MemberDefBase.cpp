@@ -162,15 +162,19 @@ void MemberDefBase::InitOptsFlags() {
 
   bool is_def_child = false;
 
+  SetOptFlag(IS_VISIBLE);       // start off assuming everything is visible
   // expert is like SHOW
   if(!HasExpert() && !HasShow() && (HasHidden() || HasReadOnly() || HasGuiReadOnly())) {
     SetOptFlag(IS_EDITOR_HIDDEN);
+    ClearOptFlag(IS_VISIBLE);   // positively marked as not-visible
   }
 #ifndef NO_TA_BASE
   if(type->IsActualTaBase() && type->InheritsFrom(&TA_taList_impl)) {
     String def_child = own_typ->OptionAfter("DEF_CHILD_");
     if(def_child == name) {
       is_def_child = true;
+      SetOptFlag(IS_DEF_CHILD);
+      SetOptFlag(IS_VISIBLE);
       SetOptFlag(IS_TREE_HIDDEN); // we actually hide on tree b/c it will be shown automatically
       if(!HasShow() && !HasExpert()) {
         SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
@@ -178,18 +182,22 @@ void MemberDefBase::InitOptsFlags() {
       }
     }
     else {
+      // default is to show taList_impl unless specifically marked as hidden
       if(HasTreeHidden() || (IsEditorHidden() && !HasTreeShow())) {
         SetOptFlag(IS_TREE_HIDDEN);
+        ClearOptFlag(IS_VISIBLE);   // positively marked as not-visible
       }
       else {
         if(!HasShow() && !HasExpert()) {
           SetOptFlag(HIDDEN); // anything that will be shown in the tree is hidden by default
           SetOptFlag(IS_EDITOR_HIDDEN);
+          // note: these don't affect visibility!
        }
       }
     }
   }
   else {
+    // other types -- default is to be hidden in the tree unless specifically marked otherwise -- doesn't affect overall visibility
     if(!HasTreeShow()) {
       SetOptFlag(IS_TREE_HIDDEN);
     }

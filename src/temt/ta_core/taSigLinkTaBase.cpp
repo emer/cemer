@@ -395,7 +395,7 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
       if(!(sd->options() & iDialogSearch::SO_ALL_MEMBS)) {
-        if(md->IsEditorHidden()) continue;
+        if(md->IsInvisible()) continue;
         // todo: what about excluding NO_SEARCH??
       }
       probed = md->name;
@@ -422,7 +422,7 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && md->IsEditorHidden()) continue;
+      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && md->IsInvisible()) continue;
       if (md->HasNoFind()) continue;
       if (md->type->IsNotPtr()) {
         // a list or greater is never a "value"
@@ -460,16 +460,13 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   }
 
 
-  String def_child = td->OptionAfter("DEF_CHILD_");
   // browsable taBase members
   // second pass: recurse
   for(int m=0; m<td->members.size;m++) {
     if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
-    if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && md->IsEditorHidden()) {
-      // def children are excluded from show, but should not be from search!!
-      if (md->name != def_child)
-        continue;
+    if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && md->IsInvisible()) {
+      continue;
     }
     if (md->HasNoSearch()) continue;
 

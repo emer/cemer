@@ -1572,7 +1572,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
 #endif
     }
     else if (sc == SC_DISPLAY) {
-      if (md->IsEditorHidden())
+      if (md->IsInvisible())
         continue;
     }
     else {
