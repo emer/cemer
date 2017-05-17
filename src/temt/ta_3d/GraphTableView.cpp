@@ -31,6 +31,7 @@
 #include <taVector2i>
 #include <taSvg>
 #include <float_Matrix>
+#include <taMath_float>
 
 #if (QT_VERSION >= 0x050000)
 #include <QGuiApplication>
@@ -2384,6 +2385,9 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       }
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
+      if(taMath_float::isnan(err_plt)) {
+        err_plt = 0;
+      }
       
       if(clr_ok)
         t3gl->errBar(plt, err_plt, err_bar_width, clr);
