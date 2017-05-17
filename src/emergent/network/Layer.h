@@ -111,6 +111,7 @@ public:
   YAlign        y_align;        // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW Y-axis alignment relative to other
   int           y_off;          // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW how much offset to add for Y-axis alignment
   int           space;          // #MIN_0 how much space to add between layers
+  int           twod_z;         // #CONDSHOW_ON_rel:ABOVE,BELOW how much to add/subtract to y coordinate of this layer in 2D coordinates, to equate for the ABOVE or BELOW position in 3D coordinates that moves one z value up or down -- i.e., the max height of the row of layers that live within a given z coordinate
   
   String        GetTypeDecoKey() const override { return "Layer"; }
 
@@ -121,6 +122,8 @@ public:
   // compute new 3d position for this layer relative to other layer -- returns false if not using relative positioning (including if other is not set)
   virtual bool  ComputePos2D(taVector2i& pos, Layer* lay);
   // compute new 3d position for this layer relative to other layer -- returns false if not using relative positioning (including if other is not set)
+  virtual bool  ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2i& oth_pos);
+  // #IGNORE common parts of 2d that apply to 3d as well (i.e., not the above, below parts)
   
   TA_SIMPLE_BASEFUNS(LayerRelPos);
 private:
@@ -391,13 +394,13 @@ public:
   
   virtual void  SetDefaultPos();
   // #IGNORE initialize position of layer
-  virtual void  SetDefaultPos2d();
-  // #IGNORE initialize position of layer -- 2d
 
   virtual void  PositionRightOf(Layer* lay, int space = 2);
-  // position this layer to the right of given other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
+  // #CAT_Structure position this layer to the right of given other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
   virtual void  PositionBehind(Layer* lay, int space = 2);
-  // position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
+  // #CAT_Structure position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
+  virtual void  PositionAbove(Layer* lay, int space = 2);
+  // #CAT_Structure position this layer above other layer -- does this for both 3D and 2D displays, with given amount of space -- sets the pos_rel settings
   
   virtual void  Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)

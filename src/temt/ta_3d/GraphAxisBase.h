@@ -25,6 +25,7 @@
 #include <MinMax>
 #include <DataCol>
 #include <String_Array>
+#include <taMath_float>
 
 // declare all other types mentioned but not required to include:
 class GraphColView; // 
@@ -111,6 +112,7 @@ public:
 
   inline float          DataToPlot(float data)
   { if(range.Range() == 0.0f) return 0.0f;
+    if(taMath_float::isnan(data)) data = 0.0f;
     float rval = axis_length * range.Normalize(data); if(flip) rval = axis_length - rval;
     return rval; }
   // convert data value to plotting value

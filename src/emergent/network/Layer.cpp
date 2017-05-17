@@ -37,13 +37,14 @@ void LayerRelPos::Initialize() {
   y_align = FRONT;
   y_off = 0;
   space = 2;
+  twod_z = 20;
 }
 
 bool LayerRelPos::ComputePos3D(taVector3i& pos, Layer* lay) {
   if(!other || rel == ABS_POS)
     return false;
   pos.z = other->pos_abs.z;     // default
-  ComputePos2D(pos, lay);       // handles alignment
+  ComputePos2D_impl(pos, lay, other->pos_abs);
   if(rel == ABOVE) {
     pos.z = other->pos_abs.z + 1;
   }
@@ -54,6 +55,19 @@ bool LayerRelPos::ComputePos3D(taVector3i& pos, Layer* lay) {
 }
 
 bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
+  if(!other || rel == ABS_POS)
+    return false;
+  ComputePos2D_impl(pos, lay, other->pos2d_abs);
+  if(rel == ABOVE) {
+    pos.y = other->pos2d_abs.y + twod_z;
+  }
+  else if(rel == BELOW) {
+    pos.y = other->pos2d_abs.y - twod_z;
+  }
+  return true;
+}
+
+bool LayerRelPos::ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2i& oth_pos) {
   if(!other)
     return false;
   switch(rel) {
@@ -61,19 +75,19 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
     return false;
   }
   case RIGHT_OF: {
-    pos.x = other->pos_abs.x + other->scaled_disp_geom.x + space;
+    pos.x = oth_pos.x + other->scaled_disp_geom.x + space;
     break;
   }
   case LEFT_OF: {
-    pos.x = other->pos_abs.x - lay->scaled_disp_geom.x - space;
+    pos.x = oth_pos.x - lay->scaled_disp_geom.x - space;
     break;
   }
   case BEHIND: {
-    pos.y = other->pos_abs.y + other->scaled_disp_geom.y + space;
+    pos.y = oth_pos.y + other->scaled_disp_geom.y + space;
     break;
   }
   case FRONT_OF: {
-    pos.y = other->pos_abs.y - lay->scaled_disp_geom.y - space;
+    pos.y = oth_pos.y - lay->scaled_disp_geom.y - space;
     break;
   }
   default:
@@ -83,15 +97,15 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
   if(!(rel == LEFT_OF || rel == RIGHT_OF)) {
     switch(x_align) {
     case LEFT: {
-      pos.x = x_off + other->pos_abs.x;
+      pos.x = x_off + oth_pos.x;
       break;
     }
     case MIDDLE: {
-      pos.x = x_off + (other->pos_abs.x + (other->scaled_disp_geom.x / 2)) - (lay->scaled_disp_geom.x / 2);
+      pos.x = x_off + (oth_pos.x + (other->scaled_disp_geom.x / 2)) - (lay->scaled_disp_geom.x / 2);
       break;
     }
     case RIGHT: {
-      pos.x = x_off + (other->pos_abs.x + other->scaled_disp_geom.x) - lay->scaled_disp_geom.x;
+      pos.x = x_off + (oth_pos.x + other->scaled_disp_geom.x) - lay->scaled_disp_geom.x;
       break;
     }
     }
@@ -99,15 +113,15 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
   if(!(rel == FRONT_OF || rel == BEHIND)) {
     switch(y_align) {
     case FRONT: {
-      pos.y = y_off + other->pos_abs.y;
+      pos.y = y_off + oth_pos.y;
       break;
     }
     case CENTER: {
-      pos.y = y_off + (other->pos_abs.y + (other->scaled_disp_geom.y / 2)) - (lay->scaled_disp_geom.y / 2);
+      pos.y = y_off + (oth_pos.y + (other->scaled_disp_geom.y / 2)) - (lay->scaled_disp_geom.y / 2);
       break;
     }
     case BACK: {
-      pos.y = y_off + (other->pos_abs.y + other->scaled_disp_geom.y) - lay->scaled_disp_geom.y;
+      pos.y = y_off + (oth_pos.y + other->scaled_disp_geom.y) - lay->scaled_disp_geom.y;
       break;
     }
     }
@@ -202,7 +216,6 @@ void Layer::InitLinks() {
     own_net->ClearIntact();
   if(!taMisc::is_loading) {
     SetDefaultPos();
-    SetDefaultPos2d();
   }
   units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
@@ -736,29 +749,19 @@ bool Layer::SetLayerSpec(LayerSpec*) {
 void Layer::SetDefaultPos() {
   if(!own_net) return;
   int index = own_net->layers.FindLeafEl(this);
-  taVector3i ps = 0;
-  for(int i=0;i<index;i++) {
-    Layer* lay = (Layer*)own_net->layers.Leaf(i);
-    ps.z = MAX(ps.z, lay->pos.z + 1);
+  if(index == 0) {              // first guy..
+    taVector3i ps3 = 0;
+    taVector2i ps2 = 0;
+    SetAbsPos(ps3);
+    SetAbsPos2d(ps2);
+    return;
   }
-  SetAbsPos(ps);
-}
-
-void Layer::SetDefaultPos2d() {
-  if(!own_net) return;
-  int index = own_net->layers.FindLeafEl(this);
-  taVector2i ps;
-  ps.x = pos.x;		// should transfer..
-  ps.y= 0;			// adapt y to fit..
-  for(int i=0;i<index;i++) {
-    Layer* lay = (Layer*)own_net->layers.Leaf(i);
-    ps.y = MAX(ps.y, lay->pos2d.y + lay->scaled_disp_geom.y + 2);
-  }
-  SetAbsPos2d(ps);
+  Layer* prev = own_net->layers.Leaf(index-1);
+  PositionAbove(prev);
 }
 
 void Layer::PositionRightOf(Layer* lay, int space) {
-  if(TestWarning((lay->pos_rel.other == this), "PositionRightOf",
+  if(TestWarning((lay == this || lay->pos_rel.other == this), "PositionRightOf",
                  "two layers cannot have reciprocal relative positions -- not good!  cannot in general be any loops in the relationship connectivity!")) {
     return;
   }
@@ -769,12 +772,23 @@ void Layer::PositionRightOf(Layer* lay, int space) {
 }
 
 void Layer::PositionBehind(Layer* lay, int space) {
-  if(TestWarning((lay->pos_rel.other == this), "PositionBehind",
+  if(TestWarning((lay == this || lay->pos_rel.other == this), "PositionBehind",
                  "two layers cannot have reciprocal relative positions -- not good!  cannot in general be any loops in the relationship connectivity!")) {
     return;
   }
   pos_rel.other = lay;
   pos_rel.rel = LayerRelPos::BEHIND;
+  pos_rel.space = space;
+  lay->RecomputeGeometry();
+}
+
+void Layer::PositionAbove(Layer* lay, int space) {
+  if(TestWarning((lay == this || lay->pos_rel.other == this), "PositionAbove",
+                 "two layers cannot have reciprocal relative positions -- not good!  cannot in general be any loops in the relationship connectivity!")) {
+    return;
+  }
+  pos_rel.other = lay;
+  pos_rel.rel = LayerRelPos::ABOVE;
   pos_rel.space = space;
   lay->RecomputeGeometry();
 }

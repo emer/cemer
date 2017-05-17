@@ -31,7 +31,6 @@
 #include <taVector2i>
 #include <taSvg>
 #include <float_Matrix>
-#include <taMath_float>
 
 #if (QT_VERSION >= 0x050000)
 #include <QGuiApplication>
