@@ -141,7 +141,7 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
     taBase* tab = (taBase*)dl->data();
     MemberDef* md = item->md();
     if(md) {
-      if(md->IsEditorHidden() || md->HasTreeHidden() || md->HasNoSearch()
+      if(md->IsInvisible() || md->HasNoSearch()
          || md->HasNoFind() || md->IsStatic() || md->HasExpert()) {
         ++it; continue;
       }

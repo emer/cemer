@@ -3555,7 +3555,7 @@ void Network::UpdateLayerGroupGeom() {
     if(lay->Iconified()) continue;
     max_disp_size.x = MAX(max_disp_size.x, lay->pos_abs.x + lay->scaled_disp_geom.x);
     max_disp_size.y = MAX(max_disp_size.y, lay->pos_abs.y + lay->scaled_disp_geom.y);
-    max_disp_size.z = MAX(max_disp_size.z, lay->pos_abs.z);
+    max_disp_size.z = MAX(max_disp_size.z, lay->pos_abs.z + 1); // extra bonus for unit vars
 
     max_disp_size2d.x = MAX(max_disp_size2d.x, lay->pos2d_abs.x + lay->scaled_disp_geom.x);
     max_disp_size2d.y = MAX(max_disp_size2d.y, lay->pos2d_abs.y + lay->scaled_disp_geom.y);
