@@ -1049,6 +1049,7 @@ TypeDef* ProgVar::GetOurTypeDef() const {
   case T_UnDef:
     return &TA_void;
   }
+  return &TA_void;
 }
 
 ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
