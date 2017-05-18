@@ -136,6 +136,8 @@ public:
   // #CAT_ProgVar set variable value from string -- does not change the type of the variable
   virtual String GetStringVal();
   // #CAT_ProgVar get value of variable as a string
+  virtual TypeDef* GetOurTypeDef() const;
+  // #CAT_ProgVar get a TypeDef for the type we are
 
   static TypeDef* GetTypeDefFromString(const String& tstr, bool& ref);
   // #IGNORE get a typedef from a type string -- also indicates if it is a reference arg
@@ -226,6 +228,7 @@ public:
   bool         BrowserCollapseAll() override;
   bool         BrowserEditEnable() const override { return true; }
   bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
+  String       GetDiffString() const override;
   
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override; // don't save the unused vals
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;

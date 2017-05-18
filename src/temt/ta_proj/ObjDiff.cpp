@@ -44,6 +44,7 @@ void ObjDiff::Initialize() {
   modify_a = false;
   modify_b = false;
   a_only = false;
+  same_proj = false;
 }
 
 bool ObjDiff::DisplayDialog(bool modal_dlg) {
@@ -59,6 +60,15 @@ int ObjDiff::Diff(taBase* obj_a, taBase* obj_b) {
 
   a_top = obj_a;
   b_top = obj_b;
+
+  taProject* a_proj = (taProject*)obj_a->GetThisOrOwner(&TA_taProject);
+  taProject* b_proj = (taProject*)obj_b->GetThisOrOwner(&TA_taProject);
+  same_proj = (a_proj != NULL && a_proj == b_proj);
+  
+  a_path_names = obj_a->GetPathFromProj();
+  a_path_idx = obj_a->GetPath(a_proj);
+  b_path_names = obj_b->GetPathFromProj();
+  b_path_idx = obj_b->GetPath(b_proj);
 
   DiffObjs(NULL, obj_a, obj_b);
   
@@ -334,8 +344,8 @@ int ObjDiff::DiffMembers(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj) {
   
   if(td->HasOption("DIFF_STRING")) {
     diff_string = true;
-    String a_val = a_obj->BrowserEditString();
-    String b_val = b_obj->BrowserEditString();
+    String a_val = a_obj->GetDiffString();
+    String b_val = b_obj->GetDiffString();
     if(a_val != b_val) {
       // co-opt the parent record now!
       par_rec->a_val = a_val;
@@ -732,18 +742,35 @@ ObjDiffRec* ObjDiff::NewRec
   return rec;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//              Patch Gen
+
+bool ObjDiff::FixObjPaths(String& val, bool a_or_b) {
+  if(!same_proj) return false;
+  int n_rep = 0;
+  if(a_or_b) {                  // a getting from b
+    n_rep = val.gsub(b_path_idx, a_path_idx);
+    n_rep += val.gsub(b_path_names, a_path_names);
+  }
+  else {                        // b getting from a
+    n_rep = val.gsub(b_path_idx, a_path_idx);
+    n_rep += val.gsub(b_path_names, a_path_names);
+  }
+  return (n_rep > 0);
+}
+
 void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
   if(!patch) return;
   if(rec->IsMembers()) {
-    patch->NewRec_AssignMbr(rec->a_indep_obj, rec->a_obj, rec->mdef, rec->b_val);
+    patch->NewRec_AssignMbr(this, true, rec->a_indep_obj, rec->a_obj, rec->mdef, rec->b_val);
   }
   else if(rec->IsObjects()) {
     if(rec->a_indep_obj->GetTypeDef() == rec->b_indep_obj->GetTypeDef()) { // just diff name
-      patch->NewRec_AssignObj(rec->a_indep_obj, rec->b_indep_obj);
+      patch->NewRec_AssignObj(this, true, rec->a_indep_obj, rec->b_indep_obj);
     }
     else {                      // replace
       taList_impl* own_obj = (taList_impl*)rec->par_rec->a_obj; // where to replace in a
-      patch->NewRec_Replace(own_obj, rec->a_indep_obj, rec->b_indep_obj);
+      patch->NewRec_Replace(this, true, own_obj, rec->a_indep_obj, rec->b_indep_obj);
     }
   }
   // todo: value!
@@ -752,15 +779,15 @@ void ObjDiff::GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch) {
 void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
   if(!patch) return;
   if(rec->IsMembers()) {
-    patch->NewRec_AssignMbr(rec->b_indep_obj, rec->b_obj, rec->mdef, rec->a_val);
+    patch->NewRec_AssignMbr(this, false, rec->b_indep_obj, rec->b_obj, rec->mdef, rec->a_val);
   }
   else if(rec->IsObjects()) {
     if(rec->b_indep_obj->GetTypeDef() == rec->a_indep_obj->GetTypeDef()) { // just diff name
-      patch->NewRec_AssignObj(rec->b_indep_obj, rec->a_indep_obj);
+      patch->NewRec_AssignObj(this, false, rec->b_indep_obj, rec->a_indep_obj);
     }
     else {                      // replace
       taList_impl* own_obj = (taList_impl*)rec->par_rec->b_obj; // where to replace in b
-      patch->NewRec_Replace(own_obj, rec->b_indep_obj, rec->a_indep_obj);
+      patch->NewRec_Replace(this, false, own_obj, rec->b_indep_obj, rec->a_indep_obj);
     }
   }
   // todo: value!
@@ -769,7 +796,7 @@ void ObjDiff::GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch) {
 void ObjDiff::GenPatch_DelA(ObjDiffRec* rec, Patch* patch) {
   if(!patch) return;
   if(rec->IsObjects()) {
-    patch->NewRec_Delete(rec->a_indep_obj);
+    patch->NewRec_Delete(this, true, rec->a_indep_obj);
   }
   // todo: value!
 }
@@ -777,7 +804,7 @@ void ObjDiff::GenPatch_DelA(ObjDiffRec* rec, Patch* patch) {
 void ObjDiff::GenPatch_DelB(ObjDiffRec* rec, Patch* patch) {
   if(!patch) return;
   if(rec->IsObjects()) {
-    patch->NewRec_Delete(rec->b_indep_obj);
+    patch->NewRec_Delete(this, false, rec->b_indep_obj);
   }
   // todo: value!
 }
@@ -797,7 +824,7 @@ void ObjDiff::GenPatch_AddA(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) 
       }
     }
     taBase* bef_obj = rec->b_obj;
-    patch->NewRec_Insert(own_obj, rec->a_indep_obj, aft_obj, bef_obj);
+    patch->NewRec_Insert(this, false, own_obj, rec->a_indep_obj, aft_obj, bef_obj);
   }
   // todo: value!
 }
@@ -817,7 +844,7 @@ void ObjDiff::GenPatch_AddB(ObjDiffRec* rec, Patch* patch, ObjDiffRec* prv_rec) 
       }
     }
     taBase* bef_obj = rec->a_obj;
-    patch->NewRec_Insert(own_obj, rec->b_indep_obj, aft_obj, bef_obj);
+    patch->NewRec_Insert(this, true, own_obj, rec->b_indep_obj, aft_obj, bef_obj);
   }
   // todo: value!
 }

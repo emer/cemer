@@ -27,6 +27,7 @@
 class taProject; //
 class taList_impl; //
 class PatchRec; //
+class ObjDiff; //
 
 TA_SMART_PTRS(TA_API, PatchRec); // PatchRecRef
 
@@ -97,18 +98,18 @@ public:
   virtual taBase* CheckObjType(taProject* proj, taBase* obj, const String& path_used);
   // check that object is of the right type -- if not, do something..
 
-  virtual bool  NewRec_impl(taBase* obj, const String& val);
+  virtual bool  NewRec_impl(ObjDiff* diff, bool a_or_b, taBase* obj, const String& val);
   // #IGNORE
-  virtual bool  NewRec_AssignMbr(taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val);
+  virtual bool  NewRec_AssignMbr(ObjDiff* diff, bool a_or_b, taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val);
   // #IGNORE 
-  virtual bool  NewRec_AssignObj(taBase* trg_obj, taBase* src_obj);
+  virtual bool  NewRec_AssignObj(ObjDiff* diff, bool a_or_b, taBase* trg_obj, taBase* src_obj);
   // #IGNORE 
-  virtual bool  NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj);
+  virtual bool  NewRec_Replace(ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* trg_obj, taBase* src_obj);
   // #IGNORE 
-  virtual bool  NewRec_Delete(taBase* obj);
+  virtual bool  NewRec_Delete(ObjDiff* diff, bool a_or_b, taBase* obj);
   // #IGNORE 
   virtual bool  NewRec_Insert
-    (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
+    (ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
   // #IGNORE 
 
 

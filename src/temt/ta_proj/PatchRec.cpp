@@ -16,6 +16,7 @@
 #include "PatchRec.h"
 #include <taProject>
 #include <MemberDef>
+#include <ObjDiff>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(PatchRec);
@@ -318,7 +319,7 @@ bool PatchRec::ApplyPatch_Insert(taProject* proj) {
 // new
 
 
-bool PatchRec::NewRec_impl(taBase* obj, const String& val) {
+bool PatchRec::NewRec_impl(ObjDiff* diff, bool a_or_b, taBase* obj, const String& val) {
   if(obj) {
     obj_path_names = obj->GetPathFromProj();
     obj_path_idx = obj->GetPath(obj->GetThisOrOwner(&TA_taProject));
@@ -333,8 +334,10 @@ bool PatchRec::NewRec_impl(taBase* obj, const String& val) {
 }
 
 bool PatchRec::NewRec_AssignMbr
-(taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val) {
-  bool rval = NewRec_impl(trg_indep_obj, val);
+(ObjDiff* diff, bool a_or_b, taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val_in) {
+  String val= val_in;
+  diff->FixObjPaths(val, a_or_b);
+  bool rval = NewRec_impl(diff, a_or_b, trg_indep_obj, val);
   if(!rval) return false;
   action = PatchRec::ASSIGN;
   String path;
@@ -348,16 +351,17 @@ bool PatchRec::NewRec_AssignMbr
   return rval;
 }
 
-bool PatchRec::NewRec_AssignObj(taBase* trg_obj, taBase* src_obj) {
+bool PatchRec::NewRec_AssignObj(ObjDiff* diff, bool a_or_b, taBase* trg_obj, taBase* src_obj) {
   String val;
   src_obj->Save_String(val);
-  bool rval = NewRec_impl(trg_obj, val);
+  diff->FixObjPaths(val, a_or_b);
+  bool rval = NewRec_impl(diff, a_or_b, trg_obj, val);
   if(!rval) return false;
   action = PatchRec::ASSIGN;
   return rval;
 }
 
-bool PatchRec::NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj) {
+bool PatchRec::NewRec_Replace(ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* trg_obj, taBase* src_obj) {
   if(!own_obj || !own_obj->InheritsFrom(&TA_taList_impl)) {
     taMisc::Warning("For Replace Patch action, owning object not a list!",
                     own_obj->GetPathNames());
@@ -365,7 +369,8 @@ bool PatchRec::NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src
   }
   String val;
   src_obj->Save_String(val);
-  bool rval = NewRec_impl(own_obj, val);
+  diff->FixObjPaths(val, a_or_b);
+  bool rval = NewRec_impl(diff, a_or_b, own_obj, val);
   if(!rval) return false;
   action = PatchRec::REPLACE;
   new_obj_type = src_obj->GetTypeDef()->name;
@@ -374,17 +379,17 @@ bool PatchRec::NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src
   return rval;
 }
 
-bool PatchRec::NewRec_Delete(taBase* obj) {
+bool PatchRec::NewRec_Delete(ObjDiff* diff, bool a_or_b, taBase* obj) {
   String val;
   obj->Save_String(val);
-  bool rval = NewRec_impl(obj, val);
+  bool rval = NewRec_impl(diff, a_or_b, obj, val);
   if(!rval) return false;
   action = PatchRec::DELETE;
   return rval;
 }
 
 bool PatchRec::NewRec_Insert
-(taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj) {
+(ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj) {
   if(!own_obj || !own_obj->InheritsFrom(&TA_taList_impl)) {
     taMisc::Warning("For Insert Patch action, owning object not a list!",
                     own_obj->GetPathNames());
@@ -393,7 +398,8 @@ bool PatchRec::NewRec_Insert
 
   String val;
   add_obj->Save_String(val);
-  bool rval = NewRec_impl(own_obj, val);
+  diff->FixObjPaths(val, a_or_b);
+  bool rval = NewRec_impl(diff, a_or_b, own_obj, val);
   if(!rval) return false;
   action = PatchRec::INSERT;
   new_obj_type = add_obj->GetTypeDef()->name;

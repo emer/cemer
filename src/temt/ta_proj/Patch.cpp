@@ -19,6 +19,7 @@
 #include <taProject>
 #include <Patch_Group>
 #include <NameVar_Array>
+#include <ObjDiff>
 
 #include <taMisc>
 
@@ -55,34 +56,34 @@ PatchRec* Patch::NewRec_impl(const String& subgp) {
 }
 
 PatchRec* Patch::NewRec_AssignMbr
-(taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val) {
+(ObjDiff* diff, bool a_or_b, taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val) {
   PatchRec* rval = NewRec_impl(cur_subgp);
-  rval->NewRec_AssignMbr(trg_indep_obj, trg_mbr_obj, md, val);
+  rval->NewRec_AssignMbr(diff, a_or_b, trg_indep_obj, trg_mbr_obj, md, val);
   return rval;
 }
 
-PatchRec* Patch::NewRec_AssignObj(taBase* trg_obj, taBase* src_obj) {
+PatchRec* Patch::NewRec_AssignObj(ObjDiff* diff, bool a_or_b, taBase* trg_obj, taBase* src_obj) {
   PatchRec* rval = NewRec_impl(cur_subgp);
-  rval->NewRec_AssignObj(trg_obj, src_obj);
+  rval->NewRec_AssignObj(diff, a_or_b, trg_obj, src_obj);
   return rval;
 }
 
-PatchRec* Patch::NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj) {
+PatchRec* Patch::NewRec_Replace(ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* trg_obj, taBase* src_obj) {
   PatchRec* rval = NewRec_impl(cur_subgp);
-  rval->NewRec_Replace(own_obj, trg_obj, src_obj);
+  rval->NewRec_Replace(diff, a_or_b, own_obj, trg_obj, src_obj);
   return rval;
 }
 
-PatchRec* Patch::NewRec_Delete(taBase* obj) {
+PatchRec* Patch::NewRec_Delete(ObjDiff* diff, bool a_or_b, taBase* obj) {
   PatchRec* rval = NewRec_impl(cur_subgp);
-  rval->NewRec_Delete(obj);
+  rval->NewRec_Delete(diff, a_or_b, obj);
   return rval;
 }
 
 PatchRec* Patch::NewRec_Insert
-(taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj) {
+(ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj) {
   PatchRec* rval = NewRec_impl(cur_subgp);
-  rval->NewRec_Insert(own_obj, add_obj, aft_obj, bef_obj);
+  rval->NewRec_Insert(diff, a_or_b, own_obj, add_obj, aft_obj, bef_obj);
   return rval;
 }
 

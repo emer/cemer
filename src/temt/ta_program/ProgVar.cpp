@@ -1030,6 +1030,27 @@ cssEl* ProgVar::NewCssEl() {
   return &cssMisc::Void;
 }
 
+TypeDef* ProgVar::GetOurTypeDef() const {
+  switch(var_type) {
+  case T_Int:
+    return &TA_int;
+  case T_Real:
+    return &TA_double;
+  case T_String:
+    return &TA_taString;
+  case T_Bool:
+    return &TA_bool;
+  case T_Object:
+    return object_type;
+  case T_HardEnum:
+    return hard_enum_type;
+  case T_DynEnum:
+    return &TA_DynEnum;
+  case T_UnDef:
+    return &TA_void;
+  }
+}
+
 ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
   if(td == NULL) return T_UnDef;
   if(td->IsBool()) return T_Bool;
@@ -1128,8 +1149,27 @@ void ProgVar::GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr) c
     return;
   }
   else {
-    ft->value = BrowserEditString();
+    ft->value = GetDiffString();
   }
+}
+
+String ProgVar::GetDiffString() const {
+  if(HasVarFlag(SAVE_VAL)) {
+    return BrowserEditString();
+  }
+  String rval = name;
+  TypeDef* td = GetOurTypeDef();
+  rval += " (" + td->name + ")";
+  if(HasVarFlag(FUN_ARG) && reference) {
+    rval = rval.before(')',-1) + "&)";
+  }
+  if(object_type && HasVarFlag(NEW_OBJ)) {
+    rval += " -- new";
+  }
+  if(init_from) {
+    rval += "  --  init from: " + init_from->name;
+  }
+  return rval;
 }
 
 bool ProgVar::BrowserEditSet(const String& code, int move_after) {

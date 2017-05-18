@@ -445,15 +445,47 @@ void LeabraConSpec::ExpLrateSched(int epcs_per_step, int n_steps, float pct_per_
   UpdateAfterEdit();            // needed to update the sub guys
 }
 
-void LeabraConSpec::LinearLrateSched(int epcs_per_step, int n_steps, float final_factor) {
+void LeabraConSpec::LinearLrateSched(int epcs_per_step, int n_steps, float final_factor,
+                                     bool interpolate) {
   float decr = (1.0f - final_factor) / (n_steps - 1.0f);
   float cur_pct = 1.0f;
   lrate_sched.SetSize(n_steps);
+  lrate_sched.interpolate = interpolate;
   for(int i=0;i<n_steps;i++) {
     lrate_sched[i]->start_ctr = i * epcs_per_step;
     lrate_sched[i]->start_val = cur_pct;
     lrate_sched[i]->UpdateAfterEdit();
     cur_pct -= decr;
+  }
+  UpdateAfterEdit();            // needed to update the sub guys
+}
+
+void LeabraConSpec::TriangleLrateSched(int epcs_per_step, int n_cycles, float low_factor, int log_drop_cycles, bool interpolate) {
+  
+  float log_ns[3] = {1, .5f, .2f};
+  lrate_sched.interpolate = interpolate;
+
+  lrate_sched.SetSize(n_cycles * 2 + 1);
+  lrate_sched[0]->start_ctr = 0;
+  lrate_sched[0]->start_val = 1.0f;
+  lrate_sched[0]->UpdateAfterEdit();
+
+  int log_drops = 0;
+  float high_val = 1.0f;
+
+  for(int i=0;i<n_cycles;i++) {
+    int idx = i*2 + 1;
+    lrate_sched[idx]->start_ctr = idx * epcs_per_step;
+    lrate_sched[idx]->start_val = high_val;
+    lrate_sched[idx]->UpdateAfterEdit();
+    idx++;
+    lrate_sched[idx]->start_ctr = idx * epcs_per_step;
+    lrate_sched[idx]->start_val = low_factor * high_val;
+    lrate_sched[idx]->UpdateAfterEdit();
+    if((i+1) % log_drop_cycles == 0) {
+      log_drops++;
+      high_val = log_ns[log_drops%3] * powf(10.0f,-(log_drops/3));
+    }
   }
   UpdateAfterEdit();            // needed to update the sub guys
 }
@@ -617,6 +649,30 @@ void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   taMisc::Info("weight max of:", String(mx_wt), "at trial:", String(mx_trl),
                "half weight of:", String(half_wt), "at trial:", String(half_trl));
 
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
+void LeabraConSpec::GraphLrateSched(DataTable* graph_data) {
+  taProject* proj = GetMyProj();
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_LrateSched", true);
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* epc = graph_data->FindMakeColName("epoch", idx, VT_FLOAT);
+  DataCol* fact = graph_data->FindMakeColName("factor", idx, VT_FLOAT);
+  // epc->SetUserData("MIN", 0.0f);
+  // epc->SetUserData("MAX", 1.0f);
+  fact->SetUserData("MIN", 0.0f);
+  fact->SetUserData("MAX", 1.0f);
+
+  for(int i = 0; i < lrate_sched.size; i++) {
+    graph_data->AddBlankRow();
+    epc->SetValAsFloat(lrate_sched[i]->start_ctr, -1);
+    fact->SetValAsFloat(lrate_sched[i]->start_val, -1);
+  }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 }

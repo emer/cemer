@@ -1446,6 +1446,9 @@ public:
 
   virtual bool          DiffCompare(taBase* cmp_obj);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
+  virtual String        GetDiffString() const;
+  // #IGNORE for objects with DIFF_STRING option to perform DiffCompare based on a single string representation of the object, this returns the string to use -- defaults to BrowserEditString -- can override to present different info for diffing
+  
   virtual bool          ChangeMyType(TypeDef* new_type);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
 

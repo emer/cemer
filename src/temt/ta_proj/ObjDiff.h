@@ -42,6 +42,12 @@ public:
   bool                  modify_a; // apply changes to A after generating patches?
   bool                  modify_b; // apply changes to B after generating patches?
   bool                  a_only;   // only allow changes to a-side -- for diffing against a fixed B record -- affects the diff browser and patch creation
+  bool                  same_proj; // are a and b in the same project?  need to fix paths
+  String                a_path_names; // path to a in names
+  String                a_path_idx; // path to a in index
+  String                b_path_names; // path to b in names
+  String                b_path_idx; // path to b in index
+  
   
   ObjDiffRec_List       diffs;
   // #NO_SAVE diff records, in a parallel, side-by-side format
@@ -137,6 +143,9 @@ public:
   virtual void SetCurSubgp(taBase* obj, taProject* proj);
   virtual void ReorderProjSubgps(Patch* pat);
   virtual void NamePatch(Patch* patch, taBase* from_obj, taBase* to_obj);
+
+  virtual bool FixObjPaths(String& val, bool a_or_b);
+  // fix the paths in dump file value val for within-project diffs
   
   virtual void GenPatch_CopyAB(ObjDiffRec* rec, Patch* patch);
   virtual void GenPatch_CopyBA(ObjDiffRec* rec, Patch* patch);

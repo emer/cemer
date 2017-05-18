@@ -24,6 +24,7 @@
 #include <PatchLib>
 
 // declare all other types mentioned but not required to include:
+class ObjDiff; //
 
 taTypeDef_Of(Patch);
 
@@ -73,16 +74,16 @@ public:
   virtual PatchRec*  NewRec_impl(const String& subgp = _nilString);
   // #IGNORE
   virtual PatchRec*  NewRec_AssignMbr
-    (taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val);
+    (ObjDiff* diff, bool a_or_b, taBase* trg_indep_obj, taBase* trg_mbr_obj, MemberDef* md, const String& val);
   // #IGNORE 
-  virtual PatchRec*  NewRec_AssignObj(taBase* trg_obj, taBase* src_obj);
+  virtual PatchRec*  NewRec_AssignObj(ObjDiff* diff, bool a_or_b, taBase* trg_obj, taBase* src_obj);
   // #IGNORE 
-  virtual PatchRec*  NewRec_Replace(taList_impl* own_obj, taBase* trg_obj, taBase* src_obj);
+  virtual PatchRec*  NewRec_Replace(ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* trg_obj, taBase* src_obj);
   // #IGNORE 
-  virtual PatchRec*  NewRec_Delete(taBase* obj);
+  virtual PatchRec*  NewRec_Delete(ObjDiff* diff, bool a_or_b, taBase* obj);
   // #IGNORE 
   virtual PatchRec*  NewRec_Insert
-    (taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
+    (ObjDiff* diff, bool a_or_b, taList_impl* own_obj, taBase* add_obj, taBase* aft_obj, taBase* bef_obj);
   // #IGNORE 
 
   ////////////////////////////////////////

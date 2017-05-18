@@ -3324,6 +3324,10 @@ String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
   return rval;
 }
 
+String taBase::GetDiffString() const {
+  return BrowserEditString();
+}
+
 bool taBase::DiffCompare(taBase* cmp_obj) {
   if(TestError(!cmp_obj, "DiffCompare", "cmp_obj is null")) return false;
   
