@@ -1240,11 +1240,22 @@ void taProject::SvnPrevDiff() {
     return;
   }
 
-  change_str = taDateTime::fmTimeToString(times[0], "yyyy_MM_dd_hh_mm_ss");
-  prev_rev = revs[0];       // should be the last one
+  // find highest revision
+  int highest_rev = -1;
+  int rev_idx = -1;
+  for(int i=0; i<revs.size; i++) {
+    int revt = revs[i];
+    if(revt > highest_rev) {
+      highest_rev = revt;
+      rev_idx = i;
+    }
+  }
+  
+  change_str = taDateTime::fmTimeToString(times[rev_idx], "yyyy_MM_dd_hh_mm_ss");
+  prev_rev = revs[rev_idx]; 
   taMisc::Info("Prior SVN revision info for file: " + fnm + " rev:",
-               String(prev_rev), "on:", change_str, "by:", authors[0], "message:\n",
-               commit_msgs[0]);
+               String(prev_rev), "on:", change_str, "by:", authors[rev_idx], "message:\n",
+               commit_msgs[rev_idx]);
   String prev_fnm = fnm.before(".proj") + "_" + String(prev_rev) + ".proj";
 
   if(taMisc::FileExists(prev_fnm)) {

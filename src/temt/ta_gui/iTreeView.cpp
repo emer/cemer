@@ -601,11 +601,16 @@ void iTreeView::ExpandDefault() {
   
   if (tv_flags & TV_EXPAND_DISABLED) exp_flags |= EF_EXPAND_DISABLED;
   ExpandAll_impl(m_def_exp_levels, exp_flags);
-  if(topLevelItemCount() > 0) {
-    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
-    if(node)
-      scrollTo(node);
-  }
+  ScrollTo(0);
+  QTimer::singleShot(250, this, SLOT(ScrollTo(0)) );
+  // taMisc::Info("trying to scroll to top!");
+  // if(topLevelItemCount() > 0) {
+  //   iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
+  //   if(node) {
+  //     taMisc::ProcessEvents();
+  //     scrollTo(node);
+  //   }
+  // }
 }
 
 void iTreeView::GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state) {
