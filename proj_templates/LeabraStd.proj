@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10721
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10743
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -16974,12 +16974,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
+       dynlr {dwt_norm=NO_NORM: norm_tau=100: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=3: norm_dt=0.01: norm_dt_c=0.99: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
        wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @[1] {
@@ -17013,12 +17013,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
+       dynlr {dwt_norm=NO_NORM: norm_tau=100: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=3: norm_dt=0.01: norm_dt_c=0.99: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
        wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -17041,12 +17041,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
-     dwt_zone {on=0: con_norm=1: s_tau=50: l_tau=2: norm_tau=100: gain=2: lrate_mult=3: s_dt=0.02: l_dt=0.5: norm_dt=0.01: };
+     dynlr {dwt_norm=NO_NORM: norm_tau=100: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=3: norm_dt=0.01: norm_dt_c=0.99: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
      wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
-     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_l_lrn=0: sign_lrn=0.001: };
+     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
     };
     FullPrjnSpec @[3] {
      name="FullPrjnSpec_0";
@@ -17083,8 +17083,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @[0] {
      name="Input";
      desc=;
-     flags=ABS_POS;
+     flags=0;
      layer_type=INPUT;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=0: };
      pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
@@ -17139,8 +17140,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @[1] {
      name="Hidden";
      desc=;
-     flags=ABS_POS;
+     flags=0;
      layer_type=HIDDEN;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=13: };
@@ -17231,8 +17233,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @[2] {
      name="Output";
      desc=;
-     flags=ABS_POS;
+     flags=0;
      layer_type=TARGET;
+     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=2: };
      pos_abs {x=0: y=0: z=2: };
      pos2d {x=0: y=6: };
@@ -17308,7 +17311,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=MANUAL_POS|ABS_POS|BUILD_INIT_WTS;
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;

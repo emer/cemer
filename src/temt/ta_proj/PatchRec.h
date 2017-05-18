@@ -75,6 +75,9 @@ public:
   virtual bool ApplyPatch(taProject* proj);
   // #BUTTON apply this patch record to given project -- can also apply at level of entire patch
 
+  virtual bool ReplaceOrigPathInVal(String& val, String& orig_path, String& new_path);
+  // #IGNORE
+  
   virtual bool ApplyPatch_Assign(taProject* proj);
   // #IGNORE
   virtual bool ApplyPatch_Replace(taProject* proj);

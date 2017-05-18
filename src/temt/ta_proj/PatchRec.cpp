@@ -158,6 +158,29 @@ bool PatchRec::ApplyPatch(taProject* proj) {
   return rval;
 }
 
+bool PatchRec::ReplaceOrigPathInVal(String& val, String& orig_path, String& new_path) {
+  while(true) {
+    if(val.contains(orig_path)) {
+      val.gsub(orig_path, new_path);
+      return true;
+    }
+    if(orig_path.endsWith(']')) {
+      orig_path = orig_path.before(']',-1);
+    }
+    if(new_path.endsWith(']')) {
+      new_path = new_path.before(']',-1);
+    }
+    if(orig_path.contains(']') && new_path.contains(']')) {
+      orig_path = orig_path.through(']',-1);
+      new_path = new_path.through(']',-1);
+    }
+    else {
+      return false;
+    }
+  }
+  return false;
+}
+
 bool PatchRec::ApplyPatch_Assign(taProject* proj) {
   taBase* obj = FindPathRobust(proj);
   if(!obj) return false;
@@ -167,14 +190,36 @@ bool PatchRec::ApplyPatch_Assign(taProject* proj) {
     MemberDef* md = TypeDef::FindMemberPathStatic
       (own_td, net_base_off, net_mbr_off, mbr_path, false); // no warn
     if(!md) {
-      ApplyInfo("could not find member:",mbr_path,"in object",
+      ApplyInfo("ASSIGN could not find member:",mbr_path,"in object",
                    obj->DisplayPath());
       return false;
     }
+    ApplyInfo("ASSIGN target:", obj_path_names, "Mbr:\n",
+              obj->DisplayPath() + "." + mbr_path, "= " + value);
     void* addr = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
     md->type->SetValStr(value, addr);
-    ApplyInfo("ASSIGN target:", obj_path_names, "Mbr:\n",
-                 obj->DisplayPath() + "." + mbr_path, "= " + value);
+    String act_val = md->type->GetValStr(addr, NULL, md, TypeDef::SC_VALUE, false);
+    if(act_val != value) {
+      if(md->type->IsBasePointerType()) {
+        String eff_val = value;
+        String cur_path = obj->GetPathFromProj();
+        if(cur_path != obj_path_names) {
+          String orig_path = obj_path_names;
+          if(ReplaceOrigPathInVal(eff_val, orig_path, cur_path)) {
+            md->type->SetValStr(eff_val, addr);
+            act_val = md->type->GetValStr(addr, NULL, md, TypeDef::SC_VALUE, false);
+            if(act_val == eff_val) { // got it!
+              obj->UpdateAfterEdit();
+              return true;
+            }
+          }
+        }
+      }
+      ApplyInfo("  Warning: ASSIGN value mismatch -- source:\n",
+                value, "\n  does not match actual:\n",
+                act_val);
+      status = WARN;
+    }
   }
   else {
     obj->Load_String(value);

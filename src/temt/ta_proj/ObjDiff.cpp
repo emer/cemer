@@ -291,10 +291,10 @@ String ObjDiff::PtrPath(TypeDef* td, void* addr, taBase* top) {
   if((td->IsPointer()) && td->IsTaBase()) {
     rbase = *((taBase**)addr);
   }
-  else if(InheritsFrom(TA_taSmartRef)) {
+  else if(td->InheritsFrom(TA_taSmartRef)) {
     rbase = ((taSmartRef*)addr)->ptr();
   }
-  else if(InheritsFrom(TA_taSmartPtr)) {
+  else if(td->InheritsFrom(TA_taSmartPtr)) {
     rbase = ((taSmartPtr*)addr)->ptr();
   }
   if(rbase) {
@@ -314,6 +314,10 @@ int ObjDiff::DiffMember(ObjDiffRec* par_rec, taBase* a_obj, taBase* b_obj, Membe
     int rollback_idx = diffs.size; // rollback to here if no further diffs
     taBase* a_sub = (taBase*)a_addr;
     taBase* b_sub = (taBase*)b_addr;
+    // we can't handle un-owned member objects actually, so bail..
+    if(a_sub->GetOwner() == NULL || b_sub->GetOwner() == NULL) {
+      return 0;
+    }
     ObjDiffRec* new_par = NewParRec(par_rec, a_sub, b_sub, md);
     int n_diffs = DiffMembers(new_par, a_sub, b_sub);
     if(n_diffs == 0) {
