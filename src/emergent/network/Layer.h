@@ -110,13 +110,29 @@ public:
   int           x_off;          // #CONDSHOW_ON_rel:FRONT_OF,BEHIND,ABOVE,BELOW how much offset to add for horizontal (x-axis) alignment
   YAlign        y_align;        // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW Y-axis alignment relative to other
   int           y_off;          // #CONDSHOW_ON_rel:LEFT_OF,RIGHT_OF,ABOVE,BELOW how much offset to add for Y-axis alignment
-  int           space;          // #MIN_0 how much space to add between layers
-  int           twod_z;         // #CONDSHOW_ON_rel:ABOVE,BELOW how much to add/subtract to y coordinate of this layer in 2D coordinates, to equate for the ABOVE or BELOW position in 3D coordinates that moves one z value up or down -- i.e., the max height of the row of layers that live within a given z coordinate
+  int           space;          // #MIN_0 how much space to add between layers -- for ABOVE, BELOW this is how much to add/subtract to y coordinate of this layer in 2D coordinates, to equate for the ABOVE or BELOW position in 3D coordinates that moves one z value up or down -- i.e., the max height of the row of layers that live within a given z coordinate
   
   String        GetTypeDecoKey() const override { return "Layer"; }
 
   inline bool   IsRel() { return (rel != ABS_POS && other); }
   // is layer using relative positioning
+
+  inline void   SetAbsPos()  { rel = ABS_POS; }
+  
+  inline void   SetLeftAlign(int x_offset = 0) { x_align = LEFT; x_off = x_offset; }
+  // set left X alignment with given offset
+  inline void   SetMiddleAlign(int x_offset = 0) { x_align = MIDDLE; x_off = x_offset; }
+  // set middle X alignment with given offset
+  inline void   SetRightAlign(int x_offset = 0) { x_align = RIGHT; x_off = x_offset; }
+  // set right X alignment with given offset
+
+  inline void   SetFrontAlign(int y_offset = 0) { y_align = FRONT; y_off = y_offset; }
+  // set front Y alignment with given offset
+  inline void   SetCenterAlign(int y_offset = 0) { y_align = CENTER; y_off = y_offset; }
+  // set center Y alignment with given offset
+  inline void   SetBackAlign(int y_offset = 0) { y_align = BACK; y_off = y_offset; }
+  // set back Y alignment with given offset
+
 
   virtual bool  ComputePos3D(taVector3i& pos, Layer* lay);
   // compute new 3d position for this layer relative to other layer -- returns false if not using relative positioning (including if other is not set)

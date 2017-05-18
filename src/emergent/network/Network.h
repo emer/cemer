@@ -992,10 +992,7 @@ public:
   virtual void  LayerZPos_Unitize();
   // #MENU #MENU_ON_Structure #CAT_Structure set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void  LayerPos_Cleanup();
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
-  virtual void  LayerPos_GridLayout_2d(int x_space = 2, int y_space = 3,
-                                       int gp_grid_x = -1, int lay_grid_x = -1);
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Structure for the 2D layer positions: arrange layers and layer subgroups into a grid with given spacing, and you can optionally constrain the x (horizontal) dimension of the grid for the subgroups within the network or layers within groups (or just the layers if no subgroups) if gp_grid_x > 0 or layer_grid_x > 0
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc) -- sets layers to use relative positioning based on their current relative positions if they overlap
   virtual void  LayerPos_GridLayout_3d(int x_space = 2, int y_space = 3,
                                        int z_size = 3, int gp_grid_x = -1,
                                        int lay_grid_x = -1);

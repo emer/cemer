@@ -52,6 +52,7 @@ taBase* ProgLib::NewProgram(Program_Group* new_owner, ObjLibEl* lib_el) {
 }
 
 taBase* ProgLib::NewProgramFmName(Program_Group* new_owner, const String& prog_nm) {
+  BuildLibrary();
   ObjLibEl* el = library.FindName(prog_nm);
   if(!el) {
     taMisc::Error("NewProgramFmName: could not find program of given name in library:",

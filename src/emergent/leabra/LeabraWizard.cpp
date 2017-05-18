@@ -1910,16 +1910,20 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   int neg_st = n_pos_pv * 2 + sp;
   int da_st = neg_st + n_neg_pv * 2 + sp;
 
+  Layer* firstlay = net->layers.Leaf(0);
+  
   if(new_pv) {
-    pv_gp->pos.SetXYZ(0,0,0);
-    pos_pv->pos_abs.SetXYZ(0,0,0);
+    if(firstlay != pos_pv) {
+      pos_pv->PositionRightOf(firstlay, sp * 2);
+    }
+    else {
+      pos_pv->SetAbsPos(0,0,0);
+    }      
     neg_pv->PositionRightOf(pos_pv, sp);
     pos_bs->PositionBehind(pos_pv, sp);
     neg_bs->PositionBehind(neg_pv, sp);
     ext_rew->PositionBehind(pos_bs, sp);
     rew_targ->PositionBehind(neg_bs, sp);
-    if(pv_gp->pos.z > 0 || pv_gp->pos.x > 0)
-      pv_gp->MovePos(-pv_gp->pos.x, -pv_gp->pos.y, -pv_gp->pos.z);
   }
 
   if(new_amyg) {
@@ -2199,7 +2203,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   // build and check
 
   net->Build();
-  net->LayerPos_Cleanup();
 
 //   if(new_laygp) {
 //     laygp->pos.z = 0;           // move back!
@@ -2912,6 +2915,7 @@ can be sure everything is ok.";
   LeabraLayer* pos_pv = NULL;
   LeabraLayer* vspatch_posd1 = NULL;
   LeabraLayer* lat_amyg = NULL;
+  LeabraLayer* lhb = NULL;
 
   if(pvlv_laygp_pv) {
     pos_pv = (LeabraLayer*)pvlv_laygp_pv->FindName("PosPV");
@@ -2921,6 +2925,7 @@ can be sure everything is ok.";
   }
   if(pvlv_laygp_da) {
     vta = (LeabraLayer*)pvlv_laygp_da->FindName("VTAp");
+    lhb = (LeabraLayer*)pvlv_laygp_da->FindName("LHbRMTg");
   }
   if(pvlv_laygp_amyg) {
     lat_amyg = (LeabraLayer*)pvlv_laygp_amyg->FindName("LatAmyg");
@@ -2944,16 +2949,16 @@ can be sure everything is ok.";
   LeabraLayer* pfc_out_d = NULL;
 
   bool new_matrix = false;
-  gpenogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPeNoGo", NULL);
-  gpi = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPi", NULL);
   matrix_go = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixGo", NULL, new_matrix);
   matrix_nogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixNoGo", NULL);
   matrix_tan = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixTAN", NULL);
   patch = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_patch", NULL);
+  gpenogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPeNoGo", NULL);
+  gpi = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPi", NULL);
   bool new_pfc  = false;
   pfc_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt", NULL, new_pfc);
   pfc_mnt_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_deep", NULL);
-  pfc_mnt_trc = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_trc", NULL, new_pfc);
+  pfc_mnt_trc = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_trc", NULL);
   pfc_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout", NULL);
   pfc_out_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout_deep", NULL);
 
@@ -3223,52 +3228,42 @@ can be sure everything is ok.";
   int bg_gp_x = pfc_gp_x * 2;
   int bg_gp_y = pfc_gp_y;
   
-  int mtx_st_x = pvlv_laygp_da->pos.x + pvlv_laygp_da->max_disp_size.x + lay_spc;
-  int mtx_st_y = 0;
-  int mtx_nogo_y = mtx_st_y + 3 * lay_spc;
-  int mtx_z = 0;
-
   int mtx_x_sz = 4;
   int mtx_y_sz = 4;
   int mtx_n = mtx_x_sz * mtx_y_sz;
 
   if(new_matrix) {
-    matrix_go->pos_abs.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+    matrix_go->PositionRightOf(lhb, lay_spc*2);
     matrix_go->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
     lay_set_geom(matrix_go, bg_gp_x, bg_gp_y);
 
     matrix_nogo->PositionBehind(matrix_go, lay_spc);
     matrix_nogo->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
     lay_set_geom(matrix_nogo, bg_gp_x, bg_gp_y);
-  }
-
-  ///////////////	GPi / Thal
-
-  int gpi_st_y = 0;
-
-  if(new_matrix) {
+    
+    patch->PositionBehind(matrix_nogo, lay_spc);
+    patch->pos_rel.SetLeftAlign();
+    lay_set_geom(patch, pfc_gp_x, pfc_gp_y, 1);
+    
+    matrix_tan->PositionBehind(matrix_nogo, lay_spc);
+    patch->pos_rel.SetRightAlign();
+    lay_set_geom(matrix_tan, 1, 1, 1);
+    matrix_tan->unit_groups = false;
+    
     gpi->PositionRightOf(matrix_go, lay_spc);
     lay_set_geom(gpi, bg_gp_x, bg_gp_y);
 
     gpenogo->PositionBehind(gpi, lay_spc);
     lay_set_geom(gpenogo, bg_gp_x, bg_gp_y);
-    
-    patch->PositionBehind(gpenogo, lay_spc);
-    lay_set_geom(patch, pfc_gp_x, pfc_gp_y, 1);
-    
-    matrix_tan->PositionBehind(patch, lay_spc);
-    lay_set_geom(matrix_tan, 1, 1, 1);
-    matrix_tan->unit_groups = false;
   }
+
 
   ///////////////	PFC Layout first -- get into z = 1
 
   int pfcu_n = 35; int pfcu_x = 5; int pfcu_y = 7;
-  int pfc_st_x = mtx_st_x;
-  int pfc_st_y = 0;
   int pfc_z = 1;
   if(new_pfc) {
-    pfc_mnt_trc->pos_abs.SetXYZ(pfc_st_x, pfc_st_y, pfc_z); 
+    pfc_mnt_trc->PositionAbove(matrix_go, mtx_y_sz * 2 * 3);
     pfc_mnt_trc->un_geom.SetXYN(4, 4, 16);
     lay_set_geom(pfc_mnt_trc, pfc_gp_x, pfc_gp_y);
 
@@ -3299,7 +3294,6 @@ can be sure everything is ok.";
   // build and check
 
   net->Build();			// rebuild after defaults in place
-  net->LayerPos_Cleanup();
 
   // move back!
   if(new_pbwm_laygp) {
@@ -3522,13 +3516,13 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // subic->un_geom.x = 12;
   // subic->un_geom.y = 1;
 
-  hip_laygp->pos.SetXYZ(0, 0, 1);
+  // hip_laygp->pos.SetXYZ(0, 0, 1);
   ecin->SetAbsPos(0, 0, 1);
-  ecout->SetAbsPos(35, 0, 1);
+  ecout->PositionRightOf(ecin);
   // subic->pos.SetXYZ(70, 0, 0);
-  dg->SetAbsPos(0, 0, 2);
-  ca3->SetAbsPos(0, 0, 3);
-  ca1->SetAbsPos(35, 0, 3);
+  dg->PositionAbove(ecin, ecin->scaled_disp_geom.y + 5);
+  ca3->PositionRightOf(dg);
+  ca1->PositionRightOf(ca3);
 
   //////////////////////////////////////////////////////////////////////////////////
   // params
@@ -3619,7 +3613,6 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // build and check
 
   net->Build();
-  net->LayerPos_Cleanup();
 
   bool ok = net->CheckConfig();
 

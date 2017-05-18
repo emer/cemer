@@ -225,59 +225,7 @@ void Layer_Group::MovePos2d(int x, int y) {
   UpdateLayerGroupGeom();       // double check..
 }
 
-// todo: redo everything below to use relative positioning!
-
 void Layer_Group::LayerPos_Cleanup() {
-  LayerPos_Cleanup_2d();
-  LayerPos_Cleanup_3d();
-}
-
-void Layer_Group::LayerPos_Cleanup_2d() {
-  bool moved = false;
-  int n_itr = 0;
-  do {
-    moved = false;
-    for(int i1=0;i1<leaves;i1++) {
-      Layer* l1 = Leaf(i1);
-      taVector2i l1s = (taVector2i)l1->pos2d_abs;
-      taVector2i l1e = l1s + (taVector2i)l1->scaled_disp_geom;
-
-      for(int i2 = i1+1; i2<leaves;i2++) {
-        Layer* l2 = Leaf(i2);
-        taVector2i l2s = (taVector2i)l2->pos2d_abs;
-        taVector2i l2e = l2s + (taVector2i)l2->scaled_disp_geom;
-
-	if(l2s.x >= l1s.x && l2s.x < l1e.x &&
-	   l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
-          taVector2i nps = l2s;
-	  if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
-	    nps.x += (l1e.x + 2) - l2s.x;
-	  }
-	  else {
-	    nps.y += (l1e.y + 2) - l2s.y;
-	  }
-          l2->SetAbsPos2d(nps);
-	  moved = true;
-	}
-	else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
-		l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
-          taVector2i nps = l1s;
-	  if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
-            nps.x += (l2e.x + 2) - l1s.x;
-	  }
-	  else {
-	    nps.y += (l2e.y + 2) - l1s.y;
-	  }
-	  l1->SetAbsPos2d(nps);
-	  moved = true;
-	}
-      }
-    }
-    n_itr++;
-  } while(moved && n_itr < 10);
-}
-
-void Layer_Group::LayerPos_Cleanup_3d() {
   bool moved = false;
   int n_itr = 0;
   do {
@@ -286,35 +234,37 @@ void Layer_Group::LayerPos_Cleanup_3d() {
       Layer* l1 = Leaf(i1);
       taVector2i l1s = (taVector2i)l1->pos_abs;
       taVector2i l1e = l1s + (taVector2i)l1->scaled_disp_geom;
+      if(l1->pos_rel.IsRel())
+        continue;
 
       for(int i2 = i1+1; i2<leaves;i2++) {
         Layer* l2 = Leaf(i2);
         taVector2i l2s = (taVector2i)l2->pos_abs;
         taVector2i l2e = l2s + (taVector2i)l2->scaled_disp_geom;
+        if(l2->pos_rel.IsRel())
+          continue;
 
         if(l2->pos_abs.z == l1->pos_abs.z) { // 3D
 	  if(l2s.x >= l1s.x && l2s.x < l1e.x &&
 	     l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
             taVector3i nps = l2->pos_abs;
 	    if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
-	      nps.x += (l1e.x + 2) - l2s.x;
+              l2->PositionRightOf(l1);
 	    }
 	    else {
-	      nps.y += (l1e.y + 2) - l2s.y;
+              l2->PositionBehind(l1);
 	    }
-	    l2->SetAbsPos(nps);
 	    moved = true;
 	  }
 	  else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
 		  l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
             taVector3i nps = l1->pos_abs;
 	    if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
-	      nps.x += (l2e.x + 2) - l1s.x;
+              l2->PositionRightOf(l1);               // always move l2 to prevent loops!
 	    }
 	    else {
-	      nps.y += (l2e.y + 2) - l1s.y;
+              l2->PositionBehind(l1);
 	    }
-	    l1->SetAbsPos(nps);
 	    moved = true;
 	  }
 	}
@@ -322,96 +272,6 @@ void Layer_Group::LayerPos_Cleanup_3d() {
     }
     n_itr++;
   } while(moved && n_itr < 10);
-}
-
-void Layer_Group::LayerPos_GridLayout_2d(int x_space, int y_space,
-                                         int gp_grid_x, int lay_grid_x) {
-  if(gp.size > 0) {
-    LayerPos_GridLayout_Gps_2d(x_space, y_space, gp_grid_x, lay_grid_x);
-  }
-  else {
-    LayerPos_GridLayout_Sub_2d(x_space, y_space, lay_grid_x);
-  }
-  LayerPos_Cleanup_2d();        // final cleanup for good measure
-}
-
-void Layer_Group::LayerPos_GridLayout_Sub_2d(int x_space, int y_space,
-                                             int lay_grid_x) {
-  taVector2i grid;
-  if(lay_grid_x < 1) {
-    grid.FitN(leaves);
-  }
-  else {
-    grid.x = lay_grid_x;
-    grid.y = leaves / grid.x;
-    while(grid.x * grid.y < leaves) grid.y++;
-  }
-  int li = 0;
-  for(int y=0; y<grid.y; y++) {
-    for(int x=0; x<grid.x; x++, li++) {
-      if(li >= leaves) break;
-      Layer* l1 = Leaf(li);
-      taVector2i nps = pos2d;   // layer group position..
-      if(li == 0) {
-        // nop
-      }
-      else if(x == 0) {
-        Layer* l2 = Leaf((y-1) * grid.x);
-        taVector2i l2e = l2->pos2d_abs + (taVector2i)l2->scaled_disp_geom;
-        nps.x = l2->pos2d_abs.x;
-        nps.y = l2e.y + y_space;
-      }
-      else {
-        Layer* l2 = Leaf(li-1);
-        taVector2i l2e = l2->pos2d_abs + (taVector2i)l2->scaled_disp_geom;
-        nps.x = l2e.x + x_space;
-        nps.y = l2->pos2d_abs.y;
-      }
-      l1->SetAbsPos2d(nps);
-    }
-  }
-  LayerPos_Cleanup_2d();        // clean me up
-  UpdateLayerGroupGeom();
-}
-
-void Layer_Group::LayerPos_GridLayout_Gps_2d(int x_space, int y_space,
-                                             int gp_grid_x, int lay_grid_x) {
-  taVector2i grid;
-  if(gp_grid_x < 1) {
-    grid.FitN(gp.size);
-  }
-  else {
-    grid.x = gp_grid_x;
-    grid.y = gp.size / grid.x;
-    while(grid.x * grid.y < gp.size) grid.y++;
-  }
-  int li = 0;
-  int last_max_y = 0;
-  for(int y=0; y<grid.y; y++) {
-    for(int x=0; x<grid.x; x++, li++) {
-      if(li >= gp.size) break;
-      Layer_Group* l1 = (Layer_Group*)FastGp(li);
-      if(li == 0) {
-        l1->pos2d = 0;
-      }
-      else if(x == 0) {
-        Layer_Group* l2 = (Layer_Group*)FastGp((y-1) * grid.x);
-        taVector2i l2e = l2->pos2d + (taVector2i)l2->max_disp_size2d;
-        l1->pos2d.x = l2->pos2d.x;
-        l1->pos2d.y = last_max_y + y_space;
-        last_max_y = 0;
-      }
-      else {
-        Layer_Group* l2 = (Layer_Group*)FastGp(li-1);
-        taVector2i l2e = l2->pos2d + (taVector2i)l2->max_disp_size2d;
-        l1->pos2d.x = l2e.x + x_space;
-        l1->pos2d.y = l2->pos2d.y;
-      }
-      l1->LayerPos_GridLayout_Sub_2d(x_space, y_space, lay_grid_x);
-      last_max_y = MAX(last_max_y, l1->pos2d.y + l1->max_disp_size2d.y);
-      l1->SigEmitUpdated();
-    }
-  }
 }
 
 void Layer_Group::LayerPos_GridLayout_3d(int x_space, int y_space, int z_size,
@@ -422,7 +282,6 @@ void Layer_Group::LayerPos_GridLayout_3d(int x_space, int y_space, int z_size,
   else {
     LayerPos_GridLayout_NoSub_3d(x_space, y_space, z_size, lay_grid_x);
   }
-  LayerPos_Cleanup_3d();        // final cleanup for good measure
 }
 
 void Layer_Group::LayerPos_GridLayout_Sub_3d(int x_space, int y_space,
@@ -448,22 +307,14 @@ void Layer_Group::LayerPos_GridLayout_Sub_3d(int x_space, int y_space,
       }
       else if(x == 0) {
         Layer* l2 = Leaf((y-1) * grid.x);
-        taVector2i l2e = (taVector2i)l2->pos_abs + (taVector2i)l2->scaled_disp_geom;
-        nps.x = l2->pos_abs.x;
-        nps.y = l2e.y + y_space;
-        nps.z = 0;
+        l1->PositionBehind(l2, y_space);
       }
       else {
         Layer* l2 = Leaf(li-1);
-        taVector2i l2e = (taVector2i)l2->pos_abs + (taVector2i)l2->scaled_disp_geom;
-        nps.x = l2e.x + x_space;
-        nps.y = l2->pos_abs.y;
-        nps.z = 0;
+        l1->PositionRightOf(l2, x_space);
       }
-      l1->SetAbsPos(nps);
     }
   }
-  LayerPos_Cleanup_3d();        // clean me up
   UpdateLayerGroupGeom();
 }
 
@@ -490,26 +341,19 @@ void Layer_Group::LayerPos_GridLayout_NoSub_3d(int x_space, int y_space, int z_s
         if(x == 0 && y == 0) {
           nps = 0;
           nps.z = z;
+          l1->SetAbsPos(nps);
         }
         else if(x == 0) {
           Layer* l2 = Leaf(z * grid.x * grid.y + (y-1) * grid.x);
-          taVector2i l2e = (taVector2i)l2->pos_abs + (taVector2i)l2->scaled_disp_geom;
-          nps.x = l2->pos_abs.x;
-          nps.y = l2e.y + y_space;
-          nps.z = z;
+          l1->PositionBehind(l2, y_space);
         }
         else {
           Layer* l2 = Leaf(li-1);
-          taVector2i l2e = (taVector2i)l2->pos_abs + (taVector2i)l2->scaled_disp_geom;
-          nps.x = l2e.x + x_space;
-          nps.y = l2->pos_abs.y;
-          nps.z = z;
+          l1->PositionRightOf(l2, x_space);
         }
-        l1->SetAbsPos(nps);
       }
     }
   }
-  LayerPos_Cleanup_3d();        // clean me up
   UpdateLayerGroupGeom();
 }
 
@@ -533,27 +377,24 @@ void Layer_Group::LayerPos_GridLayout_Gps_3d(int x_space, int y_space, int z_siz
       for(int x=0; x<grid.x; x++, li++) {
         if(li >= gp.size) break;
         Layer_Group* l1 = (Layer_Group*)FastGp(li);
+        Layer* ly1 = l1->SafeEl(0);
         if(x == 0 && y == 0) {
-          l1->pos = 0;
-          l1->pos.z = z;
         }
         else if(x == 0) {
           Layer_Group* l2 = (Layer_Group*)FastGp(z * grid.x * grid.y + (y-1) * grid.x);
-          taVector2i l2e = (taVector2i)l2->pos + (taVector2i)l2->max_disp_size;
-          l1->pos.x = l2->pos.x;
-          l1->pos.y = last_max_y + y_space;
-          l1->pos.z = z;
-          last_max_y = 0;
+          Layer* ly2 = l2->SafeEl(0);
+          if(ly1 && ly2) {
+            ly1->PositionBehind(ly2);
+          }
         }
         else {
           Layer_Group* l2 = (Layer_Group*)FastGp(li-1);
-          taVector2i l2e = (taVector2i)l2->pos + (taVector2i)l2->max_disp_size;
-          l1->pos.x = l2e.x + x_space;
-          l1->pos.y = l2->pos.y;
-          l1->pos.z = z;
+          Layer* ly2 = l2->SafeEl(0);
+          if(ly1 && ly2) {
+            ly1->PositionRightOf(ly2);
+          }
         }
         l1->LayerPos_GridLayout_Sub_3d(x_space, y_space, lay_grid_x);
-        last_max_y = MAX(last_max_y, l1->pos.y + l1->max_disp_size.y);
         l1->SigEmitUpdated();
       }
     }

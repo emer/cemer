@@ -79,21 +79,7 @@ public:
   // #BUTTON move layer group position in 2D display by given increments -- moves all the sub-layers by given amount as well, and ensures that position never goes negative
 
   virtual void  LayerPos_Cleanup();
-  // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc) -- both 2d and 3d positions
-  virtual void  LayerPos_Cleanup_2d();
-  // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc) -- 2d positions
-  virtual void  LayerPos_Cleanup_3d();
-  // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc) -- 3d positions
-
-  virtual void  LayerPos_GridLayout_2d(int x_space = 2, int y_space = 3,
-                                       int gp_grid_x = -1, int lay_grid_x = -1);
-  // #MENU #MENU_CONTEXT #CAT_Structure for the 2D layer positions: arrange layers and layer subgroups into a grid with given spacing, and you can optionally constrain the x (horizontal) dimension of the grid for the subgroups within the network or layers within groups (or just the layers if no subgroups) if gp_grid_x > 0 or layer_grid_x > 0
-  virtual void  LayerPos_GridLayout_Sub_2d(int x_space = 2, int y_space = 3,
-                                           int lay_grid_x = -1);
-  // #IGNORE 
-  virtual void  LayerPos_GridLayout_Gps_2d(int x_space = 2, int y_space = 3,
-                                           int gp_grid_x = -1, int lay_grid_x = -1);
-  // #IGNORE 
+  // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
 
   virtual void  LayerPos_GridLayout_3d(int x_space = 2, int y_space = 3,
                                        int z_size = 3, int gp_grid_x = -1,

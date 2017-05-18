@@ -3219,26 +3219,19 @@ void Network::LayerZPos_Unitize() {
     int nw_z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
     l->pos.z += nw_z - l->pos.z;
   }
-  UpdateLayerGroupGeom();
+  LayerPos_RelPos();
 }
 
 void Network::LayerPos_Cleanup() {
   layers.LayerPos_Cleanup();
-  UpdateLayerGroupGeom();          // must do that in case something moves
-}
-
-void Network::LayerPos_GridLayout_2d(int x_space, int y_space,
-                                     int gp_grid_x, int lay_grid_x) {
-  StructUpdate(true);
-  layers.LayerPos_GridLayout_2d(x_space, y_space, gp_grid_x, lay_grid_x);
-  UpdateLayerGroupGeom();          // must do that in case something moves
-  StructUpdate(false);
+  LayerPos_RelPos();
 }
 
 void Network::LayerPos_GridLayout_3d(int x_space, int y_space,
                                      int z_size, int gp_grid_x, int lay_grid_x) {
   StructUpdate(true);
   layers.LayerPos_GridLayout_3d(x_space, y_space, z_size, gp_grid_x, lay_grid_x);
+  LayerPos_RelPos();
   StructUpdate(false);
 }
 

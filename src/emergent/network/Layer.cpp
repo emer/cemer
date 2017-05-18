@@ -37,7 +37,6 @@ void LayerRelPos::Initialize() {
   y_align = FRONT;
   y_off = 0;
   space = 2;
-  twod_z = 20;
 }
 
 bool LayerRelPos::ComputePos3D(taVector3i& pos, Layer* lay) {
@@ -59,10 +58,10 @@ bool LayerRelPos::ComputePos2D(taVector2i& pos, Layer* lay) {
     return false;
   ComputePos2D_impl(pos, lay, other->pos2d_abs);
   if(rel == ABOVE) {
-    pos.y = other->pos2d_abs.y + twod_z;
+    pos.y = other->pos2d_abs.y + space;
   }
   else if(rel == BELOW) {
-    pos.y = other->pos2d_abs.y - twod_z;
+    pos.y = other->pos2d_abs.y - space;
   }
   return true;
 }
@@ -625,11 +624,7 @@ void Layer::SetRelPos(int x, int y, int z) {
 }
 
 void Layer::SetRelPos(taVector3i& ps) {
-  if(TestWarning(pos_rel.IsRel(), "SetRelPos",
-                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
-    RecomputeGeometry();        // moves us
-    return;
-  }
+  pos_rel.SetAbsPos();
   taVector3i rp = 0;
   AddRelPos(rp);
   pos.x = ps.x; pos.y = ps.y; pos.z = ps.z; // avoid pos constraint
@@ -644,11 +639,7 @@ void Layer::SetAbsPos(int x, int y, int z) {
 }
 
 void Layer::SetAbsPos(taVector3i& ps) {
-  if(TestWarning(pos_rel.IsRel(), "SetAbsPos",
-                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
-    RecomputeGeometry();        // moves us
-    return;
-  }
+  pos_rel.SetAbsPos();
   taVector3i rp = 0;
   AddRelPos(rp);
   pos_abs = ps;
@@ -663,11 +654,7 @@ void Layer::SetRelPos2d(int x, int y) {
 }
 
 void Layer::SetRelPos2d(taVector2i& ps) {
-  if(TestWarning(pos_rel.IsRel(), "SetRelPos2d",
-                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
-    RecomputeGeometry();        // moves us
-    return;
-  }
+  pos_rel.SetAbsPos();
   taVector2i rp = 0;
   AddRelPos2d(rp);
   pos2d.x = ps.x; pos2d.y = ps.y; // avoid pos constraint
@@ -682,11 +669,7 @@ void Layer::SetAbsPos2d(int x, int y) {
 }
 
 void Layer::SetAbsPos2d(taVector2i& ps) {
-  if(TestWarning(pos_rel.IsRel(), "SetAbsPos2d",
-                 "layer is using relative positioning as specified in pos_rel -- cannot set pos -- set to ABS_POS to be able to set pos")) {
-    RecomputeGeometry();        // moves us
-    return;
-  }
+  pos_rel.SetAbsPos();
   taVector2i rp = 0;
   AddRelPos2d(rp);
   pos2d_abs = ps;
@@ -696,11 +679,7 @@ void Layer::SetAbsPos2d(taVector2i& ps) {
 }
 
 void Layer::MovePos(int x, int y, int z) {
-  if(TestWarning(pos_rel.IsRel(), "MovePos",
-                 "layer is using relative positioning as specified in pos_rel -- cannot move -- set to ABS_POS to be able to move")) {
-    RecomputeGeometry();        // moves us
-    return;
-  }
+  pos_rel.SetAbsPos();
   taVector3i nps = pos_abs;
   nps.x += x;
   if(nps.x < 0) nps.x = 0;
@@ -712,11 +691,7 @@ void Layer::MovePos(int x, int y, int z) {
 }
 
 void Layer::MovePos2d(int x, int y) {
-  if(TestWarning(pos_rel.IsRel(), "MovePos2d",
-                 "layer is using relative positioning as specified in pos_rel -- cannot move -- set to ABS_POS to be able to move")) {
-    RecomputeGeometry();        // moves us
-    return;
-  }
+  pos_rel.SetAbsPos();
   taVector2i nps = pos2d_abs;
   nps.x += x;
   if(nps.x < 0) nps.x = 0;
