@@ -23,6 +23,7 @@
 #include <taBase_PtrList>
 #include <taiWidgetTypeDefChooser>
 #include <Network>
+#include <NameVar_PArray>
 
 
 TA_BASEFUNS_CTORS_DEFN(BaseSpec);
@@ -40,6 +41,7 @@ void BaseSpec::Copy_(const BaseSpec& cp) {
   //  min_obj_type = cp.min_obj_type;  // don't do this -- could be going between types
   desc = cp.desc;
   unique = cp.unique;
+  saved = cp.saved;
   children = cp.children;
 }
 
@@ -50,6 +52,7 @@ void BaseSpec::Destroy() {
 void BaseSpec::InitLinks() {
   inherited::InitLinks();
   taBase::Own(unique, this);
+  taBase::Own(saved, this);
   taBase::Own(children, this);
   children.SetBaseType(GetTypeDef());
   // put in a struct bracket so thing does a full refresh when getting subspec'ed or root spec'ed
@@ -194,10 +197,55 @@ void BaseSpec::SetUnique(int memb_no, bool on) {
   if(TestError(!md, "SetUnique","Member number:", String(memb_no), "not found")) {
     return;
   }
-  if(on)
+  if(on) {
     unique.AddUnique(md->name);
-  else
+    
+    if (md->type->InheritsFromName("SpecMemberBase")) {
+      SpecMemberBase* smb = (SpecMemberBase*)md->GetOff((void*)this);
+      if (smb) {
+        for (int i=0; i<smb->GetTypeDef()->members.size; i++) {
+          MemberDef* smb_md = smb->GetTypeDef()->members.SafeEl(i);
+          String smb_name = md->name + "." + smb_md->name;
+          int idx = saved.FindName(smb_name);
+          if (idx > -1) {
+            Variant value = saved.SafeEl(idx).value;
+            saved.RemoveIdx(idx);
+            if (smb_md->GetTypeDef()->IsActual()) {
+              smb_md->SetValVar(value, smb);
+            }
+          }
+        }
+      }
+    }
+    else {
+      int idx = saved.FindName(md->name);
+      if (idx > -1) {
+        Variant value = saved.SafeEl(idx).value;
+        saved.RemoveIdx(idx);
+        md->SetValVar(value, this);
+      }
+    }
+  }
+  else {
+    if (unique.FindEl(md->name) != -1) {
+      if (md->type->InheritsFromName("SpecMemberBase")) {
+        SpecMemberBase* smb = (SpecMemberBase*)md->GetOff((void*)this);
+        if (smb) {
+          for (int i=0; i<smb->GetTypeDef()->members.size; i++) {
+            MemberDef* smb_md = smb->GetTypeDef()->members.SafeEl(i);
+            String smb_name = md->name + "." + smb_md->name;
+            NameVar smb_nv(smb_name, smb_md->GetValVar(smb));
+            saved.Add(smb_nv);
+          }
+        }
+      }
+      else {
+        NameVar nv(md->name, md->GetValVar(this));
+        saved.Add(nv);
+      }
+    }
     unique.RemoveEl(md->name);
+  }
 }
 
 bool BaseSpec::GetUnique(const String& memb_nm) const {

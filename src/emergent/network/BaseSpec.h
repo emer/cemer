@@ -23,6 +23,7 @@
 // member includes:
 #include <BaseSpec_Group>
 #include <String_Array>
+#include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:
 class SpecUser; //
@@ -63,6 +64,7 @@ public:
   bool              is_new;     // #READ_ONLY #HIDDEN #NO_INHERIT #NO_SAVE is this spec newly created?  if so, prompt user to apply it to some objects..
   String            desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
   String_Array      unique; // #HIDDEN string list of unique members
+  NameVar_Array     saved; // #HIDDEN values of members that are not overriding parent values - reset to these values if override is click
   TypeDef*          min_obj_type;
   // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec -- for object that the spec actually operates on
   TypeDef*          min_user_type;
