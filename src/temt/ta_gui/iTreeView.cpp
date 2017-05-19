@@ -602,7 +602,7 @@ void iTreeView::ExpandDefault() {
   if (tv_flags & TV_EXPAND_DISABLED) exp_flags |= EF_EXPAND_DISABLED;
   ExpandAll_impl(m_def_exp_levels, exp_flags);
   ScrollTo(0);
-  QTimer::singleShot(250, this, SLOT(ScrollTo(0)) );
+  QTimer::singleShot(250, this, SLOT(ScrollTo()) );
   // taMisc::Info("trying to scroll to top!");
   // if(topLevelItemCount() > 0) {
   //   iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));

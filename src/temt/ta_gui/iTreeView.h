@@ -157,7 +157,7 @@ public:
   // save the current vertical scroll position for later restore
   virtual void          RestoreScrollPos();
   // restore the current vertical scroll position
-  virtual void          ScrollTo(int scr_pos);
+  virtual void          ScrollTo(int scr_pos = 0);
   // scroll vertically to given position -- directly controls vertical scroll bar
   virtual bool          PosInView(int scr_pos);
   // is given position within the main scroll area (in coordinates relative to central widget) within view?

@@ -127,9 +127,7 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
     if(frm_td->members[memb_no] == md) {        // must be the same member
       // don't copy read only or hidden members! (usually set automatically
       // and might depend on local variables)
-      if(!GetUnique(memb_no) &&
-         !(md->HasReadOnly() || md->HasHidden() || md->HasOption("NO_INHERIT")))
-      {
+      if(!GetUnique(memb_no) && !(md->IsInvisible() || md->HasOption("NO_INHERIT"))) {
         MemberCopyFrom(memb_no, from);
         // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
 //      SigEmitUpdated();

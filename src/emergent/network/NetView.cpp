@@ -841,7 +841,7 @@ void NetView::GetMembs() {
         for (k=0; k<td->members.size; k++) {
           MemberDef* smd = td->members.FastEl(k);
           if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-            if((smd->HasHidden() || smd->HasReadOnly() || smd->HasOption("NO_VIEW")))
+            if((smd->IsInvisible() || smd->HasOption("NO_VIEW")))
               continue;
             String nm = "r." + smd->name;
             if(membs.FindName(nm)==NULL) {
