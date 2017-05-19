@@ -192,19 +192,6 @@ void iTreeView::AddFilter(const String& value) {
 
 iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
 
-  taBase* obj = link->taData();
-  if(obj && obj->InheritsFrom(&TA_taList_impl)) { // need to check for def child -- cannot select!!
-    taBase* mbrown = obj->GetMemberOwner(false); // not highest
-    if(mbrown) {
-      String mbr = obj->GetPath(mbrown);
-      if(mbr.startsWith('.')) mbr = mbr.after('.');
-      MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
-      if(my_md && my_md->IsDefChild()) {
-        return NULL;
-      }
-    }
-  }
-  
   // first, check if already an item in our tree
   taSigLinkItr itr;
   iTreeViewItem* el;
@@ -214,6 +201,24 @@ iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
     }
   }
   if (!super) return NULL; // when we are called by ourself
+
+  // todo: asserting a def child is not good -- but this code
+  // prevents asserting too much b/c def children are owners.. need to put it at the
+  // right place, or not at all -- already in BrowserSelectMe
+  
+  // taBase* obj = link->taData();
+  // if(obj && obj->InheritsFrom(&TA_taList_impl)) { // need to check for def child -- cannot select!!
+  //   taBase* mbrown = obj->GetMemberOwner(false); // not highest
+  //   if(mbrown) {
+  //     String mbr = obj->GetPath(mbrown);
+  //     if(mbr.startsWith('.')) mbr = mbr.after('.');
+  //     MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
+  //     if(my_md && my_md->IsDefChild()) {
+  //       return NULL;
+  //     }
+  //   }
+  // }
+
   // failed, so try to assert the owner
   taiSigLink* own_link = link->ownLink();
   if (!own_link) return NULL;
