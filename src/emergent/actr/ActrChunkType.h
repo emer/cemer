@@ -39,7 +39,7 @@ INHERITED(taNBase)
 public:
   String               desc; // #EDIT_DIALOG #HIDDEN_INLINE description of this chunk type
   ActrChunkTypeRef     parent; // type that this one inherits from -- we automatically get the slots from the parent if set
-  ActrSlotType_List    slots;  // #TREE_SHOW #NO_EXPAND_ALL the names and types of the slots within this chunk
+  ActrSlotType_List    slots;  // #TREE_SHOW the names and types of the slots within this chunk
   ActrChunkType_List   sub_types; // #HIDDEN #LINK_LIST child types that derive from this type
 
   virtual ActrSlotType* NewSlot(const String& slot_nm = _nilString);

@@ -191,6 +191,20 @@ void iTreeView::AddFilter(const String& value) {
 }
 
 iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
+
+  taBase* obj = link->taData();
+  if(obj && obj->InheritsFrom(&TA_taList_impl)) { // need to check for def child -- cannot select!!
+    taBase* mbrown = obj->GetMemberOwner(false); // not highest
+    if(mbrown) {
+      String mbr = obj->GetPath(mbrown);
+      if(mbr.startsWith('.')) mbr = mbr.after('.');
+      MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
+      if(my_md && my_md->IsDefChild()) {
+        return NULL;
+      }
+    }
+  }
+  
   // first, check if already an item in our tree
   taSigLinkItr itr;
   iTreeViewItem* el;
@@ -426,7 +440,10 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
   if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
   if(tab->GetOwner() == NULL) return;
-    
+
+  String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+  // if(exp_def_str == "0") return;
+  
   if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
     // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
     // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
@@ -446,7 +463,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         depth = taiMisc::GetGroupDefaultExpand(name);
       }
       
-      if (depth <= 0 && exp_flags & EF_DEFAULT_UNDER) {
+      if (level <= 0 && exp_flags & EF_DEFAULT_UNDER) {
         depth = 1;  // if user asked for expansion expand 1 level even when default is zero
       }
       if (depth >= 0) {
@@ -457,7 +474,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         }
       }
       else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- thus not being expanded as a subgroup
-        String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
         if (exp_def_str.nonempty()) {
           max_levels = (int)exp_def_str;
         }
@@ -479,7 +495,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       }
     }
     else {  // not a top-level group - get class default -- if none set max_levels to 1
-      String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
       if (exp_def_str.nonempty()) {
         max_levels = (int)exp_def_str;
       }

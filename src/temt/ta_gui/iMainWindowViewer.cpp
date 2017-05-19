@@ -3252,6 +3252,18 @@ bool taBase::EditPanel(bool new_tab, bool pin_tab) {
 bool taBase::BrowserSelectMe() {
   if(!taMisc::gui_active) return false;
 
+  if(InheritsFrom(&TA_taList_impl)) {     // need to check for def child -- cannot select!!
+    taBase* mbrown = GetMemberOwner(false); // not highest
+    if(mbrown) {
+      String mbr = GetPath(mbrown);
+      if(mbr.startsWith('.')) mbr = mbr.after('.');
+      MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
+      if(my_md && my_md->IsDefChild()) {
+        return false;
+      }
+    }
+  }
+  
   // first, check for an edit dialog and use that if found
   MainWindowViewer* edlg = MainWindowViewer::FindEditDialog(this);
   if(edlg) {

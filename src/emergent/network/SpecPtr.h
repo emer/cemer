@@ -34,7 +34,11 @@ public:
   TypeDef*	type;		// #TYPE_ON_base_type The type of the spec to use
 
   virtual BaseSpec* GetSpec() const	{ return NULL; } // get the spec pointer
-  virtual bool	SetSpec(BaseSpec*)	{ return false; } // set the spec pointer
+
+  virtual bool	SetSpec_impl(BaseSpec* es, bool update_if_set) { return false; }
+  // set the spec pointer -- if update_if_set then UAE called on owner if a new spec is set -- don't do this for SetDefaultSpec
+  inline bool   SetSpec(BaseSpec* es) { return SetSpec_impl(es, true); }
+  // default set spec call -- does UAE
 
   BaseSpec* 	operator=(BaseSpec* cp)	{ SetSpec(cp); return cp; }
 
@@ -78,7 +82,7 @@ public:
   // use this call to access the spec pointer value in all client calls -- fast!
   BaseSpec*	GetSpec() const	override { return SPtr(); }
 
-  bool		SetSpec(BaseSpec* es) override  {
+  bool		SetSpec_impl(BaseSpec* es, bool update_if_set) override  {
     if (spec.ptr() == es) return true; // low level setting, ex. streaming, handled in UAE
     if(!owner) return false;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
@@ -86,7 +90,9 @@ public:
       spec.set(es);
       if(es) { type = es->GetTypeDef(); es->SpecSet(owner);}
       if(prv_spec) { prv_spec->SpecUnSet(owner); }
-      owner->UpdateAfterEdit();	// owner might need to apply this change to all sub guys
+      if(update_if_set) {
+        owner->UpdateAfterEdit();	// owner might need to apply this change to all subs
+      }
       return true;
     }
     TestError(true, "SetSpec", "incorrect type of Spec:",

@@ -136,7 +136,7 @@ public:
   ActrAssocParams       assoc;       // associative strength parameters -- when enabled, associative strengths between chunks contribute to overall activation
 
   ActrChunk_List        init_chunks; // initial chunks to start pre-loaded into declarative memory
-  ActrChunk_List        active; // #NO_EXPAND_ALL the current chunks active in declarative memory
+  ActrChunk_List        active; // the current chunks active in declarative memory
   ActrChunk_List        finsts; // #HIDDEN #NO_SAVE list of current declarative fingers of instantiation chunks
   ActrChunk_List        eligible; // #HIDDEN #NO_SAVE list of all matching chunks eligible for retrieval
   ActrChunk_List        tmp_match; // #HIDDEN #NO_SAVE temporary matching list

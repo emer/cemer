@@ -1050,11 +1050,14 @@ void taList_impl::EnforceSameStru(const taList_impl& cp) {
 }
 
 void taList_impl::SetSize(int sz) {
+  if(size == sz) return;
+  StructUpdate(true);
   if(size < sz)
     New(sz - size);
   else {
     Trim(sz);
   }
+  StructUpdate(false);
 }
 
 void taList_impl::EnforceType() {

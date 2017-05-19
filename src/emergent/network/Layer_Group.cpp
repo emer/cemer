@@ -160,7 +160,8 @@ void Layer_Group::UpdateLayerGroupGeom() {
   }
   prev_pos = pos;
   prev_pos2d = pos2d;
-  SigEmitUpdated();
+  // IMPORTANT: CANNOT call sigemit here -- this messes with tree updating!
+  // SigEmitUpdated();
 }
 
 void Layer_Group::BuildLayers() {

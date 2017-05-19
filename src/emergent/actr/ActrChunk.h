@@ -96,7 +96,7 @@ public:
   ChunkFlags            flags;      // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW flags indicating state of the chunk
   ActrActVals           act;        // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW activation values for the chunk
   ActrActTimeVals       time;       // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW activation timing values for the chunk -- when created, accessed, etc
-  ActrSlot_List         slots;      // #NO_EXPAND_ALL #TREE_SHOW the slot values -- same number as slots in chunk_type
+  ActrSlot_List         slots;      // #TREE_SHOW the slot values -- same number as slots in chunk_type
 
   inline void           SetChunkFlag(ChunkFlags flg)
   { flags = (ChunkFlags)(flags | flg); }

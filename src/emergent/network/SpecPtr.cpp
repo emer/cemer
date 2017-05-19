@@ -188,6 +188,7 @@ void SpecPtr_impl::SetBaseType(TypeDef* td) {
   base_type = td;               // this doesn't get set by defaults
 }
 
+
 void SpecPtr_impl::SetDefaultSpec(taBase* ownr, TypeDef* td) {
   if(type == NULL)
     type = td;
@@ -212,13 +213,13 @@ void SpecPtr_impl::SetDefaultSpec(taBase* ownr, TypeDef* td) {
   // pass the ownr to this, so that min_obj_type can be checked
   sp = spgp->FindSpecInherits(type, owner);
   if((sp) && sp->InheritsFrom(type)) {
-    SetSpec(sp);
+    SetSpec_impl(sp, false);    // no UAE -- called in InitLinks
     return;
   }
 
   sp = (BaseSpec*)spgp->NewEl(1, type);
   if (sp) {
-    SetSpec(sp);
+    SetSpec_impl(sp, false); // no UAE -- called in InitLinks
   }
 }
 

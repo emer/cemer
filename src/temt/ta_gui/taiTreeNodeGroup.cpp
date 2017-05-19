@@ -91,6 +91,7 @@ bool taiTreeNodeGroup::RebuildChildrenIfNeeded() {
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);
   taSubGroup* gp = &tadata()->gp;
   if(childCount() != (list()->size + gp->size + st_idx)) {
+    taMisc::DebugInfo("taiTreeNodeGroup::RebuildChildrenIfNeeded() rebuilding");
     takeChildren();
     CreateChildren();
     AssertLastListItem();

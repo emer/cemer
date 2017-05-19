@@ -157,8 +157,6 @@ public:
   // save the current vertical scroll position for later restore
   virtual void          RestoreScrollPos();
   // restore the current vertical scroll position
-  virtual void          ScrollTo(int scr_pos = 0);
-  // scroll vertically to given position -- directly controls vertical scroll bar
   virtual bool          PosInView(int scr_pos);
   // is given position within the main scroll area (in coordinates relative to central widget) within view?
   virtual void          GetTreeState(String_Array& tree_state);
@@ -202,6 +200,8 @@ public slots:
   virtual void          ExpandDefaultUnder(iTreeViewItem* item);
   // expand to default level under given item
   virtual void          CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
+  virtual void          ScrollTo(int scr_pos = 0);
+  // scroll vertically to given position -- directly controls vertical scroll bar
 
   void                  InsertEl(bool after=false); // insert new element at or after currently selected item
   void                  InsertDefaultEl(bool after=false); // insert default new element type object at or after currently selected item

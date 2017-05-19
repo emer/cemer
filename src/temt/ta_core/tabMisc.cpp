@@ -67,6 +67,7 @@ void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
   if(obj->isDestroying()) return;
   taMisc::do_wait_proc = true;
   delayed_funcalls.AddBaseFun(obj, fun_name);
+  // taMisc::DebugInfo("delayed gui call to:", obj->DisplayPath(), "fun:", fun_name);
 }
 
 void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
@@ -74,6 +75,7 @@ void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
   if(obj->isDestroying()) return;
   taMisc::do_wait_proc = true;
   delayed_funcalls.AddBaseFun(obj, fun_name);
+  // taMisc::DebugInfo("delayed nogui call to:", obj->DisplayPath(), "fun:", fun_name);
 }
 
 void tabMisc::WaitProc() {

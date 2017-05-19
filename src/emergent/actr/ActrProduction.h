@@ -64,7 +64,7 @@ private:
 eTypeDef_Of(ActrProduction);
 
 class E_API ActrProduction : public taNBase {
-  // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel a production that matches conditions and produces actions
+  // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel #EXPAND_DEF_2 a production that matches conditions and produces actions
 INHERITED(taNBase)
 public:
   enum ProdFlags { // #BITS ActR production flags
@@ -81,7 +81,7 @@ public:
   ActrProdTimeVals      time;  // time values for this production
   ActrCondition_List    conds; // conditions that must be matched to fire this production
   ActrAction_List       acts;  // actions that this production causes when it fires
-  ActrSlot_List         vars;  // #NO_SAVE #NO_EXPAND_ALL variable bindings used in matching and instantiating actions -- automatically generated from =varname variable names listed in the productions
+  ActrSlot_List         vars;  // #NO_SAVE variable bindings used in matching and instantiating actions -- automatically generated from =varname variable names listed in the productions
 
   inline void           SetProdFlag(ProdFlags flg)
   { flags = (ProdFlags)(flags | flg); }

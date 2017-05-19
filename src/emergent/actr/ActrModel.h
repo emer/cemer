@@ -90,12 +90,12 @@ public:
   float                 cur_time;   // #READ_ONLY #SHOW current time in the model
   ActrGlobalParams      params;     // global parameters
 
-  ActrChunkType_List    sys_chunk_types;  // #NO_EXPAND_ALL system chunk types -- defined automatically by modules
-  ActrChunk_List        sys_chunks;       // #NO_EXPAND_ALL system globally-defined chunks stored here -- automatically created by modules
+  ActrChunkType_List    sys_chunk_types;  // system chunk types -- defined automatically by modules
+  ActrChunk_List        sys_chunks;       // system globally-defined chunks stored here -- automatically created by modules
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
-  ActrChunk_List        chunks;       // #NO_EXPAND_ALL globally-defined chunks stored here
+  ActrChunk_List        chunks;       // globally-defined chunks stored here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
-  ActrBuffer_List       buffers;      // #NO_EXPAND_ALL buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
+  ActrBuffer_List       buffers;      // buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
   ActrEvent_List        events;       // #NO_SAVE #EXPERT currently scheduled events
   int                   cur_event_idx; // #READ_ONLY current event index in list of events
   DataTableRef          log_table;     // data table to log events into

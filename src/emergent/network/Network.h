@@ -127,7 +127,7 @@ private:
 eTypeDef_Of(NetTiming_List);
 
 class E_API NetTiming_List : public taList<NetTiming> {
-  // #NO_TOKENS #NO_UPDATE_AFTER List of NetTiming objects
+  // #NO_TOKENS #NO_UPDATE_AFTER #EXPAND_DEF_0 List of NetTiming objects
 INHERITED(taList<NetTiming>)
 public:
 
@@ -280,7 +280,7 @@ public:
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
   NetworkThreadMgr threads;     // #CAT_Threads parallel threading of network computation
   NetworkCudaSpec  cuda;         // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
-  NetTiming_List net_timing;    // #CAT_Statistic #EXPERT #NO_SAVE #NO_EXPAND_ALL timing for different network-level functions -- per thread, plus one summary item at the end
+  NetTiming_List net_timing;    // #CAT_Statistic #EXPERT #NO_SAVE timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)

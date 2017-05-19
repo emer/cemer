@@ -23,7 +23,7 @@
 #include <taBase_PtrList>
 #include <taiWidgetTypeDefChooser>
 #include <Network>
-#include <NameVar_PArray>
+#include <NameVar_Array>
 
 
 TA_BASEFUNS_CTORS_DEFN(BaseSpec);
@@ -200,51 +200,23 @@ void BaseSpec::SetUnique(int memb_no, bool on) {
   if(on) {
     unique.AddUnique(md->name);
     
-    if (md->type->InheritsFromName("SpecMemberBase")) {
-      SpecMemberBase* smb = (SpecMemberBase*)md->GetOff((void*)this);
-      if (smb) {
-        for (int i=0; i<smb->GetTypeDef()->members.size; i++) {
-          MemberDef* smb_md = smb->GetTypeDef()->members.SafeEl(i);
-          String smb_name = md->name + "." + smb_md->name;
-          int idx = saved.FindName(smb_name);
-          if (idx > -1) {
-            Variant value = saved.SafeEl(idx).value;
-            saved.RemoveIdx(idx);
-            if (smb_md->GetTypeDef()->IsActual()) {
-              smb_md->SetValVar(value, smb);
-            }
-          }
-        }
-      }
-    }
-    else {
-      int idx = saved.FindName(md->name);
-      if (idx > -1) {
-        Variant value = saved.SafeEl(idx).value;
-        saved.RemoveIdx(idx);
-        md->SetValVar(value, this);
-      }
+    int idx = saved.FindName(md->name);
+    if (idx > -1) {
+      String val_str = saved.SafeEl(idx).value.toString();
+      saved.RemoveIdx(idx);
+      md->SetValStr(val_str, this, TypeDef::SC_STREAMING, true);
     }
   }
   else {
-    if (unique.FindEl(md->name) != -1) {
-      if (md->type->InheritsFromName("SpecMemberBase")) {
-        SpecMemberBase* smb = (SpecMemberBase*)md->GetOff((void*)this);
-        if (smb) {
-          for (int i=0; i<smb->GetTypeDef()->members.size; i++) {
-            MemberDef* smb_md = smb->GetTypeDef()->members.SafeEl(i);
-            String smb_name = md->name + "." + smb_md->name;
-            NameVar smb_nv(smb_name, smb_md->GetValVar(smb));
-            saved.Add(smb_nv);
-          }
-        }
-      }
-      else {
-        NameVar nv(md->name, md->GetValVar(this));
+    int uniq_idx = unique.FindEl(md->name);
+    if (uniq_idx > -1) {
+      if(!md->IsGuiReadOnly()) {
+        String val_str = md->GetValStr(this, TypeDef::SC_STREAMING, true); // use string rep, force inline
+        NameVar nv(md->name, val_str);
         saved.Add(nv);
       }
+      unique.RemoveIdx(uniq_idx);
     }
-    unique.RemoveEl(md->name);
   }
 }
 
