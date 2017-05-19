@@ -21,8 +21,18 @@
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(GPiInvUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(GPiGateSpec);
 TA_BASEFUNS_CTORS_DEFN(GPiMiscSpec);
+TA_BASEFUNS_CTORS_DEFN(GPiInvUnitSpec);
+
+void GPiGateSpec::Initialize() {
+  updt_net = true;
+  Defaults_init();
+}
+
+void GPiGateSpec::Defaults_init() {
+  gate_cyc = 18;
+}
 
 void GPiMiscSpec::Initialize() {
   Defaults_init();
@@ -44,9 +54,11 @@ void GPiMiscSpec::UpdateAfterEdit_impl() {
 }  
 
 void GPiInvUnitSpec::Initialize() {
+  Defaults_init();
 }
 
 void GPiInvUnitSpec::Defaults_init() {
+  gate_qtr = Q1_Q3;
 }
 
 void GPiInvUnitSpec::HelpConfig() {
@@ -57,7 +69,7 @@ void GPiInvUnitSpec::HelpConfig() {
  \nGPiInvUnitSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure layers.\n\
  - Recv cons should be standard, with no learning.\n\
- - Should send back to Matrix Go and NoGo to deliver thal gating signal to drive learning.";
+ - Should send to PFC, and back to Matrix Go and NoGo, to deliver thal gating signal to drive learning.";
   taMisc::Confirm(help);
 }
 
@@ -140,18 +152,23 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 }
 
 void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  bool gate_qtr = Quarter_DeepRawNextQtr(net->quarter);
-  int qtr_cyc;
-  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get out gate value
-  gate_cyc -= 1;                                                  // go one earlier!
+  bool gate_now = Quarter_GateNow(net->quarter);
+  int qtr_cyc = net->QuarterCycle();
 
   float snd_val = 0.0f;
+  float gate_val = 0.0f;
   if(net->quarter == 0 && qtr_cyc <= 1) { // reset
     u->thal_cnt = 0.0f;
   }
 
-  if(gate_qtr && qtr_cyc == gate_cyc) {
-    net->times.current_cycle_gate_cycle = true; //This is the gating cycle. Used to record act_g for this cycle
+  if(gate_now && qtr_cyc == gate.gate_cyc) {
+    gate_val = 1.0f;            // gated!
+    if(gate.updt_net) {
+      LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+      if(un->idx == 0) {        // choose only first unit to do this -- not based on threads b/c we don't know for sure that thread 0 will be represented here!
+        net->ThalGatedNow();      // record 
+      }
+    }
     if(gpi.thr_act) {
       if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
       snd_val = u->act_eq;
@@ -183,12 +200,13 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
       ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal = snd_val;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal_gate = gate_val;
     }
   }
 }
 
 void GPiInvUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Post(u, net, thr_no);
-  Send_Thal(u, net, thr_no);
+  Send_Thal(u, net, thr_no);    // note: essential to send all modulation in Act_Post
 }
 

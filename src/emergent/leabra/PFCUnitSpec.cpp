@@ -24,11 +24,11 @@ TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCGateSpec::Initialize() {
   out_gate = false;
-  prv_qtr = true;
   Defaults_init();
 }
 
 void PFCGateSpec::Defaults_init() {
+  out_q1only = true;
   mnt_thal = 1.0f;
   gate_thr = 0.2f;
 }
@@ -203,36 +203,23 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   return net_ex;
 }
 
-
-int PFCUnitSpec::PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_cyc) {
-  const int cyc_per_qtr = net->times.quarter;
-  qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
-  int gate_cyc = net->times.gate_cyc;
-  if(pfc_out_gate)  // out gate goes first so maint can override clear!
-    gate_cyc -= 1;
-  return gate_cyc;
-}
-
-
 void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep.IsSuper()) return;
-
-  if(gate.prv_qtr) {
-    if(!Quarter_DeepRawNextQtr(net->quarter))
-      return;
-  }
-  else {
-    if(!Quarter_DeepRawNow(net->quarter))
-      return;
-  }
-
-  int qtr_cyc;
-  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, gate.out_gate, qtr_cyc);
-
-  if(qtr_cyc != gate_cyc) {
+  if(!deep.IsSuper()) {
+    LeabraUnitSpec::SaveGatingAct(u, net, thr_no); // we save like regular -- don't get gating inputs
     return;
   }
 
+  if(u->thal_gate == 0.0f) {    // no gating!
+    return;
+  }
+  // note: gating actually happend on prior cycle -- we were sent thal values in Act_Post on the prior cycle
+
+  if(gate.out_gate && gate.out_q1only) {
+    if(net->quarter > 1) return;
+  }
+  
+  u->act_g = GetRecAct(u);      // save activation at point of gating
+  
   if(u->thal > gate.gate_thr) { // new gating signal -- reset counter
     if(u->thal_cnt >= 1.0f) { // already maintaining
       if(maint.clear > 0.0f) {
@@ -251,8 +238,15 @@ void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
 }
 
-void PFCUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Post(u, net, thr_no);
+void PFCUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Rate(u, net, thr_no);
+  // note: we must compute this here based on thal values we got last cycle in Act_Post
+  // and we do it after getting new acts so that we can clear them out when gating happens
+  Compute_PFCGating(u, net, thr_no);
+}
+
+void PFCUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Spike(u, net, thr_no);
   Compute_PFCGating(u, net, thr_no);
 }
 

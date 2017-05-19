@@ -134,10 +134,14 @@ void TDDeltaUnitSpec::Send_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
 
 void TDDeltaUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Compute_TD(u, net, thr_no);
-  Send_TD(u, net, thr_no);
 }
 
 void TDDeltaUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Compute_Act_Rate(u, net, thr_no);
+}
+
+void TDDeltaUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
+  Send_TD(u, net, thr_no);      // note: can only send modulators during post!!
 }
 

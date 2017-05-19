@@ -46,7 +46,7 @@ void TANUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-void TANUnitSpec::Compute_PlusPhase(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void TANUnitSpec::Compute_PlusPhase_Netin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float max_send_act = 0.0f;
   const int nrg = u->NRecvConGps(net, thr_no);
   for(int g=0; g<nrg; g++) {
@@ -56,11 +56,16 @@ void TANUnitSpec::Compute_PlusPhase(LeabraUnitVars* u, LeabraNetwork* net, int t
     if(!cs->IsMarkerCon()) continue;
     const int sz = recv_gp->size;
     for(int i=0; i< sz; i++) {
+      // receiving from act_eq must happen outside of Compute_Act stage!
       const float act_eq = ((LeabraUnitVars*)recv_gp->UnVars(i,net))->act_eq;
       max_send_act = fmaxf(act_eq, max_send_act);
     }
   }
   u->ext = max_send_act;
+  u->net = u->ext;
+}
+
+void TANUnitSpec::Compute_PlusPhase_Act(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->act_eq = u->act_nd = u->act = u->net = u->ext;
   u->da = 0.0f;
 }
@@ -77,29 +82,43 @@ void TANUnitSpec::Send_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   }
 }
 
+void TANUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
+    Compute_PlusPhase_Netin(u, net, thr_no);
+  }
+  else {
+    inherited::Compute_NetinInteg(u, net, thr_no);
+  }
+}
+
+
 void TANUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
-    Compute_PlusPhase(u, net, thr_no);
-    if(tan.send_plus) {
-      Send_ACh(u, net, thr_no);
-    }
+    Compute_PlusPhase_Act(u, net, thr_no);
   }
   else {
     inherited::Compute_Act_Rate(u, net, thr_no);
-    if(Quarter_DeepRawNow(net->quarter))
-      Send_ACh(u, net, thr_no);
   }
 }
 
 void TANUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
-    Compute_PlusPhase(u, net, thr_no);
+    Compute_PlusPhase_Act(u, net, thr_no);
+  }
+  else {
+    inherited::Compute_Act_Spike(u, net, thr_no);
+  }
+}
+
+void TANUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
+  // must send all modulators in act_post
+  if(tan.plus_fm_pv_vs && (net->phase == LeabraNetwork::PLUS_PHASE)) {
     if(tan.send_plus) {
       Send_ACh(u, net, thr_no);
     }
   }
   else {
-    inherited::Compute_Act_Spike(u, net, thr_no);
     if(Quarter_DeepRawNow(net->quarter))
       Send_ACh(u, net, thr_no);
   }

@@ -31,9 +31,9 @@ class E_API PFCGateSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
+  bool          out_q1only;     // #DEF_true #CONDSHOW_ON_out_gate for output gating, only compute gating in first quarter -- do not compute in 3rd quarter -- this is typically true, and deep_raw_qtr is typically set to only Q1 as well -- does deep raw updating immediately after first quarter gating signal -- allows gating signals time to influence performance within a single trial
   float         mnt_thal;       // #DEF_1 effective thal activation to use in computing the deep_raw activation sent from super to deep layers, for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
   float         gate_thr;       // #DEF_0.2 threshold on thalamic gating signal to drive gating -- when using GpiInvUnitSpec gpi, this parameter ususally doesn't matter!  set the gpi.gate_thr value instead -- the only constraint is that this value be <= gpi.min_thal as that determines the minimum thalamic value for gated stripes
-  bool          prv_qtr;        // does gating happen in the previous quarter or otherwise in the same quarter as the deep_raw_qtr?  for maintenance layers, typically you set Q2_Q4 for deep_raw_qtr, and gating happens in quarters 1 and 3, so prv_qtr should be true -- for output layers, gating in Q1 and prv_qtr = false allows gating to happen after first quarter instead of waiting until later -- this allows the output gating to happen quicker to influence responses within the trial
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -75,7 +75,7 @@ private:
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // PFC unit spec -- thal signal during deep_raw_qtr drives updating of deep_raw as gated deep5b activations, sent as deep_ctxt to DEEP units that send back deep_lrn to SUPER, and drive top-down outputs -- output gating is transient
+  // PFC unit spec -- thal_gate and thal signals received typically during Q1,Q3 e.g., from GPiInvUnitSpec drives updating of deep_raw during deep_raw_qtr quaters (typically Q2,Q4) as gated deep5b activations, sent as deep_ctxt to DEEP units that send back deep_lrn to SUPER, and drive top-down outputs -- output gating is transient
 INHERITED(LeabraUnitSpec)
 public:
 
@@ -92,10 +92,6 @@ public:
   int           n_dyns;         // number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
   DataTable     dyn_table;      // #TREE_SHOW #EXPERT table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_ctxt is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
 
-
-  static int    PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_cyc);
-  // get the cycle on which the PFC will gate -- pfc_out gates 1 cycle earlier -- also fills in the current cycle within quarter in qtr_cyc -- compare against return value to determine if it is gating time..
-  
   inline float  GetDynVal(DynVals val, int row) {
     return dyn_table.GetValAsFloat(val, row);
   }
@@ -124,13 +120,15 @@ public:
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
-  void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  SaveGatingAct(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
-  void ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)

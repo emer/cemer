@@ -37,6 +37,7 @@ public:
 
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;

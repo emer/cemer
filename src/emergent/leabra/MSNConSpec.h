@@ -142,6 +142,7 @@ public:
     ACT_P,                      // act_p from current trial
     ACT_M,                      // act_m from current trial
     ACT_EQ,                     // act_eq from current trial -- use this for PBWM Dorsal matrix
+    ACT_G,                      // act_g from current trial -- activation on cycle of gating -- use this for PBWM Dorsal matrix
   };
   
   enum LearningRule {           // type of learning rule to use
@@ -199,16 +200,14 @@ public:
     switch(val) {
     case PREV_TRIAL:
       return u->act_q0;
-      break;
     case ACT_P:
       return u->act_p;
-      break;
     case ACT_M:
       return u->act_m;
-      break;
     case ACT_EQ:
       return u->act_eq;
-      break;
+    case ACT_G:
+      return u->act_g;
     }
     return 0.0f;
   }    
@@ -363,9 +362,9 @@ public:
         }
         const float ru_act = GetActVal(ru, ru_act_var);
         const float ach = q4 ? ru->ach : 0.0f;
-        C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], 
-                        ru->da_p, ach, d2r, ru->thal_cnt, ru_act, su_act, lrate_eff,
-                                 ru->deep_raw_net);
+        C_Compute_dWt_Trace_Thal
+          (dwts[i], ntrs[i], trs[i], ru->da_p, ach, d2r, ru->thal_cnt,
+           ru_act, su_act, lrate_eff, ru->deep_raw_net);
       }
       break;
     }

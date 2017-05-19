@@ -39,29 +39,19 @@ void ClampDaUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   }
 }
 
-void ClampDaUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Rate(u, net, thr_no);
-  if(send_da == CYCLE) {
-    Send_Da(u, net, thr_no);
-  }
-  else if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Send_Da(u, net, thr_no);
-  }
-}
-
-void ClampDaUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Spike(u, net, thr_no);
-  if(send_da == CYCLE) {
-    Send_Da(u, net, thr_no);
-  }
-  else if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Send_Da(u, net, thr_no);
-  }
-}
-
 void ClampDaUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net, thr_no);
   if(send_da == PLUS_END && net->phase == LeabraNetwork::PLUS_PHASE) {
+    Send_Da(u, net, thr_no);
+  }
+}
+
+void ClampDaUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
+  if(send_da == CYCLE) {
+    Send_Da(u, net, thr_no);
+  }
+  else if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
     Send_Da(u, net, thr_no);
   }
 }

@@ -477,7 +477,7 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
 }
 
 void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  float snd_val = u->act;
+  const float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
@@ -501,12 +501,9 @@ void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int th
     else {
       Compute_DaN(u, net, thr_no);
     }
-    Send_Da(u, net, thr_no);
   }
   else {
     u->act = 0.0f;
-    Send_Da(u, net, thr_no);    // send nothing
-    // Compute_Da(u, net, thr_no); // then compute just for kicks
   }
 }
 
@@ -514,4 +511,8 @@ void VTAUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int t
   Compute_Act_Rate(u, net, thr_no);
 }
 
+void VTAUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
+  Send_Da(u, net, thr_no);      // note: can only send modulators during post!!
+}
 

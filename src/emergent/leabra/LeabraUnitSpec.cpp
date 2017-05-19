@@ -587,6 +587,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_mod_net = 0.0f;
   u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
+  u->thal_gate = 0.0f;
   u->thal_cnt = -1.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -606,6 +607,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->da_n = 0.0f;
   u->sev = 0.0f;
   u->ach = 0.0f;
+  u->shunt = 0.0f;
   u->misc_1 = 0.0f;
   u->misc_2 = 0.0f;
   u->spk_t = -1;
@@ -728,6 +730,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_ctxt = 0.0f;
 
   u->thal = 0.0f;
+  u->thal_gate = 0.0f;
   u->thal_cnt = -1.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -746,6 +749,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->da_p = 0.0f;
   u->da_n = 0.0f;
   u->ach = 0.0f;
+  u->shunt = 0.0f;
   // u->sev = 0.0f; // longer time-course
 
   // not the scales
@@ -1460,6 +1464,12 @@ void LeabraUnitSpec::Compute_ApplyInhib
   }
 }
 
+void LeabraUnitSpec::SaveGatingAct(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(net->cycle == net->times.thal_gate_cycle+1) { // happened last trial
+    u->act_g = GetRecAct(u);
+  }
+}
+
 void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(deep.SendDeepMod()) {
@@ -1486,6 +1496,8 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
 void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
+  SaveGatingAct(u, net, thr_no);
+  
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if(deep.on) {
@@ -1610,6 +1622,7 @@ void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnitVars* u, LeabraNetwork* net
 void LeabraUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
+  SaveGatingAct(u, net, thr_no);
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if(deep.on) {
@@ -1986,17 +1999,6 @@ void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int th
 ///////////////////////////////////////////////////////////////////////
 //      Phase and Trial Activation Updating
 
-void LeabraUnitSpec::Gating_RecVals(LeabraUnitVars* u, LeabraNetwork* net) {
-  float use_act;
-  if(act_misc.rec_nd) {
-    use_act = u->act_nd;
-  }
-  else {
-    use_act = u->act_eq;
-  }
-  u->act_g = use_act;
-}
-
 void LeabraUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Quarter_Final_RecVals(u, net, thr_no);
 }
@@ -2004,13 +2006,7 @@ void LeabraUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int th
 void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
 
-  float use_act;
-  if(act_misc.rec_nd) {
-    use_act = u->act_nd;
-  }
-  else {
-    use_act = u->act_eq;
-  }
+  float use_act = GetRecAct(u);
 
   switch(net->quarter) {        // this has not advanced yet -- still 0-3
   case 0: {

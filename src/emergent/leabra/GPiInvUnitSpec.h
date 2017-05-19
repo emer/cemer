@@ -23,10 +23,30 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(GPiGateSpec);
+
+class E_API GPiGateSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra timing of gating 
+INHERITED(SpecMemberBase)
+public:
+  int           gate_cyc;       // #DEF_18 cycle within quarter to apply gating -- see gating_qtr for quarters when gating is computed -- we send thal_gate on this cycle in those quarters, regardless of whether our activation is over gating threshold
+  bool          updt_net;        // we update the LeabraNetwork.times.thal_gate_cycle value whenver our gating timing is activated -- if there are multiple gating layers then might want to only listen to one of them -- importantly, this should not affect actual functioning of PBWM system, which depends on direct thal_gate signals -- only affects recording of act_g gating values for units outside of PBWM
+  
+  String        GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(GPiGateSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()       { };
+  void  Defaults_init();
+};
+
 eTypeDef_Of(GPiMiscSpec);
 
 class E_API GPiMiscSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra weighting of Go vs. NoGo inputs
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra weighting of Go vs. NoGo inputs and other GPi params
 INHERITED(SpecMemberBase)
 public:
   float         net_gain;        // #DEF_3 extra netinput gain factor to compensate for reduction in netinput from subtracting away nogo -- this is IN ADDITION to adding the nogo factor as an extra gain: net = (net_gain + nogo) * (go_in - nogo * nogo_in)
@@ -53,10 +73,15 @@ private:
 eTypeDef_Of(GPiInvUnitSpec);
 
 class E_API GPiInvUnitSpec : public LeabraUnitSpec {
-  // #AKA_GPiUnitSpec Inverted GPi globus pallidus internal segment, analogous with SNr -- major output pathway of the basal ganglia.  This integrates Go and NoGo inputs, computing netin = Go - go_nogo.nogo * NoGo -- unlike real GPi units are typically off, and the most active wins through inhibitory competition -- also sends act to thal field on layers that it sends to -- can be used directly as a sole SNrThal gating layer, or indrectly with InvertUnitSpec to mimic actual non-inverted GPi in a projection to thalamus layer
+  // #AKA_GPiUnitSpec Inverted GPi globus pallidus internal segment, analogous with SNr -- major output pathway of the basal ganglia.  This integrates Go and NoGo inputs, computing netin = Go - go_nogo.nogo * NoGo -- unlike real GPi units are typically off, and the most active wins through inhibitory competition -- is responsible for determining when gating happens, sends act to thal field on layers that it sends to -- can be used directly as a sole SNrThal gating layer, or indrectly with InvertUnitSpec to mimic actual non-inverted GPi in a projection to thalamus layer
 INHERITED(LeabraUnitSpec)
 public:
-  GPiMiscSpec    gpi;      // parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold
+  Quarters       gate_qtr;    // #CAT_GPi quarter(s) during which GPi gating takes place -- typically Q1 and Q3
+  GPiGateSpec    gate;        // #CAT_GPi timing for gating  within gate_qtr
+  GPiMiscSpec    gpi;         // #CAT_GPi parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold
+
+  inline  bool Quarter_GateNow(int qtr) { return gate_qtr & (1 << qtr); }
+  // #CAT_Activation test whether gating happens in this quareter
 
   void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

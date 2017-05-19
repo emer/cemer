@@ -45,8 +45,7 @@ public:
   virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections
 
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

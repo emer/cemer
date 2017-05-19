@@ -75,6 +75,7 @@ public:
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thread_no) override { };
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };

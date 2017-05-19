@@ -28,6 +28,8 @@ void MatrixActSpec::Initialize() {
 }
 
 void MatrixActSpec::Defaults_init() {
+  patch_shunt = 0.2f;
+  shunt_ach = true;
   out_ach_inhib = 0.3f;
 }
 
@@ -72,31 +74,57 @@ void MSNUnitSpec::Compute_ApplyInhib
  LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) {
   inherited::Compute_ApplyInhib(u, net, thr_no, lay, lspec, thr, ival);
 
-  if(matrix_patch != MATRIX) return;
+  // note shunting previously applied
+  if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
+    GateType gt = MatrixGateType(u, net, thr_no);
+    if(gt == OUT) {
+      u->gc_i += matrix.out_ach_inhib * (1.0f - u->ach);
+    }
+  }
+}
 
-  GateType gt = MatrixGateType(u, net, thr_no);
-  if(gt == OUT) {
-    u->gc_i += matrix.out_ach_inhib * (1.0f - u->ach);
+
+void MSNUnitSpec::Compute_PatchShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  // note: recv this in prior Act_Post from  patch unit spec, apply in Act
+  if(u->shunt > 0.0f) {         // todo: could be more quantitative here..
+    u->da_p *= matrix.patch_shunt;
+    if(matrix.shunt_ach) {
+      u->ach *= matrix.patch_shunt;
+    }
   }
 }
 
 void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!Quarter_DeepRawNextQtr(net->quarter))
-    return;
+  // if(!Quarter_DeepRawNextQtr(net->quarter))
+  //   return;
+  // int qtr_cyc;
+  // int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get earliest value
+  // if(qtr_cyc == gate_cyc) {
 
-  int qtr_cyc;
-  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get earliest value
-  
-  if(qtr_cyc == gate_cyc) {
-    u->thal_cnt = u->thal;      // save into thal_cnt!
+  // save gating value into thal_cnt and gated activation into act_g when thal_gate indicates gating -- note 1 trial delayed from actual gating -- updated in computed_act *prior* to computing new act, so it reflects actual gating cycle activation
+  if(u->thal_gate > 0.0f) {
+    u->thal_cnt = u->thal;
+    u->act_g = GetRecAct(u);       // todo: experiment with learning based on this!
   }
 }
 
-void MSNUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Post(u, net, thr_no);
+void MSNUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  // note: critical for this to come BEFORE updating new act!
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
+    Compute_PatchShunt(u, net, thr_no);
     SaveGatingThal(u, net, thr_no);
   }
+  // note: ApplyInhib called here:
+  inherited::Compute_Act_Rate(u, net, thr_no);
+}
+
+void MSNUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  // note: critical for this to come BEFORE updating new act!
+  if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
+    Compute_PatchShunt(u, net, thr_no);
+    SaveGatingThal(u, net, thr_no);
+  }
+  inherited::Compute_Act_Spike(u, net, thr_no);
 }
 
 void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

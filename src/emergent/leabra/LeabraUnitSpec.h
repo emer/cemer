@@ -571,7 +571,8 @@ public:
     Q2 = 0x02,                 // second quarter
     Q3 = 0x04,                 // third quarter -- posterior cortical minus phase
     Q4 = 0x08,                 // fourth quarter -- posterior cortical plus phase
-    Q2_Q4 = Q2 | Q4,           // #NO_BIT standard beta frequency option, for bg, pfc
+    Q2_Q4 = Q2 | Q4,           // #NO_BIT standard beta frequency option, for pfc
+    Q1_Q3 = Q1 | Q3,           // #NO_BIT standard beta frequency option, for bg
     QALL = Q1 | Q2 | Q3 | Q4,  // #NO_BIT all quarters
   };
 
@@ -729,10 +730,6 @@ public:
   inline void  Compute_SelfInhib(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no,
                                   LeabraLayerSpec* lspec);
   // #CAT_Activation #IGNORE compute self inhibition value
-  virtual void        Compute_ApplyInhib
-    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
-     LeabraLayerSpec* lspec,  LeabraInhib* thr, float ival);
-  // #CAT_Activation #IGNORE apply computed inhibition value to unit inhibitory conductance
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -751,6 +748,14 @@ public:
       Compute_Act_Rate((LeabraUnitVars*)uv, (LeabraNetwork*)net, thr_no);
   }
 
+  virtual void        Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+     LeabraLayerSpec* lspec,  LeabraInhib* thr, float ival);
+  // #IGNORE apply computed inhibition value to unit inhibitory conductance -- called by Compute_Act functions -- this is not a separate step in computation
+
+  virtual void SaveGatingAct(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation save act_eq to act_g based on network.times.thal_gate_cycle
+  
   virtual void Compute_Act_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation Rate coded activation
 
@@ -794,7 +799,7 @@ public:
   //        Post Activation Step
 
   virtual void Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Activation post-processing step after activations are computed -- calls  Compute_SRAvg by default
+  // #CAT_Activation post-processing step after activations are computed -- calls  Compute_SRAvg and Compute_Margin by default -- this is also when any modulatory signals should be sent -- NEVER send any such signals during Compute_Act as they might be consumed by other layers during that time
     virtual void Compute_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Learning compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
     virtual void Compute_Margin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
@@ -820,6 +825,11 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Quarter Final
 
+  inline float GetRecAct(LeabraUnitVars* u) {
+    if(act_misc.rec_nd) return u->act_nd;
+    return u->act_eq;
+  }
+  
   virtual void Quarter_Final(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation record state variables after each gamma-frequency quarter-trial of processing
     virtual void Quarter_Final_RecVals(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
@@ -830,8 +840,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Stats
 
-  void Gating_RecVals(LeabraUnitVars* u, LeabraNetwork* net);
-  // Record act values at the time of gating in act_g
   float Compute_SSE(UnitVars* uv, Network* net, int thr_no, bool& has_targ) override;
   bool  Compute_PRerr
     (UnitVars* uv, Network* net, int thr_no, float& true_pos, float& false_pos,

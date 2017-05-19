@@ -52,9 +52,9 @@ public:
   inline float& net()   { return GetUnitVars()->net; }
   // #VIEW_HOT #CAT_UnitVar net input value -- what the unit receives from others  (typically sum of sending activations times the weights)
   inline float& bias_wt() { return GetUnitVars()->bias_wt; }
-  // #VIEW_HOT #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
+  // #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
   inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
-  // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
+  // #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
   inline float& bias_fwt()
   { return ((LeabraUnitVars*)GetUnitVars())->bias_fwt; }
@@ -70,29 +70,25 @@ public:
   // #VIEW_HOT #CAT_UnitVar rate-code equivalent activity value (time-averaged spikes or just act for rate code equation, NXX1) -- this includes any short-term plasticity in synaptic efficacy (e.g., depression or enhancement -- see LeabraUnitSpec::stp parameters)
   inline float& act_nd()
   { return ((LeabraUnitVars*)GetUnitVars())->act_nd; }
-  // #VIEW_HOT #CAT_UnitVar non-depressed rate-code equivalent activity value (act_eq) -- this is the rate code prior to any short-term plasticity effects (e.g., depression or enhancement -- see LeabraUnitSpec::stp parameters) -- this reflects the rate of actual action potentials fired by the neuron, but not the net effect of these AP's on postsynaptic receiving neurons
+  // #CAT_UnitVar non-depressed rate-code equivalent activity value (act_eq) -- this is the rate code prior to any short-term plasticity effects (e.g., depression or enhancement -- see LeabraUnitSpec::stp parameters) -- this reflects the rate of actual action potentials fired by the neuron, but not the net effect of these AP's on postsynaptic receiving neurons
   inline float& spike()
   { return ((LeabraUnitVars*)GetUnitVars())->spike; }
   // #CAT_UnitVar discrete spiking event, is 1.0 when the neuron spikes and 0.0 otherwise, and corresponds to act for spike activation -- for rate code equation (NXX1), spikes are triggered identically to spiking mode based on the vm membrane potential dynamics, even though act* is computed through the rate code equation
   inline float& act_q0()
   { return ((LeabraUnitVars*)GetUnitVars())->act_q0; }
-  // #VIEW_HOT #CAT_UnitVar records the activation state at the very start of the current alpha-cycle (100 msec / 10 Hz) trial, prior to any trial-level decay -- is either act_eq or act_nd depending on act_misc.rec_nd setting -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection -- this is equivalent to old p_act_p variable -- the activation in the previous plus phase
+  // #CAT_UnitVar records the activation state at the very start of the current alpha-cycle (100 msec / 10 Hz) trial, prior to any trial-level decay -- is either act_eq or act_nd depending on act_misc.rec_nd setting -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection -- this is equivalent to old p_act_p variable -- the activation in the previous plus phase
   inline float& act_q1()
   { return ((LeabraUnitVars*)GetUnitVars())->act_q1; }
-  // #VIEW_HOT #CAT_UnitVar records the activation state after the first gamma-frequency (25 msec / 40Hz) quarter of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  // #CAT_UnitVar records the activation state after the first gamma-frequency (25 msec / 40Hz) quarter of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
   inline float& act_q2()
   { return ((LeabraUnitVars*)GetUnitVars())->act_q2; }
-  // #VIEW_HOT #CAT_UnitVar records the activation state after the second gamma-frequency (25 msec / 40Hz) quarter (first half) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  // #CAT_UnitVar records the activation state after the second gamma-frequency (25 msec / 40Hz) quarter (first half) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
   inline float& act_q3()
   { return ((LeabraUnitVars*)GetUnitVars())->act_q3; }
-  // #VIEW_HOT #CAT_UnitVar records the activation state after the third gamma-frequency (25 msec / 40Hz) quarter of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  // #CAT_UnitVar records the activation state after the third gamma-frequency (25 msec / 40Hz) quarter of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
   inline float& act_q4()
   { return ((LeabraUnitVars*)GetUnitVars())->act_q4; }
-  // #VIEW_HOT #CAT_UnitVar records the activation state after the fourth gamma-frequency (25 msec / 40Hz) quarter (end) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
-  inline float& act_g()
-  { return ((LeabraUnitVars*)GetUnitVars())->act_g; }
-  // #VIEW_HOT #CAT_UnitVar records the activation state at the time of when a gating decision is made, which is based on the gating cycle and quarter -- is either act_eq or act_nd depending on act_misc.rec_nd setting -- Used for debugging PBWM
-  
+  // #CAT_UnitVar records the activation state after the fourth gamma-frequency (25 msec / 40Hz) quarter (end) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
   inline float& act_m()
   { return ((LeabraUnitVars*)GetUnitVars())->act_m; }
   // #VIEW_HOT #CAT_UnitVar records the traditional posterior-cortical minus phase activation, as act_q3 activation after third quarter of current alpha cycle -- is either act_eq or act_nd depending on act_misc.rec_nd setting
@@ -131,7 +127,7 @@ public:
   // #CAT_UnitVar how much to learn based on the long-term floating threshold (avg_l) for BCM-style Hebbian learning -- is modulated level of avg_l itself (stronger hebbian as average activation goes higher) and optionally the average amount of error experienced in the layer (to retain a common proportionality with the level of error-driven learning across layers)
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
-  // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_misc.avg_tau -- typically 200) -- useful for finding hog units and seeing overall distribution of activation -- if act_misc.avg_trace is active, then it is instead an exponentially decaying trace -- used in TD reinforcement learning
+  // #VIEW_HOT #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_misc.avg_tau -- typically 200) -- useful for finding hog units and seeing overall distribution of activation -- if act_misc.avg_trace is active, then it is instead an exponentially decaying trace -- used in TD reinforcement learning
   inline float& margin()
   { return ((LeabraUnitVars*)GetUnitVars())->margin; }
   // #CAT_UnitVar relative status of this unit for the overall activation state / attractor, used for favoring units on the edges or margins of the attractor: -2 = below the low threshold -- solidly OFF, -1.0 = above the low threshold but below the midway threshold for the marginal units, +1.0 = above the midway threshold but still in the margin, +2.0 = above the high threshold and solidly within the main attractor state
@@ -140,7 +136,7 @@ public:
   // #CAT_UnitVar raw superficial-layer activation prior to mutliplication by deep_norm -- this may reflect layer 4 activation -- used in computing new deep_raw values
   inline float& deep_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw; }
-  // #VIEW_HOT #CAT_UnitVar deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area -- this signal drives deep_ctxt temporal integration (TI) for predictive learning, in addition to attention
+  // #CAT_UnitVar deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area -- this signal drives deep_ctxt temporal integration (TI) for predictive learning, in addition to attention
   inline float& deep_raw_prv()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_prv; }
   // #CAT_UnitVar previous value of the deep layer raw activation values -- used for temporal context learning
@@ -161,10 +157,16 @@ public:
   // #CAT_UnitVar deep_raw net input from deep layer activations (representing lamina 5b intrinsic bursting neurons), typically for driver inputs into thalamic relay cells via SendDeepRawConSpec
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
-  // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MSNConSpecs, and possibly other specs, to respond to thalamic inputs
+  // #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MSNConSpecs, and possibly other specs, to respond to thalamic inputs
+  inline float& thal_gate()
+  { return ((LeabraUnitVars*)GetUnitVars())->thal_gate; }
+  // #CAT_UnitVar discrete thalamic gating signal -- typically activates to 1 when thalamic pathway gates, and is 0 otherwise -- PFC and BG layers receive this signal to drive updating etc at the proper time -- other layers can use the LeabraNetwork times.thal_gate_cycle signal
   inline float& thal_cnt()
   { return ((LeabraUnitVars*)GetUnitVars())->thal_cnt; }
   // #CAT_UnitVar counter for thalamic activation value -- increments for active maintenance in PFCUnitSpec
+  inline float& act_g()
+  { return ((LeabraUnitVars*)GetUnitVars())->act_g; }
+  // #CAT_UnitVar records the activation state when gating occurs -- for PFC and BG units this is based on direct thal_gate signal, and for other units it is based on LeabraNetwork thal_gate signal, which is actvated when thalamic layers gate and are configured to update the global signal -- is either act_eq or act_nd depending on act_misc.rec_nd setting
   inline float& gc_i()
   { return ((LeabraUnitVars*)GetUnitVars())->gc_i; }
   // #CAT_UnitVar total inhibitory conductance -- does NOT include the g_bar.i
@@ -209,16 +211,19 @@ public:
   // #CAT_UnitVar noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   inline float& da_p()
   { return ((LeabraUnitVars*)GetUnitVars())->da_p; }
-  // #VIEW_HOT #CAT_UnitVar positive-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in reward outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units -- see also da_n
+  // #CAT_UnitVar positive-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in reward outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units -- see also da_n
   inline float& da_n()
   { return ((LeabraUnitVars*)GetUnitVars())->da_n; }
-  // #VIEW_HOT #CAT_UnitVar negative-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in negative outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units with appropriate flags set -- see also da_p
+  // #CAT_UnitVar negative-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in negative outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units with appropriate flags set -- see also da_p
   inline float& sev()
   { return ((LeabraUnitVars*)GetUnitVars())->sev; }
   // #CAT_UnitVar serotonin value -- driven by Dorsal Raphe Nucleus (DRNUnitSpec) or other sources -- generally thought to reflect longer time-averages of overall progress or lack thereof
   inline float& ach()
   { return ((LeabraUnitVars*)GetUnitVars())->ach; }
   // #CAT_UnitVar acetylcholine value -- driven by Tonically Active Neurons (TAN's) in the Striatum, and potentially other sources -- effects depend strongly on types of receptors present
+  inline float& shunt()
+  { return ((LeabraUnitVars*)GetUnitVars())->shunt; }
+  // #CAT_UnitVar shunting value -- modulatory signal that shunts activity in other layers -- currently sent by PatchUnitSpec to MSNUnitSpecs in the BG to shunt dopamine and ach
   
   inline float& misc_1()
   { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }

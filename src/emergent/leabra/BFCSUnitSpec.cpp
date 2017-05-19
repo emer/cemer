@@ -171,4 +171,3 @@ void BFCSUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int 
   Compute_Act_Rate(u, net, thr_no);
 }
 
-

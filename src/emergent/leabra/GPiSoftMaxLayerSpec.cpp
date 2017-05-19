@@ -39,12 +39,12 @@ void GPiSoftMaxLayerSpec::Initialize() {
 void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   
-  if(!us->Quarter_DeepRawNextQtr(net->quarter))
-    return;
+  // if(!us->Quarter_DeepRawNextQtr(net->quarter))
+  //   return;
 
-  int qtr_cyc;
-  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get out gate value
-  gate_cyc -= 1;                                                  // go one earlier!
+  int qtr_cyc = -2;
+  // int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get out gate value
+  int gate_cyc = 1;                                                  // go one earlier!
   
   if(qtr_cyc != gate_cyc)
     return;

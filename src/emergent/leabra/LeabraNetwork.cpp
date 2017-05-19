@@ -38,7 +38,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 void LeabraTimes::Initialize() {
   quarter = 25;
   cycle_qtr = true;
-  gate_cyc = 18;
   deep_cyc = 5;
   time_inc = 0.001f;
   wt_bal_int = 10;
@@ -46,6 +45,7 @@ void LeabraTimes::Initialize() {
   minus = 3 * quarter;
   plus = quarter;
   total_cycles = minus + plus;
+  thal_gate_cycle = -2;
 }
 
 void LeabraTimes::UpdateAfterEdit_impl() {
@@ -373,6 +373,7 @@ void LeabraNetwork::Trial_Init() {
 }
 
 void LeabraNetwork::Trial_Init_Counters() {
+  times.thal_gate_cycle = -2;
   cycle = 0;
   quarter = 0;
   phase = MINUS_PHASE;
@@ -756,8 +757,6 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
   if(times.cycle_qtr)
     tot_cyc = times.quarter;
   for(int cyc = 0; cyc < tot_cyc; cyc++) {
-    if (thr_no == 0) //We only need to do this for the first thread.
-      this->times.current_cycle_gate_cycle = false; //reset this variable that is then set in GPiInvUnitSpec when the current cycle is a PBWM gating cycle.
     Send_Netin_Thr(thr_no);
     threads.SyncSpin(thr_no, 0);
 
@@ -802,9 +801,6 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
 
-    if (this->times.current_cycle_gate_cycle)
-      Gating_RecVals_Thr(thr_no);
-    
     Compute_CycleStats_Thr(thr_no);
     threads.SyncSpin(thr_no, 2);
     
@@ -1186,6 +1182,10 @@ void LeabraNetwork::Compute_Act_Post_Thr(int thr_no) {
 
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->act_post.EndIncrAvg();
+}
+
+void LeabraNetwork::ThalGatedNow() {
+  times.thal_gate_cycle = cycle; // record current cycle
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -2490,15 +2490,6 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
   Compute_HogDeadPcts();
-}
-
-void LeabraNetwork::Gating_RecVals_Thr(int thr_no) {
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Gating_RecVals(uv, this);
-  }
 }
 
 void LeabraNetwork::Compute_EpochWeights() {

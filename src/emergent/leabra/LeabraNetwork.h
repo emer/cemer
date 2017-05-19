@@ -57,7 +57,6 @@ INHERITED(taOBase)
 public:
   bool          cycle_qtr;      // #DEF_true #NO_SAVE one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down
   int		quarter;	// #DEF_25 number of cycles to run per each quarter of a trial -- typically, a trial is one alpha cycle of 100 msec (10 Hz), and we run at 1 cycle = 1 msec, so that is 25 cycles per quarter, which gives the ubiquitous gamma frequency power of 40 Hz -- a traditional minus phase takes the first 3 quarters, and the last quarter is the plus phase -- use CycleRunMax_Minus and CycleRunMax_Plus to get proper minus and plus phase cycles values to use in programs, taking into account lthreads.quarter setting
-  int           gate_cyc;       // #DEF_18 cycle within quarter to apply BG / PFC gating -- see PFCUnitSpec for more information about how gating works and its effects, etc.
   int           deep_cyc;       // #DEF_5 how often (in cycles) to perform deep layer updating -- typically not necessary to update as frequently as superficial activations -- and biologically driven by layer 5 ib neurons that emit just a few bursts
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants -- also affects rate-code computed spiking intervals in unit spec
   int           wt_bal_int;     // #DEF_10 weight balance update interval: if weight balance soft normalization is being used, this is how frequently to update in terms of trials (1 = every trial, 2 = every other trial, etc) -- this is relatively computationally intensive and doesn't typically need to be done too frequently
@@ -65,7 +64,7 @@ public:
   int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
   int		plus;	        // #READ_ONLY computed total number of cycles per plus phase = quarter
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
-  bool  current_cycle_gate_cycle; // #READ_ONLY computed value indicating if the current cycle is a gating cycle. This is used to then record act_g.
+  int           thal_gate_cycle; // #READ_ONLY #SHOW BG / thalamus layers can be configured to update this value to record cycle when gating occurred -- other units by default will record their activations to act_g variable on this cycle
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -464,7 +463,7 @@ public:
   virtual void	Compute_Inhib_Thr(int thr_no);
   // #IGNORE compute inhibitory conductances via inhib functions (FFFB, kWTA) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
     virtual void Compute_Inhib_LayGp();
-    // #CAT_Cycle compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
+    // #IGNORE compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
@@ -477,7 +476,13 @@ public:
   // #IGNORE spiking activations
 
   virtual void	Compute_Act_Post_Thr(int thr_no);
-  // #IGNORE post processing after activations have been computed -- special algorithm code takes advantage of this stage, and running average activations (SRAvg) also computed
+  // #IGNORE post processing after activations have been computed -- special algorithm code takes advantage of this stage to send modulator variables -- all such vars should EXCLUSIVELY be sent during this stage, and running average activations (SRAvg) also computed
+
+  inline  int   QuarterCycle() { return cycle - quarter * times.quarter; }
+  // #CAT_Cycle cycles within current cycle -- network cycle counter counts for entire trial across 4 quarters
+
+  virtual void  ThalGatedNow();
+  // #IGNORE record current cycle as gating cycle -- called by enabled thalamic gating layer(s)
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
@@ -665,8 +670,6 @@ public:
   void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;
-  void  Gating_RecVals_Thr(int thr_no);
-  // #CAT_Statistics store the activations of all layers at the time of gating;
   virtual void  Compute_EpochWeights();
   // #CAT_Learning perform any epoch-level weight updates or adjustments..
     virtual void  Compute_EpochWeights_Thr(int thr_no);
