@@ -520,6 +520,11 @@ void ControlPanel::CopyFromDataTable(DataTable* table, int row_num) {
   }
   FOREACH_ELEM_IN_GROUP(ControlPanelMember, item, mbrs) {
     Variant val = table->GetVal(item->label, row_num);
+    if (!item->short_label && !val.isValid()) {
+      String sh_label;
+      item->base->GetControlPanelLabel(item->mbr, sh_label, "", true);
+      val = table->GetVal(sh_label, row_num);
+    }
     if(val.isValid()) {
       if(item->IsParamSet()) {
         item->data.saved_value = val.toString();
