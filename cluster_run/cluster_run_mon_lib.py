@@ -2476,10 +2476,6 @@ def main():
     repo_dir = os.path.join(wc_root, repo_name)
     print ''
     
-
-    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user, do_svn_cleanup)
-    revision = poller.get_initial_wc()
-
     do_hup = False
     if debug:
         run_nohup = raw_input('\nRun in the background using nohup? [N/y] ')
@@ -2489,6 +2485,9 @@ def main():
         run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
         if not run_nohup or run_nohup in 'yY':
             do_hup = True
+
+    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user, do_svn_cleanup)
+    revision = poller.get_initial_wc()
 
     if do_hup:
         try: os.remove("nohup.out")
