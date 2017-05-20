@@ -27,9 +27,9 @@
 #include <String_PArray>
 #include <DumpFileCvtList>
 #include <ContextFlag>
-#include <taBase_PtrList>
 
 #ifndef NO_TA_BASE
+#include <taBase_PtrList>
 #include <taLicense>
 #include <ClusterSpecs>
 #include <String_Array>

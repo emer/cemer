@@ -925,6 +925,9 @@ void taMisc::Error_nogui(const String& a, const String& b, const String& c, cons
 #endif
 }
 
+///////////////////////////////////////////////////////////////////////////////////
+//              NOTE: BELOW ARE ALL UNDER GLOBAL TA_NO_GUI -- for maketa
+
 #ifdef TA_NO_GUI
 
 void taMisc::Error(const String& a, const String& b, const String& c, const String& d,
@@ -994,7 +997,13 @@ bool taMisc::StringPrompt(String& str_val, const String& prompt,
   return str_val.nonempty();
 }
 
+//              NOTE: ABOVE ARE ALL UNDER GLOBAL TA_NO_GUI -- for maketa
+///////////////////////////////////////////////////////////////////////////////////
+
 #else // def TA_NO_GUI
+
+///////////////////////////////////////////////////////////////////////////////////
+//              NOTE: BELOW ARE ALL UNDER GLOBAL NO_TA_BASE!!
 
 #ifndef NO_TA_BASE
 
@@ -1011,23 +1020,18 @@ void taMisc::Error(const String& a, const String& b, const String& c, const Stri
     if(taMisc::InMainThread()) {
       taMisc::last_err_msg = msg; // can only save to global for same-thread guys
     }
-#if !defined(NO_TA_BASE) 
     if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
       msg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
     }
-#endif
     emsg = "***ERROR: " + msg;
   }
   taMisc::LogEvent(emsg);
-#if !defined(NO_TA_BASE)
   taMisc::ErrorCancelCheck();   // sets taMisc::err_cancel
-#endif
   // if (beep_on_error) cerr << '\a'; // BEL character
 
   if(!taMisc::err_cancel) {
     taMisc::ConsoleOutput(emsg, true, false);
   }
-#if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top && !taMisc::is_loading) {
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
@@ -1046,7 +1050,6 @@ void taMisc::Error(const String& a, const String& b, const String& c, const Stri
       taMisc::ErrorCancelSet(cancel);
     }
   }
-#endif
 }
 
 int taMisc::Choice(const String& text, const String& a, const String& b, const String& c,
@@ -1054,10 +1057,7 @@ int taMisc::Choice(const String& text, const String& a, const String& b, const S
 {
   int m=-1;
   if(!taMisc::InMainThread()) return -1;
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return -1;
-#endif
-#if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     String delimiter = iDialogChoice::delimiter;
     int   chn = 0;
@@ -1072,9 +1072,8 @@ int taMisc::Choice(const String& text, const String& a, const String& b, const S
     if(h.nonempty()) { chstr += String(h) + delimiter; chn++; }
     if(i.nonempty()) { chstr += String(i) + delimiter; chn++; }
     m = iDialogChoice::ChoiceDialog(NULL, text, chstr);
-  } else
-#endif
-  {
+  }
+  else {
     int   chn = 0;
     String chstr = text;
     chstr += "\n";
@@ -1104,25 +1103,19 @@ void taMisc::Confirm(const String& a, const String& b, const String& c,
   const String& d, const String& e, const String& f, const String& g,
   const String& h, const String& i)
 {
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if (taMisc::dmem_proc > 0) return;
-#endif
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   taMisc::LogEvent("***CONFIRM: " + msg);
   taMisc::ConsoleOutput(msg, false, false);
-#if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     iDialogChoice::ConfirmDialog(NULL, msg);
   }
-#endif
 }
 
 bool taMisc::StringPrompt(String& str_val, const String& prompt, 
      const String& ok_txt, const String cancel_txt)
 {
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return false;
-#endif
   QString qval = str_val;
   bool rval = iDialogLineEdit::LineEditDialog(qval, prompt, ok_txt, cancel_txt);
   str_val = qval;
@@ -1130,9 +1123,7 @@ bool taMisc::StringPrompt(String& str_val, const String& prompt,
 }
 
 void taMisc::DisplayList(taBase_PtrList& base_list, const String& title, const String_Array* addl_info, const String& info_title) {
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return;
-#endif
   iDialogList* dlg = iDialogList::New(0, taiMisc::main_window);
   dlg->setAttribute(Qt::WA_DeleteOnClose);
   dlg->show();
@@ -1142,7 +1133,11 @@ void taMisc::DisplayList(taBase_PtrList& base_list, const String& title, const S
 }
 
 #endif // NO_TA_BASE
+//              NOTE: ABOVE ARE ALL UNDER GLOBAL NO_TA_BASE!!
+///////////////////////////////////////////////////////////////////////////////////
+
 #endif // else TA_NO_GUI
+
 
 void taMisc::DebugInfo(const String& a, const String& b, const String& c, const String& d,
        const String& e, const String& f, const String& g, const String& h, const String& i)
