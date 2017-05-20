@@ -606,17 +606,30 @@ void Layer::RecomputeGeometry() {
   UpdateLayerGroupGeom();
 }
 
-void Layer::RelPosFromDropped(Layer* lay, LayerRelPos::RelPos rel) {
+void Layer::PositionUsRelativeToDropped(Layer* lay, LayerRelPos::RelPos rel) {
   pos_rel.other = lay;
   pos_rel.rel = rel;
   SigEmitUpdated();
 }
 
-void Layer::RelPosToDropped(Layer* lay, LayerRelPos::RelPos rel) {
+void Layer::PositionDroppedRelativeToUs(Layer* lay, LayerRelPos::RelPos rel) {
   lay->pos_rel.other = this;
   lay->pos_rel.rel = rel;
   lay->SigEmitUpdated();
 }
+
+void Layer::ConnectUsFromDropped(Layer* lay) {
+  ConnectFrom(lay);
+}
+
+void Layer::ConnectDroppedFromUs(Layer* lay) {
+  lay->ConnectFrom(this);
+}
+
+void Layer::ConnectDroppedBidir(Layer* lay) {
+  ConnectBidir(lay);
+}
+
 
 void Layer::SetRelPos(int x, int y, int z) {
   taVector3i ps(x,y,z);

@@ -376,10 +376,16 @@ public:
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update our owning layer group geometry (auto called after repositioning layers)
 
-  virtual void  RelPosFromDropped(Layer* lay, LayerRelPos::RelPos rel);
-  // #CAT_Structure #DROP1 set the rel_pos other for this layer from the selected (dropped) layer -- for drag-and-drop configuring
-  virtual void  RelPosToDropped(Layer* lay, LayerRelPos::RelPos rel);
-  // #CAT_Structure #DROP1 set the rel_pos other for the selected (dropped) layer from this layer
+  virtual void  PositionUsRelativeToDropped(Layer* lay, LayerRelPos::RelPos rel);
+  // #CAT_IGNORE #DROP1 position this layer relative to the dropped layer -- set the rel_pos other for this layer from the dropped layer -- for drag-and-drop configuring
+  virtual void  PositionDroppedRelativeToUs(Layer* lay, LayerRelPos::RelPos rel);
+  // #CAT_IGNORE #DROP1 position the dropped layer relative to this layer -- set the rel_pos other for the dropped layer from this layer -- for drag-and-drop configuring
+  virtual void  ConnectUsFromDropped(Layer* lay);
+  // #CAT_IGNORE #DROP1 create a new receiving connection from the layer that was dropped onto this one
+  virtual void  ConnectDroppedFromUs(Layer* lay);
+  // #CAT_IGNORE #DROP1 create a new receiving connection in the dropped layer from us
+  virtual void  ConnectDroppedBidir(Layer* lay);
+  // #CAT_IGNORE #DROP1 create new bidrectional connections between the dropped layer and us
 
   inline void   GetAbsPos(taVector3i& abs_pos) { abs_pos = pos_abs; }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups

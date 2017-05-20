@@ -199,7 +199,7 @@ public:
     NO_NORM,                    // no normalization
     RMS_NORM,                   // root-mean-square, as in RMSProp -- divide by square root of exponential running average of square of dwt values on each trial
     ABS_NORM,                   // divide by running average of absolute value of dwt values on each trial
-    MAX_ABS,                    // divide by MAX of abs dwt and slow decay of current aggregated value -- used in AdaMax algorithm of Kingman & Ba (2014)
+    MAX_ABS,                    // fastest: divide by MAX of abs dwt and slow decay of current aggregated value -- used in AdaMax algorithm of Kingman & Ba (2014)
   };
     
   enum Moment {                 // form of momentum-like numerator term
@@ -210,16 +210,16 @@ public:
     ADAM,                       // use exponential running-average integration of dwt changes over time for the momentum -- original Kingman & Ba (2014) Adam paper also uses running-average dwnorm as well -- available here as an option
   };
 
-  DwtNorm       dwt_norm;       // how to normalize weight changes -- integrated in dwnorm connection value -- norm is function of the overall running-average magnitude of weight changes, which serves as an estimate of the variance in the weight changes, assuming zero net mean overall
-  float         norm_tau;       // #CONDSHOW_OFF_dwt_norm:NO_NORM #MIN_1 #DEF_100;1000 time constant for integration of dwnorm normalization factor -- generally should be long-ish, between 100-1000 -- integration rate factor is 1/tau
-  float         norm_min;       // #CONDSHOW_OFF_dwt_norm:NO_NORM #MIN_0 minimum effective value of the dwnorm factor -- provides a lower bound to how much normalization can be applied -- in backprop this is typically 1e-8 but larger values work better in Leabra
-  Moment        moment;         // type of momentum-like numerator factor to use
+  DwtNorm       dwt_norm;       // how to normalize weight changes -- integrated in dwnorm connection value -- norm is function of the overall running-average magnitude of weight changes, which serves as an estimate of the variance in the weight changes, assuming zero net mean overall -- MAX_ABS is fastest, most robust to other parameters, and can have significant benefits -- each requires different lrate_comp compensation factors
+  float         norm_tau;       // #CONDSHOW_OFF_dwt_norm:NO_NORM #MIN_1 #DEF_1000;10000 time constant for integration of dwnorm normalization factor -- generally should be long-ish, between 1000-10000 -- integration rate factor is 1/tau
+  float         norm_min;       // #CONDSHOW_OFF_dwt_norm:NO_NORM #MIN_0 #DEF_0.001 minimum effective value of the dwnorm factor -- provides a lower bound to how much normalization can be applied -- in backprop this is typically 1e-8 but larger values work better in Leabra
+  Moment        moment;         // type of momentum-like numerator factor to use -- so far no diff found between any of the momentum mechanisms -- but they do require different compensatory learning rate factors
   float         m_tau;          // #CONDSHOW_OFF_moment:NO_MOMENT,DWT_ZONE #MIN_1 #DEF_10 time constant factor for integration of momentum -- 1/tau is dt (e.g., .1), and 1-1/tau (e.g., .9) is traditional momentum time-integration factor
   float         s_tau;          // #CONDSHOW_ON_moment:DWT_ZONE #MIN_1 #DEF_50 time constant for integration of shorter-term dwt average for dwt_zone: dwa_s -- this should be long enough to capture the overall trend of weight changes, but not too long that it doesn't represent fresh directions of change in learning
   float         l_tau;          // #CONDSHOW_ON_moment:DWT_ZONE #MIN_1 #DEF_2 time constant for integration of longer-term dwt average: dwa_l -- this cascades on top of the dwa_s short term average value, so this essentially reflects the number of trials over which a new direction of learning is allowed to drive learning -- e.g., if this value was 1 then the time constant of integration is 1 and the learning rate will always be 0
-  bool          xx1;            // #CONDSHOW_ON_moment:DWT_ZONE use the x/x+1 normalization of dwt_zone factor
+  bool          xx1;            // #CONDSHOW_ON_moment:DWT_ZONE use the x/x+1 normalization of dwt_zone factor -- do we need this anymore?
   float         gain;           // #CONDSHOW_ON_moment:DWT_ZONE&&xx1 #MIN_0 #DEF_2 the zone-based learning rate is computed as: zone = XX1 (X/(X+1)) sigmoidal-shaped function where X = gain * |dwa_s - dwa_l| -- so the larger the absolute deviation between short and longer-term dwts, the higher the learning rate, approaching 1 (which is then multiplied by overall master learning rate and lrate_mult factor)
-  float         lrate_comp;     // #MIN_0 #AKA_lrate_gain overall learning rate multiplier to compensate for changes due to use of dwt_norm and momentum  -- allows for a common master learning rate to be used between different conditions
+  float         lrate_comp;     // #MIN_0 #AKA_lrate_gain #CONDSHOW_OFF_dwt_norm:NO_NORM&&moment:NO_MOMENT overall learning rate multiplier to compensate for changes due to use of dwt_norm and momentum  -- allows for a common master learning rate to be used between different conditions: MAX_ABS = .1, MOMENTUM, NESTEROV = .1 (combined = .01), DWT_ZONE = 3
 
   float         norm_dt;       // #READ_ONLY #EXPERT rate constant of delta-weight norm integration = 1 / norm_tau
   float         norm_dt_c;     // #READ_ONLY #EXPERT complement rate constant of delta-weight norm integration = 1 - (1 / norm_tau)

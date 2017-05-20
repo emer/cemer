@@ -111,14 +111,14 @@ void LeabraDynLrates::Initialize() {
 }
 
 void LeabraDynLrates::Defaults_init() {
-  norm_tau = 100.0f;
+  norm_tau = 1000.0f;
   norm_min = 0.001f;
   m_tau = 10.0f;
   s_tau = 50.0f;
   l_tau = 2.0f;
   xx1 = true;
   gain = 2.0f;
-  lrate_comp = 3.0f;
+  lrate_comp = 0.01f;
 
   norm_dt = 1.0f / norm_tau;
   norm_dt_c = 1.0f - norm_dt;
