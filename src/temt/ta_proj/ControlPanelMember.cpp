@@ -625,11 +625,11 @@ bool ControlPanelMember::RecordValue() {
 }
 
 String ControlPanelMember::RecordValueString(bool use_search_vals) {
-  if(use_search_vals && IsSearch()) {
-    return data.next_val;
-  }
   String rval;
-  if(IsParamSet()) {
+  if(use_search_vals && IsSearch()) {
+    rval = data.next_val;
+  }
+  else if(IsParamSet()) {
     rval = data.saved_value;
   }
   else {
@@ -642,6 +642,11 @@ String ControlPanelMember::RecordValueString(bool use_search_vals) {
   //   rval.quote_esc();           // note: we don't really have a way of unescaping this automatically but won't work without it -- not really a supported case but at least this won't fail in horible ways and should be fairly clear what happened and what to do about it on the other end..
   //   rval = String("\"") + rval + "\"";  // need quotes for command line!
   // }
+  rval.trim();
+  if(rval.contains(' ')) {
+    taMisc::Warning("cluster run parameter for item:", label,
+                    "has an internal space -- this will be lost in translation to job submission process -- use a different delimiter or find some way to recode without using spaces!");
+  }
   return rval;
 }
 
