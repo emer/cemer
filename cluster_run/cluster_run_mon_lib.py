@@ -2493,7 +2493,7 @@ def main():
         try: os.remove("nohup.out")
         except: pass
         cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay),
-               str(check_user)]
+               str(check_user), str(do_svn_cleanup)]
         subprocess.Popen(cmd)
         time.sleep(1) # Give it a chance to start.
         print 'Running in the background.  Re-run script and press Control-C to stop.'
