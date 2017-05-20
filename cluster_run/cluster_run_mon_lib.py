@@ -732,14 +732,14 @@ class DataTable(object):
 #############################################################################
 
 class SubversionPoller(object):
-    def __init__(self, username, repo_dir, repo_url, delay, check_user, svn_cleanup):
+    def __init__(self, username, repo_dir, repo_url, delay, check_user, do_svn_cleanup):
         self.version    = 2
         self.username   = username
         self.repo_dir   = repo_dir
         self.repo_url   = repo_url
         self.delay      = delay
         self.check_user = check_user
-        self.svn_cleanup = svn_cleanup
+        self.do_svn_cleanup = do_svn_cleanup
         self.starting_up = True
 
         self.submit_files = ""
