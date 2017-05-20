@@ -267,6 +267,13 @@ class ClusterConfig(object):
             'Only run jobs you committed?', 'Yes')
         return check and check[0] in 'yY'
 
+    def get_svn_cleanup(self):
+        # Should the script start with an svn cleanup
+        cleanup = self._prompt_for_field(
+            self.user_section, 'do_svn_cleanup',
+            'Start with a svn cleanup command (in case of bad prior state - but slow)?', 'Yes')
+        return cleanup and cleanup[0] in 'yY'
+
     def get_repo_choice(self):
         return self._prompt_for_int_field(
             self.user_section, 'repo_choice', 'Your choice:')
@@ -725,13 +732,14 @@ class DataTable(object):
 #############################################################################
 
 class SubversionPoller(object):
-    def __init__(self, username, repo_dir, repo_url, delay, check_user):
+    def __init__(self, username, repo_dir, repo_url, delay, check_user, svn_cleanup):
         self.version    = 2
         self.username   = username
         self.repo_dir   = repo_dir
         self.repo_url   = repo_url
         self.delay      = delay
         self.check_user = check_user
+        self.svn_cleanup = svn_cleanup
         self.starting_up = True
 
         self.submit_files = ""
@@ -805,7 +813,8 @@ class SubversionPoller(object):
         # Either checkout or update the directory.
         if os.path.isdir(self.repo_dir):
             #Run an svn cleanup first, in case the script crashed beforehand and left svn in a locked state
-            self._svn_cleanup()
+            if self.do_svn_cleanup:
+                self._svn_cleanup()
             cmd = ['svn', 'update', '--username', self.username, '--force',
                    '--accept', 'theirs-full', self.repo_dir]
         else:
@@ -2456,6 +2465,7 @@ def main():
 
     delay = config.get_poll_interval()
     check_user = config.get_check_user()
+    do_svn_cleanup = config.get_svn_cleanup()
 
     # Checkout or update the working copy.
     # The path format matches ClusterManager::setPaths() in the C++ code.
@@ -2467,7 +2477,7 @@ def main():
     print ''
     
 
-    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
+    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user, do_svn_cleanup)
     revision = poller.get_initial_wc()
 
     do_hup = False
@@ -2500,8 +2510,9 @@ def main_background():
     repo_url    = sys.argv[3]
     delay       = int(sys.argv[4])
     check_user  = sys.argv[5] == 'True'
+    do_svn_cleanup = sys.argv[6] == 'True'
 
-    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
+    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user, do_svn_cleanup)
     try:
         f = open(nohup_filename, 'w')
         f.write('delete this file to stop the backgrounded script.')

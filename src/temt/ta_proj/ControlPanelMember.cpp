@@ -635,10 +635,13 @@ String ControlPanelMember::RecordValueString(bool use_search_vals) {
   else {
     rval = CurValAsString();
   }
-  if(rval.contains(' ')) {
-    rval.quote_esc();           // note: we don't really have a way of unescaping this automatically but won't work without it -- not really a supported case but at least this won't fail in horible ways and should be fairly clear what happened and what to do about it on the other end..
-    rval = String("\"") + rval + "\"";  // need quotes for command line!
-  }
+  // NOTE: ROR couldn't figure out a way to pass these quoted strings through the
+  // cluster_run_mon_lib job submitter, so abandoning for now -- just use some other
+  // kind of delimiter for any relevant params!  e.g., : or | which is properly quoted
+  // if(rval.contains(' ')) {
+  //   rval.quote_esc();           // note: we don't really have a way of unescaping this automatically but won't work without it -- not really a supported case but at least this won't fail in horible ways and should be fairly clear what happened and what to do about it on the other end..
+  //   rval = String("\"") + rval + "\"";  // need quotes for command line!
+  // }
   return rval;
 }
 
