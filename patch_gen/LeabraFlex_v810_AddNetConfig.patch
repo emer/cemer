@@ -1,0 +1,710 @@
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+Patch .projects[2].patches[0] { 
+ PatchRec_Group @.patch_recs = [0] {
+  PatchRec_Group @.gp[0] = [8] { 
+   PatchRec @[0] { };
+   PatchRec @[1] { };
+   PatchRec @[2] { };
+   PatchRec @[3] { };
+   PatchRec @[4] { };
+   PatchRec @[5] { };
+   PatchRec @[6] { };
+   PatchRec @[7] { };
+  };
+  PatchRec_Group @.gp[1] = [2] { 
+   PatchRec @[0] { };
+   PatchRec @[1] { };
+  };
+  PatchRec_Group @.gp[2] = [5] { 
+   PatchRec @[0] { };
+   PatchRec @[1] { };
+   PatchRec @[2] { };
+   PatchRec @[3] { };
+   PatchRec @[4] { };
+  };
+ };
+};
+Patch .projects[2].patches[0] {
+ name="LeabraFlex_v810_AddNetConfig";
+ tags="LeabraFlex, Leabra, v810, ParamSet, NetConfig";
+ desc="adds a net config param set that plugs into BasicInit parameters passed to ConfigNetwork -- also changes these to be COLON deliminted instead of SPACE, so it works for ClusterRun (note: patch doesn't get comment updates -- good to update those too -- replace space->COLON";
+ author="Randall C. O'Reilly";
+ email="emergent-users@grey.colorado.edu";
+ date="2017_05_21_02_28_05";
+ from_name="LeabraFlex_10748";
+ to_name="LeabraFlex_10764";
+ patch_recs {
+  name="patch_recs";
+  el_typ=PatchRec;
+  el_def=0;
+  path=;
+  PatchRec_Group @.gp[0] {
+   name="programs";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars";
+    obj_path_idx=".programs.gp[1][1].vars";
+    obj_type="ProgVar_List";
+    mbr_path=;
+    targ_idx=2;
+    targ_name="net_config";
+    insert_after="run_params";
+    insert_before="net_params";
+    new_obj_type="ProgVar";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ProgVar .projects[1].programs.gp[1][1].vars[2] { };
+ProgVar .projects[1].programs.gp[1][1].vars[2] {
+ name=\"net_config\";
+ var_type=T_Object;
+ object_type=ParamSet;
+ object_val=.active_params.gp[\"NetConfig\"][\"NetConfigMaster\"]$$<ParamSet,NetConfigMaster>;
+ object_scope=.active_params.gp[\"NetConfig\"]$$<ParamSet_Group,NetConfig>;
+ objs_ptr=0;
+ flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+ reference=0;
+ desc=\"select parameters for controlling how to build the network\";
+ init_from=NULL;
+};
+";
+   };
+   PatchRec @[1] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".programs.gp[\"ConfigProgs\"][\"MasterTrain\"].prog_code[\"If_iftaMiscinteractive\"].true_code[\"If_ifactivateparams\"].true_code";
+    obj_path_idx=".programs.gp[1][1].prog_code[2].true_code[2].true_code";
+    obj_type="ProgEl_List";
+    mbr_path=;
+    targ_idx=1;
+    targ_name="MethodCall_netconfigActivatetrue";
+    insert_after="MethodCall_runparamsActivatetrue";
+    insert_before="MethodCall_netparamsActivatetrue";
+    new_obj_type="MethodCall";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+MethodCall .projects[1].programs.gp[1][1].prog_code[2].true_code[2].true_code[1] { 
+ ProgArg_List @.meth_args = [1] {
+  ProgArg @[0] { };
+ };
+};
+MethodCall .projects[1].programs.gp[1][1].prog_code[2].true_code[2].true_code[1] {
+ name=\"MethodCall_netconfigActivatetrue\";
+ desc=;
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"run_params->Activate(true)\";
+ result_var=NULL;
+ obj=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_config\"]$$<ProgVar,net_config>;
+ method=ParamSet::Activate;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=bool;
+   type=\"bool\";
+   name=\"info_msg\";
+   required=0;
+   def_val=\"false\";
+   prev_expr=;
+   expr {
+    expr=\"true\";
+   };
+  };
+ };
+ meth_sig=\"void Activate(bool info_msg = false)\";
+ meth_desc=\" copy the saved_value values to be active (live) values on the objects\";
+};
+";
+   };
+   PatchRec @[2] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"LayerGpsOnOff\"].fun_code[\"MethodCall_leslaygpmatFmDelimStringlaygps\"]";
+    obj_path_idx=".programs.gp[4][1].functions[1].fun_code[1]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+MethodCall .projects[1].programs.gp[4][1].functions[1].fun_code[1] { 
+ ProgArg_List @.meth_args = [2] {
+  ProgArg @[0] { };
+  ProgArg @[1] { };
+ };
+};
+MethodCall .projects[1].programs.gp[4][1].functions[1].fun_code[1] {
+ name=\"MethodCall_leslaygpmatFmDelimStringlaygps\";
+ desc=\"get into easier to use matrix format\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"les_laygp_mat->FmDelimString(laygps, \\\" \\\")\";
+ result_var=NULL;
+ obj=.programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"LayerGpsOnOff\"].fun_code[\"LocalVars_LocalVars3vars\"].local_vars[\"les_laygp_mat\"]$$<ProgVar,les_laygp_mat>;
+ method=String_Matrix::FmDelimString;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"str\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"laygps\";
+   };
+  };
+  ProgArg @[1] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"delim\";
+   required=0;
+   def_val=\" \";
+   prev_expr=;
+   expr {
+    expr=\"\\\":\\\"\";
+   };
+  };
+ };
+ meth_sig=\"void FmDelimString(taString& str, taString& delim =  )\";
+ meth_desc=\" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything\";
+};
+";
+   };
+   PatchRec @[3] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"LayerGpsOnOff\"].fun_code[\"MethodCall_leslaygpmatFmDelimStringlaygps\"].meth_args[\"delim\"]";
+    obj_path_idx=".programs.gp[4][1].functions[1].fun_code[1].meth_args[1]";
+    obj_type="ProgArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ProgArg .projects[1].programs.gp[4][1].functions[1].fun_code[1].meth_args[1] { };
+ProgArg .projects[1].programs.gp[4][1].functions[1].fun_code[1].meth_args[1] {
+ arg_type=const_taString_ref;
+ type=\"taString&\";
+ name=\"delim\";
+ required=0;
+ def_val=\" \";
+ prev_expr=;
+ expr {
+  expr=\"\\\":\\\"\";
+ };
+};
+";
+   };
+   PatchRec @[4] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"LayersOnOff\"].fun_code[\"MethodCall_leslaysmatFmDelimStringlays\"]";
+    obj_path_idx=".programs.gp[4][1].functions[2].fun_code[1]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+MethodCall .projects[1].programs.gp[4][1].functions[2].fun_code[1] { 
+ ProgArg_List @.meth_args = [2] {
+  ProgArg @[0] { };
+  ProgArg @[1] { };
+ };
+};
+MethodCall .projects[1].programs.gp[4][1].functions[2].fun_code[1] {
+ name=\"MethodCall_leslaysmatFmDelimStringlays\";
+ desc=\"get into easier to use matrix format\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"les_lays_mat->FmDelimString(lays, \\\" \\\")\";
+ result_var=NULL;
+ obj=.programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"LayersOnOff\"].fun_code[\"LocalVars_LocalVars3vars\"].local_vars[\"les_lays_mat\"]$$<ProgVar,les_lays_mat>;
+ method=String_Matrix::FmDelimString;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"str\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"lays\";
+   };
+  };
+  ProgArg @[1] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"delim\";
+   required=0;
+   def_val=\" \";
+   prev_expr=;
+   expr {
+    expr=\"\\\":\\\"\";
+   };
+  };
+ };
+ meth_sig=\"void FmDelimString(taString& str, taString& delim =  )\";
+ meth_desc=\" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything\";
+};
+";
+   };
+   PatchRec @[5] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"LayersOnOff\"].fun_code[\"MethodCall_leslaysmatFmDelimStringlays\"].meth_args[\"delim\"]";
+    obj_path_idx=".programs.gp[4][1].functions[2].fun_code[1].meth_args[1]";
+    obj_type="ProgArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ProgArg .projects[1].programs.gp[4][1].functions[2].fun_code[1].meth_args[1] { };
+ProgArg .projects[1].programs.gp[4][1].functions[2].fun_code[1].meth_args[1] {
+ arg_type=const_taString_ref;
+ type=\"taString&\";
+ name=\"delim\";
+ required=0;
+ def_val=\" \";
+ prev_expr=;
+ expr {
+  expr=\"\\\":\\\"\";
+ };
+};
+";
+   };
+   PatchRec @[6] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"ProjectionsOnOff\"].fun_code[\"MethodCall_lesprjnsmatFmDelimStringprjns\"]";
+    obj_path_idx=".programs.gp[4][1].functions[3].fun_code[1]";
+    obj_type="MethodCall";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+MethodCall .projects[1].programs.gp[4][1].functions[3].fun_code[1] { 
+ ProgArg_List @.meth_args = [2] {
+  ProgArg @[0] { };
+  ProgArg @[1] { };
+ };
+};
+MethodCall .projects[1].programs.gp[4][1].functions[3].fun_code[1] {
+ name=\"MethodCall_lesprjnsmatFmDelimStringprjns\";
+ desc=\"get into easier to use matrix format\";
+ flags=CAN_REVERT_TO_CODE;
+ code_string=\"les_prjns_mat->FmDelimString(prjns, \\\" \\\")\";
+ result_var=NULL;
+ obj=.programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"ProjectionsOnOff\"].fun_code[\"LocalVars_LocalVars5vars\"].local_vars[\"les_prjns_mat\"]$$<ProgVar,les_prjns_mat>;
+ method=String_Matrix::FmDelimString;
+ meth_args {
+  name=\"meth_args\";
+  el_typ=ProgArg;
+  el_def=0;
+  ProgArg @[0] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"str\";
+   required=1;
+   def_val=;
+   prev_expr=;
+   expr {
+    expr=\"prjns\";
+   };
+  };
+  ProgArg @[1] {
+   arg_type=const_taString_ref;
+   type=\"taString&\";
+   name=\"delim\";
+   required=0;
+   def_val=\" \";
+   prev_expr=;
+   expr {
+    expr=\"\\\":\\\"\";
+   };
+  };
+ };
+ meth_sig=\"void FmDelimString(taString& str, taString& delim =  )\";
+ meth_desc=\" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything\";
+};
+";
+   };
+   PatchRec @[7] {
+    off=0;
+    action=ASSIGN;
+    obj_path_names=".programs.gp[\"UtilProgs\"][\"ConfigNetwork\"].functions[\"ProjectionsOnOff\"].fun_code[\"MethodCall_lesprjnsmatFmDelimStringprjns\"].meth_args[\"delim\"]";
+    obj_path_idx=".programs.gp[4][1].functions[3].fun_code[1].meth_args[1]";
+    obj_type="ProgArg";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ProgArg .projects[1].programs.gp[4][1].functions[3].fun_code[1].meth_args[1] { };
+ProgArg .projects[1].programs.gp[4][1].functions[3].fun_code[1].meth_args[1] {
+ arg_type=const_taString_ref;
+ type=\"taString&\";
+ name=\"delim\";
+ required=0;
+ def_val=\" \";
+ prev_expr=;
+ expr {
+  expr=\"\\\":\\\"\";
+ };
+};
+";
+   };
+  };
+  PatchRec_Group @.gp[1] {
+   name="ctrl_panels";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ControlPanel\"].mbrs";
+    obj_path_idx=".ctrl_panels[0].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=2;
+    targ_name="net_config";
+    insert_after="run_params";
+    insert_before="net_params";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[2] { };
+ControlPanelMember .projects[1].ctrl_panels[0].mbrs[2] {
+ label=\"net_config\";
+ short_label=1;
+ cust_label=0;
+ desc=\"select parameters for controlling how to build the network\";
+ cust_desc=0;
+ base=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_config\"]$$<ProgVar,net_config>;
+ mbr=ProgVar::object_val;
+ data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\".active_params.gp[\\\"NetConfig\\\"][\\\"NetConfigMaster\\\"]\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[1] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".ctrl_panels[\"ClusterRun\"].mbrs";
+    obj_path_idx=".ctrl_panels[1].mbrs";
+    obj_type="ControlPanelMember_Group";
+    mbr_path=;
+    targ_idx=1;
+    targ_name="net_config";
+    insert_after="run_params";
+    insert_before="net_params";
+    new_obj_type="ControlPanelMember";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ControlPanelMember .projects[1].ctrl_panels[1].mbrs[1] { };
+ControlPanelMember .projects[1].ctrl_panels[1].mbrs[1] {
+ label=\"net_config\";
+ short_label=1;
+ cust_label=0;
+ desc=\"select parameters for controlling how to build the network\";
+ cust_desc=0;
+ base=.programs.gp[\"ConfigProgs\"][\"MasterTrain\"].vars[\"net_config\"]$$<ProgVar,net_config>;
+ mbr=ProgVar::object_val;
+ data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value=\".active_params.gp[\\\"NetConfig\\\"][\\\"NetConfigMaster\\\"]\": range=\"\": notes=\"\": };
+};
+";
+   };
+  };
+  PatchRec_Group @.gp[2] {
+   name="active_params";
+   el_typ=PatchRec;
+   el_def=0;
+   path=;
+   PatchRec @[0] {
+    off=0;
+    action=INSERT;
+    obj_path_names=".active_params.gp";
+    obj_path_idx=".active_params.gp";
+    obj_type="taSubGroup";
+    mbr_path=;
+    targ_idx=1;
+    targ_name="NetConfig";
+    insert_after="RunParams";
+    insert_before="NetParams";
+    new_obj_type="ParamSet_Group";
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ParamSet_Group .projects[1].active_params.gp[1] { 
+ ParamSet @[0] { 
+  ControlPanelMember_Group @.mbrs = [4] {
+   ControlPanelMember @[0] { };
+   ControlPanelMember @[1] { };
+   ControlPanelMember @[2] { };
+   ControlPanelMember @[3] { };
+  };
+
+  ControlPanelMethod_Group @.mths = [0] {
+  };
+ };
+ ParamSet @[1] { 
+  ControlPanelMember_Group @.mbrs = [4] {
+   ControlPanelMember @[0] { };
+   ControlPanelMember @[1] { };
+   ControlPanelMember @[2] { };
+   ControlPanelMember @[3] { };
+  };
+
+  ControlPanelMethod_Group @.mths = [0] {
+  };
+ };
+};
+ParamSet_Group .projects[1].active_params.gp[1] {
+ name=\"NetConfig\";
+ el_typ=ParamSet;
+ el_def=0;
+ master_and_clones=1;
+ ParamSet @[0] {
+  name=\"NetConfigMaster\";
+  cp_state=MASTER;
+  updt_while_running=0;
+  desc=\"master of net config\";
+  mbrs {
+   name=\"mbrs\";
+   el_typ=ControlPanelMember;
+   el_def=0;
+   ControlPanelMember @[0] {
+    label=\"layer_group_lesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of layer groups to lesion for this run -- all layers unlesioned at the start\";
+    cust_desc=0;
+    base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_group_lesion_list\"]$$<ProgVar,layer_group_lesion_list>;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"in BasicInit: note COLON separated list!\": };
+   };
+   ControlPanelMember @[1] {
+    label=\"layer_lesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of layers outside of groups to lesion for this run\";
+    cust_desc=0;
+    base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_lesion_list\"]$$<ProgVar,layer_lesion_list>;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+   };
+   ControlPanelMember @[2] {
+    label=\"prjn_lesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list\";
+    cust_desc=0;
+    base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"prjn_lesion_list\"]$$<ProgVar,prjn_lesion_list>;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+   };
+   ControlPanelMember @[3] {
+    label=\"prjn_unlesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list\";
+    cust_desc=0;
+    base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"prjn_unlesion_list\"]$$<ProgVar,prjn_unlesion_list>;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+   };
+  };
+  mths {
+   name=\"mths\";
+   el_typ=ControlPanelMethod;
+   el_def=0;
+   group_type=GT_BUTTONS;
+  };
+  date=;
+ };
+ ParamSet @[1] {
+  name=\"NetConfig1\";
+  cp_state=CLONE;
+  updt_while_running=0;
+  desc=\"variant of net config\";
+  mbrs {
+   name=\"mbrs\";
+   el_typ=ControlPanelMember;
+   el_def=0;
+   ControlPanelMember @[0] {
+    label=\"layer_group_lesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of layer groups to lesion for this run -- all layers unlesioned at the start\";
+    cust_desc=0;
+    base=$.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_group_lesion_list\"]$;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"In BasicInit\": };
+   };
+   ControlPanelMember @[1] {
+    label=\"layer_lesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of layers outside of groups to lesion for this run\";
+    cust_desc=0;
+    base=$.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_lesion_list\"]$;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"Output:Hidden\": range=\"\": notes=\"\": };
+   };
+   ControlPanelMember @[2] {
+    label=\"prjn_lesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list\";
+    cust_desc=0;
+    base=$.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"prjn_lesion_list\"]$;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+   };
+   ControlPanelMember @[3] {
+    label=\"prjn_unlesion_list\";
+    short_label=1;
+    cust_label=0;
+    desc=\"COLON-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list\";
+    cust_desc=0;
+    base=$.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"prjn_unlesion_list\"]$;
+    mbr=ProgVar::string_val;
+    data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+   };
+  };
+  mths {
+   name=\"mths\";
+   el_typ=ControlPanelMethod;
+   el_def=0;
+   group_type=GT_BUTTONS;
+  };
+  date=;
+ };
+};
+";
+   };
+   PatchRec @[1] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".active_params.gp[\"RunParams\"][\"RunMaster\"].mbrs[\"layer_group_lesion_list\"]";
+    obj_path_idx=".active_params.gp[0][0].mbrs[18]";
+    obj_type="ControlPanelMember";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ControlPanelMember .projects[2].active_params.gp[0][0].mbrs[18] { };
+ControlPanelMember .projects[2].active_params.gp[0][0].mbrs[18] {
+ label=\"layer_group_lesion_list\";
+ short_label=1;
+ cust_label=0;
+ desc=\"space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start\";
+ cust_desc=0;
+ base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_group_lesion_list\"]$$<ProgVar,layer_group_lesion_list>;
+ mbr=ProgVar::string_val;
+ data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"In BasicInit\": };
+};
+";
+   };
+   PatchRec @[2] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".active_params.gp[\"RunParams\"][\"RunMaster\"].mbrs[\"layer_lesion_list\"]";
+    obj_path_idx=".active_params.gp[0][0].mbrs[19]";
+    obj_type="ControlPanelMember";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ControlPanelMember .projects[2].active_params.gp[0][0].mbrs[19] { };
+ControlPanelMember .projects[2].active_params.gp[0][0].mbrs[19] {
+ label=\"layer_lesion_list\";
+ short_label=1;
+ cust_label=0;
+ desc=\"space-separated list of layers outside of groups to lesion for this run\";
+ cust_desc=0;
+ base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_lesion_list\"]$$<ProgVar,layer_lesion_list>;
+ mbr=ProgVar::string_val;
+ data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[3] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".active_params.gp[\"RunParams\"][\"RunConfig1\"].mbrs[\"layer_group_lesion_list\"]";
+    obj_path_idx=".active_params.gp[0][1].mbrs[18]";
+    obj_type="ControlPanelMember";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ControlPanelMember .projects[2].active_params.gp[0][1].mbrs[18] { };
+ControlPanelMember .projects[2].active_params.gp[0][1].mbrs[18] {
+ label=\"layer_group_lesion_list\";
+ short_label=1;
+ cust_label=0;
+ desc=\"space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start\";
+ cust_desc=0;
+ base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_group_lesion_list\"]$$<ProgVar,layer_group_lesion_list>;
+ mbr=ProgVar::string_val;
+ data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+   PatchRec @[4] {
+    off=0;
+    action=DELETE;
+    obj_path_names=".active_params.gp[\"RunParams\"][\"RunConfig1\"].mbrs[\"layer_lesion_list\"]";
+    obj_path_idx=".active_params.gp[0][1].mbrs[19]";
+    obj_type="ControlPanelMember";
+    mbr_path=;
+    targ_idx=0;
+    targ_name=;
+    insert_after=;
+    insert_before=;
+    new_obj_type=;
+    value="// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+ControlPanelMember .projects[2].active_params.gp[0][1].mbrs[19] { };
+ControlPanelMember .projects[2].active_params.gp[0][1].mbrs[19] {
+ label=\"layer_lesion_list\";
+ short_label=1;
+ cust_label=0;
+ desc=\"space-separated list of layers outside of groups to lesion for this run\";
+ cust_desc=0;
+ base=.programs.gp[\"ConfigProgs\"].gp[\"InitProgs\"][\"BasicInit\"].vars[\"layer_lesion_list\"]$$<ProgVar,layer_lesion_list>;
+ mbr=ProgVar::string_val;
+ data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value=\"\": range=\"\": notes=\"\": };
+};
+";
+   };
+  };
+ };
+};

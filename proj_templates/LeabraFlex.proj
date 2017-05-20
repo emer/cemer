@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10743
-LeabraProject .projects[0] { 
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10755
+LeabraProject .projects[1] { 
  Doc_Group @.docs = [2] {
   taDoc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -23,7 +23,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] { };
    };
 
-   ControlPanelMember_Group @.mbrs = [10] {
+   ControlPanelMember_Group @.mbrs = [11] {
     ControlPanelMember @[0] { };
     ControlPanelMember @[1] { };
     ControlPanelMember @[2] { };
@@ -34,6 +34,7 @@ LeabraProject .projects[0] {
     ControlPanelMember @[7] { };
     ControlPanelMember @[8] { };
     ControlPanelMember @[9] { };
+    ControlPanelMember @[10] { };
    };
 
    ControlPanelMethod_Group @.mths = [4] {
@@ -48,9 +49,10 @@ LeabraProject .projects[0] {
     UserDataItem @[0] { };
    };
 
-   ControlPanelMember_Group @.mbrs = [2] {
+   ControlPanelMember_Group @.mbrs = [3] {
     ControlPanelMember @[0] { };
     ControlPanelMember @[1] { };
+    ControlPanelMember @[2] { };
    };
 
    ControlPanelMethod_Group @.mths = [0] {
@@ -64,7 +66,7 @@ LeabraProject .projects[0] {
  ParamSet_Group @.active_params = [0] {
   ParamSet_Group @.gp[0] = [2] { 
    ParamSet @[0] { 
-    ControlPanelMember_Group @.mbrs = [20] {
+    ControlPanelMember_Group @.mbrs = [18] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -83,15 +85,13 @@ LeabraProject .projects[0] {
      ControlPanelMember @[15] { };
      ControlPanelMember @[16] { };
      ControlPanelMember @[17] { };
-     ControlPanelMember @[18] { };
-     ControlPanelMember @[19] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
     };
    };
    ParamSet @[1] { 
-    ControlPanelMember_Group @.mbrs = [20] {
+    ControlPanelMember_Group @.mbrs = [18] {
      ControlPanelMember @[0] { };
      ControlPanelMember @[1] { };
      ControlPanelMember @[2] { };
@@ -110,8 +110,6 @@ LeabraProject .projects[0] {
      ControlPanelMember @[15] { };
      ControlPanelMember @[16] { };
      ControlPanelMember @[17] { };
-     ControlPanelMember @[18] { };
-     ControlPanelMember @[19] { };
     };
 
     ControlPanelMethod_Group @.mths = [0] {
@@ -119,6 +117,30 @@ LeabraProject .projects[0] {
    };
   };
   ParamSet_Group @.gp[1] = [2] { 
+   ParamSet @[0] { 
+    ControlPanelMember_Group @.mbrs = [4] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
+   ParamSet @[1] { 
+    ControlPanelMember_Group @.mbrs = [4] {
+     ControlPanelMember @[0] { };
+     ControlPanelMember @[1] { };
+     ControlPanelMember @[2] { };
+     ControlPanelMember @[3] { };
+    };
+
+    ControlPanelMethod_Group @.mths = [0] {
+    };
+   };
+  };
+  ParamSet_Group @.gp[2] = [2] { 
    ParamSet @[0] { 
     ControlPanelMember_Group @.mbrs = [1] {
      ControlPanelMember @[0] { };
@@ -530,7 +552,7 @@ LeabraProject .projects[0] {
      ProgVar @[0] { };
     };
 
-    ProgVar_List @.vars = [10] {
+    ProgVar_List @.vars = [11] {
      ProgVar @[0] { };
      ProgVar @[1] { };
      ProgVar @[2] { };
@@ -541,6 +563,7 @@ LeabraProject .projects[0] {
      ProgVar @[7] { };
      ProgVar @[8] { };
      ProgVar @[9] { };
+     ProgVar @[10] { };
     };
 
     Function_List @.functions = [0] {
@@ -574,13 +597,18 @@ LeabraProject .projects[0] {
        AssignExpr @[0] { };
        OtherProgramVar @[1] { };
        If @[2] { 
-	ProgEl_List @.true_code = [2] {
+	ProgEl_List @.true_code = [3] {
 	 MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [1] {
 	   ProgArg @[0] { };
 	  };
 	 };
 	 MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 MethodCall @[2] { 
 	  ProgArg_List @.meth_args = [1] {
 	   ProgArg @[0] { };
 	  };
@@ -3403,7 +3431,7 @@ LeabraProject .projects[0] {
   };
  };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="LeabraFlex";
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
@@ -3780,16 +3808,26 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"RunParams\"][\"SpecialTrain\"]": range="": notes="MasterTrain sets these params at start": };
     };
     ControlPanelMember @[2] {
-     label="net_params";
+     label="net_config";
+     short_label=1;
+     cust_label=0;
+     desc="select parameters for controlling how to build the network";
+     cust_desc=0;
+     base=.programs.gp[1][1].vars[2]$$;
+     mbr=ProgVar::object_val;
+     data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".active_params.gp[\"NetConfig\"][\"NetConfigMaster\"]": range="": notes="": };
+    };
+    ControlPanelMember @[3] {
+     label="learn_params";
      short_label=1;
      cust_label=0;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=.programs.gp[1][1].vars[2]$$;
+     base=.programs.gp[1][1].vars[3]$$;
      mbr=ProgVar::object_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".projects[\"LeabraFlexParamSetExperiment\"].active_params.gp[\"MiscParams\"][\"MiscOne\"]": range="": notes="add extra params as needed..": };
     };
-    ControlPanelMember @[3] {
+    ControlPanelMember @[4] {
      label="master_run_stop_step_grain";
      short_label=0;
      cust_label=0;
@@ -3799,7 +3837,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mbr=DynEnum::value;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="0": range="0:1:0.1": notes="MasterRun step can do many different things -- very useful!": };
     };
-    ControlPanelMember @[4] {
+    ControlPanelMember @[5] {
      label="network_cycle_qtr";
      short_label=0;
      cust_label=1;
@@ -3809,7 +3847,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mbr=LeabraTimes::cycle_qtr;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="true": range="0:1:0.1": notes="turn OFF to see individual cycles, ON for MUCH faster running": };
     };
-    ControlPanelMember @[5] {
+    ControlPanelMember @[6] {
      label="cycle_update_net_view";
      short_label=0;
      cust_label=0;
@@ -3819,7 +3857,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="true": range="0:1:0.1": notes="update network view at cycle level -- actual value depends on cycle_qtr": };
     };
-    ControlPanelMember @[6] {
+    ControlPanelMember @[7] {
      label="quarter_update_net_view";
      short_label=0;
      cust_label=0;
@@ -3829,7 +3867,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="false": range="": notes="redundant with cycle for cycle_qtr = ON": };
     };
-    ControlPanelMember @[7] {
+    ControlPanelMember @[8] {
      label="trial_update_net_view";
      short_label=0;
      cust_label=0;
@@ -3839,7 +3877,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="false": range="": notes="mostly redundant but some updates happen after trial": };
     };
-    ControlPanelMember @[8] {
+    ControlPanelMember @[9] {
      label="save_log_files_interactive";
      short_label=1;
      cust_label=0;
@@ -3849,13 +3887,13 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      mbr=ProgVar::bool_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="false": range="": notes="save log files while running interactively": };
     };
-    ControlPanelMember @[9] {
+    ControlPanelMember @[10] {
      label="cust_tag";
      short_label=1;
      cust_label=0;
      desc="add any custom tag string here -- used for labeling log and weight files along with config info";
      cust_desc=0;
-     base=.programs.gp[1][1].vars[7]$$;
+     base=.programs.gp[1][1].vars[8]$$;
      mbr=ProgVar::string_val;
      data {ctrl_type=CONTROL: is_numeric=0: is_single=1: state=EXPLORE: saved_value="mtau10_mrg1st.5": range="": notes="update this to label log files -- will also be labeled with config names ": };
     };
@@ -3929,12 +3967,22 @@ leabra flex using param sets experiment project -- updated by randy from John's 
      data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="set to explore for name to be added to tag": };
     };
     ControlPanelMember @[1] {
-     label="net_params";
+     label="net_config";
+     short_label=1;
+     cust_label=0;
+     desc="select parameters for controlling how to build the network";
+     cust_desc=0;
+     base=$.programs.gp[1][1].vars[2]$;
+     mbr=ProgVar::object_val;
+     data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value=".active_params.gp[\"NetConfig\"][\"NetConfigMaster\"]": range="": notes="": };
+    };
+    ControlPanelMember @[2] {
+     label="learn_params";
      short_label=1;
      cust_label=0;
      desc="select other parameters, typically network spec params -- independent of run params";
      cust_desc=0;
-     base=$.programs.gp[1][1].vars[2]$;
+     base=$.programs.gp[1][1].vars[3]$;
      mbr=ProgVar::object_val;
      data {ctrl_type=CLUSTER_RUN: is_numeric=0: is_single=1: state=EXPLORE: saved_value="": range="": notes="": };
     };
@@ -4007,7 +4055,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=0;
       desc="name of run program to run -- must exist in the RunProgs group";
       cust_desc=0;
-      base=.programs.gp[1][1].vars[3]$$;
+      base=.programs.gp[1][1].vars[4]$$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="BasicRun": range="": notes="": };
      };
@@ -4017,7 +4065,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=0;
       desc="name of init program -- must exist in the InitProgs group";
       cust_desc=0;
-      base=.programs.gp[1][1].vars[4]$$;
+      base=.programs.gp[1][1].vars[5]$$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="BasicInit": range="": notes="": };
      };
@@ -4181,26 +4229,6 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="0": range="": notes="": };
      };
-     ControlPanelMember @[18] {
-      label="layer_group_lesion_list";
-      short_label=1;
-      cust_label=0;
-      desc="space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
-      cust_desc=0;
-      base=.programs.gp[1].gp[0][0].vars[0]$$;
-      mbr=ProgVar::string_val;
-      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="In BasicInit": };
-     };
-     ControlPanelMember @[19] {
-      label="layer_lesion_list";
-      short_label=1;
-      cust_label=0;
-      desc="space-separated list of layers outside of groups to lesion for this run";
-      cust_desc=0;
-      base=.programs.gp[1].gp[0][0].vars[1]$$;
-      mbr=ProgVar::string_val;
-      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
-     };
     };
     mths {
      name="mths";
@@ -4211,7 +4239,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     date="2017_05_14_22_01_20";
    };
    ParamSet @[1] {
-    name="RunConfig1";
+    name="RunParams1";
     cp_state=CLONE;
     updt_while_running=0;
     desc="another configuration of run parameters to choose from.. make as many as you need!  this is a 'clone' of the master and will auto-update for any additions or changes to members";
@@ -4225,7 +4253,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=0;
       desc="name of run program to run -- must exist in the RunProgs group";
       cust_desc=0;
-      base=$.programs.gp[1][1].vars[3]$;
+      base=$.programs.gp[1][1].vars[4]$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="BasicRun": range="": notes="": };
      };
@@ -4235,7 +4263,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       cust_label=0;
       desc="name of init program -- must exist in the InitProgs group";
       cust_desc=0;
-      base=$.programs.gp[1][1].vars[4]$;
+      base=$.programs.gp[1][1].vars[5]$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="BasicInit": range="": notes="": };
      };
@@ -4399,23 +4427,125 @@ leabra flex using param sets experiment project -- updated by randy from John's 
       mbr=ProgVar::int_val;
       data {ctrl_type=PARAM_SET: is_numeric=1: is_single=1: state=STABLE: saved_value="0": range="": notes="": };
      };
-     ControlPanelMember @[18] {
+    };
+    mths {
+     name="mths";
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+    date=;
+   };
+  };
+  ParamSet_Group @.gp[1] {
+   name="NetConfig";
+   el_typ=ParamSet;
+   el_def=0;
+   master_and_clones=1;
+   ParamSet @[0] {
+    name="NetConfigMaster";
+    cp_state=MASTER;
+    updt_while_running=0;
+    desc="master of net config";
+    mbrs {
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
       label="layer_group_lesion_list";
       short_label=1;
       cust_label=0;
-      desc="space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
+      desc="COLON-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
       cust_desc=0;
-      base=$.programs.gp[1].gp[0][0].vars[0]$;
+      base=.programs.gp[1].gp[0][0].vars[0]$$;
       mbr=ProgVar::string_val;
-      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="in BasicInit: note COLON separated list!": };
      };
-     ControlPanelMember @[19] {
+     ControlPanelMember @[1] {
       label="layer_lesion_list";
       short_label=1;
       cust_label=0;
-      desc="space-separated list of layers outside of groups to lesion for this run";
+      desc="COLON-separated list of layers outside of groups to lesion for this run";
+      cust_desc=0;
+      base=.programs.gp[1].gp[0][0].vars[1]$$;
+      mbr=ProgVar::string_val;
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
+     };
+     ControlPanelMember @[2] {
+      label="prjn_lesion_list";
+      short_label=1;
+      cust_label=0;
+      desc="COLON-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list";
+      cust_desc=0;
+      base=.programs.gp[1].gp[0][0].vars[2]$$;
+      mbr=ProgVar::string_val;
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
+     };
+     ControlPanelMember @[3] {
+      label="prjn_unlesion_list";
+      short_label=1;
+      cust_label=0;
+      desc="COLON-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
+      cust_desc=0;
+      base=.programs.gp[1].gp[0][0].vars[3]$$;
+      mbr=ProgVar::string_val;
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
+     };
+    };
+    mths {
+     name="mths";
+     el_typ=ControlPanelMethod;
+     el_def=0;
+     group_type=GT_BUTTONS;
+    };
+    date=;
+   };
+   ParamSet @[1] {
+    name="NetConfig1";
+    cp_state=CLONE;
+    updt_while_running=0;
+    desc="variant of net config";
+    mbrs {
+     name="mbrs";
+     el_typ=ControlPanelMember;
+     el_def=0;
+     ControlPanelMember @[0] {
+      label="layer_group_lesion_list";
+      short_label=1;
+      cust_label=0;
+      desc="COLON-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
+      cust_desc=0;
+      base=$.programs.gp[1].gp[0][0].vars[0]$;
+      mbr=ProgVar::string_val;
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="In BasicInit": };
+     };
+     ControlPanelMember @[1] {
+      label="layer_lesion_list";
+      short_label=1;
+      cust_label=0;
+      desc="COLON-separated list of layers outside of groups to lesion for this run";
       cust_desc=0;
       base=$.programs.gp[1].gp[0][0].vars[1]$;
+      mbr=ProgVar::string_val;
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="Output:Hidden": range="": notes="": };
+     };
+     ControlPanelMember @[2] {
+      label="prjn_lesion_list";
+      short_label=1;
+      cust_label=0;
+      desc="COLON-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list";
+      cust_desc=0;
+      base=$.programs.gp[1].gp[0][0].vars[2]$;
+      mbr=ProgVar::string_val;
+      data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
+     };
+     ControlPanelMember @[3] {
+      label="prjn_unlesion_list";
+      short_label=1;
+      cust_label=0;
+      desc="COLON-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
+      cust_desc=0;
+      base=$.programs.gp[1].gp[0][0].vars[3]$;
       mbr=ProgVar::string_val;
       data {ctrl_type=PARAM_SET: is_numeric=0: is_single=1: state=STABLE: saved_value="": range="": notes="": };
      };
@@ -4429,13 +4559,13 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     date=;
    };
   };
-  ParamSet_Group @.gp[1] {
-   name="NetParams";
+  ParamSet_Group @.gp[2] {
+   name="LearnParams";
    el_typ=ParamSet;
    el_def=0;
    master_and_clones=1;
    ParamSet @[0] {
-    name="NetMaster";
+    name="LearnParamsMaster";
     cp_state=MASTER;
     updt_while_running=0;
     desc="Network params -- this contains default values for all params -- this is a 'master' param set -- make changes here and all others in group will auto-update";
@@ -4463,7 +4593,7 @@ leabra flex using param sets experiment project -- updated by randy from John's 
     date="2017_05_14_22_01_20";
    };
    ParamSet @[1] {
-    name="NetConfig1";
+    name="LearnParams1";
     cp_state=CLONE;
     updt_while_running=0;
     desc="another configuration of misc parameters to choose from.. make as many as you need!  this is a 'clone' of the master and will auto-update for any additions or changes to members";
@@ -7647,7 +7777,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
      ProgVar @[2] {
-      name="net_params";
+      name="net_config";
       var_type=T_Object;
       object_type=ParamSet;
       object_val=.active_params.gp[1][0]$$;
@@ -7655,10 +7785,22 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="select other parameters, typically network spec params -- independent of run params";
+      desc="select parameters for controlling how to build the network";
       init_from=NULL;
      };
      ProgVar @[3] {
+      name="learn_params";
+      var_type=T_Object;
+      object_type=ParamSet;
+      object_val=.active_params.gp[2][0]$$;
+      object_scope=.active_params.gp[2]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="select other parameters, typically network spec params -- independent of run params";
+      init_from=NULL;
+     };
+     ProgVar @[4] {
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
@@ -7668,7 +7810,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="name of run program to run -- must exist in the RunProgs group";
       init_from=NULL;
      };
-     ProgVar @[4] {
+     ProgVar @[5] {
       name="init_prog";
       var_type=T_String;
       string_val="BasicInit";
@@ -7678,7 +7820,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="name of init program -- must exist in the InitProgs group";
       init_from=NULL;
      };
-     ProgVar @[5] {
+     ProgVar @[6] {
       name="cluster_run";
       var_type=T_Object;
       object_type=ClusterRun;
@@ -7690,7 +7832,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="used for setting the tag name -- param sets with EXPLORE set will be added to tag";
       init_from=NULL;
      };
-     ProgVar @[6] {
+     ProgVar @[7] {
       name="save_log_files_interactive";
       var_type=T_Bool;
       bool_val=0;
@@ -7700,7 +7842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="save log files when running interactively?";
       init_from=NULL;
      };
-     ProgVar @[7] {
+     ProgVar @[8] {
       name="cust_tag";
       var_type=T_String;
       string_val=;
@@ -7710,7 +7852,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="add any custom tag string here -- used for labeling log and weight files along with config info";
       init_from=NULL;
      };
-     ProgVar @[8] {
+     ProgVar @[9] {
       name="tag";
       var_type=T_String;
       string_val="__RunMaster_NetMaster";
@@ -7720,7 +7862,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-     ProgVar @[9] {
+     ProgVar @[10] {
       name="stop_train";
       var_type=T_Bool;
       bool_val=0;
@@ -7745,7 +7887,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="stop_train = false";
-      result_var=.programs.gp[1][1].vars[9]$$;
+      result_var=.programs.gp[1][1].vars[10]$$;
       expr {
        expr="false";
       };
@@ -7827,7 +7969,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="stop_train = false";
-      result_var=$.programs.gp[1][1].vars[9]$;
+      result_var=$.programs.gp[1][1].vars[10]$;
       expr {
        expr="false";
       };
@@ -7849,7 +7991,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="tag = \"_\" + cust_tag + \"_\" + cluster_run->ParamSetNames(false)";
-	result_var=.programs.gp[1][1].vars[8]$$;
+	result_var=.programs.gp[1][1].vars[9]$$;
 	expr {
 	 expr="\"_\" + cust_tag + \"_\" + cluster_run->ParamSetNames(false)";
 	};
@@ -7861,7 +8003,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	code_string="Vars To:  program=SaveLogFiles set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
 	other_prog=$.programs.gp[4].gp[0][0]$;
 	set_other=1;
-	var_1=$.programs.gp[1][1].vars[8]$;
+	var_1=$.programs.gp[1][1].vars[9]$;
 	var_2=NULL;
 	var_3=NULL;
 	var_4=NULL;
@@ -7906,12 +8048,39 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  meth_desc=" copy the saved_value values to be active (live) values on the objects";
 	 };
 	 MethodCall @[1] {
+	  name="MethodCall_netconfigActivatetrue";
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="run_params->Activate(true)";
+	  result_var=NULL;
+	  obj=$.programs.gp[1][1].vars[2]$;
+	  method=ParamSet::Activate;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=bool;
+	    type="bool";
+	    name="info_msg";
+	    required=0;
+	    def_val="false";
+	    prev_expr=;
+	    expr {
+	     expr="true";
+	    };
+	   };
+	  };
+	  meth_sig="void Activate(bool info_msg = false)";
+	  meth_desc=" copy the saved_value values to be active (live) values on the objects";
+	 };
+	 MethodCall @[2] {
 	  name="MethodCall_netparamsActivatetrue";
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="net_params->Activate(true)";
 	  result_var=NULL;
-	  obj=$.programs.gp[1][1].vars[2]$;
+	  obj=$.programs.gp[1][1].vars[3]$;
 	  method=ParamSet::Activate;
 	  meth_args {
 	   name="meth_args";
@@ -7958,7 +8127,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       prog_group=.programs.gp[1].gp[0]$$;
-      prog_name_var=$.programs.gp[1][1].vars[4]$;
+      prog_name_var=$.programs.gp[1][1].vars[5]$;
      };
      WhileLoop @[4] {
       name="WhileLoop_whilestoptrain";
@@ -8389,7 +8558,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc="space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
+       desc="COLON-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
        init_from=NULL;
       };
       ProgVar @[1] {
@@ -8399,7 +8568,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc="space-separated list of layers outside of groups to lesion for this run";
+       desc="COLON-separated list of layers outside of groups to lesion for this run";
        init_from=NULL;
       };
       ProgVar @[2] {
@@ -8409,7 +8578,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc="space-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list";
+       desc="COLON-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list";
        init_from=NULL;
       };
       ProgVar @[3] {
@@ -8419,7 +8588,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_scope=NULL;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc="space-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
+       desc="COLON-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
        init_from=NULL;
       };
       ProgVar @[4] {
@@ -11781,8 +11950,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11820,7 +11989,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc="a space delimited list of layer group names to lesion";
+      desc="a COLON delimited list of layer group names to lesion";
       init_from=NULL;
      };
      ProgVar @[2] {
@@ -11830,7 +11999,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc="a space delimited list of layer names to lesion";
+      desc="a COLON delimited list of layer names to lesion";
       init_from=NULL;
      };
      ProgVar @[3] {
@@ -11840,7 +12009,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc="a space delimited list of projections to lesion: synatx is recvlayer.Fm_sendlayer";
+      desc="a COLON delimited list of projections to lesion: synatx is recvlayer.Fm_sendlayer";
       init_from=NULL;
      };
      ProgVar @[4] {
@@ -11850,7 +12019,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_scope=NULL;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc="a space delimited list of projections to un-lesion: synatx is recvlayer.Fm_sendlayer";
+      desc="a COLON delimited list of projections to un-lesion: synatx is recvlayer.Fm_sendlayer";
       init_from=NULL;
      };
     };
@@ -12122,7 +12291,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  def_val=" ";
 	  prev_expr=;
 	  expr {
-	   expr="\" \"";
+	   expr="\":\"";
 	  };
 	 };
 	};
@@ -12514,7 +12683,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  def_val=" ";
 	  prev_expr=;
 	  expr {
-	   expr="\" \"";
+	   expr="\":\"";
 	  };
 	 };
 	};
@@ -12928,7 +13097,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  def_val=" ";
 	  prev_expr=;
 	  expr {
-	   expr="\" \"";
+	   expr="\":\"";
 	  };
 	 };
 	};
@@ -24521,7 +24690,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="svn rev: 10514 update startup program";
- tree_state{ .;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].layers; };
+ tree_state{ .;.patches;.docs;.wizards;.ctrl_panels;.active_params;.active_params.gp[0];.active_params.gp[1];.active_params.gp[2];.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -24571,6 +24740,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraLayerSpec;
@@ -24581,6 +24751,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{        };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraLayerSpec;
@@ -24625,6 +24796,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraUnitSpec;
@@ -24671,6 +24843,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraConSpec;
@@ -24681,6 +24854,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraBiasSpec;
@@ -24762,6 +24936,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraConSpec;
@@ -24912,6 +25087,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=FullPrjnSpec;
@@ -25189,7 +25365,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
-   times {quarter=25: gate_cyc=18: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: current_cycle_gate_cycle=0: };
+   times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
    net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
