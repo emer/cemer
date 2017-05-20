@@ -988,7 +988,6 @@ set(ta_gui_SRCS_NOMAKETA
 
   iDialogRegexpPopulator.cpp
   taSound_QObj.cpp
-  iDialogLineEdit.cpp
 )
 
 set(ta_gui_SRCS_UI

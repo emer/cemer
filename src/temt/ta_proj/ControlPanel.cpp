@@ -750,6 +750,9 @@ bool ControlPanel::AddMember_impl
       negp->Transfer(item);     // grab it
     }
   }
+  if(InheritsFromName("ClusterRun")) {
+    item->SetToExplore();
+  }
   item->UpdateAfterEdit();
   return rval;
 }
