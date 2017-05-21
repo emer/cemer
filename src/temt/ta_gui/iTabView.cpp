@@ -162,9 +162,17 @@ iPanelBase* iTabView::curPanel() const {
 }
 
 void iTabView::DataPanelDestroying(iPanelBase* panel) {
+  iMainWindowViewer* vw = viewerWindow();
+  if (!vw) return;
+  if (!vw->isRoot()) {
+    taProject* proj = vw->myProject();
+    if (!proj) return;
+    if (proj->isDestroying())
+	    return;
+  }
   RemoveDataPanel(panel);//TODO
 }
-
+  
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   iPanelBase* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
