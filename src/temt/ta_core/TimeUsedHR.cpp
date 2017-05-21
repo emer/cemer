@@ -36,18 +36,18 @@ public:
   LARGE_INTEGER end;
   LARGE_INTEGER used;
   void		GetStartTime() { QueryPerformanceCounter(&start);}
-  void		GetEndTime() { if(start == (LARGE_INTEGER)0) return;
+  void		GetEndTime() { if(start.QuadPart == 0) return;
     QueryPerformanceCounter(&end);
     used.QuadPart = end.QuadPart - start.QuadPart;
     }
   double	GetTotSecs() {
-    if (freq.QuadPart == (LARGE_INTEGER)0) {
+    if (freq.QuadPart == 0) {
       QueryPerformanceFrequency(&freq);
     } 
     double rval = used.QuadPart / (double)(freq.QuadPart);
     return rval;
   }
-  TimeUsedHRd() { start = (LARGE_INTEGER)0; end = (LARGE_INTEGER)0; used = (LARGE_INTEGER)0; }
+  TimeUsedHRd() { start.QuadPart = 0; end.QuadPart = 0; used.QuadPart = 0; }
 };
 
 LARGE_INTEGER TimeUsedHRd::freq;
