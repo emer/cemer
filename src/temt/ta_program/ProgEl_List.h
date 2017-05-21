@@ -31,7 +31,7 @@ class taBase_PtrList; //
 taTypeDef_Of(ProgEl_List);
 
 class TA_API ProgEl_List: public taList<ProgEl> {
-  // #TREEFILT_ProgGp ##CAT_Program list of program elements: a block of code
+  // #TREEFILT_ProgGp ##CAT_Program ##NO_UNIQUE_NAME_WARNING list of program elements: a block of code
 INHERITED(taList<ProgEl>)
 public:
   String_Array          acceptable_types;     // #HIDDEN #NO_SAVE types that are ok for this list instance

@@ -223,8 +223,10 @@ bool taList_impl::MakeElNamesUnique() {
         String orig = nm2;
         ndupe++;
         nm2 = nm2 + "_" + (String)ndupe;
-        taMisc::Warning("taList_impl::MakeElNamesUnique",
-                        "names of items on the list must be unique -- renaming:",el2->DisplayPath(),"to:",nm2);
+        if(!HasOption("NO_UNIQUE_NAME_WARNING")) {
+          taMisc::Warning("taList_impl::MakeElNamesUnique",
+                          "names of items on the list must be unique -- renaming:",el2->DisplayPath(),"to:",nm2);
+        }
         el2->SetName(nm2);
         el2->UpdateAfterEdit(); // trigger update so visible
         unique = false;
@@ -270,8 +272,10 @@ bool taList_impl::MakeElNameUnique(taBase* itm) {
       String orig = itmnm;
       ndupe++;
       itmnm = itmnm + "_" + (String)ndupe;
-      taMisc::Warning("taList_impl::MakeElNameUnique",
-                      "names of items on the list must be unique -- renaming:",itm->DisplayPath(),"to:",itmnm);
+      if(!HasOption("NO_UNIQUE_NAME_WARNING")) {
+        taMisc::Warning("taList_impl::MakeElNameUnique",
+                        "names of items on the list must be unique -- renaming:",itm->DisplayPath(),"to:",itmnm);
+      }
       itm->SetName(itmnm);
       itm->UpdateAfterEdit();   // trigger update so visible
       unique = false;
