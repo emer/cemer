@@ -1,0 +1,80 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ./test-projects/TestMatrixOperations.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ./test-projects/TestMatrixOperations.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v8.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+
+Intitialisations
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "matrixInitialisation"    
+    Run Emergent Program	matrixInitialisation
+    Prog Var Should Equal	shape_a_0	4
+    Prog Var Should Equal	shape_b_0	4
+    Prog Var Should Equal	shape_b_1	2
+    Prog Var Should Equal	shape_c_0	0
+    Prog Var Should Equal	shape_d_0	3
+    Prog Var Should Equal	shape_d_1	2
+    Prog Var Should Equal	elem_a_1	0.1
+    Prog Var Should Equal	elem_a_2	0.4
+    Prog Var Should Equal	elem_b_1	0.1
+    Prog Var Should Equal	elem_b_2	1.4
+    Prog Var Should Match	elem_d_1	Hello
+    Prog Var Should Match	elem_d_2	test
+    Prog Var Should Equal	zeros_test_pass	true
+    Prog Var Should Equal	eye_test_pass	true
+    Prog Var Should Equal	diag_test_pass	true
+    Prog Var Should Equal	rand_test_pass	true
+    Prog Var Should Equal	linspace_test_pass	true
+    Prog Var Should Equal	meshgrid_test_pass	true
+
+
+
+
+
+*** Keywords ***
+
+

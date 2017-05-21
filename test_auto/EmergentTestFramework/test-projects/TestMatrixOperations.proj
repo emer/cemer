@@ -1,0 +1,2869 @@
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10769
+LeabraProject .projects[0] { 
+ Doc_Group @.docs = [0] {
+ };
+
+ Wizard_Group @.wizards = [1] {
+  LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+    UserDataItem @[1] { };
+   };
+  };
+ };
+
+ ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [0] {
+   };
+
+   ControlPanelMethod_Group @.mths = [0] {
+   };
+  };
+  ClusterRun @[1] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   ControlPanelMember_Group @.mbrs = [0] {
+   };
+
+   ControlPanelMethod_Group @.mths = [0] {
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+ };
+
+ ParamSet_Group @.active_params = [0] {
+ };
+
+ ArchivedParams_Group @.archived_params = [0] {
+ };
+
+ DataTable_Group @.data = [0] {
+  DataTable_Group @.gp[0] { 
+  };
+  DataTable_Group @.gp[1] { 
+  };
+  DataTable_Group @.gp[2] { 
+  };
+ };
+
+ Program_TopGroup @.programs = [2] {
+  Program @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [18] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
+    ProgVar @[9] { };
+    ProgVar @[10] { };
+    ProgVar @[11] { };
+    ProgVar @[12] { };
+    ProgVar @[13] { };
+    ProgVar @[14] { };
+    ProgVar @[15] { };
+    ProgVar @[16] { };
+    ProgVar @[17] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [60] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [17] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+      ProgVar @[4] { };
+      ProgVar @[5] { };
+      ProgVar @[6] { };
+      ProgVar @[7] { };
+      ProgVar @[8] { };
+      ProgVar @[9] { };
+      ProgVar @[10] { };
+      ProgVar @[11] { };
+      ProgVar @[12] { };
+      ProgVar @[13] { };
+      ProgVar @[14] { };
+      ProgVar @[15] { };
+      ProgVar @[16] { };
+     };
+    };
+    AssignExpr @[1] { };
+    AssignExpr @[2] { };
+    AssignExpr @[3] { };
+    AssignExpr @[4] { };
+    AssignExpr @[5] { };
+    AssignExpr @[6] { };
+    AssignExpr @[7] { };
+    AssignExpr @[8] { };
+    AssignExpr @[9] { };
+    AssignExpr @[10] { };
+    AssignExpr @[11] { };
+    MethodCall @[12] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    AssignExpr @[13] { };
+    AssignExpr @[14] { };
+    AssignExpr @[15] { };
+    AssignExpr @[16] { };
+    AssignExpr @[17] { };
+    AssignExpr @[18] { };
+    AssignExpr @[19] { };
+    AssignExpr @[20] { };
+    BlankLineEl @[21] { };
+    AssignExpr @[22] { };
+    AssignExpr @[23] { };
+    If @[24] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[25] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    ForLoop @[26] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[27] { };
+    AssignExpr @[28] { };
+    AssignExpr @[29] { };
+    If @[30] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[31] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    ForLoop @[32] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [2] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+	Else @[1] { 
+	 ProgEl_List @.true_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[33] { };
+    AssignExpr @[34] { };
+    AssignExpr @[35] { };
+    If @[36] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[37] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    ForLoop @[38] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [2] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+	Else @[1] { 
+	 ProgEl_List @.true_code = [1] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[39] { };
+    AssignExpr @[40] { };
+    AssignExpr @[41] { };
+    If @[42] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[43] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    BlankLineEl @[44] { };
+    AssignExpr @[45] { };
+    AssignExpr @[46] { };
+    If @[47] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[48] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    ForLoop @[49] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+       };
+      };
+     };
+    };
+    AssignExpr @[50] { };
+    If @[51] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[52] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    ForLoop @[53] { 
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+       };
+      };
+     };
+    };
+    BlankLineEl @[54] { };
+    AssignExpr @[55] { };
+    AssignExpr @[56] { };
+    If @[57] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    If @[58] { 
+     ProgEl_List @.true_code = [1] {
+      AssignExpr @[0] { };
+     };
+    };
+    ForLoop @[59] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [2] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  AssignExpr @[0] { };
+	 };
+	};
+	If @[1] { 
+	 ProgEl_List @.true_code = [1] {
+	  AssignExpr @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+   };
+  };
+  Program @[1] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @[0] { };
+   };
+
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [9] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [14] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [4] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+     };
+    };
+    AssignExpr @[1] { };
+    AssignExpr @[2] { };
+    AssignExpr @[3] { };
+    AssignExpr @[4] { };
+    AssignExpr @[5] { };
+    AssignExpr @[6] { };
+    AssignExpr @[7] { };
+    AssignExpr @[8] { };
+    AssignExpr @[9] { };
+    AssignExpr @[10] { };
+    AssignExpr @[11] { };
+    AssignExpr @[12] { };
+    AssignExpr @[13] { };
+   };
+  };
+ };
+
+ taViewer_List @.viewers = [1] {
+  MainWindowViewer @[0] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+    UserDataItem @[1] { };
+    UserDataItem @[2] { };
+    UserDataItem @[3] { };
+    UserDataItem @[4] { };
+    UserDataItem @[5] { };
+   };
+
+   ToolBar_List @.toolbars = [1] {
+    ToolBar @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   FrameViewer_List @.frames = [3] {
+    BrowseViewerTaBase @[0] { };
+    PanelViewer @[1] { };
+    T3PanelViewer @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+
+     T3Panel_List @.panels = [1] {
+      T3Panel @[0] { 
+       T3DataView_List @.root_view.children = [0] {
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @[0] { };
+	T3SavedView @[1] { };
+	T3SavedView @[2] { };
+	T3SavedView @[3] { };
+	T3SavedView @[4] { };
+	T3SavedView @[5] { };
+	T3SavedView @[6] { };
+	T3SavedView @[7] { };
+	T3SavedView @[8] { };
+	T3SavedView @[9] { };
+       };
+      };
+     };
+    };
+   };
+
+   DockViewer_List @.docks = [1] {
+    ToolBoxDockViewer @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+      UserDataItem @[2] { };
+      UserDataItem @[3] { };
+      UserDataItem @[4] { };
+      UserDataItem @[5] { };
+     };
+    };
+   };
+  };
+ };
+
+ Network_Group @.networks = [0] {
+ };
+};
+LeabraProject .projects[0] {
+ name="TestMatrixOperations";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ author="Kai Krueger";
+ email="kai.krueger@colorado.edu";
+ license {
+  license=GPLv2;
+  owner_name=;
+  org=;
+  year="2017";
+  custom=;
+ };
+ pub_cite=;
+ wiki {wiki="": page_name="": };
+ docs {
+  name="docs";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name="wizards";
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_6";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="NO_CLIP": value=1: val_type_fixed=0: };
+    UserDataItem @[1] {name="user_pinned": value=1: val_type_fixed=0: };
+   };
+   name="LeabraWizard_0";
+  };
+ };
+ ctrl_panels {
+  name="ctrl_panels";
+  el_typ=ControlPanel;
+  el_def=0;
+  master_and_clones=0;
+  ControlPanel @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
+   };
+   name="ControlPanel";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+   };
+   mths {
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+  };
+  ClusterRun @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="user_pinned": value=1: val_type_fixed=0: };
+   };
+   name="ClusterRun";
+   cp_state=REGULAR;
+   updt_while_running=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=ControlPanelMember;
+    el_def=0;
+   };
+   mths {
+    name="mths";
+    el_typ=ControlPanelMethod;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   search_algos {
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   use_search_algo=0;
+   cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   auto_updt_interval=10;
+   auto_updt_timeout=30;
+   cluster=;
+   clusters=;
+   users=;
+   last_submit_time=;
+   notes=;
+   label=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   queue=;
+   run_time=;
+   exe_cmd="emergent";
+   ram_gb=0;
+   n_threads=1;
+   use_mpi=0;
+   mpi_nodes=10;
+   mpi_per_node=1;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_n_batches_per=1;
+   nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=0;
+  };
+ };
+ active_params {
+  name="active_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
+ };
+ archived_params {
+  name="archived_params";
+  el_typ=ParamSet;
+  el_def=0;
+  master_and_clones=0;
+ };
+ data {
+  name="data";
+  el_typ=DataTable;
+  el_def=0;
+  save_tables=1;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+ };
+ programs {
+  name="programs";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+  debug_mode=0;
+  Program @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[0].doc$$: };
+   };
+   name="matrixInitialisation";
+   short_nm="mtrxnt";
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="shape_a_0";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="shape_b_0";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="shape_b_1";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[3] {
+     name="shape_c_0";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[4] {
+     name="shape_d_0";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[5] {
+     name="shape_d_1";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[6] {
+     name="elem_a_1";
+     var_type=T_Real;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[7] {
+     name="elem_a_2";
+     var_type=T_Real;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[8] {
+     name="elem_b_1";
+     var_type=T_Real;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[9] {
+     name="elem_b_2";
+     var_type=T_Real;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[10] {
+     name="elem_d_1";
+     var_type=T_String;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[11] {
+     name="elem_d_2";
+     var_type=T_String;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[12] {
+     name="zeros_test_pass";
+     var_type=T_Bool;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[13] {
+     name="eye_test_pass";
+     var_type=T_Bool;
+     bool_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[14] {
+     name="diag_test_pass";
+     var_type=T_Bool;
+     bool_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[15] {
+     name="rand_test_pass";
+     var_type=T_Bool;
+     bool_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[16] {
+     name="linspace_test_pass";
+     var_type=T_Bool;
+     bool_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[17] {
+     name="meshgrid_test_pass";
+     var_type=T_Bool;
+     bool_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars0vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (17 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="float_a";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="float_b";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="float_c";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="float_d";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[4] {
+       name="float_e";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[5] {
+       name="float_f";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[6] {
+       name="float_g";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[7] {
+       name="float_h";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[8] {
+       name="float_i";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[9] {
+       name="string_d";
+       var_type=T_Object;
+       object_type=String_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[10] {
+       name="shape_a";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[11] {
+       name="shape_b";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[12] {
+       name="shape_c";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[13] {
+       name="shape_d";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[14] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[15] {
+       name="j";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[16] {
+       name="k";
+       var_type=T_Int;
+       int_val=0;
+       object_scope=NULL;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_floata01020304";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_a = [0.1, 0.2, 0.3, 0.4]";
+     result_var=.programs[0].prog_code[0].local_vars[0]$$;
+     expr {
+      expr="[0.1, 0.2, 0.3, 0.4]";
+     };
+    };
+    AssignExpr @[2] {
+     name="AssignExpr_floatb0102030411121314";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_b = [0.1,0.2,0.3,0.4; 1.1,1.2,1.3,1.4]";
+     result_var=.programs[0].prog_code[0].local_vars[1]$$;
+     expr {
+      expr="[0.1,0.2,0.3,0.4; 1.1,1.2,1.3,1.4]";
+     };
+    };
+    AssignExpr @[3] {
+     name="AssignExpr_floatcnewfloatMatrix";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_c = new float_Matrix";
+     result_var=.programs[0].prog_code[0].local_vars[2]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    AssignExpr @[4] {
+     name="AssignExpr_stringdHelloWorldthisisatest";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="string_d = [\"Hello\", \"World\", \"this\"; \"is\", \"a\", \"test\"]";
+     result_var=.programs[0].prog_code[0].local_vars[9]$$;
+     expr {
+      expr="[\"Hello\", \"World\", \"this\"; \"is\", \"a\", \"test\"]";
+     };
+    };
+    AssignExpr @[5] {
+     name="AssignExpr_shapeashapefloata";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_a = shape(float_a)";
+     result_var=.programs[0].prog_code[0].local_vars[10]$$;
+     expr {
+      expr="shape(float_a)";
+     };
+    };
+    AssignExpr @[6] {
+     name="AssignExpr_shapebshapefloatb";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_b = shape(float_b)";
+     result_var=.programs[0].prog_code[0].local_vars[11]$$;
+     expr {
+      expr="shape(float_b)";
+     };
+    };
+    AssignExpr @[7] {
+     name="AssignExpr_shapecshapefloatc";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_c = shape(float_c)";
+     result_var=.programs[0].prog_code[0].local_vars[12]$$;
+     expr {
+      expr="shape(float_c)";
+     };
+    };
+    AssignExpr @[8] {
+     name="AssignExpr_shapedshapestringd";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_d = shape(string_d)";
+     result_var=.programs[0].prog_code[0].local_vars[13]$$;
+     expr {
+      expr="shape(string_d)";
+     };
+    };
+    AssignExpr @[9] {
+     name="AssignExpr_shapea1shapea0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_a_0 = shape_a[0]";
+     result_var=.programs[0].vars[0]$$;
+     expr {
+      expr="shape_a[0]";
+     };
+    };
+    AssignExpr @[10] {
+     name="AssignExpr_shapeb0shapeb0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_b_0 = shape_b[0]";
+     result_var=.programs[0].vars[1]$$;
+     expr {
+      expr="shape_b[0]";
+     };
+    };
+    AssignExpr @[11] {
+     name="AssignExpr_shapeb1shapeb1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_b_1 = shape_b[1]";
+     result_var=.programs[0].vars[2]$$;
+     expr {
+      expr="shape_b[1]";
+     };
+    };
+    MethodCall @[12] {
+     name="MethodCall_shapec0floatcdims";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_c_0 = float_c->dims()";
+     result_var=.programs[0].vars[3]$$;
+     obj=$.programs[0].prog_code[0].local_vars[2]$;
+     method=taMatrix::dims;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="int dims()";
+     meth_desc=" the number of dimensions";
+    };
+    AssignExpr @[13] {
+     name="AssignExpr_shaped0shaped0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_d_0 = shape_d[0]";
+     result_var=.programs[0].vars[4]$$;
+     expr {
+      expr="shape_d[0]";
+     };
+    };
+    AssignExpr @[14] {
+     name="AssignExpr_shaped1shaped1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="shape_d_1 = shape_d[1]";
+     result_var=.programs[0].vars[5]$$;
+     expr {
+      expr="shape_d[1]";
+     };
+    };
+    AssignExpr @[15] {
+     name="AssignExpr_elema1floata0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_a_1 = float_a[0]";
+     result_var=.programs[0].vars[6]$$;
+     expr {
+      expr="float_a[0]";
+     };
+    };
+    AssignExpr @[16] {
+     name="AssignExpr_elema2floata3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_a_2 = float_a[3]";
+     result_var=.programs[0].vars[7]$$;
+     expr {
+      expr="float_a[3]";
+     };
+    };
+    AssignExpr @[17] {
+     name="AssignExpr_elemb1floatb00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_b_1 = float_b[0,0]";
+     result_var=.programs[0].vars[8]$$;
+     expr {
+      expr="float_b[0,0]";
+     };
+    };
+    AssignExpr @[18] {
+     name="AssignExpr_elemb2floatb31";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_b_2 = float_b[3,1]";
+     result_var=.programs[0].vars[9]$$;
+     expr {
+      expr="float_b[3,1]";
+     };
+    };
+    AssignExpr @[19] {
+     name="AssignExpr_elemd1stringd00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_d_1 = string_d[0,0]";
+     result_var=.programs[0].vars[10]$$;
+     expr {
+      expr="string_d[0,0]";
+     };
+    };
+    AssignExpr @[20] {
+     name="AssignExpr_elemd2stringd21";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_d_2 = string_d[2,1]";
+     result_var=.programs[0].vars[11]$$;
+     expr {
+      expr="string_d[2,1]";
+     };
+    };
+    BlankLineEl @[21] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    AssignExpr @[22] {
+     name="AssignExpr_zerostestpasstrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="zeros_test_pass = true";
+     result_var=.programs[0].vars[12]$$;
+     expr {
+      expr="true";
+     };
+    };
+    AssignExpr @[23] {
+     name="AssignExpr_floatdzeros345";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_d = zeros([3,4,5])";
+     result_var=.programs[0].prog_code[0].local_vars[3]$$;
+     expr {
+      expr="zeros([3,4,5])";
+     };
+    };
+    If @[24] {
+     name="If_ifndimsfloatd3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_d) != 3)";
+     cond {
+      expr="ndims(float_d) != 3";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_zerostestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="zeros_test_pass = false";
+       result_var=$.programs[0].vars[12]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[25] {
+     name="If_ifshapefloatd03s_14shapefloatd25";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if ((shape(float_d)[0] != 3) || (shape(float_d)[1] != 4) || (shape(float_d)[2] != 5))";
+     cond {
+      expr="(shape(float_d)[0] != 3) || (shape(float_d)[1] != 4) || (shape(float_d)[2] != 5)";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_zerostestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="zeros_test_pass = false";
+       result_var=$.programs[0].vars[12]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    ForLoop @[26] {
+     name="ForLoop_fori0i3i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 name="ForLoop_fork0k5k";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="for (k = 0; k < 5; k++)";
+	 loop_code {
+	  name="loop_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloatdijk0";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_d[i,j,k] != 0)";
+	   cond {
+	    expr="float_d[i,j,k] != 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_zerostestpassfalse";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="zeros_test_pass = false";
+	     result_var=$.programs[0].vars[12]$;
+	     expr {
+	      expr="false";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="k = 0";
+	 };
+	 test {
+	  expr="k < 5";
+	 };
+	 iter {
+	  expr="k++";
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[27] {
+     name="BlankLineEl__1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    AssignExpr @[28] {
+     name="AssignExpr_eyetestpasstrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="eye_test_pass = true";
+     result_var=.programs[0].vars[13]$$;
+     expr {
+      expr="true";
+     };
+    };
+    AssignExpr @[29] {
+     name="AssignExpr_floateeye3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_e = eye(3)";
+     result_var=.programs[0].prog_code[0].local_vars[4]$$;
+     expr {
+      expr="eye(3)";
+     };
+    };
+    If @[30] {
+     name="If_ifndimsfloate2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_e) != 2)";
+     cond {
+      expr="ndims(float_e) != 2";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_eyetestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="eye_test_pass = false";
+       result_var=$.programs[0].vars[13]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[31] {
+     name="If_ifshapefloate03shapefloate13";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if ((shape(float_e)[0] != 3) || (shape(float_e)[1] != 3))";
+     cond {
+      expr="(shape(float_e)[0] != 3) || (shape(float_e)[1] != 3)";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_eyetestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="eye_test_pass = false";
+       result_var=$.programs[0].vars[13]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    ForLoop @[32] {
+     name="ForLoop_fori0i3i_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j3j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 3; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifij";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (i == j)";
+	 cond {
+	  expr="i == j";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloateij1";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_e[i,j] != 1)";
+	   cond {
+	    expr="float_e[i,j] != 1";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_eyetestpassfalse";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="eye_test_pass = false";
+	     result_var=$.programs[0].vars[13]$;
+	     expr {
+	      expr="false";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+	Else @[1] {
+	 name="Else_If_ifij";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="else";
+	 cond {
+	  expr=;
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloateij0";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_e[i,j] != 0)";
+	   cond {
+	    expr="float_e[i,j] != 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_eyetestpassfalse";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="eye_test_pass = false";
+	     result_var=$.programs[0].vars[13]$;
+	     expr {
+	      expr="false";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 3";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[33] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    AssignExpr @[34] {
+     name="AssignExpr_diagtestpasstrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="diag_test_pass = true";
+     result_var=.programs[0].vars[14]$$;
+     expr {
+      expr="true";
+     };
+    };
+    AssignExpr @[35] {
+     name="AssignExpr_floatfdiagfloata0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_f = diag(float_a,0)";
+     result_var=.programs[0].prog_code[0].local_vars[5]$$;
+     expr {
+      expr="diag(float_a,0)";
+     };
+    };
+    If @[36] {
+     name="If_ifndimsfloatf2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_f) != 2)";
+     cond {
+      expr="ndims(float_f) != 2";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_diagtestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="diag_test_pass = false";
+       result_var=$.programs[0].vars[14]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[37] {
+     name="If_ifshapefloatf04shapefloatf14";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if ((shape(float_f)[0] != 4) || (shape(float_f)[1] != 4))";
+     cond {
+      expr="(shape(float_f)[0] != 4) || (shape(float_f)[1] != 4)";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_diagtestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="diag_test_pass = false";
+       result_var=$.programs[0].vars[14]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    ForLoop @[38] {
+     name="ForLoop_fori0i4i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 4; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_ifij";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (i == j)";
+	 cond {
+	  expr="i == j";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloatfijfloatai";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_f[i,j] != float_a[i])";
+	   cond {
+	    expr="float_f[i,j] != float_a[i]";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_diagtestpassfalse";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="diag_test_pass = false";
+	     result_var=$.programs[0].vars[14]$;
+	     expr {
+	      expr="false";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+	Else @[1] {
+	 name="Else_If_ifij";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="else";
+	 cond {
+	  expr=;
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
+	   name="If_iffloatfij0";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="if (float_f[i,j] != 0)";
+	   cond {
+	    expr="float_f[i,j] != 0";
+	   };
+	   true_code {
+	    name="true_code";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    AssignExpr @[0] {
+	     name="AssignExpr_diagtestpassfalse";
+	     desc=;
+	     flags=CAN_REVERT_TO_CODE;
+	     code_string="diag_test_pass = false";
+	     result_var=$.programs[0].vars[14]$;
+	     expr {
+	      expr="false";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 4";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[39] {
+     name="BlankLineEl__2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    AssignExpr @[40] {
+     name="AssignExpr_randtestpasstrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="rand_test_pass = true";
+     result_var=.programs[0].vars[15]$$;
+     expr {
+      expr="true";
+     };
+    };
+    AssignExpr @[41] {
+     name="AssignExpr_floatgrand34";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_g = rand([3,4])";
+     result_var=.programs[0].prog_code[0].local_vars[6]$$;
+     expr {
+      expr="rand([3,4])";
+     };
+    };
+    If @[42] {
+     name="If_ifndimsfloatg2";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_g) != 2)";
+     cond {
+      expr="ndims(float_g) != 2";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_randtestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="rand_test_pass = false";
+       result_var=$.programs[0].vars[15]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[43] {
+     name="If_ifshapefloatg03shapefloatg14";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if ((shape(float_g)[0] != 3) || (shape(float_g)[1] != 4))";
+     cond {
+      expr="(shape(float_g)[0] != 3) || (shape(float_g)[1] != 4)";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_randtestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="rand_test_pass = false";
+       result_var=$.programs[0].vars[15]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    BlankLineEl @[44] {
+     name="BlankLineEl_";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    AssignExpr @[45] {
+     name="AssignExpr_linspacetestpasstrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="linspace_test_pass = true";
+     result_var=.programs[0].vars[16]$$;
+     expr {
+      expr="true";
+     };
+    };
+    AssignExpr @[46] {
+     name="AssignExpr_floathlinspace155";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_h = linspace(1,5,5)";
+     result_var=.programs[0].prog_code[0].local_vars[7]$$;
+     expr {
+      expr="linspace(1,5,5)";
+     };
+    };
+    If @[47] {
+     name="If_ifndimsfloath1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_h) != 1)";
+     cond {
+      expr="ndims(float_h) != 1";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_linspacetestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="linspace_test_pass = false";
+       result_var=$.programs[0].vars[16]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[48] {
+     name="If_ifshapefloath05";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (shape(float_h)[0] != 5)";
+     cond {
+      expr="shape(float_h)[0] != 5";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_linspacetestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="linspace_test_pass = false";
+       result_var=$.programs[0].vars[16]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    ForLoop @[49] {
+     name="ForLoop_fori1i6i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 1; i < 6; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_iffloathi1i";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (float_h[i - 1] != i)";
+       cond {
+	expr="float_h[i - 1] != i";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_linspacetestpassfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="linspace_test_pass = false";
+	 result_var=$.programs[0].vars[16]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 1";
+     };
+     test {
+      expr="i < 6";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    AssignExpr @[50] {
+     name="AssignExpr_floathlinspace085";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_h = linspace(0,8,5)";
+     result_var=$.programs[0].prog_code[0].local_vars[7]$;
+     expr {
+      expr="linspace(0,8,5)";
+     };
+    };
+    If @[51] {
+     name="If_ifndimsfloath1_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_h) != 1)";
+     cond {
+      expr="ndims(float_h) != 1";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_linspacetestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="linspace_test_pass = false";
+       result_var=$.programs[0].vars[16]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[52] {
+     name="If_ifshapefloath05_1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (shape(float_h)[0] != 5)";
+     cond {
+      expr="shape(float_h)[0] != 5";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_linspacetestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="linspace_test_pass = false";
+       result_var=$.programs[0].vars[16]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    ForLoop @[53] {
+     name="ForLoop_fori0i5i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 5; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       name="If_iffloathii2";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (float_h[i] != i*2)";
+       cond {
+	expr="float_h[i] != i*2";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 name="AssignExpr_linspacetestpassfalse";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="linspace_test_pass = false";
+	 result_var=$.programs[0].vars[16]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 5";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    BlankLineEl @[54] {
+     name="BlankLineEl__3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|NO_CODE;
+     code_string=" ";
+    };
+    AssignExpr @[55] {
+     name="AssignExpr_meshgridtestpasstrue";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="meshgrid_test_pass = true";
+     result_var=.programs[0].vars[17]$$;
+     expr {
+      expr="true";
+     };
+    };
+    AssignExpr @[56] {
+     name="AssignExpr_floatimeshgrid1459";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="float_i = meshgrid([1:4,5:9])";
+     result_var=.programs[0].prog_code[0].local_vars[8]$$;
+     expr {
+      expr="meshgrid([1:4,5:9])";
+     };
+    };
+    If @[57] {
+     name="If_ifndimsfloati3";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (ndims(float_i) != 3)";
+     cond {
+      expr="ndims(float_i) != 3";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_meshgridtestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="meshgrid_test_pass = false";
+       result_var=$.programs[0].vars[17]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    If @[58] {
+     name="If_ifshapefloati03s_14shapefloati22";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if ((shape(float_i)[0] != 3) || (shape(float_i)[1] != 4) || (shape(float_i)[2] != 2))";
+     cond {
+      expr="(shape(float_i)[0] != 3) || (shape(float_i)[1] != 4) || (shape(float_i)[2] != 2)";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       name="AssignExpr_meshgridtestpassfalse";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="meshgrid_test_pass = false";
+       result_var=$.programs[0].vars[17]$;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    ForLoop @[59] {
+     name="ForLoop_fori0i3i";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i = 0; i < 3; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       name="ForLoop_forj0j4j";
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (j = 0; j < 4; j++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	If @[0] {
+	 name="If_iffloatiij0i1";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (float_i[i,j,0] != i + 1)";
+	 cond {
+	  expr="float_i[i,j,0] != i + 1";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_meshgridtestpassfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="meshgrid_test_pass = false";
+	   result_var=$.programs[0].vars[17]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+	If @[1] {
+	 name="If_iffloatiij1j5";
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (float_i[i,j,1] != j + 5)";
+	 cond {
+	  expr="float_i[i,j,1] != j + 5";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   name="AssignExpr_meshgridtestpassfalse";
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="meshgrid_test_pass = false";
+	   result_var=$.programs[0].vars[17]$;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+       };
+       init {
+	expr="j = 0";
+       };
+       test {
+	expr="j < 4";
+       };
+       iter {
+	expr="j++";
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 3";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+   };
+  };
+  Program @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_1";
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {name="DocLink": doc=.programs[1].doc$$: };
+   };
+   name="accessPatterns";
+   short_nm="ccsPtt";
+   tags=;
+   desc=;
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author="Kai Krueger";
+   email="kai.krueger@colorado.edu";
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="elem_a_1";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="elem_a_2";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="elem_b_1";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[3] {
+     name="elem_b_2";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[4] {
+     name="elem_c_1";
+     var_type=T_Int;
+     int_val=1;
+     object_scope=NULL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[5] {
+     name="elem_c_2";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[6] {
+     name="dims_b";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[7] {
+     name="dims_c";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[8] {
+     name="dims_d";
+     var_type=T_Int;
+     object_scope=NULL;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     name="LocalVars_LocalVars4vars";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (4 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="int_a";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="int_b";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="int_c";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="int_d";
+       var_type=T_Object;
+       object_type=int_Matrix;
+       object_val=NULL;
+       object_scope=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     name="AssignExpr_inta12345678";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_a = [1,2,3,4;5,6,7,8]";
+     result_var=.programs[1].prog_code[0].local_vars[0]$$;
+     expr {
+      expr="[1,2,3,4;5,6,7,8]";
+     };
+    };
+    AssignExpr @[2] {
+     name="AssignExpr_elema1inta00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_a_1 = int_a[0,0]";
+     result_var=.programs[1].vars[0]$$;
+     expr {
+      expr="int_a[0,0]";
+     };
+    };
+    AssignExpr @[3] {
+     name="AssignExpr_elema2inta31";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_a_2 = int_a[3,1]";
+     result_var=.programs[1].vars[1]$$;
+     expr {
+      expr="int_a[3,1]";
+     };
+    };
+    AssignExpr @[4] {
+     name="AssignExpr_intbinta0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_b = int_a[:,0]";
+     result_var=.programs[1].prog_code[0].local_vars[1]$$;
+     expr {
+      expr="int_a[:,0]";
+     };
+    };
+    AssignExpr @[5] {
+     name="AssignExpr_intcinta1";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_c = int_a[:,1]";
+     result_var=.programs[1].prog_code[0].local_vars[2]$$;
+     expr {
+      expr="int_a[:,1]";
+     };
+    };
+    AssignExpr @[6] {
+     name="AssignExpr_intdinta0";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="int_d = int_a[0,:]";
+     result_var=.programs[1].prog_code[0].local_vars[3]$$;
+     expr {
+      expr="int_a[0,:]";
+     };
+    };
+    AssignExpr @[7] {
+     name="AssignExpr_dimsbndimsintb";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="dims_b = ndims(int_b)";
+     result_var=.programs[1].vars[6]$$;
+     expr {
+      expr="ndims(int_b)";
+     };
+    };
+    AssignExpr @[8] {
+     name="AssignExpr_dimscndimsintc";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="dims_c = ndims(int_c)";
+     result_var=.programs[1].vars[7]$$;
+     expr {
+      expr="ndims(int_c)";
+     };
+    };
+    AssignExpr @[9] {
+     name="AssignExpr_dimsdndimsintd";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="dims_d = ndims(int_d)";
+     result_var=.programs[1].vars[8]$$;
+     expr {
+      expr="ndims(int_d)";
+     };
+    };
+    AssignExpr @[10] {
+     name="AssignExpr_elemb1intb00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_b_1 = int_b[0,0]";
+     result_var=.programs[1].vars[2]$$;
+     expr {
+      expr="int_b[0,0]";
+     };
+    };
+    AssignExpr @[11] {
+     name="AssignExpr_elemb2intb30";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_b_2 = int_b[3,0]";
+     result_var=.programs[1].vars[3]$$;
+     expr {
+      expr="int_b[3,0]";
+     };
+    };
+    AssignExpr @[12] {
+     name="AssignExpr_elemc1intc00";
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="elem_c_1 = int_c[0,0]";
+     result_var=.programs[1].vars[4]$$;
+     expr {
+      expr="int_c[0,0]";
+     };
+    };
+    AssignExpr @[13] {
+     name="AssignExpr_elemc2intc30";
+     desc=;
+     flags=CAN_REVERT_TO_CODE|BREAKPOINT_ENABLED;
+     code_string="elem_c_2 = int_c[3,0]";
+     result_var=.programs[1].vars[5]$$;
+     expr {
+      expr="int_c[3,0]";
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+    html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+   };
+  };
+ };
+ viewers {
+  name="viewers";
+  el_typ=MainWindowViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_102";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {name="view_win_lft": value=0: val_type_fixed=0: };
+    UserDataItem @[1] {name="view_win_top": value=0: val_type_fixed=0: };
+    UserDataItem @[2] {name="view_win_wd": value=1: val_type_fixed=0: };
+    UserDataItem @[3] {name="view_win_ht": value=0.7993158: val_type_fixed=0: };
+    UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
+    UserDataItem @[5] {name="view_splitter_state": value=AAAA/wAAAAEAAAADAAABBAAAAiIAAAIVAf////8BAAAAAQA=: val_type_fixed=0: };
+   };
+   name="Browser2";
+   m_data=.$$;
+   cur_font_size=12;
+   visible=1;
+   win_name=".projects[\"TestMatrixOperations\"] - TestMatrixOperations.proj";
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   revert_to_tab_no=-1;
+   toolbars {
+    name="toolbars";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_103";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {name="view_win_visible": value=1: val_type_fixed=0: };
+     };
+     name="Application";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name="frames";
+    el_typ=BrowseViewerTaBase;
+    el_def=0;
+    BrowseViewerTaBase @[0] {
+     name="Navigator";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$.$;
+    };
+    PanelViewer @[1] {
+     name="Editor";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+    };
+    T3PanelViewer @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_104";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {name="view_panel_selected": value=1: val_type_fixed=0: };
+     };
+     name="Visualizer";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     panels {
+      name="panels";
+      el_typ=T3Panel;
+      el_def=0;
+      T3Panel @[0] {
+       name="Frame1";
+       m_data=NULL;
+       cur_font_size=12;
+       visible=1;
+       root_view {
+	name="root_view";
+	m_data=NULL;
+	cur_font_size=12;
+	m_transform=NULL;
+	children {
+	 name="children";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
+       camera_params {field_of_view=45: near_distance=0.1: focal=5: far_distance=1000: };
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="saved_views";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=-0.4765596: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=3.52344;
+	};
+	T3SavedView @[1] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[6] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[7] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[8] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[9] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name="docks";
+    el_typ=ToolBoxDockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_105";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {name="view_win_lft": value=-0.002785515: val_type_fixed=0: };
+      UserDataItem @[1] {name="view_win_top": value=0.002280502: val_type_fixed=0: };
+      UserDataItem @[2] {name="view_win_wd": value=0.05710306: val_type_fixed=0: };
+      UserDataItem @[3] {name="view_win_ht": value=0.722919: val_type_fixed=0: };
+      UserDataItem @[4] {name="view_win_iconified": value=0: val_type_fixed=0: };
+      UserDataItem @[5] {name="view_visible": value=1: val_type_fixed=0: };
+     };
+     name="Tools";
+     m_data=NULL;
+     cur_font_size=12;
+     visible=1;
+     win_name=;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ save_view=1;
+ save_as_only=0;
+ auto_name=1;
+ last_change_desc=;
+ tree_state{ .;.patches;.ctrl_panels;.programs;.programs[0];.programs[0].objs;.programs[0].types;.programs[0].args;.programs[0].vars;.programs[0].functions;.programs[0].init_code;.programs[0].prog_code;.programs[0].prog_code[0];.programs[1];.programs[1].objs;.programs[1].types;.programs[1].args;.programs[1].vars;.programs[1].functions;.programs[1].init_code;.programs[1].prog_code;.programs[1].prog_code[0]; };
+ networks {
+  name="networks";
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};
