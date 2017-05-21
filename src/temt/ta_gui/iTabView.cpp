@@ -129,9 +129,11 @@ void iTabView::CloseTab(int tab) {
   if (tab < 0) return; // huh?
   // don't allow closing last tab for a modified panel
   iMainWindowViewer* vw = viewerWindow();
-  if(!vw) return;
-  if(vw->myProject()) {
-    if(vw->myProject()->isDestroying())
+  if (!vw) return;
+  if (!vw->isRoot()) {
+    taProject* proj = vw->myProject();
+    if (!proj) return;
+    if (proj->isDestroying())
       return;
   }
   if (tbPanels->count() > 1) {
@@ -146,6 +148,14 @@ void iTabView::CloseTab(int tab) {
 }
 
 void iTabView::Closing(CancelOp& cancel_op) {
+  iMainWindowViewer* vw = viewerWindow();
+  if (!vw) return;
+  if (!vw->isRoot()) {
+    taProject* proj = vw->myProject();
+    if (!proj) return;
+    if (proj->isDestroying())
+      return;
+  }
   // close all panels
   for (int i = panels.size - 1; i >= 0; --i) {
     iPanelBase* panel = panels.FastEl(i);
@@ -168,7 +178,7 @@ void iTabView::DataPanelDestroying(iPanelBase* panel) {
     taProject* proj = vw->myProject();
     if (!proj) return;
     if (proj->isDestroying())
-	    return;
+      return;
   }
   RemoveDataPanel(panel);//TODO
 }
