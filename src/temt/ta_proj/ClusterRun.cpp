@@ -1304,10 +1304,11 @@ void ClusterRun::FormatTables() {
   jobs_submit.name = "jobs_submit";
   jobs_submitted.name = "jobs_submitted";
 
-  jobs_running.name = "jobs_running";
-  jobs_done.name = "jobs_done";
-  jobs_deleted.name = "jobs_deleted";
-  jobs_archive.name = "jobs_archive";
+  // note: saving a bit of space with all the tabs at the top:
+  jobs_running.name = "running";
+  jobs_done.name = "done";
+  jobs_deleted.name = "deleted";
+  jobs_archive.name = "archive";
 
   jobs_running_tmp.name = "jobs_running_tmp";
   jobs_done_tmp.name = "jobs_done_tmp";
@@ -1328,10 +1329,10 @@ void ClusterRun::FormatTables() {
   FormatJobTable(jobs_archive_tmp);
   FormatJobTable(jobs_running_cmd);
 
-  file_list.name = "file_list";
+  file_list.name = "files";
   FormatFileListTable(file_list);
 
-  cluster_info.name = "cluster_info";
+  cluster_info.name = "cluster";
   clusterscript_timestamp.name = "clusterscript_timestamp";
   FormatClusterInfoTable(cluster_info);
   FormatClusterScriptTimestampTable(clusterscript_timestamp);
