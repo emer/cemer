@@ -21,6 +21,7 @@
 #include <iTreeViewItem>
 #include <taiMisc>
 #include <taMisc>
+#include <taProject>
 
 #include <QVBoxLayout>
 #include <QStackedWidget>
@@ -127,12 +128,19 @@ void iTabView::AddTab(int tab_idx) {
 void iTabView::CloseTab(int tab) {
   if (tab < 0) return; // huh?
   // don't allow closing last tab for a modified panel
+  iMainWindowViewer* vw = viewerWindow();
+  if(!vw) return;
+  if(vw->myProject()) {
+    if(vw->myProject()->isDestroying())
+      return;
+  }
   if (tbPanels->count() > 1) {
     iPanelBase* panel_base = tbPanels->panel(tbPanels->currentIndex());
     panel_base->Unpin();
     tbPanels->removeTab(tab);
     panelSelected(tbPanels->currentIndex()); // needed to resync proper panel with tab
-  } else { // last tab
+  }
+  else { // last tab
     panelSelected(-1);
   }
 }
