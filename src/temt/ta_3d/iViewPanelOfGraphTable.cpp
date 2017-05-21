@@ -710,15 +710,61 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   pdtRAxis->SetFlag(taiWidget::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
 }
 
-static void GetFixedMinMaxVal(taiWidgetPoly* widg, FixedMinMax& fmm, bool panel_current) {
+static void GetFixedMinMaxVal(taiWidgetPoly* widg, FixedMinMax& fmm, bool panel_current,
+                              FixedMinMax& cur_mm) {
   // implements the auto-check function for fixed min max
   FixedMinMax fmm_orig; fmm_orig = fmm;
   widg->GetValue_(&fmm);
-  if(panel_current) {
-    if((String)fmm.min != (String)fmm_orig.min)
+  if(!panel_current) return;
+  
+  if(!fmm_orig.fix_min) {     // not originally fixed
+    if((String)fmm.min != (String)fmm_orig.min) {
       fmm.fix_min = true;
-    if((String)fmm.max != (String)fmm_orig.max)
+      if(!cur_mm.fix_min) {
+        cur_mm.fix_min = true;
+        cur_mm.min = fmm.min;
+      }
+      // else {
+      //   cur_mm.min = fminf(cur_mm.min, mm.min); // get the effective min
+      //   // actually, graph doesn't do this.. so we don't
+      // }
+    }
+    else if(fmm.fix_min) {    // we just clicked on fix
+      if(cur_mm.fix_min) {    // there is an already-established primary min/max in effect
+        fmm.min = cur_mm.min; // use it
+      }
+    }
+  }
+  else {
+    if(!cur_mm.fix_min) {     // we're it
+      cur_mm.fix_min = true;
+      cur_mm.min = fmm.min;
+    }
+  }
+
+  if(!fmm_orig.fix_max) {     // not originally fixed
+    if((String)fmm.max != (String)fmm_orig.max) {
       fmm.fix_max = true;
+      if(!cur_mm.fix_max) {
+        cur_mm.fix_max = true;
+        cur_mm.max = fmm.max;
+      }
+      // else {
+      //   cur_mm.max = fmaxf(cur_mm.max, mm.max); // get the effective max
+      //   // actually, graph doesn't do this.. so we don't
+      // }
+    }
+    else if(fmm.fix_max) {    // we just clicked on fix
+      if(cur_mm.fix_max) {    // there is an already-established primary max/max in effect
+        fmm.max = cur_mm.max; // use it
+      }
+    }
+  }
+  else {
+    if(!cur_mm.fix_max) {     // we're it
+      cur_mm.fix_max = true;
+      cur_mm.max = fmm.max;
+    }
   }
 }
 
@@ -752,8 +798,10 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   
   glv->setScaleData(false, cbar->min(), cbar->max());
 
+  FixedMinMax cur_x_mm;
+  
   glv->x_axis.row_num = rncXAxis->isChecked();
-  GetFixedMinMaxVal(pdtXAxis, glv->x_axis.fixed_range, panel_current);
+  GetFixedMinMaxVal(pdtXAxis, glv->x_axis.fixed_range, panel_current, cur_x_mm);
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
   glv->x_axis.matrix_cell = (int)cellXAxis->GetValue();
   glv->x_axis.show_axis_label = chkXAxisLabel->isChecked();
@@ -761,12 +809,13 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->x_axis.labels_on = labonXAxis->isChecked();
   glv->x_axis.flip = flipXAxis->isChecked();
 
+  FixedMinMax cur_z_mm;
   // if setting a col for 1st time, we automatically turn on (since it would be ro)
   GraphColView* tcol = (GraphColView*)lelZAxis->GetValue();
   if (tcol && !glv->z_axis.GetColPtr())
     oncZAxis->setChecked(true);
   glv->z_axis.on = oncZAxis->isChecked();
-  GetFixedMinMaxVal(pdtZAxis, glv->z_axis.fixed_range, panel_current);
+  GetFixedMinMaxVal(pdtZAxis, glv->z_axis.fixed_range, panel_current, cur_z_mm);
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
@@ -776,14 +825,26 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.flip = flipZAxis->isChecked();
   
   int pltsz = MIN(max_plots, glv->plots.size);
+
+  FixedMinMax cur_reg_mm;       // track first fixed min / max and use for new clicks
+  FixedMinMax cur_alt_mm;
   
   for(int pi=0; pi<pltsz; pi++) {
     tcol = (GraphColView*)lelYAxis[pi]->GetValue();
     if (tcol && !glv->plots[pi]->GetColPtr())
       oncYAxis[pi]->setChecked(true);
     glv->plots[pi]->on = oncYAxis[pi]->isChecked();
-    GetFixedMinMaxVal(pdtYAxis[pi], glv->plots[pi]->fixed_range, panel_current);
     glv->plots[pi]->alt_y = chkYAltY[pi]->isChecked();
+
+    if(glv->plots[pi]->alt_y) {
+      GetFixedMinMaxVal(pdtYAxis[pi], glv->plots[pi]->fixed_range, panel_current,
+                        cur_alt_mm);
+    }
+    else {
+      GetFixedMinMaxVal(pdtYAxis[pi], glv->plots[pi]->fixed_range, panel_current,
+                        cur_reg_mm);
+    }
+    
     glv->plots[pi]->SetColPtr(tcol);
     glv->plots[pi]->matrix_cell = (int)cellYAxis[pi]->GetValue();
     
