@@ -141,6 +141,7 @@ void iMainWindowViewer::Init() {
 #endif
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   brow_hist = new iBrowseHistory(this);
+  skip_next_update_refresh = 0;
   cur_main_focus = LEFT_BROWSER;
   cur_sub_focus = MAIN_TREE;
   menu = NULL;
@@ -2301,6 +2302,14 @@ void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
 }
 
 bool iMainWindowViewer::event(QEvent* ev) {
+  // note this is the type of event that leads to a crash of the iTreeView when
+  // deleting nodes..
+  if(ev->type() == QEvent::UpdateRequest) {
+    if(skip_next_update_refresh > 0) {
+      skip_next_update_refresh--;
+      return true;
+    }
+  }
   bool rval = inherited::event(ev);
   if(ev->type() == QEvent::WindowActivate) {
     taiMisc::active_wins.GotFocus_MainWindow(this);

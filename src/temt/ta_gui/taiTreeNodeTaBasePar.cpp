@@ -15,6 +15,7 @@
 
 #include "taiTreeNodeTaBasePar.h"
 #include <taiViewType>
+#include <iMainWindowViewer>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -37,6 +38,7 @@ taiTreeNodeTaBasePar::taiTreeNodeTaBasePar(taSigLinkTaOBase* link_, MemberDef* m
 }
 
 void taiTreeNodeTaBasePar::init(taSigLinkTaOBase* link_, int dn_flags_) {
+  save_exp_state = false;
   last_list_items_node = NULL;
 }
 
@@ -111,6 +113,7 @@ bool taiTreeNodeTaBasePar::RebuildChildrenIfNeeded() {
   if(last_member_node)
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);
   if(childCount() != list()->size + st_idx) {
+    taMisc::DebugInfo("taiTreeNodeTaBasePar::RebuildChildrenIfNeeded() running");
     takeChildren();
     CreateChildren();
     return true;
@@ -123,14 +126,18 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
   if (!this->children_created) {
     if ((sls == SLS_LIST_ITEM_INSERT) || (sls == SLS_LIST_ITEM_REMOVE) ||
         (sls == SLS_STRUCT_UPDATE_END)) {
+      // taMisc::DebugInfo("UpdateLazyChildren sls", String(sls));
       UpdateLazyChildren(); // updates
     }
     return;
   }
 
   if(sls == SLS_ITEM_UPDATED || sls == SLS_STRUCT_UPDATE_END) {
-    if(!RebuildChildrenIfNeeded())
+    // taMisc::DebugInfo("SLS item update or struct update end", String(sls));
+    if(!RebuildChildrenIfNeeded()) {
+      // taMisc::DebugInfo("UpdateListNames", String(sls));
       UpdateListNames();
+    }
     return;
   }
 
@@ -142,15 +149,15 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     if (!after_node) after_node = last_member_node; // insert, after
     iTreeView* tv = treeView();
     if(tv) {
-      tv->EmitTreeStructToUpdate();
+      tv->TreeStructUpdate(true);
     }
     taiTreeNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
 //EVIL    tv->expandItem(new_node);
     // only scroll to it if parent is visible
     if(tv) {
-      tv->EmitTreeStructUpdated();
+      tv->TreeStructUpdate(false);
       if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-	tv->scrollTo(new_node);
+        tv->scrollTo(new_node);
     }
     break;
   }
@@ -159,16 +166,15 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     if (gone_node) {
       iTreeView* tv = treeView();
       if(tv) {
-	tv->EmitTreeStructToUpdate();
-        tv->SaveScrollPos();
-        tv->setAutoScroll(false);       // auto scroll is very bad for this in 4.7.0 -- scrolls to top..
-      }
-      delete gone_node; // goodbye!
-      iTreeView* tv2 = treeView(); // make sure it still exists!
-      if(tv2) {
-        tv2->RestoreScrollPos();
-        tv2->setAutoScroll(true);
-	tv2->EmitTreeStructUpdated();
+        // taMisc::DebugInfo("SLS_LIST_ITEM_REMOVE");
+	tv->TreeStructUpdate(true);
+        // bool is_exp = this->isExpanded();
+        // if(is_exp)
+        //   this->setExpanded(false);
+        takeChild(idx);
+        delete gone_node;
+        // this->setExpanded(is_exp);
+	tv->TreeStructUpdate(false);
       }
     }
     break;
@@ -183,14 +189,15 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     ++to_idx; // after
     iTreeView* tv = treeView();
     if(tv) {
-      tv->EmitTreeStructToUpdate();
+      tv->TreeStructUpdate(true);
     }
     moveChild(fm_idx, to_idx);
-    // only scroll to it if parent is visible
+
     if(tv) {
-//      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-//	tv->scrollTo(moved_node);
-      tv->EmitTreeStructUpdated();
+      tv->TreeStructUpdate(false);
+      // only scroll to it if parent is visible
+      // if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
+      //   tv->scrollTo(moved_node);
     }
     break;
   }
@@ -201,11 +208,37 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     if ((!node1) || (!node2)) break; // shouldn't happen
     iTreeView* tv = treeView();
     if(tv) {
-      tv->EmitTreeStructToUpdate();
+      tv->TreeStructUpdate(true);
     }
     swapChildren(n1_idx, n2_idx);
     if(tv) {
-      tv->EmitTreeStructUpdated();
+      tv->TreeStructUpdate(false);
+    }
+    break;
+  }
+  case SLS_LIST_RESET_START: {     // no ops
+    this->save_exp_state = isExpanded();
+    this->setExpanded(false);
+    iTreeView* tv = treeView();
+    if(tv) {
+      // taMisc::DebugInfo("SLS_LIST_RESET_START");
+      tv->TreeStructUpdate(true);
+    }
+    break;
+  }
+  case SLS_LIST_RESET_END: {     // no ops
+    // actually, no point in restoring!
+    // this->setExpanded(save_exp_state);
+    iTreeView* tv = treeView();
+    if(tv) {
+#ifdef TA_OS_MAC
+      // this is key for preventing crash on delete of groups!
+      iMainWindowViewer* imw = tv->mainWindow();
+      if(imw)
+        imw->skip_next_update_refresh = 1; // 2 causes noticible lack of update -- 1 ok
+#endif      
+      // taMisc::DebugInfo("SLS_LIST_RESET_END");
+      tv->TreeStructUpdate(false);
     }
     break;
   }
@@ -214,7 +247,7 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     taList_impl* list = this->list(); // cache
     iTreeView* tv = treeView();
     if(tv) {
-      tv->EmitTreeStructToUpdate();
+      tv->TreeStructUpdate(true);
     }
     for (int i = 0; i < list->size; ++i) {
       taBase* tab = (taBase*)list->FastEl_(i);
@@ -223,7 +256,7 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
       moveChild(nd_idx, i);
     }
     if(tv) {
-      tv->EmitTreeStructUpdated();
+      tv->TreeStructUpdate(false);
     }
     break;
   }

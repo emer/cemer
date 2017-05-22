@@ -122,9 +122,14 @@ void iTreeViewItem::SigEmit_impl(int sls, void* op1_, void* op2_) {
 void iTreeViewItem::SigLinkDestroying(taSigLink*) {
   iTreeView* tv = treeView();
   if(tv) {
-    tv->EmitTreeStructToUpdate();
+    tv->TreeStructUpdate(true);
   }
+  // taMisc::DebugInfo("item remove direct link");
+  // note: this is called for non-tabase items or items that are not taOBase at least
   delete this;
+  if(tv) {
+    tv->TreeStructUpdate(false);
+  }
 }
 
 void iTreeViewItem::DecorateDataNode() {

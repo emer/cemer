@@ -64,7 +64,7 @@ void LayerView::UpdateAfterEdit_impl() {
 void LayerView::UpdateNetLayDispMode() {
   NetView* n = getNetView();
   Layer* lay = layer(); //cache
-  if(n && lay) {
+  if(n && lay && !lay->isDestroying()) {
     n->SetLayDispMode(lay->name, disp_mode);
   }
 }
@@ -105,6 +105,9 @@ void LayerView::UpdateAutoScale(bool& updated) {
 
 void LayerView::SigRecvUpdateAfterEdit_impl() {
   inherited::SigRecvUpdateAfterEdit_impl();
+  Layer* lay = layer(); //cache
+  if(lay->isDestroying()) return;
+
   // always update kids!!
   DoActionChildren_impl(RENDER_IMPL);
 

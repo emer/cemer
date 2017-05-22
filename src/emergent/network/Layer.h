@@ -140,7 +140,7 @@ public:
   // compute new 3d position for this layer relative to other layer -- returns false if not using relative positioning (including if other is not set)
   virtual bool  ComputePos2D_impl(taVector2i& pos, Layer* lay, const taVector2i& oth_pos);
   // #IGNORE common parts of 2d that apply to 3d as well (i.e., not the above, below parts)
-  
+
   TA_SIMPLE_BASEFUNS(LayerRelPos);
 private:
   void  Initialize();

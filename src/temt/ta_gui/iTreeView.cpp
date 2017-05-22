@@ -94,6 +94,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_decorate_enabled = true;
   italic_font = NULL;
   in_mouse_press = 0;
+  struct_updt_cnt = 0;
   m_saved_scroll_pos = 0;
   setIndentation(taMisc::tree_indent);
   tree_searcher = NULL;
@@ -1208,6 +1209,29 @@ void iTreeView::Show_impl() {
     ++it;
   }
   RestoreScrollPos();
+}
+
+
+void iTreeView::TreeStructUpdate(bool begin) {
+  if(begin) {
+    if(struct_updt_cnt == 0) {
+      // taMisc::DebugInfo("starting tree updt");
+      SaveScrollPos();
+      setAutoScroll(false);       // auto scroll is very bad for this in 4.7.0 -- scrolls to top..
+      EmitTreeStructToUpdate();
+    }
+    struct_updt_cnt++;
+  }
+  else {
+    struct_updt_cnt--;
+    // taMisc::RunPending();
+    if(struct_updt_cnt == 0) {
+      // taMisc::DebugInfo("ending tree updt");
+      RestoreScrollPos();
+      setAutoScroll(true);
+      EmitTreeStructUpdated();
+    }
+  }
 }
 
 void iTreeView::EmitTreeStructToUpdate() {

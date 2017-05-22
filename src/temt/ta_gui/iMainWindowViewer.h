@@ -87,6 +87,7 @@ public:
   iSplitter*            body;           // #IGNORE body of the window
   int                   nav_frame_width;// hold onto size of navigator frame for resetting splitter
   bool                  tool_dock_was_visible;  // save state for flipping between views that might and might not include the programming toolbar
+  int                   skip_next_update_refresh; // #IGNORE set by tree view.. countdown..
   
   QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value

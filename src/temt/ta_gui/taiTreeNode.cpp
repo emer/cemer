@@ -94,11 +94,11 @@ void taiTreeNode::willHaveChildren_impl(bool& will) const {
 
 taiTreeNode* taiTreeNode::FindChildForData(void* data, int& idx) {
   for (int i = 0; i < childCount(); ++i) {
-      taiTreeNode* rval = (taiTreeNode*)child(i);
-      if (rval->link()->data() == data) {
-        idx = i;
-        return rval;
-      }
+    taiTreeNode* rval = (taiTreeNode*)child(i);
+    if (rval->link()->data() == data) {
+      idx = i;
+      return rval;
+    }
   }
   idx = -1;
   return NULL;

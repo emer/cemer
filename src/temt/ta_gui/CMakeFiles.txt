@@ -369,6 +369,8 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   taiWidgetMethod.h
   taiWidgetMethodToggle.h
 
+  taiEditorWidgetsMulti.h
+
   iDialogEditor.h
   iDialogChoice.h
   iDialogTextEdit.h
@@ -444,7 +446,6 @@ set(ta_gui_HEADS_NOMAKETA_NOMOC
   taiWidgetActions_List.h
 
   IWidgetHost.h
-  taiEditorWidgetsMulti.h
   taiEditorOfList.h
   taiEditorOfListCompact.h
   taiEditorOfArray.h

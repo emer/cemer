@@ -93,6 +93,7 @@ void taiEditorOfListCompact::Constr_ListWidget() {
 }
 
 void taiEditorOfListCompact::GetValue_Membs() {
+  if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -123,6 +124,7 @@ void taiEditorOfListCompact::GetValue_Membs() {
 }
 
 void taiEditorOfListCompact::GetImage_Membs() {
+  if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!

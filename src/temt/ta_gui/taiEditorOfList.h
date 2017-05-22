@@ -23,7 +23,6 @@
 #include <taiListMemberWidgets_List>
 #include <String_PArray>
 
-
 // declare all other types mentioned but not required to include:
 
 class TA_API taiEditorOfList : public taiEditorWidgetsMulti {

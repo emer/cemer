@@ -22,11 +22,15 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QCheckBox; //
 
 class TA_API taiEditorWidgetsMulti: public taiEditorOfClass {
 INHERITED(taiEditorOfClass)
+Q_OBJECT
 public:
   QWidget*              multi; // outer container
+    bool                show_els;       // whether to display list elements or not
+    QCheckBox*          show_els_chk;
     QScrollArea*        scrMulti;               // scrollbars for the multi items
     QHBoxLayout*        lay_multi; // used by gpiGroupDialog to add its group buttons
     iEditGrid*          multi_body;
@@ -43,6 +47,10 @@ public:
   void          AddMultiWidget(int row, int col, QWidget* data)
     {taiEditorOfClass::AddMultiWidget(multi_body, row, col, data);}  // add a data item in the multi-data area -- expands if necessary
   void         SetMultiSize(int rows, int cols) override; //note: can never shrink
+
+public slots:
+  virtual void showElsClicked();
+  
 protected:
   int           multi_rows;
   int           multi_cols;

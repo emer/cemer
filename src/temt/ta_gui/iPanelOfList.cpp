@@ -76,6 +76,11 @@ void iPanelOfList::ConfigHeader() {
 
 void iPanelOfList::SigEmit_impl(int sls, void* op1_, void* op2_) {
   inherited::SigEmit_impl(sls, op1_, op2_);
+  if (sls == SLS_LIST_RESET_START) {
+    // taMisc::DebugInfo("LIST_RESET_START");
+    // data_panel_set()->setCurrentPanelId(1); // switch to properties!
+  }
+  if(!list) return;
   if (sls == SLS_LIST_ITEM_REMOVE) {
     // index will now be invalid for followers
     RenumberList();
@@ -168,6 +173,7 @@ void iPanelOfList::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/) {
 
 void iPanelOfList::OnWindowBind_impl(iPanelViewer* itv) {
   inherited::OnWindowBind_impl(itv);
+  if(!list) return;
   // connect the list up to the panel
   list->Connect_SelectableHostNotifySignal(itv, SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
@@ -182,6 +188,7 @@ String iPanelOfList::panel_type() const {
 void iPanelOfList::UpdatePanel_impl() {
   //NOTE: when reshowing from invisible, we need to do this full refresh
   //obs list->Refresh();
+  if(!list) return;
   ClearList();
   FillList();
   inherited::UpdatePanel_impl();

@@ -378,8 +378,11 @@ bool taPtrList_impl::RemoveLast() {
 }
 
 void taPtrList_impl::RemoveAll() {
+  if(size == 0) return;
+  SigEmit(SLS_LIST_RESET_START);
   while (size > 0)
     RemoveLast();
+  SigEmit(SLS_LIST_RESET_END);
 }
 
 bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {

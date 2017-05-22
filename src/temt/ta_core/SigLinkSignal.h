@@ -77,21 +77,27 @@ enum SigLinkSignal { /* #IGNORE reason why SigEmit being called, as well as defi
   SLS_LIST_ITEM_REMOVE, // 13 op1=item -- note, item not DisOwned yet, but has been removed from list
   SLS_LIST_ITEM_MOVED,  // 14 op1=item, op2=item_after, null=at beginning
   SLS_LIST_ITEMS_SWAP,  // 15 op1=item1, op2=item2
-  SLS_LIST_SORTED,      // 16 after sorting; ops not used
+  SLS_LIST_RESET_START, // 16 start of all items being removed from list
+  SLS_LIST_RESET_END,   // 17 end of all items being removed from list
+  SLS_LIST_SORTED,      // 18 after sorting; ops not used
 
   SLS_GROUP_UPDATE = 21,// 21 op1=group, typically called for group name change
   SLS_GROUP_INSERT,     // 22 op1=group, op2=group_after, null=at beginning
   SLS_GROUP_REMOVE,     // 23 op1=group -- note, item not DisOwned yet, but has been removed from list
   SLS_GROUP_MOVED,      // 24 op1=group, op2=group_after, null=at beginning
   SLS_GROUPS_SWAP,      // 25 op1=group1, op2=group2
-  SLS_GROUPS_SORTED,    // 26 op1=group1, op2=group2
+  SLS_GROUP_RESET_START,// 26
+  SLS_GROUP_RESET_END,  // 27
+  SLS_GROUPS_SORTED,    // 28 op1=group1, op2=group2
 
   SLS_GROUP_ITEM_UPDATE = 31, // 31 op1=item
   SLS_GROUP_ITEM_INSERT, // 32 op1=item, op2=item_after, null=at beginning
   SLS_GROUP_ITEM_REMOVE, // 33 op1=item -- note, item not DisOwned yet, but has been removed from list
   SLS_GROUP_ITEM_MOVED,  // 34 op1=item, op2=item_after, null=at beginning
   SLS_GROUP_ITEMS_SWAP,  // 35 op1=item1, op2=item2
-  SLS_GROUP_LIST_SORTED, // 36 after sorting; ops not used
+  SLS_GROUP_ITEM_RESET_START, // 36
+  SLS_GROUP_ITEM_RESET_END,  // 37
+  SLS_GROUP_LIST_SORTED, // 38 after sorting; ops not used
 
   SLS_UPDATE_VIEWS = 40, // 40 no ops; sent for UpdateAllViews
   SLS_REBUILD_VIEWS,     // 41 no ops; sent to DataViews for RebuildAllViews
@@ -111,7 +117,7 @@ enum SigLinkSignal { /* #IGNORE reason why SigEmit being called, as well as defi
   SLS_LIST_MIN          = SLS_LIST_INIT,
   SLS_LIST_MAX          = SLS_LIST_SORTED,
   SLS_GROUP_MIN         = SLS_GROUP_UPDATE,
-  SLS_GROUP_MAX         = SLS_GROUPS_SWAP,
+  SLS_GROUP_MAX         = SLS_GROUPS_SORTED,
   SLS_LIST_ITEM_MIN     = SLS_LIST_ITEM_UPDATE,
   SLS_LIST_ITEM_MAX     = SLS_LIST_SORTED,
   SLS_LIST_ORDER_MIN    = SLS_LIST_ITEM_INSERT, // anything related to item ordering

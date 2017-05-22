@@ -17,6 +17,7 @@
 #include <iEditGrid>
 #include <iSplitter>
 #include <iScrollArea>
+#include <QCheckBox>
 
 #include <QVBoxLayout>
 
@@ -32,6 +33,8 @@ taiEditorWidgetsMulti::taiEditorWidgetsMulti(void* base, TypeDef* typ_, bool rea
   multi_rows = 1;
   multi_cols = 1;
   header_row = true; // most compatible choice
+  show_els = false;
+  show_els_chk = NULL;
 }
 
 void taiEditorWidgetsMulti::SetMultiSize(int rows, int cols) {
@@ -54,6 +57,7 @@ void taiEditorWidgetsMulti::ClearMultiBody_impl() {
 
 void taiEditorWidgetsMulti::Constr_Body() {
   inherited::Constr_Body(); // reuse entire implementation for list members
+  if(!show_els) return;
   Constr_MultiBody();
 }
 
@@ -65,6 +69,9 @@ void taiEditorWidgetsMulti::Constr_Box() {
 
   taiEditorOfClass::Constr_Box();
 
+  show_els_chk = new QCheckBox("Show List Elements?  ", splBody);
+  connect(show_els_chk, SIGNAL(clicked(bool)), this, SLOT(showElsClicked()));
+  
   scrMulti = new iScrollArea(splBody);
   QPalette pal = scrMulti->viewport()->palette();
   pal.setColor(QPalette::Background, bg_color);
@@ -82,6 +89,17 @@ void taiEditorWidgetsMulti::Constr_Box() {
   multi_body->setHiLightColor(bg_color_dark);
   multi_body->setRowHeight(row_height);
   lay_multi->addWidget(multi_body);
+
+  QList<int> cur_sz = splBody->sizes();
+  // total not known yet:
+  // int tot = 0;
+  // for(int i = 0; i<cur_sz.count(); i++) {
+  //   tot += cur_sz[i];
+  // }
+  cur_sz[1] = row_height;
+  cur_sz[0] = 400;
+  cur_sz[2] = 800;
+  splBody->setSizes(cur_sz);
 }
 
 void taiEditorWidgetsMulti::Constr_MultiBody() {
@@ -89,11 +107,16 @@ void taiEditorWidgetsMulti::Constr_MultiBody() {
 }
 
 void taiEditorWidgetsMulti::RebuildMultiBody() {
-//note: don't disable updates before clear, because it really doesn't help,
-// and just requires recursive descent into everything to be nuked
+  //note: don't disable updates before clear, because it really doesn't help,
+  // and just requires recursive descent into everything to be nuked
   ClearMultiBody_impl();
+  if(!show_els) return;
   multi->setUpdatesEnabled(false);
-    Constr_MultiBody();
+  Constr_MultiBody();
   multi->setUpdatesEnabled(true);
 }
 
+void taiEditorWidgetsMulti::showElsClicked() {
+  show_els = show_els_chk->isChecked();
+  RebuildMultiBody();
+}

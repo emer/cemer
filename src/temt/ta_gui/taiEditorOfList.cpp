@@ -114,6 +114,7 @@ void taiEditorOfList::Constr_ListLabels() {
 }
 
 void taiEditorOfList::GetValue_Membs() {
+  if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -144,6 +145,7 @@ void taiEditorOfList::GetValue_Membs() {
 }
 
 void taiEditorOfList::GetImage_Membs() {
+  if(!show_els) return;
   bool rebuild = false;
   if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -157,16 +159,6 @@ void taiEditorOfList::GetImage_Membs() {
 
   if (rebuild) {
     RebuildMultiBody(); 
-  /*obs lst_widget_el.Reset();
-    ivGlyphIndex i;
-    for(i=lst_data_g->count()-1; i >= 0; i--)
-      lst_data_g->remove(i);
-    for(i=labels->count()-1; i >= 1; i--)
-      labels->remove(i);
-    lst_membs.Reset();
-    Constr_ListMembs();
-    Constr_Labels_impl(lst_membs);
-    Constr_ElWidget(); */
   } 
 
   // first for the List-structure members

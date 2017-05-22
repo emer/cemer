@@ -144,6 +144,8 @@ public:
   virtual void          Refresh() {Refresh_impl();} // manually refresh
   virtual bool          ShowNode(iTreeViewItem* item) const;
   // whether the node is visible in this show context
+  virtual void          TreeStructUpdate(bool begin);
+  // call at start / end of tree structure updates
   virtual void	        EmitTreeStructToUpdate();
   // emit signal that tree structure is about to be updated
   virtual void	        EmitTreeStructUpdated();
@@ -237,6 +239,7 @@ protected:
   String_PArray*        m_filters; // only created if any added
   short                 m_def_exp_levels; // level of default expand, typically 2
   bool                  m_decorate_enabled;
+  int                   struct_updt_cnt; // counter for struct updates
   int                   in_mouse_press; // ugly hack
   int                   m_saved_scroll_pos;
   bool                  tree_state_restored;  // set when tree state is restored so we know not to call ExpandDefault()

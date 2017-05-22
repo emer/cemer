@@ -324,6 +324,8 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
+  // taMisc::DebugInfo("layer uae", name);
+
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
