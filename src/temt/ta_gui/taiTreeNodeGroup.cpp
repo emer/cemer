@@ -199,11 +199,6 @@ void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
     this->setExpanded(false);
     iTreeView* tv = treeView();
     if(tv) {
-#ifdef TA_OS_MAC
-      iMainWindowViewer* imw = tv->mainWindow();
-      if(imw)
-        imw->skip_next_update_refresh = true;
-#endif      
       // taMisc::DebugInfo("SLS_GROUP_RESET_START");
       tv->TreeStructUpdate(true);
     }
@@ -215,9 +210,11 @@ void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
     iTreeView* tv = treeView();
     if(tv) {
 #ifdef TA_OS_MAC
+      // this is key for preventing crash on delete of groups!
       iMainWindowViewer* imw = tv->mainWindow();
-      if(imw)
-        imw->skip_next_update_refresh = true;
+      if(imw) {
+        imw->skip_next_update_refresh = 1; // 2 causes noticible lack of update -- 1 ok
+      }
 #endif      
       // taMisc::DebugInfo("SLS_GROUP_RESET_END");
       tv->TreeStructUpdate(false);
