@@ -738,6 +738,9 @@ bool Layer::SetLayerSpec(LayerSpec*) {
 
 void Layer::SetDefaultPos() {
   if(!own_net) return;
+  if(pos_rel.other) return;    // already set
+  if(!(pos_abs.x == 0 && pos_abs.y == 0 && pos_abs.z == 0))
+    return; // already set
   int index = own_net->layers.FindLeafEl(this);
   if(index == 0) {              // first guy..
     taVector3i ps3 = 0;

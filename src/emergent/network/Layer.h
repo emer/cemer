@@ -204,7 +204,7 @@ public:
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
   UnitVars::ExtFlags    ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
 
-  LayerDistances        dist;           // #CAT_Structure distances from closest input/output layers to this layer
+  LayerDistances        dist;           // #CAT_Structure #READ_ONLY #SHOW distances from closest input/output layers to this layer
 
   String                output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   String_Matrix         gp_output_names; // #NO_SAVE #TREE_SHOW #CAT_Statistic #CONDTREE_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)

@@ -2134,6 +2134,9 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], TypeDef* root_typ) 
   if(taMisc::gui_active && (taMisc::dmem_proc == 0))    // only guy and don't have all the other nodes save
     instance()->Save();
 
+  cout << "Running " << taMisc::app_name << " version: " << taMisc::version
+       << " svn rev: " << taMisc::svn_rev << endl;
+  
   if(taMisc::CheckArgByName("AttachWait")) {
 #ifdef DMEM_COMPILE
     String awval = taMisc::FindArgByName("AttachWait");
