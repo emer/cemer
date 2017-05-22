@@ -49,7 +49,7 @@ iComboBoxPrevNext::iComboBoxPrevNext(QWidget* parent) : QWidget(parent) {
   // combo_box->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   combo_box->setIconSize(QSize(1,1)); // no icon!
   lay->addWidget(combo_box);
-  lay->addStretch(1);           // soak up any stretching AFTER this guy, not between
+  lay->addStretch(0);           // soak up any stretching AFTER this guy, not between
 
   connect(combo_box, SIGNAL(editTextChanged(const QString &)), this,
           SIGNAL(editTextChanged(const QString &)));

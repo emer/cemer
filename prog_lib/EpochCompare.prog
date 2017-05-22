@@ -1,5 +1,9 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7234
-Program .projects[0].programs.gp[1][2] { 
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10771
+Program .projects[0].programs[1] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
+
  ProgObjList @.objs = [5] {
   Relation @[0] { };
   DataTable @[1] { 
@@ -7,192 +11,59 @@ Program .projects[0].programs.gp[1][2] {
     int_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     int_Data @[1] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
-    String_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[3] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[4] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[5] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[6] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[7] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    String_Data @[2] { };
+    float_Data @[3] { };
+    float_Data @[4] { };
+    float_Data @[5] { };
+    float_Data @[6] { };
+    float_Data @[7] { };
     int_Data @[8] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
-    double_Data @[9] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    double_Data @[10] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[11] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[12] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[13] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[14] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[15] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[16] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[17] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[18] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[19] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[20] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[21] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[22] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[23] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[24] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[25] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[26] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[27] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[28] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[29] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[30] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[31] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[32] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[33] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[34] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[35] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    double_Data @[9] { };
+    double_Data @[10] { };
+    float_Data @[11] { };
+    float_Data @[12] { };
+    float_Data @[13] { };
+    float_Data @[14] { };
+    float_Data @[15] { };
+    float_Data @[16] { };
+    float_Data @[17] { };
+    float_Data @[18] { };
+    float_Data @[19] { };
+    float_Data @[20] { };
+    float_Data @[21] { };
+    float_Data @[22] { };
+    float_Data @[23] { };
+    float_Data @[24] { };
+    float_Data @[25] { };
+    String_Data @[26] { };
+    String_Data @[27] { };
+    String_Data @[28] { };
+    String_Data @[29] { };
+    String_Data @[30] { };
+    float_Data @[31] { };
+    float_Data @[32] { };
+    float_Data @[33] { };
+    float_Data @[34] { };
+    float_Data @[35] { };
     int_Data @[36] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
    };
   };
   DataTable @[2] { 
@@ -247,136 +118,77 @@ Program .projects[0].programs.gp[1][2] {
     float_Data @[35] { };
     float_Data @[36] { };
    };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
   };
   DataTable @[3] { 
    DataTableCols @.data = [6] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    String_Data @[0] { };
     int_Data @[1] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     float_Data @[2] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
-    float_Data @[3] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[4] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[5] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    float_Data @[3] { };
+    float_Data @[4] { };
+    String_Data @[5] { };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
    };
   };
   DataTable @[4] { 
    DataTableCols @.data = [17] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    String_Data @[0] { };
+    String_Data @[1] { };
     float_Data @[2] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     float_Data @[3] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     float_Data @[4] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     float_Data @[5] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     float_Data @[6] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     float_Data @[7] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
-    float_Data @[8] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[9] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[10] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[11] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[12] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[13] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[14] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[15] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[16] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    float_Data @[8] { };
+    float_Data @[9] { };
+    float_Data @[10] { };
+    float_Data @[11] { };
+    float_Data @[12] { };
+    float_Data @[13] { };
+    float_Data @[14] { };
+    float_Data @[15] { };
+    float_Data @[16] { };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
    };
   };
  };
@@ -387,7 +199,7 @@ Program .projects[0].programs.gp[1][2] {
  ProgVar_List @.args = [0] {
  };
 
- ProgVar_List @.vars = [11] {
+ ProgVar_List @.vars = [12] {
   ProgVar @[0] { };
   ProgVar @[1] { };
   ProgVar @[2] { };
@@ -399,6 +211,7 @@ Program .projects[0].programs.gp[1][2] {
   ProgVar @[8] { };
   ProgVar @[9] { };
   ProgVar @[10] { };
+  ProgVar @[11] { };
  };
 
  Function_List @.functions = [0] {
@@ -437,8 +250,8 @@ Program .projects[0].programs.gp[1][2] {
       IfContinue @[0] { };
      };
     };
-    Else @[2] { 
-     ProgEl_List @.else_code = [1] {
+    If @[2] { 
+     ProgEl_List @.true_code = [1] {
       IfContinue @[0] { };
      };
     };
@@ -460,7 +273,7 @@ Program .projects[0].programs.gp[1][2] {
      };
     };
     Else @[4] { 
-     ProgEl_List @.else_code = [1] {
+     ProgEl_List @.true_code = [1] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
@@ -483,7 +296,7 @@ Program .projects[0].programs.gp[1][2] {
      };
     };
     Else @[6] { 
-     ProgEl_List @.else_code = [3] {
+     ProgEl_List @.true_code = [3] {
       AssignExpr @[0] { };
       DataProcCall @[1] { 
        ProgArg_List @.meth_args = [2] {
@@ -558,17 +371,33 @@ Program .projects[0].programs.gp[1][2] {
   MemberAssign @[12] { };
  };
 };
-Program .projects[0].programs.gp[1][2] {
+Program .projects[0].programs[1] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {name="DocLink": doc=.doc$$: };
+ };
  name="EpochCompare";
  short_nm="EpcCmpr";
  tags="Data, Analysis, Epoch, Training, ClusterRun";
  desc="performs various stats on epochs to train to criterion, across multiple batches, including an additional err threshold that can be different than the training stopping criterion, and also the minimum error value achieved across batches";
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ author="Randall C. O'Reilly";
+ email="randy.oreilly@colorado.edu";
  flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
  objs {
   name="objs";
   el_typ=Relation;
   el_def=0;
-  Relation @[0] {name="rel": rel=EQUAL: val=0: use_var=0: var=NULL: };
+  Relation @[0] {name="rel": rel=EQUAL: val=0: val_string="": use_var=0: var=NULL: };
   DataTable @[1] {
    name="AllData";
    desc=;
@@ -581,19 +410,10 @@ Program .projects[0].programs.gp[1][2] {
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="batch";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -602,26 +422,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     int_Data @[1] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -630,21 +442,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     String_Data @[2] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_573";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="train_mode";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -653,21 +456,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[3] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_574";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="avg_sse";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -676,21 +470,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     float_Data @[4] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_575";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -699,21 +484,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     float_Data @[5] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_576";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="avg_norm_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -722,21 +498,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=12;
+     matrix_col_width=10;
     };
     float_Data @[6] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_577";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="avg_ext_rew";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -745,21 +512,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     float_Data @[7] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_578";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="avg_cycles";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -768,26 +526,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=10;
+     matrix_col_width=10;
     };
     int_Data @[8] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="n_unk_bb_trials";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -796,21 +546,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=15;
+     matrix_col_width=10;
     };
     double_Data @[9] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_579";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="unk_bb_err_i1";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -819,21 +560,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     double_Data @[10] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_580";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="unk_bb_err_i2";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -842,21 +574,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[11] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_581";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="epoch_time_tot";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -865,21 +588,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[12] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_582";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="epoch_time_usr";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -888,21 +602,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[13] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_583";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="BlicketProbability_Fm_Hidden_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -911,21 +616,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=35;
+     matrix_col_width=10;
     };
     float_Data @[14] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_584";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Effect_Fm_Hidden_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -934,21 +630,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=23;
+     matrix_col_width=10;
     };
     float_Data @[15] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_585";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Hidden_Fm_Input_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -957,21 +644,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=22;
+     matrix_col_width=10;
     };
     float_Data @[16] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_586";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Hidden_Fm_Context_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -980,21 +658,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=24;
+     matrix_col_width=10;
     };
     float_Data @[17] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_587";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Hidden_Fm_Time_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1003,21 +672,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=21;
+     matrix_col_width=10;
     };
     float_Data @[18] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_588";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Hidden_Fm_Effect_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1026,21 +686,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=23;
+     matrix_col_width=10;
     };
     float_Data @[19] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_589";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Hidden_Ctxt_Fm_Hidden_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1049,21 +700,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=28;
+     matrix_col_width=10;
     };
     float_Data @[20] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_590";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Input_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1072,21 +714,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=12;
+     matrix_col_width=10;
     };
     float_Data @[21] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_591";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Context_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1095,21 +728,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[22] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_592";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="BlicketPr_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1118,21 +742,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[23] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_593";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Time_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1141,21 +756,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     float_Data @[24] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_594";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Effect_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1164,21 +770,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=13;
+     matrix_col_width=10;
     };
     float_Data @[25] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_595";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="Hidden_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1187,21 +784,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=13;
+     matrix_col_width=10;
     };
     String_Data @[26] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_596";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="tag";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1210,21 +798,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[27] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_597";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="tag_svn";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1233,21 +812,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[28] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_598";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="tag_job";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1256,21 +826,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[29] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_599";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="params";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1279,21 +840,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[30] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_600";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="notes";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1302,21 +854,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[31] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_601";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="LeabraConSpec_0_lrate";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1325,21 +868,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=21;
+     matrix_col_width=10;
     };
     float_Data @[32] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_602";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="thr_l_mix";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1348,21 +882,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=9;
+     matrix_col_width=10;
     };
     float_Data @[33] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_603";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="stable_pct";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1371,21 +896,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=10;
+     matrix_col_width=10;
     };
     float_Data @[34] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_604";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="fm_output_rel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1394,21 +910,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=13;
+     matrix_col_width=10;
     };
     float_Data @[35] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_605";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
-     };
      name="ti_ctxt_rel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1417,26 +924,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     int_Data @[36] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_557";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.170940175652504;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="run";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1445,16 +944,25 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
    };
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
   };
   DataTable @[2] {
    name="SmoothData";
@@ -1468,14 +976,10 @@ Program .projects[0].programs.gp[1][2] {
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="batch";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1484,21 +988,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     int_Data @[1] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1507,11 +1008,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     String_Data @[2] {
      name="train_mode";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1520,11 +1022,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[3] {
      name="avg_sse";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1533,11 +1036,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     float_Data @[4] {
      name="cnt_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1546,11 +1050,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     float_Data @[5] {
      name="avg_norm_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1559,11 +1064,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=12;
+     matrix_col_width=10;
     };
     float_Data @[6] {
      name="avg_ext_rew";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1572,11 +1078,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     float_Data @[7] {
      name="avg_cycles";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1585,21 +1092,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=10;
+     matrix_col_width=10;
     };
     int_Data @[8] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="n_unk_bb_trials";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1608,11 +1112,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=15;
+     matrix_col_width=10;
     };
     double_Data @[9] {
      name="unk_bb_err_i1";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1621,11 +1126,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     double_Data @[10] {
      name="unk_bb_err_i2";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1634,11 +1140,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[11] {
      name="epoch_time_tot";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1647,11 +1154,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[12] {
      name="epoch_time_usr";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1660,11 +1168,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[13] {
      name="BlicketProbability_Fm_Hidden_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1673,11 +1182,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=35;
+     matrix_col_width=10;
     };
     float_Data @[14] {
      name="Effect_Fm_Hidden_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1686,11 +1196,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=23;
+     matrix_col_width=10;
     };
     float_Data @[15] {
      name="Hidden_Fm_Input_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1699,11 +1210,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=22;
+     matrix_col_width=10;
     };
     float_Data @[16] {
      name="Hidden_Fm_Context_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1712,11 +1224,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=24;
+     matrix_col_width=10;
     };
     float_Data @[17] {
      name="Hidden_Fm_Time_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1725,11 +1238,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=21;
+     matrix_col_width=10;
     };
     float_Data @[18] {
      name="Hidden_Fm_Effect_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1738,11 +1252,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=23;
+     matrix_col_width=10;
     };
     float_Data @[19] {
      name="Hidden_Ctxt_Fm_Hidden_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1751,11 +1266,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=28;
+     matrix_col_width=10;
     };
     float_Data @[20] {
      name="Input_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1764,11 +1280,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=12;
+     matrix_col_width=10;
     };
     float_Data @[21] {
      name="Context_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1777,11 +1294,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[22] {
      name="BlicketPr_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1790,11 +1308,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[23] {
      name="Time_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1803,11 +1322,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     float_Data @[24] {
      name="Effect_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1816,11 +1336,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=13;
+     matrix_col_width=10;
     };
     float_Data @[25] {
      name="Hidden_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1829,11 +1350,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=13;
+     matrix_col_width=10;
     };
     String_Data @[26] {
      name="tag";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1842,11 +1364,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[27] {
      name="tag_svn";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1855,11 +1378,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[28] {
      name="tag_job";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1868,11 +1392,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[29] {
      name="params";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1881,11 +1406,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     String_Data @[30] {
      name="notes";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1894,11 +1420,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[31] {
      name="LeabraConSpec_0_lrate";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1907,11 +1434,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=21;
+     matrix_col_width=10;
     };
     float_Data @[32] {
      name="thr_l_mix";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1920,11 +1448,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=9;
+     matrix_col_width=10;
     };
     float_Data @[33] {
      name="stable_pct";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1933,11 +1462,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=10;
+     matrix_col_width=10;
     };
     float_Data @[34] {
      name="fm_output_rel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1946,11 +1476,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=13;
+     matrix_col_width=10;
     };
     float_Data @[35] {
      name="ti_ctxt_rel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1959,11 +1490,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     float_Data @[36] {
      name="hidden_gi";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -1972,16 +1504,25 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=9;
+     matrix_col_width=10;
     };
    };
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
   };
   DataTable @[3] {
    name="ByBatchData";
@@ -1991,18 +1532,8 @@ Program .projects[0].programs.gp[1][2] {
     el_typ=int_Data;
     el_def=0;
     String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_558";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="tag_svn_group";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2011,26 +1542,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     int_Data @[1] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_556";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="batch_group";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2039,26 +1562,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     float_Data @[2] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_558";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch_last";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2067,21 +1582,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=10;
+     matrix_col_width=10;
     };
     float_Data @[3] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_559";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_find_first";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2090,21 +1596,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=18;
+     matrix_col_width=10;
     };
     float_Data @[4] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_560";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_min";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2113,21 +1610,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=11;
+     matrix_col_width=10;
     };
     String_Data @[5] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_561";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="params_last";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2136,16 +1624,25 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
    };
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
   };
   DataTable @[4] {
    name="ByTagStats";
@@ -2155,18 +1652,8 @@ Program .projects[0].programs.gp[1][2] {
     el_typ=int_Data;
     el_def=0;
     String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_562";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="tag_svn_group_group";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2175,21 +1662,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=19;
+     matrix_col_width=10;
     };
     String_Data @[1] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_563";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="params_last_last";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2198,26 +1676,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[2] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_552";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="N";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2226,26 +1696,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=8;
+     matrix_col_width=10;
     };
     float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_553";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch_last_min";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2254,26 +1716,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[4] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_554";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch_last_max";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2282,26 +1736,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[5] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_555";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch_last_n_at_max";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2310,26 +1756,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=19;
+     matrix_col_width=10;
     };
     float_Data @[6] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_556";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch_last_mean";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2338,26 +1776,18 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=15;
+     matrix_col_width=10;
     };
     float_Data @[7] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_557";
       el_typ=UserDataItem;
       el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
+      UserDataItem @[0] {name="NARROW": value=1: val_type_fixed=0: };
      };
      name="epoch_last_sem";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2366,21 +1796,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=14;
+     matrix_col_width=10;
     };
     float_Data @[8] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_564";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_find_first_min";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2389,21 +1810,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=22;
+     matrix_col_width=10;
     };
     float_Data @[9] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_565";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_find_first_max";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2412,21 +1824,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=22;
+     matrix_col_width=10;
     };
     float_Data @[10] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_566";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_find_first_n_at_max";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2435,21 +1838,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=27;
+     matrix_col_width=10;
     };
     float_Data @[11] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_567";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_find_first_mean";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2458,21 +1852,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=23;
+     matrix_col_width=10;
     };
     float_Data @[12] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_568";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_find_first_sem";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2481,21 +1866,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=22;
+     matrix_col_width=10;
     };
     float_Data @[13] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_569";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_min_min";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2504,21 +1880,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=15;
+     matrix_col_width=10;
     };
     float_Data @[14] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_570";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_min_max";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2527,21 +1894,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=15;
+     matrix_col_width=10;
     };
     float_Data @[15] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_571";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_min_mean";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2550,21 +1908,12 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=16;
+     matrix_col_width=10;
     };
     float_Data @[16] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_572";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 6 0=0.1579778790473938;
-       val_type_fixed=0;
-      };
-     };
      name="cnt_err_min_sem";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_DATA|AUTO_WIDTH;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2573,16 +1922,25 @@ Program .projects[0].programs.gp[1][2] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=15;
+     matrix_col_width=10;
     };
    };
    data_flags=AUTO_CALC;
    auto_load=NO_AUTO_LOAD;
    auto_load_file=;
+   row_height=1;
+   max_col_width=50;
    keygen 4 0=0;
-   row_indexes {
-    name="row_indexes";
-   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   row_with_hilite=-1;
   };
  };
  types {
@@ -2603,7 +1961,8 @@ Program .projects[0].programs.gp[1][2] {
    name="ClusterRunData";
    var_type=T_Object;
    object_type=DataTable_Group;
-   object_val=.projects[0].data.gp[4]$$<DataTable_Group,ClusterRun>;
+   object_val=.data.gp["ClusterRun"]$$<DataTable_Group,ClusterRun>;
+   object_scope=NULL;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2614,7 +1973,7 @@ Program .projects[0].programs.gp[1][2] {
    name="err_thresh";
    var_type=T_Int;
    int_val=5;
-   objs_ptr=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="alternative error threshold to use";
@@ -2624,7 +1983,8 @@ Program .projects[0].programs.gp[1][2] {
    name="rel";
    var_type=T_Object;
    object_type=Relation;
-   object_val=.projects[0].programs.gp[1][2].objs[0]$$;
+   object_val=.objs[0]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2635,7 +1995,8 @@ Program .projects[0].programs.gp[1][2] {
    name="AllData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[1][2].objs[1]$$;
+   object_val=.objs[1]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2646,7 +2007,8 @@ Program .projects[0].programs.gp[1][2] {
    name="ByBatchData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[1][2].objs[3]$$;
+   object_val=.objs[3]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2657,7 +2019,8 @@ Program .projects[0].programs.gp[1][2] {
    name="ByTagStats";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[1][2].objs[4]$$;
+   object_val=.objs[4]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2668,7 +2031,8 @@ Program .projects[0].programs.gp[1][2] {
    name="SmoothData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[1][2].objs[2]$$;
+   object_val=.objs[2]$$;
+   object_scope=NULL;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2676,40 +2040,50 @@ Program .projects[0].programs.gp[1][2] {
    init_from=NULL;
   };
   ProgVar @[7] {
-   name="test_data";
+   name="train_data";
    var_type=T_Bool;
    bool_val=0;
-   objs_ptr=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc=;
+   desc="include train data -- not mutex with test";
    init_from=NULL;
   };
   ProgVar @[8] {
-   name="smooth";
+   name="test_data";
    var_type=T_Bool;
    bool_val=0;
-   objs_ptr=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc=;
+   desc="include test data -- not mutex with train";
    init_from=NULL;
   };
   ProgVar @[9] {
-   name="smooth_kern_width";
-   var_type=T_Int;
-   int_val=8;
-   objs_ptr=0;
+   name="smooth";
+   var_type=T_Bool;
+   bool_val=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
   };
   ProgVar @[10] {
+   name="smooth_kern_width";
+   var_type=T_Int;
+   int_val=8;
+   object_scope=NULL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[11] {
    name="smooth_sig";
    var_type=T_Real;
    real_val=4;
-   objs_ptr=0;
+   object_scope=NULL;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
@@ -2731,11 +2105,12 @@ Program .projects[0].programs.gp[1][2] {
   el_typ=ProgCode;
   el_def=0;
   LocalVars @[0] {
+   name="LocalVars_LocalVars7vars";
    desc=;
    flags=0;
-   orig_prog_code=;
+   code_string=;
    local_vars {
-    name="ProgVar_List_0";
+    name="local_vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
@@ -2743,8 +2118,9 @@ Program .projects[0].programs.gp[1][2] {
      var_type=T_Object;
      object_type=DataTable;
      object_val=NULL;
+     object_scope=NULL;
      objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2753,8 +2129,8 @@ Program .projects[0].programs.gp[1][2] {
      name="max_idx";
      var_type=T_Int;
      int_val=42;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     object_scope=NULL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2763,8 +2139,8 @@ Program .projects[0].programs.gp[1][2] {
      name="epoch_last_max";
      var_type=T_Real;
      real_val=499;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     object_scope=NULL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2773,8 +2149,8 @@ Program .projects[0].programs.gp[1][2] {
      name="find_first_max";
      var_type=T_Real;
      real_val=249;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     object_scope=NULL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2783,8 +2159,8 @@ Program .projects[0].programs.gp[1][2] {
      name="run_no";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     object_scope=NULL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2793,8 +2169,8 @@ Program .projects[0].programs.gp[1][2] {
      name="cur_sz";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     object_scope=NULL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2803,8 +2179,8 @@ Program .projects[0].programs.gp[1][2] {
      name="i";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     object_scope=NULL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -2812,27 +2188,31 @@ Program .projects[0].programs.gp[1][2] {
    };
   };
   MethodCall @[1] {
+   name="MethodCall_AllDataResetData";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="AllData.Reset()";
+   code_string="AllData.Reset()";
    result_var=NULL;
-   obj=.projects[0].programs.gp[1][2].vars[3]$$;
+   obj=.vars[3]$$;
    method=DataTable::ResetData;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="void ResetData()";
+   meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
   };
   MethodCall @[2] {
+   name="MethodCall_AllDataStructUpdatetrue";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="AllData.StructUpdate()";
+   code_string="AllData.StructUpdate()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[1][2].vars[3]$;
+   obj=$.vars[3]$;
    method=taBase::StructUpdate;
    meth_args {
-    name="ProgArg_List_0";
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -2841,70 +2221,83 @@ Program .projects[0].programs.gp[1][2] {
      name="begin";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="true";
      };
     };
    };
+   meth_sig="void StructUpdate(bool begin)";
+   meth_desc=" bracket structural changes with (nestable) true/false calls;";
   };
   AssignExpr @[3] {
+   name="AssignExpr_runno0";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="run_no = 0";
-   result_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[4]$$;
+   code_string="run_no = 0";
+   result_var=.prog_code[0].local_vars[4]$$;
    expr {
     expr="0";
    };
   };
   ForeachLoop @[4] {
+   name="ForeachLoop_foreachdtinClusterRunData";
    desc=;
    flags=0;
-   orig_prog_code=;
+   code_string=;
    loop_code {
-    name=;
+    name="loop_code";
     el_typ=ProgCode;
     el_def=0;
     IfContinue @[0] {
+     name="IfContinue_ifdtnamecontainsepccontinue";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     orig_prog_code="if(!dt.name.contains(\"_epc\")) continue";
+     code_string="if(!dt.name.contains(\"_epc\")) continue";
      cond {
       expr="!dt.name.contains(\"_epc\")";
      };
     };
     If @[1] {
+     name="If_iftraindata";
      desc=;
-     flags=0;
-     orig_prog_code="if(test_data)";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if(test_data)";
      cond {
-      expr="test_data";
+      expr="!train_data";
      };
      true_code {
-      name="ProgEl_List_1315";
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       IfContinue @[0] {
+       name="IfContinue_ifdtnamecontainstrncontinue";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="if(dt.name.contains(\"_tst_\")) continue";
+       code_string="if(dt.name.contains(\"_tst_\")) continue";
        cond {
 	expr="dt.name.contains(\"_trn_\")";
        };
       };
      };
     };
-    Else @[2] {
+    If @[2] {
+     name="If_iftestdata";
      desc=;
-     flags=0;
-     orig_prog_code=;
-     else_code {
-      name="else_code";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if(test_data)";
+     cond {
+      expr="!test_data";
+     };
+     true_code {
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       IfContinue @[0] {
+       name="IfContinue_ifdtnamecontainststcontinue";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="if(dt.name.contains(\"_tst_\")) continue";
+       code_string="if(dt.name.contains(\"_tst_\")) continue";
        cond {
 	expr="dt.name.contains(\"_tst_\")";
        };
@@ -2912,25 +2305,27 @@ Program .projects[0].programs.gp[1][2] {
      };
     };
     If @[3] {
+     name="If_ifsmooth";
      desc=;
-     flags=0;
-     orig_prog_code="if(smooth)";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if(smooth)";
      cond {
       expr="smooth";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       DataAnalCall @[0] {
+       name="DataAnalCall_taDataAnalSmooth_ruetruetruetrue";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="taDataAnal::SmoothGauss()";
+       code_string="taDataAnal::SmoothGauss()";
        result_var=NULL;
        object_type=taDataAnal;
        method=taDataAnal::SmoothGauss;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -2939,6 +2334,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="smooth_data";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="SmoothData";
 	 };
@@ -2949,6 +2345,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="view";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="false";
 	 };
@@ -2959,6 +2356,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="src_data";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="dt";
 	 };
@@ -2969,6 +2367,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="kern_half_wd";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="smooth_kern_width";
 	 };
@@ -2979,6 +2378,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="kern_sigma";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="smooth_sig";
 	 };
@@ -2989,6 +2389,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="neg_tail";
 	 required=0;
 	 def_val="true";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
@@ -2999,6 +2400,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="pos_tail";
 	 required=0;
 	 def_val="true";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
@@ -3009,6 +2411,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="keep_edges";
 	 required=0;
 	 def_val="true";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
@@ -3019,6 +2422,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="float_only";
 	 required=0;
 	 def_val="true";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
@@ -3028,81 +2432,95 @@ Program .projects[0].programs.gp[1][2] {
      };
     };
     Else @[4] {
+     name="Else_If_ifsmooth";
      desc=;
      flags=0;
-     orig_prog_code=;
-     else_code {
-      name="else_code";
+     code_string=;
+     cond {
+      expr=;
+     };
+     true_code {
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
+       name="MethodCall_SmoothDataCopyFromdt";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="SmoothData.CopyFrom(dt)";
+       code_string="SmoothData.CopyFrom(dt)";
        result_var=NULL;
-       obj=.projects[0].programs.gp[1][2].vars[6]$$;
+       obj=.vars[6]$$;
        method=taBase::CopyFrom;
        meth_args {
 	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
-	 arg_type=taBase_ptr;
+	 arg_type=const_taBase_ptr;
 	 type="taBase*";
 	 name="cpy_from";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="dt";
 	 };
 	};
        };
+       meth_sig="bool CopyFrom(taBase* cpy_from)";
+       meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
       };
      };
     };
     If @[5] {
+     name="If_ifAllDatarows0";
      desc=;
-     flags=0;
-     orig_prog_code="if(AllData.rows == 0)";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if(AllData.rows == 0)";
      cond {
       expr="AllData.rows == 0";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
+       name="MethodCall_AllDataCopyFromSmoothData";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="AllData.CopyFrom()";
+       code_string="AllData.CopyFrom()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[1][2].vars[3]$;
+       obj=$.vars[3]$;
        method=taBase::CopyFrom;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
-	 arg_type=taBase_ptr;
+	 arg_type=const_taBase_ptr;
 	 type="taBase*";
 	 name="cpy_from";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="SmoothData";
 	 };
 	};
        };
+       meth_sig="bool CopyFrom(taBase* cpy_from)";
+       meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
       };
       MethodCall @[1] {
+       name="MethodCall_AllDataNewColIntrun";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="AllData.NewColInt()";
+       code_string="AllData.NewColInt()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[1][2].vars[3]$;
+       obj=$.vars[3]$;
        method=DataTable::NewColInt;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -3111,35 +2529,44 @@ Program .projects[0].programs.gp[1][2] {
 	 name="col_nm";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\"run\"";
 	 };
 	};
        };
+       meth_sig="int_Data_ptr NewColInt(taString& col_nm)";
+       meth_desc=" create new column of integer-level data (= narrow display, actually stored as float)";
       };
      };
     };
     Else @[6] {
+     name="Else_If_ifAllDatarows0";
      desc=;
      flags=0;
-     orig_prog_code=;
-     else_code {
-      name="else_code";
+     code_string=;
+     cond {
+      expr=;
+     };
+     true_code {
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
       AssignExpr @[0] {
+       name="AssignExpr_curszAllDatarows";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="cur_sz = AllData.rows";
-       result_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[5]$$;
+       code_string="cur_sz = AllData.rows";
+       result_var=.prog_code[0].local_vars[5]$$;
        expr {
 	expr="AllData.rows";
        };
       };
       DataProcCall @[1] {
+       name="DataProcCall_taDataProcCopyCo_lDataSmoothData";
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="taDataProc::CopyCommonColData()";
+       code_string="taDataProc::CopyCommonColData()";
        result_var=NULL;
        object_type=taDataProc;
        method=taDataProc::CopyCommonColData;
@@ -3153,6 +2580,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="dest";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="AllData";
 	 };
@@ -3163,6 +2591,7 @@ Program .projects[0].programs.gp[1][2] {
 	 name="src";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="SmoothData";
 	 };
@@ -3170,17 +2599,19 @@ Program .projects[0].programs.gp[1][2] {
        };
       };
       ForLoop @[2] {
+       name="ForLoop_foricursziAllDatarowsi";
        desc=;
-       flags=0;
-       orig_prog_code="for(i=cur_sz; i< AllData.rows; i++)";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for(i=cur_sz; i< AllData.rows; i++)";
        loop_code {
 	name="loop_code";
 	el_typ=ProgCode;
 	el_def=0;
 	CssExpr @[0] {
+	 name="CssExpr_AllDatarunirunno";
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 orig_prog_code="AllData[\"run\"][i] = run_no;";
+	 code_string="AllData[\"run\"][i] = run_no;";
 	 expr {
 	  expr="AllData[\"run\"][i] = run_no;";
 	 };
@@ -3199,29 +2630,31 @@ Program .projects[0].programs.gp[1][2] {
      };
     };
     VarIncr @[7] {
+     name="VarIncr_runno1";
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     orig_prog_code="run_no += 1";
-     var=$.projects[0].programs.gp[1][2].prog_code[0].local_vars[4]$;
+     code_string="run_no += 1";
+     var=$.prog_code[0].local_vars[4]$;
      expr {
       expr="1";
      };
     };
    };
-   el_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[0]$$;
+   el_var=.prog_code[0].local_vars[0]$$;
    in {
     expr="ClusterRunData";
    };
   };
   MethodCall @[5] {
+   name="MethodCall_AllDataStructUpdatefalse";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="AllData.StructUpdate()";
+   code_string="AllData.StructUpdate()";
    result_var=NULL;
-   obj=$.projects[0].programs.gp[1][2].vars[3]$;
+   obj=$.vars[3]$;
    method=taBase::StructUpdate;
    meth_args {
-    name="ProgArg_List_0";
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -3230,18 +2663,22 @@ Program .projects[0].programs.gp[1][2] {
      name="begin";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="false";
      };
     };
    };
+   meth_sig="void StructUpdate(bool begin)";
+   meth_desc=" bracket structural changes with (nestable) true/false calls;";
   };
   DataGroupProg @[6] {
+   name="DataGroupProg_Groupfromsrctabl_ableByBatchData";
    desc=;
    flags=0;
-   orig_prog_code=;
-   src_data_var=$.projects[0].programs.gp[1][2].vars[3]$;
-   dest_data_var=.projects[0].programs.gp[1][2].vars[4]$$;
+   code_string=;
+   src_data_var=$.vars[3]$;
+   dest_data_var=.vars[4]$$;
    group_spec {
     name="group_spec";
     ops {
@@ -3251,47 +2688,48 @@ Program .projects[0].programs.gp[1][2] {
      DataGroupEl @[0] {
       col_name="tag_svn";
       name="tag_svn_GROUP_0";
-      agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[1] {
       col_name="batch";
       name="batch_GROUP_1";
-      agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[2] {
       col_name="epoch";
       name="epoch_LAST_2";
-      agg {name="agg": op=LAST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=LAST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[3] {
       col_name="cnt_err";
       name="cnt_err_FIND_FIRST_3";
-      agg {name="agg": op=FIND_FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs.gp[1][2].vars[1]$$: }: };
+      agg {name="agg": op=FIND_FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=1: var=.vars[1]$$: }: };
      };
      DataGroupEl @[4] {
       col_name="cnt_err";
       name="cnt_err_MIN_4";
-      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[5] {
       col_name="params";
       name="params_LAST_5";
-      agg {name="agg": op=LAST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=LAST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
     };
     append_agg_name=1;
    };
   };
   MemberMethodCall @[7] {
+   name="MemberMethodCall_ByBatchDatadatae_petaBaseVTFLOAT";
    desc="change type to float, to enable subsequent analysis operations";
    flags=0;
-   orig_prog_code=;
-   obj=$.projects[0].programs.gp[1][2].vars[4]$;
+   code_string=;
+   obj=$.vars[4]$;
    path="data.epoch_last";
    result_var=NULL;
    method=DataCol::ChangeColType;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -3300,21 +2738,25 @@ Program .projects[0].programs.gp[1][2] {
      name="new_type";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="taBase::VT_FLOAT";
      };
     };
    };
+   meth_sig="void ChangeColType(taBase::ValType new_type)";
+   meth_desc=" change the type of the data in this col, without loss of data";
   };
   MathCall @[8] {
+   name="MathCall_epochlastmaxtaMa_ochlastarmaxidx";
    desc=;
    flags=0;
-   orig_prog_code=;
-   result_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[2]$$;
+   code_string=;
+   result_var=.prog_code[0].local_vars[2]$$;
    object_type=taMath_float;
    method=taMath_float::vec_max;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -3323,6 +2765,7 @@ Program .projects[0].programs.gp[1][2] {
      name="vec";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="ByBatchData.data.epoch_last.ar";
      };
@@ -3333,6 +2776,7 @@ Program .projects[0].programs.gp[1][2] {
      name="idx";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="max_idx";
      };
@@ -3340,14 +2784,15 @@ Program .projects[0].programs.gp[1][2] {
    };
   };
   MathCall @[9] {
+   name="MathCall_findfirstmaxtaMa_ndfirstarmaxidx";
    desc=;
    flags=0;
-   orig_prog_code=;
-   result_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[3]$$;
+   code_string=;
+   result_var=.prog_code[0].local_vars[3]$$;
    object_type=taMath_float;
    method=taMath_float::vec_max;
    meth_args {
-    name=;
+    name="meth_args";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
@@ -3356,6 +2801,7 @@ Program .projects[0].programs.gp[1][2] {
      name="vec";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="ByBatchData.data.cnt_err_find_first.ar";
      };
@@ -3366,6 +2812,7 @@ Program .projects[0].programs.gp[1][2] {
      name="idx";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="max_idx";
      };
@@ -3373,11 +2820,12 @@ Program .projects[0].programs.gp[1][2] {
    };
   };
   DataGroupProg @[10] {
+   name="DataGroupProg_Groupfromsrctabl_tableByTagStats";
    desc=;
    flags=0;
-   orig_prog_code=;
-   src_data_var=$.projects[0].programs.gp[1][2].vars[4]$;
-   dest_data_var=.projects[0].programs.gp[1][2].vars[5]$$;
+   code_string=;
+   src_data_var=$.vars[4]$;
+   dest_data_var=.vars[5]$$;
    group_spec {
     name="group_spec";
     ops {
@@ -3387,97 +2835,98 @@ Program .projects[0].programs.gp[1][2] {
      DataGroupEl @[0] {
       col_name="tag_svn_group";
       name="tag_svn_group_GROUP_0";
-      agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[1] {
       col_name="params_last";
       name="params_last_LAST_1";
-      agg {name="agg": op=LAST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=LAST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[2] {
       col_name="epoch_last";
       name="epoch_last_N_2";
-      agg {name="agg": op=N: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=N: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[3] {
       col_name="epoch_last";
       name="epoch_last_MIN_3";
-      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[4] {
       col_name="epoch_last";
       name="epoch_last_MAX_4";
-      agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[5] {
       col_name="epoch_last";
       name="epoch_last_COUNT_5";
-      agg {name="agg": op=COUNT: rel={name="rel": rel=EQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[1][2].prog_code[0].local_vars[2]$: }: };
+      agg {name="agg": op=COUNT: rel={name="rel": rel=EQUAL: val=0: val_string="": use_var=1: var=$.prog_code[0].local_vars[2]$: }: };
      };
      DataGroupEl @[6] {
       col_name="epoch_last";
       name="epoch_last_MEAN_6";
-      agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[7] {
       col_name="epoch_last";
       name="epoch_last_SEM_7";
-      agg {name="agg": op=SEM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=SEM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[8] {
       col_name="cnt_err_find_first";
       name="cnt_err_find_first_MIN_8";
-      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[1][2].vars[1]$: }: };
+      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=1: var=$.vars[1]$: }: };
      };
      DataGroupEl @[9] {
       col_name="cnt_err_find_first";
       name="cnt_err_find_first_MAX_9";
-      agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[1][2].vars[1]$: }: };
+      agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=1: var=$.vars[1]$: }: };
      };
      DataGroupEl @[10] {
       col_name="cnt_err_find_first";
       name="cnt_err_find_first_COUNT_10";
-      agg {name="agg": op=COUNT: rel={name="rel": rel=EQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[1][2].prog_code[0].local_vars[3]$: }: };
+      agg {name="agg": op=COUNT: rel={name="rel": rel=EQUAL: val=0: val_string="": use_var=1: var=$.prog_code[0].local_vars[3]$: }: };
      };
      DataGroupEl @[11] {
       col_name="cnt_err_find_first";
       name="cnt_err_find_first_MEAN_11";
-      agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[1][2].vars[1]$: }: };
+      agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=1: var=$.vars[1]$: }: };
      };
      DataGroupEl @[12] {
       col_name="cnt_err_find_first";
       name="cnt_err_find_first_SEM_12";
-      agg {name="agg": op=SEM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[1][2].vars[1]$: }: };
+      agg {name="agg": op=SEM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=1: var=$.vars[1]$: }: };
      };
      DataGroupEl @[13] {
       col_name="cnt_err_min";
       name="cnt_err_min_MIN_13";
-      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[14] {
       col_name="cnt_err_min";
       name="cnt_err_min_MAX_14";
-      agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[15] {
       col_name="cnt_err_min";
       name="cnt_err_min_MEAN_15";
-      agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
      DataGroupEl @[16] {
       col_name="cnt_err_min";
       name="cnt_err_min_SEM_16";
-      agg {name="agg": op=SEM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      agg {name="agg": op=SEM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: val_string="": use_var=0: var=NULL: }: };
      };
     };
     append_agg_name=1;
    };
   };
   MemberAssign @[11] {
+   name="MemberAssign_ByTagStatsdataep_epochlastnatmax";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="ByTagStats.data.epoch_last_count.name = \"epoch_last_n_at_max\"";
-   obj=$.projects[0].programs.gp[1][2].vars[5]$;
+   code_string="ByTagStats.data.epoch_last_count.name = \"epoch_last_n_at_max\"";
+   obj=$.vars[5]$;
    path="data.epoch_last_count.name";
    expr {
     expr="\"epoch_last_n_at_max\"";
@@ -3485,10 +2934,11 @@ Program .projects[0].programs.gp[1][2] {
    update_after=0;
   };
   MemberAssign @[12] {
+   name="MemberAssign_ByTagStatsdatacn_findfirstnatmax";
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="ByTagStats.data.epoch_last_count.name = \"epoch_last_n_at_max\"";
-   obj=$.projects[0].programs.gp[1][2].vars[5]$;
+   code_string="ByTagStats.data.epoch_last_count.name = \"epoch_last_n_at_max\"";
+   obj=$.vars[5]$;
    path="data.cnt_err_find_first_count.name";
    expr {
     expr="\"cnt_err_find_first_n_at_max\"";
@@ -3498,4 +2948,27 @@ Program .projects[0].programs.gp[1][2] {
  };
  step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=0;
+  wiki=;
+  url="local";
+  full_url="local";
+  text_size=1;
+  text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+ };
 };

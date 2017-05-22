@@ -80,6 +80,7 @@ void taiWidgetComposite::InitLayout() { //virtual/overridable
       //no default -- must handle all cases
   }
   lay->setMargin(0); // supposedly deprecated...
+  lay->setSpacing(0);
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
@@ -161,7 +162,7 @@ void taiWidgetComposite::AddChildMember(MemberDef* md, int column) {
 void taiWidgetComposite::EndLayout() { //virtual/overridable
   switch (lay_type) {
     case LT_HBox:
-      layHBox()->addStretch();
+      layHBox()->addStretch(1);
       break;
     case LT_Flow:
       break;
@@ -193,8 +194,7 @@ void taiWidgetComposite::AddChildWidget_impl(QWidget* child_widget, int spacing,
   switch (lay_type) {
     case LT_HBox:
       if (spacing != -1)
-        //lay->addItem(new QSpacerItem(last_spc, 0, QSizePolicy::Fixed));
-        layHBox()->addSpacing(last_spc);
+        layHBox()->addSpacing(spacing);
       layHBox()->addWidget(child_widget, stretch, (Qt::AlignLeft | Qt::AlignVCenter));
       child_widget->show();
       break;

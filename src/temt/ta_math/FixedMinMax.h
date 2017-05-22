@@ -30,9 +30,9 @@ class TA_API FixedMinMax : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Math minimum-maximum values with toggles for usage
 INHERITED(taBase)
 public:
-  bool          fix_min;        // use fixed minimum value?
+  bool          fix_min;        // #LABEL_fix use fixed minimum value?
   float         min;            // minimum value
-  bool          fix_max;        // use fixed maximum value?
+  bool          fix_max;        // #LABEL_fix use fixed maximum value?
   float         max;            // maximum value
 
   void  Init(float it)  { min = max = it; }  // initializes the max and min to this value

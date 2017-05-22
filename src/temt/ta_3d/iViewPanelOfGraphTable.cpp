@@ -93,18 +93,18 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   lblGraphType = taiM->NewLabel("Graph", widg, font_spec);
   lblGraphType->setToolTip(taiMisc::ToolTipPreProcess("How to display the graph"));
   layTopCtrls->addWidget(lblGraphType);
-  cmbGraphType = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
-                                              this, NULL, widg, taiWidget::flgAutoApply));
+  cmbGraphType = dl.Add
+    (new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
+                           this, NULL, widg, taiWidget::flgAutoApply));
   layTopCtrls->addWidget(cmbGraphType->GetRep());
-  layTopCtrls->addSpacing(taiM->hsep_c);
   
   lblPlotStyle = taiM->NewLabel("Style", widg, font_spec);
   lblPlotStyle->setToolTip(taiMisc::ToolTipPreProcess("How to plot the lines"));
   layTopCtrls->addWidget(lblPlotStyle);
-  cmbPlotStyle = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
-                                              this, NULL, widg, taiWidget::flgAutoApply));
+  cmbPlotStyle = dl.Add
+    (new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
+                           this, NULL, widg, taiWidget::flgAutoApply));
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
-  layTopCtrls->addSpacing(taiM->hsep_c);
   
   chkNegDraw =  new QCheckBox("Neg\nDraw", widg); chkNegDraw->setObjectName("chkNegDraw");
   chkNegDraw->setToolTip(taiMisc::ToolTipPreProcess("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data"));
@@ -118,11 +118,11 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layTopCtrls->addWidget(chkNegDrawZ);
   layTopCtrls->addSpacing(taiM->hsep_c);
   
-  layTopCtrls->addStretch();
   butRefresh = new QPushButton("Refresh", widg);
   butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layTopCtrls->addWidget(butRefresh);
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
+  layTopCtrls->addStretch(10);
   
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
   layVals->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
@@ -182,7 +182,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   ((iLineEdit*)fldNPlots->GetRep())->setCharWidth(5);
   layVals->addSpacing(taiM->hsep_c);
   
-  layVals->addStretch();
+  layVals->addStretch(10);
   
   //    A series of checkboxes for show/hide axes labels
   layAxisLabelChks = new QHBoxLayout;
@@ -216,7 +216,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   connect(chkLinesSolid, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   
   layAxisLabelChks->addSpacing(taiM->hsep_c);
-  layAxisLabelChks->addStretch();
+  layAxisLabelChks->addStretch(10);
   //    Axes
   
   // -------- X Axis --------
@@ -278,7 +278,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   connect(butLinePropsXAxis, SIGNAL(pressed()), this, SLOT(butSetLineStyleXAxis()));
   layXAxis->addWidget(butLinePropsXAxis);
   
-  layXAxis->addStretch();
+  layXAxis->addStretch(10);
   
   // -------- Z Axis --------
   layZAxis = new QHBoxLayout; layWidg->addLayout(layZAxis);
@@ -343,7 +343,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   connect(butLinePropsZAxis, SIGNAL(pressed()), this, SLOT(butSetLineStyleZAxis()));
   layZAxis->addWidget(butLinePropsZAxis);
   
-  layZAxis->addStretch();
+  layZAxis->addStretch(10);
   
   plotsWidg = new iStripeWidget(widg);
   layWidg->addWidget(plotsWidg);
@@ -416,7 +416,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   ((iLineEdit*)fldXlblRot->GetRep())->setCharWidth(6);
   //  layCAxis->addSpacing(taiM->hsep_c);
   
-  layCAxis->addStretch();
+  layCAxis->addStretch(10);
   
   // Raster Axis
   layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
@@ -448,14 +448,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layRAxis->addWidget(fldBarDepth->GetRep());
   ((iLineEdit*)fldBarDepth->GetRep())->setCharWidth(6);
   
-  layRAxis->addStretch();
+  layRAxis->addStretch(10);
   
   // second row: color bar + button
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
   layColorScale->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
   
   cbar = new iHColorScaleBar(&tlv->colorscale, iColorScaleBar::RANGE, true, true, widg);
-  //  cbar->setMaximumWidth(30);
+  cbar->setMinimumWidth(300);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   
@@ -464,7 +464,9 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
-  
+
+  layColorScale->addStretch(0); // can't use higher stretch here!
+
   layWidg->addStretch();
   
   MakeButtons(layOuter);
@@ -600,6 +602,8 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     connect(butLineProps[i], SIGNAL(pressed()), sig_map_for_prop_buttons, SLOT(map()));
     sig_map_for_prop_buttons->setMapping(butLineProps[i], i);
     layYAxis[i]->addWidget(butLineProps[i]);
+    
+    layYAxis[i]->addStretch(10);
     
     layPlots->addRow(layYAxis[i]);
   }

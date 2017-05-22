@@ -81,12 +81,12 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layTopCtrls->addWidget(fldFontScale->GetRep());
   ((iLineEdit*)fldFontScale->GetRep())->setCharWidth(8);
 
-  layTopCtrls->addStretch();
-
   butRefresh = new QPushButton("Refresh", widg);
   butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layTopCtrls->addWidget(butRefresh);
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
+
+  layTopCtrls->addStretch(10);
 
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
   layVals->setSpacing(2);       // plenty of room
@@ -124,7 +124,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   fldTxtMax = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMax->GetRep());
   ((iLineEdit*)fldTxtMax->GetRep())->setCharWidth(8);
-  layVals->addStretch();
+  layVals->addStretch(10);
   
   layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
   layMatrix->setSpacing(2);     // plenty of room
@@ -160,7 +160,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   ((iLineEdit*)fldGridLine->GetRep())->setCharWidth(8);
   layMatrix->addSpacing(taiM->hsep_c);
   
-  layMatrix->addStretch();
+  layMatrix->addStretch(10);
 
   layMatrix_II = new QHBoxLayout; layWidg->addLayout(layMatrix_II);  // split into 2 rows
   layMatrix_II->setSpacing(2);     // plenty of room
@@ -190,7 +190,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   ((iLineEdit*)fldRot->GetRep())->setCharWidth(8);
   // layMatrix_II->addSpacing(taiM->hsep_c);
 
-  layMatrix_II->addStretch();
+  layMatrix_II->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
   //    Colorscale etc
@@ -210,7 +210,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layColorScale->addSpacing(taiM->hsep_c);
 
   cbar = new iHColorScaleBar(&tlv->colorscale, iColorScaleBar::RANGE, true, true, widg);
-//  cbar->setMaximumWidth(30);
+  cbar->setMinimumWidth(300);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
 
@@ -219,6 +219,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   butSetColor->setMinimumWidth(taiM->maxButtonWidth() / 2);
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+  layColorScale->addStretch(0);
 
   ////////////////////////////////////////////////////////////////////////////
   layClickVals = new QHBoxLayout; layWidg->addLayout(layClickVals);
@@ -245,7 +246,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layClickVals->addWidget(fldMMBVal->GetRep());
   ((iLineEdit*)fldMMBVal->GetRep())->setCharWidth(8);
 
-  layClickVals->addStretch();
+  layClickVals->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
   // Row and column page size controls
@@ -271,7 +272,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   fldColPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
   layPageVals->addWidget(fldColPageVal->GetRep());
 
-  layPageVals->addStretch();
+  layPageVals->addStretch(10);
   
   ////////////////////////////////////////////////////////////////////////////
   layRowNav = new QHBoxLayout; layWidg->addLayout(layRowNav);
@@ -318,7 +319,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   actRowFwdAll->setToolTip(taiMisc::ToolTipPreProcess("Forward all the way to the end"));
   connect(actRowFwdAll, SIGNAL(triggered()), this, SLOT(RowFwdAll()) );
 
-  layRowNav->addStretch();
+  layRowNav->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
   layColNav = new QHBoxLayout; layWidg->addLayout(layColNav);
@@ -365,7 +366,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   actColFwdAll->setToolTip(taiMisc::ToolTipPreProcess("Forward all the way to the end"));
   connect(actColFwdAll, SIGNAL(triggered()), this, SLOT(ColFwdAll()) );
 
-  layColNav->addStretch();
+  layColNav->addStretch(10);
 
   ////////////////////
   // all done..

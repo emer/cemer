@@ -74,9 +74,9 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   lblLayLayout = taiM->NewLabel("2/3D:", widg, font_spec);
   lblLayLayout->setToolTip(taiMisc::ToolTipPreProcess("Use 2D or 3D layout of layers (2D is big flat plane, 3D is stacked layer planes)"));
   layDispCheck->addWidget(lblLayLayout);
-  cmbLayLayout = dl.Add(new taiWidgetComboBox(true, 
-		TA_NetView.sub_types.FindName("LayerLayout"),
-                               this, NULL, widg, taiWidget::flgAutoApply));
+  cmbLayLayout = dl.Add
+    (new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("LayerLayout"),
+                           this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbLayLayout->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -117,7 +117,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   cmbPrjnDisp = dl.Add(new taiWidgetComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
                                 this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbPrjnDisp->GetRep());
-  layDispCheck->addStretch();
+  layDispCheck->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
@@ -185,7 +185,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(chkLayGp, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkLayGp);
 
-  layFontsEtc->addStretch();
+  layFontsEtc->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
@@ -268,7 +268,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ((iLineEdit*)fldWtPrjnKGp->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
-  layColorScaleCtrls->addStretch();
+  layColorScaleCtrls->addStretch(10);
 
   ////////////////////////////////////////////////////////////////////////////
   layiColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layiColorBar);
@@ -286,8 +286,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   cbar = new iHColorScaleBar(&(dv_->scale), iColorScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(scalebar_changed()) );
-//  cbar->setMaximumWidth(30);
-//   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+  cbar->setMinimumWidth(300);
   layiColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
 
   butSetColor = new QPushButton("Colors", widg);
@@ -295,7 +294,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
   layiColorBar->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
-//  layDisplayValues->addStretch();
+  layiColorBar->addStretch(0);  // can't be > 0 else colorbar dissappears!
 
   ////////////////////////////////////////////////////////////////////////////
   layHistory = new QHBoxLayout();  layDisplayValues->addLayout(layHistory);
@@ -367,7 +366,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   actMovie->setToolTip(taiMisc::ToolTipPreProcess("record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- uses default 640x480 size with images saved as movie_img_xxx.png -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats"));
   connect(actMovie, SIGNAL(triggered()), this, SLOT(hist_movie()) );
 
-  layHistory->addStretch();
+  layHistory->addStretch(10);
 //   histTB->addStretch();
 
 //   iSplitter* splt = new iSplitter(Qt::Vertical);
