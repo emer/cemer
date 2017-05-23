@@ -1589,29 +1589,30 @@ void taProject::ParamSetComparePeers(ParamSet* key_set, ParamSet* peer_set) {
   if (!key_set || !peer_set) return;
   
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("ParamData");
-
-  String table_name = "param_table";
+  String table_name = key_set->name + "_param_peer_table";
   DataTable* param_table = (DataTable*)dgp->FindLeafName_(table_name);
   
-  if (param_table) {
-    dgp->RemoveEl(param_table);
+  if (!param_table) {
+    param_table = dgp->NewEl(1, NULL);   // add a new data table to the group
+    param_table->SetName(table_name);
+    param_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
+    param_table->StructUpdate(true);
+  
+    DataCol* dc_member = (DataCol*)param_table->FindMakeCol("Member", taBase::VT_STRING);
+    dc_member->SetColFlag(DataCol::READ_ONLY);
+    
+    DataCol* dc_spec = (DataCol*)param_table->FindMakeCol(key_set->name, taBase::VT_STRING);
+    dc_spec->SetColFlag(DataCol::READ_ONLY);
+    param_table->StructUpdate(false);
+    param_table->RefreshViews();
+    
+    WriteParamMbrNamesToTable(param_table, key_set);
+    WriteParamSavedValsToTable(param_table, key_set);
   }
-  
-  param_table = dgp->NewEl(1, NULL);   // add a new data table to the group
-  param_table->SetName(table_name);
-  param_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
-  param_table->StructUpdate(true);
-  
-  DataCol* dc_member = (DataCol*)param_table->FindMakeCol("Member", taBase::VT_STRING);
-  dc_member->SetColFlag(DataCol::READ_ONLY);
-  
-  DataCol* dc_spec = (DataCol*)param_table->FindMakeCol(key_set->name, taBase::VT_STRING);
-  dc_spec->SetColFlag(DataCol::READ_ONLY);
-  param_table->StructUpdate(false);
-  param_table->RefreshViews();
-  
-  WriteParamMbrNamesToTable(param_table, key_set);
-  WriteParamSavedValsToTable(param_table, key_set);
+  else {
+    WriteParamMbrNamesToTable(param_table, peer_set);
+    WriteParamSavedValsToTable(param_table, peer_set);
+  }
 
   param_table->StructUpdate(true);
   AddPeerToParamCompareTable(param_table, peer_set);
