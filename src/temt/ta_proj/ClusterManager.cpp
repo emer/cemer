@@ -140,6 +140,16 @@ ClusterManager_UpdtThr::UpdateWorkingCopy() {
           int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user, clust, projname,
                                            main_svn);
         } catch (const SubversionClient::Exception &ex) {
+          if (ex.GetSvnErrorCode() == 155004) { //SVN repository is locked, need to cleanup first
+            try {
+              m_svn_other->Cleanup();
+            } catch (const SubversionClient::Exception &ex2) {
+              emit sendError("Failed to run a SVN cleanup on working copy " + wcp + ". Please fix manually\n" + ex2.what());
+              return -1;
+            }
+            emit sendInfo("SVN working copy " + wcp + " needed cleanup. Try your operation again");
+            continue;
+          }
           //These are additional repositories, so don't worry about them too much
           emit sendInfo("Could not update SVN working copy " + wcp + ". Ignoring secondary repository\n" + ex.what());
         }
@@ -209,12 +219,7 @@ ClusterManager_UpdtThr::UpdateWorkingCopy_impl
           rev_rval = wc_rev;
         }
         else {
-          try {
-            rev_rval = sc->Update();// TODO: FIXME: testing thread safety issues.
-          } catch (const SubversionClient::Exception & ex) {
-            rev_rval = -1;
-            emit sendError("Could not update wc: " + wcp + " " + ex.what());
-          }
+          rev_rval = sc->Update();// TODO: FIXME: testing thread safety issues.
         }
       }
         
@@ -323,8 +328,9 @@ bool ClusterManager::CheckPrefs() {
                                 and/or alternatively add a public cluster/repository (https://grey.colorado.edu/emergent/index.php/NSG_public)", "OK", "Add public cluster (NSG)");
     if (choice == 1) {
       SetupPublicNSGCluster();
+    } else {
+      return false;
     }
-    return false;
   }
   return true;
 }
@@ -1278,9 +1284,9 @@ ClusterManager::ChooseCluster(const String& prompt) {
                    and/or alternatively add a public cluster/repository (https://grey.colorado.edu/emergent/index.php/NSG_public)", "OK", "Add public cluster (NSG)");
     if (choice == 1) {
         SetupPublicNSGCluster();
+    } else {
+      return false;
     }
-    
-    return false;
   }
 
   taGuiDialog dlg;

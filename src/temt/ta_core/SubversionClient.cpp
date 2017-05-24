@@ -37,6 +37,7 @@
 #include <string>
 #include <apr_pools.h>
 #include <svn_client.h>
+#include <svn_repos.h>
 #include <svn_path.h>
 #include <svn_pools.h>
 #include <svn_props.h>
@@ -2205,16 +2206,29 @@ SubversionClient::Cleanup()
   QMutexLocker qml(svn_operation);
 
   apr_pool_t* m_pool = svn_pool_create(0);
-
-  if (svn_error_t *error = svn_client_cleanup(
-        m_wc_path,
-        m_ctx,
-        m_pool))
-  {
-    svn_pool_destroy(m_pool);
-    throw Exception("Subversion cleanup error", error);
+  String m_wc_path_tmp = m_wc_path;
+  bool tryagain = true;
+  while (tryagain) {
+    if (svn_error_t *error = svn_client_cleanup(
+                                                m_wc_path_tmp,
+                                                m_ctx,
+                                                m_pool))
+    {
+      //Path is not an SVN directory root, and cleanup can only be run on a root
+      //Repeatedly shave off a directory until we reach the repository root
+      if (error->apr_err == 155007) {
+        if (m_wc_path_tmp.length() > 1) {
+          m_wc_path_tmp = QFileInfo(m_wc_path_tmp).dir().absolutePath();
+          continue;
+        }
+      }
+      svn_pool_destroy(m_pool);
+      throw Exception("Subversion cleanup error", error);
+    }
+    tryagain = false;
   }
-
+  
+  
   svn_pool_destroy(m_pool);
 }
 
