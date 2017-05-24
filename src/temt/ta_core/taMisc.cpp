@@ -692,6 +692,14 @@ void taMisc::UpdateAfterEdit() {
 /////////////////////////////////////////////////
 //      Errors, Warnings, Simple Dialogs
 
+
+static bool taMisc_same_msg_check(const String& msg, const String& last_msg) {
+  String common = common_prefix(msg, last_msg, 0);
+  float pct = (float)common.length() / fmaxf(msg.length(), last_msg.length());
+  if(pct >= .8) return true;
+  return false;
+}
+
 bool taMisc::ErrorCancelCheck() {
 #ifndef NO_TA_BASE
   if(taMisc::err_cancel) {
@@ -741,14 +749,50 @@ void taMisc::Warning(const String& a, const String& b, const String& c, const St
     return;
   }
 #endif
+  static int same_msg_cnt = 0;
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   String wmsg;
-  if(msg == taMisc::last_warn_msg) {
-    wmsg = ".";
+  if(taMisc_same_msg_check(msg, taMisc::last_warn_msg)) {
+    same_msg_cnt++;
+    if(same_msg_cnt > 10000) {
+      if(same_msg_cnt % 10000 != 0) {
+        return;
+      }
+      wmsg = ".." + String(same_msg_cnt);
+    }
+    else if(same_msg_cnt > 1000) {
+      if(same_msg_cnt % 1000 != 0) {
+        return;
+      }
+      wmsg = ".." + String(same_msg_cnt);
+    }
+    else if(same_msg_cnt > 100) {
+      if(same_msg_cnt % 100 != 0) {
+        return;
+      }
+      wmsg = ".." + String(same_msg_cnt);
+    }
+    else if(same_msg_cnt > 10) {
+      if(same_msg_cnt % 10 != 0) {
+        return;
+      }
+      wmsg = ".." + String(same_msg_cnt);
+    }
+    else {
+      wmsg = ".";
+    }
+    taMisc::ConsoleOutputChars(wmsg, true, false);
+    taMisc::LogEvent(wmsg);
+    return;
   }
   else {
     if(taMisc::InMainThread()) {
       taMisc::last_warn_msg = msg; // can only save to global for same-thread guys
+    }
+    if(same_msg_cnt > 0) {
+      wmsg = ".." + String(same_msg_cnt) + "\n";
+      taMisc::ConsoleOutput(wmsg, true, false);
+      same_msg_cnt = 0;
     }
 #ifndef NO_TA_BASE
     if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
@@ -884,33 +928,71 @@ bool taMisc::TestWarning_impl(const taBase* obj, bool test, const String& fun_na
   }
   return true;
 }
-#endif
+#endif // NO_TA_BASE
 
-void taMisc::Error_nogui(const String& a, const String& b, const String& c, const String& d,
-                         const String& e, const String& f, const String& g, const String& h, const String& i)
+static String taMisc_Error_impl
+(bool& repeat, const String& a, const String& b, const String& c, const String& d,
+ const String& e, const String& f, const String& g, const String& h, const String& i)
 {
-  ++err_cnt;
-  //  if (beep_on_error) cerr << '\a'; // BEL character
-  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  taMisc::err_cnt++;
+  static int same_msg_cnt = 0;
+  String msg = taMisc::SuperCat(a, b, c, d, e, f, g, h, i);
   String emsg;
-  if(msg == taMisc::last_err_msg) {
-    emsg = ".";
+  repeat = false;
+  if(taMisc_same_msg_check(msg, taMisc::last_err_msg)) {
+    repeat = true;
+    same_msg_cnt++;
+    if(same_msg_cnt > 10000) {
+      if(same_msg_cnt % 10000 != 0) {
+        return _nilString;
+      }
+      emsg = ".." + String(same_msg_cnt);
+    }
+    else if(same_msg_cnt > 1000) {
+      if(same_msg_cnt % 1000 != 0) {
+        return _nilString;
+      }
+      emsg = ".." + String(same_msg_cnt);
+    }
+    else if(same_msg_cnt > 100) {
+      if(same_msg_cnt % 100 != 0) {
+        return _nilString;
+      }
+      emsg = ".." + String(same_msg_cnt);
+    }
+    else if(same_msg_cnt > 10) {
+      if(same_msg_cnt % 10 != 0) {
+        return _nilString;
+      }
+      emsg = ".." + String(same_msg_cnt);
+    }
+    else {
+      emsg = ".";
+    }
+    taMisc::ConsoleOutputChars(emsg, true, false);
+    taMisc::LogEvent(emsg);
+    return _nilString;
   }
   else {
     if(taMisc::InMainThread()) {
       taMisc::last_err_msg = msg; // can only save to global for same-thread guys
     }
+    if(same_msg_cnt > 0) {
+      emsg = ".." + String(same_msg_cnt) + "\n";
+      taMisc::ConsoleOutput(emsg, true, false);
+      same_msg_cnt = 0;
+    }
 #ifndef NO_TA_BASE
-    if(cssMisc::cur_top) {
-      msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+    if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
+      msg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
     }
 #endif
     emsg = "***ERROR: " + msg;
   }
+  
   taMisc::LogEvent(emsg);
-  taMisc::ConsoleOutput(emsg, true, false);
 #if !defined(NO_TA_BASE)
-  if(cssMisc::cur_top) {
+  if(cssMisc::cur_top && !taMisc::is_loading) {
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
       cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running, msg);
@@ -923,6 +1005,18 @@ void taMisc::Error_nogui(const String& a, const String& b, const String& c, cons
     taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
   }
 #endif
+  return emsg;
+}
+
+void taMisc::Error_nogui
+(const String& a, const String& b, const String& c, const String& d,
+ const String& e, const String& f, const String& g, const String& h, const String& i)
+{
+  bool repeat = false;
+  String emsg = taMisc_Error_impl(repeat, a,b,c,d,e,f,g,h,i);
+  if(!repeat) {
+    taMisc::ConsoleOutput(emsg, true, false);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1010,42 +1104,16 @@ bool taMisc::StringPrompt(String& str_val, const String& prompt,
 void taMisc::Error(const String& a, const String& b, const String& c, const String& d,
   const String& e, const String& f, const String& g, const String& h, const String& i)
 {
-  ++err_cnt;
-  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
-  String emsg;
-  if(msg == taMisc::last_err_msg) {
-    emsg = ".";
+  bool repeat = false;
+  String emsg = taMisc_Error_impl(repeat, a,b,c,d,e,f,g,h,i);
+  if(repeat) {
+    return;
   }
-  else {
-    if(taMisc::InMainThread()) {
-      taMisc::last_err_msg = msg; // can only save to global for same-thread guys
-    }
-    if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
-      msg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
-    }
-    emsg = "***ERROR: " + msg;
-  }
-  taMisc::LogEvent(emsg);
   taMisc::ErrorCancelCheck();   // sets taMisc::err_cancel
-  // if (beep_on_error) cerr << '\a'; // BEL character
-
   if(!taMisc::err_cancel) {
     taMisc::ConsoleOutput(emsg, true, false);
-  }
-  if(cssMisc::cur_top && !taMisc::is_loading) {
-    if(cssMisc::cur_top->own_program) {
-      bool running = cssMisc::cur_top->state & cssProg::State_Run;
-      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running, msg);
-    }
-    cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
-    cssMisc::cur_top->exec_err_msg = msg;
-  }
-  if(!taMisc::interactive) {
-    taMisc::Info("Quitting non-interactive job on error");
-    taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
-  }
-  else {
     if (taMisc::gui_active && !taMisc::is_loading && taMisc::InMainThread()) {
+      String msg = taMisc::SuperCat(a, b, c, d, e, f, g, h, i);
       bool cancel = iDialogChoice::ErrorDialog(NULL, msg);
       taMisc::ErrorCancelSet(cancel);
     }
