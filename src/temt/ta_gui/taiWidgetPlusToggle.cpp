@@ -39,7 +39,7 @@ void taiWidgetPlusToggle::applyNow() {
 void taiWidgetPlusToggle::InitLayout() {
   inherited::InitLayout();
   but_rep = new iCheckBox(rep());
-  AddChildWidget(but_rep, 3);
+  AddChildWidget(but_rep, 1);
   if (HasFlag(flgToggleReadOnly)) {
     but_rep->setReadOnly(true);
   }

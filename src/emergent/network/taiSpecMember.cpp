@@ -106,7 +106,8 @@ taiWidget* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par
     deck->AddChildWidget(child->GetRep());
     deck->EndLayout();
 
-    rval->AddChildWidget(deck_gui);
+    rval->last_spc = 10;         // get some space there
+    rval->AddChildWidget(deck_gui, 10);
     rval->EndLayout();
     rval->but_rep->setToolTip(taiMisc::ToolTipPreProcess("click this button to override the parent settings for this parameter -- if this is not checked, then whatever parameter is set on the parent spec will be automatically inherited by this child spec"));
 
