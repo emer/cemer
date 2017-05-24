@@ -505,6 +505,7 @@ void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int th
   else {
     u->act_eq = u->act_nd = u->act = u->net = 0.0f;
   }
+  u->da = 0.0f;
 }
 
 void VTAUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

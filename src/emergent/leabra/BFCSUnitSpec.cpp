@@ -164,7 +164,8 @@ void BFCSUnitSpec::Send_ACh(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
 }
 
 void BFCSUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  u->act = u->misc_1;
+  u->act_eq = u->act_nd = u->act = u->net = u->misc_1;
+  u->da = 0.0f;
 }
 
 void BFCSUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
