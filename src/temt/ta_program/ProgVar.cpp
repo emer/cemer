@@ -464,7 +464,7 @@ MemberDef* ProgVar::GetValMemberDef() const {
   else if(var_type == T_Object)
     return TA_ProgVar.members.FindName("object_val");
   else if(var_type == T_HardEnum)
-    return TA_ProgVar.members.FindName("hard_enum_type");
+    return TA_ProgVar.members.FindName("int_val");
   else if(var_type == T_DynEnum)
     return TA_ProgVar.members.FindName("dyn_enum_val");
   return NULL;
@@ -513,6 +513,13 @@ void ProgVar::SetHardEnum(TypeDef* enum_type, int val) {
   var_type = T_HardEnum;
   int_val = val;
   hard_enum_type = enum_type;
+}
+
+void ProgVar::SetHardEnumName(TypeDef* enum_type, const String& str_val) {
+  var_type = T_HardEnum;
+  hard_enum_type = enum_type;
+  // this version deals with BITS properly:
+  hard_enum_type->SetValStr_enum(str_val, (void*)&int_val, hard_enum_type);
 }
 
 void ProgVar::SetDynEnum(int val) {

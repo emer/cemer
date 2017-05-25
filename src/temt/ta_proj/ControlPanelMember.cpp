@@ -559,20 +559,28 @@ void ControlPanelMember::SavedToProgVar() {
     data.saved.dyn_enum_val.CopyFrom(den);
     data.saved.dyn_enum_val.SetNameVal(data.saved_value);
   }
+  else if(mbr_td->IsEnum()) {
+    data.saved.SetHardEnumName(mbr_td, data.saved_value);
+  }
   else if(mbr_td->IsBool()) {
     data.saved.SetBool(data.saved_value.toBool());
   }
   else if(mbr_td->IsInt()) {
-    data.saved.SetInt(data.saved_value.toInt());
+    if(base->InheritsFrom(&TA_ProgVar)) {
+      ProgVar* pv = (ProgVar*)base;
+      if(pv->var_type == ProgVar::T_HardEnum) {
+        data.saved.SetHardEnumName(pv->hard_enum_type, data.saved_value);
+      }
+      else {
+        data.saved.SetInt(data.saved_value.toInt());
+      }
+    }
+    else {
+      data.saved.SetInt(data.saved_value.toInt());
+    }
   }
   else if(mbr_td->IsFloat()) {
     data.saved.SetReal(data.saved_value.toDouble());
-  }
-  else if(mbr_td->IsEnum()) {
-    String enum_tp_nm;
-    data.saved.SetHardEnum(mbr_td, mbr_td->GetEnumVal(data.saved_value, enum_tp_nm));
-    // this is required for full bits processing:
-    mbr_td->SetValStr_enum(data.saved_value, (void*)&(data.saved.int_val), mbr_td);
   }
   else if(mbr_td->IsString()) {
     data.saved.SetString(data.saved_value);

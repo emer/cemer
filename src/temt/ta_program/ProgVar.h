@@ -122,6 +122,8 @@ public:
   // #CAT_ProgVar #DROP1 set variable type to OBJECT and set object_type to given value
   virtual void  SetHardEnum(TypeDef* enum_type, int val);
   // #CAT_ProgVar set variable type to HARD_ENUM and set value
+  virtual void  SetHardEnumName(TypeDef* enum_type, const String& str_val);
+  // #CAT_ProgVar set variable type to HARD_ENUM and set value from a string enum label / name
   virtual void  SetDynEnum(int val);
   // #CAT_ProgVar set variable type to DYN_ENUM and set value
   virtual void  SetDynEnumName(const String& val);
