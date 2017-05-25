@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10743
+// ta_Dump File v3.0 -- code v8.0.9.0 rev10784
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -16839,6 +16839,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraLayerSpec;
@@ -16849,6 +16850,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ kwta;lay_inhib;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraLayerSpec;
@@ -16893,6 +16895,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraUnitSpec;
@@ -16939,6 +16942,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=LeabraConSpec;
@@ -16949,6 +16953,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraBiasSpec;
@@ -16974,12 +16979,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dynlr {dwt_norm=NO_NORM: norm_tau=100: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=3: norm_dt=0.01: norm_dt_c=0.99: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
+       dynlr {dwt_norm=NO_NORM: norm_tau=1000: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=0.01: norm_dt=0.001: norm_dt_c=0.999: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
        wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @[1] {
@@ -16988,6 +16993,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        used_status=USED;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;       };
+       saved{        };
        children {
 	name="children";
 	el_typ=LeabraConSpec;
@@ -17013,12 +17019,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: soft_bound=1: };
-       dynlr {dwt_norm=NO_NORM: norm_tau=100: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=3: norm_dt=0.01: norm_dt_c=0.99: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
+       dynlr {dwt_norm=NO_NORM: norm_tau=1000: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=0.01: norm_dt=0.001: norm_dt_c=0.999: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
        wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
-       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
+       margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
@@ -17041,12 +17047,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: soft_bound=1: };
-     dynlr {dwt_norm=NO_NORM: norm_tau=100: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=3: norm_dt=0.01: norm_dt_c=0.99: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
+     dynlr {dwt_norm=NO_NORM: norm_tau=1000: norm_min=0.001: moment=NO_MOMENT: m_tau=10: s_tau=50: l_tau=2: xx1=1: gain=2: lrate_comp=0.01: norm_dt=0.001: norm_dt_c=0.999: m_dt=0.1: m_dt_c=0.9: s_dt=0.02: l_dt=0.5: };
      wt_bal {on=1: hi_thr=0.4: hi_gain=4: lo_thr=0.2: lo_gain=4: };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
-     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.001: };
+     margin {lrate_mod=0: stable_lrate=0.5: sign_dwt=0: sign_lrn=0.5: };
     };
     FullPrjnSpec @[3] {
      name="FullPrjnSpec_0";
@@ -17054,6 +17060,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      used_status=USED;
      desc=;
      unique{      };
+     saved{      };
      children {
       name="children";
       el_typ=FullPrjnSpec;
@@ -17331,7 +17338,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
-   times {quarter=25: gate_cyc=18: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: current_cycle_gate_cycle=0: };
+   times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
    net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };
    deep {on=0: ctxt=0: raw_net=0: mod_net=0: raw_qtr=0: };
