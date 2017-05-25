@@ -210,8 +210,11 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   taVector2i snd_layer_grp_geom = snd_layer->gp_geom;
   DataCol* dt_trg_rf_values_col;
   DataCol* dt_trg_rf_count_col;
+  
+  
   // column of calculated image values - get the size of the image from the previously generated rf data table
-  DataCol* dt_snd_rf_values_col = dt_snd_rf->GetColData("values");
+  // ** use the values that are multiplied by the actual activations that were calculated for the specific image
+  DataCol* dt_snd_rf_values_col = dt_snd_rf->GetColData("values_x_act");
   taVector2i image_size;
   dt_snd_rf_values_col->Get2DCellGeom(image_size.x, image_size.y);
   dt_trg_rf_values_col = dt_trg_rf->FindMakeColMatrix("values", VT_FLOAT, 2, image_size.x, image_size.y);
