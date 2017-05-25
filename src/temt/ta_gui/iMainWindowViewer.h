@@ -224,8 +224,13 @@ public:
   iAction*            windowMinimizeAction;
   iAction*            windowZoomAction;
   
+  QPointer<iDialogSearch>       search_dialog;
+  QPointer<iTreeView>           cur_tree_view;  // current tree viewer (set in focus event on iTreeView)
+  QPointer<iDialogKeyBindings>  key_bindings_dialog;
+
   NameVar_Array       method_key_bindings; // list of methods that can be called on selections and which are bound to QKeySequences; each name/value pair is the method name and int equivalent of BoundAction enum
-  QKeySequence        GetMethodKeySequence(String method_name); // checks method_key_bindings - empty string if not found
+
+    QKeySequence        GetMethodKeySequence(String method_name); // checks method_key_bindings - empty string if not found
 
   QObject*             clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
 
@@ -248,9 +253,6 @@ public:
 #ifndef __MAKETA__
   virtual void          AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea);
-  QPointer<iDialogSearch>       search_dialog;
-  QPointer<iTreeView>           cur_tree_view;  // current tree viewer (set in focus event on iTreeView)
-  QPointer<iDialogKeyBindings>  key_bindings_dialog;
 
   void                  Find(taiSigLink* root, const String& find_str="");
   // common find called by main menu, and context menu finds

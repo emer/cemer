@@ -19,6 +19,7 @@
 #include <iAction>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
+#include <QTimer>
 
 taTypeDef_Of(ToolBoxDockViewer);
 
@@ -78,7 +79,8 @@ void iDockViewer::showEvent(QShowEvent* e) {
   if(taMisc::is_post_loading) {
     DockViewer* vw = viewer();
     if(vw && !vw->visible) {
-      hide();                   // now hide me!
+      QTimer::singleShot(500, this, SLOT(hide()));
+      // hide();                   // now hide me!
       return;
     }
   }
@@ -97,7 +99,8 @@ void iDockViewer::Showing(bool showing) {
   if(taMisc::is_post_loading && showing && vw->InheritsFrom(&TA_ToolBoxDockViewer)) {
     if(taMisc::viewer_options & taMisc::VO_NO_TOOLBOX) {
       me->setChecked(false);
-      hide();
+      QTimer::singleShot(500, this, SLOT(hide()));
+      // hide();
       return;
     }
   }
