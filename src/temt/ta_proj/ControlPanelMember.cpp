@@ -650,7 +650,7 @@ bool ControlPanelMember::RecordValue() {
 String ControlPanelMember::RecordValueString(bool use_search_vals) {
   String rval;
   if(use_search_vals && IsSearch()) {
-    rval = data.next_val;
+    rval = (String)data.next_val;
   }
   else if(IsParamSet()) {
     rval = data.saved_value;
