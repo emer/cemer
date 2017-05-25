@@ -413,6 +413,11 @@ String ControlPanelMember::CurValAsString() const {
     if(nmval.nonempty())
       return nmval;             // special case for program enum -- use string
   }
+  else if (base && (base->InheritsFrom(&TA_ProgVar)) && (mbr->name == "int_val")) {
+    // could be enum or int..
+    ProgVar* pv = (ProgVar*)base;
+    return pv->GetStringVal();
+  }
   return mbr->GetValStr(base, TypeDef::SC_VALUE, true);
 }
 
@@ -423,9 +428,14 @@ bool ControlPanelMember::SetCurVal(const Variant& cur_val) {
     return false;
   if(TestError(!data.is_single, "SetCurVal", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label))
     return false;
-  if (base && (base->GetTypeDef()->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value") &&
+  if (base && (base->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value") &&
       (cur_val.isStringType())) {
     ((DynEnum*)base)->SetNameVal(cur_val.toString());
+  }
+  else if (base && (base->InheritsFrom(&TA_ProgVar)) && (mbr->name == "int_val")) {
+    // could be enum or int..
+    ProgVar* pv = (ProgVar*)base;
+    pv->SetVar(cur_val); // let var sort it out..
   }
   else {
     mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
@@ -442,8 +452,13 @@ bool ControlPanelMember::SetCurValFmString(const String& cur_val, bool warn_no_m
     return false;
   // if(TestError(!data.is_single, "SetCurValFmString", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label, "in panel:", panel->name))
   //   return false;
-  if (base && (base->GetTypeDef()->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value")) {
+  if (base && (base->InheritsFrom(&TA_DynEnum)) && (mbr->name == "value")) {
     ((DynEnum*)base)->SetNameVal(cur_val);
+  }
+  else if (base && (base->InheritsFrom(&TA_ProgVar)) && (mbr->name == "int_val")) {
+    // could be enum or int..
+    ProgVar* pv = (ProgVar*)base;
+    pv->SetValFromString(cur_val); // let var sort it out..
   }
   else {
     mbr->SetValStr(cur_val, base);
