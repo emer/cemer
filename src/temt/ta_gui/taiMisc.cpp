@@ -986,6 +986,8 @@ void taiMisc::SetGroupDefaultExpand(const String& group, int depth) {
 int taiMisc::GetEditorDefaultExpand(const String& group) {
   if (group == "objs")
     return taMisc::expand_defaults_editor.objs;
+  else if (group == "objs_vars")
+    return taMisc::expand_defaults_editor.objs_vars;
   else if (group == "types")
     return taMisc::expand_defaults_editor.types;
   else if (group == "args")
@@ -1007,6 +1009,8 @@ int taiMisc::GetEditorDefaultExpand(const String& group) {
 int taiMisc::GetNavigatorDefaultExpand(const String& group) {
   if (group == "objs")
     return taMisc::expand_defaults_navigator.objs;
+  else if (group == "objs_vars")
+    return taMisc::expand_defaults_navigator.objs_vars;
   else if (group == "types")
     return taMisc::expand_defaults_navigator.types;
   else if (group == "args")
