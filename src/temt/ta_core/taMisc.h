@@ -103,6 +103,7 @@ class TA_API taExpandDefaultsEditor {
   // #EDIT_INLINE defaults for expanding program groups in program editor
 public:
   int  objs;  // #MIN_0
+  int  objs_vars;  // #MIN_0
   int  types;  // #MIN_0
   int  args;  // #MIN_0 #MAX_1
   int  vars;  // #MIN_0 #MAX_1
@@ -120,6 +121,7 @@ class TA_API taExpandDefaultsNavigator {
   // #EDIT_INLINE defaults for expanding program groups in the navigator panel
 public:
   int  objs;  // #MIN_0
+  int  objs_vars;  // #MIN_0
   int  types;  // #MIN_0
   int  args;  // #MIN_0 #MAX_1
   int  vars;  // #MIN_0 #MAX_1

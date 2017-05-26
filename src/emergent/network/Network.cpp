@@ -3178,24 +3178,16 @@ void Network::LayerPos_RelPos() {
       loop_check.Link(cur);
       cur = cur->pos_rel.other;
     }
-    l->RecomputeGeometry();     // does lay pos update
+    l->UpdateGeometry();
   }
   bool lay_moved = false;
   int n_iters = 0;
-  PosVector3i new_pos;
-  PosVector2i new_pos2d;
   do {
     lay_moved = false;
     n_iters++;
     FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-      if(!l->pos_rel.IsRel()) {
-        continue;
-      }
-      l->pos_rel.ComputePos3D(new_pos, l);
-      l->pos_rel.ComputePos2D(new_pos2d, l);
-      new_pos.UpdateAfterEdit();
-      new_pos2d.UpdateAfterEdit();
-      if(new_pos != l->pos_abs || new_pos2d != l->pos2d_abs) {
+      bool updt_pos = l->UpdatePosition();
+      if(updt_pos) {
         lay_moved = true;
         l->SigEmitUpdated();
       }
@@ -3203,7 +3195,7 @@ void Network::LayerPos_RelPos() {
   }
   while(lay_moved && n_iters < 5);
   
-  UpdateLayerGroupGeom();          // must do that in case something moves
+  UpdateLayerGroupGeom();          // one last time.. has likely been updated already but..
 }
 
 

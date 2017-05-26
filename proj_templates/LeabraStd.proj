@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.9.0 rev10784
+// ta_Dump File v3.0 -- code v8.0.10.0 rev10791
 LeabraProject .projects[0] { 
  Doc_Group @.docs = [0] {
  };
@@ -220,6 +220,9 @@ LeabraProject .projects[0] {
    ProgObjList @.objs = [0] {
    };
 
+   ProgVar_List @.objs_vars = [0] {
+   };
+
    ProgType_List @.types = [0] {
    };
 
@@ -379,6 +382,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -458,6 +464,9 @@ LeabraProject .projects[0] {
       };
      };
      RndSeed @[1] { };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [1] {
@@ -644,6 +653,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -731,6 +743,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -808,6 +823,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -883,6 +901,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -921,6 +942,9 @@ LeabraProject .projects[0] {
        LayerWriterEl @[2] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1006,6 +1030,9 @@ LeabraProject .projects[0] {
        NetMonItem @[25] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1105,6 +1132,9 @@ LeabraProject .projects[0] {
      };
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1182,6 +1212,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1247,6 +1280,9 @@ LeabraProject .projects[0] {
     };
 
     ProgObjList @.objs = [0] {
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1328,6 +1364,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1405,6 +1444,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1480,6 +1522,9 @@ LeabraProject .projects[0] {
     ProgObjList @.objs = [0] {
     };
 
+    ProgVar_List @.objs_vars = [0] {
+    };
+
     ProgType_List @.types = [0] {
     };
 
@@ -1518,6 +1563,9 @@ LeabraProject .projects[0] {
        LayerWriterEl @[2] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1597,6 +1645,9 @@ LeabraProject .projects[0] {
        NetMonItem @[19] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -1683,6 +1734,9 @@ LeabraProject .projects[0] {
        NetMonItem @[18] { };
       };
      };
+    };
+
+    ProgVar_List @.objs_vars = [0] {
     };
 
     ProgType_List @.types = [0] {
@@ -4126,6 +4180,11 @@ LeabraProject .projects[0] {
     el_typ=taNBase;
     el_def=0;
    };
+   objs_vars {
+    name="objs_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
    types {
     name="types";
     el_typ=DynEnumType;
@@ -5141,6 +5200,11 @@ LeabraProject .projects[0] {
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -5506,6 +5570,11 @@ LeabraProject .projects[0] {
       name="rnd_seed";
       rnd_seed=1208639044;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -6580,6 +6649,11 @@ mw.config.set({\"wgBackendResponseTime\":155});
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -7008,6 +7082,11 @@ mw.config.set({\"wgBackendResponseTime\":155});
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -7339,6 +7418,11 @@ this program can be extended to do arbitrary things to generate data and apply i
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -7681,6 +7765,11 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -7840,6 +7929,11 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -8988,6 +9082,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=$.data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -10305,6 +10404,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       rmv_orphan_cols=1;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -10732,6 +10836,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -11084,6 +11193,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -11489,6 +11603,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -11820,6 +11939,11 @@ this program can be extended to do arbitrary things to generate data and apply i
     objs {
      name="objs";
      el_typ=taNBase;
+     el_def=0;
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
      el_def=0;
     };
     types {
@@ -12162,6 +12286,11 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_typ=taNBase;
      el_def=0;
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -12321,6 +12450,11 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -13266,6 +13400,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       rmv_orphan_cols=1;
      };
     };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
     types {
      name="types";
      el_typ=DynEnumType;
@@ -14207,6 +14346,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=.data.gp[1][3]$$;
       rmv_orphan_cols=1;
      };
+    };
+    objs_vars {
+     name="objs_vars";
+     el_typ=ProgVar;
+     el_def=0;
     };
     types {
      name="types";
@@ -17086,7 +17230,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     pos {x=0: y=0: z=0: };
     pos2d {x=0: y=0: };
     max_disp_size {x=5: y=5: z=3: };
-    max_disp_size2d {x=5: y=18: };
+    max_disp_size2d {x=5: y=9: };
     LeabraLayer @[0] {
      name="Input";
      desc=;
@@ -17149,11 +17293,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      flags=0;
      layer_type=HIDDEN;
-     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
+     pos_rel {rel=ABOVE: other=.networks[0].layers[0]$$: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
-     pos2d {x=0: y=13: };
-     pos2d_abs {x=0: y=13: };
+     pos2d {x=0: y=2: };
+     pos2d_abs {x=0: y=2: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -17174,7 +17318,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.networks[0].layers[0]$$;
+       from=$.networks[0].layers[0]$;
        spec {type=FullPrjnSpec: spec=.networks[0].specs[3]$$: };
        con_type=LeabraCon;
        con_spec {type=LeabraConSpec: spec=$.networks[0].specs[2]$: };
@@ -17242,11 +17386,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      flags=0;
      layer_type=TARGET;
-     pos_rel {rel=ABS_POS: other=NULL: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
+     pos_rel {rel=ABOVE: other=.networks[0].layers[1]$$: x_align=LEFT: x_off=0: y_align=FRONT: y_off=0: space=2: };
      pos {x=0: y=0: z=2: };
      pos_abs {x=0: y=0: z=2: };
-     pos2d {x=0: y=6: };
-     pos2d_abs {x=0: y=6: };
+     pos2d {x=0: y=4: };
+     pos2d_abs {x=0: y=4: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -17267,7 +17411,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.networks[0].layers[1]$$;
+       from=$.networks[0].layers[1]$;
        spec {type=FullPrjnSpec: spec=$.networks[0].specs[3]$: };
        con_type=LeabraCon;
        con_spec {type=LeabraConSpec: spec=$.networks[0].specs[2]$: };
@@ -17337,7 +17481,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    n_cons=1875;
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
-   max_disp_size2d {x=5: y=18: };
+   max_disp_size2d {x=5: y=9: };
    times {quarter=25: deep_cyc=5: time_inc=0.001: wt_bal_int=10: minus=75: plus=25: total_cycles=100: thal_gate_cycle=-2: };
    lstats {trg_max_act_crit=0.5: off_errs=1: on_errs=1: agg_unlearnable=0: wt_bal=0: };
    net_misc {spike=0: deep=0: bias_learn=0: trial_decay=1: diff_scale_p=0: diff_scale_q1=0: wt_bal=1: lay_gp_inhib=0: inhib_cons=0: };

@@ -222,6 +222,7 @@ taExpandDefaultsProject taMisc::expand_defaults_project;
 
 taExpandDefaultsEditor::taExpandDefaultsEditor() {
   objs = 1;
+  objs_vars = 0;
   types = 1;
   args = 1;
   vars = 1;
@@ -234,6 +235,7 @@ taExpandDefaultsEditor taMisc::expand_defaults_editor;
 
 taExpandDefaultsNavigator::taExpandDefaultsNavigator() {
   objs = 1;
+  objs_vars = 0;
   types = 0;
   args = 0;
   vars = 0;

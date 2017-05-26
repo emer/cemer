@@ -454,8 +454,10 @@ public:
   // #IGNORE update the recv_idx, send_idx guys for active projections, and count number of prjns of each type
   virtual void  BuildUnitsFlatList(Network* net);
   // #IGNORE build flat list of units -- layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
-  virtual void  RecomputeGeometry();
-  // #CAT_Structure recompute the layer's geometry specifcations
+  virtual void  UpdateGeometry();
+  // #CAT_Structure recompute the layer's full set of size values based on un_geom, gp_geom, gp_space settings
+  virtual bool  UpdatePosition();
+  // #CAT_Structure recompute the layer's positioning in 3D space (based on relative positioning) -- returns true if any changes
   virtual void  LayoutUnits();
   // #CAT_Structure layout the units according to layer geometry
   virtual void  ConnectFrom(Layer* lay);

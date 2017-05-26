@@ -27,6 +27,7 @@
 #include <T3Panel>
 #include <taSvg>
 
+#include <taMisc>
 #include <tabMisc>
 
 #ifdef TA_QT3D
@@ -108,6 +109,7 @@ void LayerView::SigRecvUpdateAfterEdit_impl() {
   Layer* lay = layer(); //cache
   if(lay->isDestroying()) return;
 
+  // taMisc::Info("lv uae:", lay->name);
   // always update kids!!
   DoActionChildren_impl(RENDER_IMPL);
 

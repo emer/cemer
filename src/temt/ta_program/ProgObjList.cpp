@@ -53,7 +53,9 @@ void ProgObjList::GetVarsForObjs() {
     taBase* obj = FastEl(i);
     String nm = obj->GetName();
     nm = nm.CamelToSnake();
-    ProgVar* var = prog->vars.FindObjVar(obj);
+
+    // first look at objs_vars
+    ProgVar* var = prog->objs_vars.FindObjVar(obj);
     if(var) {
       var->objs_ptr = true;   // make sure
       if(var->object_type != obj->GetTypeDef() || var->name != nm) {
@@ -61,19 +63,48 @@ void ProgObjList::GetVarsForObjs() {
         var->SetName(nm);
         var->UpdateAfterEdit(); // trigger more updating..
       }
+      continue;
     }
-    else {
-      var = (ProgVar*)prog->vars.New(1, &TA_ProgVar);
-      var->name = nm;
-      var->var_type = ProgVar::T_Object;
-      var->object_val = obj;
-      var->objs_ptr = true;
-      var->object_type = obj->GetTypeDef();
-      var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
-      var->UpdateAfterEdit();
+
+    // look for pre-8.1.0 vars in regular vars if not found in objs_vars
+    var = prog->vars.FindObjVar(obj);
+    if(var) {
+      prog->objs_vars.Transfer(var); // grab
+      var->objs_ptr = true;   // make sure
+      if(var->object_type != obj->GetTypeDef() || var->name != nm) {
+        var->object_type = obj->GetTypeDef();
+        var->SetName(nm);
+        var->UpdateAfterEdit(); // trigger more updating..
+      }
+      continue;
+    }
+    
+    var = (ProgVar*)prog->objs_vars.New(1, &TA_ProgVar);
+    var->name = nm;
+    var->var_type = ProgVar::T_Object;
+    var->object_val = obj;
+    var->objs_ptr = true;
+    var->object_type = obj->GetTypeDef();
+    var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
+    var->UpdateAfterEdit();
+  }
+  
+  // now cleanup any orphaned -- objs vars
+  for(int i = prog->objs_vars.size-1; i >= 0; --i) {
+    ProgVar* var = prog->objs_vars[i];
+    if(!(var->objs_ptr && var->var_type == ProgVar::T_Object)) continue;
+    int obj_idx = FindEl(var->object_val);
+    if(obj_idx < 0) {
+      if(is_transfer) {           // flag on taPtrList_impl -- means transferring list not deleting items
+        var->objs_ptr = false;
+      }
+      else {
+        prog->objs_vars.RemoveIdx(i); // get rid of it -- not clear if this ever happens...
+      }
     }
   }
-  // now cleanup any orphaned 
+
+  // now cleanup any orphaned -- vars (pre-8.1.0)
   for(int i = prog->vars.size-1; i >= 0; --i) {
     ProgVar* var = prog->vars[i];
     if(!(var->objs_ptr && var->var_type == ProgVar::T_Object)) continue;

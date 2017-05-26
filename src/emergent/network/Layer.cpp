@@ -353,10 +353,13 @@ void Layer::UpdateAfterEdit_impl() {
       if(unit_names.dims() > 0)
         SetLayerFlag(SAVE_UNIT_NAMES);
     }
-    RecomputeGeometry();
+    UpdateGeometry();
+    UpdatePosition();
   }
   else {                        // not loading
-    RecomputeGeometry();
+    // taMisc::DebugInfo("lay uae:", name);
+    UpdateGeometry();
+    UpdatePosition();
     if(own_net) {
       own_net->LayerPos_RelPos();
     }
@@ -557,7 +560,7 @@ void Layer::UpdateLayerGroupGeom() {
   }
 }
 
-void Layer::RecomputeGeometry() {
+void Layer::UpdateGeometry() {
   un_geom.SetGtEq(1);           // can't go < 1
   gp_geom.SetGtEq(1);
   un_geom.UpdateAfterEdit_NoGui();
@@ -578,7 +581,10 @@ void Layer::RecomputeGeometry() {
   }
   scaled_disp_geom.x = (int)ceil((float)disp_geom.x * disp_scale);
   scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
+}
 
+bool Layer::UpdatePosition() {
+  bool lay_moved = false;
   if(pos_rel.IsRel()) {
     if(TestWarning((pos_rel.other == this), "RecomputeGeom",
                    "getting relative position from self -- not good! cannot be any loops in the relationship connectivity! I cut the connection")) {
@@ -590,14 +596,21 @@ void Layer::RecomputeGeometry() {
       pos_rel.other = NULL;
     }
     else {
-      // go ahead and update!
-      pos_rel.ComputePos3D(pos_abs, this);
-      pos_rel.ComputePos2D(pos2d_abs, this);
-      pos_abs.UpdateAfterEdit(); // update pos status
-      pos2d_abs.UpdateAfterEdit(); // update pos status
+      PosVector3i new_pos;
+      PosVector2i new_pos2d;
+      pos_rel.ComputePos3D(new_pos, this);
+      pos_rel.ComputePos2D(new_pos2d, this);
+      new_pos.UpdateAfterEdit();
+      new_pos2d.UpdateAfterEdit();
+      if(new_pos != pos_abs || new_pos2d != pos2d_abs) {
+        lay_moved = true;
+        pos_abs = new_pos;
+        pos2d_abs = new_pos2d;
+      }
     }
   }
 
+  // always do these updates just for kicks..
   taVector3i rp = 0;
   AddRelPos(rp);
   taVector2i rp2 = 0;
@@ -605,7 +618,10 @@ void Layer::RecomputeGeometry() {
   // always update pos based on pos_abs
   pos = pos_abs - rp;         // subtract relative positions
   pos2d = pos2d_abs - rp2;
-  UpdateLayerGroupGeom();
+  if(lay_moved) {
+    UpdateLayerGroupGeom();
+  }
+  return lay_moved;
 }
 
 void Layer::PositionUsRelativeToDropped(Layer* lay, LayerRelPos::RelPos rel) {
@@ -761,7 +777,7 @@ void Layer::PositionRightOf(Layer* lay, int space) {
   pos_rel.other = lay;
   pos_rel.rel = LayerRelPos::RIGHT_OF;
   pos_rel.space = space;
-  lay->RecomputeGeometry();
+  lay->UpdatePosition();
 }
 
 void Layer::PositionBehind(Layer* lay, int space) {
@@ -772,7 +788,7 @@ void Layer::PositionBehind(Layer* lay, int space) {
   pos_rel.other = lay;
   pos_rel.rel = LayerRelPos::BEHIND;
   pos_rel.space = space;
-  lay->RecomputeGeometry();
+  lay->UpdatePosition();
 }
 
 void Layer::PositionAbove(Layer* lay, int space) {
@@ -783,12 +799,12 @@ void Layer::PositionAbove(Layer* lay, int space) {
   pos_rel.other = lay;
   pos_rel.rel = LayerRelPos::ABOVE;
   pos_rel.space = space;
-  lay->RecomputeGeometry();
+  lay->UpdatePosition();
 }
 
 void Layer::LayoutUnits() {
   StructUpdate(true);
-  RecomputeGeometry();
+  UpdateGeometry();             // triple sure..
   units.pos = 0;                // our base guy must always be 0..
   if(unit_groups) {
     taVector2i eff_un_sz = un_geom + gp_spc;
@@ -864,7 +880,8 @@ void Layer::CheckSpecs() {
 void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
-  RecomputeGeometry();
+  UpdateGeometry();
+  UpdatePosition();
   UpdatePrjnIdxs();
   units_lesioned = false;
   bool units_changed = false;

@@ -143,6 +143,8 @@ public:
   // #CONDSHOW_OFF_flags:NO_STOP_STEP #BROWSER_EDIT_LOOKUP optional condition for when the default stop / step check should be executed (this is automatically inserted at the end of the program) -- only stop / step when this expression is true -- allows e.g., longer time scales and specific conditions (e.g., errors) to be used for stopping
   ProgObjList           objs;
   // #TREEFILT_ProgGp create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable
+  ProgVar_List          objs_vars;
+  // variables automatically maintained in one-to-one correspondence with the objs objects -- these are how the program accesses the objs objects -- they have lower-case versions of the names (snake_case) instead of CamelCase, which is naming convention for variables
   ProgType_List         types;
   // user-defined types for this program (new enumerated types and class objects)
   ProgVar_List          args;
@@ -242,8 +244,8 @@ public:
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
   virtual void  StepCss();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run one step of underlying css script code, from current point of execution
-  virtual void RunFunction();
-  // #BUTTON display chooser of no arg functions
+  virtual void  RunFunction();
+  // #BUTTON #NO_BUSY display chooser of no arg functions for user to run
   virtual void  RunNoArgFunction(Function* fun);
   // Directly run given function -- function must not take any args! -- will compile / init program if not already done yet
 

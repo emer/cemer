@@ -85,6 +85,7 @@ ProgVar* ForLoop::GetLoopVar() {
     if(!vrf->ptr()) continue;   // shouldn't happen..
     // todo: could do some things here to test but for now just take the first guy!
     rval = vrf->ptr();
+    break;                      // get the first one!
   }
   return rval;
 }

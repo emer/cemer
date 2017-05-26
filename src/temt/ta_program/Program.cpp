@@ -164,6 +164,7 @@ void Program::CutLinks() {
   vars.CutLinks();
   args.CutLinks();
   types.CutLinks();
+  objs_vars.CutLinks();
   objs.CutLinks();
   prog_gp = NULL;
   inherited::CutLinks();
@@ -184,6 +185,7 @@ void Program::Reset() {
   vars.Reset();
   args.Reset();
   types.Reset();
+  objs_vars.Reset();
   objs.Reset();
 }
 
@@ -199,6 +201,7 @@ void Program::Copy_(const Program& cp) {
   email = cp.email;
   flags = cp.flags;
   objs = cp.objs;
+  objs_vars = cp.objs_vars;
   types = cp.types;
   args = cp.args;
   vars = cp.vars;
@@ -271,6 +274,7 @@ void Program::SigEmitUpdateAllMembers() {
   types.SigEmitUpdated();
   args.SigEmitUpdated();
   vars.SigEmitUpdated();
+  objs_vars.SigEmitUpdated();
   functions.SigEmitUpdated();
   init_code.SigEmitUpdated();
   prog_code.SigEmitUpdated();
@@ -297,6 +301,7 @@ bool Program::CheckConfig_impl(bool quiet) {
 void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   objs.CheckConfig(quiet, rval);
+  objs_vars.CheckConfig(quiet, rval);
   types.CheckConfig(quiet, rval);
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
@@ -527,10 +532,11 @@ void Program::Init() {
   
   if(ret_val == RV_OK) {
     // check args and vars before running any code, to get NULL_CHECK etc
+    bool chkobjsvars = objs_vars.CheckConfig(false);
     bool chkargs = args.CheckConfig(false);
     bool chkvars = vars.CheckConfig(false);
     
-    if(chkargs && chkvars) {
+    if(chkargs && chkvars && chkobjsvars) {
       SetAllBreakpoints();          // reinstate all active breakpoints
       bool did_struct_updt = false;
       if(!HasProgFlag(OBJS_UPDT_GUI)) {
@@ -1038,6 +1044,7 @@ void Program::ListCallers() {
 
 void Program::RenameVarsToObj() {
   StructUpdate(true);
+  objs_vars.RenameToObj();      // should be automatic
   args.RenameToObj();
   vars.RenameToObj();
   StructUpdate(false);
@@ -1191,6 +1198,8 @@ ProgVar* Program::FindVarName(const String& var_nm) const {
   ProgVar* sv = args.FindName(var_nm);
   if(sv) return sv;
   sv = vars.FindName(var_nm);
+  if(sv) return sv;
+  sv = objs_vars.FindName(var_nm);
   if(sv) return sv;
   sv = init_code.FindVarName(var_nm);
   if(sv) return sv;
@@ -1701,6 +1710,10 @@ const String Program::scriptString() {
   AddLine(this, "/* globals added to hardvars:", ProgLine::COMMENT);
   AddLine(this, "Program::RunState run_state; // our program's run state", ProgLine::COMMENT);
   AddLine(this, "int ret_val;", ProgLine::COMMENT);
+  if(objs_vars.size > 0) {
+    AddLine(this, "// objs_vars: global variables for objs objects", ProgLine::COMMENT);
+    objs_vars.GenCss_ProgVars(this);
+  }
   if(args.size > 0) {
     AddLine(this, "// args: global script parameters (arguments)", ProgLine::COMMENT);
     args.GenCss_ProgVars(this);
@@ -1818,6 +1831,10 @@ const String Program::ProgramListing() {
   m_listingCache = "// ";
   m_listingCache += GetName();
   
+  if (objs_vars.size > 0) {
+    m_listingCache += "\n// objs_vars: global variables for accessing objs objects\n";
+    m_listingCache += objs_vars.GenListing(0);
+  }
   if (types.size > 0) {
     m_listingCache += "\n// types: new types defined for this program\n";
     m_listingCache += types.GenListing(0);
@@ -1865,6 +1882,12 @@ void  Program::UpdateProgVars() {
   //   script->prog_vars.Push(el);
   
   // add new in the program
+  for (int i = 0; i < objs_vars.size; ++i) {
+    ProgVar* sv = objs_vars.FastEl(i);
+    cssEl* el = sv->NewCssEl();
+    script->prog_vars.Push(el); //refs
+    sv->css_idx = script->prog_vars.size-1; // record location
+  }
   for (int i = 0; i < args.size; ++i) {
     ProgVar* sv = args.FastEl(i);
     cssEl* el = sv->NewCssEl();
