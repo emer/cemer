@@ -23,6 +23,8 @@
 #include <taBase_List>
 #include <ProgVarRef_List>
 #include <String_Array>
+#include <taList_impl>
+#include <taGroup_impl>
 #include <EnumSpace>
 #include <MemberSpace>
 #include <MethodSpace>
@@ -99,6 +101,8 @@ public:
   static taBase_List            completion_dynenum_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_function_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static taBase_List            completion_program_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_list_items_list;  // #READ_ONLY #HIDDEN #NO_SAVE
+  static taBase_List            completion_group_items_list;  // #READ_ONLY #HIDDEN #NO_SAVE
   static MemberSpace            completion_member_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static MethodSpace            completion_method_list; // #READ_ONLY #HIDDEN #NO_SAVE
   static EnumSpace              completion_enum_list;   // #READ_ONLY #HIDDEN #NO_SAVE
@@ -206,6 +210,8 @@ public:
   static String         FinishCompletion(const String& cur_completion , int& new_pos);
   static void           GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* scope = NULL,
                                         TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
+  static void           GetListItems(taList_impl* list, taBase_List* tokens);
+  static void           GetGroupItems(taGroup_impl* groups, taBase_List* tokens);
   static void           GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope = NULL,
                                        TypeDef* scope_type = NULL, ProgVar::VarType = ProgVar::T_UnDef);
   static void           GetGlobalVars(taBase_List* tokens, taBase* scope = NULL,

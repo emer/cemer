@@ -61,6 +61,8 @@ taBase_List                 ProgExprBase::completion_progvar_local_list;
 taBase_List                 ProgExprBase::completion_dynenum_list;
 taBase_List                 ProgExprBase::completion_function_list;
 taBase_List                 ProgExprBase::completion_program_list;
+taBase_List                 ProgExprBase::completion_list_items_list;
+taBase_List                 ProgExprBase::completion_group_items_list;
 MemberSpace                 ProgExprBase::completion_member_list;
 MethodSpace                 ProgExprBase::completion_method_list;
 EnumSpace                   ProgExprBase::completion_enum_list;
@@ -610,6 +612,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     
     if (c =='"') {
+      
       quote_count++;
       continue;
     }
@@ -1306,6 +1309,8 @@ void ProgExprBase::ExprLookupCompleterReset() {
   completion_dynenum_list.RemoveAll();
   completion_function_list.RemoveAll();
   completion_program_list.RemoveAll();
+  completion_list_items_list.RemoveAll();
+  completion_group_items_list.RemoveAll();
   completion_member_list.RemoveAll();
   completion_method_list.RemoveAll();
   completion_enum_list.RemoveAll();
@@ -1555,34 +1560,12 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
       if(!lookup_td) {
         taMisc::DebugInfo("Var lookup: cannot find path:", path_rest, "in variable:", path_var);
       }
-      if(tal) {  // DO WE NEED THESE FOR COMPLETION?
+      if(tal) {
         if(tal->InheritsFrom(&TA_taGroup_impl)) {
-//          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser
-//          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
-//          lilkup->GetImage((taGroup_impl*)tal, NULL);
-//          bool okc = lilkup->OpenChooser();
-//          if(okc && lilkup->item()) {
-//            path_own_obj = lilkup->item();
-//            path_own_typ = path_own_obj->GetTypeDef();
-//            rval = path_prepend_txt + path_own_obj->GetName();
-//            new_pos = rval.length();
-//            rval += append_txt;
-//          }
-//          delete lilkup;
+          GetListItems(tal, &completion_group_items_list);
         }
         else {
-//          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser
-//          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
-//          lilkup->GetImage(tal, NULL);
-//          bool okc = lilkup->OpenChooser();
-//          if(okc && lilkup->item()) {
-//            path_own_obj = lilkup->item();
-//            path_own_typ = path_own_obj->GetTypeDef();
-//            rval = path_prepend_txt + path_own_obj->GetName();
-//            new_pos = rval.length();
-//            rval += append_txt;
-//          }
-//          delete lilkup;
+          GetListItems(tal, &completion_list_items_list);
         }
       }
       else if(lookup_td) {
@@ -1665,6 +1648,16 @@ String_Array* ProgExprBase::ExprLookupCompleter(const String& cur_txt, int cur_p
 
   for (int i=0; i<completion_progvar_global_list.size; i++) {
     taBase* base = completion_progvar_global_list.FastEl(i);
+    AddToCompleter(base->GetName());
+  }
+  
+  for (int i=0; i<completion_list_items_list.size; i++) {
+    taBase* base = completion_list_items_list.FastEl(i);
+    AddToCompleter(base->GetName());
+  }
+  
+  for (int i=0; i<completion_group_items_list.size; i++) {
+    taBase* base = completion_group_items_list.FastEl(i);
     AddToCompleter(base->GetName());
   }
   
@@ -1893,6 +1886,24 @@ void ProgExprBase::GetTokensOfType(TypeDef* td, taBase_List* tokens, taBase* sco
     tokens->Link(btmp);
   }
   tokens->Sort();
+}
+
+void ProgExprBase::GetListItems(taList_impl* list, taBase_List* tokens) {
+  if (list == NULL || tokens == NULL) return;
+  
+  for (int i = 0; i < list->size; ++i) {
+    taBase* tab = (taBase*)list->FastEl_(i);
+    tokens->Link(tab);
+  }
+}
+
+void ProgExprBase::GetGroupItems(taGroup_impl* list, taBase_List* tokens) {
+  if (list == NULL || tokens == NULL) return;
+  
+  for (int i = 0; i < list->size; ++i) {
+    taBase* tab = (taBase*)list->FastEl_(i);
+    tokens->Link(tab);
+  }
 }
 
 void ProgExprBase::GetLocalVars(taBase_List* tokens, ProgEl* prog_el, taBase* scope, TypeDef* scope_type, ProgVar::VarType var_type) {
