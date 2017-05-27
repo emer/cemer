@@ -876,13 +876,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         path_rest = base_path.after(delim_pos.SafeEl(parens_index-1)-expr_start_pos);
     }
     else {
-      // note: any ref to base path needs to subtract expr_start_pos relative to delim_pos!
-      path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start_pos); // use last one = first in list
-      path_var = path_var.trim();
-      if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
-        path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start_pos);
-      else
-        path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start_pos);
+      // this simple reparsing eliminates a lot of complicated spaghetti!!
+      int sep_start; // separator starting position
+      int sep_end;   // separator ending position
+      if (FindPathSeparator(base_path, sep_start, sep_end, true)) {
+        path_var = base_path.before(sep_start);
+        path_rest = base_path.after(sep_end);
+      }
     }
   }
   
@@ -898,7 +898,6 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   lookup_seed.trim();
   return lookup_type;
 }
-
 
 String ProgExprBase::ExprLookupChooser(const String& cur_txt, int cur_pos, int& new_pos,
                                        taBase*& path_own_obj, TypeDef*& path_own_typ,
@@ -2091,4 +2090,6 @@ void ProgExprBase::GetTypes(String_Array* types) {
     types->Add("String");
   }
 }
+
+
 
