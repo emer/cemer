@@ -20,7 +20,6 @@
 #include <SigLinkSignal>
 #include <taMisc>
 
-
 taiTreeNodeTaBasePar::taiTreeNodeTaBasePar(taSigLinkTaOBase* link_, MemberDef* md_,
   taiTreeNode* parent_, taiTreeNode* last_child_,
     const String& tree_name, int dn_flags_)
@@ -161,24 +160,25 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     }
     break;
   }
-  case SLS_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
-    taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
-    if (gone_node) {
-      iTreeView* tv = treeView();
-      if(tv) {
-        // taMisc::DebugInfo("SLS_LIST_ITEM_REMOVE");
-	tv->TreeStructUpdate(true);
-        // bool is_exp = this->isExpanded();
-        // if(is_exp)
-        //   this->setExpanded(false);
-        takeChild(idx);
-        delete gone_node;
-        // this->setExpanded(is_exp);
-	tv->TreeStructUpdate(false);
+    case SLS_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
+      taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
+      if (gone_node) {
+        iTreeView* tv = treeView();
+        if(tv) {
+          // taMisc::DebugInfo("SLS_LIST_ITEM_REMOVE");
+          tv->TreeStructUpdate(true);
+          // bool is_exp = this->isExpanded();
+          // if(is_exp)
+          //   this->setExpanded(false);
+          tv->SelectNextLogicalItem(gone_node);  // do while we still have the current item
+          takeChild(idx);
+          delete gone_node;
+          // this->setExpanded(is_exp);
+          tv->TreeStructUpdate(false);
+       }
       }
+      break;
     }
-    break;
-  }
   case SLS_LIST_ITEM_MOVED: {   // op1=item, op2=item_after, null=at beginning
     int fm_idx;
     taiTreeNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found

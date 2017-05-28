@@ -131,6 +131,8 @@ public:
     // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be assertedtaMisc::
   iTreeViewItem*        PrevItem(iTreeViewItem* itm);
   // return the previous item just before given item on the tree
+  virtual void          SelectNextLogicalItem(iTreeViewItem* item);
+  // select the next item or if no next then the previous
   bool                  HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list
 
@@ -151,6 +153,7 @@ public:
   virtual void	        EmitTreeStructUpdated();
   // emit signal that tree structure was updated
   bool                  IsSearchMatch(iTreeViewItem* item);
+
 
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management

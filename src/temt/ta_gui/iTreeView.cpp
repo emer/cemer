@@ -781,6 +781,29 @@ void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
   }
 }
 
+void iTreeView::SelectNextLogicalItem(iTreeViewItem* item) {
+  if(selItems().FindEl((ISelectable*)item) >= 0) {
+    // if we are selected, select next guy..
+    QTreeWidgetItem* nxt = getNextItem(item);
+    if (!nxt) {
+      nxt = getPrevItem(item);
+      if (nxt && nxt->isHidden()) {
+        nxt = NULL;
+      }
+    }
+    if (!nxt) {
+      nxt = GetParentItem(item);
+    }
+    if(nxt) {
+      selectItem(nxt);
+      ISelectable* si = curItem();
+      if(!si || !si->link()) return;
+      taBase* sb = si->link()->taData();
+      tabMisc::DelayedFunCall_gui(sb, "BrowserSelectMe");
+    }
+  }
+}
+
 QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
   //NOTE: in Qt4, we no longer know if we are starting a drag operation
   if (items.count() == 0) return NULL; // according to Qt spec
