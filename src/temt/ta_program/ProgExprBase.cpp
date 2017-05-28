@@ -863,6 +863,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     // is one of the delimiters a '(' - we want to start from there unless balanced with right parens
     int left_parens_pos = base_path.index('(', cur_pos-base_path.length());
     if (left_parens_pos != -1) {
+      taMisc::Warning("ProgExprBase::ParseForLookup -- left parens code - report this message to John.Rohrlich@colorado.edu");
       int parens_index = 0;
       // which delimiter is it
       parens_index = delim_pos.FindEl(left_parens_pos);
