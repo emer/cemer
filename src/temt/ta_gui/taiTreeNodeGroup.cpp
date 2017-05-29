@@ -124,123 +124,131 @@ void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
   }
   int idx;
   switch (sls) {
-  case SLS_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
-    taiTreeNode* after_node = this->FindChildForData(op2_, idx); //null if not found
-    if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
-    iTreeView* tv = treeView();
-    if(tv) {
-      tv->TreeStructUpdate(true);
-    }
-    taiTreeNode* new_node = CreateSubGroup(after_node, op1_);
-    // only scroll to it if parent is visible
-    if(tv) {
-      tv->TreeStructUpdate(false);
-      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-        tv->scrollTo(new_node);
-    }
-    break;
-  }
-  case SLS_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
-    taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
-    if (gone_node) {
+    case SLS_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
+      taiTreeNode* after_node = this->FindChildForData(op2_, idx); //null if not found
+      if (after_node == NULL) {
+        after_node = last_list_items_node; // insert, after lists
+      }
       iTreeView* tv = treeView();
       if(tv) {
-	tv->TreeStructUpdate(true);
-        // taMisc::DebugInfo("SLS_GROUP_REMOVE");
-        bool is_exp = this->isExpanded();
-        if(is_exp)
-          this->setExpanded(false);
-        takeChild(idx);
-        delete gone_node;
-        this->setExpanded(is_exp);
-	tv->TreeStructUpdate(false);
+        tv->TreeStructUpdate(true);
       }
+      taiTreeNode* new_node = CreateSubGroup(after_node, op1_);
+      // only scroll to it if parent is visible
+      if(tv) {
+        tv->TreeStructUpdate(false);
+        if (isExpandedLeaf() && !taMisc::in_gui_multi_action) {
+          tv->scrollTo(new_node);
+        }
+      }
+      break;
     }
-    break;
-  }
-  case SLS_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
-    int fm_idx;
-    taiTreeNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
-    if (!moved_node) break; // shouldn't happen
-    int to_idx;
-    taiTreeNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
-    if (!after_node) to_idx = indexOfChild(last_list_items_node); // insert, after
-    ++to_idx; // after
-    iTreeView* tv = treeView();
-    if(tv) {
-      tv->TreeStructUpdate(true);
+    case SLS_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
+      taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
+      if (gone_node) {
+        iTreeView* tv = treeView();
+        if(tv) {
+          tv->TreeStructUpdate(true);
+          // taMisc::DebugInfo("SLS_GROUP_REMOVE");
+          bool is_exp = this->isExpanded();
+          if(is_exp) {
+            this->setExpanded(false);
+          }
+          tv->SelectNextLogicalItem(gone_node);  // do while we still have the current item
+          takeChild(idx);
+          delete gone_node;
+          this->setExpanded(is_exp);
+          tv->TreeStructUpdate(false);
+        }
+      }
+      break;
     }
-    moveChild(fm_idx, to_idx);
-    // only scroll to it if parent is visible
-    if(tv) {
-      tv->TreeStructUpdate(false);
-      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-        tv->scrollTo(moved_node);
+    case SLS_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
+      int fm_idx;
+      taiTreeNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
+      if (!moved_node) break; // shouldn't happen
+      int to_idx;
+      taiTreeNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
+      if (!after_node) {
+        to_idx = indexOfChild(last_list_items_node); // insert, after
+      }
+      ++to_idx; // after
+      iTreeView* tv = treeView();
+      if(tv) {
+        tv->TreeStructUpdate(true);
+      }
+      moveChild(fm_idx, to_idx);
+      // only scroll to it if parent is visible
+      if(tv) {
+        tv->TreeStructUpdate(false);
+        if (isExpandedLeaf() && !taMisc::in_gui_multi_action) {
+          tv->scrollTo(moved_node);
+        }
+      }
+      break;
     }
-    break;
-  }
-  case SLS_GROUPS_SWAP: {       // op1=item1, op2=item2
-    int n1_idx, n2_idx;
-    taiTreeNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
-    taiTreeNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
-    if ((!node1) || (!node2)) break; // shouldn't happen
-    iTreeView* tv = treeView();
-    if(tv) {
-      tv->TreeStructUpdate(true);
+    case SLS_GROUPS_SWAP: {       // op1=item1, op2=item2
+      int n1_idx, n2_idx;
+      taiTreeNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
+      taiTreeNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
+      if ((!node1) || (!node2)) break; // shouldn't happen
+      iTreeView* tv = treeView();
+      if(tv) {
+        tv->TreeStructUpdate(true);
+      }
+      swapChildren(n1_idx, n2_idx);
+      if(tv) {
+        tv->TreeStructUpdate(false);
+      }
+      break;
     }
-    swapChildren(n1_idx, n2_idx);
-    if(tv) {
-      tv->TreeStructUpdate(false);
+    case SLS_GROUP_RESET_START: {     // no ops
+      this->save_exp_state = isExpanded();
+      this->setExpanded(false);
+      iTreeView* tv = treeView();
+      if(tv) {
+        // taMisc::DebugInfo("SLS_GROUP_RESET_START");
+        tv->TreeStructUpdate(true);
+      }
+      break;
     }
-    break;
-  }
-  case SLS_GROUP_RESET_START: {     // no ops
-    this->save_exp_state = isExpanded();
-    this->setExpanded(false);
-    iTreeView* tv = treeView();
-    if(tv) {
-      // taMisc::DebugInfo("SLS_GROUP_RESET_START");
-      tv->TreeStructUpdate(true);
-    }
-    break;
-  }
-  case SLS_GROUP_RESET_END: {     // no ops
-    // actually, no point in restoring!
-    // this->setExpanded(save_exp_state);
-    iTreeView* tv = treeView();
-    if(tv) {
+    case SLS_GROUP_RESET_END: {     // no ops
+      // actually, no point in restoring!
+      // this->setExpanded(save_exp_state);
+      iTreeView* tv = treeView();
+      if(tv) {
 #ifdef TA_OS_MAC
-      // this is key for preventing crash on delete of groups!
-      iMainWindowViewer* imw = tv->mainWindow();
-      if(imw) {
-        imw->skip_next_update_refresh = 1; // 2 causes noticible lack of update -- 1 ok
+        // this is key for preventing crash on delete of groups!
+        iMainWindowViewer* imw = tv->mainWindow();
+        if(imw) {
+          imw->skip_next_update_refresh = 1; // 2 causes noticible lack of update -- 1 ok
+        }
+#endif
+        // taMisc::DebugInfo("SLS_GROUP_RESET_END");
+        tv->TreeStructUpdate(false);
       }
-#endif      
-      // taMisc::DebugInfo("SLS_GROUP_RESET_END");
-      tv->TreeStructUpdate(false);
+      break;
     }
-    break;
-  }
-  case SLS_GROUPS_SORTED: {     // no ops
-    int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
-    int nd_idx; // index of the node
-    taGroup_impl* gp = this->tadata(); // cache
-    iTreeView* tv = treeView();
-    if(tv) {
-      tv->TreeStructUpdate(true);
+    case SLS_GROUPS_SORTED: {     // no ops
+      int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
+      int nd_idx; // index of the node
+      taGroup_impl* gp = this->tadata(); // cache
+      iTreeView* tv = treeView();
+      if(tv) {
+        tv->TreeStructUpdate(true);
+      }
+      for (int i = 0; i < gp->gp.size; ++i) {
+        taBase* tab = (taBase*)gp->FastGp_(i);
+        FindChildForData(tab, nd_idx);
+        if ((gp0_idx+i) == nd_idx) continue; // in right place already
+        moveChild(nd_idx, (gp0_idx+i));
+      }
+      if(tv) {
+        tv->TreeStructUpdate(false);
+      }
+      break;
     }
-    for (int i = 0; i < gp->gp.size; ++i) {
-      taBase* tab = (taBase*)gp->FastGp_(i);
-      FindChildForData(tab, nd_idx);
-      if ((gp0_idx+i) == nd_idx) continue; // in right place already
-      moveChild(nd_idx, (gp0_idx+i));
-    }
-    if(tv) {
-      tv->TreeStructUpdate(false);
-    }
-    break;
-  }
-  default: return; // don't update names
+    default: return; // don't update names
   }
   UpdateGroupNames();
 }

@@ -75,10 +75,7 @@ void iTreeViewItem::init(const String& tree_name, taiSigLink* link_,
 }
 
 iTreeViewItem::~iTreeViewItem() {
-  iTreeView* tv = treeView();
-  if (tv) {
-    tv->ItemDestroyingCb(this);
-  }
+
 }
 
 bool iTreeViewItem::canAcceptDrop(const QMimeData* mime) const {
