@@ -701,6 +701,10 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     }
     else if(txt[delim_pos[0]] == '.') { // path sep = .
       base_path = txt.at(expr_start_pos, delim_pos[0]-expr_start_pos);
+      int idx = base_path.index(' ', -1);  // could be something like "printexpr object.member"
+      if (idx != -1) {
+        base_path = base_path.after(idx);
+      }
       int length = base_path.length();
       base_path = triml(base_path);
       if (!base_path.isFloat()) {  // don't proceed if it is a floating point number
@@ -771,6 +775,10 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
       base_path = txt.at(expr_start_pos, delim_pos[1]-expr_start_pos);
+      int idx = base_path.index(' ', -1);  // could be something like "printexpr object->member"
+      if (idx != -1) {
+        base_path = base_path.after(idx);
+      }
       int length = base_path.length();
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
