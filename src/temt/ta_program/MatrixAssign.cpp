@@ -166,15 +166,17 @@ bool MatrixAssign::CvtFmCode(const String& code) {
   }
   idxs = idxs.between('[', ']');
   if(idxs.empty()) return false;
-  int dim = 0;
-  while(idxs.nonempty()) {
-    String ds = idxs;
-    if(ds.contains(',')) {
-      ds = ds.before(',');
-      idxs = idxs.after(',');
-    }
-    else {
-      idxs = "";
+  for(int dim=0; dim<6; dim++) {
+    String ds;
+    if(idxs.nonempty()) {
+      ds = idxs;
+      if(ds.contains(',')) {
+        ds = ds.before(',');
+        idxs = idxs.after(',');
+      }
+      else {
+        idxs = "";
+      }
     }
     switch(dim) {
     case 0:  dim0.SetExpr(ds); break;
@@ -184,7 +186,6 @@ bool MatrixAssign::CvtFmCode(const String& code) {
     case 4:  dim4.SetExpr(ds); break;
     case 5:  dim5.SetExpr(ds); break;
     }
-    dim++;
   }
   return true;
 }
