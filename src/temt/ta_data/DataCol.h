@@ -155,7 +155,7 @@ public:
   const Variant GetVal(int row) const { return GetValAsVar_impl(row, 0); }
   // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last)
   bool          SetVal(const Variant& val, int row)
-  { return SetValAsVar_impl(val, row, 0); }
+  { return SetValAsVar(val, row); }
   // #CAT_Modify get data of scalar type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last)
 
   const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0) const

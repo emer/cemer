@@ -380,7 +380,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
 	for(int j=0; j<3; j++)
 	  imat->FastEl2d(j,dim) = ses[j];
 	if(i==na+1) break;	// all done
-	ses[0] = 0; ses[1] = -1; ses[2] = 1; ses_dx = 0;
+	ses[0] = 0; ses[1] = 0; ses[2] = 1; ses_dx = 0; // reset for next
 	dim++; n_cols = 0;
 	continue;
       }
