@@ -59,6 +59,8 @@ public:
   // #MENU #MENU_ON_Object #DYN1 remove breakpoints for all programs in the group:
   virtual void  ToggleDebug();
   // #BUTTON #MENU_CONTEXT #DYN1 toggle the debug_mode, which determines whether any print statements with the debug flag set will print
+  virtual void  SetGuiUpdt(bool objs_updt_gui = true);
+  // #MENU #MENU_ON_Object #DYN1 set the OBJS_UPDT_GUI flag in all the programs in this group -- can be faster without this on but it also interferes with interactive updates and can lead to confusing behavior -- from version 8.1.0 the default is to have it ON, before it was off
   
   virtual void  RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open

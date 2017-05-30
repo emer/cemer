@@ -43,8 +43,8 @@ public:
   taBase*               New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)"); // #NO_MENU
 #endif
-  int                 NumListCols() const override {return 3;}
-  // name, val_type (float, etc.), desc
+  int                 NumListCols() const override { return 4; }
+  // name, val_type (float, etc.), geom, desc
   String              GetColHeading(const KeyString& key) const override;
   // header text for the indicated column
   const KeyString     GetListColKey(int col) const override;

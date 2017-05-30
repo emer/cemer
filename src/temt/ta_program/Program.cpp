@@ -87,7 +87,7 @@ int64_t Program::global_init_timestamp = 0;
 
 void Program::Initialize() {
   run_state = NOT_INIT;
-  flags = NO_STOP_STEP;         // most new progs should not be..
+  flags = (ProgFlags)(NO_STOP_STEP | OBJS_UPDT_GUI);
   objs.SetBaseType(&TA_taNBase);
   objs.el_typ = &TA_DataTable;  // make data tables by default..
   ret_val = 0;

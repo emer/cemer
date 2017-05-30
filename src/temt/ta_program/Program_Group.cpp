@@ -158,6 +158,13 @@ void Program_Group::ToggleDebug() {
   UpdateAfterEdit();
 }
 
+void Program_Group::SetGuiUpdt(bool objs_updt_gui) {
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
+    prog->SetProgFlagState(Program::OBJS_UPDT_GUI, objs_updt_gui);
+  }
+}
+
+
 String Program_Group::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
   if(rval.empty()) {

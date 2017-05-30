@@ -788,45 +788,45 @@ bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col
 
 /////////////////////
 
-bool DataTable::InitVals(const Variant& init_val, const Variant& col) {
+bool DataTable::InitVals(const Variant& init_val, const Variant& col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   if (!da) return false;
-  da->InitVals(init_val);
+  da->InitVals(init_val, st_row, n_rows);
   return true;
 }
 
-bool DataTable::InitValsToRowNo(const Variant& col) {
+bool DataTable::InitValsToRowNo(const Variant& col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   if (!da) return false;
-  da->InitValsToRowNo();
+  da->InitValsToRowNo(st_row, n_rows);
   return true;
 }
 
-bool DataTable::InitValsByIncrement(const int first_value, const int increment, const Variant& col) {
+bool DataTable::InitValsByIncrement(const int first_value, const int increment, const Variant& col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   if (!da) return false;
-  da->InitValsByIncrement();
+  da->InitValsByIncrement(first_value, increment, st_row, n_rows);
   return true;
 }
 
-bool DataTable::InitValsColName(const Variant& init_val, const String& col_nm) {
+bool DataTable::InitValsColName(const Variant& init_val, const String& col_nm, int st_row, int n_rows) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
-  da->InitVals(init_val);
+  da->InitVals(init_val, st_row, n_rows);
   return true;
 }
 
-bool DataTable::InitValsToRowNoColName(const String& col_nm) {
+bool DataTable::InitValsToRowNoColName(const String& col_nm, int st_row, int n_rows) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
-  da->InitValsToRowNo();
+  da->InitValsToRowNo(st_row, n_rows);
   return true;
 }
 
-bool DataTable::InitValsByIncrementColName(const int first_value, const int increment, const String& col_nm) {
+bool DataTable::InitValsByIncrementColName(const int first_value, const int increment, const String& col_nm, int st_row, int n_rows) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
-  da->InitValsByIncrement(first_value, increment);
+  da->InitValsByIncrement(first_value, increment, st_row, n_rows);
   return true;
 }
 
@@ -1744,6 +1744,24 @@ int DataTable::FindColNameIdx(const String& col_nm, bool err_msg) const {
   if(col_nm.empty()) return -1;
   int idx = data.FindNameIdx(col_nm);
   TestError(idx < 0 && err_msg, "FindColNameIdx",  "could not find column named:", col_nm);
+  return idx;
+}
+
+int DataTable::FindColNameIdxCamelSnake(const String& col_nm, bool err_msg) const {
+  if(col_nm.empty()) return -1;
+  int idx = data.FindNameIdx(col_nm);
+  if(idx < 0) {
+    String col_name = col_nm;
+    col_name = col_name.toCamel();
+    idx = data.FindNameIdx(col_name);
+    if(idx < 0) {
+      col_name = col_nm;
+      col_name = col_name.CamelToSnake();
+      idx = data.FindNameIdx(col_name);
+    }
+  }
+  TestError(idx < 0 && err_msg, "FindColNameIdxCamelSnake",
+            "could not find column named:", col_nm);
   return idx;
 }
 
@@ -5193,27 +5211,27 @@ bool DataTable::RestoreGoodCols() {
   return true;
 }
 
-bool DataTable::InitValsCol(DataCol* col, const Variant& init_val) {
+bool DataTable::InitValsCol(DataCol* col, const Variant& init_val, int st_row, int n_rows) {
   if (col) {
-    return col->InitVals(init_val);
+    return col->InitVals(init_val, st_row, n_rows);
   }
   else {
     return false;
   }
 }
 
-bool DataTable::InitValsToRowNoCol(DataCol* col) {
+bool DataTable::InitValsToRowNoCol(DataCol* col, int st_row, int n_rows) {
   if (col) {
-    return col->InitValsToRowNo();
+    return col->InitValsToRowNo(st_row, n_rows);
   }
   else {
     return false;
   }
 }
 
-bool DataTable::InitValsByIncrementCol(DataCol* col, const int first_value, const int increment) {
+bool DataTable::InitValsByIncrementCol(DataCol* col, const int first_value, const int increment, int st_row, int n_rows) {
   if (col) {
-    return col->InitValsByIncrement(first_value, increment);
+    return col->InitValsByIncrement(first_value, increment, st_row, n_rows);
   }
   else {
     return false;

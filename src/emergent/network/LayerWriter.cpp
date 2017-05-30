@@ -17,7 +17,6 @@
 #include <Network>
 #include <DataTable>
 
-
 TA_BASEFUNS_CTORS_DEFN(LayerWriter);
 
 void LayerWriter::Initialize() {
@@ -69,26 +68,31 @@ void LayerWriter::AutoConfig(bool remove_unused) {
   bool made_new;
   FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
     if(lay->layer_type == Layer::HIDDEN) continue;
-    int col_idx = data->FindColNameIdx(lay->name, false);
+    String col_name = lay->name;
+    int col_idx = data->FindColNameIdxCamelSnake(col_name, false);
     if(TestWarning(col_idx < 0, "AutoConfig",
-                   "did not find data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type))) {
+                   "did not find data column for layer named:", lay->name, "of type:",
+                   lay->GetMemberStrVal("layer_type"))) {
       continue; // not found
     }
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(lay->name, lay->name, made_new);
+    col_name = data->data[col_idx]->name;
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(col_name, lay->name, made_new);
     lrw->SetDataNetwork(data, network);
     lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
-  int nm_idx = data->FindColNameIdx("Name", false);
+  int nm_idx = data->FindColNameIdxCamelSnake("Name", false);
   if(nm_idx >= 0) {
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeColName("Name", made_new);
+    LayerWriterEl* lrw =
+      (LayerWriterEl*)layer_data.FindMakeColName(data->data[nm_idx]->name, made_new);
     lrw->net_target = LayerDataEl::TRIAL_NAME;
     lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
-  int gp_idx = data->FindColNameIdx("Group", false);
+  int gp_idx = data->FindColNameIdxCamelSnake("Group", false);
   if(gp_idx >= 0) {
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeColName("Group", made_new);
+    LayerWriterEl* lrw =
+      (LayerWriterEl*)layer_data.FindMakeColName(data->data[gp_idx]->name, made_new);
     lrw->net_target = LayerDataEl::GROUP_NAME;
     lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used

@@ -76,6 +76,7 @@ void DataTableCols::SigEmit(int sls, void* op1, void* op2) {
 String DataTableCols::GetColHeading(const KeyString& key) const {
   if (key == key_name) return "Col Name"; // override
   else if (key == DataCol::key_val_type) return "Data Type";
+  else if (key == DataCol::key_geom) return "Cell Geom";
   else if (key == key_desc) return "Description";
   else return inherited::GetColHeading(key);
 }
@@ -84,7 +85,8 @@ const KeyString DataTableCols::GetListColKey(int col) const {
   switch (col) {
   case 0: return key_name;
   case 1: return DataCol::key_val_type;
-  case 2: return key_desc;
+  case 2: return DataCol::key_geom;
+  case 3: return key_desc;
   default: return _nilKeyString;
   }
 }

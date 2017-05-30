@@ -447,6 +447,8 @@ public:
   // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
   virtual int           FindColNameIdx(const String& col_nm, bool err_msg = false) const;
   // #CAT_Columns find a column index of the given name; if err_msg then generate an error if not found
+  virtual int           FindColNameIdxCamelSnake(const String& col_nm, bool err_msg = false) const;
+  // #CAT_Columns find a column index of the given name, trying both camel and snake versions of the name if the original is not found; if err_msg then generate an error if not found
 
   DataCol*              FindMakeCol(const String& col_nm, ValType val_type);
   // #CAT_Columns insures that a scalar column of the given name and val type exists, and return that col.
@@ -677,12 +679,12 @@ public:
   bool                  SetMatrixFlatVal(const Variant& val, const Variant& col, int row, int cell);
   // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions) -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful
 
-  bool          InitVals(const Variant& init_val, const Variant& col);
-  // #CAT_Modify initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name
-  bool          InitValsToRowNo(const Variant& col);
-  // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name
-  bool          InitValsByIncrement(const int first_value, const int increment, const Variant& col);
-  // #CAT_Modify initialize all values in given column to be equal to some starting values plus some increment -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name
+  bool          InitVals(const Variant& init_val, const Variant& col, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsToRowNo(const Variant& col, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsByIncrement(const int first_value, const int increment, const Variant& col, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify initialize all values in given column to be equal to some starting values plus some increment -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   int           FindVal(const Variant& val, const Variant& col, int st_row = 0,
                         bool not_found_err = false) const;
@@ -724,11 +726,11 @@ public:
                                                 int row, int cell, bool quiet = false);
   // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful -- quiet = fail quietly
 
-  bool          InitValsColName(const Variant& init_val, const String& col_name);
+  bool          InitValsColName(const Variant& init_val, const String& col_name, int st_row = 0, int n_rows = -1);
   // #EXPERT #CAT_Modify initialize all values in column of given name to given value
-  bool          InitValsToRowNoColName(const String& col_name);
+  bool          InitValsToRowNoColName(const String& col_name, int st_row = 0, int n_rows = -1);
   // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
-  bool          InitValsByIncrementColName(const int first_value, int increment, const String& col_name);
+  bool          InitValsByIncrementColName(const int first_value, int increment, const String& col_name, int st_row = 0, int n_rows = -1);
   // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
 
   int           FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
@@ -775,12 +777,12 @@ public:
   /////////////////////////////
   // column pointer versions, just for the gui:
 
-  bool          InitValsCol(DataCol* col, const Variant& init_val);
-  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals    #FROM_LIST_data initialize all values in given column to given value
-  bool          InitValsToRowNoCol(DataCol* col);
-  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsToRowNo #FROM_LIST_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
-  bool          InitValsByIncrementCol(DataCol* col, const int first_value, const int increment);
-  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsByIncrement #FROM_LIST_data initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns
+  bool          InitValsCol(DataCol* col, const Variant& init_val, int st_row = 0, int n_rows = -1);
+  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_LIST_data #EXPERT initialize all values in given column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsToRowNoCol(DataCol* col, int st_row = 0, int n_rows = -1);
+  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsToRowNo #FROM_LIST_data #EXPERT initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsByIncrementCol(DataCol* col, const int first_value, const int increment, int st_row = 0, int n_rows = -1);
+  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsByIncrement #FROM_LIST_data #EXPERT initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   int           FindValCol(DataCol* col, const Variant& val, int st_row = 0) const
   { return col->FindVal(val, st_row); }

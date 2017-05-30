@@ -172,12 +172,12 @@ public:
   { return SetValAsVar_impl(val, row, cell); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), using flat representation of matrix cell (single cell index)
 
-  bool          InitVals(const Variant& init_val);
-  // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
-  bool          InitValsToRowNo();
-  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
-  bool          InitValsByIncrement(int first_value = 0, int increment = 1);
-  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to a starting integer plus some integer value (negative ok) multiplied by the row number -- only valid for scalar (not matrix) columns
+  bool          InitVals(const Variant& init_val, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsToRowNo(int st_row = 0, int n_rows = -1);
+  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
+  bool          InitValsByIncrement(int first_value = 0, int increment = 1, int st_row = 0, int n_rows = -1);
+  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to a starting integer plus some integer value (negative ok) multiplied by the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   void          SortAscending();
   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_ON_is_matrix
@@ -227,41 +227,35 @@ public:
   // row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
 
-  const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
+  const Variant GetValAsVar(int row) const;
   // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
-  bool          SetValAsVar(const Variant& val, int row)
-  { return SetValAsVar_impl(val, row, 0);}
+  bool          SetValAsVar(const Variant& val, int row);
   // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   const String  GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
   // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
-  bool          SetValAsString(const String& val, int row)
-  {return SetValAsString_impl(val, row, 0);}
+  bool          SetValAsString(const String& val, int row);
   // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   float         GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);}
   // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
-  bool          SetValAsFloat(float val, int row)
+  bool          SetValAsFloat(float val, int row);
   // #EXPERT #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
-  {return SetValAsFloat_impl(val, row, 0);}
   double        GetValAsDouble(int row) const {return GetValAsDouble_impl(row, 0);}
   // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
-  bool          SetValAsDouble(double val, int row)
+  bool          SetValAsDouble(double val, int row);
   // #EXPERT #CAT_Modify valid only if type is double, -ve row is from end (-1=last)
-  {return SetValAsDouble_impl(val, row, 0);}
   int           GetValAsInt(int row) const {return GetValAsInt_impl(row, 0);}
   // #EXPERT #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
-  bool          SetValAsInt(int val, int row)
+  bool          SetValAsInt(int val, int row);
   // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
-  {return SetValAsInt_impl(val, row, 0);}
   byte          GetValAsByte(int row) const {return GetValAsByte_impl(row, 0);}
   // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
   bool          SetValAsByte(byte val, int row)
   // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
-  {return SetValAsByte_impl(val, row, 0);}
+  {return SetValAsInt((int)val, row);}
   byte          GetValAsBool(int row) const {return GetValAsBool_impl(row, 0);}
   // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
-  bool          SetValAsBool(bool val, int row)
+  bool          SetValAsBool(bool val, int row);
   // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
-  {return SetValAsBool_impl(val, row, 0);}
 
   ///////////////////////////////////////////////////////////////
   // Matrix versions, cell index
@@ -397,6 +391,7 @@ public:
   // #IGNORE whether to save col to external 'data' format
 
   static const KeyString key_val_type;  // #IGNORE "val_type"
+  static const KeyString key_geom;  // #IGNORE "geom"
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   String       GetDisplayName() const override; // #IGNORE we strip out the format characters
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override

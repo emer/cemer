@@ -774,16 +774,16 @@ void taMisc::Warning(const String& a, const String& b, const String& c, const St
       }
       wmsg = ".." + String(same_msg_cnt);
     }
-    else if(same_msg_cnt > 10) {
+    else if(same_msg_cnt > 20) {
       if(same_msg_cnt % 10 != 0) {
         return;
       }
       wmsg = ".." + String(same_msg_cnt);
     }
-    else {
+    else if(same_msg_cnt > 10) {
       wmsg = ".";
     }
-    taMisc::ConsoleOutputChars(wmsg, true, false);
+    taMisc::ConsoleOutput(wmsg, true, false);
     taMisc::LogEvent(wmsg);
     return;
   }
@@ -962,16 +962,16 @@ static String taMisc_Error_impl
       }
       emsg = ".." + String(same_msg_cnt);
     }
-    else if(same_msg_cnt > 10) {
+    else if(same_msg_cnt > 20) {
       if(same_msg_cnt % 10 != 0) {
         return _nilString;
       }
       emsg = ".." + String(same_msg_cnt);
     }
-    else {
+    else if(same_msg_cnt > 10) {
       emsg = ".";
     }
-    taMisc::ConsoleOutputChars(emsg, true, false);
+    taMisc::ConsoleOutput(emsg, true, false);
     taMisc::LogEvent(emsg);
     return _nilString;
   }
@@ -1466,10 +1466,6 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
     console_hold << str;
   }
 
-  if(str.empty() || str == ".") {
-    ConsoleOutputChars(str, err, pager);
-  }
-  
   if(!taMisc::interactive) pager = false;
   int pageln = 0;
   String rmdr;

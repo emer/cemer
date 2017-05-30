@@ -642,10 +642,12 @@ void DataCol::Get2DCellGeomGui(int& x, int& y, bool odd_y, int spc) const {
 }
 
 const KeyString DataCol::key_val_type("val_type");
+const KeyString DataCol::key_geom("geom");
 
 String DataCol::GetColText(const KeyString& key, int itm_idx) const {
   if (key == key_name) return GetDisplayName(); // override
   if (key == key_val_type) return ValTypeToStr(valType());
+  if (key == key_geom) return cell_geom.ToString();
   else return inherited::GetColText(key, itm_idx);
 }
 
@@ -677,6 +679,93 @@ int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3, int d4
 /////////////////////
 // Access Var/String
 
+const Variant DataCol::GetValAsVar(int row) const {
+  if(is_matrix) {
+    return Variant((const_cast<DataCol*>(this))->GetValAsMatrix(row)); // does ref counting
+  }
+  else {
+    return GetValAsVar_impl(row, 0);
+  }  
+}
+
+bool DataCol::SetValAsVar(const Variant& val, int row) {
+  if(is_matrix) {
+    const int n_cell = cell_geom.Product();
+    for(int i=0; i<n_cell; i++) {
+      SetValAsVar_impl(val, row, i);
+    }
+    return true;
+  }
+  else {
+    return SetValAsVar_impl(val, row, 0);
+  }  
+}
+
+bool DataCol::SetValAsString(const String& val, int row) {
+  if(is_matrix) {
+    const int n_cell = cell_geom.Product();
+    for(int i=0; i<n_cell; i++) {
+      SetValAsString_impl(val, row, i);
+    }
+    return true;
+  }
+  else {
+    return SetValAsString_impl(val, row, 0);
+  }  
+}
+
+bool DataCol::SetValAsFloat(float val, int row) {
+  if(is_matrix) {
+    const int n_cell = cell_geom.Product();
+    for(int i=0; i<n_cell; i++) {
+      SetValAsFloat_impl(val, row, i);
+    }
+    return true;
+  }
+  else {
+    return SetValAsFloat_impl(val, row, 0);
+  }  
+}
+
+bool DataCol::SetValAsDouble(double val, int row) {
+  if(is_matrix) {
+    const int n_cell = cell_geom.Product();
+    for(int i=0; i<n_cell; i++) {
+      SetValAsDouble_impl(val, row, i);
+    }
+    return true;
+  }
+  else {
+    return SetValAsDouble_impl(val, row, 0);
+  }  
+}
+
+bool DataCol::SetValAsInt(int val, int row) {
+  if(is_matrix) {
+    const int n_cell = cell_geom.Product();
+    for(int i=0; i<n_cell; i++) {
+      SetValAsInt_impl(val, row, i);
+    }
+    return true;
+  }
+  else {
+    return SetValAsInt_impl(val, row, 0);
+  }  
+}
+
+bool DataCol::SetValAsBool(bool val, int row) {
+  if(is_matrix) {
+    const int n_cell = cell_geom.Product();
+    for(int i=0; i<n_cell; i++) {
+      SetValAsBool_impl(val, row, i);
+    }
+    return true;
+  }
+  else {
+    return SetValAsBool_impl(val, row, 0);
+  }  
+}
+
 const String DataCol::GetValAsString_impl(int row, int cell) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
   return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
@@ -702,26 +791,29 @@ bool DataCol::SetValAsBool_impl(bool val, int row, int cell) {
   return true;
 }
 
-bool DataCol::InitVals(const Variant& init_val)  {
-  AR()->InitValsFmVar(init_val);
-  return true;
-}
-
-bool DataCol::InitValsToRowNo()  {
-  if(TestError(is_matrix, "InitValsToRowNo", "column is a matrix")) return false;
-  const int n_rows = rows();
+bool DataCol::InitVals(const Variant& init_val, int st_row, int n_rows)  {
+  if(n_rows < 0)
+    n_rows = rows() - st_row;
   for(int i=0; i<n_rows; i++) {
-    SetValAsInt(i, i);
+    SetVal(init_val, i);
   }
   return true;
 }
 
-bool DataCol::InitValsByIncrement(int first_value, int increment)  {
-  if(TestError(is_matrix, "InitValsByIncrement", "column is a matrix")) return false;
-  SetValAsInt(first_value, 0);
-  const int n_rows = rows();
-  for(int i=1; i<n_rows; i++) {
-    SetValAsInt(first_value + i*increment, i);
+bool DataCol::InitValsToRowNo(int st_row, int n_rows)  {
+  if(n_rows < 0)
+    n_rows = rows() - st_row;
+  for(int i=0; i<n_rows; i++) {
+    SetValAsInt(st_row + i, st_row + i);
+  }
+  return true;
+}
+
+bool DataCol::InitValsByIncrement(int first_value, int increment, int st_row, int n_rows)  {
+  if(n_rows < 0)
+    n_rows = rows() - st_row;
+  for(int i=0; i<n_rows; i++) {
+    SetValAsInt(first_value + i*increment, st_row + i);
   }
   return true;
 }
