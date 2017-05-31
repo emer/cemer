@@ -2420,12 +2420,12 @@ bool Program::BrowserEditMe_ProgItem(taOBase* itm) {
         }
       }
     }
-    else {
-      if(itm->InheritsFrom(&TA_ProgVar)) {
-        // auto edit vars too..
+    else {  // anything else
+//      if(itm->InheritsFrom(&TA_ProgVar)) {
+//        // auto edit vars too..
         QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
                                                        Qt::MetaModifier));
-      }
+//      }
     }
     // NO!!!! this causes the item in the left navigator browser to be selected
     // instead of the one in the program panel!!  REALLY want to always get the
