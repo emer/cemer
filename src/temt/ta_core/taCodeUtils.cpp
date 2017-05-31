@@ -452,10 +452,7 @@ bool taCodeUtils::CreateNewSrcFilesExisting(const String& type_nm, const String&
 }
 
 String taCodeUtils::GetCurSvnRevYear(const String& filename) {
-  String yr;
-  taDateTime dt;
-  dt.currentDateTime();
-  yr = dt.toString("yyyy");
+  String yr = QDate::currentDate().toString("yyyy");
 
   SubversionClient svn_client;
   int rev = 0;
@@ -475,13 +472,13 @@ String taCodeUtils::GetCurSvnRevYear(const String& filename) {
   }
 
   if(last_changed_date == 0) {
-    taMisc::Warning("Subversion client did not return proper date info for:",filename);
+    taMisc::Info("Subversion client did not return proper date info for:",filename);
     return yr;
   }    
   
   yr = taDateTime::fmTimeToString(last_changed_date, "yyyy");
-  taMisc::Info("svn info:", filename, "rev:", String(last_change_rev), "author:",
-               last_changed_author, "year:", yr);
+  // taMisc::Info("svn info:", filename, "rev:", String(last_change_rev), "author:",
+  //              last_changed_author, "year:", yr);
   
   return yr;
 }
@@ -495,7 +492,7 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   String cpyright = "// Copyright";
   int cpyidx = srcstr.index(cpyright);
   if(cpyidx < 0) {
-    taMisc::Warning("could not find copyright string in file:", filename);
+    taMisc::Info("could not find copyright string in file:", filename);
     return false;
   }
 
@@ -529,9 +526,9 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
     srcstr.SaveToFile(filename);
     taMisc::Info("Replaced copyright to:", yr, "in:",filename);
   }
-  else {
-    taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
-  }
+  // else {
+  //   taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
+  // }
 
   return mod;
 }
@@ -545,17 +542,29 @@ bool taCodeUtils::CopyrightUpdateDir(const String& top_path, const String& src_d
   QStringList files = dir.entryList(filters);
   for(int i=0; i<files.count(); i++) {
     String fnm = files[i];
+
+    if(fnm.endsWith("_parse.cpp") || fnm.endsWith("_parse.h")) continue;
+    if(fnm == "y.tab.h") continue;
+    if(fnm.endsWith("_qrc.cpp")) continue;
+    if(fnm.startsWith("vector") && fnm.endsWith(".h")) continue;
+    if(fnm == "instrset.h") continue;
+    if(fnm.startsWith("nifti")) continue;
+    if(fnm == "znzlib.h") continue;
+    
     CopyrightUpdateFile(src_path + fnm);
   }
   return true;
 }
 
 bool taCodeUtils::CopyrightUpdateAllFiles(const String& top_path) {
+  // taMisc::Info("display width:", String(taMisc::display_width));
+
   InitSrcPaths();
   for(int i=0; i<emergent_src_paths.size; i++) {
     String path = emergent_src_paths[i];
     CopyrightUpdateDir(top_path, path);
   }
+  CopyrightUpdateDir(top_path, "src/temt/maketa");
   return true;
 }
 

@@ -1,5 +1,5 @@
 
-// Copyright, 1995-2013, Regents of the University of Colorado,
+// Copyright 2015, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of Emergent

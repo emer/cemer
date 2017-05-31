@@ -1,4 +1,4 @@
-// Copyright, 1995-2013, Regents of the University of Colorado,
+// Copyright 2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -35,6 +35,7 @@
 #include <taRootBase>
 #include <dumpMisc>
 #include <taGroup_impl>
+#include <QDate>
 
 #ifdef DMEM_COMPILE
 #include <DMemShare>
@@ -3306,11 +3307,18 @@ String TypeDef::GetHTML(bool gendoc) const {
     rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "Expert ", "expert_", gendoc));
   }
 
+  String yr = "2017";
+#ifndef NO_TA_BASE
+  yr = QDate::currentDate().toString("yyyy");
+#endif
+  
   /////////////////////////
   // postscript/footer
   rval.cat("<p /><address><hr /><div align=\"center\">\n");
   rval.cat("<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n");
-  rval.cat("<td width=\"70%\" align=\"left\">Copyright &copy; 2011 Regents of the University of Colorado, Carnegie Mellon University, Princeton University.</td>\n");
+  rval.cat("<td width=\"70%\" align=\"left\">Copyright &copy; ");
+  rval.cat(yr);
+  rval.cat("Regents of the University of Colorado, Carnegie Mellon University, Princeton University.</td>\n");
   //  rval.cat("<td width=\"40%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n");
   rval.cat("<td width=\"30%\" align=\"right\"><div align=\"right\"> ").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat("</div></td>\n");
   rval.cat("</tr></table></div></address></body>\n");

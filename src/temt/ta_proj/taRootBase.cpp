@@ -1,4 +1,4 @@
-// Copyright, 1995-2013, Regents of the University of Colorado,
+// Copyright 2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -486,7 +486,7 @@ void taRootBase::About() {
   info += "WWW Page: https://grey.colorado.edu/temt\n";
   info += "\n\n";
 
-  info += "Copyright (c) 1995-2010, Regents of the University of Colorado,\n\
+  info += "Copyright (c) 1995-2017, Regents of the University of Colorado,\n\
  Carnegie Mellon University, Princeton University.\n\
  \n\
  TEMT is free software; you can redistribute it and/or modify\n\
@@ -921,7 +921,7 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--copyrightify", "CopyrightUpdate");
   taMisc::AddArgName("copyrightify=", "CopyrightUpdate");
   taMisc::AddArgNameDesc("CopyrightUpdate", "\
- -- update the copyright year on all files in the source code");
+ -- update the copyright year on specified file or all files in the source code if none specified");
 
   taMisc::Init_Args(argc, argv);
   return true;
@@ -2206,6 +2206,10 @@ bool taRootBase::Startup_Run() {
     return true;
   }
 #endif
+
+  if(!taMisc::interactive) {
+    taMisc::display_width = 120;
+  }
   
   // if in server mode, make it now!
   if (taMisc::args.FindName("Server") >= 0) {

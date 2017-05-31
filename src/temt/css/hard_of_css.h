@@ -1,4 +1,4 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright 2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
