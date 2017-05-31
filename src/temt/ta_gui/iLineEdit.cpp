@@ -365,12 +365,14 @@ void iLineEdit::DoCompletion(bool extend) {
   }
   emit characterEntered(this);
   GetCompleter()->setCompletionPrefix(prefix);
-  if (IsDelimter(prefix.lastchar())) {
-    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-  }
-  else {
-    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
-  }
+  GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+  
+// if (IsDelimter(prefix.lastchar())) {
+//    GetCompleter()->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+//  }
+//  else {
+//    GetCompleter()->setCompletionMode(QCompleter::PopupCompletion);
+//  }
   
   GetCompleter()->FilterList(prefix);
   
