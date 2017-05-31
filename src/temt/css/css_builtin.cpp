@@ -294,6 +294,17 @@ static cssEl* cssElCFun_de_ptr_stub(int, cssEl* arg[]) {
 }
 
 static cssEl* cssElCFun_de_array_stub(int, cssEl* arg[]) {
+  cssEl* ths = arg[1];
+  if(cssTA_Matrix::IsMatrix(*ths)) {
+    cssTA_Matrix* cmat = (cssTA_Matrix*)ths;
+    taMatrix* mat = cmat->GetMatrixPtr();
+    if(mat->ElView()) {         // already has a view
+      taMatrix* flat = mat->Flatten();
+      cssEl::Done(cmat);
+      cssTA_Matrix* cflat = new cssTA_Matrix(flat);
+      arg[1] = cflat;           // swap it out!
+    }
+  }
   return (*arg[1])[*arg[2]];
 }
 

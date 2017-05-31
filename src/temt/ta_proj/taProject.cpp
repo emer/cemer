@@ -1081,9 +1081,9 @@ bool taProject::SvnCommitDialog(String& commit_msg, bool& updt_change_log,
 }
 
 void taProject::SvnDiff() {
-  SubversionClient* svn_client = new SubversionClient();
+  SubversionClient svn_client;
   try {
-    svn_client->SetWorkingCopyPath(proj_dir);
+    svn_client.SetWorkingCopyPath(proj_dir);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in setting working copy\n", ex.what());
@@ -1102,7 +1102,7 @@ void taProject::SvnDiff() {
   String last_changed_author;
   int64_t sz = 0;
   try {
-    svn_client->GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
+    svn_client.GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
                         last_changed_author, sz);
   }
   catch (const SubversionClient::Exception &ex) {
@@ -1123,7 +1123,7 @@ void taProject::SvnDiff() {
   
   String url;
   try {
-    svn_client->GetUrlFromPath(url, fnm);
+    svn_client.GetUrlFromPath(url, fnm);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in GetUrl\n", ex.what());
@@ -1131,7 +1131,7 @@ void taProject::SvnDiff() {
   }
   
   try {
-    svn_client->SaveFile(url, rev_fnm, last_change_rev);
+    svn_client.SaveFile(url, rev_fnm, last_change_rev);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in SaveFile\n", ex.what());
@@ -1151,9 +1151,9 @@ void taProject::SvnDiff() {
 }
 
 void taProject::SvnPrevDiff() {
-  SubversionClient* svn_client = new SubversionClient();
+  SubversionClient svn_client;
   try {
-    svn_client->SetWorkingCopyPath(proj_dir);
+    svn_client.SetWorkingCopyPath(proj_dir);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in setting working copy\n", ex.what());
@@ -1172,7 +1172,7 @@ void taProject::SvnPrevDiff() {
   String last_changed_author;
   int64_t sz = 0;
   try {
-    svn_client->GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
+    svn_client.GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
                         last_changed_author, sz);
   }
   catch (const SubversionClient::Exception &ex) {
@@ -1193,7 +1193,7 @@ void taProject::SvnPrevDiff() {
   
   String url;
   try {
-    svn_client->GetUrlFromPath(url, fnm);
+    svn_client.GetUrlFromPath(url, fnm);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in GetUrl\n", ex.what());
@@ -1201,7 +1201,7 @@ void taProject::SvnPrevDiff() {
   }
   
   try {
-    svn_client->SaveFile(url, rev_fnm, last_change_rev);
+    svn_client.SaveFile(url, rev_fnm, last_change_rev);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in SaveFile\n", ex.what());
@@ -1222,7 +1222,7 @@ void taProject::SvnPrevDiff() {
   int search_chunk = 100;
   while(true) {
     try {
-      svn_client->GetLogs(revs, commit_msgs, authors, times, files_start_idx, files_n,
+      svn_client.GetLogs(revs, commit_msgs, authors, times, files_start_idx, files_n,
                           files, actions, url, prev_rev, search_chunk);
     }
     catch (const SubversionClient::Exception &ex) {
@@ -1262,7 +1262,7 @@ void taProject::SvnPrevDiff() {
     taMisc::RemoveFile(prev_fnm);
   }
   try {
-    svn_client->SaveFile(url, prev_fnm, prev_rev);
+    svn_client.SaveFile(url, prev_fnm, prev_rev);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Subversion client error in SaveFile\n", ex.what());

@@ -18,6 +18,8 @@
 #include <MemberDef>
 #include <MethodDef>
 #include <int_Array>
+#include <SubversionClient>
+#include <taDateTime>
 
 #include <taMisc>
 
@@ -25,9 +27,33 @@
 
 using namespace std;
 
+String_Array taCodeUtils::emergent_src_paths;
+
+bool taCodeUtils::InitSrcPaths() {
+  if(emergent_src_paths.size > 0)
+    return false;
+  
+  emergent_src_paths.Add("src/temt/ta_core");
+  emergent_src_paths.Add("src/temt/ta_math");
+  emergent_src_paths.Add("src/temt/ta_program");
+  emergent_src_paths.Add("src/temt/ta_data");
+  emergent_src_paths.Add("src/temt/ta_proj");
+  emergent_src_paths.Add("src/temt/ta_gui");
+  emergent_src_paths.Add("src/temt/ta_3d");
+  emergent_src_paths.Add("src/temt/css");
+  emergent_src_paths.Add("src/emergent/network");
+  emergent_src_paths.Add("src/emergent/leabra");
+  emergent_src_paths.Add("src/emergent/bp");
+  emergent_src_paths.Add("src/emergent/cs");
+  emergent_src_paths.Add("src/emergent/so");
+  emergent_src_paths.Add("src/emergent/actr");
+  emergent_src_paths.Add("src/emergent/virt_env");
+  return true;
+}
+
 bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_path,
 			       const String& src_dir) {
-  String src_path = top_path + "/" + src_dir + "/";
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
   String crfile = src_path + "COPYRIGHT.txt";
   String cmfile = src_path + "CMakeFiles.txt";
   String hfile = src_path + type_nm + ".h";
@@ -108,7 +134,7 @@ bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_pat
   }
   else {
     String str;
-    str << "#include \"../" << src_dir << "/" << type_nm << ".h\"\n";
+    str << "#include \"../" << src_dir << PATH_SEP << type_nm << ".h\"\n";
     str.SaveToFile(incfileh);
     taMisc::ExecuteCommand("svn add " + incfileh);
     got_one = true;
@@ -174,7 +200,7 @@ bool taCodeUtils::RenameType(const String& type_nm, const String& new_nm,
     return false;
   }
 
-  String src_path = top_path + "/" + src_dir + "/";
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
   String inc_path = top_path + "/include/";
 
   if(taMisc::FileExists(src_path + type_nm + ".h")) {
@@ -194,7 +220,7 @@ bool taCodeUtils::RenameType(const String& type_nm, const String& new_nm,
 
 bool taCodeUtils::ReplaceInDir(const String& search_nm, const String& repl_nm,
                                const String& top_path, const String& src_dir) {
-  String src_path = top_path + "/" + src_dir + "/";
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
 
   QDir dir(src_path);
   QStringList filters;
@@ -213,22 +239,12 @@ bool taCodeUtils::ReplaceInDir(const String& search_nm, const String& repl_nm,
 bool taCodeUtils::ReplaceInAllFiles(const String& search_nm, const String& repl_nm,
                                     const String& top_path) {
 
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_core");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_math");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_program");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_data");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_proj");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_gui");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_3d");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/css");
+  InitSrcPaths();
+  for(int i=0; i<emergent_src_paths.size; i++) {
+    String path = emergent_src_paths[i];
+    ReplaceInDir(search_nm, repl_nm, top_path, path);
+  }
   ReplaceInDir(search_nm, repl_nm, top_path, "include");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/network");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/leabra");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/bp");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/cs");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/so");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/actr");
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/virt_env");
   return true;
 }
 
@@ -240,7 +256,7 @@ bool taCodeUtils::RemoveType(const String& type_nm,
     return false;
   }
 
-  String src_path = top_path + "/" + src_dir + "/";
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
   String inc_path = top_path + "/include/";
 
   String fnmo = taMisc::GetFileFmPath(td->source_file);
@@ -273,6 +289,7 @@ bool taCodeUtils::RemoveType(const String& type_nm,
 bool taCodeUtils::FixIncludes(const String& top_path) {
   String inc_path = top_path + "/include/";
 
+  InitSrcPaths();
   QDir dir(inc_path);
   QStringList filters;
   filters << "*";
@@ -281,21 +298,10 @@ bool taCodeUtils::FixIncludes(const String& top_path) {
     String fnm = files[i];
     if(fnm.endsWith(".h")) continue; // only not-h guys
     int rpl = 0;
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_core/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_math/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_program/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_data/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_proj/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_gui/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_3d/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/css/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/network/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/bp/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/cs/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/so/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/leabra/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/actr/", "./");
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/virt_env/", "./");
+    for(int j=0; j<emergent_src_paths.size; j++) {
+      String path = emergent_src_paths[j];
+      rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../" + path, "./");
+    }
     if(rpl > 0) {
       taMisc::Info("replaced in:",fnm,"count:",String(rpl));
     }
@@ -412,7 +418,7 @@ bool taCodeUtils::CreateNewSrcFilesExisting(const String& type_nm, const String&
   bool new_file = CreateNewSrcFiles(td->name, top_path, src_dir);
   String fname = td->name;
 
-  String src_path = top_path + "/" + src_dir + "/";
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
   String hfile = src_path + fname + ".h";
 
   String hstr;
@@ -445,46 +451,112 @@ bool taCodeUtils::CreateNewSrcFilesExisting(const String& type_nm, const String&
   return true;
 }
 
-void taCodeUtils::CreateAllNewSrcFiles() {
-  int_Array iary;
-  int i=0;
-  while(i < taMisc::types.size) {
-    TypeDef* typ = taMisc::types.FastEl(i);
-    // bool dbg = false;
-    if(!typ->IsActualClass()) {
-      // if(dbg) taMisc::Info("fail class, anchor");
-      i++;
-      continue;
-    }
-    if(!typ->source_file.contains("emergent/leabra")) {
-      // if(dbg) taMisc::Info("fail src file");
-      i++;
-      continue;
-    }
-    if(typ->IsSaveInline()) {
-      // if(dbg) taMisc::Info("fail inline");
-      i++;
-      continue;
-    }
-    int chs = taMisc::Choice("Fix new source file for: " + typ->name,
-			     "Yes", "No", "Back", "Cancel");
-    if(chs == 3) break;
-    if(chs == 2) {
-      if(iary.size > 0) {
-	i = iary.Pop();
-      }
-      continue;
-    }
-    iary.Add(i);
-    if(chs == 1) {
-      i++;
-      continue;
-    }
-    if(chs == 0) {
-      CreateNewSrcFilesExisting(typ->name, "/home/oreilly/emergent",
-                                "src/emergent/leabra");
-      i++;
-    }
+String taCodeUtils::GetCurSvnRevYear(const String& filename) {
+  String yr;
+  taDateTime dt;
+  dt.currentDateTime();
+  yr = dt.toString("yyyy");
+
+  String dir = taMisc::GetDirFmPath(filename);
+  taMisc::Info("dir:", dir);
+  SubversionClient svn_client;
+  try {
+    svn_client.SetWorkingCopyPath(dir);
   }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in setting working copy\n", ex.what());
+    return yr;
+  }
+  String fnm = taMisc::GetFileFmPath(filename);
+  taMisc::Info("fnm:", fnm);
+  if(fnm.empty()) {
+    taMisc::Error("file name is empty!");
+    return yr;
+  }
+  int rev = 0;
+  int kind = 0;
+  String root_url;
+  int last_change_rev = 0;
+  int last_changed_date = 0;
+  String last_changed_author;
+  int64_t sz = 0;
+  try {
+    svn_client.GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
+                        last_changed_author, sz);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetInfo\n", ex.what());
+    return yr;
+  }
+
+  if(last_changed_date == 0) {
+    taMisc::Warning("Subversion client did not return proper date info for:",filename);
+    return yr;
+  }    
+  
+  yr = taDateTime::fmTimeToString(last_changed_date, "yyyy");
+  taMisc::Info("svn info:", filename, "rev:", String(last_change_rev), "author:",
+               last_changed_author, "year:", yr);
+  
+  return yr;
+}
+
+bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
+  String srcstr;
+  srcstr.LoadFromFile(filename);
+
+  String cpyright = "// Copyright";
+  int cpyidx = srcstr.index(cpyright);
+  if(cpyidx < 0) {
+    taMisc::Warning("could not find copyright string in file:", filename);
+    return false;
+  }
+
+  int nxtidx = cpyidx + cpyright.length();
+  if(srcstr[nxtidx] == ',') {
+    srcstr.del(nxtidx, 1);      // don't include , anymore
+  }
+  nxtidx++;
+
+  int ecomma = srcstr.index(',', nxtidx);
+  String curyr = srcstr.at(nxtidx, ecomma-nxtidx);
+  int dashidx = curyr.index('-');
+  if(dashidx > 0) {             // get rid of dashed-year
+    int st = nxtidx + dashidx;
+    srcstr.del(st, ecomma-st);
+  }
+
+  String yr = GetCurSvnRevYear(filename);
+  for(int i=0; i<yr.length();i++) {
+    srcstr[nxtidx + i] = yr[i];
+  }
+  
+  srcstr.SaveToFile(filename);
+  taMisc::Info("Replaced copyright to:", yr, "in:",filename);
+
+  return true;
+}
+
+bool taCodeUtils::CopyrightUpdateDir(const String& top_path, const String& src_dir) {
+  String src_path = top_path + PATH_SEP + src_dir + PATH_SEP;
+
+  QDir dir(src_path);
+  QStringList filters;
+  filters << "*.cpp" << "*.h" << "*.y";
+  QStringList files = dir.entryList(filters);
+  for(int i=0; i<files.count(); i++) {
+    String fnm = files[i];
+    CopyrightUpdateFile(src_path + fnm);
+  }
+  return true;
+}
+
+bool taCodeUtils::CopyrightUpdateAllFiles(const String& top_path) {
+  InitSrcPaths();
+  for(int i=0; i<emergent_src_paths.size; i++) {
+    String path = emergent_src_paths[i];
+    CopyrightUpdateDir(top_path, path);
+  }
+  return true;
 }
 

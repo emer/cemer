@@ -918,6 +918,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("RemoveType", "\
  -- remove existing type -- removes files with name of type, and reports on any files that still refer to that type -- DOES NOT ASK FOR CONFIRMATION -- USE WITH EXTREME CAUTION -- must run in directory where you want to do the rename -- must pass rename_to as the target name to rename type to");
 
+  taMisc::AddArgName("--copyrightify", "CopyrightUpdate");
+  taMisc::AddArgName("copyrightify=", "CopyrightUpdate");
+  taMisc::AddArgNameDesc("CopyrightUpdate", "\
+ -- update the copyright year on all files in the source code");
+
   taMisc::Init_Args(argc, argv);
   return true;
 }
@@ -953,6 +958,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("RenameType")
      || taMisc::CheckArgByName("ReplaceString")
      || taMisc::CheckArgByName("RemoveType")
+     || taMisc::CheckArgByName("CopyrightUpdate")
      ) { // auto nogui by default
     taMisc::use_plugins = false;                      // don't use if making
     taMisc::use_gui = false;
@@ -2031,6 +2037,23 @@ bool taRootBase::Startup_ProcessArgs() {
     taMisc::Info("removing type:", srcnm, "in top path:", top_path,
 		 "src_path:", src_path);
     taCodeUtils::RemoveType(srcnm, top_path, src_path);
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("CopyrightUpdate")) {
+    String srcnm = taMisc::FindArgByName("CopyrightUpdate");
+    String curpath = QDir::currentPath();
+    String top_path = curpath.before("/src/",-1);
+    String src_path = curpath.from("/src/",-1);
+    src_path = src_path.after("/");
+    if(srcnm.nonempty()) {
+      taMisc::Info("updating copyright in:", srcnm, "in top path:", top_path,
+                   "src_path:", src_path);
+      taCodeUtils::CopyrightUpdateFile(top_path + PATH_SEP + src_path + PATH_SEP + srcnm);
+    }
+    else {
+      taMisc::Info("updating copyright in all files in top path:", top_path);
+      taCodeUtils::CopyrightUpdateAllFiles(top_path);
+    }
     run_startup = false;
   }
 

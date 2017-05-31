@@ -940,6 +940,7 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
 
 cssEl* cssEl::TAElem(taBase* ths, const Variant& i) const {
   String elno = i.toString();   // i can dissappear in bad circumstances, so get this now
+  // note: checking for ths as a matrix and flattening first happens upstream in de_array 
   Variant rval = ths->Elem(i);
   if(rval.isNull()) {
     cssMisc::Error(prog, "Element access failed for container object:", ths->GetName(),

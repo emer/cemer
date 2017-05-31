@@ -21,6 +21,7 @@
 
 // member includes:
 #include <taString>
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 
@@ -31,6 +32,12 @@ class TA_API taCodeUtils {
 friend class InitProcRegistrar;
 public:
 
+  static String_Array emergent_src_paths;
+  // #NO_SAVE #HIDDEN list of all our source paths
+
+  static bool   InitSrcPaths();
+  // #CAT_File make sure that source paths are updated
+  
   static bool	CreateNewSrcFiles(const String& type_nm, const String& top_path,
                                   const String& src_dir);
   // #CAT_File create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
@@ -66,9 +73,15 @@ public:
   static bool	CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
 					  const String& src_dir);
   // #CAT_File create all new source files for an existing type -- just calls TypeDef version of this
-  static void	CreateAllNewSrcFiles();
-  // #CAT_File create all new source files!!  this is a one-time function that will be removed!
 
+  static String GetCurSvnRevYear(const String& filename);
+  // #CAT_File get current year of last svn revision of given file
+  static bool	CopyrightUpdateFile(const String& filename);
+  // #CAT_File update copyright year in given file, based on svn info or current year
+  static bool	CopyrightUpdateDir(const String& top_path, const String& src_dir);
+  // #CAT_File update copyright in all files in given directory
+  static bool	CopyrightUpdateAllFiles(const String& top_path);
+  // #CAT_File update copyright in all files in emergent code base
 };
 
 #endif // taCodeUtils_h
