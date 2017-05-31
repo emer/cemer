@@ -1,4 +1,4 @@
-// Copyright, 1995-2013, Regents of the University of Colorado,
+// Copyright 2017, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -457,22 +457,7 @@ String taCodeUtils::GetCurSvnRevYear(const String& filename) {
   dt.currentDateTime();
   yr = dt.toString("yyyy");
 
-  String dir = taMisc::GetDirFmPath(filename);
-  taMisc::Info("dir:", dir);
   SubversionClient svn_client;
-  try {
-    svn_client.SetWorkingCopyPath(dir);
-  }
-  catch (const SubversionClient::Exception &ex) {
-    taMisc::Error("Subversion client error in setting working copy\n", ex.what());
-    return yr;
-  }
-  String fnm = taMisc::GetFileFmPath(filename);
-  taMisc::Info("fnm:", fnm);
-  if(fnm.empty()) {
-    taMisc::Error("file name is empty!");
-    return yr;
-  }
   int rev = 0;
   int kind = 0;
   String root_url;
@@ -481,7 +466,7 @@ String taCodeUtils::GetCurSvnRevYear(const String& filename) {
   String last_changed_author;
   int64_t sz = 0;
   try {
-    svn_client.GetInfo(fnm, rev, kind, root_url, last_change_rev, last_changed_date,
+    svn_client.GetInfo(filename, rev, kind, root_url, last_change_rev, last_changed_date,
                         last_changed_author, sz);
   }
   catch (const SubversionClient::Exception &ex) {
@@ -505,6 +490,8 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   String srcstr;
   srcstr.LoadFromFile(filename);
 
+  bool mod = false;
+
   String cpyright = "// Copyright";
   int cpyidx = srcstr.index(cpyright);
   if(cpyidx < 0) {
@@ -515,6 +502,7 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   int nxtidx = cpyidx + cpyright.length();
   if(srcstr[nxtidx] == ',') {
     srcstr.del(nxtidx, 1);      // don't include , anymore
+    mod = true;
   }
   nxtidx++;
 
@@ -524,17 +512,28 @@ bool taCodeUtils::CopyrightUpdateFile(const String& filename) {
   if(dashidx > 0) {             // get rid of dashed-year
     int st = nxtidx + dashidx;
     srcstr.del(st, ecomma-st);
+    curyr = curyr.after('-');
+    mod = true;
   }
 
   String yr = GetCurSvnRevYear(filename);
-  for(int i=0; i<yr.length();i++) {
-    srcstr[nxtidx + i] = yr[i];
-  }
-  
-  srcstr.SaveToFile(filename);
-  taMisc::Info("Replaced copyright to:", yr, "in:",filename);
 
-  return true;
+  if(yr != curyr) {
+    for(int i=0; i<yr.length();i++) {
+      srcstr[nxtidx + i] = yr[i];
+    }
+    mod = true;
+  }
+
+  if(mod) {
+    srcstr.SaveToFile(filename);
+    taMisc::Info("Replaced copyright to:", yr, "in:",filename);
+  }
+  else {
+    taMisc::Info("copyright was already up-to-date:", yr, "in:",filename);
+  }
+
+  return mod;
 }
 
 bool taCodeUtils::CopyrightUpdateDir(const String& top_path, const String& src_dir) {
