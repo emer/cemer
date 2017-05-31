@@ -1221,6 +1221,8 @@ public:
   // #CAT_Display get the project browser for this object's project owner
   virtual bool          BrowserSelectMe();
   // #CAT_Display select this item in the main project browser (only works if gui is active, etc) -- returns success
+  virtual bool          BrowserEditMe();
+  // #CAT_Display select this item and open for edit (only works if gui is active, etc) -- returns success
   virtual bool          ChooseMe();
   // #CAT_Display Display a chooser of whatever type this method is called on
   virtual bool          BrowserExpandAll();

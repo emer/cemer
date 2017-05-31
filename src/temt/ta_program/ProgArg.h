@@ -59,6 +59,7 @@ public:
                             const taBase* par_obj, MemberDef* md) const override;
   void          GetFlatTreeValue(FlatTreeEl_List& ftl, FlatTreeEl* ft, bool ptr = false) const override;
   bool         BrowserSelectMe() override;
+  bool         BrowserEditMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
   bool         BrowserEditEnable() const override { return true; }

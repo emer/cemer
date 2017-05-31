@@ -3298,6 +3298,46 @@ bool taBase::BrowserSelectMe() {
   return rval;
 }
 
+bool taBase::BrowserEditMe() {
+  if(!taMisc::gui_active) return false;
+  
+  if(InheritsFrom(&TA_taList_impl)) {     // need to check for def child -- cannot select!!
+    taBase* mbrown = GetMemberOwner(false); // not highest
+    if(mbrown) {
+      String mbr = GetPath(mbrown);
+      if(mbr.startsWith('.')) mbr = mbr.after('.');
+      MemberDef* my_md = mbrown->GetTypeDef()->members.FindName(mbr);
+      if(my_md && my_md->IsDefChild()) {
+        return false;
+      }
+    }
+  }
+  
+  // first, check for an edit dialog and use that if found
+  MainWindowViewer* edlg = MainWindowViewer::FindEditDialog(this);
+  if(edlg) {
+    edlg->Show();               // focus on it
+    return true;
+  }
+  
+  taProject* proj = GetMyProj();
+  if(!proj) return false;
+  taiSigLink* link = (taiSigLink*)GetSigLink();
+  if (!link) return false;
+  
+  bool rval = false;
+  // iterate to find all Browsers
+  for (int i = 0; i < proj->viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+    
+    rval = rval || (bool)imwv->AssertBrowserItem(link);
+  }
+  return rval;
+}
+
 bool taBase::BrowserExpandAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GetMyProj();

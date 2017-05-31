@@ -37,6 +37,7 @@ public:
   String       GetDesc() const override { return desc; }
 
   bool         BrowserSelectMe() override;
+  bool         BrowserEditMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 

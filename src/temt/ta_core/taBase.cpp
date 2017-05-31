@@ -3140,11 +3140,14 @@ MainWindowViewer* taBase::GetMyBrowser() {
 
 #ifndef TA_GUI
 
-// see iMainWindowViewer.cpp for the ifdef TA_GUI implementations
+// **** SEE iMainWindowViewer.cpp for the ifdef TA_GUI implementations ****
 bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   return false;
 }
 bool taBase::BrowserSelectMe() {
+  return false;
+}
+bool taBase::BrowserEditMe() {
   return false;
 }
 bool taBase::BrowserExpandAll() {

@@ -206,6 +206,7 @@ public:
   String       GetName() const           override { return name; }
 
   bool         BrowserSelectMe() override;
+  bool         BrowserEditMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
   

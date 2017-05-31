@@ -73,6 +73,12 @@ bool DynEnumItem::BrowserSelectMe() {
   return prog->BrowserSelectMe_ProgItem(this);
 }
 
+bool DynEnumItem::BrowserEditMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserEditMe_ProgItem(this);
+}
+
 bool DynEnumItem::BrowserExpandAll() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return false;

@@ -1246,6 +1246,12 @@ bool ProgVar::BrowserSelectMe() {
   return prog->BrowserSelectMe_ProgItem(this);
 }
 
+bool ProgVar::BrowserEditMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserEditMe_ProgItem(this);
+}
+
 bool ProgVar::BrowserExpandAll() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return false;

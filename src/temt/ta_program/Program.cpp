@@ -2371,7 +2371,7 @@ iPanelOfProgramBase* Program::FindMyProgramPanel() {
   return NULL;
 }
 
-bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
+bool Program::BrowserEditMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
   
   itm->taBase::BrowserSelectMe();
@@ -2444,6 +2444,31 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   return (bool)iti;
 }
 
+bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  
+  itm->taBase::BrowserSelectMe();
+  taMisc::ProcessEvents();
+  
+  this->taBase::BrowserSelectMe(); // first, select the program in main tree
+  taMisc::ProcessEvents();
+  
+  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
+  if(!link) return false;
+  
+  iPanelOfProgramBase* mwv = FindMyProgramPanel();
+  
+  if (!mwv) {
+    taMisc::Info("No program panel open, selecting item in Navigator");
+    itm->taBase::BrowserSelectMe();
+    return false;
+  }
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  
+  return (bool)iti;
+}
+
 bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
   if(!taMisc::gui_active) return false;
 
@@ -2475,31 +2500,6 @@ bool Program::BrowserSelectMe_ProgItemForEdit(taOBase* itm) {
 
     // make sure our operations are finished
     taMisc::ProcessEvents();
-    // edit ProgCode but not other ProgEls, and tab into all other items
-    // if(itm->InheritsFrom(&TA_ProgEl)) {
-    //   ProgEl* pel = (ProgEl*)itm;
-    //   if(pel->edit_move_after > 0) {
-    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-    //                                                    Qt::NoModifier));
-    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-    //                                                    Qt::MetaModifier));
-    //     pel->edit_move_after = 0;
-    //   }
-    //   else if(pel->edit_move_after < 0) {
-    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
-    //                                                    Qt::NoModifier));
-    //     QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-    //                                                    Qt::MetaModifier));
-    //     pel->edit_move_after = 0;
-    //   }
-    //   else {
-    //     if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
-    //       // auto edit prog code
-    //       QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-    //                                                      Qt::MetaModifier));
-    //     }
-    //   }
-    // }
     scroll_to_itm = itm;
     tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
   }

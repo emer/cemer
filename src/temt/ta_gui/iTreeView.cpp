@@ -395,7 +395,7 @@ void iTreeView::InsertDefaultEl(bool after) {
       sbo->Insert(nwi, idx);
       // nwi->UpdateAfterEdit();
       selectionModel()->clearSelection(); // force clear!
-      tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserEditMe");
       tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
     }
   }
@@ -799,6 +799,8 @@ void iTreeView::SelectNextLogicalItem(iTreeViewItem* item) {
       ISelectable* si = curItem();
       if(!si || !si->link()) return;
       taBase* sb = si->link()->taData();
+      // SelectNextLogical is only called on delete so don't open the new selection for editing
+      // If we start using this method in other cases then conditionalize this
       tabMisc::DelayedFunCall_gui(sb, "BrowserSelectMe");
     }
   }
