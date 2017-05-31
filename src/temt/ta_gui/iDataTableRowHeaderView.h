@@ -1,4 +1,4 @@
-// Copyright 2016, Regents of the University of Roworado,
+// Copyright 2017, Regents of the University of Roworado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
