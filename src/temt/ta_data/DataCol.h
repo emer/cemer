@@ -176,7 +176,7 @@ public:
   // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value -- for rows as specified by starting row, and n_rows = -1 means to the end
   bool          InitValsToRowNo(int st_row = 0, int n_rows = -1);
   // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
-  bool          InitValsByIncrement(int first_value = 0, int increment = 1, int st_row = 0, int n_rows = -1);
+  bool          InitValsByIncrement(float first_value = 0, float increment = 1, int st_row = 0, int n_rows = -1);
   // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to a starting integer plus some integer value (negative ok) multiplied by the row number -- only valid for scalar (not matrix) columns -- for rows as specified by starting row, and n_rows = -1 means to the end
 
   void          SortAscending();
